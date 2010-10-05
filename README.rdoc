@@ -1,0 +1,99 @@
+= GoodData Ruby wrapper and CLI
+
+A convenient Ruby wrapper around the GoodData RESTful API.
+
+This is a two-in one tool. It both contains a wrapper class called GoodData::Base
+that you can use in your own projects and a CLI for use on the prompt.
+
+The best documentation for the API can be found using these resources:
+* http://developer.gooddata.com/api
+* https://secure.gooddata.com/gdc
+
+== Usage
+
+Install gooddata-ruby gem
+
+  gem install gooddata-ruby
+
+Now you are ready to use either the Ruby wrapper class or the CLI.
+
+=== Wrapper class usage
+
+For details of how to use the Ruby wrapper class, see the GoodData::Base RDoc.
+
+=== CLI Usage
+
+After installing the gooddata-ruby gem, GoodData is available from your command line using
+the <tt>gdr</tt> command. To get a complete overview of possible options type:
+
+  gdr --help
+
+The examples and descriptions below does not cover all the options available via the CLI.
+So remember to refer back to the <tt>--help</tt> mode.
+
+Before you do anything else, a good idea is to see if your account is set up correctly and 
+that you can log in. To do this, use the test-mode:
+
+  gdr --test
+
+==== Authentication
+
+As you saw if you ran the above test command <tt>gdr</tt> will prompt you for your GoodData username
+and password. Alternatively you can also specify it using the command line options <tt>--username</tt>
+/ <tt>-u</tt> and <tt>--password</tt> / <tt>-p</tt>. Examples:
+
+  $ gdr -u user@example.com
+  Password: 
+
+  $ gdr -u user@example.com -p secret
+
+In the latter example the password is written in clear-text in the console. This is not recommended.
+Alternatively the first method can be used.
+
+If you don't wish to write your credentials each time you connect to GoodData using <tt>gdr</tt>, you can
+create a simple gdr settings file called <tt>.gdr</tt> in the root of your users home directory. To make it
+easy you can just run the settings file generator command which will create the file for you:
+
+  gdr --write-settings
+
+==== List available projects
+
+To get a list of projects available to your GoodData user account, run:
+
+  gdr -l
+
+The output from the above command will look similar to this:
+
+     521  Some project
+    3521  Some other project
+    3642  Some third project
+
+The first column contains the project-id. You need this if you wan't to either see more details about
+the project using the <tt>--show-project</tt> mode or if you wish to delete the project using the 
+<tt>--delete-project</tt> mode.
+
+==== Create a new project
+
+To create a new project under on the GoodData servers, run:
+
+  gdr -c
+
+You will then be asked about the desired project name and summary before it's created.
+
+== Note on Patches/Pull Requests
+ 
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Commit, do not mess with rakefile, version, or history.
+  (if you want to have your own version, that is fine but bump version in a commit by itself we can ignore when we pull)
+* Send us a pull request. Bonus points for topic branches.
+
+== Credits
+
+This project is developed and maintained by Thomas Watson Steen [ mailto:w@tson.dk / {@wa7son}[http://twitter.com/wa7son] ]
+
+== Copyright
+
+Copyright (c) 2010 Thomas Watson Steen & GoodData Corporation. See LICENSE for details.
