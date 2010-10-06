@@ -4,7 +4,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{gooddata-ruby}
+  s.name = %q{gooddata}
   s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -26,13 +26,14 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/gdr",
-     "gooddata-ruby.gemspec",
+     "gooddata.gemspec",
      "lib/good_data/base.rb",
      "lib/good_data/collections/projects.rb",
      "lib/good_data/connection.rb",
      "lib/good_data/profile.rb",
      "lib/good_data/project.rb",
-     "lib/good_data_cli.rb",
+     "lib/gooddata.rb",
+     "lib/gooddata_cli.rb",
      "test/helper.rb",
      "test/test_gooddata-ruby.rb"
   ]

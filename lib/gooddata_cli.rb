@@ -4,7 +4,7 @@ require 'parseconfig'
 require 'pp'
 require File.dirname(__FILE__) + '/good_data/base'
 
-module GoodDataCli
+module GooddataCli
   class << self
     NAME = "gooddata-ruby"
     CONFIG_FILE = '~/.gdr'

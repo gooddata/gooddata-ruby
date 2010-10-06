@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 
 begin
-  require 'good_data_cli'
+  require 'gooddata_cli'
 rescue LoadError
-  require 'rubygems'
-  require 'good_data_cli'
+  require File.dirname(__FILE__) + '/../lib/gooddata_cli'
 end
 
-GoodDataCli.run
+GooddataCli.run
