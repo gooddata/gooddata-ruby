@@ -65,7 +65,7 @@ module GoodDataCli
 
         opts.separator ''
         opts.separator 'Other options:'
-        opts.on('--log-level=LEVEL',
+        opts.on('--log-level LEVEL',
                 [:fatal, :error, :warn, :info, :debug],
                 'Set the log level. Possible levels are:',
                 'fatal, error, warn (default), info, debug')                  { |level| @config['log_level'] = level }
