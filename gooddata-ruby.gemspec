@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/gdr",
+     "gooddata-ruby.gemspec",
      "lib/good_data/base.rb",
      "lib/good_data/collections/projects.rb",
      "lib/good_data/connection.rb",
