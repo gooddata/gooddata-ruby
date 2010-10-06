@@ -33,9 +33,9 @@ module GoodDataCli
                 'List available projects')                                    { @config['mode'] = :list_projects }
         opts.on('-c', '--create-project',
                 'Create new project')                                         { @config['mode'] = :create_project }
-        opts.on('-s', '--show-project=ID',
+        opts.on('-s', '--show-project ID',
                 'Show project details')                                       { |id| @config['mode'] = :show_project; @config['project_id'] = id }
-        opts.on('-D', '--delete-project=ID',
+        opts.on('-D', '--delete-project ID',
                 'Delete an existing project')                                 { |id| @config['mode'] = :delete_project; @config['project_id'] = id }
 
         opts.separator ''
@@ -58,9 +58,9 @@ module GoodDataCli
 
         opts.separator ''
         opts.separator 'Login options:'
-        opts.on('-u', '--username=USERNAME',
+        opts.on('-u', '--username USERNAME',
                 'Set GoodData username')                                      { |username| @config['username'] = username }
-        opts.on('-p', '--password[=PASSWORD]',
+        opts.on('-p', '--password PASSWORD',
                 'Set GoodData password')                                      { |password| @config['password'] = password }
 
         opts.separator ''

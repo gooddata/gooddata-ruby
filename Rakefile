@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "GoodData Ruby wrapper and CLI"
+    gem.name = "gooddata-ruby"
     gem.summary = %Q{A convenient Ruby wrapper around the GoodData RESTful API}
     gem.description = %Q{This is a two-in one tool. It both contains a wrapper class called GoodData::Base that you can use in your own projects and a CLI for use on the prompt.}
     gem.email = "w@tson.dk"
