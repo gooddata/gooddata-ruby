@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Watson Steen"]
-  s.date = %q{2010-10-06}
-  s.default_executable = %q{gdr}
+  s.date = %q{2010-10-08}
+  s.default_executable = %q{gooddata}
   s.description = %q{This is a two-in one tool. It both contains a wrapper class called GoodData::Base that you can use in your own projects and a CLI for use on the prompt.}
   s.email = %q{w@tson.dk}
-  s.executables = ["gdr"]
+  s.executables = ["gooddata"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.rdoc"
@@ -24,8 +24,9 @@ Gem::Specification.new do |s|
      "LICENSE",
      "README.rdoc",
      "Rakefile",
+     "TODO.md",
      "VERSION",
-     "bin/gdr",
+     "bin/gooddata",
      "gooddata.gemspec",
      "lib/good_data/base.rb",
      "lib/good_data/collections/projects.rb",
@@ -54,18 +55,18 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_runtime_dependency(%q<parseconfig>, [">= 0"])
-      s.add_runtime_dependency(%q<json>, [">= 0"])
+      s.add_runtime_dependency(%q<json_pure>, [">= 0"])
       s.add_runtime_dependency(%q<rest-client>, [">= 0"])
     else
       s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_dependency(%q<parseconfig>, [">= 0"])
-      s.add_dependency(%q<json>, [">= 0"])
+      s.add_dependency(%q<json_pure>, [">= 0"])
       s.add_dependency(%q<rest-client>, [">= 0"])
     end
   else
     s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     s.add_dependency(%q<parseconfig>, [">= 0"])
-    s.add_dependency(%q<json>, [">= 0"])
+    s.add_dependency(%q<json_pure>, [">= 0"])
     s.add_dependency(%q<rest-client>, [">= 0"])
   end
 end
