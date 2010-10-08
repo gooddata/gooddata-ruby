@@ -24,9 +24,9 @@ For details of how to use the Ruby wrapper class, see the GoodData::Base RDoc.
 === CLI Usage
 
 After installing the gooddata-ruby gem, GoodData is available from your command line using
-the <tt>gdr</tt> command. To get a complete overview of possible options type:
+the <tt>gooddata</tt> command. To get a complete overview of possible options type:
 
-  gdr --help
+  gooddata --help
 
 The examples and descriptions below does not cover all the options available via the CLI.
 So remember to refer back to the <tt>--help</tt> mode.
@@ -34,33 +34,33 @@ So remember to refer back to the <tt>--help</tt> mode.
 Before you do anything else, a good idea is to see if your account is set up correctly and 
 that you can log in. To do this, use the test-mode:
 
-  gdr --test
+  gooddata --test
 
 ==== Authentication
 
-As you saw if you ran the above test command <tt>gdr</tt> will prompt you for your GoodData username
+As you saw if you ran the above test command <tt>gooddata</tt> will prompt you for your GoodData username
 and password. Alternatively you can also specify it using the command line options <tt>--username</tt>
 / <tt>-u</tt> and <tt>--password</tt> / <tt>-p</tt>. Examples:
 
-  $ gdr -u user@example.com
+  $ gooddata -u user@example.com
   Password: 
 
-  $ gdr -u user@example.com -p secret
+  $ gooddata -u user@example.com -p secret
 
 In the latter example the password is written in clear-text in the console. This is not recommended.
 Alternatively the first method can be used.
 
-If you don't wish to write your credentials each time you connect to GoodData using <tt>gdr</tt>, you can
-create a simple gdr settings file called <tt>.gdr</tt> in the root of your users home directory. To make it
+If you don't wish to write your credentials each time you connect to GoodData using <tt>gooddata</tt>, you can
+create a simple gooddata settings file called <tt>.gooddata</tt> in the root of your users home directory. To make it
 easy you can just run the settings file generator command which will create the file for you:
 
-  gdr --write-settings
+  gooddata --write-settings
 
 ==== List available projects
 
 To get a list of projects available to your GoodData user account, run:
 
-  gdr -l
+  gooddata -l
 
 The output from the above command will look similar to this:
 
@@ -76,7 +76,7 @@ the project using the <tt>--show-project</tt> mode or if you wish to delete the 
 
 To create a new project under on the GoodData servers, run:
 
-  gdr -c
+  gooddata -c
 
 You will then be asked about the desired project name and summary before it's created.
 
