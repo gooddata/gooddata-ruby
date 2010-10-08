@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'optparse'
 require 'parseconfig'
 require 'pp'
