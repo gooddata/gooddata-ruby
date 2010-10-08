@@ -6,8 +6,8 @@ require File.dirname(__FILE__) + '/good_data/base'
 
 module GooddataCli
   class << self
-    NAME = "gooddata-ruby"
-    CONFIG_FILE = '~/.gdr'
+    NAME = "gooddata"
+    CONFIG_FILE = '~/.gooddata'
 
     def run
       parse_config_file
@@ -25,7 +25,7 @@ module GooddataCli
 
     def parse_command_line_args
       options = OptionParser.new do |opts|
-        opts.banner = "Usage: gdr [mode] [options]"
+        opts.banner = "Usage: gooddata [mode] [options]"
 
         opts.separator ''
         opts.separator 'Project related modes:'
@@ -54,7 +54,7 @@ module GooddataCli
         opts.on('--api-info',
                 'General info about the current GoodData API version')        { @config['mode'] = :api_info }
         opts.on('--write-settings',
-                'Write default settings to a convenient ~/.gdr file')         { @config['mode'] = :write_settings }
+                'Write default settings to a convenient ~/.gooddata file')    { @config['mode'] = :write_settings }
 
         opts.separator ''
         opts.separator 'Login options:'
@@ -181,7 +181,7 @@ module GooddataCli
       password = ask "GoodData password", :secret => true
 
       ovewrite = if File.exist?(File.expand_path(CONFIG_FILE))
-        ask "The gdr settings file already exist at #{CONFIG_FILE}. Overwrite", :answers => %w(y n)
+        ask "The gooddata settings file already exist at #{CONFIG_FILE}. Overwrite", :answers => %w(y n)
       else
         'y'
       end
