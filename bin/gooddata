@@ -3,4 +3,8 @@
 require 'gooddata'
 require 'gooddata/command'
 
-Gooddata::Command.run
+args = ARGV.dup
+ARGV.clear
+command = args.shift.strip rescue 'help'
+
+Gooddata::Command.run command, args

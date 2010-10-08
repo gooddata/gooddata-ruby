@@ -1,5 +1,8 @@
 require 'logger'
-Dir[File.dirname(__FILE__) + '/**/*.rb'].each { |file| require file }
+require 'gooddata/version'
+require 'gooddata/connection'
+Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }
+Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
 
 # Wrapper module for all GoodData classes. See the Client class for details.
 #
@@ -45,8 +48,7 @@ module Gooddata
   #
   # Now it is just a matter of creating a new Gooddata::Client object:
   #
-  #   gd = Gooddata::Client.new :username => 'gooddata_username',
-  #                             :password => 'gooddata_password'
+  #   gd = Gooddata::Client.new 'gooddata_user', 'gooddata_password'
   #
   # This GoodData object can now be utalized to retrieve your GoodData profile, the available
   # projects etc.
@@ -54,29 +56,41 @@ module Gooddata
   class Client
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
+    class << self
+      def version
+        Gooddata::VERSION
+      end
+
+      def gem_version_string
+        "gooddata-gem/#{version}"
+      end
+    end
+
     # Creates a new GoodData API wrapper
     #
     # === Parameters
     #
-    # * +attributes+ - A Hash of configuration attributes.
+    # * +user+ - A GoodData username
+    # * +password+ - A GoodData password
+    # * +log_level+ - The desired loglevel (defaults to warn) - see Gooddata.init_logger for possible values.
     #
-    # ==== Possible attributes:
-    #
-    # * :username (required)
-    # * :password (required)
-    # * :log_level (defaults to :warn) - see Gooddata.init_logger for possible values.
-    #
-    # The Hash keys can be both symbols and strings. So :username is just as good as 'username'.
-    def initialize(attributes)
-      attributes = attributes.inject({}) { |memo, (k,v)| memo[k.to_sym] = v; memo } # convert all attribute keys to symbols
-      attributes = { :log_level => :warn }.merge attributes
-      Gooddata.init_logger attributes[:log_level]
-      Connection.instance.set_credentials attributes[:username], attributes[:password]
+    def initialize(user, password, log_level = :warn)
+      Gooddata.init_logger log_level
+      Connection.instance.set_credentials user, password
+    end
+
+    def test_login
+      Gooddata::Connection.instance.connect!
+      Gooddata::Connection.instance.logged_in?
     end
 
     # Returns the currently logged in user Profile.
     def profile
       @profile ||= Profile.load
+    end
+
+    def find_project(id)
+      Project.find(id)
     end
 
     # Returns an Array of projects.

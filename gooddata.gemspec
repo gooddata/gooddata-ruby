@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Watson Steen"]
-  s.date = %q{2010-10-08}
+  s.date = %q{2010-10-09}
   s.default_executable = %q{gooddata}
   s.description = %q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
   s.email = %q{w@tson.dk}
@@ -27,9 +27,18 @@ Gem::Specification.new do |s|
      "lib/gooddata/client.rb",
      "lib/gooddata/collections/projects.rb",
      "lib/gooddata/command.rb",
+     "lib/gooddata/commands/api.rb",
+     "lib/gooddata/commands/auth.rb",
+     "lib/gooddata/commands/base.rb",
+     "lib/gooddata/commands/help.rb",
+     "lib/gooddata/commands/profile.rb",
+     "lib/gooddata/commands/projects.rb",
+     "lib/gooddata/commands/version.rb",
      "lib/gooddata/connection.rb",
-     "lib/gooddata/profile.rb",
-     "lib/gooddata/project.rb",
+     "lib/gooddata/helpers.rb",
+     "lib/gooddata/models/profile.rb",
+     "lib/gooddata/models/project.rb",
+     "lib/gooddata/version.rb",
      "test/helper.rb",
      "test/test_gooddata-ruby.rb"
   ]

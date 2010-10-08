@@ -160,10 +160,7 @@ module Gooddata
         }
       }
 
-      version = nil
-      File.open(File.dirname(__FILE__) + '/../../VERSION') { |f| version = f.gets }
-
-      @server = RestClient::Resource.new GOODDATA_SERVER, :headers => { :content_type => :json, :accept => :json, :user_agent => "gooddata-ruby #{version}" }
+      @server = RestClient::Resource.new GOODDATA_SERVER, :headers => { :content_type => :json, :accept => :json, :user_agent => Gooddata::Client.gem_version_string }
 
       Gooddata.logger.debug "Logging in..."
       @user = post(LOGIN_PATH, credentials)['userLogin']

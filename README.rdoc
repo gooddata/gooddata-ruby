@@ -2,8 +2,8 @@
 
 A convenient Ruby wrapper around the GoodData RESTful API.
 
-This is a two-in one tool. It both contains a wrapper class called Gooddata::Client
-that you can use in your own projects and a CLI for use on the prompt.
+Use the Gooddata::Client class to integrate GoodData into your own application
+or use the CLI to work with GoodData directly from the command line.
 
 The best documentation for the API can be found using these resources:
 * http://developer.gooddata.com/api
@@ -31,41 +31,32 @@ For details of how to use the Ruby wrapper class, see the Gooddata::Client RDoc.
 After installing the gooddata gem, GoodData is available from your command line using
 the <tt>gooddata</tt> command. To get a complete overview of possible options type:
 
-  gooddata --help
+  gooddata help
 
 The examples and descriptions below does not cover all the options available via the CLI.
-So remember to refer back to the <tt>--help</tt> mode.
+So remember to refer back to the <tt>help</tt> command.
 
 Before you do anything else, a good idea is to see if your account is set up correctly and 
-that you can log in. To do this, use the test-mode:
+that you can log in. To do this, use the <tt>api:test</tt> command:
 
-  gooddata --test
+  gooddata api:test
 
 ==== Authentication
 
-As you saw if you ran the above test command <tt>gooddata</tt> will prompt you for your GoodData username
-and password. Alternatively you can also specify it using the command line options <tt>--username</tt>
-/ <tt>-u</tt> and <tt>--password</tt> / <tt>-p</tt>. Examples:
+As you saw if you ran the above test command <tt>gooddata</tt> will prompt you
+for your GoodData username and password. If you don't wish to write your
+credentials each time you connect to GoodData using <tt>gooddata</tt>, you can
+create a simple gooddata credentials file called <tt>.gooddata</tt> in the root
+of your home directory. To make it easy you can just run the credentials file
+generator command which will create the file for you:
 
-  $ gooddata -u user@example.com
-  Password: 
-
-  $ gooddata -u user@example.com -p secret
-
-In the latter example the password is written in clear-text in the console. This is not recommended.
-Alternatively the first method can be used.
-
-If you don't wish to write your credentials each time you connect to GoodData using <tt>gooddata</tt>, you can
-create a simple gooddata settings file called <tt>.gooddata</tt> in the root of your users home directory. To make it
-easy you can just run the settings file generator command which will create the file for you:
-
-  gooddata --write-settings
+  gooddata auth:store
 
 ==== List available projects
 
 To get a list of projects available to your GoodData user account, run:
 
-  gooddata -l
+  gooddata projects
 
 The output from the above command will look similar to this:
 
@@ -73,15 +64,15 @@ The output from the above command will look similar to this:
     3521  Some other project
     3642  Some third project
 
-The first column contains the project-id. You need this if you wan't to either see more details about
-the project using the <tt>--show-project</tt> mode or if you wish to delete the project using the 
-<tt>--delete-project</tt> mode.
+The first column contains the project-key. You need this if you wan't to either
+see more details about the project using the <tt>projects:show</tt> comamnd or
+if you wish to delete the project using the <tt>projects:delete</tt> command.
 
 ==== Create a new project
 
 To create a new project under on the GoodData servers, run:
 
-  gooddata -c
+  gooddata projects:create
 
 You will then be asked about the desired project name and summary before it's created.
 
