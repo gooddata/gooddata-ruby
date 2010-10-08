@@ -12,7 +12,7 @@ begin
     gem.authors = ["Thomas Watson Steen"]
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     gem.add_dependency 'parseconfig'
-    gem.add_dependency 'json'
+    gem.add_dependency 'json_pure'
     gem.add_dependency 'rest-client'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

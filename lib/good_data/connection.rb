@@ -1,6 +1,6 @@
 require 'singleton'
 require 'rest-client'
-require 'json'
+require 'json/pure'
 
 module GoodData
 
