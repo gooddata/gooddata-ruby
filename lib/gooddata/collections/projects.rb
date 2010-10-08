@@ -1,7 +1,7 @@
-module GoodData::Collections
+module Gooddata::Collections
   class Projects < Array
     def create(attributes)
-      GoodData.logger.info "Creating project #{attributes[:name]}"
+      Gooddata.logger.info "Creating project #{attributes[:name]}"
 
       json = {
         'meta' => {

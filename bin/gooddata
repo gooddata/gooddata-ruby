@@ -1,9 +1,6 @@
 #!/usr/bin/env ruby
 
-begin
-  require 'gooddata_cli'
-rescue LoadError
-  require File.dirname(__FILE__) + '/../lib/gooddata_cli'
-end
+require 'gooddata'
+require 'gooddata/command'
 
-GooddataCli.run
+Gooddata::Command.run

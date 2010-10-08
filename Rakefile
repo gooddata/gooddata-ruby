@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "gooddata"
     gem.summary = %Q{A convenient Ruby wrapper around the GoodData RESTful API}
-    gem.description = %Q{This is a two-in one tool. It both contains a wrapper class called GoodData::Base that you can use in your own projects and a CLI for use on the prompt.}
+    gem.description = %Q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
     gem.email = "w@tson.dk"
     gem.homepage = "http://github.com/gooddata/gooddata-ruby"
     gem.authors = ["Thomas Watson Steen"]

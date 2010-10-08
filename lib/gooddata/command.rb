@@ -1,9 +1,8 @@
 require 'optparse'
 require 'parseconfig'
 require 'pp'
-require File.dirname(__FILE__) + '/good_data/base'
 
-module GooddataCli
+module Gooddata::Command
   class << self
     NAME = "gooddata"
     CONFIG_FILE = '~/.gooddata'
@@ -112,9 +111,9 @@ module GooddataCli
     end
 
     def test_connection
-      gd = GoodData::Base.new @config
-      GoodData::Connection.instance.connect!
-      if GoodData::Connection.instance.logged_in?
+      gd = Gooddata::Client.new @config
+      Gooddata::Connection.instance.connect!
+      if Gooddata::Connection.instance.logged_in?
         puts "Succesfully logged in as #{gd.profile.user}"
       else
         puts "Unable to log in to GoodData server!"
@@ -122,12 +121,12 @@ module GooddataCli
     end
 
     def show_profile
-      gd = GoodData::Base.new @config
-      pp GoodData::Profile.load.to_json
+      gd = Gooddata::Client.new @config
+      pp Gooddata::Profile.load.to_json
     end
 
     def list_projects
-      gd = GoodData::Base.new @config
+      gd = Gooddata::Client.new @config
       gd.projects.each do |project|
         puts "%6i  %s" % [project.id, project.name]
       end
@@ -137,22 +136,22 @@ module GooddataCli
       name = ask "Project name"
       summary = ask "Project summary"
 
-      gd = GoodData::Base.new @config
+      gd = Gooddata::Client.new @config
       project = gd.projects.create :name => name, :summary => summary
 
       puts "Project '#{project.name}' with id #{project.id} created successfully!"
     end
 
     def show_project(id)
-      gd = GoodData::Base.new @config
-      project = GoodData::Project.find(id)
+      gd = Gooddata::Client.new @config
+      project = Gooddata::Project.find(id)
       pp project.to_json
     end
 
     def delete_project(ids)
-      gd = GoodData::Base.new @config
+      gd = Gooddata::Client.new @config
       ids.to_s.split(',').each do |id|
-        project = GoodData::Project.find(id)
+        project = Gooddata::Project.find(id)
         ask "Do you want to delete the project '#{project.name}' with id #{project.id}", :answers => %w(y n) do |answer|
           case answer
           when 'y' then
@@ -167,7 +166,7 @@ module GooddataCli
     end
 
     def api_info
-      gd = GoodData::Base.new @config
+      gd = Gooddata::Client.new @config
       json = gd.release_info
       puts "GoodData API"
       puts "  Version: #{json['releaseName']}"

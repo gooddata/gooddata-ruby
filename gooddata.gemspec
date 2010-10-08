@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors = ["Thomas Watson Steen"]
   s.date = %q{2010-10-08}
   s.default_executable = %q{gooddata}
-  s.description = %q{This is a two-in one tool. It both contains a wrapper class called GoodData::Base that you can use in your own projects and a CLI for use on the prompt.}
+  s.description = %q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
   s.email = %q{w@tson.dk}
   s.executables = ["gooddata"]
   s.extra_rdoc_files = [
@@ -28,13 +28,13 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/gooddata",
      "gooddata.gemspec",
-     "lib/good_data/base.rb",
-     "lib/good_data/collections/projects.rb",
-     "lib/good_data/connection.rb",
-     "lib/good_data/profile.rb",
-     "lib/good_data/project.rb",
      "lib/gooddata.rb",
-     "lib/gooddata_cli.rb",
+     "lib/gooddata/client.rb",
+     "lib/gooddata/collections/projects.rb",
+     "lib/gooddata/command.rb",
+     "lib/gooddata/connection.rb",
+     "lib/gooddata/profile.rb",
+     "lib/gooddata/project.rb",
      "test/helper.rb",
      "test/test_gooddata-ruby.rb"
   ]

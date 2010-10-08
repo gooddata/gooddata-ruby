@@ -1,7 +1,7 @@
 require 'logger'
 Dir[File.dirname(__FILE__) + '/**/*.rb'].each { |file| require file }
 
-# Wrapper module for all GoodData classes. See the Base class for details.
+# Wrapper module for all GoodData classes. See the Client class for details.
 #
 # == Logging
 #
@@ -10,12 +10,12 @@ Dir[File.dirname(__FILE__) + '/**/*.rb'].each { |file| require file }
 # first be initialized using the init_logger method. After initialization,
 # an event can be logged using the logger attribute:
 #
-#   GoodData.logger.error 'Something bad happend!'
+#   Gooddata.logger.error 'Something bad happend!'
 #
 # For details about the logger options and methods, see the
 # {Logger module documentation}[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
 #
-module GoodData
+module Gooddata
   class << self
     attr_accessor :logger
 
@@ -43,15 +43,15 @@ module GoodData
   # To communicate with the API you first need a personal GoodData account.
   # {Sign up here}[https://secure.gooddata.com/registration.html] if you havent already.
   #
-  # Now it is just a matter of creating a new GoodData::Base object:
+  # Now it is just a matter of creating a new Gooddata::Client object:
   #
-  #   gd = GoodData::Base.new :username => 'gooddata_username',
-  #                           :password => 'gooddata_password'
+  #   gd = Gooddata::Client.new :username => 'gooddata_username',
+  #                             :password => 'gooddata_password'
   #
   # This GoodData object can now be utalized to retrieve your GoodData profile, the available
   # projects etc.
   #
-  class Base
+  class Client
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
     # Creates a new GoodData API wrapper
@@ -64,13 +64,13 @@ module GoodData
     #
     # * :username (required)
     # * :password (required)
-    # * :log_level (defaults to :warn) - see GoodData.init_logger for possible values.
+    # * :log_level (defaults to :warn) - see Gooddata.init_logger for possible values.
     #
     # The Hash keys can be both symbols and strings. So :username is just as good as 'username'.
     def initialize(attributes)
       attributes = attributes.inject({}) { |memo, (k,v)| memo[k.to_sym] = v; memo } # convert all attribute keys to symbols
       attributes = { :log_level => :warn }.merge attributes
-      GoodData.init_logger attributes[:log_level]
+      Gooddata.init_logger attributes[:log_level]
       Connection.instance.set_credentials attributes[:username], attributes[:password]
     end
 
@@ -81,7 +81,7 @@ module GoodData
 
     # Returns an Array of projects.
     #
-    # The Array is of type GoodData::Collections::Projects and each element is of type GoodData::Project.
+    # The Array is of type Gooddata::Collections::Projects and each element is of type Gooddata::Project.
     def projects
       @projects ||= profile.projects
     end

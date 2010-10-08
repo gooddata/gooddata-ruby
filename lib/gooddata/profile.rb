@@ -1,11 +1,11 @@
-module GoodData
+module Gooddata
   class Profile
     private_class_method :new
     attr_reader :user
 
     class << self
       def load
-        GoodData.logger.info "Loading user profile..."
+        Gooddata.logger.info "Loading user profile..."
         Profile.send 'new'
       end
     end
