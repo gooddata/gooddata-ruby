@@ -10,6 +10,7 @@ begin
     gem.email = "w@tson.dk"
     gem.homepage = "http://github.com/gooddata/gooddata-ruby"
     gem.authors = ["Thomas Watson Steen"]
+    gem.files = Dir["**/*"].select { |d| d =~ %r{^(README|LICENSE|VERSION|bin/|data/|ext/|lib/|spec/|test/)} }
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     gem.add_dependency 'parseconfig'
     gem.add_dependency 'json_pure'

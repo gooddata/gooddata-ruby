@@ -19,15 +19,10 @@ Gem::Specification.new do |s|
      "README.rdoc"
   ]
   s.files = [
-    ".document",
-     ".gitignore",
-     "LICENSE",
+    "LICENSE",
      "README.rdoc",
-     "Rakefile",
-     "TODO.md",
      "VERSION",
      "bin/gooddata",
-     "gooddata.gemspec",
      "lib/gooddata.rb",
      "lib/gooddata/client.rb",
      "lib/gooddata/collections/projects.rb",
