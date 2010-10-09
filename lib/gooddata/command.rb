@@ -8,6 +8,8 @@ module Gooddata::Command
   class InvalidOption < RuntimeError; end
   class CommandFailed  < RuntimeError; end
 
+  extend Gooddata::Helpers
+
   class << self
     def run(command, args)
       begin
@@ -40,20 +42,13 @@ module Gooddata::Command
 
     def parse(command)
       parts = command.split(':')
-      case parts.size
-      when 1
-        begin
-          return eval("Gooddata::Command::#{command.capitalize}"), :index
-        rescue NameError, NoMethodError
-          return Gooddata::Command::App, command
-        end
-      when 2
-        begin
-          return Gooddata::Command.const_get(parts[0].capitalize), parts[1]
-        rescue NameError
-          raise InvalidCommand
-        end
-      else
+
+      parts << :index if parts.size == 1
+      raise InvalidCommand if parts.size > 2
+
+      begin
+        return Gooddata::Command.const_get(parts[0].capitalize), parts[1]
+      rescue NameError
         raise InvalidCommand
       end
     end

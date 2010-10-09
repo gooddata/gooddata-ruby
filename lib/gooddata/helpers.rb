@@ -10,4 +10,9 @@ module Gooddata::Helpers
   def running_on_a_mac?
     RUBY_PLATFORM =~ /-darwin\d/
   end
+
+  def error(msg)
+    STDERR.puts(msg)
+    exit 1
+  end
 end
