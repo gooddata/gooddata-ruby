@@ -38,7 +38,7 @@ module Gooddata::Command
     def ask_for_credentials
       puts "Enter your GoodData credentials."
       user = ask("Email")
-      passowrd = ask("Password", :secret => true)
+      password = ask("Password", :secret => true)
       [ user, password ]
     end
 
