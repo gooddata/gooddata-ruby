@@ -74,8 +74,7 @@ module Gooddata
     def get(path)
       Gooddata.logger.debug "GET #{path}"
       ensure_connection
-      response = @server[path].get cookies
-      process_response(response)
+      process_response { @server[path].get cookies }
     end
 
     # Performs a HTTP GET request.
@@ -94,8 +93,7 @@ module Gooddata
       json = JSON.generate(data)
       Gooddata.logger.debug "POST #{path}, payload: #{json.inspect}"
       ensure_connection
-      response = @server[path].post json, cookies
-      process_response(response)
+      process_response { @server[path].post json, cookies }
     end
 
     # Performs a HTTP DELETE request.
@@ -112,8 +110,7 @@ module Gooddata
     def delete(path)
       Gooddata.logger.debug "DELETE #{path}"
       ensure_connection
-      response = @server[path].delete cookies
-      process_response(response)
+      process_response { @server[path].delete cookies }
     end
 
     # Get the cookies associated with the current connection.
@@ -175,11 +172,17 @@ module Gooddata
       @status = :logged_in
     end
 
-    def process_response(response)
-      self.cookies = response.cookies unless response.cookies.empty?
-      json = response.to_str == '""' ? {} : JSON.parse(response.to_str)
-      Gooddata.logger.debug "Response: #{json.inspect}"
-      json
+    def process_response
+      begin
+        response = yield
+        self.cookies = response.cookies unless response.cookies.empty?
+        json = response.to_str == '""' ? {} : JSON.parse(response.to_str)
+        Gooddata.logger.debug "Response: #{json.inspect}"
+        json
+      rescue RestClient::Exception => e
+        Gooddata.logger.debug "Response: #{e.response}"
+        raise $!
+      end
     end
   end
 end
