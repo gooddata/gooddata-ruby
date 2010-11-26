@@ -115,12 +115,13 @@ module Gooddata
 
     # Get the cookies associated with the current connection.
     def cookies
-      @cookies || {}
+      @cookies ||= { :cookies => {} }
     end
 
     # Set the cookies used when communicating with the GoodData API.
-    def cookies=(cookies)
-      @cookies = { :cookies => cookies }
+    def merge_cookies!(cookies)
+      self.cookies
+      @cookies[:cookies].merge! cookies
     end
 
     # Returns true if a connection have been established to the GoodData API
@@ -175,7 +176,7 @@ module Gooddata
     def process_response
       begin
         response = yield
-        self.cookies = response.cookies unless response.cookies.empty?
+        merge_cookies! response.cookies
         json = response.to_str == '""' ? {} : JSON.parse(response.to_str)
         Gooddata.logger.debug "Response: #{json.inspect}"
         json
