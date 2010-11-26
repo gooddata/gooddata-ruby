@@ -16,5 +16,12 @@ module Gooddata::Command
         puts "Unable to log in to GoodData server!"
       end
     end
+
+    def get
+      path = args.shift rescue nil
+      raise(CommandFailed, "Specify the path you want to GET.") if path.nil?
+      gooddata  # initialize connection (TODO: nicer)
+      jj Gooddata::Connection.instance.get path
+    end
   end
 end

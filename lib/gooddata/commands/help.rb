@@ -36,6 +36,7 @@ module Gooddata::Command
           group.space
           group.command 'api',                          'general info about the current GoodData API version'
           group.command 'api:test',                     'test you credentials and the connection to GoodData server'
+          group.command 'api:get',                      'issue a generic GET request to the GoodData API'
           group.space
           group.command 'auth:store',                   'save your GoodData credentials and we won\'t ask you for them ever again'
           group.command 'auth:unstore',                 'remove the saved GoodData credentials from your computer'
