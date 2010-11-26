@@ -33,16 +33,11 @@ module Gooddata::Command
         if options.has_key? :answers
           answer = nil
           while !options[:answers].include?(answer)
-            print "#{question} [#{options[:answers].join(',')}]? "
-            system "stty -echo" if options[:secret]
-            answer = $stdin.gets.chomp
-            system "stty echo" if options[:secret]
+            answer = get_answer "#{question} [#{options[:answers].join(',')}]? ", options[:secret]
           end
         else
-          print "#{question}: "
-          system "stty -echo" if options[:secret]
-          answer = $stdin.gets.chomp
-          system "stty echo" if options[:secret]
+          question = "#{question} [#{options[:default]}]" if options[:default]
+          answer = get_answer "#{question}: ", options[:secret], options[:default]
         end
         puts if options[:secret] # extra line-break
       rescue NoMethodError, Interrupt => e
@@ -56,6 +51,17 @@ module Gooddata::Command
       else
         return answer
       end
+    end
+
+    private
+
+    def get_answer(question, secret, default)
+      print question
+      system "stty -echo" if secret
+      answer = $stdin.gets.chomp
+      system "stty echo" if secret
+      answer = default if answer.empty? && default
+      answer
     end
   end
 end

@@ -10,8 +10,9 @@ module Gooddata::Command
     def create
       name = ask "Project name"
       summary = ask "Project summary"
+      template = ask "Project template", :default => '/projectTemplates/empty'
 
-      project = gooddata.projects.create :name => name, :summary => summary
+      project = gooddata.projects.create :name => name, :summary => summary, :template => template
 
       puts "Project '#{project.name}' with id #{project.uri} created successfully!"
     end
