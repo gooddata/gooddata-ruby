@@ -63,9 +63,13 @@ module Gooddata::Command
     end
 
     def parse_error_json(body)
-      json = JSON.parse(body.to_s)
-      json['error']
-    rescue JSON::ParserError
+      begin
+          error = JSON.parse(body.to_s)['error']
+          return error['message'] if !error['parameters']
+          return error['message'] % error['parameters'] rescue error
+      rescue JSON::ParserError
+          return msg
+      end
     end
   end
 end
