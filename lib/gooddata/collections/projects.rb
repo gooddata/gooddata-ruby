@@ -14,7 +14,7 @@ module Gooddata::Collections
         }
       }
 
-      json['mata']['projectTemplate'] = attributes[:template] if attributes.has_key? :template
+      json['meta']['projectTemplate'] = attributes[:template] if attributes.has_key? :template
 
       self << Gooddata::Project.create(json)
       last
