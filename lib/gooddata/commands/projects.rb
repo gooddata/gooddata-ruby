@@ -2,7 +2,7 @@ module Gooddata::Command
   class Projects < Base
     def list
       gooddata.projects.each do |project|
-        puts "%6i  %s" % [project.id, project.name]
+        puts "%s  %s" % [project.uri, project.name]
       end
     end
     alias :index :list
@@ -13,7 +13,7 @@ module Gooddata::Command
 
       project = gooddata.projects.create :name => name, :summary => summary
 
-      puts "Project '#{project.name}' with id #{project.id} created successfully!"
+      puts "Project '#{project.name}' with id #{project.uri} created successfully!"
     end
 
     def show
@@ -27,12 +27,12 @@ module Gooddata::Command
       while args.size > 0
         id = args.shift
         project = gooddata.find_project(id)
-        ask "Do you want to delete the project '#{project.name}' with id #{project.id}", :answers => %w(y n) do |answer|
+        ask "Do you want to delete the project '#{project.name}' with id #{project.uri}", :answers => %w(y n) do |answer|
           case answer
           when 'y' then
             puts "Deleting #{project.name}..."
             project.delete
-            puts "Project '#{project.name}' with id #{project.id} deleted successfully!"
+            puts "Project '#{project.name}' with id #{project.uri} deleted successfully!"
           when 'n' then
             puts "Aborting..."
           end
