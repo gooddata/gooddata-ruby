@@ -1,7 +1,7 @@
 require 'pp'
 require 'gooddata/helpers'
 require 'gooddata/commands/base'
-Dir[File.dirname(__FILE__) + '/commands/*.rb'].each { |file| require file }
+Dir[File.dirname(__FILE__) + '/commands/*.rb'].each { |file| require file unless file =~ /\/base.rb$/ }
 
 module Gooddata::Command
   class InvalidCommand < RuntimeError; end
