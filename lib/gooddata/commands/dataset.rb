@@ -5,8 +5,12 @@ module Gooddata::Command
   class Dataset < Base
     def index
       project_id = extract_option('--project')
-      raise ArgumentError.new "Project not specified, use the --project switch"     
-      raise "Data sets listing is not implemented yet" 
+      raise ArgumentError.new "Project not specified, use the --project switch" unless project_id
+      gooddata
+      response = Gooddata::Project.find(project_id).datasets
+      response['dataSetsInfo']['sets'].each do |ds|
+        puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
+      end
     end
 
     def describe

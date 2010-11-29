@@ -50,6 +50,21 @@ module Gooddata
       @json['content']['state'].downcase.to_sym if @json['content'] && @json['content']['state']
     end
 
+    def md
+      unless @md
+        @md = Collections::Metadata.new Connection.instance.get @json['links']['metadata']
+      end
+      @md
+    end
+
+    def datasets
+      unless @datasets
+        datasets_uri = "#{md['data']}/sets"
+        @datasets = Connection.instance.get datasets_uri
+      end
+      @datasets
+    end
+
     def to_json
       @json
     end

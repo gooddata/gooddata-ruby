@@ -41,6 +41,8 @@ module Gooddata::Command
           group.command 'auth:store',                   'save your GoodData credentials and we won\'t ask you for them ever again'
           group.command 'auth:unstore',                 'remove the saved GoodData credentials from your computer'
           group.space
+          group.command 'dataset',                      'list remote data sets in the project specified via --project'
+          group.space
           group.command 'profile',                      'show your GoodData profile'
           group.space
           group.command 'projects',                     'list available projects'
