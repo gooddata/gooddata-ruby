@@ -14,13 +14,33 @@ module Gooddata::Command
     end
 
     def describe
-      puts "describe" # TODO remove me
-      reader = create_dataset.read
-      fields = Guesser.new(reader).guess 1000
+      columns  = ask_for_fields
+      name   = extract_option('--name') || ask("Enter the dataset name")
+      output = extract_option('--output') || ask("Enter path to the file where to save the model description", :default => "#{name}.json")
+      open output, 'w' do |f|
+        f << JSON.pretty_generate( :title => name, :columns => columns ) + "\n"
+        f.flush
+      end
     end
     
     private
     
+    def ask_for_fields
+      guesser = Guesser.new create_dataset.read
+      guess = guesser.guess(1000)
+      model = []
+      connection_point_set = false
+      question_fmt = 'Select data type of column #%i (%s)'
+      guesser.headers.each_with_index do |header, i|
+        options = guess[header].map { |t| t.to_s }
+        options = options.select { |t| t != :connection_point.to_s } if connection_point_set
+        type = ask question_fmt % [ i + 1, header ], :answers => options
+        model.push :title => header, :name => header, :type => type.upcase
+        connection_point_set = true if type == :connection_point.to_s
+      end
+      model
+    end
+
     def create_dataset
       file = extract_option('--file-csv')
       return Gooddata::Dataset::CsvReader.new file if file
@@ -29,6 +49,18 @@ module Gooddata::Command
   end
   
   class Guesser
+
+    TYPES_PRIORITY = [ :connection_point, :fact, :date, :attribute ]
+    attr_reader :headers
+
+    class << self
+      def sort_types(types)
+        types.sort do |x, y|
+          TYPES_PRIORITY.index(x) <=> TYPES_PRIORITY.index(y)
+        end
+      end
+    end
+
     def initialize(reader)
       @reader = reader
       @headers = reader.shift.map! { |h| h.to_s } or raise "Empty data set"
@@ -66,7 +98,7 @@ module Gooddata::Command
     def guess_result
       result = {}
       @headers.each do |header|
-        result[header] = @pros[header].keys.select { |type| @cons[header][type].nil? }
+        result[header] = Guesser::sort_types @pros[header].keys.select { |type| @cons[header][type].nil? }
       end
       result
     end
