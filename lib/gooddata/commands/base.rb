@@ -55,7 +55,7 @@ module Gooddata::Command
 
     private
 
-    def get_answer(question, secret, default)
+    def get_answer(question, secret, default = nil)
       print question
       system "stty -echo" if secret
       answer = $stdin.gets.chomp
