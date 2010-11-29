@@ -2,7 +2,7 @@ require 'date'
 require 'gooddata/dataset'
 
 module Gooddata::Command
-  class Dataset < Base
+  class Datasets < Base
     def index
       project_id = extract_option('--project')
       raise ArgumentError.new "Project not specified, use the --project switch" unless project_id
