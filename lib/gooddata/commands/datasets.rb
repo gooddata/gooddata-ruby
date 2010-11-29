@@ -43,7 +43,7 @@ module Gooddata::Command
     def guess(limit)
       count = 0
       while row = @reader.shift
-        break unless row && count < limit
+        break unless row && !row.empty? && count < limit
         raise "%i fields in row %i, %i expected" % [ row.size, count + 1, @headers.size ] if row.size != @headers.size
         row.each_with_index do |value, j|
           header = @headers[j]
