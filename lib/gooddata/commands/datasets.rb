@@ -5,7 +5,7 @@ module Gooddata::Command
   class Datasets < Base
     def index
       project_id = extract_option('--project')
-      raise ArgumentError.new "Project not specified, use the --project switch" unless project_id
+      raise CommandFailed.new "Project not specified, use the --project switch" unless project_id
       gooddata
       response = Gooddata::Project.find(project_id).datasets
       response['dataSetsInfo']['sets'].each do |ds|
@@ -44,7 +44,7 @@ module Gooddata::Command
     def create_dataset
       file = extract_option('--file-csv')
       return Gooddata::Dataset::CsvReader.new file if file
-      raise "Unsupported dataset type (only CSV supported now)"
+      raise CommandFailed.new "Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)"
     end
   end
   

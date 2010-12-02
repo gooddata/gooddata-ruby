@@ -42,6 +42,7 @@ module Gooddata::Command
           group.command 'auth:unstore',                 'remove the saved GoodData credentials from your computer'
           group.space
           group.command 'datasets',                     'list remote data sets in the project specified via --project'
+          group.command 'datasets:describe',            'describe a local data set and save the description in a JSON file'
           group.space
           group.command 'profile',                      'show your GoodData profile'
           group.space
@@ -53,6 +54,7 @@ module Gooddata::Command
 
         group 'General Options' do |group|
           group.command '--log-level <level>', 'Set the log level (fatal, error, warn [default], info, debug)'
+          group.command '--project <project_id>', 'Set the working remote project identified by an URI or project ID'
         end
       end
     end
