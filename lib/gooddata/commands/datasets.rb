@@ -4,12 +4,11 @@ require 'gooddata/dataset'
 module Gooddata::Command
   class Datasets < Base
     def index
-      project_id = extract_option('--project')
-      raise CommandFailed.new "Project not specified, use the --project switch" unless project_id
-      gooddata
-      response = Gooddata::Project.find(project_id).datasets
-      response['dataSetsInfo']['sets'].each do |ds|
-        puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
+      with_project do |project_id|
+        response = Gooddata::Project.find(project_id).datasets
+        response['dataSetsInfo']['sets'].each do |ds|
+          puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
+        end
       end
     end
 
@@ -24,6 +23,13 @@ module Gooddata::Command
     end
     
     private
+
+    def with_project
+      project_id = extract_option('--project')
+      raise CommandFailed.new "Project not specified, use the --project switch" unless project_id
+      gooddata
+      yield project_id
+    end
     
     def ask_for_fields
       guesser = Guesser.new create_dataset.read
