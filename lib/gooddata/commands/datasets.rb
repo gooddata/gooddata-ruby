@@ -1,5 +1,5 @@
 require 'date'
-require 'gooddata/dataset'
+require 'gooddata/load'
 
 module Gooddata::Command
   class Datasets < Base
@@ -21,7 +21,7 @@ module Gooddata::Command
         f.flush
       end
     end
-    
+
     private
 
     def with_project
@@ -49,11 +49,14 @@ module Gooddata::Command
 
     def create_dataset
       file = extract_option('--file-csv')
-      return Gooddata::Dataset::CsvReader.new file if file
+      return Gooddata::Load::CSV.new file if file
       raise CommandFailed.new "Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)"
     end
   end
   
+  ##
+  # Utility class to guess data types of a data stream by looking at first couple of rows
+  #
   class Guesser
 
     TYPES_PRIORITY = [ :connection_point, :fact, :date, :attribute ]
