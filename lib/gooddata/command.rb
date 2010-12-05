@@ -68,7 +68,7 @@ module Gooddata::Command
           return error['message'] if !error['parameters']
           return error['message'] % error['parameters'] rescue error
       rescue JSON::ParserError
-          return msg
+          return body
       end
     end
   end
