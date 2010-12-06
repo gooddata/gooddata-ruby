@@ -22,6 +22,14 @@ module Gooddata::Command
       end
     end
 
+    def apply
+      with_project do |project_id|
+        config = args.shift rescue nil
+        raise(CommandFailed, "Specify the dataset config file") unless config
+        puts Gooddata::Dataset.to_maql config
+      end
+    end
+
     private
 
     def with_project
