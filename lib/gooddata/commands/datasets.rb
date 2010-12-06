@@ -1,5 +1,6 @@
 require 'date'
 require 'gooddata/load'
+require 'gooddata/dataset'
 
 module Gooddata::Command
   class Datasets < Base
@@ -24,9 +25,12 @@ module Gooddata::Command
 
     def apply
       with_project do |project_id|
-        config = args.shift rescue nil
-        raise(CommandFailed, "Specify the dataset config file") unless config
-        puts Gooddata::Dataset.to_maql config
+        cfg_file = args.shift rescue nil
+        raise(CommandFailed, "Specify the dataset config file") unless cfg_file
+        fh = open(cfg_file, 'r') rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
+        content = fh.readlines.join
+        config = JSON.parse(content) # rescue raise(CommandFailed, "Error parsing dataset config file #{cfg_file}")
+        puts Gooddata::Dataset::Dataset.new(config).to_maql    
       end
     end
 
