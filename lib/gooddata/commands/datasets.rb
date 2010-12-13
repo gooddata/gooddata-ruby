@@ -61,7 +61,7 @@ module Gooddata::Command
 
     def create_dataset
       file = extract_option('--file-csv')
-      return Gooddata::Load::CsvFile.new file if file
+      return Gooddata::Extract::CsvFile.new file if file
       raise CommandFailed.new "Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)"
     end
   end
