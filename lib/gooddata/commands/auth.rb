@@ -1,7 +1,7 @@
 module Gooddata::Command
   class Auth < Base
     def client
-      unless @client
+      unless defined? @client
         log_level = extract_option('--log-level') || 'warn'
         raise InvalidOption, "Unknown log level '#{log_level}'" unless %w(fatal error warn info debug).include?(log_level)
         @client = Gooddata::Client.new(user, password, log_level.to_sym)
@@ -24,7 +24,7 @@ module Gooddata::Command
     end
 
     def ensure_credentials
-      return if @credentials
+      return if defined? @credentials
       unless @credentials = read_credentials
         @credentials = ask_for_credentials
       end
