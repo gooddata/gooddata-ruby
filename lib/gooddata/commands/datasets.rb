@@ -1,5 +1,5 @@
 require 'date'
-require 'gooddata/load'
+require 'gooddata/extract'
 require 'gooddata/dataset'
 
 module Gooddata::Command
