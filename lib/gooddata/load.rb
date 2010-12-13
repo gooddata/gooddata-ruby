@@ -1,7 +1,7 @@
 require 'csv'
 
 module Gooddata::Load  
-  class CSV
+  class CsvFile
     def initialize(file)
       @file = file
     end
