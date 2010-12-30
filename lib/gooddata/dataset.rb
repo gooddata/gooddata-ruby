@@ -61,7 +61,11 @@ module Gooddata::Dataset
     # Generates MAQL DDL script to drop this data set and included pieces
     #
     def to_maql_drop
-      maql = "DROP {#{self.identifier}};"
+      maql = ""
+      [ attributes, facts ].each do |obj|
+        maql += obj.to_maql_drop
+      end
+      maql += "DROP {#{self.identifier}};\n"
     end
 
     ##
