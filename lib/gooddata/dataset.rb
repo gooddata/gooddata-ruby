@@ -30,9 +30,9 @@ module Gooddata::Dataset
       @name  = @title
       labels = []
       model['columns'].each do |c|
-        Attribute.new c, self.attributes if c['type'] == 'ATTRIBUTE'
-        Fact.new c, self.facts if c['type'] == 'FACT'
-        @connection_point = Attribute.new c if c['type'] == 'CONNECTION_POINT'
+        add_to_hash self.attributes, Attribute.new(c, self) if c['type'] == 'ATTRIBUTE'
+        add_to_hash self.facts, Fact.new(c, self) if c['type'] == 'FACT'
+        @connection_point = Attribute.new(c, self) if c['type'] == 'CONNECTION_POINT'
         labels.push c if c['type'] == 'LABEL'
       end
     end
@@ -55,17 +55,22 @@ module Gooddata::Dataset
         end
       end
       maql
-    end 
+    end
+
+    def add_to_hash(hash, obj)
+      hash[obj.identifier] = obj
+    end
+    private :add_to_hash
   end
 
   class DatasetColumn < MdObject
     attr_accessor :folder
 
-    def initialize(hash, store = nil)
-      @name   = hash['name'] || raise("Data set fields must have their names defined")
-      @title  = hash['title'] || hash['name']
-      @folder = hash['folder']
-      store[self.identifier] = self if store
+    def initialize(hash, dataset)
+      @name    = hash['name'] || raise("Data set fields must have their names defined")
+      @title   = hash['title'] || hash['name']
+      @folder  = hash['folder']
+      @dataset = dataset
     end
   end
 
