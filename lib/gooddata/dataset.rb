@@ -27,6 +27,11 @@ module Gooddata::Dataset
     end
   end
 
+  ##
+  # Server-side representation of a local data set; includes connection point,
+  # attributes and labels, facts, folders and corresponding pieces of physical
+  # model abstractions.
+  #
   class Dataset < MdObject
     def initialize(model, title = nil)
       @title = title || model['title'] || raise("Dataset name not specified")
@@ -45,14 +50,23 @@ module Gooddata::Dataset
     def attributes; @attributes ||= {} ; end
     def facts; @facts ||= {} ; end
 
+    ##
+    # Underlying fact table name
+    #
     def table
       @table ||= FACT_PREFIX + Gooddata::Dataset::to_id(name)
     end
 
+    ##
+    # Generates MAQL DDL script to drop this data set and included pieces
+    #
     def to_maql_drop
       maql = "DROP {#{self.identifier}};"
     end
 
+    ##
+    # Generates MAQL DDL script to create this data set and included pieces
+    #
     def to_maql_create
       maql = "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n"
       [ attributes, facts ].each do |objects|
@@ -70,6 +84,10 @@ module Gooddata::Dataset
     private :add_to_hash
   end
 
+  ##
+  # This is a base class for server-side LDM elements such as attributes, labels and
+  # facts
+  #
   class DatasetColumn < MdObject
     attr_accessor :folder
 
@@ -86,6 +104,9 @@ module Gooddata::Dataset
     private :title_esc
   end
 
+  ##
+  # GoodData attribute abstraction
+  #
   class Attribute < DatasetColumn
     def type_prefix ; 'attr' ; end
 
@@ -103,6 +124,9 @@ module Gooddata::Dataset
     end
   end
 
+  ##
+  # GoodData fact abstraction
+  #
   class Fact < DatasetColumn
     def type_prefix ; 'fact' ; end
 
