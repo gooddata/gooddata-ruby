@@ -8,7 +8,7 @@ module Gooddata::Dataset
   class << self
     def to_id(str)
       Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
-              .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '')
+              .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
     end
   end
 
