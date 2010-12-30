@@ -37,10 +37,12 @@ module Gooddata::Command
     private
 
     def with_project
-      project_id = extract_option('--project')
-      raise CommandFailed.new "Project not specified, use the --project switch" unless project_id
-      gooddata
-      yield project_id
+      unless @project_id
+        @project_id = extract_option('--project')
+        raise CommandFailed.new "Project not specified, use the --project switch" unless @project_id
+        gooddata
+      end
+      yield @project_id
     end
     
     def ask_for_fields
