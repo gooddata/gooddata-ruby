@@ -102,6 +102,10 @@ module Gooddata::Dataset
       @dataset = dataset
     end
 
+    def to_maql_drop
+      "DROP {#{self.identifier}};\n"
+    end
+
     def title_esc
       title.gsub(/"/, "\\\"")
     end
