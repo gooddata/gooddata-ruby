@@ -1,5 +1,9 @@
 require 'iconv'
 
+##
+# Module containing classes that counter-part GoodData server-side meta-data
+# elements, including the server-side data model.
+#
 module Gooddata::Dataset
   class << self
     def to_id(str)
