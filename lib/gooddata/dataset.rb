@@ -9,7 +9,7 @@ module Gooddata::Dataset
   end
 
   class MdObject
-    attr_accessor :name, :title, :TYPE
+    attr_accessor :name, :title
 
     ##
     # Generates an identifier from the object name by transliterating
@@ -55,7 +55,7 @@ module Gooddata::Dataset
   end
 
   class DatasetColumn < MdObject
-    attr_accessor :title, :folder
+    attr_accessor :folder
 
     def initialize(hash, store = nil)
       @name   = hash['name'] || raise("Data set fields must have their names defined")
