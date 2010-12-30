@@ -7,6 +7,8 @@ require 'iconv'
 module Gooddata::Dataset
   FIELD_PK = 'id'
   FACT_PREFIX = 'f_'
+  ATTRIBUTE_FOLDER_PREFIX = 'dim'
+  FACT_FOLDER_PREFIX = 'ffld'
 
   class << self
     def to_id(str)
@@ -38,8 +40,8 @@ module Gooddata::Dataset
       @name  = @title
       labels = []
       model['columns'].each do |c|
-        add_to_hash self.attributes, Attribute.new(c, self) if c['type'] == 'ATTRIBUTE'
-        add_to_hash self.facts, Fact.new(c, self) if c['type'] == 'FACT'
+        add_attribute Attribute.new(c, self) if c['type'] == 'ATTRIBUTE'
+        add_fact Fact.new(c, self) if c['type'] == 'FACT'
         @connection_point = Attribute.new(c, self) if c['type'] == 'CONNECTION_POINT'
         labels.push c if c['type'] == 'LABEL'
       end
@@ -49,6 +51,7 @@ module Gooddata::Dataset
 
     def attributes; @attributes ||= {} ; end
     def facts; @facts ||= {} ; end
+    def folders; @folders ||= {}; end
 
     ##
     # Underlying fact table name
@@ -79,13 +82,24 @@ module Gooddata::Dataset
           maql += "ALTER DATASET {#{self.identifier}} ADD {#{obj.identifier}};\n"
         end
       end
-      maql
+      folders_maql = ''
+      folders.keys.each { |folder| folders_maql += folder.to_maql_create }
+      folders_maql + maql
     end
 
-    def add_to_hash(hash, obj)
-      hash[obj.identifier] = obj
+    private
+
+    def add_attribute(attribute)
+      add_to_hash(self.attributes, attribute)
+      folders[AttributeFolder.new(attribute.folder)] = 1 if attribute.folder
     end
-    private :add_to_hash
+
+    def add_fact(fact)
+      add_to_hash(self.facts, fact)
+      folders[FactFolder.new(fact.folder)] = 1 if fact.folder
+    end
+
+    def add_to_hash(hash, obj); hash[obj.identifier] = obj; end
   end
 
   ##
@@ -106,10 +120,17 @@ module Gooddata::Dataset
       "DROP {#{self.identifier}};\n"
     end
 
+    private
+
+    def visual
+      visual = "TITLE \"#{title_esc}\""
+      visual += ", FOLDER {#{folder_prefix}.#{Gooddata::Dataset::to_id(folder)}}" if folder
+      visual
+    end
+
     def title_esc
       title.gsub(/"/, "\\\"")
     end
-    private :title_esc
   end
 
   ##
@@ -117,6 +138,7 @@ module Gooddata::Dataset
   #
   class Attribute < DatasetColumn
     def type_prefix ; 'attr' ; end
+    def folder_prefix; ATTRIBUTE_FOLDER_PREFIX; end
 
     def labels
       @labels ||= []
@@ -127,7 +149,7 @@ module Gooddata::Dataset
     end
 
     def to_maql_create
-      "CREATE ATTRIBUTE {#{identifier}} VISUAL (TITLE \"#{title_esc}\")" \
+      "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
              + " AS {#{table}.#{Gooddata::Dataset::FIELD_PK}};\n"
     end
   end
@@ -137,6 +159,7 @@ module Gooddata::Dataset
   #
   class Fact < DatasetColumn
     def type_prefix ; 'fact' ; end
+    def folder_prefix; FACT_FOLDER_PREFIX; end
 
     def table
       @dataset.table
@@ -147,9 +170,38 @@ module Gooddata::Dataset
     end
 
     def to_maql_create
-      folder_stmt = ", FOLDER {ffld." + sfn + "}" if folder
-      "CREATE FACT {#{self.identifier}} VISUAL (TITLE \"#{title_esc}\")" \
+      "CREATE FACT {#{self.identifier}} VISUAL (#{visual})" \
              + " AS {#{table}.#{column}};\n"
     end
+  end
+
+  ##
+  # Base class for GoodData attribute and fact folder abstractions
+  #
+  class Folder < MdObject
+    def initialize(title)
+      @title = title
+      @name = title
+    end
+
+    def to_maql_create
+      "CREATE FOLDER {#{type_prefix}.#{Gooddata::Dataset::to_id(name)}} TYPE #{type};\n"
+    end
+  end
+
+  ##
+  # GoodData attribute folder abstraction
+  #
+  class AttributeFolder < Folder
+    def type; "ATTRIBUTE"; end
+    def type_prefix; "dim"; end
+  end
+
+  ##
+  # GoodData fact folder abstraction
+  #
+  class FactFolder < Folder
+    def type; "FACT"; end
+    def type_prefix; "ffld"; end
   end
 end
