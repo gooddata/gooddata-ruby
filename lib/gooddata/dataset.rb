@@ -5,6 +5,9 @@ require 'iconv'
 # elements, including the server-side data model.
 #
 module Gooddata::Dataset
+  FIELD_PK = 'id'
+  FACT_PREFIX = 'f_'
+
   class << self
     def to_id(str)
       Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
@@ -42,6 +45,10 @@ module Gooddata::Dataset
     def attributes; @attributes ||= {} ; end
     def facts; @facts ||= {} ; end
 
+    def table
+      @table ||= FACT_PREFIX + Gooddata::Dataset::to_id(name)
+    end
+
     def to_maql_drop
       maql = "DROP {#{self.identifier}};"
     end
@@ -72,6 +79,11 @@ module Gooddata::Dataset
       @folder  = hash['folder']
       @dataset = dataset
     end
+
+    def title_esc
+      title.gsub(/"/, "\\\"")
+    end
+    private :title_esc
   end
 
   class Attribute < DatasetColumn
@@ -81,17 +93,31 @@ module Gooddata::Dataset
       @labels ||= []
     end
 
+    def table
+      @table ||= "d_" + Gooddata::Dataset::to_id(@dataset.name) + "_" + Gooddata::Dataset::to_id(name)
+    end
+
     def to_maql_create
-      return "CREATE ATTRIBUTE {#{identifier}} AS ;\n" # TODO
+      "CREATE ATTRIBUTE {#{identifier}} VISUAL (TITLE \"#{title_esc}\")" \
+             + " AS {#{table}.#{Gooddata::Dataset::FIELD_PK}};\n"
     end
   end
 
   class Fact < DatasetColumn
     def type_prefix ; 'fact' ; end
 
+    def table
+      @dataset.table
+    end
+
+    def column
+      @column ||= FACT_PREFIX + Gooddata::Dataset::to_id(name)
+    end
+
     def to_maql_create
       folder_stmt = ", FOLDER {ffld." + sfn + "}" if folder
-      return "CREATE FACT {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n" # TODO
+      "CREATE FACT {#{self.identifier}} VISUAL (TITLE \"#{title_esc}\")" \
+             + " AS {#{table}.#{column}};\n"
     end
   end
 end
