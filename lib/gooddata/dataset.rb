@@ -6,6 +6,7 @@ require 'iconv'
 #
 module Gooddata::Dataset
   FIELD_PK = 'id'
+  FK_SUFFIX = '_id'
   FACT_PREFIX = 'f_'
   ATTRIBUTE_FOLDER_PREFIX = 'dim'
   FACT_FOLDER_PREFIX = 'ffld'
@@ -42,9 +43,10 @@ module Gooddata::Dataset
       model['columns'].each do |c|
         add_attribute Attribute.new(c, self) if c['type'] == 'ATTRIBUTE'
         add_fact Fact.new(c, self) if c['type'] == 'FACT'
-        @connection_point = Attribute.new(c, self) if c['type'] == 'CONNECTION_POINT'
+        @connection_point = RecordsOf.new(c, self) if c['type'] == 'CONNECTION_POINT'
         labels.push c if c['type'] == 'LABEL'
       end
+      @connection_point = RecordsOf.new(nil, self) unless @connection_point
     end
 
     def type_prefix ; 'dataset' ; end
@@ -76,7 +78,7 @@ module Gooddata::Dataset
     #
     def to_maql_create
       maql = "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n"
-      [ attributes, facts ].each do |objects|
+      [ attributes, facts, { 1 => @connection_point } ].each do |objects|
         objects.values.each do |obj|
           maql += obj.to_maql_create
           maql += "ALTER DATASET {#{self.identifier}} ADD {#{obj.identifier}};\n"
@@ -84,7 +86,7 @@ module Gooddata::Dataset
       end
       folders_maql = ''
       folders.keys.each { |folder| folders_maql += folder.to_maql_create }
-      folders_maql + maql
+      folders_maql + maql + "SYNCHRONIZE {#{identifier}}"
     end
 
     private
@@ -150,7 +152,37 @@ module Gooddata::Dataset
 
     def to_maql_create
       "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
-             + " AS {#{table}.#{Gooddata::Dataset::FIELD_PK}};\n"
+             + " AS KEYS {#{table}.#{Gooddata::Dataset::FIELD_PK}} FULLSET;\n"
+    end
+  end
+
+  ##
+  # A GoodData attribute that represents a data set's connection point or a data set
+  # without a connection point
+  #
+  class RecordsOf < Attribute
+    def initialize(column, dataset)
+      if column then
+        super
+      else
+        @name = 'id'
+        @title = "Records of #{dataset.name}"
+        @folder = nil
+        @dataset = dataset
+      end
+    end
+
+    def table
+      @table ||= "f_" + Gooddata::Dataset::to_id(@dataset.name)
+    end
+
+    def to_maql_create
+      maql = super
+      @dataset.attributes.values.each do |c|
+        maql += "ALTER ATTRIBUTE {#{c.identifier}} ADD KEYS " \
+              + "{#{table}.#{Gooddata::Dataset::to_id(c.name)}#{FK_SUFFIX}};\n"
+      end
+      maql
     end
   end
 
