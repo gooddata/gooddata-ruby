@@ -77,16 +77,18 @@ module Gooddata::Dataset
     # Generates MAQL DDL script to create this data set and included pieces
     #
     def to_maql_create
-      maql = "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n"
+      maql = "# Create the '#{self.title}' data set\n"
+      maql += "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n\n"
       [ attributes, facts, { 1 => @connection_point } ].each do |objects|
         objects.values.each do |obj|
+          maql += "# Create '#{obj.title}' and add it to the '#{self.title}' data set.\n"
           maql += obj.to_maql_create
-          maql += "ALTER DATASET {#{self.identifier}} ADD {#{obj.identifier}};\n"
+          maql += "ALTER DATASET {#{self.identifier}} ADD {#{obj.identifier}};\n\n"
         end
       end
-      folders_maql = ''
+      folders_maql = "# Create folders\n"
       folders.keys.each { |folder| folders_maql += folder.to_maql_create }
-      folders_maql + maql + "SYNCHRONIZE {#{identifier}}"
+      folders_maql + "\n" + maql + "SYNCHRONIZE {#{identifier}};\n"
     end
 
     private
@@ -178,6 +180,7 @@ module Gooddata::Dataset
 
     def to_maql_create
       maql = super
+      maql += "\n# Connect '#{self.title}' to all attributes of this data set\n"
       @dataset.attributes.values.each do |c|
         maql += "ALTER ATTRIBUTE {#{c.identifier}} ADD KEYS " \
               + "{#{table}.#{Gooddata::Dataset::to_id(c.name)}#{FK_SUFFIX}};\n"
