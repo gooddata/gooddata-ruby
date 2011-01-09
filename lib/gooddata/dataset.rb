@@ -11,6 +11,16 @@ module Gooddata::Dataset
   ATTRIBUTE_FOLDER_PREFIX = 'dim'
   FACT_FOLDER_PREFIX = 'ffld'
 
+  module Visual
+    def visual
+      "TITLE \"#{title_esc}\""
+    end
+
+    def title_esc
+      title.gsub(/"/, "\\\"")
+    end
+  end
+
   class << self
     def to_id(str)
       Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
@@ -112,6 +122,7 @@ module Gooddata::Dataset
   #
   class DatasetColumn < MdObject
     attr_accessor :folder
+    include Visual
 
     def initialize(hash, dataset)
       @name    = hash['name'] || raise("Data set fields must have their names defined")
@@ -124,16 +135,10 @@ module Gooddata::Dataset
       "DROP {#{self.identifier}};\n"
     end
 
-    private
-
     def visual
-      visual = "TITLE \"#{title_esc}\""
+      visual = super
       visual += ", FOLDER {#{folder_prefix}.#{Gooddata::Dataset::to_id(folder)}}" if folder
       visual
-    end
-
-    def title_esc
-      title.gsub(/"/, "\\\"")
     end
   end
 
@@ -214,13 +219,16 @@ module Gooddata::Dataset
   # Base class for GoodData attribute and fact folder abstractions
   #
   class Folder < MdObject
+    include Visual
+
     def initialize(title)
       @title = title
       @name = title
     end
 
     def to_maql_create
-      "CREATE FOLDER {#{type_prefix}.#{Gooddata::Dataset::to_id(name)}} TYPE #{type};\n"
+      "CREATE FOLDER {#{type_prefix}.#{Gooddata::Dataset::to_id(name)}}" \
+          + " VISUAL (#{visual}) TYPE #{type};\n"
     end
   end
 
