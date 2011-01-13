@@ -2,6 +2,7 @@ module GoodData
   class Project
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
+    SLIS_PATH = '/ldm/singleloadinterface'
 
     class << self
       def find(*args)
@@ -55,6 +56,11 @@ module GoodData
         @md = Collections::Metadata.new Connection.instance.get @json['links']['metadata']
       end
       @md
+    end
+
+    def slis
+      link = "#{@json['links']['metadata']}#{SLIS_PATH}"
+      Collections::Metadata.new Connection.instance.get link
     end
 
     def datasets
