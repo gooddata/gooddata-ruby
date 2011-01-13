@@ -1,4 +1,4 @@
-module Gooddata::Command
+module GoodData::Command
   class Help < Base
     class HelpGroup < Array
       attr_reader :title
@@ -64,7 +64,7 @@ module Gooddata::Command
     end
 
     def version
-      puts Gooddata::Client.version
+      puts GoodData::Client.version
     end
 
     def usage
@@ -99,4 +99,4 @@ EOT
   end
 end
 
-Gooddata::Command::Help.create_default_groups!
+GoodData::Command::Help.create_default_groups!

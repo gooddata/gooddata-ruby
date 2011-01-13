@@ -4,7 +4,7 @@ require 'iconv'
 # Module containing classes that counter-part GoodData server-side meta-data
 # elements, including the server-side data model.
 #
-module Gooddata::Dataset
+module GoodData::Dataset
   FIELD_PK = 'id'
   FK_SUFFIX = '_id'
   FACT_PREFIX = 'f_'
@@ -36,7 +36,7 @@ module Gooddata::Dataset
     # non-Latin character and then dropping non-alphanumerical characters.
     #
     def identifier
-      @identifier ||= "#{self.type_prefix}.#{Gooddata::Dataset::to_id(name)}"
+      @identifier ||= "#{self.type_prefix}.#{GoodData::Dataset::to_id(name)}"
     end
   end
 
@@ -69,7 +69,7 @@ module Gooddata::Dataset
     # Underlying fact table name
     #
     def table
-      @table ||= FACT_PREFIX + Gooddata::Dataset::to_id(name)
+      @table ||= FACT_PREFIX + GoodData::Dataset::to_id(name)
     end
 
     ##
@@ -137,7 +137,7 @@ module Gooddata::Dataset
 
     def visual
       visual = super
-      visual += ", FOLDER {#{folder_prefix}.#{Gooddata::Dataset::to_id(folder)}}" if folder
+      visual += ", FOLDER {#{folder_prefix}.#{GoodData::Dataset::to_id(folder)}}" if folder
       visual
     end
   end
@@ -154,12 +154,12 @@ module Gooddata::Dataset
     end
 
     def table
-      @table ||= "d_" + Gooddata::Dataset::to_id(@dataset.name) + "_" + Gooddata::Dataset::to_id(name)
+      @table ||= "d_" + GoodData::Dataset::to_id(@dataset.name) + "_" + GoodData::Dataset::to_id(name)
     end
 
     def to_maql_create
       "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
-             + " AS KEYS {#{table}.#{Gooddata::Dataset::FIELD_PK}} FULLSET;\n"
+             + " AS KEYS {#{table}.#{GoodData::Dataset::FIELD_PK}} FULLSET;\n"
     end
   end
 
@@ -180,7 +180,7 @@ module Gooddata::Dataset
     end
 
     def table
-      @table ||= "f_" + Gooddata::Dataset::to_id(@dataset.name)
+      @table ||= "f_" + GoodData::Dataset::to_id(@dataset.name)
     end
 
     def to_maql_create
@@ -188,7 +188,7 @@ module Gooddata::Dataset
       maql += "\n# Connect '#{self.title}' to all attributes of this data set\n"
       @dataset.attributes.values.each do |c|
         maql += "ALTER ATTRIBUTE {#{c.identifier}} ADD KEYS " \
-              + "{#{table}.#{Gooddata::Dataset::to_id(c.name)}#{FK_SUFFIX}};\n"
+              + "{#{table}.#{GoodData::Dataset::to_id(c.name)}#{FK_SUFFIX}};\n"
       end
       maql
     end
@@ -206,7 +206,7 @@ module Gooddata::Dataset
     end
 
     def column
-      @column ||= FACT_PREFIX + Gooddata::Dataset::to_id(name)
+      @column ||= FACT_PREFIX + GoodData::Dataset::to_id(name)
     end
 
     def to_maql_create
@@ -227,7 +227,7 @@ module Gooddata::Dataset
     end
 
     def to_maql_create
-      "CREATE FOLDER {#{type_prefix}.#{Gooddata::Dataset::to_id(name)}}" \
+      "CREATE FOLDER {#{type_prefix}.#{GoodData::Dataset::to_id(name)}}" \
           + " VISUAL (#{visual}) TYPE #{type};\n"
     end
   end

@@ -1,4 +1,4 @@
-module Gooddata::Helpers
+module GoodData::Helpers
   def home_directory
     running_on_windows? ? ENV['USERPROFILE'] : ENV['HOME']
   end

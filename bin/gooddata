@@ -7,4 +7,4 @@ args = ARGV.dup
 ARGV.clear
 command = args.shift.strip rescue 'help'
 
-Gooddata::Command.run command, args
+GoodData::Command.run command, args

@@ -1,6 +1,6 @@
 require 'pp'
 
-module Gooddata::Collections
+module GoodData::Collections
   class Metadata < Hash
     def initialize(items)
       items['about']['links'].each do |item|

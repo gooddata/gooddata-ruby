@@ -1,7 +1,7 @@
 require 'helper'
 require 'gooddata/dataset'
 
-include Gooddata
+include GoodData
 
 class TestModel < Test::Unit::TestCase
   should "generate identifiers starting with letters and without ugly characters" do

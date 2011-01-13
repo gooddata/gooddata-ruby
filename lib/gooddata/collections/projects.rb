@@ -1,7 +1,7 @@
-module Gooddata::Collections
+module GoodData::Collections
   class Projects < Array
     def create(attributes)
-      Gooddata.logger.info "Creating project #{attributes[:name]}"
+      GoodData.logger.info "Creating project #{attributes[:name]}"
 
       json = {
         'meta' => {
@@ -16,7 +16,7 @@ module Gooddata::Collections
 
       json['meta']['projectTemplate'] = attributes[:template] if attributes.has_key? :template
 
-      self << Gooddata::Project.create(json)
+      self << GoodData::Project.create(json)
       last
     end
   end

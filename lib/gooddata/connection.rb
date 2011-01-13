@@ -2,7 +2,7 @@ require 'singleton'
 require 'rest-client'
 require 'json/pure'
 
-module Gooddata
+module GoodData
 
   # = GoodData HTTP wrapper
   #
@@ -22,14 +22,14 @@ module Gooddata
   # Since this is a singleton class, it's not possible to create a new instance.
   # Instead you call the instance method on the class:
   #
-  #   Gooddata::Connection.instance
+  #   GoodData::Connection.instance
   #
   # This will return the current instance.
   #
   # Before a connection can be made to the GoodData API, you have to supply the user
   # credentials using the set_credentials method:
   #
-  #   Gooddata::Connection.instance.set_credentials(username, password)
+  #   GoodData::Connection.instance.set_credentials(username, password)
   #
   # To send a HTTP request use either the get, post or delete methods documented below.
   #
@@ -70,9 +70,9 @@ module Gooddata
     #
     # === Examples
     #
-    #   Gooddata::Connection.instance.get '/gdc/projects'
+    #   GoodData::Connection.instance.get '/gdc/projects'
     def get(path)
-      Gooddata.logger.debug "GET #{path}"
+      GoodData.logger.debug "GET #{path}"
       ensure_connection
       process_response { @server[path].get cookies }
     end
@@ -88,10 +88,10 @@ module Gooddata
     #
     # === Examples
     #
-    #   Gooddata::Connection.instance.post '/gdc/projects', { ... }
+    #   GoodData::Connection.instance.post '/gdc/projects', { ... }
     def post(path, data)
       json = JSON.generate(data)
-      Gooddata.logger.debug "POST #{path}, payload: #{json.inspect}"
+      GoodData.logger.debug "POST #{path}, payload: #{json.inspect}"
       ensure_connection
       process_response { @server[path].post json, cookies }
     end
@@ -106,9 +106,9 @@ module Gooddata
     #
     # === Examples
     #
-    #   Gooddata::Connection.instance.delete '/gdc/project/1'
+    #   GoodData::Connection.instance.delete '/gdc/project/1'
     def delete(path)
-      Gooddata.logger.debug "DELETE #{path}"
+      GoodData.logger.debug "DELETE #{path}"
       ensure_connection
       process_response { @server[path].delete cookies }
     end
@@ -144,7 +144,7 @@ module Gooddata
     end
 
     def connect
-      Gooddata.logger.info "Connecting to GoodData..."
+      GoodData.logger.info "Connecting to GoodData..."
       @status = :connecting
       authenticate
     end
@@ -161,13 +161,13 @@ module Gooddata
       @server = RestClient::Resource.new GOODDATA_SERVER, :headers => { 
         :content_type => :json,
         :accept => :json,
-        :user_agent => Gooddata::Client.gem_version_string
+        :user_agent => GoodData::Client.gem_version_string
       }
 
-      Gooddata.logger.debug "Logging in..."
+      GoodData.logger.debug "Logging in..."
       @user = post(LOGIN_PATH, credentials)['userLogin']
 
-      Gooddata.logger.debug "Getting authentication token..."
+      GoodData.logger.debug "Getting authentication token..."
       get TOKEN_PATH
 
       @status = :logged_in
@@ -178,10 +178,10 @@ module Gooddata
         response = yield
         merge_cookies! response.cookies
         json = response.to_str == '""' ? {} : JSON.parse(response.to_str)
-        Gooddata.logger.debug "Response: #{json.inspect}"
+        GoodData.logger.debug "Response: #{json.inspect}"
         json
       rescue RestClient::Exception => e
-        Gooddata.logger.debug "Response: #{e.response}"
+        GoodData.logger.debug "Response: #{e.response}"
         raise $!
       end
     end

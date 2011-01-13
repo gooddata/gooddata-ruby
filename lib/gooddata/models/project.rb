@@ -1,4 +1,4 @@
-module Gooddata
+module GoodData
   class Project
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'

@@ -13,12 +13,12 @@ Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
 # first be initialized using the init_logger method. After initialization,
 # an event can be logged using the logger attribute:
 #
-#   Gooddata.logger.error 'Something bad happend!'
+#   GoodData.logger.error 'Something bad happend!'
 #
 # For details about the logger options and methods, see the
 # {Logger module documentation}[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
 #
-module Gooddata
+module GoodData
   class << self
     attr_accessor :logger
 
@@ -46,9 +46,9 @@ module Gooddata
   # To communicate with the API you first need a personal GoodData account.
   # {Sign up here}[https://secure.gooddata.com/registration.html] if you havent already.
   #
-  # Now it is just a matter of creating a new Gooddata::Client object:
+  # Now it is just a matter of creating a new GoodData::Client object:
   #
-  #   gd = Gooddata::Client.new 'gooddata_user', 'gooddata_password'
+  #   gd = GoodData::Client.new 'gooddata_user', 'gooddata_password'
   #
   # This GoodData object can now be utalized to retrieve your GoodData profile, the available
   # projects etc.
@@ -58,7 +58,7 @@ module Gooddata
 
     class << self
       def version
-        Gooddata::VERSION
+        GoodData::VERSION
       end
 
       def gem_version_string
@@ -72,16 +72,16 @@ module Gooddata
     #
     # * +user+ - A GoodData username
     # * +password+ - A GoodData password
-    # * +log_level+ - The desired loglevel (defaults to warn) - see Gooddata.init_logger for possible values.
+    # * +log_level+ - The desired loglevel (defaults to warn) - see GoodData.init_logger for possible values.
     #
     def initialize(user, password, log_level = :warn)
-      Gooddata.init_logger log_level
+      GoodData.init_logger log_level
       Connection.instance.set_credentials user, password
     end
 
     def test_login
-      Gooddata::Connection.instance.connect!
-      Gooddata::Connection.instance.logged_in?
+      GoodData::Connection.instance.connect!
+      GoodData::Connection.instance.logged_in?
     end
 
     # Returns the currently logged in user Profile.
@@ -95,7 +95,7 @@ module Gooddata
 
     # Returns an Array of projects.
     #
-    # The Array is of type Gooddata::Collections::Projects and each element is of type Gooddata::Project.
+    # The Array is of type GoodData::Collections::Projects and each element is of type GoodData::Project.
     def projects
       @projects ||= profile.projects
     end

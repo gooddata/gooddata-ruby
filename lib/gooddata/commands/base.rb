@@ -1,6 +1,6 @@
-module Gooddata::Command
+module GoodData::Command
   class Base
-    include Gooddata::Helpers
+    include GoodData::Helpers
 
     attr_accessor :args
 
@@ -9,7 +9,7 @@ module Gooddata::Command
     end
 
     def gooddata
-      @gooddata ||= Gooddata::Command.run_internal('auth:client', args)
+      @gooddata ||= GoodData::Command.run_internal('auth:client', args)
     end
 
     def extract_option(options, default=true)

@@ -1,4 +1,4 @@
-module Gooddata::Command
+module GoodData::Command
   class Api < Base
     def info
       json = gooddata.release_info
@@ -21,7 +21,7 @@ module Gooddata::Command
       path = args.shift rescue nil
       raise(CommandFailed, "Specify the path you want to GET.") if path.nil?
       gooddata  # initialize connection (TODO: nicer)
-      jj Gooddata::Connection.instance.get path
+      jj GoodData::Connection.instance.get path
     end
   end
 end

@@ -1,4 +1,4 @@
-module Gooddata::Command
+module GoodData::Command
   class Profile < Base
     def show
       pp gooddata.profile.to_json

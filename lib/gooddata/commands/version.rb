@@ -1,7 +1,7 @@
-module Gooddata::Command
+module GoodData::Command
   class Version < Base
     def index
-      puts Gooddata::Client.gem_version_string
+      puts GoodData::Client.gem_version_string
     end
   end
 end

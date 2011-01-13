@@ -1,4 +1,4 @@
-module Gooddata::Command
+module GoodData::Command
   class Projects < Base
     def list
       gooddata.projects.each do |project|

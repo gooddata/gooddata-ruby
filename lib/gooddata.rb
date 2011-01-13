@@ -1,3 +1,3 @@
-module Gooddata; end
+module GoodData; end
 
 require 'gooddata/client'

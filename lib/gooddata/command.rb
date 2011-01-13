@@ -3,12 +3,12 @@ require 'gooddata/helpers'
 require 'gooddata/commands/base'
 Dir[File.dirname(__FILE__) + '/commands/*.rb'].each { |file| require file unless file =~ /\/base.rb$/ }
 
-module Gooddata::Command
+module GoodData::Command
   class InvalidCommand < RuntimeError; end
   class InvalidOption < RuntimeError; end
   class CommandFailed  < RuntimeError; end
 
-  extend Gooddata::Helpers
+  extend GoodData::Helpers
 
   class << self
     def run(command, args)
@@ -47,7 +47,7 @@ module Gooddata::Command
       raise InvalidCommand if parts.size > 2
 
       begin
-        return Gooddata::Command.const_get(parts[0].capitalize), parts[1]
+        return GoodData::Command.const_get(parts[0].capitalize), parts[1]
       rescue NameError
         raise InvalidCommand
       end

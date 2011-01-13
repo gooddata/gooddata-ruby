@@ -2,11 +2,11 @@ require 'date'
 require 'gooddata/extract'
 require 'gooddata/dataset'
 
-module Gooddata::Command
+module GoodData::Command
   class Datasets < Base
     def index
       with_project do |project_id|
-        response = Gooddata::Project.find(project_id).datasets
+        response = GoodData::Project.find(project_id).datasets
         response['dataSetsInfo']['sets'].each do |ds|
           puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
         end
@@ -30,7 +30,7 @@ module Gooddata::Command
         fh = open(cfg_file, 'r') rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
         content = fh.readlines.join
         config = JSON.parse(content) # rescue raise(CommandFailed, "Error parsing dataset config file #{cfg_file}")
-        puts Gooddata::Dataset::Dataset.new(config).to_maql_create
+        puts GoodData::Dataset::Dataset.new(config).to_maql_create
       end
     end
 
@@ -63,7 +63,7 @@ module Gooddata::Command
 
     def create_dataset
       file = extract_option('--file-csv')
-      return Gooddata::Extract::CsvFile.new file if file
+      return GoodData::Extract::CsvFile.new file if file
       raise CommandFailed.new "Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)"
     end
   end

@@ -1,7 +1,7 @@
 require 'helper'
 require 'gooddata/command'
 
-include Gooddata::Command
+include GoodData::Command
 
 class TestGuesser < Test::Unit::TestCase
   should "order LDM types as follows: cp, fact, date, attribute" do
