@@ -21,7 +21,8 @@ module GoodData::Command
       path = args.shift rescue nil
       raise(CommandFailed, "Specify the path you want to GET.") if path.nil?
       gooddata  # initialize connection (TODO: nicer)
-      jj GoodData::Connection.instance.get path
+      result = GoodData::Connection.instance.get path
+      jj result rescue puts result
     end
   end
 end

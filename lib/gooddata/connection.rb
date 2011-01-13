@@ -160,7 +160,7 @@ module GoodData
 
       @server = RestClient::Resource.new GOODDATA_SERVER, :headers => { 
         :content_type => :json,
-        :accept => :json,
+        :accept => [ :json, :zip ],
         :user_agent => GoodData::Client.gem_version_string
       }
 
@@ -177,9 +177,17 @@ module GoodData
       begin
         response = yield
         merge_cookies! response.cookies
-        json = response.to_str == '""' ? {} : JSON.parse(response.to_str)
-        GoodData.logger.debug "Response: #{json.inspect}"
-        json
+        content_type = response.headers[:content_type]
+        if content_type == "application/json" then
+            result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
+            GoodData.logger.debug "Response: #{result.inspect}"
+        elsif content_type == "application/zip" then
+            result = response
+            GoodData.logger.debug "Response: a zipped stream"
+        else
+            raise "Unsupported response content type '%s'" % content_type
+        end
+        result
       rescue RestClient::Exception => e
         GoodData.logger.debug "Response: #{e.response}"
         raise $!
