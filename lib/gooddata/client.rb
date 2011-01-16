@@ -76,33 +76,41 @@ module GoodData
     #
     def initialize(user, password, log_level = :warn)
       GoodData.init_logger log_level
-      Connection.instance.set_credentials user, password
+      @connection = Connection.new user, password
     end
 
     def test_login
-      GoodData::Connection.instance.connect!
-      GoodData::Connection.instance.logged_in?
+      @connection.connect!
+      @connection.logged_in?
+    end
+
+    def get(path)
+      @connection.get path
+    end
+
+    def post(path, data)
+      @connection.post path, data
     end
 
     # Returns the currently logged in user Profile.
     def profile
-      @profile ||= Profile.load
+      @profile ||= Profile.load @connection
     end
 
     def find_project(id)
-      Project.find(id)
+      projects.find(id)
     end
 
     # Returns an Array of projects.
     #
-    # The Array is of type GoodData::Collections::Projects and each element is of type GoodData::Project.
+    # The Array is of type GoodData::Projects and each element is of type GoodData::Project.
     def projects
       @projects ||= profile.projects
     end
 
     # Returns information about the GoodData API as a Hash (e.g. version, release time etc.)
     def release_info
-      @release_info ||= Connection.instance.get(RELEASE_INFO_PATH)['release']
+      @release_info ||= @connection.get(RELEASE_INFO_PATH)['release']
     end
   end
 end

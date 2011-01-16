@@ -1,4 +1,3 @@
-require 'singleton'
 require 'rest-client'
 require 'json/pure'
 
@@ -19,22 +18,14 @@ module GoodData
   #
   # == Usage
   #
-  # Since this is a singleton class, it's not possible to create a new instance.
-  # Instead you call the instance method on the class:
-  #
-  #   GoodData::Connection.instance
-  #
-  # This will return the current instance.
-  #
   # Before a connection can be made to the GoodData API, you have to supply the user
   # credentials using the set_credentials method:
   #
-  #   GoodData::Connection.instance.set_credentials(username, password)
+  #   Connection.new(username, password).set_credentials(username, password)
   #
   # To send a HTTP request use either the get, post or delete methods documented below.
   #
   class Connection
-    include Singleton
 
     GOODDATA_SERVER = 'https://secure.gooddata.com'
     LOGIN_PATH = '/gdc/account/login'
@@ -48,7 +39,7 @@ module GoodData
     #
     # * +username+ - The GoodData account username
     # * +password+ - The GoodData account password
-    def set_credentials(username, password)
+    def initialize(username, password)
       @status = :not_connected
       @username = username
       @password = password
@@ -70,7 +61,7 @@ module GoodData
     #
     # === Examples
     #
-    #   GoodData::Connection.instance.get '/gdc/projects'
+    #   Connection.new(username, password).get '/gdc/projects'
     def get(path)
       GoodData.logger.debug "GET #{path}"
       ensure_connection
@@ -88,7 +79,7 @@ module GoodData
     #
     # === Examples
     #
-    #   GoodData::Connection.instance.post '/gdc/projects', { ... }
+    #   Connection.new(username, password).post '/gdc/projects', { ... }
     def post(path, data)
       json = JSON.generate(data)
       GoodData.logger.debug "POST #{path}, payload: #{json.inspect}"
@@ -106,7 +97,7 @@ module GoodData
     #
     # === Examples
     #
-    #   GoodData::Connection.instance.delete '/gdc/project/1'
+    #   Connection.new(username, password).delete '/gdc/project/1'
     def delete(path)
       GoodData.logger.debug "DELETE #{path}"
       ensure_connection

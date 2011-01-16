@@ -4,19 +4,19 @@ module GoodData
     attr_reader :user
 
     class << self
-      def load
+      def load(connection)
         GoodData.logger.info "Loading user profile..."
-        Profile.send 'new'
+        Profile.send 'new', connection
       end
     end
 
     def projects
       unless @projects
-        json = Connection.instance.get(@projects_path)['projects']
+        json = @connection.get(@projects_path)['projects']
         projects_array = json.map do |project|
-          Project.new project['project']
+          Project.new @connection, project['project']
         end
-        @projects = Collections::Projects.new projects_array
+        @projects = Projects.new @connection, projects_array
       end
       @projects
     end
@@ -27,8 +27,9 @@ module GoodData
 
     private
 
-    def initialize
-      @json = Connection.instance.get Connection.instance.user['profile']
+    def initialize(connection)
+      @connection = connection
+      @json = @connection.get @connection.user['profile']
       @user = @json['accountSetting']['firstName'] + " " + @json['accountSetting']['lastName']
       @projects_path = @json['accountSetting']['links']['projects']
     end

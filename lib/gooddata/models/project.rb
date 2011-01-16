@@ -5,38 +5,29 @@ module GoodData
     SLIS_PATH = '/ldm/singleloadinterface'
 
     class << self
-      def find(*args)
-        raise ArgumentError.new "wrong number of arguments (#{args.size} for 1)" if args.size != 1
-        raise ArgumentError.new "wrong type of argument. Should be either project ID or path" if args[0].to_s !~ /^(\/gdc\/(projects|md)\/)?[a-z\d]+$/ 
-
-        args[0] = args[0].match(/[a-z\d]+$/)[0] if args[0] =~ /\//
-
-        response = Connection.instance.get PROJECT_PATH % args[0]
-        Project.new response['project']
-      end
-
-      def create(json)
-        project = Project.new json
+      def create(connection, json)
+        project = Project.new connection, json
         project.save
         project
       end
     end
 
-    def initialize(json)
+    def initialize(connection, json)
+      @connection = connection
       @json = json
     end
 
     def save
-      response = Connection.instance.post PROJECTS_PATH, { 'project' => @json }
+      response = @connection.post PROJECTS_PATH, { 'project' => @json }
       if uri == nil
-        response = Connection.instance.get response['uri']
+        response = @connection.get response['uri']
         @json = response['project']
       end
     end
 
     def delete
       raise "Project '#{name}' with id #{uri} is already deleted" if state == :deleted
-      Connection.instance.delete @json['links']['self']
+      @connection.delete @json['links']['self']
     end
 
     def uri
@@ -53,20 +44,20 @@ module GoodData
 
     def md
       unless @md
-        @md = Collections::Metadata.new Connection.instance.get @json['links']['metadata']
+        @md = Metadata.new @connection.get @json['links']['metadata']
       end
       @md
     end
 
     def slis
       link = "#{@json['links']['metadata']}#{SLIS_PATH}"
-      Collections::Metadata.new Connection.instance.get link
+      Metadata.new @connection.get link
     end
 
     def datasets
       unless @datasets
         datasets_uri = "#{md['data']}/sets"
-        @datasets = Connection.instance.get datasets_uri
+        @datasets = @connection.get datasets_uri
       end
       @datasets
     end
