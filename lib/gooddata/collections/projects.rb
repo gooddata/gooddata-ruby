@@ -15,6 +15,19 @@ module GoodData
       Project.new @connection, response['project']
     end
 
+    ##
+    # If id is a string, acts as Array[] (i.e. "i" is treated as an array index),
+    # otherwise returns the project identified by the id identifier (i.e. acts as
+    # an alias of the find method)
+    #
+    def [](id)
+      if id.respond_to? :integer?
+        super
+      else
+        find(id)
+      end
+    end
+
     def create(attributes)
       GoodData.logger.info "Creating project #{attributes[:name]}"
 

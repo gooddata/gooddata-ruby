@@ -6,7 +6,7 @@ module GoodData::Command
   class Datasets < Base
     def index
       with_project do |project_id|
-        response = gooddata.projects.find(project_id).datasets
+        response = gooddata.projects[project_id].datasets
         response['dataSetsInfo']['sets'].each do |ds|
           puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
         end
