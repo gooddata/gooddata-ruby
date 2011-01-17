@@ -4,14 +4,6 @@ module GoodData
     PROJECT_PATH = '/gdc/projects/%s'
     SLIS_PATH = '/ldm/singleloadinterface'
 
-    class << self
-      def create(connection, json)
-        project = Project.new connection, json
-        project.save
-        project
-      end
-    end
-
     def initialize(connection, json)
       @connection = connection
       @json = json

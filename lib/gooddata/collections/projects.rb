@@ -31,8 +31,10 @@ module GoodData
 
       json['meta']['projectTemplate'] = attributes[:template] if attributes.has_key? :template
 
-      self << GoodData::Project.create(json)
-      last
+      project = GoodData::Project.new @connection, json
+      project.save
+      self << project
+      project
     end
   end
 end
