@@ -1,5 +1,3 @@
-require 'pp'
-
 module GoodData
   class Metadata < Hash
     def initialize(items)
