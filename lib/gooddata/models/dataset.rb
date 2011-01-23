@@ -4,14 +4,14 @@ require 'iconv'
 # Module containing classes that counter-part GoodData server-side meta-data
 # elements, including the server-side data model.
 #
-module GoodData::Dataset
-  FIELD_PK = 'id'
-  FK_SUFFIX = '_id'
-  FACT_PREFIX = 'f_'
-  ATTRIBUTE_FOLDER_PREFIX = 'dim'
-  FACT_FOLDER_PREFIX = 'ffld'
+module GoodData
+  module GoodData::Model
+    FIELD_PK = 'id'
+    FK_SUFFIX = '_id'
+    FACT_PREFIX = 'f_'
+    ATTRIBUTE_FOLDER_PREFIX = 'dim'
+    FACT_FOLDER_PREFIX = 'ffld'
 
-  module Visual
     def visual
       "TITLE \"#{title_esc}\""
     end
@@ -19,24 +19,25 @@ module GoodData::Dataset
     def title_esc
       title.gsub(/"/, "\\\"")
     end
-  end
 
-  class << self
-    def to_id(str)
-      Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
-              .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
+    class << self
+      def to_id(str)
+        Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
+                .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
+      end
     end
   end
 
   class MdObject
     attr_accessor :name, :title
+    include Model
 
     ##
     # Generates an identifier from the object name by transliterating
     # non-Latin character and then dropping non-alphanumerical characters.
     #
     def identifier
-      @identifier ||= "#{self.type_prefix}.#{GoodData::Dataset::to_id(name)}"
+      @identifier ||= "#{self.type_prefix}.#{Model::to_id(name)}"
     end
   end
 
@@ -46,9 +47,31 @@ module GoodData::Dataset
   # model abstractions.
   #
   class Dataset < MdObject
-    def initialize(model, title = nil)
-      @title = title || model['title'] || raise("Dataset name not specified")
-      @name  = @title
+    class << self
+      def local(connection, model, title = nil)
+        Dataset.new.initialize_local connection, model, title
+      end
+
+      def remote(connection, json)
+        Dataset.new.initialize_remote connection, json
+      end
+    end
+
+    def initialize_local(connection, model, title = nil)
+      @connection = connection
+      model['title'] ||= title
+      raise 'Dataset name not specified' unless model['title']
+      self.model = model
+      self.title = title
+      self
+    end
+
+    def initialize_remote(connection, json)
+      @connection = connection
+      @json = json
+    end
+
+    def model=(model)
       labels = []
       model['columns'].each do |c|
         add_attribute Attribute.new(c, self) if c['type'] == 'ATTRIBUTE'
@@ -57,6 +80,10 @@ module GoodData::Dataset
         labels.push c if c['type'] == 'LABEL'
       end
       @connection_point = RecordsOf.new(nil, self) unless @connection_point
+    end
+
+    def title=(title)
+      @name = @title = title
     end
 
     def type_prefix ; 'dataset' ; end
@@ -69,7 +96,7 @@ module GoodData::Dataset
     # Underlying fact table name
     #
     def table
-      @table ||= FACT_PREFIX + GoodData::Dataset::to_id(name)
+      @table ||= FACT_PREFIX + Model::to_id(name)
     end
 
     ##
@@ -122,7 +149,6 @@ module GoodData::Dataset
   #
   class DatasetColumn < MdObject
     attr_accessor :folder
-    include Visual
 
     def initialize(hash, dataset)
       @name    = hash['name'] || raise("Data set fields must have their names defined")
@@ -137,7 +163,7 @@ module GoodData::Dataset
 
     def visual
       visual = super
-      visual += ", FOLDER {#{folder_prefix}.#{GoodData::Dataset::to_id(folder)}}" if folder
+      visual += ", FOLDER {#{folder_prefix}.#{Model::to_id(folder)}}" if folder
       visual
     end
   end
@@ -154,7 +180,7 @@ module GoodData::Dataset
     end
 
     def table
-      @table ||= "d_" + GoodData::Dataset::to_id(@dataset.name) + "_" + GoodData::Dataset::to_id(name)
+      @table ||= "d_" + Model::to_id(@dataset.name) + "_" + Model::to_id(name)
     end
 
     def to_maql_create
@@ -180,7 +206,7 @@ module GoodData::Dataset
     end
 
     def table
-      @table ||= "f_" + GoodData::Dataset::to_id(@dataset.name)
+      @table ||= "f_" + Model::to_id(@dataset.name)
     end
 
     def to_maql_create
@@ -188,7 +214,7 @@ module GoodData::Dataset
       maql += "\n# Connect '#{self.title}' to all attributes of this data set\n"
       @dataset.attributes.values.each do |c|
         maql += "ALTER ATTRIBUTE {#{c.identifier}} ADD KEYS " \
-              + "{#{table}.#{GoodData::Dataset::to_id(c.name)}#{FK_SUFFIX}};\n"
+              + "{#{table}.#{Model::to_id(c.name)}#{FK_SUFFIX}};\n"
       end
       maql
     end
@@ -206,7 +232,7 @@ module GoodData::Dataset
     end
 
     def column
-      @column ||= FACT_PREFIX + GoodData::Dataset::to_id(name)
+      @column ||= FACT_PREFIX + Model::to_id(name)
     end
 
     def to_maql_create
@@ -219,15 +245,13 @@ module GoodData::Dataset
   # Base class for GoodData attribute and fact folder abstractions
   #
   class Folder < MdObject
-    include Visual
-
     def initialize(title)
       @title = title
       @name = title
     end
 
     def to_maql_create
-      "CREATE FOLDER {#{type_prefix}.#{GoodData::Dataset::to_id(name)}}" \
+      "CREATE FOLDER {#{type_prefix}.#{Model::to_id(name)}}" \
           + " VISUAL (#{visual}) TYPE #{type};\n"
     end
   end

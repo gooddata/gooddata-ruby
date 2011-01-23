@@ -4,6 +4,8 @@ module GoodData
     PROJECT_PATH = '/gdc/projects/%s'
     SLIS_PATH = '/ldm/singleloadinterface'
 
+    attr_accessor :connection
+
     def initialize(connection, json)
       @connection = connection
       @json = json
@@ -48,8 +50,12 @@ module GoodData
 
     def datasets
       unless @datasets
-        datasets_uri = "#{md['data']}/sets"
-        @datasets = @connection.get datasets_uri
+        datasets_uri  = "#{md['data']}/sets"
+        response      = @connection.get datasets_uri
+        dataset_array = response['dataSetsInfo']['sets'].map do |ds|
+          Dataset.remote @connection, ds
+        end
+        @datasets = Datasets.new self, dataset_array
       end
       @datasets
     end

@@ -6,8 +6,7 @@ module GoodData::Command
   class Datasets < Base
     def index
       with_project do |project_id|
-        response = gooddata.projects[project_id].datasets
-        response['dataSetsInfo']['sets'].each do |ds|
+        gooddata.projects[project_id].datasets.each do |ds|
           puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
         end
       end
@@ -30,7 +29,7 @@ module GoodData::Command
         fh = open(cfg_file, 'r') rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
         content = fh.readlines.join
         config = JSON.parse(content) # rescue raise(CommandFailed, "Error parsing dataset config file #{cfg_file}")
-        puts GoodData::Dataset::Dataset.new(config).to_maql_create
+        puts GoodData::Dataset.new(config).to_maql_create
       end
     end
 
