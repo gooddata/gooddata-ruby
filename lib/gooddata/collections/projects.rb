@@ -5,13 +5,14 @@ module GoodData
       projects.each { |p| self.push p }
     end
 
-    def find(*args)
-      raise ArgumentError.new "wrong number of arguments (#{args.size} for 1)" if args.size != 1
-      raise ArgumentError.new "wrong type of argument. Should be either project ID or path" if args[0].to_s !~ /^(\/gdc\/(projects|md)\/)?[a-z\d]+$/ 
+    def find(id)
+      if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-z\d]+$/
+        raise ArgumentError.new "wrong type of argument. Should be either project ID or path"
+      end
 
-      args[0] = args[0].match(/[a-z\d]+$/)[0] if args[0] =~ /\//
+      id = id.match(/[a-z\d]+$/)[0] if id =~ /\//
 
-      response = @connection.get Project::PROJECT_PATH % args[0]
+      response = @connection.get Project::PROJECT_PATH % id
       Project.new @connection, response['project']
     end
 
