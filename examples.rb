@@ -6,6 +6,10 @@ require 'gooddata'
 
 # Optional if credentials are already stored in ~/.gooddata
 # using bin/gooddata auth:store
+#
+# Note: this call will store the connection in a thread-local
+# variable so this construction and following static method
+# calls can be used even in a multi-threaded environment
 GoodData.connect 'test@example.org', '$3[r37'
 
 # Get a representation of a specific project
