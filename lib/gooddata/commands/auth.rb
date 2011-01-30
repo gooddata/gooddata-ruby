@@ -1,12 +1,11 @@
 module GoodData::Command
   class Auth < Base
-    def client
-      unless defined? @client
-        log_level = extract_option('--log-level') || 'warn'
-        raise InvalidOption, "Unknown log level '#{log_level}'" unless %w(fatal error warn info debug).include?(log_level)
-        @client = GoodData::Client.new(user, password, log_level.to_sym)
+    def connect
+      unless defined? @connected
+        GoodData.connect user, password
+        @connected = true
       end
-      @client
+      @connected
     end
 
     def user

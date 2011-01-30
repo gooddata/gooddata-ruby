@@ -1,116 +1,183 @@
-require 'logger'
 require 'gooddata/version'
 require 'gooddata/connection'
 Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }
 Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
 
-# Wrapper module for all GoodData classes. See the Client class for details.
+# = GoodData API wrapper
+#
+# A convenient Ruby wrapper around the GoodData RESTful API.
+#
+# The best documentation for the API can be found using these resources:
+# * http://developer.gooddata.com/api
+# * https://secure.gooddata.com/gdc
+#
+# == Usage
+#
+# To communicate with the API you first need a personal GoodData account.
+# {Sign up here}[https://secure.gooddata.com/registration.html] if you havent already.
+#
+# Now it is just a matter of initializing the GoodData connection via the connect
+# method:
+#
+#   GoodData.connect 'gooddata_user', 'gooddata_password'
+#
+# This GoodData object can now be utalized to retrieve your GoodData profile, the available
+# projects etc.
 #
 # == Logging
 #
-# The only thing contained directly in this module is logger object used to log all
-# activity in the GoodData API wrapper. Before logging, the logger must
-# first be initialized using the init_logger method. After initialization,
-# an event can be logged using the logger attribute:
-#
-#   GoodData.logger.error 'Something bad happend!'
-#
+# TODO: nice to have - by something like GoodData.logger = Logger.new(STDOUT)
 # For details about the logger options and methods, see the
 # {Logger module documentation}[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
 #
 module GoodData
-  class << self
-    attr_accessor :logger
-
-    # Prepare the Logger object. Logs to STDOUT.
-    #
-    # === Parameters
-    #
-    # * +level+ - the log level (:fatal, :error, :warn (default), :info, :debug)
-    def init_logger(level = :warn)
-      @logger = Logger.new(STDOUT)
-      @logger.level = eval("Logger::#{level.to_s.upcase}")
+  module Threaded
+    # Used internally for thread safety
+    def threaded
+      Thread.current[:goooddata] ||= {}
     end
   end
 
-  # = GoodData API wrapper
-  #
-  # A convenient Ruby wrapper around the GoodData RESTful API.
-  #
-  # The best documentation for the API can be found using these resources:
-  # * http://developer.gooddata.com/api
-  # * https://secure.gooddata.com/gdc
-  #
-  # == Usage
-  #
-  # To communicate with the API you first need a personal GoodData account.
-  # {Sign up here}[https://secure.gooddata.com/registration.html] if you havent already.
-  #
-  # Now it is just a matter of creating a new GoodData::Client object:
-  #
-  #   gd = GoodData::Client.new 'gooddata_user', 'gooddata_password'
-  #
-  # This GoodData object can now be utalized to retrieve your GoodData profile, the available
-  # projects etc.
-  #
-  class Client
+  class NilLogger
+    def debug(*args) ; end
+    alias :info :debug
+    alias :warn :debug
+    alias :error :debug
+  end
+
+  class << self
+    include Threaded
+
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
-    class << self
-      def version
-        GoodData::VERSION
-      end
-
-      def gem_version_string
-        "gooddata-gem/#{version}"
-      end
+    def version
+      GoodData::VERSION
     end
 
-    # Creates a new GoodData API wrapper
+    def gem_version_string
+      "gooddata-gem/#{version}"
+    end
+
+    # Connect to the GoodData API
     #
     # === Parameters
     #
     # * +user+ - A GoodData username
     # * +password+ - A GoodData password
-    # * +log_level+ - The desired loglevel (defaults to warn) - see GoodData.init_logger for possible values.
     #
-    def initialize(user, password, log_level = :warn)
-      GoodData.init_logger log_level
-      @connection = Connection.new user, password
+    def connect(user, password, project = nil)
+      threaded[:connection] = Connection.new user, password
+      use project if project
+    end
+
+    # Returns the active GoodData connection earlier initialized via
+    # GoodData.connect call
+    #
+    # @see GoodData.connect
+    #
+    def connection
+      threaded[:connection]
+    end
+
+    # Sets the active project
+    #
+    # === Parameters
+    #
+    # * +project+ - a project identifier
+    #
+    # === Example
+    #
+    # GoodData.project = 'afawtv356b6usdfsdf34vt'
+    # GoodData.use 'afawtv356b6usdfsdf34vt'
+    #
+    def project=(project)
+      threaded[:project] = Project[project]
+    end
+
+    alias :use :project=
+
+    # Returns the active project
+    #
+    def project
+      threaded[:project]
+    end
+
+    # Performs a HTTP GET request.
+    #
+    # Retuns the JSON response formatted as a Hash object.
+    #
+    # === Parameters
+    #
+    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # === Examples
+    #
+    #   GoodData.get '/gdc/projects'
+    def get(path)
+      connection.get(path)
+    end
+
+    # Performs a HTTP POST request.
+    #
+    # Retuns the JSON response formatted as a Hash object.
+    #
+    # === Parameters
+    #
+    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # * +data+ - The payload data in the format of a Hash object
+    #
+    # === Examples
+    #
+    #   GoodData.post '/gdc/projects', { ... }
+    def post(path, data)
+      connection.post path, data
+    end
+
+    # Performs a HTTP DELETE request.
+    #
+    # Retuns the JSON response formatted as a Hash object.
+    #
+    # === Parameters
+    #
+    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    #
+    # === Examples
+    #
+    #   GoodData.delete '/gdc/project/1'
+    def delete(path)
+      connection.delete path
     end
 
     def test_login
-      @connection.connect!
-      @connection.logged_in?
-    end
-
-    def get(path)
-      @connection.get path
-    end
-
-    def post(path, data)
-      @connection.post path, data
+      connection.connect!
+      connection.logged_in?
     end
 
     # Returns the currently logged in user Profile.
     def profile
-      @profile ||= Profile.load @connection
-    end
-
-    def find_project(id)
-      projects.find(id)
-    end
-
-    # Returns an Array of projects.
-    #
-    # The Array is of type GoodData::Projects and each element is of type GoodData::Project.
-    def projects
-      @projects ||= profile.projects
+      threaded[:profile] ||= Profile.load
     end
 
     # Returns information about the GoodData API as a Hash (e.g. version, release time etc.)
     def release_info
       @release_info ||= @connection.get(RELEASE_INFO_PATH)['release']
+    end
+
+    # Returns the logger instance. The default implementation
+    # does not log anything
+    # For some serious logging, set the logger instance using
+    # the logger= method
+    #
+    # === Example
+    #
+    #   require 'logger'
+    #   GoodData.logger = Logger.new(STDOUT)
+    def logger
+      @logger ||= NilLogger.new
+    end
+
+    # Sets the logger instance
+    def logger=(logger)
+      @logger = logger
     end
   end
 end

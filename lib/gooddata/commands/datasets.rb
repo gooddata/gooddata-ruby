@@ -1,12 +1,14 @@
 require 'date'
 require 'gooddata/extract'
 require 'gooddata/models/dataset'
+require 'gooddata/models/project'
 
 module GoodData::Command
   class Datasets < Base
     def index
+      connect
       with_project do |project_id|
-        gooddata.projects[project_id].datasets.each do |ds|
+        GoodData::Project[project_id].datasets.each do |ds|
           puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
         end
       end
@@ -29,7 +31,7 @@ module GoodData::Command
         fh = open(cfg_file, 'r') rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
         content = fh.readlines.join
         config = JSON.parse(content) # rescue raise(CommandFailed, "Error parsing dataset config file #{cfg_file}")
-        puts GoodData::Dataset::local(@connection, config).to_maql_create
+        puts GoodData::Dataset::local(config).to_maql_create
       end
     end
 
@@ -39,7 +41,6 @@ module GoodData::Command
       unless @project_id
         @project_id = extract_option('--project')
         raise CommandFailed.new "Project not specified, use the --project switch" unless @project_id
-        gooddata
       end
       yield @project_id
     end

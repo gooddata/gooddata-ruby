@@ -5,7 +5,7 @@ require 'iconv'
 # elements, including the server-side data model.
 #
 module GoodData
-  module GoodData::Model
+  module Model
     FIELD_PK = 'id'
     FK_SUFFIX = '_id'
     FACT_PREFIX = 'f_'
@@ -48,26 +48,28 @@ module GoodData
   #
   class Dataset < MdObject
     class << self
-      def local(connection, model, title = nil)
-        Dataset.new.initialize_local connection, model, title
+      def local(model, title = nil)
+        Dataset.new.initialize_local model, title
       end
 
-      def remote(connection, json)
-        Dataset.new.initialize_remote connection, json
+      def remote(json)
+        Dataset.new.initialize_remote json
+      end
+
+      def all
+        GoodData.project.datasets
       end
     end
 
-    def initialize_local(connection, model, title = nil)
-      @connection = connection
-      model['title'] ||= title
+    def initialize_local(model, title = nil)
+      model['title'] ||= title unless model[title]
       raise 'Dataset name not specified' unless model['title']
       self.model = model
-      self.title = title
+      self.title = model['title']
       self
     end
 
-    def initialize_remote(connection, json)
-      @connection = connection
+    def initialize_remote(json)
       @json = json
     end
 
@@ -76,14 +78,15 @@ module GoodData
       model['columns'].each do |c|
         add_attribute Attribute.new(c, self) if c['type'] == 'ATTRIBUTE'
         add_fact Fact.new(c, self) if c['type'] == 'FACT'
-        @connection_point = RecordsOf.new(c, self) if c['type'] == 'CONNECTION_POINT'
+        @conn_point = RecordsOf.new(c, self) if c['type'] == 'CONNECTION_POINT'
         labels.push c if c['type'] == 'LABEL'
       end
-      @connection_point = RecordsOf.new(nil, self) unless @connection_point
+      @conn_point = RecordsOf.new(nil, self) unless @conn_point
     end
 
     def title=(title)
-      @name = @title = title
+      @name = title
+      @title = title
     end
 
     def type_prefix ; 'dataset' ; end
@@ -116,7 +119,7 @@ module GoodData
     def to_maql_create
       maql = "# Create the '#{self.title}' data set\n"
       maql += "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n\n"
-      [ attributes, facts, { 1 => @connection_point } ].each do |objects|
+      [ attributes, facts, { 1 => @conn_point } ].each do |objects|
         objects.values.each do |obj|
           maql += "# Create '#{obj.title}' and add it to the '#{self.title}' data set.\n"
           maql += obj.to_maql_create

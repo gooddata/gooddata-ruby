@@ -68,7 +68,7 @@ module GoodData
       process_response { @server[path].get cookies }
     end
 
-    # Performs a HTTP GET request.
+    # Performs a HTTP POST request.
     #
     # Retuns the JSON response formatted as a Hash object.
     #
@@ -135,7 +135,7 @@ module GoodData
     end
 
     def connect
-      GoodData.logger.info "Connecting to GoodData..."
+      # GoodData.logger.info "Connecting to GoodData..."
       @status = :connecting
       authenticate
     end
@@ -152,7 +152,7 @@ module GoodData
       @server = RestClient::Resource.new GOODDATA_SERVER, :headers => { 
         :content_type => :json,
         :accept => [ :json, :zip ],
-        :user_agent => GoodData::Client.gem_version_string
+        :user_agent => GoodData.gem_version_string
       }
 
       GoodData.logger.debug "Logging in..."
@@ -170,13 +170,13 @@ module GoodData
         merge_cookies! response.cookies
         content_type = response.headers[:content_type]
         if content_type == "application/json" then
-            result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
-            GoodData.logger.debug "Response: #{result.inspect}"
+          result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
+          GoodData.logger.debug "Response: #{result.inspect}"
         elsif content_type == "application/zip" then
-            result = response
-            GoodData.logger.debug "Response: a zipped stream"
+          result = response
+          GoodData.logger.debug "Response: a zipped stream"
         else
-            raise "Unsupported response content type '%s'" % content_type
+          raise "Unsupported response content type '%s':\n%s" % [ content_type, response.to_str[0..127] ]
         end
         result
       rescue RestClient::Exception => e

@@ -1,12 +1,10 @@
 require 'helper'
-require 'gooddata/dataset'
-
-include GoodData
+require 'gooddata/models/dataset'
 
 class TestModel < Test::Unit::TestCase
   should "generate identifiers starting with letters and without ugly characters" do
-    assert_equal 'blah', Dataset::Object.new({ 'name' => 'blah' }).identifier
-    assert_equal 'blah', Dataset::Object.new({ 'name' => '1_2_3 blah' }).identifier
-    assert_equal 'blaz', Dataset::Object.new({ 'name' => ' b*ĺ*á#ž$' }).identifier
+    assert_equal 'fact.blah', GoodData::Fact.new({ 'name' => 'blah' }, 'ds').identifier
+    assert_equal 'attr.blah', GoodData::Attribute.new({ 'name' => '1_2_3 blah' }, 'ds').identifier
+    assert_equal 'dim.blaz', GoodData::AttributeFolder.new(' b*ĺ*á#ž$').identifier
   end
 end

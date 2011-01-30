@@ -8,8 +8,9 @@ module GoodData::Command
       @args = args
     end
 
-    def gooddata
-      @gooddata ||= GoodData::Command.run_internal('auth:client', args)
+    def connect
+      @connected ||= GoodData::Command.run_internal('auth:connect', args)
+      GoodData.connection
     end
 
     def extract_option(options, default=true)

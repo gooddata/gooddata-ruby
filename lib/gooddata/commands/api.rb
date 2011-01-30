@@ -10,8 +10,9 @@ module GoodData::Command
     alias :index :info
 
     def test
-      if gooddata.test_login
-        puts "Succesfully logged in as #{gooddata.profile.user}"
+      connect
+      if GoodData.test_login
+        puts "Succesfully logged in as #{GoodData.profile.user}"
       else
         puts "Unable to log in to GoodData server!"
       end
@@ -20,7 +21,8 @@ module GoodData::Command
     def get
       path = args.shift rescue nil
       raise(CommandFailed, "Specify the path you want to GET.") if path.nil?
-      result = gooddata.get path
+      connect
+      result = GoodData.get path
       jj result rescue puts result
     end
   end
