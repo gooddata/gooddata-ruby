@@ -1,8 +1,6 @@
 require 'helper'
 require 'gooddata/command'
 
-include GoodData
-
 class TestRestApiBasic < Test::Unit::TestCase
   context "GoodData REST Client" do
     # Initialize a GoodData connection using the credential
@@ -12,9 +10,9 @@ class TestRestApiBasic < Test::Unit::TestCase
     end
 
     should "get the FoodMartDemo" do
-      p_by_hash   = Project['FoodMartDemo']
-      p_by_uri    = Project['/gdc/projects/FoodMartDemo']
-      p_by_md_uri = Project['/gdc/md/FoodMartDemo']
+      p_by_hash   = GoodData::Project['FoodMartDemo']
+      p_by_uri    = GoodData::Project['/gdc/projects/FoodMartDemo']
+      p_by_md_uri = GoodData::Project['/gdc/md/FoodMartDemo']
       assert_not_nil p_by_hash
       assert_equal p_by_hash.uri, p_by_uri.uri
       assert_equal p_by_hash.title, p_by_uri.title
@@ -23,7 +21,7 @@ class TestRestApiBasic < Test::Unit::TestCase
 
     should "connect to the FoodMartDemo" do
       GoodData.use 'FoodMartDemo'
-      Dataset.all # should not fail on unknown project or access denied
+      GoodData::Dataset.all # should not fail on unknown project or access denied
     end
 
     # Not supported yet
