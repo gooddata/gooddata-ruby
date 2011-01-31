@@ -1,5 +1,5 @@
 require 'helper'
-require 'gooddata/models/dataset'
+require 'gooddata/model'
 
 class TestModel < Test::Unit::TestCase
   should "generate identifiers starting with letters and without ugly characters" do
