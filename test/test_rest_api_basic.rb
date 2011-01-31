@@ -21,7 +21,8 @@ class TestRestApiBasic < Test::Unit::TestCase
 
     should "connect to the FoodMartDemo" do
       GoodData.use 'FoodMartDemo'
-      GoodData::Dataset.all # should not fail on unknown project or access denied
+      GoodData.project.datasets # should not fail on unknown project or access denied
+                                # TODO: should be equal to Dataset.all once implemented
     end
 
     # Not supported yet
