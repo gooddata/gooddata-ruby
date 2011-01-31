@@ -8,7 +8,7 @@ class TestRestApiBasic < Test::Unit::TestCase
     # Initialize a GoodData connection using the credential
     # stored in ~/.gooddata
     setup do
-      GoodData::Command::Base.new([]).connect
+      GoodData::Command::connect
     end
 
     should "get the FoodMartDemo" do

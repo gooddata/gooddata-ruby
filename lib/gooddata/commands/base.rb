@@ -1,4 +1,14 @@
 module GoodData::Command
+
+  # Initializes GoodData connection with credentials loaded from
+  # ~/.gooddata. If the file doesn't exist or doesn't contain
+  # necessary information, a command line prompt will be issued
+  # using the GoodData::Command::Base#ask method
+  #
+  def self.connect
+    GoodData::Command.run_internal('auth:connect', [])
+  end
+
   class Base
     include GoodData::Helpers
 
@@ -9,7 +19,7 @@ module GoodData::Command
     end
 
     def connect
-      @connected ||= GoodData::Command.run_internal('auth:connect', args)
+      @connected ||= GoodData::Command.connect
       GoodData.connection
     end
 
