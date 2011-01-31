@@ -44,10 +44,10 @@ module GoodData
     # attributes and labels, facts, folders and corresponding pieces of physical
     # model abstractions.
     #
-    class Dataset < MdObject
+    class Schema < MdObject
       def initialize(config, title = nil)
         config['title'] ||= title unless config[title]
-        raise 'Dataset name not specified' unless config['title']
+        raise 'Schema name not specified' unless config['title']
         self.config = config
         self.title = config['title']
         self
@@ -130,14 +130,14 @@ module GoodData
     # This is a base class for server-side LDM elements such as attributes, labels and
     # facts
     #
-    class DatasetColumn < MdObject
+    class Column < MdObject
       attr_accessor :folder
 
-      def initialize(hash, dataset)
+      def initialize(hash, schema)
         @name    = hash['name'] || raise("Data set fields must have their names defined")
         @title   = hash['title'] || hash['name']
         @folder  = hash['folder']
-        @dataset = dataset
+        @schema  = schema
       end
 
       def to_maql_drop
@@ -154,7 +154,7 @@ module GoodData
     ##
     # GoodData attribute abstraction
     #
-    class Attribute < DatasetColumn
+    class Attribute < Column
       def type_prefix ; 'attr' ; end
       def folder_prefix; ATTRIBUTE_FOLDER_PREFIX; end
 
@@ -163,12 +163,12 @@ module GoodData
       end
 
       def table
-        @table ||= "d_" + Model::to_id(@dataset.name) + "_" + Model::to_id(name)
+        @table ||= "d_" + Model::to_id(@schema.name) + "_" + Model::to_id(name)
       end
 
       def to_maql_create
         "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
-               + " AS KEYS {#{table}.#{GoodData::Dataset::FIELD_PK}} FULLSET;\n"
+               + " AS KEYS {#{table}.#{GoodData::Model::FIELD_PK}} FULLSET;\n"
       end
     end
 
@@ -177,25 +177,25 @@ module GoodData
     # without a connection point
     #
     class RecordsOf < Attribute
-      def initialize(column, dataset)
+      def initialize(column, schema)
         if column then
           super
         else
           @name = 'id'
           @title = "Records of #{dataset.name}"
           @folder = nil
-          @dataset = dataset
+          @schema = schema
         end
       end
 
       def table
-        @table ||= "f_" + Model::to_id(@dataset.name)
+        @table ||= "f_" + Model::to_id(@schema.name)
       end
 
       def to_maql_create
         maql = super
         maql += "\n# Connect '#{self.title}' to all attributes of this data set\n"
-        @dataset.attributes.values.each do |c|
+        @schema.attributes.values.each do |c|
           maql += "ALTER ATTRIBUTE {#{c.identifier}} ADD KEYS " \
                 + "{#{table}.#{Model::to_id(c.name)}#{FK_SUFFIX}};\n"
         end
@@ -206,12 +206,12 @@ module GoodData
     ##
     # GoodData fact abstraction
     #
-    class Fact < DatasetColumn
+    class Fact < Column
       def type_prefix ; 'fact' ; end
       def folder_prefix; FACT_FOLDER_PREFIX; end
 
       def table
-        @dataset.table
+        @schema.table
       end
 
       def column

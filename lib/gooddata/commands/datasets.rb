@@ -31,7 +31,7 @@ module GoodData::Command
         fh = open(cfg_file, 'r') rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
         content = fh.readlines.join
         config = JSON.parse(content) # rescue raise(CommandFailed, "Error parsing dataset config file #{cfg_file}")
-        puts GoodData::Dataset::local(config).to_maql_create
+        puts GoodData::Model::Schema.new(config).to_maql_create
       end
     end
 
