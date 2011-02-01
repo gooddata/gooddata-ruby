@@ -6,6 +6,11 @@ require 'iconv'
 #
 module GoodData
   module Model
+    # GoodData REST API categories
+    LDM_CTG = 'ldm'
+    LDM_MANAGE_CTG = 'ldm-manage'
+
+    # Model naming conventions
     FIELD_PK = 'id'
     FK_SUFFIX = '_id'
     FACT_PREFIX = 'f_'
@@ -13,6 +18,13 @@ module GoodData
     FACT_FOLDER_PREFIX = 'ffld'
 
     class << self
+      def add_dataset(title, columns)
+        schema = Schema.new 'columns' => columns, 'title' => title
+        ldm_links = GoodData.get GoodData.project.md[LDM_CTG]
+        ldm_uri = GoodData::Links.new(ldm_links)[LDM_MANAGE_CTG]
+        GoodData.post ldm_uri, { 'manage' => { 'maql' => schema.to_maql_create } }
+      end
+
       def to_id(str)
         Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
                 .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
@@ -46,11 +58,10 @@ module GoodData
     #
     class Schema < MdObject
       def initialize(config, title = nil)
-        config['title'] ||= title unless config[title]
+        config['title'] = title unless config['title']
         raise 'Schema name not specified' unless config['title']
         self.config = config
         self.title = config['title']
-        self
       end
 
       def config=(config)
@@ -182,7 +193,7 @@ module GoodData
           super
         else
           @name = 'id'
-          @title = "Records of #{dataset.name}"
+          @title = "Records of #{schema.name}"
           @folder = nil
           @schema = schema
         end

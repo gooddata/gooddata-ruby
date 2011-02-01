@@ -1,5 +1,9 @@
+require 'logger'
+
 require 'helper'
 require 'gooddata/command'
+
+GoodData.logger = Logger.new(STDOUT)
 
 class TestRestApiBasic < Test::Unit::TestCase
   context "GoodData REST Client" do

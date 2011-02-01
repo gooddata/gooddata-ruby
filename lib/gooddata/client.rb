@@ -85,13 +85,20 @@ module GoodData
     #
     # * +project+ - a project identifier
     #
-    # === Example
+    # === Examples
     #
-    # GoodData.project = 'afawtv356b6usdfsdf34vt'
-    # GoodData.use 'afawtv356b6usdfsdf34vt'
+    # The following calls are equivalent:
+    # * GoodData.project = 'afawtv356b6usdfsdf34vt'
+    # * GoodData.use 'afawtv356b6usdfsdf34vt'
+    # * GoodData.use '/gdc/projects/afawtv356b6usdfsdf34vt'
+    # * GoodData.project = Project['afawtv356b6usdfsdf34vt']
     #
     def project=(project)
-      threaded[:project] = Project[project]
+      if project.is_a? Project
+        threaded[:project] = project
+      else
+        threaded[:project] = Project[project]
+      end
     end
 
     alias :use :project=

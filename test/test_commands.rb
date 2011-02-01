@@ -1,6 +1,7 @@
+require 'logger'
+
 require 'helper'
 require 'gooddata/command'
-require 'logger'
 
 GoodData.logger = Logger.new(STDOUT)
 
