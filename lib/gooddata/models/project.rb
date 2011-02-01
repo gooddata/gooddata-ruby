@@ -96,7 +96,7 @@ module GoodData
 
     def md
       unless @md
-        @md = Metadata.new GoodData.get @json['links']['metadata']
+        @md = Links.new GoodData.get @json['links']['metadata']
       end
       @md
     end

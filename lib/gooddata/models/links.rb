@@ -1,5 +1,5 @@
 module GoodData
-  class Metadata < Hash
+  class Links < Hash
     def initialize(items)
       items['about']['links'].each do |item|
         self[item['category']] = item['link']
