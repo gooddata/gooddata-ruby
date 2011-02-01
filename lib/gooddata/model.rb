@@ -18,9 +18,10 @@ module GoodData
     FACT_FOLDER_PREFIX = 'ffld'
 
     class << self
-      def add_dataset(title, columns)
+      def add_dataset(title, columns, project = nil)
         schema = Schema.new 'columns' => columns, 'title' => title
-        ldm_links = GoodData.get GoodData.project.md[LDM_CTG]
+        project = GoodData.project unless project
+        ldm_links = GoodData.get project.md[LDM_CTG]
         ldm_uri = GoodData::Links.new(ldm_links)[LDM_MANAGE_CTG]
         GoodData.post ldm_uri, { 'manage' => { 'maql' => schema.to_maql_create } }
       end

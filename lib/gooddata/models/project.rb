@@ -101,6 +101,10 @@ module GoodData
       @md
     end
 
+    def add_dataset(title, columns)
+      GoodData::Model.add_dataset title, columns, self
+    end
+
     def slis
       link = "#{@json['links']['metadata']}#{SLIS_PATH}"
       Metadata.new GoodData.get link

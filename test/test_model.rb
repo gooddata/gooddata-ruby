@@ -7,6 +7,14 @@ require 'gooddata/command'
 GoodData.logger = Logger.new(STDOUT)
 
 class TestModel < Test::Unit::TestCase
+  COLUMNS = [
+      { 'type' => 'CONNECTION_POINT', 'name' => 'cp', 'title' => 'CP', 'folder' => 'test' },
+      { 'type' => 'ATTRIBUTE', 'name' => 'a1', 'title' => 'A1', 'folder' => 'test' },
+      { 'type' => 'ATTRIBUTE', 'name' => 'a2', 'title' => 'A2', 'folder' => 'test' },
+      { 'type' => 'FACT', 'name' => 'f1', 'title' => 'F1', 'folder' => 'test' },
+      { 'type' => 'FACT', 'name' => 'f2', 'title' => 'F2', 'folder' => 'test' },
+    ]
+
   context "GoodData model tools" do
     # Initialize a GoodData connection using the credential
     # stored in ~/.gooddata
@@ -20,16 +28,21 @@ class TestModel < Test::Unit::TestCase
       assert_equal 'dim.blaz', GoodData::Model::AttributeFolder.new(' b*ĺ*á#ž$').identifier
     end
 
-    should "create a simple model in a sandbox project" do
+    should "create a simple model in a sandbox project using Model.add_dataset" do
       project = GoodData::Project.create :title => "gooddata-ruby test #{Time.new.to_i}"
       GoodData.use project
-      objects = GoodData::Model.add_dataset 'Mrkev', [
-          { 'type' => 'CONNECTION_POINT', 'name' => 'cp', 'title' => 'CP', 'folder' => 'test' },
-          { 'type' => 'ATTRIBUTE', 'name' => 'a1', 'title' => 'A1', 'folder' => 'test' },
-          { 'type' => 'ATTRIBUTE', 'name' => 'a2', 'title' => 'A2', 'folder' => 'test' },
-          { 'type' => 'FACT', 'name' => 'f1', 'title' => 'F1', 'folder' => 'test' },
-          { 'type' => 'FACT', 'name' => 'f2', 'title' => 'F2', 'folder' => 'test' },
-        ]
+      objects = GoodData::Model.add_dataset 'Mrkev', COLUMNS
+
+      uris = objects['uris']
+      assert_equal "#{project.md['obj']}/1", uris[0]
+      # fetch last object (temporary objects can be placed at the begining of the list)
+      GoodData.get uris[uris.length - 1]
+      project.delete
+    end
+
+    should "create a simple model in a sandbox project using project.model.add_dataset" do
+      project = GoodData::Project.create :title => "gooddata-ruby test #{Time.new.to_i}"
+      objects = project.add_dataset 'Mrkev', COLUMNS
 
       uris = objects['uris']
       assert_equal "#{project.md['obj']}/1", uris[0]
