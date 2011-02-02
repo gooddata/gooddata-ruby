@@ -81,10 +81,10 @@ module GoodData
     #
     #   Connection.new(username, password).post '/gdc/projects', { ... }
     def post(path, data)
-      data = JSON.generate data
-      GoodData.logger.debug "POST #{path}, payload: #{data.inspect}"
+      payload = data.to_json
+      GoodData.logger.debug "POST #{path}, payload: #{payload}"
       ensure_connection
-      process_response { @server[path].post data, cookies }
+      process_response { @server[path].post payload, cookies }
     end
 
     # Performs a HTTP DELETE request.

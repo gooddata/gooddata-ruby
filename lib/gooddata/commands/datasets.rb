@@ -25,13 +25,15 @@ module GoodData::Command
     end
 
     def apply
+      connect
       with_project do |project_id|
         cfg_file = args.shift rescue nil
         raise(CommandFailed, "Specify the dataset config file") unless cfg_file
         fh = open(cfg_file, 'r') rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
         content = fh.readlines.join
         config = JSON.parse(content) # rescue raise(CommandFailed, "Error parsing dataset config file #{cfg_file}")
-        puts GoodData::Model::Schema.new(config).to_maql_create
+        objects = GoodData::Project[project_id].add_dataset config['title'], config['columns']
+        puts "Dataset #{config['title']} added to the project, #{objects['uris'].length} metadata objects affected"
       end
     end
 
