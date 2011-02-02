@@ -1,7 +1,5 @@
 require 'date'
 require 'gooddata/extract'
-require 'gooddata/model'
-require 'gooddata/models/project'
 
 module GoodData::Command
   class Datasets < Base
