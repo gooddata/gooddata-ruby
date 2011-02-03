@@ -5,5 +5,10 @@ module GoodData
         self[item['category']] = item['link']
       end
     end
+
+    def links(key)
+      response = GoodData.get self[key]
+      Links.new response
+    end
   end
 end
