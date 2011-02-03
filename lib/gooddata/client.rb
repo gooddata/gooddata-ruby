@@ -45,6 +45,12 @@ module GoodData
     alias :error :debug
   end
 
+  def project=(project)
+    GoodData.project = project
+    GoodData.project
+  end
+  alias :use :project=
+
   class << self
     include Threaded
 
