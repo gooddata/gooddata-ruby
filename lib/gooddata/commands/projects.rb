@@ -1,6 +1,7 @@
 module GoodData::Command
   class Projects < Base
     def list
+      connect
       GoodData::Project.all.each do |project|
         puts "%s  %s" % [project.uri, project.title]
       end
