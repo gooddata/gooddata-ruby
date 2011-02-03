@@ -36,11 +36,15 @@ module GoodData
     end
 
     def uri
-      @json['links']['self'] if @json['links'] && @json['links']['self']
+      meta['uri']
+    end
+
+    def identifier
+      meta['identifier']
     end
 
     def title
-      data['meta']['title']
+      meta['title']
     end
 
     def meta
@@ -49,6 +53,10 @@ module GoodData
 
     def content
       data['content']
+    end
+
+    def project
+      @project ||= GoodData::Project[uri.gsub /\/obj\/\d+$/, '']
     end
 
     private
@@ -64,7 +72,7 @@ module GoodData
     DS_SLI_CTG = 'dataset-singleloadinterface'
 
     def sli
-      GoodData.project.md.links(GoodData::Model::LDM_CTG).links(SLI_CTG)[]
+      GoodData.project.md.links(GoodData::Model::LDM_CTG).links(SLI_CTG)[DS_SLI_CTG]
     end
   end
 end
