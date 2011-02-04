@@ -57,7 +57,7 @@ module GoodData
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
     def version
-      GoodData::VERSION
+      VERSION
     end
 
     def gem_version_string

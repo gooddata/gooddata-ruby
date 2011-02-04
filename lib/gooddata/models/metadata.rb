@@ -56,7 +56,7 @@ module GoodData
     end
 
     def project
-      @project ||= GoodData::Project[uri.gsub /\/obj\/\d+$/, '']
+      @project ||= Project[uri.gsub /\/obj\/\d+$/, '']
     end
 
     private
@@ -72,7 +72,7 @@ module GoodData
     DS_SLI_CTG = 'dataset-singleloadinterface'
 
     def sli
-      GoodData.project.md.links(GoodData::Model::LDM_CTG).links(SLI_CTG)[DS_SLI_CTG]
+      GoodData.project.md.links(Model::LDM_CTG).links(SLI_CTG)[DS_SLI_CTG]
     end
   end
 end

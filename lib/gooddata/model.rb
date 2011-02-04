@@ -22,7 +22,7 @@ module GoodData
         schema = Schema.new 'columns' => columns, 'title' => title
         project = GoodData.project unless project
         ldm_links = GoodData.get project.md[LDM_CTG]
-        ldm_uri = GoodData::Links.new(ldm_links)[LDM_MANAGE_CTG]
+        ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
         GoodData.post ldm_uri, { 'manage' => { 'maql' => schema.to_maql_create } }
       end
 
@@ -180,7 +180,7 @@ module GoodData
 
       def to_maql_create
         "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
-               + " AS KEYS {#{table}.#{GoodData::Model::FIELD_PK}} FULLSET;\n"
+               + " AS KEYS {#{table}.#{Model::FIELD_PK}} FULLSET;\n"
       end
     end
 

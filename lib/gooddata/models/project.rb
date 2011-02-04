@@ -59,7 +59,7 @@ module GoodData
           }
         }
 
-        project = GoodData::Project.new json
+        project = Project.new json
         project.save
         project
       end
@@ -102,7 +102,7 @@ module GoodData
     end
 
     def add_dataset(title, columns)
-      GoodData::Model.add_dataset title, columns, self
+      Model.add_dataset title, columns, self
     end
 
     def slis
