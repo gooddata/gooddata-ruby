@@ -114,7 +114,7 @@ module GoodData
       datasets_uri  = "#{md['data']}/sets"
       response      = GoodData.get datasets_uri
       response['dataSetsInfo']['sets'].map do |ds|
-        ds # TODO wrap with an instance of the Dataset object once implemented
+        DataSet.new ds
       end
     end
 

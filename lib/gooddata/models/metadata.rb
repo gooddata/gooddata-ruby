@@ -1,3 +1,5 @@
+require 'gooddata/model'
+
 module GoodData
   class MdObject
     MD_OBJ_CTG = 'obj'
@@ -5,6 +7,7 @@ module GoodData
 
     class << self
       def [](id)
+        raise "Cannot search for nil #{self.class}" unless id
         if id.is_a? Integer or id =~ /^\d+$/
           uri = "#{GoodData.project.md.link(MD_OBJ_CTG)}/#{id}"
         elsif id !~ /\//
@@ -14,7 +17,7 @@ module GoodData
         else
           raise "Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash"
         end
-        MdObject.new GoodData.get uri
+        self.new((GoodData.get uri).values[0])
       end
 
       private
@@ -48,22 +51,15 @@ module GoodData
     end
 
     def meta
-      data['meta']
+      @json['meta']
     end
 
     def content
-      data['content']
+      @json['content']
     end
 
     def project
       @project ||= Project[uri.gsub /\/obj\/\d+$/, '']
-    end
-
-    private
-
-    def data
-      first_key = @json.keys[0]
-      @json[first_key]
     end
   end
 
@@ -71,8 +67,14 @@ module GoodData
     SLI_CTG = 'singleloadinterface'
     DS_SLI_CTG = 'dataset-singleloadinterface'
 
+    def sli_enabled?
+      content['mode'] == 'SLI'
+    end
+
     def sli
-      GoodData.project.md.links(Model::LDM_CTG).links(SLI_CTG)[DS_SLI_CTG]
+      slis = GoodData.project.md.links(Model::LDM_CTG).links(SLI_CTG)[DS_SLI_CTG]
+      uri = slis[identifier]['link']
+      MdObject[uri]
     end
   end
 end

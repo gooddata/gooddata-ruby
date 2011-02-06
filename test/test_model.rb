@@ -37,6 +37,13 @@ class TestModel < Test::Unit::TestCase
       assert_equal "#{project.md['obj']}/1", uris[0]
       # fetch last object (temporary objects can be placed at the begining of the list)
       GoodData.get uris[uris.length - 1]
+
+      # created model should define SLI interface on the 'Mrkev' data set
+      # TODO move this into a standalone test covering gooddata/metadata.rb
+      ds = GoodData::DataSet['dataset.mrkev']
+      assert_not_nil ds
+
+      # clean-up
       project.delete
     end
 

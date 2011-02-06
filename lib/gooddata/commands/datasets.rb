@@ -8,7 +8,7 @@ module GoodData
         connect
         with_project do |project_id|
           Project[project_id].datasets.each do |ds|
-            puts "#{ds['meta']['uri']}\t#{ds['meta']['identifier']}\t#{ds['meta']['title']}"
+            puts "#{ds.uri}\t#{ds.identifier}\t#{ds.title}"
           end
         end
       end
@@ -45,7 +45,7 @@ module GoodData
         end
         yield @project_id
       end
-    
+
       def ask_for_fields
         guesser = Guesser.new create_dataset.read
         guess = guesser.guess(1000)
