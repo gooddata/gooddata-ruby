@@ -5,6 +5,8 @@ require 'gooddata/command'
 
 require 'irb'
 
+include GoodData
+
 module IRB
   def IRB.start2(bind, ap_path)
     IRB.setup(ap_path)
@@ -20,7 +22,7 @@ module IRB
 end
 
 
-GoodData::Command.connect
+Command.connect
 puts "Logged into GoodData as #{GoodData.profile.user}"
 puts
 IRB::start2 binding, $STDIN
