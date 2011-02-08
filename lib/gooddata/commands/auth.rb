@@ -2,7 +2,7 @@ module GoodData::Command
   class Auth < Base
     def connect
       unless defined? @connected
-        GoodData.connect user, password
+        GoodData.connect user, password, url
         @connected = true
       end
       @connected
@@ -10,12 +10,17 @@ module GoodData::Command
 
     def user
       ensure_credentials
-      @credentials[0]
+      @credentials[:username]
     end
 
     def password
       ensure_credentials
-      @credentials[1]
+      @credentials[:password]
+    end
+
+    def url
+      ensure_credentials
+      @credentials[:url]
     end
 
     def credentials_file
@@ -31,14 +36,17 @@ module GoodData::Command
     end
 
     def read_credentials
-      File.exists?(credentials_file) and File.read(credentials_file).split("\n")
+      if File.exists?(credentials_file) then
+        config = File.read(credentials_file)
+        JSON.parser.new(config, :symbolize_names => true).parse
+      end
     end
 
     def ask_for_credentials
       puts "Enter your GoodData credentials."
       user = ask("Email")
       password = ask("Password", :secret => true)
-      [ user, password ]
+      { :username => user, :password => password }
     end
 
     def store
@@ -52,7 +60,7 @@ module GoodData::Command
 
       if ovewrite == 'y'
         File.open(credentials_file, 'w', 0600) do |f|
-          f.puts credentials
+          f.puts JSON.pretty_generate(credentials)
         end
       else
         puts 'Aborting...'

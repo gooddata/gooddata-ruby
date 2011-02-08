@@ -27,7 +27,7 @@ module GoodData
   #
   class Connection
 
-    GOODDATA_SERVER = 'https://secure.gooddata.com'
+    DEFAULT_URL = 'https://secure.gooddata.com'
     LOGIN_PATH = '/gdc/account/login'
     TOKEN_PATH = '/gdc/account/token'
 
@@ -39,10 +39,11 @@ module GoodData
     #
     # * +username+ - The GoodData account username
     # * +password+ - The GoodData account password
-    def initialize(username, password)
-      @status = :not_connected
+    def initialize(username, password, url = nil)
+      @status   = :not_connected
       @username = username
       @password = password
+      @url      = url || DEFAULT_URL
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.
@@ -149,7 +150,7 @@ module GoodData
         }
       }
 
-      @server = RestClient::Resource.new GOODDATA_SERVER, :headers => { 
+      @server = RestClient::Resource.new @url, :headers => {
         :content_type => :json,
         :accept => [ :json, :zip ],
         :user_agent => GoodData.gem_version_string
