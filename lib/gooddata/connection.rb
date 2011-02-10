@@ -63,10 +63,10 @@ module GoodData
     # === Examples
     #
     #   Connection.new(username, password).get '/gdc/projects'
-    def get(path)
+    def get(path, options = {})
       GoodData.logger.debug "GET #{path}"
       ensure_connection
-      process_response { @server[path].get cookies }
+      process_response(options) { @server[path].get cookies }
     end
 
     # Performs a HTTP POST request.
@@ -81,11 +81,11 @@ module GoodData
     # === Examples
     #
     #   Connection.new(username, password).post '/gdc/projects', { ... }
-    def post(path, data)
+    def post(path, data, options = {})
       payload = data.to_json
       GoodData.logger.debug "POST #{path}, payload: #{payload}"
       ensure_connection
-      process_response { @server[path].post payload, cookies }
+      process_response(options) { @server[path].post payload, cookies }
     end
 
     # Performs a HTTP DELETE request.
@@ -157,17 +157,20 @@ module GoodData
       }
 
       GoodData.logger.debug "Logging in..."
-      @user = post(LOGIN_PATH, credentials)['userLogin']
-
-      GoodData.logger.debug "Getting authentication token..."
-      get TOKEN_PATH
+      @user = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
       @status = :logged_in
     end
 
-    def process_response
+    def process_response(options = {})
       begin
-        response = yield
+        begin
+          response = yield
+        rescue RestClient::Unauthorized
+          raise $! if options[:dont_reauth]
+          refresh_token
+          response = yield
+        end
         merge_cookies! response.cookies
         content_type = response.headers[:content_type]
         if content_type == "application/json" then
@@ -184,6 +187,11 @@ module GoodData
         GoodData.logger.debug "Response: #{e.response}"
         raise $!
       end
+    end
+
+    def refresh_token
+      GoodData.logger.debug "Getting authentication token..."
+      get TOKEN_PATH, :dont_reauth => true
     end
   end
 end
