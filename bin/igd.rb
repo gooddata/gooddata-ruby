@@ -21,7 +21,11 @@ module IRB
   end
 end
 
-
+param = ARGV.shift if ARGV.length
+if param == '--debug' then
+  require 'logger'
+  GoodData.logger = Logger.new STDOUT
+end
 Command.connect
 puts "Logged into GoodData as #{GoodData.profile.user}"
 puts
