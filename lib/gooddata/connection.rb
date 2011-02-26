@@ -158,6 +158,7 @@ module GoodData
 
       GoodData.logger.debug "Logging in..."
       @user = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
+      refresh_token :dont_reauth => true # avoid infinite loop if refresh_token fails with 401
 
       @status = :logged_in
     end
@@ -179,6 +180,8 @@ module GoodData
         elsif content_type == "application/zip" then
           result = response
           GoodData.logger.debug "Response: a zipped stream"
+        elsif response.headers[:content_length].to_s == '0'
+          result = nil
         else
           raise "Unsupported response content type '%s':\n%s" % [ content_type, response.to_str[0..127] ]
         end
@@ -189,9 +192,14 @@ module GoodData
       end
     end
 
-    def refresh_token
+    def refresh_token(options = {})
       GoodData.logger.debug "Getting authentication token..."
-      get TOKEN_PATH, :dont_reauth => true
+      begin
+        get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
+      rescue RestClient::Unauthorized
+        raise $! if options[:dont_reauth]
+        authenticate
+      end
     end
   end
 end
