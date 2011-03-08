@@ -101,7 +101,7 @@ module GoodData
         raise CommandFailed.new "Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)"
       end
     end
-  
+
     ##
     # Utility class to guess data types of a data stream by looking at first couple of rows
     #
@@ -128,7 +128,7 @@ module GoodData
           @seen[h.to_s] = {}
         end
       end
-    
+
       def guess(limit)
         count = 0
         while row = @reader.shift
@@ -149,9 +149,9 @@ module GoodData
         end
         guess_result
       end
-    
+
       private
-    
+
       def guess_result
         result = {}
         @headers.each do |header|
@@ -159,7 +159,7 @@ module GoodData
         end
         result
       end
-    
+
       def hash_increment(hash, key)
         if hash[key]
           hash[key] += 1
@@ -167,7 +167,7 @@ module GoodData
           hash[key] = 1
         end
       end
-    
+
       def check_number(header, value)
         if value.nil? || value =~ /^[\+-]?\d*(\.\d*)?$/
           return store_guess header, { @pros => [ :fact, :attribute ] }
