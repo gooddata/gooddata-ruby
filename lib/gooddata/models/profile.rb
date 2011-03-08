@@ -18,6 +18,10 @@ module GoodData
       @json
     end
 
+    def [](key)
+      @json['accountSetting'][key]
+    end
+
     private
 
     def initialize

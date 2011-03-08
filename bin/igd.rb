@@ -27,7 +27,7 @@ if param == '--debug' then
   GoodData.logger = Logger.new STDOUT
 end
 Command.connect
-puts "Logged into GoodData as #{GoodData.profile.user}"
+puts "Logged into GoodData as #{GoodData.profile.user} (#{GoodData.profile['login']})"
 puts
 IRB::start2 binding, $STDIN
 puts "Logging out"
