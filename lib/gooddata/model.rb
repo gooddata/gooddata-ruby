@@ -58,22 +58,29 @@ module GoodData
     # model abstractions.
     #
     class Schema < MdObject
+      attr_reader :fields
+
+      def self.load(file)
+        Schema.new JSON.load open 'Test.json'
+      end
+
       def initialize(config, title = nil)
+        @fields = {}
         config['title'] = title unless config['title']
         raise 'Schema name not specified' unless config['title']
-        self.config = config
         self.title = config['title']
+        self.config = config
       end
 
       def config=(config)
         labels = []
         config['columns'].each do |c|
-          add_attribute Attribute.new(c, self) if c['type'] == 'ATTRIBUTE'
-          add_fact Fact.new(c, self) if c['type'] == 'FACT'
-          @conn_point = RecordsOf.new(c, self) if c['type'] == 'CONNECTION_POINT'
+          add_attribute c if c['type'] == 'ATTRIBUTE'
+          add_fact c if c['type'] == 'FACT'
+          set_connection_point c if c['type'] == 'CONNECTION_POINT'
           labels.push c if c['type'] == 'LABEL'
         end
-        @conn_point = RecordsOf.new(nil, self) unless @conn_point
+        @connection_point = RecordsOf.new(nil, self) unless @connection_point
       end
 
       def title=(title)
@@ -111,7 +118,7 @@ module GoodData
       def to_maql_create
         maql = "# Create the '#{self.title}' data set\n"
         maql += "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n\n"
-        [ attributes, facts, { 1 => @conn_point } ].each do |objects|
+        [ attributes, facts, { 1 => @connection_point } ].each do |objects|
           objects.values.each do |obj|
             maql += "# Create '#{obj.title}' and add it to the '#{self.title}' data set.\n"
             maql += obj.to_maql_create
@@ -125,14 +132,23 @@ module GoodData
 
       private
 
-      def add_attribute(attribute)
+      def add_attribute(column)
+        attribute = Attribute.new column, self
+        @fields[column['name']] = attribute
         add_to_hash(self.attributes, attribute)
         folders[AttributeFolder.new(attribute.folder)] = 1 if attribute.folder
       end
 
-      def add_fact(fact)
+      def add_fact(column)
+        fact = Fact.new column, self
+        @fields[column['name']] = fact
         add_to_hash(self.facts, fact)
         folders[FactFolder.new(fact.folder)] = 1 if fact.folder
+      end
+
+      def set_connection_point(column)
+        @connection_point = RecordsOf.new column, self
+        @fields[column['name']] = @connection_point
       end
 
       def add_to_hash(hash, obj); hash[obj.identifier] = obj; end
@@ -143,13 +159,22 @@ module GoodData
     # facts
     #
     class Column < MdObject
-      attr_accessor :folder
+      attr_accessor :folder, :name, :title, :schema
 
       def initialize(hash, schema)
+        raise ArgumentError.new "Schema must be provided, got #{schema.class}" unless schema.is_a? Schema
         @name    = hash['name'] || raise("Data set fields must have their names defined")
         @title   = hash['title'] || hash['name']
         @folder  = hash['folder']
         @schema  = schema
+      end
+
+      ##
+      # Generates an identifier from the object name by transliterating
+      # non-Latin character and then dropping non-alphanumerical characters.
+      #
+      def identifier
+        @identifier ||= "#{self.type_prefix}.#{Model::to_id @schema.title}.#{Model::to_id name}"
       end
 
       def to_maql_drop
@@ -161,17 +186,28 @@ module GoodData
         visual += ", FOLDER {#{folder_prefix}.#{Model::to_id(folder)}}" if folder
         visual
       end
+
+      # Overriden to prevent long strings caused by the @schema attribute
+      #
+      def inspect
+        to_s.sub />$/, " @title=#{@title.inspect}, @name=#{@name.inspect}, @folder=#{@folder.inspect}," \
+                       " @schema=#{@schema.to_s.sub />$/, ' @title=' + @schema.name.inspect + '>'}" \
+                       ">"
+      end
     end
 
     ##
     # GoodData attribute abstraction
     #
     class Attribute < Column
+      attr_reader :labels
+
       def type_prefix ; 'attr' ; end
       def folder_prefix; ATTRIBUTE_FOLDER_PREFIX; end
 
-      def labels
-        @labels ||= []
+      def initialize(hash, schema)
+        super hash, schema
+        @labels = [ Label.new hash, self, schema ]
       end
 
       def table
@@ -180,7 +216,42 @@ module GoodData
 
       def to_maql_create
         "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
-               + " AS KEYS {#{table}.#{Model::FIELD_PK}} FULLSET;\n"
+               + " AS KEYS {#{table}.#{Model::FIELD_PK}} FULLSET;\n" \
+               + "#{labels.map { |l| l.to_maql_create }.join}"
+      end
+
+      private
+
+      def primary_label_identifier
+        "label.#{Model::to_id(name)}"
+      end
+    end
+
+    ##
+    # GoodData display form abstraction. Represents a default representation
+    # of an attribute column or an additional representation defined in a LABEL
+    # field
+    #
+    class Label < Column
+      def type_prefix ; 'label' ; end
+
+      def initialize(hash, attribute, schema)
+        super hash, schema
+        @attribute = attribute
+      end
+
+      def to_maql_create
+        "ALTER ATTRIBUTE {#{@attribute.identifier}} ADD LABELS {#{identifier}}" \
+              + " VISUAL (TITLE #{title.inspect}) AS {#{@attribute.table}.#{column}};\n"
+      end
+
+      def column
+        "nm_#{Model::to_id name}"
+      end
+
+      alias :inspect_orig :inspect
+      def inspect
+        inspect_orig.sub />$/, " @attribute=" + @attribute.to_s.sub(/>$/, " @name=#{@attribute.name}") + '>'
       end
     end
 
