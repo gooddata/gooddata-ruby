@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Watson Steen"]
-  s.date = %q{2011-02-17}
+  s.date = %q{2011-03-10}
   s.description = %q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
   s.email = %q{w@tson.dk}
   s.executables = ["gooddata", "igd.rb"]
@@ -47,7 +47,8 @@ Gem::Specification.new do |s|
      "test/test_commands.rb",
      "test/test_guessing.rb",
      "test/test_model.rb",
-     "test/test_rest_api_basic.rb"
+     "test/test_rest_api_basic.rb",
+     "test/test_upload.rb"
   ]
   s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -59,7 +60,8 @@ Gem::Specification.new do |s|
      "test/test_commands.rb",
      "test/test_guessing.rb",
      "test/test_model.rb",
-     "test/test_rest_api_basic.rb"
+     "test/test_rest_api_basic.rb",
+     "test/test_upload.rb"
   ]
 
   if s.respond_to? :specification_version then

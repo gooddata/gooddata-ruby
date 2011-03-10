@@ -1,5 +1,6 @@
 require 'rest-client'
 require 'json/pure'
+require 'net/ftptls'
 
 module GoodData
 
@@ -127,6 +128,18 @@ module GoodData
     # want to force a connection (or a re-connect) you can use this method.
     def connect!
       connect
+    end
+
+    # Uploads a file to GoodData server via FTPS
+    def upload(file, dir = nil)
+      Net::FTPTLS.open('secure-di.gooddata.com', @username, @password) do |ftp|
+        ftp.passive = true
+        if dir then
+          begin ; ftp.mkdir dir ; rescue ; ensure ; ftp.chdir dir ; end
+        end
+        ftp.binary = true
+        ftp.put file
+      end
     end
 
     private

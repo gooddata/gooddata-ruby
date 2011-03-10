@@ -1,3 +1,6 @@
+require 'zip/zip'
+require 'fileutils'
+
 module GoodData
   class Project
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
@@ -8,11 +11,6 @@ module GoodData
     attr_accessor :connection
 
     class << self
-      def load
-        # GoodData.logger.info "Loading user profile..."
-        Profile.send 'new'
-      end
-
       # Returns an array of all projects accessible by
       # current user
       def all
@@ -59,6 +57,7 @@ module GoodData
           }
         }
 
+        json['meta']['templateUri'] = attributes[:template] if attributes[:template]
         project = Project.new json
         project.save
         project
@@ -95,14 +94,24 @@ module GoodData
     end
 
     def md
-      unless @md
-        @md = Links.new GoodData.get @json['links']['metadata']
-      end
-      @md
+      @md ||= Links.new GoodData.get @json['links']['metadata']
     end
 
-    def add_dataset(title, columns)
-      Model.add_dataset title, columns, self
+    # Creates a data set within the project
+    #
+    # == Usage
+    # p.add_dataset 'Test', [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
+    # p.add_dataset 'title' => 'Test', 'columns' => [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
+    #
+    def add_dataset(schema, columns = nil)
+      schema = { 'title' => schema, 'columns' => columns } if columns
+      schema = Model::Schema.new schema if schema.is_a? Hash
+      raise ArgumentError.new "Required either schema object or title plus columns array" unless schema.is_a? Model::Schema
+      Model.add_schema schema, self
+    end
+
+    def upload(file, schema)
+      schema.upload file, self
     end
 
     def slis

@@ -14,6 +14,7 @@ class TestModel < Test::Unit::TestCase
       { 'type' => 'FACT', 'name' => 'f1', 'title' => 'F1', 'folder' => 'test' },
       { 'type' => 'FACT', 'name' => 'f2', 'title' => 'F2', 'folder' => 'test' },
     ]
+  SCHEMA = GoodData::Model::Schema.new 'title' => 'test', 'columns' => COLUMNS
 
   context "GoodData model tools" do
     # Initialize a GoodData connection using the credential
@@ -23,8 +24,8 @@ class TestModel < Test::Unit::TestCase
     end
 
     should "generate identifiers star  ting with letters and without ugly characters" do
-      assert_equal 'fact.blah', GoodData::Model::Fact.new({ 'name' => 'blah' }, 'ds').identifier
-      assert_equal 'attr.blah', GoodData::Model::Attribute.new({ 'name' => '1_2_3 blah' }, 'ds').identifier
+      assert_equal 'fact.test.blah', GoodData::Model::Fact.new({ 'name' => 'blah' }, SCHEMA).identifier
+      assert_equal 'attr.test.blah', GoodData::Model::Attribute.new({ 'name' => '1_2_3 blah' }, SCHEMA).identifier
       assert_equal 'dim.blaz', GoodData::Model::AttributeFolder.new(' b*ĺ*á#ž$').identifier
     end
 

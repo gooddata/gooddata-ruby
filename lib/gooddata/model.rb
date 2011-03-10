@@ -1,4 +1,5 @@
 require 'iconv'
+require 'fastercsv'
 
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
@@ -19,7 +20,14 @@ module GoodData
 
     class << self
       def add_dataset(title, columns, project = nil)
-        schema = Schema.new 'columns' => columns, 'title' => title
+        add_schema Schema.new('columns' => columns, 'title' => title), project
+      end
+
+      def add_schema(schema, project = nil)
+        unless schema.is_a?(Schema)|| schema.is_a?(String) then
+          raise ArgumentError.new "Schema object or schema file path expected, got '#{schema}'"
+        end
+        schema = Schema.load schema unless schema.is_a? Schema
         project = GoodData.project unless project
         ldm_links = GoodData.get project.md[LDM_CTG]
         ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
@@ -61,7 +69,7 @@ module GoodData
       attr_reader :fields
 
       def self.load(file)
-        Schema.new JSON.load open 'Test.json'
+        Schema.new JSON.load open file
       end
 
       def initialize(config, title = nil)
@@ -128,6 +136,50 @@ module GoodData
         folders_maql = "# Create folders\n"
         folders.keys.each { |folder| folders_maql += folder.to_maql_create }
         folders_maql + "\n" + maql + "SYNCHRONIZE {#{identifier}};\n"
+      end
+
+      # Load given file into a data set described by the given schema
+      #
+      def upload(path, project = nil)
+        path = path.path if path.respond_to? :path
+        project = GoodData.project unless project
+
+        # create a temporary zip file
+        dir = Dir.mktmpdir
+        Zip::ZipFile.open("#{dir}/upload.zip", Zip::ZipFile::CREATE) do |zip|
+          # TODO make sure schema columns match CSV column names
+          zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate to_manifest }
+          zip.get_output_stream('data.csv') do |f|
+            FasterCSV.foreach(path) { |row| f.puts row.to_csv }
+          end
+        end
+
+        # upload it
+        GoodData.connection.upload "#{dir}/upload.zip", File.basename(dir)
+        FileUtils.rm_rf dir
+
+        # kick the load
+        pull = { 'pullIntegration' => File.basename(dir) }
+        link = project.md.links('etl')['pull']
+        GoodData.post link, pull
+      end
+
+      # Generates the SLI manifest describing the data loading
+      #
+      def to_manifest
+        {
+          'dataSetSLIManifest' => {
+            'parts'   => fields.values.map { |f| f.to_manifest_part },
+            'dataSet' => self.identifier,
+            'file'    => 'data.csv', # should be configurable
+            'csvParams' => {
+              'quoteChar'     => '"',
+              'escapeChar'    => '"',
+              'separatorChar' => ',',
+              'endOfLine'     => "\n"
+            }
+          }
+        }
       end
 
       private
@@ -200,14 +252,14 @@ module GoodData
     # GoodData attribute abstraction
     #
     class Attribute < Column
-      attr_reader :labels
+      attr_reader :primary_label
 
       def type_prefix ; 'attr' ; end
       def folder_prefix; ATTRIBUTE_FOLDER_PREFIX; end
 
       def initialize(hash, schema)
         super hash, schema
-        @labels = [ Label.new hash, self, schema ]
+        @primary_label = Label.new hash, self, schema
       end
 
       def table
@@ -217,13 +269,16 @@ module GoodData
       def to_maql_create
         "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
                + " AS KEYS {#{table}.#{Model::FIELD_PK}} FULLSET;\n" \
-               + "#{labels.map { |l| l.to_maql_create }.join}"
+               + "#{@primary_label.to_maql_create}"
       end
 
-      private
-
-      def primary_label_identifier
-        "label.#{Model::to_id(name)}"
+      def to_manifest_part
+        {
+          'referenceKey' => 1,
+          'populates' => [ @primary_label.identifier ],
+          'mode' => 'FULL',
+          'columnName' => name
+        }
       end
     end
 
@@ -242,11 +297,19 @@ module GoodData
 
       def to_maql_create
         "ALTER ATTRIBUTE {#{@attribute.identifier}} ADD LABELS {#{identifier}}" \
-              + " VISUAL (TITLE #{title.inspect}) AS {#{@attribute.table}.#{column}};\n"
+              + " VISUAL (TITLE #{title.inspect}) AS {#{column}};\n"
+      end
+
+      def to_manifest_part
+        {
+          'populates'  => [ identifier ],
+          'mode'       => 'FULL',
+          'columnName' => name
+        }
       end
 
       def column
-        "nm_#{Model::to_id name}"
+        "#{@attribute.table}.nm_#{Model::to_id name}"
       end
 
       alias :inspect_orig :inspect
@@ -298,12 +361,20 @@ module GoodData
       end
 
       def column
-        @column ||= FACT_PREFIX + Model::to_id(name)
+        @column ||= table + '.' + FACT_PREFIX + Model::to_id(name)
       end
 
       def to_maql_create
         "CREATE FACT {#{self.identifier}} VISUAL (#{visual})" \
-               + " AS {#{table}.#{column}};\n"
+               + " AS {#{column}};\n"
+      end
+
+      def to_manifest_part
+        {
+          'populates'  => [ identifier ],
+          'mode'       => 'FULL',
+          'columnName' => name
+        }
       end
     end
 
