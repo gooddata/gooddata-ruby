@@ -28,7 +28,7 @@ module GoodData
       #
       def [](id)
         if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
-          raise ArgumentError.new "wrong type of argument. Should be either project ID or path"
+          raise ArgumentError.new("wrong type of argument. Should be either project ID or path")
         end
 
         id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
@@ -94,7 +94,7 @@ module GoodData
     end
 
     def md
-      @md ||= Links.new GoodData.get @json['links']['metadata']
+      @md ||= Links.new GoodData.get(@json['links']['metadata'])
     end
 
     # Creates a data set within the project
@@ -106,7 +106,7 @@ module GoodData
     def add_dataset(schema, columns = nil)
       schema = { 'title' => schema, 'columns' => columns } if columns
       schema = Model::Schema.new schema if schema.is_a? Hash
-      raise ArgumentError.new "Required either schema object or title plus columns array" unless schema.is_a? Model::Schema
+      raise ArgumentError.new("Required either schema object or title plus columns array") unless schema.is_a? Model::Schema
       Model.add_schema schema, self
     end
 
@@ -116,7 +116,7 @@ module GoodData
 
     def slis
       link = "#{@json['links']['metadata']}#{SLIS_PATH}"
-      Metadata.new GoodData.get link
+      Metadata.new GoodData.get(link)
     end
 
     def datasets

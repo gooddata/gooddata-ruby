@@ -93,7 +93,7 @@ module GoodData
       def with_project
         unless @project_id
           @project_id = extract_option('--project')
-          raise CommandFailed.new "Project not specified, use the --project switch" unless @project_id
+          raise CommandFailed.new("Project not specified, use the --project switch") unless @project_id
         end
         yield @project_id
       end
@@ -116,8 +116,8 @@ module GoodData
 
       def create_dataset
         file = extract_option('--file-csv')
-        return Extract::CsvFile.new file if file
-        raise CommandFailed.new "Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)"
+        return Extract::CsvFile.new(file) if file
+        raise CommandFailed.new("Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)")
       end
     end
 
@@ -189,16 +189,16 @@ module GoodData
 
       def check_number(header, value)
         if value.nil? || value =~ /^[\+-]?\d*(\.\d*)?$/
-          return store_guess header, { @pros => [ :fact, :attribute ] }
+          return store_guess(header, @pros => [ :fact, :attribute ] )
         end
         store_guess header, { @cons => :fact }
       end
 
       def check_date(header, value)
-        return store_guess header, { @pros => [ :date, :attribute, :fact ] } if value.nil? || value == '0000-00-00'
+        return store_guess(header, @pros => [ :date, :attribute, :fact ]) if value.nil? || value == '0000-00-00'
         begin
           DateTime.parse value
-          return store_guess header, { @pros => [ :date, :attribute ] }
+          return store_guess(header, @pros => [ :date, :attribute ])
         rescue ArgumentError; end
         store_guess header, { @cons => :date }
       end

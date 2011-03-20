@@ -24,8 +24,8 @@ module GoodData
       end
 
       def add_schema(schema, project = nil)
-        unless schema.is_a?(Schema)|| schema.is_a?(String) then
-          raise ArgumentError.new "Schema object or schema file path expected, got '#{schema}'"
+        unless schema.is_a?(Schema) || schema.is_a?(String) then
+          raise ArgumentError.new("Schema object or schema file path expected, got '#{schema}'")
         end
         schema = Schema.load schema unless schema.is_a? Schema
         project = GoodData.project unless project
@@ -69,7 +69,7 @@ module GoodData
       attr_reader :fields
 
       def self.load(file)
-        Schema.new JSON.load open file
+        Schema.new JSON.load(open(file))
       end
 
       def initialize(config, title = nil)
@@ -148,7 +148,7 @@ module GoodData
         dir = Dir.mktmpdir
         Zip::ZipFile.open("#{dir}/upload.zip", Zip::ZipFile::CREATE) do |zip|
           # TODO make sure schema columns match CSV column names
-          zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate to_manifest }
+          zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(to_manifest) }
           zip.get_output_stream('data.csv') do |f|
             FasterCSV.foreach(path) { |row| f.puts row.to_csv }
           end
@@ -214,7 +214,7 @@ module GoodData
       attr_accessor :folder, :name, :title, :schema
 
       def initialize(hash, schema)
-        raise ArgumentError.new "Schema must be provided, got #{schema.class}" unless schema.is_a? Schema
+        raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
         @name    = hash['name'] || raise("Data set fields must have their names defined")
         @title   = hash['title'] || hash['name']
         @folder  = hash['folder']
@@ -242,9 +242,9 @@ module GoodData
       # Overriden to prevent long strings caused by the @schema attribute
       #
       def inspect
-        to_s.sub />$/, " @title=#{@title.inspect}, @name=#{@name.inspect}, @folder=#{@folder.inspect}," \
-                       " @schema=#{@schema.to_s.sub />$/, ' @title=' + @schema.name.inspect + '>'}" \
-                       ">"
+        to_s.sub(/>$/, " @title=#{@title.inspect}, @name=#{@name.inspect}, @folder=#{@folder.inspect}," \
+                       " @schema=#{@schema.to_s.sub(/>$/, ' @title=' + @schema.name.inspect + '>')}" \
+                       ">")
       end
     end
 
@@ -314,7 +314,7 @@ module GoodData
 
       alias :inspect_orig :inspect
       def inspect
-        inspect_orig.sub />$/, " @attribute=" + @attribute.to_s.sub(/>$/, " @name=#{@attribute.name}") + '>'
+        inspect_orig.sub(/>$/, " @attribute=" + @attribute.to_s.sub(/>$/, " @name=#{@attribute.name}") + '>')
       end
     end
 

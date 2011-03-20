@@ -26,7 +26,8 @@ Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
 #
 # == Logging
 #
-# TODO: nice to have - by something like GoodData.logger = Logger.new(STDOUT)
+#   GoodData.logger = Logger.new(STDOUT)
+#
 # For details about the logger options and methods, see the
 # {Logger module documentation}[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
 #

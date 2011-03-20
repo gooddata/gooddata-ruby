@@ -1,6 +1,8 @@
-require 'rest-client'
 require 'json/pure'
 require 'net/ftptls'
+
+# silence the parenthesis warning in rest-client 1.6.1
+old_verbose, $VERBOSE = $VERBOSE, nil ; require 'rest-client' ; $VERBOSE = old_verbose
 
 module GoodData
 

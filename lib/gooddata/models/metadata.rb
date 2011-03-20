@@ -59,7 +59,7 @@ module GoodData
     end
 
     def project
-      @project ||= Project[uri.gsub /\/obj\/\d+$/, '']
+      @project ||= Project[uri.gsub(/\/obj\/\d+$/, '')]
     end
   end
 
