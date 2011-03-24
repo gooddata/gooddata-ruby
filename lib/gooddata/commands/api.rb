@@ -25,5 +25,13 @@ module GoodData::Command
       result = GoodData.get path
       jj result rescue puts result
     end
+
+    def delete
+      path = args.shift rescue nil
+      raise(CommandFailed, "Specify the path you want to DELETE.") if path.nil?
+      connect
+      result = GoodData.delete path
+      jj result rescue puts result
+    end
   end
 end
