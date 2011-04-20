@@ -7,9 +7,9 @@ begin
     gem.name = "gooddata"
     gem.summary = %Q{A convenient Ruby wrapper around the GoodData RESTful API}
     gem.description = %Q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
-    gem.email = "w@tson.dk"
+    gem.email = "pavel@gooddata.com"
     gem.homepage = "http://github.com/gooddata/gooddata-ruby"
-    gem.authors = ["Thomas Watson Steen"]
+    gem.authors = ["Pavel Kolesnikov", "Thomas Watson Steen"]
     gem.files = Dir["**/*"].select { |d| d =~ %r{^(README|LICENSE|VERSION|bin/|data/|ext/|lib/|spec/|test/)} }
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     gem.add_dependency 'parseconfig'
