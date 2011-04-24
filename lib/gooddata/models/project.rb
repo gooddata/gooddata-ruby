@@ -57,7 +57,7 @@ module GoodData
           }
         }
 
-        json['meta']['templateUri'] = attributes[:template] if attributes[:template]
+        json['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
         project.save
         project

@@ -37,7 +37,8 @@ class TestRestApiBasic < Test::Unit::TestCase
 
     should "apply a dataset model" do
       GoodData::Command.connect
-      project = GoodData::Project.create :title => "gooddata-ruby TestRestApi #{Time.new.to_i}"
+      project = GoodData::Project.create \
+        :title => "gooddata-ruby TestRestApi #{Time.new.to_i}", :template => '/projectTemplates/empty/1'
 
       Tempfile.open 'gdrb-test-' do |file|
         file.puts SAMPLE_DATASET_CONFIG.to_json
