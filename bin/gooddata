@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'logger'
+
 require 'gooddata'
 require 'gooddata/command'
 
@@ -7,4 +9,5 @@ args = ARGV.dup
 ARGV.clear
 command = args.shift.strip rescue 'help'
 
+GoodData.logger = Logger.new(STDOUT) if ENV['DEBUG']
 GoodData::Command.run command, args
