@@ -14,8 +14,16 @@ module GoodData
     # Model naming conventions
     FIELD_PK = 'id'
     FK_SUFFIX = '_id'
-    FACT_PREFIX = 'f_'
+    FACT_COLUMN_PREFIX = 'f_'
+    DATE_COLUMN_PREFIX = 'dt_'
+    TIME_COLUMN_PREFIX = 'tm_'
+    LABEL_COLUMN_PREFIX = 'nm_'
     ATTRIBUTE_FOLDER_PREFIX = 'dim'
+    ATTRIBUTE_PREFIX = 'attr'
+    FACT_PREFIX = 'fact'
+    DATE_FACT_PREFIX = 'dt'
+    TIME_FACT_PREFIX = 'tm.dt'
+    TIME_ATTRIBUTE_PREFIX = 'attr.time'
     FACT_FOLDER_PREFIX = 'ffld'
 
     class << self
@@ -73,7 +81,7 @@ module GoodData
       end
 
       def initialize(config, title = nil)
-        @fields = {}
+        @fields = []
         config['title'] = title unless config['title']
         raise 'Schema name not specified' unless config['title']
         self.title = config['title']
@@ -85,6 +93,7 @@ module GoodData
         config['columns'].each do |c|
           add_attribute c if c['type'] == 'ATTRIBUTE'
           add_fact c if c['type'] == 'FACT'
+          add_date c if c['type'] == 'DATE'
           set_connection_point c if c['type'] == 'CONNECTION_POINT'
           labels.push c if c['type'] == 'LABEL'
         end
@@ -106,7 +115,7 @@ module GoodData
       # Underlying fact table name
       #
       def table
-        @table ||= FACT_PREFIX + Model::to_id(name)
+        @table ||= FACT_COLUMN_PREFIX + Model::to_id(name)
       end
 
       ##
@@ -186,21 +195,29 @@ module GoodData
 
       def add_attribute(column)
         attribute = Attribute.new column, self
-        @fields[column['name']] = attribute
+        @fields << attribute
         add_to_hash(self.attributes, attribute)
         folders[AttributeFolder.new(attribute.folder)] = 1 if attribute.folder
       end
 
       def add_fact(column)
         fact = Fact.new column, self
-        @fields[column['name']] = fact
+        @fields << fact
         add_to_hash(self.facts, fact)
         folders[FactFolder.new(fact.folder)] = 1 if fact.folder
       end
 
+      def add_date(column)
+        date = DateColumn.new column, self
+        date.parts.values.each { |p| @fields << p }
+        date.facts.each { |f| add_to_hash(self.facts, f) }
+        date.attributes.each { |a| add_to_hash(self.attributes, a) }
+        @fields << date
+      end
+
       def set_connection_point(column)
         @connection_point = RecordsOf.new column, self
-        @fields[column['name']] = @connection_point
+        @fields << @connection_point
       end
 
       def add_to_hash(hash, obj); hash[obj.identifier] = obj; end
@@ -254,7 +271,7 @@ module GoodData
     class Attribute < Column
       attr_reader :primary_label
 
-      def type_prefix ; 'attr' ; end
+      def type_prefix ; ATTRIBUTE_PREFIX ; end
       def folder_prefix; ATTRIBUTE_FOLDER_PREFIX; end
 
       def initialize(hash, schema)
@@ -266,10 +283,12 @@ module GoodData
         @table ||= "d_" + Model::to_id(@schema.name) + "_" + Model::to_id(name)
       end
 
+      def key ; "#{Model::to_id(@name)}#{FK_SUFFIX}" ; end
+
       def to_maql_create
         "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
                + " AS KEYS {#{table}.#{Model::FIELD_PK}} FULLSET;\n" \
-               + "#{@primary_label.to_maql_create}"
+               + @primary_label.to_maql_create
       end
 
       def to_manifest_part
@@ -309,7 +328,7 @@ module GoodData
       end
 
       def column
-        "#{@attribute.table}.nm_#{Model::to_id name}"
+        "#{@attribute.table}.#{LABEL_COLUMN_PREFIX}#{Model::to_id name}"
       end
 
       alias :inspect_orig :inspect
@@ -343,7 +362,7 @@ module GoodData
         maql += "\n# Connect '#{self.title}' to all attributes of this data set\n"
         @schema.attributes.values.each do |c|
           maql += "ALTER ATTRIBUTE {#{c.identifier}} ADD KEYS " \
-                + "{#{table}.#{Model::to_id(c.name)}#{FK_SUFFIX}};\n"
+                + "{#{table}.#{c.key}};\n"
         end
         maql
       end
@@ -353,7 +372,8 @@ module GoodData
     # GoodData fact abstraction
     #
     class Fact < Column
-      def type_prefix ; 'fact' ; end
+      def type_prefix ; FACT_PREFIX ; end
+      def column_prefix ; FACT_COLUMN_PREFIX ; end
       def folder_prefix; FACT_FOLDER_PREFIX; end
 
       def table
@@ -361,7 +381,7 @@ module GoodData
       end
 
       def column
-        @column ||= table + '.' + FACT_PREFIX + Model::to_id(name)
+        @column ||= table + '.' + column_prefix + Model::to_id(name)
       end
 
       def to_maql_create
@@ -373,8 +393,134 @@ module GoodData
         {
           'populates'  => [ identifier ],
           'mode'       => 'FULL',
-          'columnName' => name
+          'columnName' => column
         }
+      end
+    end
+
+    ##
+    # Reference to another data set
+    #
+    class Reference
+      def initialize(column, schema)
+        @name       = column['name']
+        @reference  = column['reference']
+        @schema_ref = column['schema_ref']
+        @schema     = schema
+      end
+
+      ##
+      # Generates an identifier of the referencing attribute using the 
+      # schema name derived from schemaReference and column name derived
+      # from the reference key.
+      #
+      def identifier
+        @identifier ||= "#{ATTRIBUTE_PREFIX}.#{Model::to_id @schema_ref.title}.#{Model::to_id @reference}"
+      end
+
+      def key ; "#{Model::to_id @name}_id" ; end
+
+      def label_column
+        @column ||= "#{@schema.table}.#{LABEL_COLUMN_PREFIX Model::to_id(reference)}"
+      end
+
+      def to_maql_create
+        "ALTER ATTRIBUTE {#{self.identifier} ADD KEYS {#{@schema.table}.#{key}}"
+      end
+
+      def to_maql_drop
+        "ALTER ATTRIBUTE {#{self.identifier} DROP KEYS {#{@schema.table}.#{key}}"
+      end
+
+      def to_manifest_part
+        {
+          'populates'  => [ identifier ],
+          'mode'       => 'FULL',
+          'columnName' => label_column
+        }
+      end
+    end
+
+    ##
+    # Fact representation of a date.
+    #
+    class DateFact < Fact
+      def column_prefix ; DATE_COLUMN_PREFIX ; end
+      def type_prefix ; DATE_FACT_PREFIX ; end
+    end
+
+    ##
+    # Date as a reference to a date dimension
+    #
+    class DateReference < Reference
+
+    end
+
+    ##
+    # Date field that's not connected to a date dimension
+    #
+    class DateAttribute < Attribute
+      def key ; "#{DATE_COLUMN_PREFIX}#{super}" ; end
+    end
+
+    ##
+    # Fact representation of a time of a day
+    #
+    class TimeFact < Fact
+      def column_prefix ; TIME_COLUMN_PREFIX ; end
+      def type_prefix ; TIME_FACT_PREFIX ; end
+    end
+
+    ##
+    # Time as a reference to a time-of-a-day dimension
+    #
+    class TimeReference < Reference
+
+    end
+
+    ##
+    # Time field that's not connected to a time-of-a-day dimension
+    #
+    class TimeAttribute < Attribute
+      def type_prefix ; TIME_ATTRIBUTE_PREFIX ; end
+      def key ; "#{TIME_COLUMN_PREFIX}#{super}" ; end
+      def table ; @table ||= "#{super}_tm" ; end
+    end
+
+    ##
+    # Date column. A container holding the following
+    # parts: date fact, a date reference or attribute and an optional time component
+    # that contains a time fact and a time reference or attribute.
+    #
+    class DateColumn
+      attr_reader :parts, :facts, :attributes
+
+      def initialize(column, schema)
+        @parts = {} ; @facts = [] ; @attributes = []
+
+        @facts << @parts[:date_fact] = DateFact.new(column, schema)
+        if column['schemaReference'] then
+          @parts[:date_ref] = DateReference.new column, schema
+        else
+          @attributes << @parts[:date_attr] = DateAttribute.new(column, schema)
+        end
+        if column['datetime'] then
+          puts "*** datetime"
+          @facts << @parts[:time_fact] = TimeFact.new(column, schema)
+          if column['schemaReference'] then
+            @parts[:time_ref] = TimeReference.new column, schema
+          else
+            @attributes << @parts[:time_attr] = TimeAttribute.new(column, schema)
+          end
+        end
+      end
+
+      def to_maql_create
+        @parts.values.map { |v| v.to_maql_create }.join "\n"
+      end
+
+      def to_maql_drop
+        @parts.values.map { |v| v.to_maql_drop }.join "\n"
       end
     end
 

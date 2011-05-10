@@ -2,6 +2,8 @@ require 'zip/zip'
 require 'fileutils'
 
 module GoodData
+  class NoProjectError < RuntimeError ; end
+
   class Project
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
     PROJECTS_PATH = '/gdc/projects'

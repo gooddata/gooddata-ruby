@@ -60,7 +60,7 @@ module GoodData
         connect
         with_project do |project_id|
           cfg_file = args.shift rescue nil
-          raise(CommandFailed, "Usage: #{0} <dataset config>") unless cfg_file
+          raise(CommandFailed, "Usage: #{$0} <dataset config>") unless cfg_file
           config = JSON.load open(cfg_file) rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
           objects = Project[project_id].add_dataset config['title'], config['columns']
           puts "Dataset #{config['title']} added to the project, #{objects['uris'].length} metadata objects affected"

@@ -11,6 +11,7 @@ class TestModel < Test::Unit::TestCase
       { 'type' => 'CONNECTION_POINT', 'name' => 'cp', 'title' => 'CP', 'folder' => 'test' },
       { 'type' => 'ATTRIBUTE', 'name' => 'a1', 'title' => 'A1', 'folder' => 'test' },
       { 'type' => 'ATTRIBUTE', 'name' => 'a2', 'title' => 'A2', 'folder' => 'test' },
+      { 'type' => 'DATE', 'name' => 'event', 'title' => 'Event', 'folder' => 'test' },
       { 'type' => 'FACT', 'name' => 'f1', 'title' => 'F1', 'folder' => 'test' },
       { 'type' => 'FACT', 'name' => 'f2', 'title' => 'F2', 'folder' => 'test' },
     ]
