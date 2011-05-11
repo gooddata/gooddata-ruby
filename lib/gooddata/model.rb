@@ -286,9 +286,10 @@ module GoodData
       def key ; "#{Model::to_id(@name)}#{FK_SUFFIX}" ; end
 
       def to_maql_create
-        "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
-               + " AS KEYS {#{table}.#{Model::FIELD_PK}} FULLSET;\n" \
-               + @primary_label.to_maql_create
+        maql = "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
+               + " AS KEYS {#{table}.#{Model::FIELD_PK}} FULLSET;\n"
+        maql += @primary_label.to_maql_create if @primary_label
+        maql
       end
 
       def to_manifest_part

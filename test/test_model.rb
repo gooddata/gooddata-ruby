@@ -45,6 +45,16 @@ class TestModel < Test::Unit::TestCase
       ds = GoodData::DataSet['dataset.mrkev']
       assert_not_nil ds
 
+      # create a similar data set but without the connection point column
+      cols_no_cp = COLUMNS.select { |c| c['type'] != 'CONNECTION_POINT' }
+      objects    = GoodData::Model.add_dataset 'No CP', cols_no_cp
+      uris       = objects['uris']
+
+      # Repeat check of metadata objects expected to be created on the server side
+      GoodData.get uris[uris.length - 1]
+      ds = GoodData::DataSet['dataset.nocp']
+      assert_not_nil ds
+
       # clean-up
       project.delete
     end
