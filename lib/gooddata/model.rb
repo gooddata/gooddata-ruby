@@ -178,7 +178,7 @@ module GoodData
       def to_manifest
         {
           'dataSetSLIManifest' => {
-            'parts'   => fields.values.map { |f| f.to_manifest_part },
+            'parts'   => fields.map { |f| f.to_manifest_part },
             'dataSet' => self.identifier,
             'file'    => 'data.csv', # should be configurable
             'csvParams' => {
