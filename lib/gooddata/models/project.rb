@@ -87,6 +87,10 @@ module GoodData
       @json['links']['self'] if @json['links'] && @json['links']['self']
     end
 
+    def obj_id
+      uri.split('/').last
+    end
+
     def title
       @json['meta']['title'] if @json['meta']
     end
