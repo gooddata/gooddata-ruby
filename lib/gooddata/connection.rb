@@ -42,11 +42,12 @@ module GoodData
     #
     # * +username+ - The GoodData account username
     # * +password+ - The GoodData account password
-    def initialize(username, password, url = nil)
+    def initialize(username, password, url = nil, options = {})
       @status   = :not_connected
       @username = username
       @password = password
       @url      = url || DEFAULT_URL
+      @options  = options
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.
@@ -165,11 +166,13 @@ module GoodData
         }
       }
 
-      @server = RestClient::Resource.new @url, :headers => {
-        :content_type => :json,
-        :accept => [ :json, :zip ],
-        :user_agent => GoodData.gem_version_string
-      }
+      @server = RestClient::Resource.new @url,
+        :timeout => @options[:timeout],
+        :headers => {
+          :content_type => :json,
+          :accept => [ :json, :zip ],
+          :user_agent => GoodData.gem_version_string,
+        }
 
       GoodData.logger.debug "Logging in..."
       @user = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']

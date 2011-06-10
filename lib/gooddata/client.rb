@@ -72,8 +72,8 @@ module GoodData
     # * +user+ - A GoodData username
     # * +password+ - A GoodData password
     #
-    def connect(user, password, url = nil)
-      threaded[:connection] = Connection.new user, password, url
+    def connect(user, password, url = nil, options={})
+      threaded[:connection] = Connection.new user, password, url, options
     end
 
     # Returns the active GoodData connection earlier initialized via
