@@ -1,6 +1,6 @@
 require 'csv'
 
-module GoodData::Extract  
+module GoodData::Extract
   class CsvFile
     def initialize(file)
       @file = file

@@ -184,17 +184,17 @@ module GoodData
             maql += "ALTER DATASET {#{self.identifier}} ADD {#{obj.identifier}};\n\n"
           end
         end
-        
+
         labels.each do |label|
           maql += "# Creating Labels\n"
           maql += label.to_maql_create
         end
-        
+
         references.values.each do |ref|
           maql += "# Creating references\n"
           maql += ref.to_maql_create
         end
-        
+
         folders_maql = "# Create folders\n"
         (folders[:attributes].values + folders[:facts].values).each { |folder| folders_maql += folder.to_maql_create }
         folders_maql + "\n" + maql + "SYNCHRONIZE {#{identifier}};\n"
@@ -206,7 +206,7 @@ module GoodData
         path = path.path if path.respond_to? :path
         header = nil
         project = GoodData.project unless project
-      
+
         # create a temporary zip file
         dir = Dir.mktmpdir
         Zip::ZipFile.open("#{dir}/upload.zip", Zip::ZipFile::CREATE) do |zip|
@@ -223,11 +223,11 @@ module GoodData
             end
           end
         end
-      
+
         # upload it
         GoodData.connection.upload "#{dir}/upload.zip", File.basename(dir)
         FileUtils.rm_rf dir
-      
+
         # kick the load
         pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull']
@@ -239,7 +239,7 @@ module GoodData
       end
 
       # Generates the SLI manifest describing the data loading
-      # 
+      #
       def to_manifest
         {
           'dataSetSLIManifest' => {
@@ -263,7 +263,7 @@ module GoodData
         fields << attribute
         add_to_hash(attributes, attribute)
         add_attribute_folder(attribute.folder)
-        # folders[AttributeFolder.new(attribute.folder)] = 1 if attribute.folder 
+        # folders[AttributeFolder.new(attribute.folder)] = 1 if attribute.folder
       end
 
       def add_attribute_folder(name)
@@ -355,7 +355,7 @@ module GoodData
       def to_csv_data(headers, row)
         row[name]
       end
-      
+
 
       # Overriden to prevent long strings caused by the @schema attribute
       #
@@ -509,7 +509,7 @@ module GoodData
       def initialize(column, schema)
         super column, schema
         # pp column
-        
+
         @name       = column['name']
         @reference  = column['reference']
         @schema_ref = column['schema_reference']
@@ -517,7 +517,7 @@ module GoodData
       end
 
       ##
-      # Generates an identifier of the referencing attribute using the 
+      # Generates an identifier of the referencing attribute using the
       # schema name derived from schemaReference and column name derived
       # from the reference key.
       #
@@ -553,7 +553,7 @@ module GoodData
     # Fact representation of a date.
     #
     class DateFact < Fact
-      
+
       attr_accessor :format, :output_format
 
       def initialize(column, schema)
@@ -611,7 +611,7 @@ module GoodData
           'referenceKey'  => 1
         }
       end
-      
+
       def to_maql_create
         # urn:chefs_warehouse_fiscal:date
         super_maql = super
@@ -620,7 +620,7 @@ module GoodData
         # maql += "INCLUDE TEMPLATE \"#{urn}\" MODIFY (IDENTIFIER \"#{name}\", TITLE \"#{title || name}\");\n"
         maql += super_maql
       end
-      
+
     end
 
     ##
@@ -745,9 +745,9 @@ module GoodData
       def type; "FACT"; end
       def type_prefix; "ffld"; end
     end
-    
+
     class DateDimension < MdObject
-      
+
       def to_maql_create
         # urn:chefs_warehouse_fiscal:date
         maql = ""
@@ -755,6 +755,6 @@ module GoodData
         maql
       end
     end
-    
+
   end
 end

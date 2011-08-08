@@ -92,15 +92,15 @@ module GoodData
         # puts "TABLES ARE OF DIFFERENT SIZES"
         return false
       end
-      
+
       diff(otherDataResult).empty?() ? true : false
-      
+
     end
 
     def diff(otherDataResult)
       other_table = otherDataResult.to_table
       differences = []
-      
+
       @table.each do |row|
         differences << row unless other_table.detect {|r| r == row}
       end
@@ -143,8 +143,8 @@ module GoodData
       csv_table = to_table
       len =  csv_table.length
       return false if len != otherDataResult.to_table.length
-      
-      
+
+
       result
     end
 
@@ -152,7 +152,7 @@ module GoodData
       csv_table = to_table
       other_table = otherDataResult.to_table
       differences = []
-      
+
       csv_table.each do |row|
         differences << row unless other_table.detect {|r| r == row}
       end
@@ -185,7 +185,7 @@ module GoodData
     def tabularize_rows
       rows    = data["xtab_data"]["rows"]
       kids = rows["tree"]["children"]
-      
+
       if kids.empty? || (kids.size == 1 && kids.first['type'] == 'metric')
         headers, size = [[nil]], 0
       else
@@ -198,7 +198,7 @@ module GoodData
     def tabularize_columns
       columns = data["xtab_data"]["columns"]
       kids = columns["tree"]["children"]
-      
+
       if kids.empty? || (kids.size == 1 && kids.first['type'] == 'metric')
         headers, size = [[nil]], 0
       else
