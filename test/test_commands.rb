@@ -32,7 +32,7 @@ class TestRestApiBasic < Test::Unit::TestCase
     }
 
     should "list datasets" do
-      GoodData::Command.run "datasets", [ "--project", "FoodMartDemo" ]
+      GoodData::Command.run "datasets", [ "--project", $DEMO_PROJECT ]
     end
 
     should "apply a dataset model" do
@@ -60,8 +60,8 @@ class TestRestApiBasic < Test::Unit::TestCase
       GoodData::Command.run "api:test", []
     end
 
-    should "get FoodMartDemo metadata" do
-      GoodData::Command.run "api:get", [ '/gdc/md/FoodMartDemo' ]
+    should "get demo project's metadata" do
+      GoodData::Command.run "api:get", [ "/gdc/md/#{$DEMO_PROJECT}" ]
     end
   end
 

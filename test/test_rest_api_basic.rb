@@ -13,25 +13,25 @@ class TestRestApiBasic < Test::Unit::TestCase
       GoodData::Command::connect
     end
 
-    should "get the FoodMartDemo" do
-      p_by_hash   = GoodData::Project['FoodMartDemo']
-      p_by_uri    = GoodData::Project['/gdc/projects/FoodMartDemo']
-      p_by_md_uri = GoodData::Project['/gdc/md/FoodMartDemo']
+    should "get the demo project" do
+      p_by_hash   = GoodData::Project[$DEMO_PROJECT]
+      p_by_uri    = GoodData::Project["/gdc/projects/#{$DEMO_PROJECT}"]
+      p_by_md_uri = GoodData::Project["/gdc/md/#{$DEMO_PROJECT}"]
       assert_not_nil p_by_hash
       assert_equal p_by_hash.uri, p_by_uri.uri
       assert_equal p_by_hash.title, p_by_uri.title
       assert_equal p_by_hash.title, p_by_md_uri.title
     end
 
-    should "connect to the FoodMartDemo" do
-      GoodData.use 'FoodMartDemo'
+    should "connect to the demo project" do
+      GoodData.use $DEMO_PROJECT
       GoodData.project.datasets # should not fail on unknown project or access denied
                                 # TODO: should be equal to Dataset.all once implemented
     end
 
     # Not supported yet
     # should "fetch dataset by numerical or string identifier" do
-    #   GoodData.use 'FoodMartDemo'
+    #   GoodData.use $DEMO_PROJECT
     #   ds_by_hash = Dataset['amJoIYHjgESv']
     #   ds_by_id   = Dataset[34]
     #   assert_not_nil ds_by_hash

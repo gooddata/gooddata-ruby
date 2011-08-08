@@ -45,6 +45,13 @@ class TestModel < Test::Unit::TestCase
       ds = GoodData::DataSet['dataset.mrkev']
       assert_not_nil ds
 
+      project.delete
+    end
+
+    should "create a simple model with no CP in a sandbox project using Model.add_dataset" do
+      project = GoodData::Project.create :title => "gooddata-ruby test #{Time.new.to_i}"
+      GoodData.use project
+
       # create a similar data set but without the connection point column
       cols_no_cp = COLUMNS.select { |c| c['type'] != 'CONNECTION_POINT' }
       objects    = GoodData::Model.add_dataset 'No CP', cols_no_cp
