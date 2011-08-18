@@ -116,8 +116,8 @@ module GoodData
       Model.add_schema schema, self
     end
 
-    def upload(file, schema)
-      schema.upload file, self
+    def upload(file, schema, mode)
+      schema.upload file, self, mode
     end
 
     def slis

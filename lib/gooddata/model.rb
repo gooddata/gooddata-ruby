@@ -202,7 +202,7 @@ module GoodData
 
       # Load given file into a data set described by the given schema
       #
-      def upload(path, project = nil)
+      def upload(path, project = nil, mode = "FULL")
         path = path.path if path.respond_to? :path
         header = nil
         project = GoodData.project unless project
@@ -211,7 +211,7 @@ module GoodData
         dir = Dir.mktmpdir
         Zip::ZipFile.open("#{dir}/upload.zip", Zip::ZipFile::CREATE) do |zip|
           # TODO make sure schema columns match CSV column names
-          zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(to_manifest) }
+          zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(to_manifest(mode)) }
           zip.get_output_stream('data.csv') do |f|
             FasterCSV.foreach(path, :headers => true, :return_headers => true) do |row|
               output = if row.header_row?
@@ -232,18 +232,18 @@ module GoodData
         pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull']
         task = GoodData.post link, pull
-        while GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "RUNNING" do
+        while (GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "RUNNING" || GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "PREPARED") do
           sleep 30
         end
         puts "Done loading"
       end
 
       # Generates the SLI manifest describing the data loading
-      #
-      def to_manifest
+      # 
+      def to_manifest(mode)
         {
           'dataSetSLIManifest' => {
-            'parts'   => fields.reduce([]) { |memo, f| val = f.to_manifest_part; memo << val unless val.nil?; memo },
+            'parts'   => fields.reduce([]) { |memo, f| val = f.to_manifest_part(mode); memo << val unless val.nil?; memo },
             'dataSet' => self.identifier,
             'file'    => 'data.csv', # should be configurable
               'csvParams' => {
@@ -393,11 +393,11 @@ module GoodData
         maql
       end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         {
           'referenceKey' => 1,
           'populates' => [ @primary_label.identifier ],
-          'mode' => 'FULL',
+          'mode' => mode,
           'columnName' => name
         }
       end
@@ -423,10 +423,10 @@ module GoodData
               + " VISUAL (TITLE #{title.inspect}) AS {#{column}};\n"
       end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         {
           'populates'     => [ identifier ],
-          'mode'          => 'FULL',
+          'mode'          => mode,
           'columnName'    => name
         }
       end
@@ -493,10 +493,10 @@ module GoodData
                + " AS {#{column}};\n"
       end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         {
           'populates'  => [ identifier ],
-          'mode'       => 'FULL',
+          'mode'       => mode,
           'columnName' => name
         }
       end
@@ -539,10 +539,10 @@ module GoodData
         "ALTER ATTRIBUTE {#{self.identifier} DROP KEYS {#{@schema.table}.#{key}};\n"
       end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         {
           'populates'     => [ label_column ],
-          'mode'          => 'FULL',
+          'mode'          => mode,
           'columnName'    => name,
           'referenceKey'  => 1
         }
@@ -574,10 +574,10 @@ module GoodData
         val.nil?() ? nil : (Date.strptime(val, format) - BEGINNING_OF_TIMES).to_i
       end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         {
           'populates'  => [ identifier ],
-          'mode'       => 'FULL',
+          'mode'       => mode,
           'columnName' => "#{name}_fact"
         }
       end
@@ -602,10 +602,10 @@ module GoodData
         @identifier ||= "#{Model::to_id @schema_ref}.#{DATE_ATTRIBUTE}"
       end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         {
           'populates'     => [ "#{identifier}.#{DATE_ATTRIBUTE_DEFAULT_DISPLAY_FORM}" ],
-          'mode'          => 'FULL',
+          'mode'          => mode,
           'constraints'   => {"date" => output_format},
           'columnName'    => name,
           'referenceKey'  => 1
@@ -629,11 +629,11 @@ module GoodData
     class DateAttribute < Attribute
       def key ; "#{DATE_COLUMN_PREFIX}#{super}" ; end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         {
           'populates'     => ['label.stuff.mmddyy'],
           "format"        => "unknown",
-          "mode"          => "full",
+          "mode"          => mode,
           "referenceKey"  => 1
         }
       end
@@ -709,7 +709,7 @@ module GoodData
         SKIP_FIELD
       end
 
-      def to_manifest_part
+      def to_manifest_part(mode)
         nil
       end
 
