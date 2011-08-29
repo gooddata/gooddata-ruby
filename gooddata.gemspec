@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Pavel Kolesnikov}, %q{Thomas Watson Steen}]
-  s.date = %q{2011-06-10}
+  s.date = %q{2011-08-29}
   s.description = %q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
   s.email = %q{pavel@gooddata.com}
   s.executables = [%q{igd.rb}, %q{gooddata}]
@@ -54,17 +54,13 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
   s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.1}
+  s.rubygems_version = %q{1.8.8}
   s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<gooddata>, [">= 0"])
-      s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
-      s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
-      s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_runtime_dependency(%q<parseconfig>, [">= 0"])
       s.add_runtime_dependency(%q<json_pure>, [">= 0"])
@@ -73,10 +69,6 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<json>, [">= 0"])
       s.add_runtime_dependency(%q<rubyzip>, [">= 0"])
     else
-      s.add_dependency(%q<gooddata>, [">= 0"])
-      s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
-      s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
-      s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_dependency(%q<parseconfig>, [">= 0"])
       s.add_dependency(%q<json_pure>, [">= 0"])
@@ -86,10 +78,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rubyzip>, [">= 0"])
     end
   else
-    s.add_dependency(%q<gooddata>, [">= 0"])
-    s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
-    s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
-    s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     s.add_dependency(%q<parseconfig>, [">= 0"])
     s.add_dependency(%q<json_pure>, [">= 0"])
