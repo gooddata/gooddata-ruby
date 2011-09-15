@@ -46,7 +46,7 @@ class TestModel < Test::Unit::TestCase
 
     should "upload CSV in a full mode" do
       @project.add_dataset SCHEMA
-      @project.upload @file.path, SCHEMA
+      @project.upload @file.path, SCHEMA, "FULL"
     end
   end
 end
