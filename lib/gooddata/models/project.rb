@@ -116,7 +116,7 @@ module GoodData
       Model.add_schema schema, self
     end
 
-    def upload(file, schema, mode)
+    def upload(file, schema, mode = "FULL")
       schema.upload file, self, mode
     end
 
