@@ -17,11 +17,9 @@ class TestSchema < Test::Unit::TestCase
     ]
   
   context "schema creation" do
-    should "be created" do
-      config = {}
-      config['title'] = 'schema title'
-      config['columns'] = COLUMNS
-      schema = Schema.new config
+    should "be created with hash" do
+      schema = Schema.new 'title' => 'schema title', 'columns' => COLUMNS
+
       assert_equal 'schema title', schema.title
       assert_equal 2, schema.attributes.size
       assert_equal 2, schema.facts.size
@@ -33,7 +31,7 @@ class TestSchema < Test::Unit::TestCase
     should "require a name" do
       assert_raise RuntimeError do
         config = {}
-        Schema.new config
+        Schema.new({}) 
       end
     end
   end
