@@ -16,7 +16,7 @@ class TestSchema < Test::Unit::TestCase
       { 'type' => 'FACT', 'name' => 'f2', 'title' => 'F2', 'folder' => 'test' },
     ]
   
-  context "a schema" do
+  context "schema creation" do
     should "be created" do
       config = {}
       config['title'] = 'schema title'
@@ -28,6 +28,13 @@ class TestSchema < Test::Unit::TestCase
       assert_equal 5, schema.fields.size
       assert_equal 'test', schema.folders[:attributes]['test'].title
       assert_equal 'test', schema.folders[:facts]['test'].title
+    end
+    
+    should "require a name" do
+      assert_raise RuntimeError do
+        config = {}
+        Schema.new config
+      end
     end
   end
 end
