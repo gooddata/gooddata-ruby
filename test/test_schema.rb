@@ -1,6 +1,7 @@
 require 'logger'
 
 require 'helper'
+require 'gooddata/command'
 require 'gooddata/model'
 
 include GoodData::Model
@@ -33,6 +34,20 @@ class TestSchema < Test::Unit::TestCase
         config = {}
         Schema.new({}) 
       end
+    end
+    
+  end
+  
+  context "add dataset twice to project" do
+    should "add dataset happy case" do
+      schema = Schema.new 'title' => 'yo', 'columns' => COLUMNS
+      GoodData::Command::connect
+      project = GoodData::Project.create :title => "gooddata-ruby test #{Time.now.to_i}"
+      project.add_dataset schema
+      e = assert_raise RestClient::InternalServerError do 
+        project.add_dataset schema
+      end
+      #assert e.message =~ /Duplicate entry/
     end
   end
 end
