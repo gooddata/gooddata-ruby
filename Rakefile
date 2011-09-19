@@ -28,7 +28,7 @@ end
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
+  test.pattern = 'test/**/test_schema.rb'
   test.verbose = true
 end
 
@@ -45,7 +45,7 @@ rescue LoadError
   end
 end
 
-task :test => :check_dependencies
+#task :test => :check_dependencies
 
 task :default => :test
 
