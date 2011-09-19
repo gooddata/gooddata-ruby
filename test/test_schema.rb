@@ -26,6 +26,8 @@ class TestSchema < Test::Unit::TestCase
       assert_equal 2, schema.attributes.size
       assert_equal 2, schema.facts.size
       assert_equal 5, schema.fields.size
+      assert_equal 'test', schema.folders[:attributes]['test'].title
+      assert_equal 'test', schema.folders[:facts]['test'].title
     end
   end
 end
