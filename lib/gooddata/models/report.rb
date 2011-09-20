@@ -1,5 +1,3 @@
-require 'gooddata/models/metadata'
-
 module GoodData
   class Report < GoodData::MdObject 
 
