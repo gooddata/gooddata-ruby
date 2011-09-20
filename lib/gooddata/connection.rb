@@ -1,4 +1,4 @@
-require 'json/pure'
+require 'json'
 require 'net/ftptls'
 
 # silence the parenthesis warning in rest-client 1.6.1
