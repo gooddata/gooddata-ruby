@@ -39,15 +39,23 @@ class TestSchema < Test::Unit::TestCase
   end
   
   context "add dataset twice to project" do
+    setup do
+      GoodData::Command::connect
+      @project = GoodData::Project.create :title => "gooddata-ruby test #{Time.now.to_i}"
+    end
+
+    teardown do
+      @project.delete
+    end
+    
     should "add dataset happy case" do
       schema = Schema.new 'title' => 'yo', 'columns' => COLUMNS
-      GoodData::Command::connect
-      project = GoodData::Project.create :title => "gooddata-ruby test #{Time.now.to_i}"
-      project.add_dataset schema
+      @project.add_dataset schema
       e = assert_raise RestClient::InternalServerError do 
-        project.add_dataset schema
+        @project.add_dataset schema
       end
       #assert e.message =~ /Duplicate entry/
+      # TODO : assert "duplicate entry" in the error message here....
     end
   end
 end
