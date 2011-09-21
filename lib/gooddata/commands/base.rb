@@ -44,8 +44,10 @@ module GoodData
         begin
           if options.has_key? :answers
             answer = nil
+            options[:default] = options[:answers][0] if !options.has_key? :default
             while !options[:answers].include?(answer)
-              answer = get_answer "#{question} [#{options[:answers].join(',')}]? ", options[:secret]
+              answer = get_answer "#{question} (#{options[:answers].join(',')}) [#{options[:default]}]? ", options[:secret]
+              answer = options[:default] if answer == ""
             end
           else
             question = "#{question} [#{options[:default]}]" if options[:default]
