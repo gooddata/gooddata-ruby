@@ -1,5 +1,4 @@
 require 'json'
-require 'net/ftptls'
 
 # silence the parenthesis warning in rest-client 1.6.1
 old_verbose, $VERBOSE = $VERBOSE, nil ; require 'rest-client' ; $VERBOSE = old_verbose
@@ -33,6 +32,7 @@ module GoodData
     DEFAULT_URL = 'https://secure.gooddata.com'
     LOGIN_PATH = '/gdc/account/login'
     TOKEN_PATH = '/gdc/account/token'
+    STAGE_PATH = '/uploads'
 
     # Set the GoodData account credentials.
     #
@@ -133,16 +133,39 @@ module GoodData
       connect
     end
 
-    # Uploads a file to GoodData server via FTPS
+    # Uploads a file to GoodData server
+    # /uploads/ resources are special in that they use a different
+    # host and a basic authentication.
     def upload(file, dir = nil)
-      Net::FTPTLS.open('secure-di.gooddata.com', @username, @password) do |ftp|
-        ftp.passive = true
-        if dir then
-          begin ; ftp.mkdir dir ; rescue ; ensure ; ftp.chdir dir ; end
-        end
-        ftp.binary = true
-        ftp.put file
+      # We should have followed a link. If it was correct.
+      stage_url = DEFAULT_URL.sub(/\./, '-di.')
+
+      # Make a directory, if needed
+      if dir then
+        RestClient::Request.execute(
+          :method => :mkcol,
+          :url => stage_url + STAGE_PATH + dir + '/',
+          :user => @username,
+          :password => @password,
+          :timeout => @options[:timeout],
+          :headers => {
+            :user_agent => GoodData.gem_version_string,
+          }
+        )
       end
+
+      # Upload the file
+      RestClient::Request.execute(
+        :method => :put,
+        :url => stage_url + STAGE_PATH + dir + '/' + File.basename(file),
+        :user => @username,
+        :password => @password,
+        :timeout => @options[:timeout],
+        :headers => {
+          :user_agent => GoodData.gem_version_string,
+        },
+        :payload => File.read(file)
+      )
     end
 
     private
