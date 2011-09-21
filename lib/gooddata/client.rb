@@ -1,5 +1,9 @@
 require 'gooddata/version'
 require 'gooddata/connection'
+
+# Metadata packages, such as report.rb, require this to be loaded first
+require File.dirname(__FILE__) + '/models/metadata.rb'
+
 Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }
 Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
 

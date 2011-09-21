@@ -572,6 +572,9 @@ module GoodData
       def to_csv_data(headers, row)
         val = row[name]
         val.nil?() ? nil : (Date.strptime(val, format) - BEGINNING_OF_TIMES).to_i
+        rescue ArgumentError
+          raise "Value \"#{val}\" for column \"#{name}\" did not match the format: #{format}. " +
+            "Perhaps you need to add or change the \"format\" key in the data set configuration."
       end
 
       def to_manifest_part(mode)
