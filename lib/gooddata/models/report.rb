@@ -17,7 +17,7 @@ module GoodData
       dataResultUri = result["reportResult2"]["content"]["dataResult"]
 
       result = GoodData.get dataResultUri
-      while result["taskState"] && result["taskState"]["state"] == "WAIT" do
+      while result["taskState"] && result["taskState"]["status"] == "WAIT" do
         sleep 10
         result = GoodData.get dataResultUri
       end
