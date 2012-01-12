@@ -215,7 +215,7 @@ module GoodData
         end
         merge_cookies! response.cookies
         content_type = response.headers[:content_type]
-        if content_type == "application/json" then
+        if content_type == "application/json" || content_type == "application/json;charset=UTF-8" then
           result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
           GoodData.logger.debug "Response: #{result.inspect}"
         elsif content_type == "application/zip" then
