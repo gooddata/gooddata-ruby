@@ -4,15 +4,15 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{gooddata}
-  s.version = "0.3.0"
+  s.name = "gooddata"
+  s.version = "0.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Pavel Kolesnikov}, %q{Thomas Watson Steen}]
-  s.date = %q{2011-08-29}
-  s.description = %q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
-  s.email = %q{pavel@gooddata.com}
-  s.executables = [%q{igd.rb}, %q{gooddata}]
+  s.authors = ["Pavel Kolesnikov", "Thomas Watson Steen"]
+  s.date = "2012-01-12"
+  s.description = "Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line."
+  s.email = "pavel@gooddata.com"
+  s.executables = ["igd.rb", "gooddata"]
   s.extra_rdoc_files = [
     "LICENSE",
     "README.rdoc"
@@ -52,10 +52,10 @@ Gem::Specification.new do |s|
     "test/test_rest_api_basic.rb",
     "test/test_upload.rb"
   ]
-  s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.8}
-  s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
+  s.homepage = "http://github.com/gooddata/gooddata-ruby"
+  s.require_paths = ["lib"]
+  s.rubygems_version = "1.8.11"
+  s.summary = "A convenient Ruby wrapper around the GoodData RESTful API"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
