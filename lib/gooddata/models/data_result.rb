@@ -46,6 +46,7 @@ module GoodData
         col.each_with_index.map{|cell, i|
           i.zero?? cell.to_s.center(w) : cell.to_s.ljust(w)}   # alligns the column #
       }.transpose.each{|row| puts "[#{row.join(' | ')}]"}
+      nil
     end
 
     def to_table
