@@ -55,6 +55,38 @@ module GoodData
 
   end
 
+  class EmptyResult < DataResult
+
+    def initialize(data, options = {})
+      super(data)
+      @options = options
+      assemble_table
+    end
+
+    def print
+      puts "No Data"
+    end
+
+    def assemble_table
+      @table = FasterCSV::Table.new([GoodData::Row.new([],[],false)])
+    end
+
+    def to_table
+      @table
+    end
+
+    def without_column_headers
+      @table
+    end
+
+    def == (otherDataResult)
+      false
+    end
+    
+    def diff(otherDataResult)
+      ['empty']
+    end
+  end
 
   class SFDataResult < DataResult
 
@@ -68,7 +100,14 @@ module GoodData
       sf_data = data[:queryResponse][:result][:records]
       sf_data = sf_data.is_a?(Hash) ? [sf_data] : sf_data
       if @options[:soql]
-        @headers = @options[:soql].strip.match(/^SELECT (.*) FROM/)[1].strip.split(",").map{|item| item.strip.split(/\s/)}.map{|item| item.last.to_sym}
+        # puts @options[:soql]
+        fields = @options[:soql].strip.match(/SELECT (.*) FROM/)[1]
+        @headers = fields.strip.split(",").map do |item|
+          item.strip.split(/\s/)
+        end.map do |item|
+          item.last.to_sym
+        end
+        # pp @headers
       elsif @options[:headers]
         @headers = @options[:headers]
       else
