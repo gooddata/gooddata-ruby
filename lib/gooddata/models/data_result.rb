@@ -101,7 +101,7 @@ module GoodData
       sf_data = sf_data.is_a?(Hash) ? [sf_data] : sf_data
       if @options[:soql]
         # puts @options[:soql]
-        fields = @options[:soql].strip.match(/SELECT (.*) FROM/)[1]
+        fields = @options[:soql].strip.match(/SELECT (.*) FROM/i)[1]
         @headers = fields.strip.split(",").map do |item|
           item.strip.split(/\s/)
         end.map do |item|
