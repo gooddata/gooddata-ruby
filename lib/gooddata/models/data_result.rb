@@ -17,12 +17,15 @@ module GoodData
     private
     def convert_field(val)
       if val.is_a?(String) && val.match(/^[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?$/)
+        # Is it a Number?
         val = val.scan(/[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?/).first
         val = val.include?('.') ? val.to_f.round : val.to_i
         return val
-      elsif val.nil? || val == ' '
-        return 'N/A'
+      elsif val.nil? || val.strip.emtpy?
+        #is ia a String
+        return ''
       elsif val.respond_to? :round
+        # No idea what that one does
         return val.round
       else
         return val
@@ -39,14 +42,17 @@ module GoodData
     end
 
     def print
+      puts to_s
+    end
+
+    def to_s
       a = to_table.to_a
       a.transpose.unshift((1..a.length).to_a).each_with_index.map{|col, i|
         col.unshift(i.zero?? nil : i)   # inserts row labels #
         w = col.map{|cell| cell.to_s.length}.max   # w = "column width" #
         col.each_with_index.map{|cell, i|
           i.zero?? cell.to_s.center(w) : cell.to_s.ljust(w)}   # alligns the column #
-      }.transpose.each{|row| puts "[#{row.join(' | ')}]"}
-      nil
+      }.transpose.map{|row| "[#{row.join(' | ')}]"}.join("\n")
     end
 
     def to_table
@@ -63,8 +69,8 @@ module GoodData
       assemble_table
     end
 
-    def print
-      puts "No Data"
+    def to_s
+      "No Data"
     end
 
     def assemble_table
