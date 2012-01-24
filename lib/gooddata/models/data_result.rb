@@ -21,7 +21,7 @@ module GoodData
         val = val.scan(/[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?/).first
         val = val.include?('.') ? val.to_f.round : val.to_i
         return val
-      elsif val.nil? || val.strip.emtpy?
+      elsif val.nil? || val.strip.empty?
         #is ia a String
         return ''
       elsif val.respond_to? :round
