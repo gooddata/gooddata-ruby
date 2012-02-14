@@ -32,7 +32,7 @@ module GoodData
     DEFAULT_URL = 'https://secure.gooddata.com'
     LOGIN_PATH = '/gdc/account/login'
     TOKEN_PATH = '/gdc/account/token'
-    STAGE_PATH = '/uploads'
+    STAGE_PATH = '/uploads/'
 
     # Set the GoodData account credentials.
     #
@@ -70,7 +70,8 @@ module GoodData
     def get(path, options = {})
       GoodData.logger.debug "GET #{path}"
       ensure_connection
-      process_response(options) { @server[path].get cookies }
+      b = Proc.new { @server[path].get cookies }
+      response = (options[:process] == false) ? (b.call) : process_response(&b)
     end
 
     # Performs a HTTP POST request.
@@ -86,10 +87,11 @@ module GoodData
     #
     #   Connection.new(username, password).post '/gdc/projects', { ... }
     def post(path, data, options = {})
-      payload = data.to_json
+      payload = data.is_a?(Hash) ? data.to_json : data
       GoodData.logger.debug "POST #{path}, payload: #{payload}"
       ensure_connection
-      process_response(options) { @server[path].post payload, cookies }
+      b = Proc.new { @server[path].post payload, cookies }
+      options[:process] == false ? b.call : process_response(&b)
     end
 
     # Performs a HTTP DELETE request.
@@ -103,10 +105,11 @@ module GoodData
     # === Examples
     #
     #   Connection.new(username, password).delete '/gdc/project/1'
-    def delete(path)
+    def delete(path, options = {})
       GoodData.logger.debug "DELETE #{path}"
       ensure_connection
-      process_response { @server[path].delete cookies }
+      b = Proc.new { @server[path].delete cookies }
+      options[:process] == false ? b.call : process_response(&b)
     end
 
     # Get the cookies associated with the current connection.
@@ -137,19 +140,23 @@ module GoodData
     # /uploads/ resources are special in that they use a different
     # host and a basic authentication.
     def upload(file, dir = nil)
+      ensure_connection
       # We should have followed a link. If it was correct.
       stage_url = DEFAULT_URL.sub(/\./, '-di.')
 
       # Make a directory, if needed
       if dir then
+        method = :mkcol
+        url = stage_url + STAGE_PATH + dir + '/'
+        GoodData.logger.debug "#{method}: #{url}"
         RestClient::Request.execute(
-          :method => :mkcol,
-          :url => stage_url + STAGE_PATH + dir + '/',
+          :method => method,
+          :url => url,
           :user => @username,
           :password => @password,
           :timeout => @options[:timeout],
           :headers => {
-            :user_agent => GoodData.gem_version_string,
+            :user_agent => GoodData.gem_version_string
           }
         )
       end
@@ -204,14 +211,14 @@ module GoodData
       @status = :logged_in
     end
 
-    def process_response(options = {})
+    def process_response(options = {}, &block)
       begin
         begin
-          response = yield
+          response = block.call
         rescue RestClient::Unauthorized
           raise $! if options[:dont_reauth]
           refresh_token
-          response = yield
+          response = block.call
         end
         merge_cookies! response.cookies
         content_type = response.headers[:content_type]
@@ -223,6 +230,7 @@ module GoodData
           GoodData.logger.debug "Response: a zipped stream"
         elsif response.headers[:content_length].to_s == '0'
           result = nil
+          GoodData.logger.debug "Response: Empty response possibly 204"
         else
           raise "Unsupported response content type '%s':\n%s" % [ content_type, response.to_str[0..127] ]
         end

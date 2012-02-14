@@ -129,8 +129,8 @@ module GoodData
     # === Examples
     #
     #   GoodData.get '/gdc/projects'
-    def get(path)
-      connection.get(path)
+    def get(path, options = {})
+      connection.get(path, options)
     end
 
     # Performs a HTTP POST request.
@@ -145,8 +145,8 @@ module GoodData
     # === Examples
     #
     #   GoodData.post '/gdc/projects', { ... }
-    def post(path, data)
-      connection.post path, data
+    def post(path, data, options = {})
+      connection.post path, data, options
     end
 
     # Performs a HTTP DELETE request.
@@ -160,8 +160,8 @@ module GoodData
     # === Examples
     #
     #   GoodData.delete '/gdc/project/1'
-    def delete(path)
-      connection.delete path
+    def delete(path, options = {})
+      connection.delete path, options
     end
 
     def test_login
