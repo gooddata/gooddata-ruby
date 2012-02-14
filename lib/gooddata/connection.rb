@@ -68,10 +68,11 @@ module GoodData
     #
     #   Connection.new(username, password).get '/gdc/projects'
     def get(path, options = {})
+      pp options
       GoodData.logger.debug "GET #{path}"
       ensure_connection
       b = Proc.new { @server[path].get cookies }
-      response = (options[:process] == false) ? (b.call) : process_response(&b)
+      response = (options[:process] == false) ? (b.call) : process_response(options, &b)
     end
 
     # Performs a HTTP POST request.
@@ -91,7 +92,7 @@ module GoodData
       GoodData.logger.debug "POST #{path}, payload: #{payload}"
       ensure_connection
       b = Proc.new { @server[path].post payload, cookies }
-      options[:process] == false ? b.call : process_response(&b)
+      options[:process] == false ? b.call : process_response(options, &b)
     end
 
     # Performs a HTTP DELETE request.
@@ -109,7 +110,7 @@ module GoodData
       GoodData.logger.debug "DELETE #{path}"
       ensure_connection
       b = Proc.new { @server[path].delete cookies }
-      options[:process] == false ? b.call : process_response(&b)
+      options[:process] == false ? b.call : process_response(options, &b)
     end
 
     # Get the cookies associated with the current connection.
