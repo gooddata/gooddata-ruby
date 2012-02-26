@@ -68,7 +68,6 @@ module GoodData
     #
     #   Connection.new(username, password).get '/gdc/projects'
     def get(path, options = {})
-      pp options
       GoodData.logger.debug "GET #{path}"
       ensure_connection
       b = Proc.new { @server[path].get cookies }
@@ -147,19 +146,37 @@ module GoodData
 
       # Make a directory, if needed
       if dir then
-        method = :mkcol
         url = stage_url + STAGE_PATH + dir + '/'
+        method = :get
         GoodData.logger.debug "#{method}: #{url}"
-        RestClient::Request.execute(
-          :method => method,
-          :url => url,
-          :user => @username,
-          :password => @password,
-          :timeout => @options[:timeout],
-          :headers => {
-            :user_agent => GoodData.gem_version_string
-          }
-        )
+        begin
+          # first check if it does exits
+          RestClient::Request.execute(
+            :method => method,
+            :url => url,
+            :user => @username,
+            :password => @password,
+            :timeout => @options[:timeout],
+            :headers => {
+              :user_agent => GoodData.gem_version_string
+            }
+          )
+        rescue RestClient::Exception => e
+          if e.http_code == 404 then
+            method = :mkcol
+            GoodData.logger.debug "#{method}: #{url}"
+            RestClient::Request.execute(
+              :method => method,
+              :url => url,
+              :user => @username,
+              :password => @password,
+              :timeout => @options[:timeout],
+              :headers => {
+                :user_agent => GoodData.gem_version_string
+              }
+            )
+          end
+        end
       end
 
       # Upload the file
@@ -174,6 +191,22 @@ module GoodData
         },
         :payload => File.read(file)
       )
+    end
+
+    def download(what, where)
+      stage_url = DEFAULT_URL.sub(/\./, '-di.')
+      url = stage_url + STAGE_PATH + what
+      File.open(where, 'w') do |f|
+        resp = RestClient::Request.execute({
+          :method => 'GET',
+          :url => url,
+          :user => @username,
+          :password => @password,
+          :timeout => 0
+        }) do |chunk, x, y|
+          f.write chunk
+        end
+      end
     end
 
     private
