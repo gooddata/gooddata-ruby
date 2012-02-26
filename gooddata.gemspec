@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "gooddata"
-  s.version = "0.5.2"
+  s.version = "0.5.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pavel Kolesnikov", "Thomas Watson Steen"]
-  s.date = "2012-02-14"
+  s.date = "2012-02-26"
   s.description = "Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line."
   s.email = "pavel@gooddata.com"
   s.executables = ["igd.rb", "gooddata"]
