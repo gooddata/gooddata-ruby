@@ -142,7 +142,7 @@ module GoodData
     def upload(file, dir = nil)
       ensure_connection
       # We should have followed a link. If it was correct.
-      stage_url = DEFAULT_URL.sub(/\./, '-di.')
+      stage_url = @options[:webdav_server] || @url.sub(/\./, '-di.')
 
       # Make a directory, if needed
       if dir then
@@ -194,7 +194,7 @@ module GoodData
     end
 
     def download(what, where)
-      stage_url = DEFAULT_URL.sub(/\./, '-di.')
+      stage_url = @options[:webdav_server] || @url.sub(/\./, '-di.')
       url = stage_url + STAGE_PATH + what
       File.open(where, 'w') do |f|
         resp = RestClient::Request.execute({
