@@ -149,6 +149,22 @@ module GoodData
       connection.post path, data, options
     end
 
+    # Performs a HTTP PUT request.
+    #
+    # Retuns the JSON response formatted as a Hash object.
+    #
+    # === Parameters
+    #
+    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # * +data+ - The payload data in the format of a Hash object
+    #
+    # === Examples
+    #
+    #   GoodData.put '/gdc/projects', { ... }
+    def put(path, data, options = {})
+      connection.put path, data, options
+    end
+
     # Performs a HTTP DELETE request.
     #
     # Retuns the JSON response formatted as a Hash object.
