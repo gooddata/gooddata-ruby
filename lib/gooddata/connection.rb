@@ -94,6 +94,26 @@ module GoodData
       options[:process] == false ? b.call : process_response(options, &b)
     end
 
+    # Performs a HTTP PUT request.
+    #
+    # Retuns the JSON response formatted as a Hash object.
+    #
+    # === Parameters
+    #
+    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # * +data+ - The payload data in the format of a Hash object
+    #
+    # === Examples
+    #
+    #   Connection.new(username, password).put '/gdc/projects', { ... }
+    def put(path, data, options = {})
+      payload = data.is_a?(Hash) ? data.to_json : data
+      GoodData.logger.debug "PUT #{path}, payload: #{payload}"
+      ensure_connection
+      b = Proc.new { @server[path].put payload, cookies }
+      options[:process] == false ? b.call : process_response(options, &b)
+    end
+
     # Performs a HTTP DELETE request.
     #
     # Retuns the JSON response formatted as a Hash object.
