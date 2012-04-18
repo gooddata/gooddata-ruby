@@ -71,7 +71,7 @@ module GoodData
       GoodData.logger.debug "GET #{path}"
       ensure_connection
       b = Proc.new { @server[path].get cookies }
-      response = (options[:process] == false) ? (b.call) : process_response(options, &b)
+      process_response(options, &b)
     end
 
     # Performs a HTTP POST request.
@@ -91,7 +91,7 @@ module GoodData
       GoodData.logger.debug "POST #{path}, payload: #{payload}"
       ensure_connection
       b = Proc.new { @server[path].post payload, cookies }
-      options[:process] == false ? b.call : process_response(options, &b)
+      process_response(options, &b)
     end
 
     # Performs a HTTP PUT request.
@@ -111,7 +111,7 @@ module GoodData
       GoodData.logger.debug "PUT #{path}, payload: #{payload}"
       ensure_connection
       b = Proc.new { @server[path].put payload, cookies }
-      options[:process] == false ? b.call : process_response(options, &b)
+      process_response(options, &b)
     end
 
     # Performs a HTTP DELETE request.
@@ -129,7 +129,7 @@ module GoodData
       GoodData.logger.debug "DELETE #{path}"
       ensure_connection
       b = Proc.new { @server[path].delete cookies }
-      options[:process] == false ? b.call : process_response(options, &b)
+      process_response(options, &b)
     end
 
     # Get the cookies associated with the current connection.
@@ -276,6 +276,8 @@ module GoodData
         end
         merge_cookies! response.cookies
         content_type = response.headers[:content_type]
+        return response if options[:process] == false
+
         if content_type == "application/json" || content_type == "application/json;charset=UTF-8" then
           result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
           GoodData.logger.debug "Response: #{result.inspect}"
