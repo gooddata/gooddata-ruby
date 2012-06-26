@@ -11,6 +11,27 @@ module GoodData
       end
     end
 
+    def results
+      content["results"]
+    end
+
+    def get_latest_report_definition_uri
+      report_result = get_latest_report_result
+      report_result.content["reportDefinition"]
+    end
+
+    def get_latest_report_definition
+      GoodData::MdObject[get_latest_report_definition_uri]
+    end
+
+    def get_latest_report_result_uri
+      results.last
+    end
+
+    def get_latest_report_result
+      GoodData::MdObject[get_latest_report_result_uri]
+    end
+
     def execute
       # puts "Executing report #{uri}"
       result = GoodData.post '/gdc/xtab2/executor3', {"report_req" => {"report" => uri}}

@@ -74,6 +74,17 @@ module GoodData
     def project
       @project ||= Project[uri.gsub(/\/obj\/\d+$/, '')]
     end
+
+    def get_usedby
+      result = GoodData.get "#{GoodData.project.md['usedby2']}/#{obj_id}"
+      result["entries"]
+    end
+
+    def get_using
+      result = GoodData.get "#{GoodData.project.md['using2']}/#{obj_id}"
+      result["entries"]
+    end
+
   end
 
   class DataSet < MdObject
