@@ -1,5 +1,4 @@
 require 'iconv'
-require 'fastercsv'
 
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
