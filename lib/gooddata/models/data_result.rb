@@ -1,5 +1,3 @@
-require 'fastercsv'
-
 module GoodData
 
   class Row < FasterCSV::Row

@@ -1,6 +1,14 @@
 require 'gooddata/version'
 require 'gooddata/connection'
 
+# fastercsv is built in Ruby 1.9
+if RUBY_VERSION < "1.9"
+  require 'fastercsv'
+else
+  require 'csv'
+  FasterCSV = CSV
+end
+
 # Metadata packages, such as report.rb, require this to be loaded first
 require File.dirname(__FILE__) + '/models/metadata.rb'
 
