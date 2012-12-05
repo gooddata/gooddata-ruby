@@ -1,6 +1,5 @@
 require 'logger'
 require 'tempfile'
-require 'fastercsv'
 
 require 'helper'
 require 'gooddata/model'
