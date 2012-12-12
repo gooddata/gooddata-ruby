@@ -51,7 +51,7 @@ module GoodData::Command
       puts "Enter your GoodData credentials."
       user = ask("Email")
       password = ask("Password", :secret => true)
-      auth_token = ask("Authentication Token")
+      auth_token = ask("Authorization Token")
       { :username => user, :password => password, :auth_token => auth_token }
     end
 
