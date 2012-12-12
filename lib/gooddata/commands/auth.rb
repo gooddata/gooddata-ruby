@@ -2,7 +2,7 @@ module GoodData::Command
   class Auth < Base
     def connect
       unless defined? @connected
-        GoodData.connect user, password, url
+        GoodData.connect user, password, url, :auth_token => auth_token
         @connected = true
       end
       @connected
@@ -21,6 +21,11 @@ module GoodData::Command
     def url
       ensure_credentials
       @credentials[:url]
+    end
+
+    def auth_token
+      ensure_credentials
+      @credentials[:auth_token]
     end
 
     def credentials_file
@@ -46,7 +51,8 @@ module GoodData::Command
       puts "Enter your GoodData credentials."
       user = ask("Email")
       password = ask("Password", :secret => true)
-      { :username => user, :password => password }
+      auth_token = ask("Authorization Token")
+      { :username => user, :password => password, :auth_token => auth_token }
     end
 
     def store

@@ -34,6 +34,8 @@ module GoodData
     TOKEN_PATH = '/gdc/account/token'
     STAGE_PATH = '/uploads/'
 
+    attr_reader(:auth_token)
+
     # Options:
     # * :tries - Number of retries to perform. Defaults to 1.
     # * :on - The Exception on which a retry will be performed. Defaults to Exception, which retries on any Exception.
@@ -67,11 +69,12 @@ module GoodData
     # * +username+ - The GoodData account username
     # * +password+ - The GoodData account password
     def initialize(username, password, url = nil, options = {})
-      @status   = :not_connected
-      @username = username
-      @password = password
-      @url      = url || DEFAULT_URL
-      @options  = options
+      @status     = :not_connected
+      @username   = username
+      @password   = password
+      @url        = url || DEFAULT_URL
+      @auth_token = options.delete(:auth_token)
+      @options    = options
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.
