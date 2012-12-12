@@ -94,7 +94,7 @@ module GoodData
     # @see GoodData.connect
     #
     def connection
-      threaded[:connection] || raise "Please authenticate with GoodData.connect first"
+      threaded[:connection] || raise("Please authenticate with GoodData.connect first")
     end
 
     # Sets the active project

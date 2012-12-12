@@ -7,7 +7,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'gooddata'
 
 # used in test that expect an existing accessible project
-$DEMO_PROJECT = 'ca6a1r1lbfwpt2v05k36nbc0cjpu7lh9'
+$DEMO_PROJECT = 'uhq8dikmtxog8n19jmuqn4gtj3cm2q0t'
 
 class Test::Unit::TestCase
 end
