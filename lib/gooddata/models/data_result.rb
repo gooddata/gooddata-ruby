@@ -138,7 +138,7 @@ module GoodData
         # puts "TABLES ARE OF DIFFERENT SIZES"
         return false
       end
-f
+
       diff(otherDataResult).empty?() ? true : false
 
     end
