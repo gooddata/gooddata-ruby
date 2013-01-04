@@ -31,7 +31,7 @@ module GoodData
       #
       def [](id)
         if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
-          raise ArgumentError.new("wrong type of argument. Should be either project ID or path")
+          raise ArgumentError.new("wrong type of argument (#{id}). Should be either project ID or path")
         end
 
         id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
