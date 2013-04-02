@@ -27,10 +27,10 @@ Gem::Specification.new do |s|
   
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "thoughtbot-shoulda"
-  s.add_development_dependency "parseconfig"
-  s.add_development_dependency "json_pure"
-  s.add_development_dependency "rest-client"
-  s.add_development_dependency "json"
-  s.add_development_dependency "rubyzip"
+  s.add_dependency "parseconfig"
+  s.add_dependency "json_pure"
+  s.add_dependency "rest-client"
+  s.add_dependency "json"
+  s.add_dependency "rubyzip"
 end
 
