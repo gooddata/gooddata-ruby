@@ -8,16 +8,16 @@ module GoodData
     class << self
       def [](id)
         raise "Cannot search for nil #{self.class}" unless id
-        if id.is_a? Integer or id =~ /^\d+$/
-          uri = "#{GoodData.project.md.link(MD_OBJ_CTG)}/#{id}"
+        uri = if id.is_a? Integer or id =~ /^\d+$/
+          "#{GoodData.project.md.link(MD_OBJ_CTG)}/#{id}"
         elsif id !~ /\//
-          uri = identifier_to_uri id
+          identifier_to_uri id
         elsif id =~ /^\//
-          uri = id
+          id
         else
           raise "Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash"
         end
-        self.new((GoodData.get uri).values[0])
+        self.new((GoodData.get uri).values[0]) unless uri.nil?
       end
 
       private
@@ -26,7 +26,11 @@ module GoodData
         raise NoProjectError.new "Connect to a project before searching for an object" unless GoodData.project
         uri      = GoodData.project.md[IDENTIFIERS_CFG]
         response = GoodData.post uri, { 'identifierToUri' => [id ] }
-        response['identifiers'][0]['uri']
+        if response['identifiers'].empty?
+          nil
+        else
+          response['identifiers'][0]['uri']
+        end
       end
     end
 

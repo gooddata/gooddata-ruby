@@ -224,6 +224,8 @@ module GoodData
             )
           end
         end
+      else
+        dir = "."
       end
 
       # Upload the file
