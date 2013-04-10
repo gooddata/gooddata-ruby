@@ -188,6 +188,18 @@ module GoodData
       connection.delete path, options
     end
 
+    def poll(result, key)
+      link = result[key]["link"]["poll"]
+      response = GoodData.get(link, :process => false)
+      while response.code != 204
+        sleep 5
+        GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+          sleep 5
+          response = GoodData.get(link, :process => false)
+        end
+      end
+    end
+
     def test_login
       connection.connect!
       connection.logged_in?
