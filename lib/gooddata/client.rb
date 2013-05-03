@@ -189,7 +189,7 @@ module GoodData
     end
 
     def poll(result, key)
-      link = result[key]["link"]["poll"]
+      link = result[key]["links"]["poll"]
       response = GoodData.get(link, :process => false)
       while response.code != 204
         sleep 5
