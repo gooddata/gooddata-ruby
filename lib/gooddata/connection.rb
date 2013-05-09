@@ -77,6 +77,15 @@ module GoodData
       @url        = url || DEFAULT_URL
       @auth_token = options.delete(:auth_token)
       @options    = options
+
+      @server = RestClient::Resource.new @url,
+        :timeout => @options[:timeout],
+        :headers => {
+          :content_type => :json,
+          :accept => [ :json, :zip ],
+          :user_agent => GoodData.gem_version_string,
+        }
+
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.
@@ -280,14 +289,6 @@ module GoodData
           'remember' => 1
         }
       }
-
-      @server = RestClient::Resource.new @url,
-        :timeout => @options[:timeout],
-        :headers => {
-          :content_type => :json,
-          :accept => [ :json, :zip ],
-          :user_agent => GoodData.gem_version_string,
-        }
 
       GoodData.logger.debug "Logging in..."
       @user = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
