@@ -35,6 +35,8 @@ module GoodData
     STAGE_PATH = '/uploads/'
 
     attr_reader(:auth_token)
+    attr_accessor :status
+
 
     # Options:
     # * :tries - Number of retries to perform. Defaults to 1.
