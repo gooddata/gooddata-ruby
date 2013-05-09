@@ -101,6 +101,7 @@ module GoodData
       server_cookies = options[:cookies]
       connection.merge_cookies!(server_cookies)
       connection.status = :logged_in
+      connection
     end
 
     # Returns the active GoodData connection earlier initialized via
