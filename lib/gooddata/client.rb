@@ -94,10 +94,10 @@ module GoodData
     # * +options+ - :server => optional GD server uri. If nil it secure will be used 
     # * +options+ - :cookies => you can specify a hash of cookies
     # 
-    def create_athenticated_connection(options={})
+    def create_authenticated_connection(options={})
       url = options[:server]
 
-      threaded[:connection] = Connection.new "", "", url, options
+      connect("", "", url, options)
       server_cookies = options[:cookies]
       connection.merge_cookies!(server_cookies)
       connection.status = :logged_in
