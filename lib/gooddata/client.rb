@@ -88,6 +88,21 @@ module GoodData
       threaded[:connection] = Connection.new user, password, url, options
     end
 
+    # This method is aimed at creating an authenticated connection in case you do not hae pass/login but you have SST
+    # === Parameters
+    #
+    # * +options+ - :server => optional GD server uri. If nil it secure will be used 
+    # * +options+ - :cookies => you can specify a hash of cookies
+    # 
+    def create_athenticated_connection(options={})
+      url = options[:server]
+
+      threaded[:connection] = Connection.new "", "", url, options
+      server_cookies = options[:cookies]
+      connection.merge_cookies!(server_cookies)
+      connection.status = :logged_in
+    end
+
     # Returns the active GoodData connection earlier initialized via
     # GoodData.connect call
     #
