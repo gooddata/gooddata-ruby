@@ -9,7 +9,7 @@ module GoodData
       def [](id)
         raise "Cannot search for nil #{self.class}" unless id
         uri = if id.is_a? Integer or id =~ /^\d+$/
-          "#{GoodData.project.md.link(MD_OBJ_CTG)}/#{id}"
+          "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
         elsif id !~ /\//
           identifier_to_uri id
         elsif id =~ /^\//
