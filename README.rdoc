@@ -11,17 +11,17 @@ The best documentation for the GoodData API can be found using these resources:
 
 If you are using bundler. Add 
 
-	gem "gooddata"
+  gem "gooddata"
 
 into Gemfile 
 
 and run 
 
-	bundle install
+  bundle install
 
 If you are using gems just
 
-	gem install gooddata
+  gem install gooddata
 
 === Library usage
 
@@ -30,27 +30,27 @@ In its most simple form GoodData gem just cares about the logging in and jugglin
 
 ==== Authentiacation
 
-	GoodData.connect("login", "pass")
-	
-	# Different server than the usual secure.gooddata.com
-	GoodData.connect("login", "pass", "https://different.server.gooddata.com")
-	
-	# the last argument is passed to underlying RestClient so you can specify other useful stuff there
-	GoodData.connect("login", "pass", "https://different.server.gooddata.com", :timeout => 0)
+  GoodData.connect("login", "pass")
+
+  # Different server than the usual secure.gooddata.com
+  GoodData.connect("login", "pass", "https://different.server.gooddata.com")
+
+  # the last argument is passed to underlying RestClient so you can specify other useful stuff there
+  GoodData.connect("login", "pass", "https://different.server.gooddata.com", :timeout => 0)
 
 ==== Basic requests
 
-	GoodData.get("/gdc/md")
-	
-	# This post will not actually work it is just for the illustration
-	GoodData.post("/gdc/md/#{project_id}", {:my_object => "some_date"})
-	
-	# and the same goes for put delete
-	# By default the response is decoded for you as json but sometimes you do not want that png or other stuff.
-	# you will get the response object and you can query it further
-	response = GoodData.get("/gdc/md", :process => false)
-	response.code == 400
-	pp response.body
+  GoodData.get("/gdc/md")
+
+  # This post will not actually work it is just for the illustration
+  GoodData.post("/gdc/md/#{project_id}", {:my_object => "some_date"})
+
+  # and the same goes for put delete
+  # By default the response is decoded for you as json but sometimes you do not want that png or other stuff.
+  # you will get the response object and you can query it further
+  response = GoodData.get("/gdc/md", :process => false)
+  response.code == 400
+  pp response.body
 
 ==== Loading of data
 
@@ -63,29 +63,29 @@ The API is currently a little fragmented and we never had the guts to actually d
 
 obj is a resource that is probably the oldest in all GoodData. Obj are all the objects that have something to do with the analytical engine (metrics, attributes, reports etc). You can find the docs here (Add link to apiary). There are coule of convenience methods to work with these
 
-	GoodData.connect("svarovsky@gooddata.com", "just_testing")
-	GoodData.project="fill_in_your_project_pid"
-	
-	obj = GoodData::MdObject[obj_number]
-	# bunch of useful methods are defined on these
-	obj.title
-	obj.get_used_by
-	obj.get_using
-	obj.delete
+  GoodData.connect("svarovsky@gooddata.com", "just_testing")
+  GoodData.project="fill_in_your_project_pid"
+
+  obj = GoodData::MdObject[obj_number]
+  # bunch of useful methods are defined on these
+  obj.title
+  obj.get_used_by
+  obj.get_using
+  obj.delete
 
 ==== Working with reports
 Sometimes it is useful to compute reports outside of UI so there are couple of convenience methods for that.
 
-	GoodData.connect("svarovsky@gooddata.com", "just_testing")
-	GoodData.project="fill_in_your_project_pid"
+  GoodData.connect("svarovsky@gooddata.com", "just_testing")
+  GoodData.project="fill_in_your_project_pid"
 
-	report = GoodData::Project[1231]
-	result = report.execute
-	pp result
+  report = GoodData::Project[1231]
+  result = report.execute
+  pp result
 
-	File.open('png.png', 'w') do |f|
-		f.write(rep.export(:png))
-	end
+  File.open('png.png', 'w') do |f|
+  	f.write(rep.export(:png))
+  end
 
 === CLI Usage
 
@@ -121,9 +121,9 @@ To get a list of projects available to your GoodData user account, run:
 
 The output from the above command will look similar to this:
 
-     521  Some project
-    3521  Some other project
-    3642  Some third project
+   521  Some project
+  3521  Some other project
+  3642  Some third project
 
 The first column contains the project-key. You need this if you wan't to either
 see more details about the project using the <tt>projects:show</tt> comamnd or
