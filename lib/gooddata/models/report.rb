@@ -54,15 +54,5 @@ module GoodData
       png
     end
 
-    def execute_report
-      result = GoodData.post '/gdc/xtab2/executor3', {"report_req" => {"report" => uri}}
-      data_result_uri = result["execResult"]["dataResult"]
-      result = GoodData.get data_result_uri
-      while result["taskState"] && result["taskState"]["status"] == "WAIT" do
-         sleep 10
-         result = GoodData.get data_result_uri
-       end
-       data_result_uri
-    end
   end
 end
