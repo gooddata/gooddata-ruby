@@ -33,15 +33,36 @@ module GoodData
     end
 
     def execute
-      # puts "Executing report #{uri}"
       result = GoodData.post '/gdc/xtab2/executor3', {"report_req" => {"report" => uri}}
-      dataResultUri = result["execResult"]["dataResult"]
-      result = GoodData.get dataResultUri
+      data_result_uri = result["execResult"]["dataResult"]
+      result = GoodData.get data_result_uri
       while result["taskState"] && result["taskState"]["status"] == "WAIT" do
          sleep 10
-         result = GoodData.get dataResultUri
+         result = GoodData.get data_result_uri
        end
-       ReportDataResult.new(GoodData.get dataResultUri)
+      ReportDataResult.new(GoodData.get data_result_uri)
+    end
+
+    def export(format)
+      result = GoodData.post('/gdc/xtab2/executor3', {"report_req" => {"report" => uri}})
+      result1 = GoodData.post('/gdc/exporter/executor', {:result_req => {:format => format, :result => result}})
+      png = GoodData.get(result1['uri'], :process => false)
+      while (png.code == 202) do
+        sleep(1)
+        png = GoodData.get(result1['uri'], :process => false)
+      end
+      png
+    end
+
+    def execute_report
+      result = GoodData.post '/gdc/xtab2/executor3', {"report_req" => {"report" => uri}}
+      data_result_uri = result["execResult"]["dataResult"]
+      result = GoodData.get data_result_uri
+      while result["taskState"] && result["taskState"]["status"] == "WAIT" do
+         sleep 10
+         result = GoodData.get data_result_uri
+       end
+       data_result_uri
     end
   end
 end
