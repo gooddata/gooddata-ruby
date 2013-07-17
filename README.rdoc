@@ -76,15 +76,17 @@ obj is a resource that is probably the oldest in all GoodData. Obj are all the o
 ==== Working with reports
 Sometimes it is useful to compute reports outside of UI so there are couple of convenience methods for that.
 
+  require 'pp'
+
   GoodData.connect("svarovsky@gooddata.com", "just_testing")
   GoodData.project="fill_in_your_project_pid"
 
-  report = GoodData::Project[1231]
+  report = GoodData::Report[1231]
   result = report.execute
   pp result
 
   File.open('png.png', 'w') do |f|
-  	f.write(rep.export(:png))
+  	f.write(report.export(:png))
   end
 
 === CLI Usage
