@@ -86,7 +86,21 @@ Sometimes it is useful to compute reports outside of UI so there are couple of c
   pp result
 
   File.open('png.png', 'w') do |f|
-  	f.write(report.export(:png))
+    f.write(report.export(:png))
+  end
+
+You can export even whole dashboards. Currently afaik reports can be exported either as xls and png and dashboards as pdf. Hopefully it will support more in the future.
+
+  dash = GoodData::Dashboard[33807]
+  File.open('dash.pdf', 'w') do |f|
+    f.write(dash.export(:pdf))
+  end
+
+You can specify which tab to export. By default it is the first
+
+  dash = GoodData::Dashboard[33807]
+  File.open('dash.pdf', 'w') do |f|
+    f.write(dash.export(:pdf, :tab => dash.tabs_ids.last))
   end
 
 === CLI Usage
