@@ -1,5 +1,3 @@
-require 'iconv'
-
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
 # elements, including the server-side data model.
@@ -51,8 +49,7 @@ module GoodData
       end
 
       def to_id(str)
-        Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
-                .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
+        str.encode("utf-8", :invalid => :replace, :undef => :replace, :replace => "?")
       end
     end
 
@@ -238,7 +235,7 @@ module GoodData
       end
 
       # Generates the SLI manifest describing the data loading
-      # 
+      #
       def to_manifest(mode)
         {
           'dataSetSLIManifest' => {
