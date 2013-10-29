@@ -88,6 +88,16 @@ module GoodData
       threaded[:connection] = Connection.new user, password, url, options
     end
 
+    # Hepler for starting with SST easier
+    # === Parameters
+    #
+    # * +token+ - SST token
+    # * +options+ - options get routed to connect eventually so everything that you can use there should be possible to use here.
+    #
+    def connect_with_sst(token, options={})
+      create_authenticated_connection(options.merge({:cookies => {"GDCAuthSST" => token}}))
+    end
+
     # This method is aimed at creating an authenticated connection in case you do not hae pass/login but you have SST
     # === Parameters
     #
