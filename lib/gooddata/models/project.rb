@@ -69,6 +69,75 @@ module GoodData
       end
     end
 
+    # Clone a project
+    # Expected keys in options:
+    # - :project_name (mandatory)
+    # - :with_users
+    # - :with_data
+    def clone_project(pid, options)
+      project_name = options[:project_name]
+      fail "project name has to be filled in" if project_name.blank?
+      with_users = options[:with_users]
+      with_data = options[:with_data]
+
+      export = {
+        :exportProject => {
+          :exportUsers => with_users ? 1 : 0,
+          :exportData => with_data ? 1 : 0,
+        }
+      }
+
+      result = GoodData.post("/gdc/md/#{pid}/maintenance/export", export)
+      token = result["exportArtifact"]["token"]
+      status_url = result["exportArtifact"]["status"]["uri"]
+
+      state = GoodData.get(status_url)["taskState"]["status"]
+      while state == "RUNNING"
+        sleep 5
+        result = GoodData.get(status_url)
+        state = result["taskState"]["status"]
+      end
+
+      old_project = GoodData::Project[pid]
+
+      pr = {
+        :project => {
+          :content => {
+            :guidedNavigation => 1,
+            :driver => "Pg",
+            :authorizationToken => options[:token]
+          },
+          :meta => {
+            :title => project_name,
+            :summary => "Testing Project"
+          }
+        }
+      }
+      result = GoodData.post("/gdc/projects/", pr)
+      uri = result["uri"]
+      while(GoodData.get(uri)["project"]["content"]["state"] == "LOADING")
+        sleep(5)
+      end
+
+      new_project = GoodData::Project[uri]
+
+      import = {
+        :importProject => {
+          :token => token
+        }
+      }
+
+      result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
+      status_url = result["uri"]
+      state = GoodData.get(status_url)["taskState"]["status"]
+      while state == "RUNNING"
+        sleep 5
+        result = GoodData.get(status_url)
+        state = result["taskState"]["status"]
+      end
+      new_project.obj_id
+    end
+
     def initialize(json)
       @json = json
     end
