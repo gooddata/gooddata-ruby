@@ -49,7 +49,11 @@ module GoodData
       end
 
       def to_id(str)
-        str.encode("US-ASCII", :invalid => :replace, :undef => :replace, :replace => "") \
+        str
+        .tr( # Transliteration is not natively available in ruby-- this will remove diacratics from most characters -- From https://gist.github.com/jpmckinney/1374687#file-remove-accents-rb
+          "ÀÁÂÃÄÅàáâãäåĀāĂăĄąÇçĆćĈĉĊċČčÐðĎďĐđÈÉÊËèéêëĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħÌÍÎÏìíîïĨĩĪīĬĭĮįİıĴĵĶķĸĹĺĻļĽľĿŀŁłÑñŃńŅņŇňŉŊŋÒÓÔÕÖØòóôõöøŌōŎŏŐőŔŕŖŗŘřŚśŜŝŞşŠšſŢţŤťŦŧÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųŴŵÝýÿŶŷŸŹźŻżŽž",
+          "AAAAAAaaaaaaAaAaAaCcCcCcCcCcDdDdDdEEEEeeeeEeEeEeEeEeGgGgGgGgHhHhIIIIiiiiIiIiIiIiIiJjKkkLlLlLlLlLlNnNnNnNnnNnOOOOOOooooooOoOoOoRrRrRrSsSsSsSssTtTtTtUUUUuuuuUuUuUuUuUuUuWwYyyYyYZzZzZz")
+          .encode("US-ASCII", :invalid => :replace, :undef => :replace, :replace => "") \
           .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
       end
     end
