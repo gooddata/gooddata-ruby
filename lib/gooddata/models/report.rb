@@ -1,6 +1,8 @@
 module GoodData
   class Report < GoodData::MdObject 
 
+    root_key :report
+
     class << self
       def [](id)
         if id == :all
@@ -9,7 +11,50 @@ module GoodData
           super
         end
       end
+            
+      def create(options={})
+        title = options[:title]
+        summary = options[:summary] || ""
+        rd = options[:rd] || ReportDefinition.create(:top => options[:top], :left => options[:left])
+        rd.save
+
+        report = Report.new({
+           "report" => {
+              "content" => {
+                 "domains" => [],
+                 "definitions" => [rd.uri]
+              },
+              "meta" => {
+                 "tags" => "",
+                 "deprecated" => "0",
+                 "summary" => summary,
+                 "title" => title
+              }
+           }
+        })        
+      end
     end
+
+# ----
+
+    def title=(a_title)
+      @json["report"]["meta"]["title"] = a_title
+    end
+
+    def summary=(a_summary)
+      @json[:report][:meta][:summary] = a_summary
+    end
+
+    def add_definition(a_definition)
+      @json[:report][:content][:definitions] << a_definition
+    end
+    
+    def to_json(options={})
+      JSON.pretty_generate(@json, options)
+    end
+# ----
+
+
 
     def results
       content["results"]

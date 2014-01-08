@@ -6,6 +6,10 @@ module GoodData
     IDENTIFIERS_CFG = 'instance-identifiers'
 
     class << self
+      def root_key(a_key)
+        define_method :root_key, Proc.new { a_key.to_s}
+      end
+      
       def [](id)
         raise "Cannot search for nil #{self.class}" unless id
         uri = if id.is_a? Integer or id =~ /^\d+$/
@@ -17,7 +21,16 @@ module GoodData
         else
           raise "Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash"
         end
-        self.new((GoodData.get uri).values[0]) unless uri.nil?
+        self.new(GoodData.get uri) unless uri.nil?
+      end
+
+      def find_by_tag(tag)
+        self[:all].find_all {|r| r["tags"].split(",").include?(tag)}
+      end
+
+      def find_first_by_title(title)
+        item = self[:all].find {|r| r["title"] == title}
+        self[item["link"]]
       end
 
       private
@@ -39,8 +52,7 @@ module GoodData
     end
 
     def delete
-      raise "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
-      GoodData.delete @json['links']['self']
+      GoodData.delete(uri)
     end
 
     def obj_id
@@ -48,11 +60,15 @@ module GoodData
     end
 
     def links
-      @json['links']
+      data['links']
     end
 
     def uri
       meta['uri']
+    end
+
+    def browser_uri
+      GoodData.connection.url + meta['uri']
     end
 
     def identifier
@@ -67,12 +83,28 @@ module GoodData
       meta['summary']
     end
 
+    def title=(a_title)
+      data["meta"]["title"] = a_title
+    end
+
+    def summary=(a_summary)
+      data["meta"]["summary"] = a_summary
+    end
+
+    def tags
+      data["meta"]["tags"]
+    end
+
+    def tags=(list_of_tags)
+      data["meta"]["tags"] = tags
+    end
+
     def meta
-      @json['meta']
+      data['meta']
     end
 
     def content
-      @json['content']
+      data['content']
     end
 
     def project
@@ -89,21 +121,41 @@ module GoodData
       result["entries"]
     end
 
-  end
-
-  class DataSet < MdObject
-    SLI_CTG = 'singleloadinterface'
-    DS_SLI_CTG = 'dataset-singleloadinterface'
-
-    def sli_enabled?
-      content['mode'] == 'SLI'
+    def to_json
+      @json.to_json
     end
 
-    def sli
-      raise NoProjectError.new "Connect to a project before searching for an object" unless GoodData.project
-      slis = GoodData.project.md.links(Model::LDM_CTG).links(SLI_CTG)[DS_SLI_CTG]
-      uri = slis[identifier]['link']
-      MdObject[uri]
+    def raw_data
+      @json
+    end
+
+    def data
+      raw_data[root_key]
+    end
+
+    def saved?
+      !!uri
+    end
+
+    def save
+      fail("Validation failed") unless validate
+
+      if saved?
+        GoodData.put(uri, to_json)
+      else
+        result = GoodData.post(GoodData.project.md['obj'], to_json)
+        saved_object = self.class[result["uri"]]
+        @json = saved_object.raw_data
+      end
+      self
+    end
+
+    def ==(other)
+      other.uri == uri
+    end
+
+    def validate
+      true
     end
   end
 end

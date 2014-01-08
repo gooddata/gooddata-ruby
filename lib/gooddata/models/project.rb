@@ -1,4 +1,4 @@
-require 'zip/zip'
+require 'zip'
 require 'fileutils'
 
 module GoodData
@@ -18,7 +18,7 @@ module GoodData
       def all
         json = GoodData.get GoodData.profile.projects
         json['projects'].map do |project|
-          Project.new project['project']
+          Project.new project
         end
       end
 
@@ -29,6 +29,7 @@ module GoodData
       #  - <id>
       #
       def [](id)
+        return id if id.respond_to?(:is_project?) && id.is_project?
         if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
           raise ArgumentError.new("wrong type of argument. Should be either project ID or path")
         end
@@ -36,7 +37,7 @@ module GoodData
         id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
         response = GoodData.get PROJECT_PATH % id
-        Project.new response['project']
+        Project.new response
       end
 
       # Create a project from a given attributes
@@ -45,26 +46,32 @@ module GoodData
       # - :summary
       # - :template (default /projects/blank)
       #
-      def create(attributes)
+      def create(attributes, &block)
         GoodData.logger.info "Creating project #{attributes[:title]}"
 
         auth_token = attributes.delete(:auth_token) || GoodData.connection.auth_token
 
-        json = {
-          'meta' => {
-            'title' => attributes[:title],
-            'summary' => attributes[:summary]
-          },
-          'content' => {
-            # 'state' => 'ENABLED',
-            'guidedNavigation' => 1,
-            'authorizationToken' => auth_token
+        json = {:project =>
+          {
+            'meta' => {
+              'title' => attributes[:title],
+              'summary' => attributes[:summary] || "No summary"
+            },
+            'content' => {
+              'guidedNavigation' => 1,
+              'authorizationToken' => auth_token,
+              "driver" => "Pg"
+            }
           }
         }
-
         json['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
         project.save
+        if block
+          GoodData::with_project(project) do |p|
+            block.call(p)
+          end
+        end
         project
       end
     end
@@ -74,20 +81,29 @@ module GoodData
     end
 
     def save
-      response = GoodData.post PROJECTS_PATH, { 'project' => @json }
+      response = GoodData.post PROJECTS_PATH, raw_data
       if uri == nil
         response = GoodData.get response['uri']
-        @json = response['project']
+        @json = response
       end
     end
 
     def delete
       raise "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
-      GoodData.delete @json['links']['self']
+      GoodData.delete data['links']['self']
     end
 
     def uri
-      @json['links']['self'] if @json['links'] && @json['links']['self']
+      data['links']['self'] if data && data['links'] && data['links']['self']
+    end
+
+    def browser_uri(options={})
+      ui = options[:ui]
+      if ui
+        GoodData.connection.url + "#s=" + uri
+      else
+        GoodData.connection.url + uri
+      end
     end
 
     def obj_id
@@ -95,15 +111,15 @@ module GoodData
     end
 
     def title
-      @json['meta']['title'] if @json['meta']
+      data['meta']['title'] if data['meta']
     end
 
     def state
-      @json['content']['state'].downcase.to_sym if @json['content'] && @json['content']['state']
+      data['content']['state'].downcase.to_sym if data['content'] && data['content']['state']
     end
 
     def md
-      @md ||= Links.new GoodData.get(@json['links']['metadata'])
+      @md ||= Links.new GoodData.get(data['links']['metadata'])
     end
 
     # Creates a data set within the project
@@ -112,11 +128,34 @@ module GoodData
     # p.add_dataset 'Test', [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
     # p.add_dataset 'title' => 'Test', 'columns' => [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
     #
-    def add_dataset(schema, columns = nil)
-      schema = { 'title' => schema, 'columns' => columns } if columns
-      schema = Model::Schema.new schema if schema.is_a? Hash
-      raise ArgumentError.new("Required either schema object or title plus columns array") unless schema.is_a? Model::Schema
-      Model.add_schema schema, self
+    def add_dataset(schema_def, columns = nil, &block)
+      schema = if block
+        builder = block.call(Model::SchemaBuilder.new(schema_def))
+        builder.to_schema
+      else
+        sch = { :title => schema_def, :columns => columns } if columns
+        sch = Model::Schema.new schema_def if schema_def.is_a? Hash
+        sch = schema_def if schema_def.is_a?(Model::Schema)
+        raise ArgumentError.new("Required either schema object or title plus columns array") unless schema_def.is_a? Model::Schema
+        sch
+      end
+      Model.add_schema(schema, self)
+    end
+
+    def add_metric(options={})
+      expression = options[:expression] || fail("Metric has to have its expression defined")
+      m1 = GoodData::Metric.create(options)
+      m1.save
+    end
+
+    def add_report(options={})
+      rep = GoodData::Report.create(options)
+      rep.save
+    end
+
+    def add_dashboard(options={})
+      dash = GoodData::Dashboard.create(options)
+      dash.save
     end
 
     def upload(file, schema, mode = "FULL")
@@ -124,7 +163,7 @@ module GoodData
     end
 
     def slis
-      link = "#{@json['links']['metadata']}#{SLIS_PATH}"
+      link = "#{data['links']['metadata']}#{SLIS_PATH}"
       Metadata.new GoodData.get(link)
     end
 
@@ -132,12 +171,25 @@ module GoodData
       datasets_uri  = "#{md['data']}/sets"
       response      = GoodData.get datasets_uri
       response['dataSetsInfo']['sets'].map do |ds|
-        DataSet.new ds
+        DataSet[ds["meta"]["uri"]]
       end
     end
 
-    def to_json
+    def raw_data
       @json
     end
+
+    def data
+      raw_data["project"]
+    end
+
+    def to_json
+      raw_data.to_json
+    end
+
+    def is_project?
+      true
+    end
+
   end
 end

@@ -1,13 +1,253 @@
 #!/usr/bin/env ruby
-
-require 'logger'
-
+require 'gli'
 require 'gooddata'
-require 'gooddata/command'
+require 'highline/import'
+require 'gooddata/commands/projects'
 
-args = ARGV.dup
-ARGV.clear
-command = args.shift.strip rescue 'help'
+include GLI::App
 
-GoodData.logger = Logger.new(STDOUT) if ENV['DEBUG']
-GoodData::Command.run command, args
+program_desc 'GoodData Ruby gem - a wrapper over GoodData API and several useful abstractions to make your everyday usage of GoodData easier.'
+
+version GoodData::VERSION
+
+desc 'GoodData user name'
+default_value nil
+arg_name 'gooddata-login'
+flag [:U,:username]
+
+desc 'GoodData password'
+default_value nil
+arg_name 'gooddata-password'
+flag [:P,:password]
+
+desc 'Project pid'
+default_value nil
+arg_name 'project-id'
+flag [:p,:project_id]
+
+desc 'Server'
+default_value nil
+arg_name 'server'
+flag [:s,:server]
+
+desc 'WEBDAV Server. Used for uploads of files'
+default_value nil
+arg_name 'web dav server'
+flag [:w,:webdav_server]
+
+
+desc 'Verbose mode'
+arg_name 'verbose'
+switch [:v,:verbose]
+
+desc 'Describe list here'
+arg_name 'Describe arguments to list here'
+command :process do |c|
+
+  c.desc 'Use when you need to redeploy a process'
+  c.default_value nil
+  c.flag :process_id
+
+  c.desc 'Specify directory for deployment'
+  c.default_value nil
+  c.flag :dir
+
+  c.action do |global_options,options,args|
+    require 'gooddata/commands/process'
+    options = options.merge(global_options)
+
+    case args.first
+    when "list"
+      pp GoodData::Command::Process.list(options)
+    when "get"
+      pp GoodData::Command::Process.get(options)
+    when "deploy"
+      GoodData::Command::Process.deploy_graph(options[:dir], options)
+    end
+  end
+end
+
+desc 'Some basic API stuff directly from CLI'
+arg_name 'info|test|get|delete'
+command :api do |c|
+
+  c.action do |global_options,options,args|
+    require 'gooddata/commands/api'
+    options = options.merge(global_options)
+
+    case args.first
+    when "list", "index", "info"
+      pp GoodData::Command::Api.info
+    when "get"
+      pp GoodData::Command::Api.get(args[1])
+    when "deploy"
+      GoodData::Command::Api.deploy_graph(options[:dir], options)
+    end
+  end
+end
+
+
+desc 'Describe add here'
+arg_name 'show'
+command :profile do |c|
+  c.action do |global_options, options, args|
+    require 'gooddata/commands/profile'
+    
+    case args.first
+    when "show"
+      pp GoodData::Command::Profile.show()
+    else
+      raise "command provided not right"
+    end
+  end
+end
+
+desc 'Scaffold things'
+arg_name 'show'
+command :scaffold do |c|
+  c.action do |global_options, options, args|
+    require 'gooddata/commands/scaffold'
+    case args.first
+    when "brick"
+      pp GoodData::Command::Scaffold.brick(args[1])
+    else
+      raise "command provided not right"
+    end
+  end
+end
+
+desc 'Manage your projects'
+arg_name 'project_command'
+command :project do |c|
+
+  c.command :list do |list|
+    list.action do |global_options,options,args|
+      list = GoodData::Command::Projects.list()
+      puts list.map {|p| [p.uri, p.title].join(",")}
+    end
+  end
+
+  c.command :create do |create|
+    create.action do |global_options,options,args|
+      title = ask "Project name"
+      summary = ask("Project summary") { |q| q.default = "" }
+      template = ask("Project template")
+      token = ask("token")
+      
+      project = GoodData::Command::Projects.create({
+        :title => title,
+        :summary => summary,
+        :template => template,
+        :token => token
+      })
+      puts "Project '#{project.title}' with id #{project.uri} created successfully!"
+    end
+  end
+
+  c.command :delete do |delete|
+    delete.action do |global_options,options,args|
+      id = global_options[:project_id]
+      GoodData::Command::Projects.delete(id)
+    end
+  end
+
+  c.command :clone do |clone|
+    clone.desc 'Name of the new project'
+    clone.default_value nil
+    clone.arg_name 'cloned_project_name'
+    clone.flag [:n, :name]
+
+    clone.desc 'Token of the new project'
+    clone.default_value nil
+    clone.arg_name 'token'
+    clone.flag [:t, :token]
+
+    clone.action do |global_options,options,args|
+      id = global_options[:project_id]
+      name = options[:name]
+      token = options[:token]
+      GoodData::Command::Projects.clone(id, :name => name, :token => token)
+    end
+  end
+
+  c.command :show do |show|
+    show.action do |global_options,options,args|
+      id = global_options[:project_id]
+      p = GoodData::Command::Projects.show(id)
+      pp p.data
+    end
+  end
+
+end
+
+desc 'Run bricks locally'
+# arg_name 'show'
+command :run_ruby do |c|
+
+  c.desc 'Directory of the ruby brick'
+  c.default_value nil
+  c.flag [:d, :dir]
+
+  c.desc 'Project id for which you would like to run the script'
+  c.default_value nil
+  c.flag [:p, :project, :project_id, :project_pid]
+
+  c.desc 'Log file. If empty STDOUT will be used instead'
+  c.default_value nil
+  c.flag [:l, :logger]
+
+  c.desc 'Params file path. Inside should be hash of key values'
+  c.default_value nil
+  c.flag [:params]
+
+  c.desc 'Run on remote machine'
+  c.switch [:r, :remote]
+
+  c.desc 'Name of the deployed process'
+  c.default_value nil
+  c.flag [:n, :name]
+  
+
+  c.action do |global_options, options, args|
+
+    opts = options.merge(global_options).merge({:project_id => options[:project], "project_id" => options[:project], :type => "RUBY"})
+
+    if options[:remote]
+      require 'gooddata/commands/process'
+      GoodData::Command::Process.run(options[:dir], opts) do
+        puts "would run"
+      end
+    else
+      require 'gooddata/commands/runners'
+      GoodData::Command::Runners.run_ruby(options[:dir], options)
+    end
+  end
+end
+
+pre do |global,command,options,args|
+  require 'logger'
+  GoodData.logger = Logger.new(STDOUT)
+  GoodData.connect(global[:username] || "svarovsky@gooddata.com", global[:password] || "MamaSlaVcera77", global[:server], global.merge(options))
+  # Pre logic here
+  # Return true to proceed; false to abort and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  true
+end
+
+post do |global,command,options,args|
+  # Post logic here
+  # Use skips_post before a command to skip this
+  # block on that command only
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  # binding.pry
+  pp exception.backtrace
+  pp exception
+  true
+end
+exit run(ARGV)

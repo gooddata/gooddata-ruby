@@ -1,4 +1,5 @@
 require 'iconv'
+require 'open-uri'
 
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
@@ -35,8 +36,9 @@ module GoodData
     BEGINNING_OF_TIMES = Date.parse('1/1/1900')
 
     class << self
-      def add_dataset(title, columns, project = nil)
-        add_schema Schema.new('columns' => columns, 'title' => title), project
+      def add_dataset(name, columns, project = nil)
+          Schema.new('columns' => columns, 'title' => title)
+        add_schema(schema , project)
       end
 
       def add_schema(schema, project = nil)
@@ -56,6 +58,270 @@ module GoodData
       end
     end
 
+    class ProjectBuilder
+
+      attr_reader :title, :datasets, :reports, :metrics, :uploads, :users, :assert_report
+
+      class << self
+        
+        def create(title, options={}, &block)
+          pb = ProjectBuilder.new(title)
+          block.call(pb)
+          pb
+        end
+        
+      end
+
+      def initialize(title)
+        @title = title
+        @datasets = []
+        @reports = []
+        @assert_tests = []
+        @metrics = []
+        @uploads = []
+        @users = []
+        @dashboards = []
+      end
+
+      def add_dataset(title, &block)
+        builder = GoodData::Model::SchemaBuilder.new(title)
+        block.call(builder)
+        @datasets << builder.to_hash
+      end
+
+      def add_report(title, options={})
+        @reports << {:title => title}.merge(options)
+      end
+
+      def add_metric(title, options={})
+        @metrics << {:title => title}.merge(options)
+      end
+
+      def add_dashboard(title, &block)
+        db = DashboardBuilder.new(title)
+        block.call(db)
+        @dashboards << db.to_hash
+      end
+
+      def load_metrics(file)
+        new_metrics = JSON.parse(open(file).read, :symbolize_names => true)
+        @metrics = @metrics + new_metrics
+      end
+
+      def load_datasets(file)
+        new_metrics = JSON.parse(open(file).read, :symbolize_names => true)
+        @datasets = @datasets + new_metrics
+      end
+
+      def assert_report(report, result)
+        @assert_tests << {:report => report, :result => result}
+      end
+
+      def upload(data, options={})
+        mode = options[:mode] || "FULL"
+        dataset = options[:dataset]
+        @uploads << {
+          :source => data,
+          :mode => mode,
+          :dataset => dataset
+        }
+      end
+
+      def to_json
+        JSON.pretty_generate(to_hash)
+      end
+
+      def to_hash
+        {
+          :title => @title,
+          :datasets => @datasets,
+          :uploads => @uploads,
+          :dashboards => @dashboards,
+          :metrics => @metrics,
+          :reports => @reports,
+          :users => @users,
+          :assert_tests => @assert_tests
+        }
+      end
+
+    end
+
+    class DashboardBuilder
+      
+      def initialize(title)
+        @title = title
+        @tabs = []
+      end
+
+      def add_tab(tab, &block)
+        tb = TabBuilder.new(tab)
+        block.call(tb)
+        @tabs << tb
+        tb
+      end
+
+      def to_hash
+        {
+          :title => @title,
+          :tabs => @tabs.map{|tab| tab.to_hash}
+        }
+      end
+    end
+
+    class TabBuilder
+      
+      def initialize(title)
+        @title = title
+        @stuff = []
+      end
+
+      def add_report(options={})
+        @stuff << {:type => :report}.merge(options)
+      end
+
+      def to_hash
+        {
+          :title => @title,
+          :items => @stuff
+        }
+      end
+
+    end
+
+    class SchemaBuilder
+
+      def initialize(title=nil)
+        @title = title
+        @columns = []
+      end
+
+      def title=(a_title)
+        @title = a_title
+      end
+
+      def add_column(column_def)
+        @columns.push(column_def)
+        self
+      end
+
+      def add_anchor(name, options={})
+        add_column({ :type => :anchor, :name => name}.merge(options))
+        self
+      end
+
+      def add_attribute(name, options={})
+        add_column({ :type => :attribute, :name => name}.merge(options))
+        self
+      end
+
+      def add_fact(name, options={})
+        add_column({ :type => :fact, :name => name}.merge(options))
+        self
+      end
+
+      def add_date_ref
+        
+      end
+
+      def add_ref
+        
+      end
+
+      def to_schema
+        Schema.new({
+          :title => @title,
+          :columns => @columns
+        })
+      end
+
+      def to_json
+        JSON.pretty_generate({
+          :title => @title,
+          :columns => @columns
+        })
+      end
+
+      def to_hash
+        {
+          :title => @title,
+          :columns => @columns
+        }
+      end
+    end
+
+    class ProjectCreator
+      
+      class << self
+        def migrate(options={})
+          spec = options[:spec] || fail("You need to provide spec for migration")
+          spec = spec.to_hash
+          project = options[:project]
+          new_project = GoodData::Project.create(:title => spec[:title], :auth_token => "INTNA000000GDPM")
+
+          begin
+            GoodData.with_project(new_project) do |p|
+              migrate_datasets(p, spec[:datasets])
+              load(p, spec)
+              migrate_metrics(p, spec[:metrics])
+              migrate_reports(p, spec[:reports])
+              migrate_dashboards(p, spec[:dashboards])
+              migrate_users(p, spec[:users])
+              execute_tests(p, spec[:assert_tests])
+              p
+            end
+          # rescue RuntimeError => e
+          #   new_project.delete
+          #   GoodData::Project[project]
+          end
+        end
+        
+        def migrate_datasets(project, spec)
+          spec.each do |ds|
+            project.add_dataset(GoodData::Model::Schema.new(ds))
+          end
+        end
+
+        def migrate_reports(project, spec)
+          spec.each do |report|
+            project.add_report(report)
+          end
+        end
+
+        def migrate_dashboards(project, spec)
+          spec.each do |dash|
+            project.add_dashboard(dash)
+          end
+        end
+
+        def migrate_metrics(project, spec)
+          spec.each do |metric|
+            project.add_metric(metric)
+          end
+        end
+
+        def migrate_users(project, spec)
+          puts "would migrate"
+        end
+
+        def load(project, spec)
+          spec[:uploads].each do |load|
+            schema = GoodData::Model::Schema.new(spec[:datasets].detect {|d| d[:title] == load[:dataset]})
+            project.upload(load[:source], schema, load[:mode])
+          end
+            
+        end
+
+        def execute_tests(project, spec)
+          spec.each do |assert|
+            result = GoodData::ReportDefinition.execute(assert[:report])
+            fail "Test did not pass. Got #{result.table.inspect}, expected #{assert[:result].inspect}" if result.table != assert[:result]
+          end
+        end
+
+      end
+      
+    end
+    
     class MdObject
       attr_accessor :name, :title
 
@@ -99,50 +365,54 @@ module GoodData
         @references = {}
         @labels = []
 
-        config['title'] = title unless config['title']
-        raise 'Schema name not specified' unless config['title']
-        self.title = config['title']
+        config[:title] = title unless config[:title]
+        fail 'Schema name not specified' unless config[:title]
+        self.title = config[:title]
         self.config = config
       end
 
-      def transform_header(headers)
-        result = fields.reduce([]) do |memo, f|
-          val = f.to_csv_header(headers)
-          memo << val unless val === SKIP_FIELD
-          memo
-        end
-        result.flatten
-      end
-
-      def transform_row(headers, row)
-        result = fields.reduce([]) do |memo, f|
-          val = f.to_csv_data(headers, row)
-          memo << val unless val === SKIP_FIELD
-          memo
-        end
-        result.flatten
-      end
+      # def transform_header(headers)
+      #   result = fields.reduce([]) do |memo, f|
+      #     val = f.to_csv_header(headers)
+      #     memo << val unless val === SKIP_FIELD
+      #     memo
+      #   end
+      #   result.flatten
+      # end
+      # 
+      # def transform_row(headers, row)
+      #   result = fields.reduce([]) do |memo, f|
+      #     val = f.to_csv_data(headers, row)
+      #     memo << val unless val === SKIP_FIELD
+      #     memo
+      #   end
+      #   result.flatten
+      # end
 
       def config=(config)
-        config['columns'].each do |c|
-          case c['type']
-          when 'ATTRIBUTE'
+        config[:columns].each do |c|
+          case c[:type].to_s
+          when "attribute"
             add_attribute c
-          when 'FACT'
+          when "fact"
             add_fact c
-          when 'DATE'
+          when "date"
             add_date c
-          when 'CONNECTION_POINT'
+          when "anchor"
             set_connection_point c
-          when 'LABEL'
+          when "label"
             add_label c
-          when 'REFERENCE'
+          when "reference"
             add_reference c
           else
-            fail "Unexpected type #{c['type']} in #{c.inspect}"
+            fail "Unexpected type #{c[:type]} in #{c.inspect}"
           end
         end
         @connection_point = RecordsOf.new(nil, self) unless @connection_point
+      end
+
+      def title
+        @title
       end
 
       def title=(title)
@@ -150,7 +420,9 @@ module GoodData
         @title = title
       end
 
-      def type_prefix ; 'dataset' ; end
+      def type_prefix
+        'dataset'
+      end
 
       ##
       # Underlying fact table name
@@ -199,27 +471,39 @@ module GoodData
         folders_maql + "\n" + maql + "SYNCHRONIZE {#{identifier}};\n"
       end
 
-      # Load given file into a data set described by the given schema
-      #
       def upload(path, project = nil, mode = "FULL")
+        if path =~ URI::regexp
+          Tempfile.open('remote_file') do |temp|
+            temp << open(path).read
+            temp.flush
+            upload_data(temp, project, mode)
+          end
+        else
+          upload_data(path, project, mode)
+        end
+      end
+
+      # Load given file into a data set described by the given schema
+      def upload_data(path, project = nil, mode = "FULL")
         path = path.path if path.respond_to? :path
-        header = nil
+
+        inline_data = path.is_a?(String) ? false : true
+
         project = GoodData.project unless project
 
         # create a temporary zip file
         dir = Dir.mktmpdir
-        Zip::ZipFile.open("#{dir}/upload.zip", Zip::ZipFile::CREATE) do |zip|
+        Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
           # TODO make sure schema columns match CSV column names
           zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(to_manifest(mode)) }
-          zip.get_output_stream('data.csv') do |f|
-            FasterCSV.foreach(path, :headers => true, :return_headers => true) do |row|
-              output = if row.header_row?
-                transform_header(row)
-              else
-                transform_row(header, row)
+          if inline_data
+            zip.get_output_stream('data.csv') do |f|
+              path.each do |row|
+                f.puts row.to_csv
               end
-              f.puts output.to_csv
             end
+          else
+            zip.add('data.csv', path)
           end
         end
 
@@ -234,6 +518,7 @@ module GoodData
         while (GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "RUNNING" || GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "PREPARED") do
           sleep 30
         end
+        fail "Load Failed" if (GoodData.get(task["pullTask"]["uri"])["taskStatus"] == "ERROR")
         puts "Done loading"
       end
 
@@ -323,9 +608,9 @@ module GoodData
 
       def initialize(hash, schema)
         raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
-        @name    = hash['name'] || raise("Data set fields must have their names defined")
-        @title   = hash['title'] || hash['name']
-        @folder  = hash['folder']
+        @name    = hash[:name] || raise("Data set fields must have their names defined")
+        @title   = hash[:title] || hash[:name]
+        @folder  = hash[:folder]
         @schema  = schema
       end
 
@@ -749,7 +1034,6 @@ module GoodData
     end
 
     class DateDimension < MdObject
-
       def to_maql_create
         # urn:chefs_warehouse_fiscal:date
         maql = ""

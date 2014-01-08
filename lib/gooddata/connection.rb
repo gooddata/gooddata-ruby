@@ -34,7 +34,7 @@ module GoodData
     TOKEN_PATH = '/gdc/account/token'
     STAGE_PATH = '/uploads/'
 
-    attr_reader(:auth_token)
+    attr_reader(:auth_token, :url)
     attr_accessor :status
 
 
@@ -78,14 +78,8 @@ module GoodData
       @auth_token = options.delete(:auth_token)
       @options    = options
 
-      @server = RestClient::Resource.new @url,
-        :timeout => @options[:timeout],
-        :headers => {
-          :content_type => :json,
-          :accept => [ :json, :zip ],
-          :user_agent => GoodData.gem_version_string,
-        }
-
+      @server = create_server_connection(@url, @options)
+      
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.
@@ -106,7 +100,7 @@ module GoodData
     #
     #   Connection.new(username, password).get '/gdc/projects'
     def get(path, options = {})
-      GoodData.logger.debug "GET #{path}"
+      GoodData.logger.debug "GET #{@server}#{path}"
       ensure_connection
       b = Proc.new { @server[path].get cookies }
       process_response(options, &b)
@@ -126,7 +120,7 @@ module GoodData
     #   Connection.new(username, password).post '/gdc/projects', { ... }
     def post(path, data, options = {})
       payload = data.is_a?(Hash) ? data.to_json : data
-      GoodData.logger.debug "POST #{path}, payload: #{payload}"
+      GoodData.logger.debug "POST #{@server}#{path}, payload: #{payload}"
       ensure_connection
       b = Proc.new { @server[path].post payload, cookies }
       process_response(options, &b)
@@ -146,7 +140,7 @@ module GoodData
     #   Connection.new(username, password).put '/gdc/projects', { ... }
     def put(path, data, options = {})
       payload = data.is_a?(Hash) ? data.to_json : data
-      GoodData.logger.debug "PUT #{path}, payload: #{payload}"
+      GoodData.logger.debug "PUT #{@server}#{path}, payload: #{payload}"
       ensure_connection
       b = Proc.new { @server[path].put payload, cookies }
       process_response(options, &b)
@@ -164,7 +158,7 @@ module GoodData
     #
     #   Connection.new(username, password).delete '/gdc/project/1'
     def delete(path, options = {})
-      GoodData.logger.debug "DELETE #{path}"
+      GoodData.logger.debug "DELETE #{@server}#{path}"
       ensure_connection
       b = Proc.new { @server[path].delete cookies }
       process_response(options, &b)
@@ -187,6 +181,11 @@ module GoodData
       @status == :logged_in
     end
 
+    def url=(url=nil)
+      @url = url || DEFAULT_URL
+      @server = create_server_connection(@url, @options)
+    end
+
     # The connection will automatically be established once it's needed, which it
     # usually is when either the user, get, post or delete method is called. If you
     # want to force a connection (or a re-connect) you can use this method.
@@ -197,11 +196,11 @@ module GoodData
     # Uploads a file to GoodData server
     # /uploads/ resources are special in that they use a different
     # host and a basic authentication.
-    def upload(file, dir = nil)
+    def upload(file, dir = nil, options={})
       ensure_connection
       # We should have followed a link. If it was correct.
+      
       stage_url = @options[:webdav_server] || @url.sub(/\./, '-di.')
-
       # Make a directory, if needed
       if dir then
         url = stage_url + STAGE_PATH + dir + '/'
@@ -239,17 +238,20 @@ module GoodData
         dir = "."
       end
 
+      payload = options[:stream] ? "file" : File.read(file)
+      filename = options[:filename] || options[:stream] ? "randome-filename.txt" : File.basename(file)
+
       # Upload the file
       RestClient::Request.execute(
         :method => :put,
-        :url => stage_url + STAGE_PATH + dir + '/' + File.basename(file),
+        :url => stage_url + STAGE_PATH + dir + '/' + filename,
         :user => @username,
         :password => @password,
         :timeout => @options[:timeout],
         :headers => {
           :user_agent => GoodData.gem_version_string,
         },
-        :payload => File.read(file)
+        :payload => payload
       )
     end
 
@@ -270,6 +272,16 @@ module GoodData
     end
 
     private
+
+    def create_server_connection(url, options)
+      RestClient::Resource.new url,
+        :timeout => options[:timeout],
+        :headers => {
+          :content_type => :json,
+          :accept => [ :json, :zip ],
+          :user_agent => GoodData.gem_version_string,
+        }
+    end
 
     def ensure_connection
       connect if @status == :not_connected

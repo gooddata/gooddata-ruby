@@ -1,9 +1,9 @@
 module GoodData::Command
-  class Profile < Base
-    def show
-      connect
-      pp GoodData.profile.to_json
+  class Profile
+    class << self
+      def show
+        GoodData.profile.to_json
+      end
     end
-    alias :index :show
   end
 end

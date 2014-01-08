@@ -9,12 +9,12 @@ GoodData.logger = Logger.new(STDOUT)
 
 class TestModel < Test::Unit::TestCase
   COLUMNS = [
-      { 'type' => 'CONNECTION_POINT', 'name' => 'cp', 'title' => 'CP', 'folder' => 'test' },
-      { 'type' => 'ATTRIBUTE', 'name' => 'a1', 'title' => 'A1', 'folder' => 'test' },
-      { 'type' => 'ATTRIBUTE', 'name' => 'a2', 'title' => 'A2', 'folder' => 'test' },
-      { 'type' => 'DATE', 'name' => 'event', 'title' => 'Event', 'folder' => 'test' },
-      { 'type' => 'FACT', 'name' => 'f1', 'title' => 'F1', 'folder' => 'test' },
-      { 'type' => 'FACT', 'name' => 'f2', 'title' => 'F2', 'folder' => 'test' },
+      { 'type' => :anchor, 'name' => 'cp', 'title' => 'CP', 'folder' => 'test' },
+      { 'type' => :attribute, 'name' => 'a1', 'title' => 'A1', 'folder' => 'test' },
+      { 'type' => :attribute, 'name' => 'a2', 'title' => 'A2', 'folder' => 'test' },
+      { 'type' => :date, 'name' => 'event', 'title' => 'Event', 'folder' => 'test' },
+      { 'type' => :fact, 'name' => 'f1', 'title' => 'F1', 'folder' => 'test' },
+      { 'type' => :fact, 'name' => 'f2', 'title' => 'F2', 'folder' => 'test' },
     ]
   SCHEMA = GoodData::Model::Schema.new 'title' => 'test', 'columns' => COLUMNS
 

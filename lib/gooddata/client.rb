@@ -114,6 +114,25 @@ module GoodData
       connection
     end
 
+    def with_project(project, &bl)
+      old_project = GoodData.project
+      begin
+        GoodData.use(project)
+        server_url = case GoodData.project.data["content"]["cluster"]
+        when "na1"
+          "https://na1.gooddata.com"
+        else
+          "https://secure.gooddata.com"
+        end
+        connection.url = server_url
+        bl.call(project)
+      rescue Exception => e
+        fail e
+      ensure
+        GoodData.project = old_project
+      end
+    end
+
     # Returns the active GoodData connection earlier initialized via
     # GoodData.connect call
     #
@@ -140,6 +159,8 @@ module GoodData
     def project=(project)
       if project.is_a? Project
         threaded[:project] = project
+      elsif project.nil?
+        threaded[:project] = nil
       else
         threaded[:project] = Project[project]
       end
@@ -214,13 +235,14 @@ module GoodData
       connection.delete path, options
     end
 
-    def poll(result, key)
+    def poll(result, key, options={})
+      sleep_interval = options[:sleep_interval] || 10
       link = result[key]["links"]["poll"]
       response = GoodData.get(link, :process => false)
       while response.code != 204
-        sleep 5
+        sleep sleep_interval
         GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
-          sleep 5
+          sleep sleep_interval
           response = GoodData.get(link, :process => false)
         end
       end
