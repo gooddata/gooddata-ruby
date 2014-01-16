@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GoodData Ruby GEM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="http://gooddata.github.io/bam/css/bootstrap.css" rel="stylesheet">
+    <link href="http://gooddata.github.io/bam/css/syntax.css" rel="stylesheet">
+
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        padding: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+      
+      img.centered {
+        margin: 30px auto;
+        display: block;
+/*        border: 1px solid red;*/
+      }
+    </style>
+    <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
+
+  <body>
+
+    <div >
+
+      <div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div style="margin-left: 100px;">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="./index.html">BAM!</a>
+      <div class="nav-collapse collapse container">
+        <ul class="nav">
+          <li class="">
+            <a href="http://gooddata.github.io/bam/">Home</a>
+          </li>
+          <li class="">
+            <a href="http://gooddata.github.io/bam/getting-started">Get started</a>
+          </li>
+          <li class="">
+            <a href="http://gooddata.github.io/bam/architecture">Architecture</a>
+          </li>
+          <li class="">
+            <a href="http://gooddata.github.io/bam/tutorials">Tutorials</a>
+          </li>
+          <li class="active">
+            <a href="http://gooddata.github.io/bam/docs">Docs</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-narrow" style="margin-top: 30px;">
+<h2>Project Structure</h2>
+
+<p>The following diagram illustrates the typical structure of a BAM project:</p>
+
+<p><img src="https://dl.dropboxusercontent.com/s/kqauncz9f4jtmpt/dir_structure.png?token_hash=AAENwT2QTwiZc5vAz4sy_5Smdm-VqTq-F7ULd8NUP7dYgg"></p>
+
+<p>For the most part, the diagram is fairly descriptive, except for the following:</p>
+
+<p>
+<ul>
+<li><b>params.json</b> Local parameter file where you can store any necessary passwords or other referenced data. </li>
+<li><b>local_graphs</b> Use this directory to store any ETL graphs for your local project, which are not available through a remote repository.</li>
+</ul>
+</p>
+
+<h2>Taps</h2>
+
+In BAM, a <b>tap</b> is a source of data. Currently, BAM supports two types of taps: Salesforce and File.
+
+<h3>Common properties</h3>
+
+Each tap definition contains the source of the data and an internal identifier. 
+
+<ul>
+  <li>The source identifies where to collect the data for the ETL. Sources can be CSV files or Salesforce data.
+    <li>Depending on the type of tap, the tap definition may vary.</li>
+  </li>
+  <li>The ID field is the unique identifier for the tap. This identifier can be referenced elsewhere in your BAM project. It must be unique among the tap identifiers in your project. </li>
+</ul>
+
+<h3>Salesforce</h3>
+
+The Salesforce tap connects to SalesForce using credentials referenced in the params.json file in your BAM project. 
+
+<ul>
+  <li>The Object value indicates for the downloader the Salesforce object to extract.</li>
+  <li>You can specify the fields from the object that you wish to acquire.</li>
+</ul>
+
+<div class="highlight"><pre><code class="ruby"><span class="p">{</span>
+   <span class="s2">&quot;source&quot;</span> <span class="p">:</span> <span class="s2">&quot;salesforce&quot;</span>
+  <span class="p">,</span><span class="s2">&quot;object&quot;</span> <span class="p">:</span> <span class="s2">&quot;User&quot;</span>
+  <span class="p">,</span><span class="s2">&quot;id&quot;</span>     <span class="p">:</span> <span class="s2">&quot;user&quot;</span>
+  <span class="p">,</span><span class="s2">&quot;fields&quot;</span> <span class="p">:</span> <span class="o">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Id&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;FirstName&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;LastName&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Region&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Department&quot;</span>
+    <span class="p">}</span>
+  <span class="o">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4>Defining limits</h4>
+
+Sometimes, it may useful to limit the number of collected values. For example, if you are testing your ETL, you may wish to limit the number of collected records to 100.
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+   <span class="nt">&quot;source&quot;</span> <span class="p">:</span> <span class="s2">&quot;salesforce&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;object&quot;</span> <span class="p">:</span> <span class="s2">&quot;User&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;id&quot;</span>     <span class="p">:</span> <span class="s2">&quot;user&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;fields&quot;</span> <span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Id&quot;</span>
+    <span class="p">}</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+  <span class="p">]</span>
+  <span class="p">,</span><span class="nt">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">100</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4>Acts As references</h4>
+
+In some cases, you may need to reference a single field in a source of data several different places in your ETL. Or, your ETL may rely on a specific name of a field, so you need to be able to define a reference to a differently named field. 
+
+These use cases can be addressed through the <em>Act as</em> declaration:
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+   <span class="nt">&quot;source&quot;</span> <span class="p">:</span> <span class="s2">&quot;salesforce&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;object&quot;</span> <span class="p">:</span> <span class="s2">&quot;User&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;id&quot;</span>     <span class="p">:</span> <span class="s2">&quot;user&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;fields&quot;</span> <span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="nt">&quot;acts_as&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="s2">&quot;Name&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Custom_Amount__c&quot;</span><span class="p">,</span> <span class="nt">&quot;acts_as&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;RenamedAmount&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+In the above declaration, the field Id is routed to both Id and Name. The Custom_Amount_c field is called RenamedAccount.
+
+Be careful using <em>acts_as</em>. It is primarily used for feeding a field into ETL that has a different source name than the name used in the ETL. If the source name is to be propagated in the GoodData project, please verify that the name is applied in the tap and in the sink of the ETL.
+
+<b>NOTE:</b> Even if you have applied <em>acts_as</em> to a field, the field is stored in its intermediary storage under its original name. If you need to change the name again, intermediary storage is not affected.
+
+<h4>Condition</h4>
+
+In the tap definition, you may specify a condition to apply during download. A <b>condition</b> is a Boolean test that is applied to one or more fields in the dataset. 
+
+<b>NOTE:</b> It should be used only if it can significantly reduce the data transmitted over the network. Otherwise, conditional filtering should be applied elsewhere in your ETL.
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;tap&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;salesforce&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;task&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Id&quot;</span>
+  <span class="p">}],</span>
+  <span class="nt">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;IsDeleted = false&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4>Taps validation</h4>
+
+Fail early. Wherever possible, you should design your ETL to fail as soon as possible. 
+
+When you develop your taps, you should design BAM to connect and validate that all requested fields are present. Failures here can simplify debugging later.
+
+<h4>Mandatory fields</h4>
+
+In your tap definition, you can define whether a field is mandatory or not. If you mark a field as not mandatory, then the rest of the dataset can continue to be processed without generating an error and failing. 
+
+In Salesforce in particular, fields and their locations are modified frequently, so building this kind of check into your BAM can assist in managing change.
+
+<h3>Files</h3>
+
+BAM taps can also be designed to read from files. A <b>file</b> is any flat file that is stored locally or is accessible via HTTP. CloudConnect can handle both.
+
+<h4>Local file</h4>
+
+To acquire files from your local file system, you can specify relative (<em>./</em>) and absolute (<em>/</em>) paths. 
+
+<b>NOTE:</b> The local file options are not supported when the BAM project is deployed to the GoodData platform.
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+   <span class="nt">&quot;source&quot;</span> <span class="p">:</span> <span class="s2">&quot;/&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;id&quot;</span>     <span class="p">:</span> <span class="s2">&quot;user&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;fields&quot;</span> <span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Id&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;FirstName&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;LastName&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Region&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Department&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4>Remote file</h4>
+
+In your tap definition, you can reference remote files by setting the value for <em>source</em> to be the URL to access. This method enables you to access files in GoodData project-specific storage. 
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+   <span class="nt">&quot;source&quot;</span> <span class="p">:</span> <span class="s2">&quot;https://example.com/abc.txt&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;id&quot;</span>     <span class="p">:</span> <span class="s2">&quot;user&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;fields&quot;</span> <span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Id&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;FirstName&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;LastName&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Region&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Department&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4>Encoding</h4>
+
+You can specify different encoding for a file. Use <em>charset</em> property in the tap to define correct encoding.
+
+<h3>Incremental</h3>
+
+By default everything is pushed to intermediary storage. If for whatever reason you do not want this set <em>direct</em> property to true, then the data is will not be downloaded to intermediary storage.
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+   <span class="nt">&quot;source&quot;</span> <span class="p">:</span> <span class="s2">&quot;https://example.com/abc.txt&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;id&quot;</span>     <span class="p">:</span> <span class="s2">&quot;user&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;direct&quot;</span> <span class="p">:</span> <span class="s2">&quot;true&quot;</span>
+  <span class="p">,</span><span class="nt">&quot;fields&quot;</span> <span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Id&quot;</span>
+    <span class="p">}</span>  
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+Advantages of using intermediary storage is that all the history is kept and you can us the tap DSL to read out snapshots and do other cool things. Everything is backed up automatically.
+
+<ul>
+<li><a href="/recipe/2013/06/16/limitation-of-event-store.html">Limitations of Event Store</a></li>
+<li>Incremental grabbing of data from the source still enables rebuilding of the entire history. </li>
+<li>Less stress on the source system.</li>
+</ul>
+
+<h2>Sinks</h2>
+
+<p>A <b>sink</b> is a declaration of where data from a BAM ETL is delivered. </p>
+
+<p><b>NOTE:</b> Currently, the only supported sink type is the GoodData dataset. The value for the <em>target</em> property must always be <em>gooddata</em>.</p>
+
+
+<h3>JSON Declaration</h3>
+
+
+<p>A GoodData sink declaration mimics the CL tool definition, with some shortcuts added to it. For those with experience with CL tool definitions, the only new information to add is the metadata field that is the source for a specified field. </p>
+
+<p>In the JSON below, you can review how a sink is declared. </p>
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+  <span class="nt">&quot;id&quot;</span> <span class="p">:</span> <span class="s2">&quot;account&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;target&quot;</span> <span class="p">:</span> <span class="s2">&quot;gooddata&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;gd_name&quot;</span> <span class="p">:</span> <span class="s2">&quot;account&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;connection_point&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;meta&quot;</span> <span class="p">:</span> <span class="s2">&quot;Id&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;for&quot;</span>  <span class="p">:</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;meta&quot;</span> <span class="p">:</span> <span class="s2">&quot;Name&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;for&quot;</span>  <span class="p">:</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;meta&quot;</span> <span class="p">:</span> <span class="s2">&quot;Url&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;market&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;attribute&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;meta&quot;</span> <span class="p">:</span> <span class="s2">&quot;Market__c&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<p><b>Definitions:</b></p>
+
+<ul>
+  <li><b>id</b> Name of the sink.</li>
+  <li><b>target</b> Target for the sink. Set to <em>gooddata</em>.</li>
+  <li><b>gd_name</b> Name of the dataset to which the sink is writing.</li>
+  <li>Fields:
+    <li><b>name</b> Name of the field to which the sink is writing</li>
+    <li><b>type</b> Type of field in the LDM. Values include: <em>fact</em>, <em>attribute</em>, <em>label</em>, and <em>connection point</em>.</li>
+    <li><b>for</b> If type=<em>label</em>, please include the name of the attribute to which the label is assigned.</li>
+    <li><b>meta</b> Name of the metadata field from which the sink is reading.</li>
+  </li>
+</ul>
+
+
+<p>For more examples, see <a href="https://github.com/gooddata/goodsales_base/tree/master/sinks">GoodSales Essentials GitHub tree</a>.</p>
+
+<h2>Flows</h2>
+<p>A <b>flow</b> is an abstraction layer of the series of transformations that occur between extraction and loading. In BAM, a flow is the middle part of the ETL, connecting a tap and a sink.</p>
+
+
+<p>Below, you can see a simple example of a flow, which illustrates the majority of features that you are likely to use:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">flow</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;account_dim&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+
+  <span class="n">tap</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;account&quot;</span><span class="p">)</span>
+  <span class="n">tap</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+  <span class="n">graph</span><span class="p">(</span><span class="ss">:path</span> <span class="o">=&gt;</span> <span class="s2">&quot;my_join.grf&quot;</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">metadata</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;account&quot;</span><span class="p">,</span> <span class="ss">:out</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span> <span class="k">do</span> 
+      <span class="n">add</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;UserAge&quot;</span><span class="p">)</span>
+      <span class="n">remove</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Name&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">metadata</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">sink</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<p><b>Notes:</b></p>
+
+<ul>
+  <li><b>Flow definition:</b> The flow is defined using a DSL in Ruby. This might change and we might introduce our own DSL but both of these approaches have its drawbacks. Let's wait where the future will lead us.
+    <li>For more information on Ruby and DSLs, see <a href="http://rubymonk.com/">http://rubymonk.com/</a>.</li>
+  </li>
+  <li>Each flow has its own internal ID. The name of the file is for display purposes only.</li>
+  <li><b>Tap reference:</b> At least one tap must be included in the flow definition. In the above example, two taps are integrated using the id parameter. Taps need to be declared at the beginning of the flow. 
+    <li>If you omit the tap reference, the flow attempts to locate a flow with the same ID as the flow itself. If no tap can be found, an error is generated.</li>
+  </li>
+  <li><b>Graph reference:</b> Graphs are referenced in the flow by the graph filename (my_join.grf). BAM looks for graphs in two locations: 1) in the local_graphs folder of your project and then 2) the library provided by BAM.
+    <li>Available graph repositories are likely to change, as GoodData deploys a shared repository of reusable graphs and components.</li> 
+  </li>
+  <li><b>Metadata declaration:</b> Associated with the graph may be one or more metadata declarations. Inserted after the graph declaration, these <em>metadata</em> statements are listed in the order of inclusion. In the previous example, the account metadata is included, followed by the user metadata. To the account account metadata, the field UserAge is begin added, while the Name field is being removed. During graph execution, it is expected that some functionality will populate the UserAge field.
+    <li>Graph references in BAM are essentially CloudConnect Designer graphs with extra metadata and other functionality included.<li> 
+  </li>
+  <li><b>Sink reference:</b> At the end of the flow definition, you specify the sink to which the flow delivers its output. In the above case, no ID is included with the sink declaration, so this flow looks for a sink with the same name as the flow ("account_dim"). BAM supports output to one sink per flow at this time.</li>
+  <li><b>Output flags:</b> In a metadata declaration, you can specify whether the metadata is passed as output from the flow. In the above example, the flag (:out => true) indicates that the account metadata will be the output of this flow and the name under which it is available to the next step. In this case, out.csv is delivered from the defined graph to the next step, which is the sink, and is parsed as account metadata.  
+    <li>The output flag does not determine the contents of the output, which is determined by the structure of the graph. </li>
+    <li>Currently, there is no integration between the flow and the actual graph, so output contents are determined exclusively by the graph.</li>
+  </li>
+</ul>
+
+<h3>Postprocessing DSL</h3>
+When you are using BAM data are always stored in as generic way as possible and this means via immutable data facts. This format is ideal for storage and for keeping history but sometimes you need to look at the data in a different way. BAM allows you to specify this on the fly this means it does not influence your original ETL design and you can later change it. The goal of BAM is to provide you declarative way how to achieve the typical transformations. In the example you already used one type of postprocessing and that is the "latest snapshot". It is so common that you actually do not need to do anything to make it happen.
+
+<h4>Snapshots</h4>
+Other typical way that is needed is to get out snapshots. What does that mean? Imagine these data facts
+
+<pre>
++----+------------+-------------+-----------+
+| Id | Attribute  |    Value    | Timestamp |
++----+------------+-------------+-----------+
+|  1 | Name       | Tomas       | 1/1/1982  |
+|  1 | Department | Engineering | 1/6/2011  |
+|  1 | Department | PM          | 1/1/2013  |
++----+------------+-------------+-----------+
+</pre>
+
+Without specifying anything special you will get
+
+
+<div class="highlight"><pre><code class="ruby"><span class="n">flow</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+
+  <span class="n">tap</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+  <span class="sr">//o</span><span class="n">ther</span> <span class="n">stuff</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+<pre>
++----+------------+-------------+
+| Id |    Name    | Department  |
++----+------------+-------------+
+|  1 | Tomas      | PM          |
++----+------------+-------------+
+</pre>
+
+You can see that I get only the latest state. The name was always Tomas but the guy changed jobs and now is in PM. This is not visible. If you want to investigate changes that happened on objects usually you need to use snapshots.
+
+Now you will get something like this
+
+<div class="highlight"><pre><code class="ruby"><span class="n">flow</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+
+  <span class="n">timeframe</span> <span class="o">=</span> <span class="o">[</span>
+    <span class="p">{</span><span class="s2">&quot;startDateType&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;MONTHS&quot;</span><span class="p">,</span> <span class="s2">&quot;startDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;endDateType&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;TOMORROW&quot;</span><span class="p">,</span><span class="s2">&quot;endDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;Tomorrow&quot;</span><span class="p">,</span><span class="s2">&quot;interval&quot;</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;intervalUnit&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;DAYS&quot;</span><span class="p">,</span><span class="s2">&quot;dayWithinPeriod&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;LAST_DAY&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;startDateType&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;YEARS&quot;</span><span class="p">,</span> <span class="s2">&quot;startDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;endDateType&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;MONTHS&quot;</span><span class="p">,</span><span class="s2">&quot;endDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;interval&quot;</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;intervalUnit&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;WEEKS&quot;</span><span class="p">,</span><span class="s2">&quot;dayWithinPeriod&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;LAST_DAY&quot;</span><span class="p">}</span>
+  <span class="o">]</span>
+
+  <span class="n">tap</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="ss">:time_intervals</span> <span class="o">=&gt;</span> <span class="n">timeframe</span><span class="p">,</span> <span class="ss">:snapshots</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
+
+<span class="k">end</span>
+</code></pre></div>
+
+<pre>
++----+------------+-------------+-------------+
+| Id |    Name    | Department  | Snapshot    |
++----+------------+-------------+-------------+
+|  1 | Tomas      |             | 1/1/1982    |
+|  1 | Tomas      |             | 1/1/1983    |
+|  1 | Tomas      |             | 1/1/1984    |
+|  1 | Tomas      |             | 1/1/1985    |
+|  1 | Tomas      |             | 1/1/1986    |
+.
+.
+.
+|  1 | Tomas      | Engineering | 1/1/2012    |
+|  1 | Tomas      | PM          | 1/1/2013    |
++----+------------+-------------+-------------+
+</pre>
+
+These are yearly snapshots. You can see that The name is there since beginning and never changes. The department is not known in the beginning so it is blank. On 2012 we can see that it is filled with Engineering because that is the value the attribute had at that time. Then it changed to PM. Also notice that snapshots are not generated befor 82 since we had no information about object ID 1. Also it is important that this multiplied my row count by number of snapshots you wanted to generate and this has direct impact on project performance. Daily snapshots for 1000 objects for last 10 years means
+
+1000 * 10 * 365 = 3650000MM rows
+
+<h5>Snapshot timeframes definitions</h5>
+TBD
+
+<h4>Latest value propagation</h4>
+Imagine this scenario. Customer's OLTP system does not retain history. So you accumulate it ideally since the point you start acquire data. One of the object is a Sales Opportunity. This opportunity is tied to a User -> Sales Rep. They would like to track the Opportunities as they change in time which leads to snapshots usage. Also they have so many users that it would clutter the system so they ask if you could filter out the users other than sales. It looks easy until you dig deeper.
+
+Since the original system does not have history for some of those You do not know who the historical owner was. So when you create a snapshots and try to filter them out based on the owner-type = sales you will filter lots of those that will later be  (and maybe always was) associated to a sales people. 
+
+BAM cannot read history but what it can do is propagate the latest known value to all the snapshots. This basically would equal to something like "Whoever is the owner now always was an owner". We could enforce this behavior before storing the data but we do not want to do that. We want our raw data to be as close to the reality as possible.
+
+You can define this in a flow like this
+
+<div class="highlight"><pre><code class="ruby"><span class="n">flow</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+
+  <span class="n">timeframe</span> <span class="o">=</span> <span class="o">[</span>
+    <span class="p">{</span><span class="s2">&quot;startDateType&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;MONTHS&quot;</span><span class="p">,</span> <span class="s2">&quot;startDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;endDateType&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;TOMORROW&quot;</span><span class="p">,</span><span class="s2">&quot;endDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;Tomorrow&quot;</span><span class="p">,</span><span class="s2">&quot;interval&quot;</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;intervalUnit&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;DAYS&quot;</span><span class="p">,</span><span class="s2">&quot;dayWithinPeriod&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;LAST_DAY&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;startDateType&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;YEARS&quot;</span><span class="p">,</span> <span class="s2">&quot;startDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;endDateType&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;MONTHS&quot;</span><span class="p">,</span><span class="s2">&quot;endDateValue&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;interval&quot;</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;intervalUnit&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;WEEKS&quot;</span><span class="p">,</span><span class="s2">&quot;dayWithinPeriod&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;LAST_DAY&quot;</span><span class="p">}</span>
+  <span class="o">]</span>
+
+  <span class="n">tap</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="ss">:time_intervals</span> <span class="o">=&gt;</span> <span class="n">timeframe</span><span class="p">,</span> <span class="ss">:snapshots</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span> <span class="ss">:propagate_latest_value_for</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;Name&quot;</span><span class="o">]</span><span class="p">)</span>
+
+<span class="k">end</span>
+</code></pre></div>
+
+The `:propagate_latest_value_for => ["Name"]` does the trick. It takes an array of metadata fields that should be propagated.
+
+<h3>Decomposition</h3>
+
+<p>In the below diagram, you can see how the BAM flow decomposes into individual CloudConnect components:</p>
+
+<p>
+  <img src="https://dl.dropboxusercontent.com/s/d91sg4894tocs47/Decomposed-Flow.png?token_hash=AAFQDggjYFuWqG38Lu63yasDWgdYiQ_-3ZXX37rkGvo1kQ" />
+</p>
+
+
+</div>
+
+      <hr>
+
+      <div class="footer" style="text-align: center; font-size: 70%;">
+        <p>&copy; GoodData 2013</p>
+        <p>Pictograms used on this page are from <a href="http://www.defaulticon.com/">http://www.defaulticon.com/</a> created by <a href="http://www.interactivemania.com/">http://www.interactivemania.com/</a></p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://gooddata.github.io/bam/js/jquery.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-transition.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-alert.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-modal.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-dropdown.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-scrollspy.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-tab.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-tooltip.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-popover.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-button.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-collapse.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-carousel.js"></script>
+    <script src="http://gooddata.github.io/bam/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>

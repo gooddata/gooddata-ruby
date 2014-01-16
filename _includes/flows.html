@@ -1,0 +1,157 @@
+<h2>Flows</h2>
+<p>A <b>flow</b> is an abstraction layer of the series of transformations that occur between extraction and loading. In BAM, a flow is the middle part of the ETL, connecting a tap and a sink.</p>
+
+
+<p>Below, you can see a simple example of a flow, which illustrates the majority of features that you are likely to use:</p>
+
+{% highlight ruby %}
+flow(:id => "account_dim") do |f|
+
+  tap(:id => "account")
+  tap(:id => "user")
+
+  graph(:path => "my_join.grf") do
+    metadata(:id => "account", :out => true) do 
+      add(:name => "UserAge")
+      remove(:name => "Name")
+    end
+    metadata(:id => "user")
+  end
+
+  sink
+end
+{% endhighlight %}
+
+<p><b>Notes:</b></p>
+
+<ul>
+  <li><b>Flow definition:</b> The flow is defined using a DSL in Ruby. This might change and we might introduce our own DSL but both of these approaches have its drawbacks. Let's wait where the future will lead us.
+    <li>For more information on Ruby and DSLs, see <a href="http://rubymonk.com/">http://rubymonk.com/</a>.</li>
+  </li>
+  <li>Each flow has its own internal ID. The name of the file is for display purposes only.</li>
+  <li><b>Tap reference:</b> At least one tap must be included in the flow definition. In the above example, two taps are integrated using the id parameter. Taps need to be declared at the beginning of the flow. 
+    <li>If you omit the tap reference, the flow attempts to locate a flow with the same ID as the flow itself. If no tap can be found, an error is generated.</li>
+  </li>
+  <li><b>Graph reference:</b> Graphs are referenced in the flow by the graph filename (my_join.grf). BAM looks for graphs in two locations: 1) in the local_graphs folder of your project and then 2) the library provided by BAM.
+    <li>Available graph repositories are likely to change, as GoodData deploys a shared repository of reusable graphs and components.</li> 
+  </li>
+  <li><b>Metadata declaration:</b> Associated with the graph may be one or more metadata declarations. Inserted after the graph declaration, these <em>metadata</em> statements are listed in the order of inclusion. In the previous example, the account metadata is included, followed by the user metadata. To the account account metadata, the field UserAge is begin added, while the Name field is being removed. During graph execution, it is expected that some functionality will populate the UserAge field.
+    <li>Graph references in BAM are essentially CloudConnect Designer graphs with extra metadata and other functionality included.<li> 
+  </li>
+  <li><b>Sink reference:</b> At the end of the flow definition, you specify the sink to which the flow delivers its output. In the above case, no ID is included with the sink declaration, so this flow looks for a sink with the same name as the flow ("account_dim"). BAM supports output to one sink per flow at this time.</li>
+  <li><b>Output flags:</b> In a metadata declaration, you can specify whether the metadata is passed as output from the flow. In the above example, the flag (:out => true) indicates that the account metadata will be the output of this flow and the name under which it is available to the next step. In this case, out.csv is delivered from the defined graph to the next step, which is the sink, and is parsed as account metadata.  
+    <li>The output flag does not determine the contents of the output, which is determined by the structure of the graph. </li>
+    <li>Currently, there is no integration between the flow and the actual graph, so output contents are determined exclusively by the graph.</li>
+  </li>
+</ul>
+
+<h3>Postprocessing DSL</h3>
+When you are using BAM data are always stored in as generic way as possible and this means via immutable data facts. This format is ideal for storage and for keeping history but sometimes you need to look at the data in a different way. BAM allows you to specify this on the fly this means it does not influence your original ETL design and you can later change it. The goal of BAM is to provide you declarative way how to achieve the typical transformations. In the example you already used one type of postprocessing and that is the "latest snapshot". It is so common that you actually do not need to do anything to make it happen.
+
+<h4>Snapshots</h4>
+Other typical way that is needed is to get out snapshots. What does that mean? Imagine these data facts
+
+<pre>
++----+------------+-------------+-----------+
+| Id | Attribute  |    Value    | Timestamp |
++----+------------+-------------+-----------+
+|  1 | Name       | Tomas       | 1/1/1982  |
+|  1 | Department | Engineering | 1/6/2011  |
+|  1 | Department | PM          | 1/1/2013  |
++----+------------+-------------+-----------+
+</pre>
+
+Without specifying anything special you will get
+
+
+{% highlight ruby %}
+flow(:id => "user") do |f|
+
+  tap(:id => "user")
+
+  //other stuff
+end
+{% endhighlight %}
+
+
+<pre>
++----+------------+-------------+
+| Id |    Name    | Department  |
++----+------------+-------------+
+|  1 | Tomas      | PM          |
++----+------------+-------------+
+</pre>
+
+You can see that I get only the latest state. The name was always Tomas but the guy changed jobs and now is in PM. This is not visible. If you want to investigate changes that happened on objects usually you need to use snapshots.
+
+Now you will get something like this
+
+{% highlight ruby %}
+flow(:id => "user") do |f|
+
+  timeframe = [
+    {"startDateType" => "MONTHS", "startDateValue"=>"3","endDateType"=>"TOMORROW","endDateValue"=>"Tomorrow","interval"=>1,"intervalUnit"=>"DAYS","dayWithinPeriod"=>"LAST_DAY"},
+    {"startDateType" => "YEARS", "startDateValue"=>"3","endDateType"=>"MONTHS","endDateValue"=>"3","interval"=>1,"intervalUnit"=>"WEEKS","dayWithinPeriod"=>"LAST_DAY"}
+  ]
+
+  tap(:id => "user", :time_intervals => timeframe, :snapshots => true)
+
+end
+{% endhighlight %}
+
+<pre>
++----+------------+-------------+-------------+
+| Id |    Name    | Department  | Snapshot    |
++----+------------+-------------+-------------+
+|  1 | Tomas      |             | 1/1/1982    |
+|  1 | Tomas      |             | 1/1/1983    |
+|  1 | Tomas      |             | 1/1/1984    |
+|  1 | Tomas      |             | 1/1/1985    |
+|  1 | Tomas      |             | 1/1/1986    |
+.
+.
+.
+|  1 | Tomas      | Engineering | 1/1/2012    |
+|  1 | Tomas      | PM          | 1/1/2013    |
++----+------------+-------------+-------------+
+</pre>
+
+These are yearly snapshots. You can see that The name is there since beginning and never changes. The department is not known in the beginning so it is blank. On 2012 we can see that it is filled with Engineering because that is the value the attribute had at that time. Then it changed to PM. Also notice that snapshots are not generated befor 82 since we had no information about object ID 1. Also it is important that this multiplied my row count by number of snapshots you wanted to generate and this has direct impact on project performance. Daily snapshots for 1000 objects for last 10 years means
+
+1000 * 10 * 365 = 3650000MM rows
+
+<h5>Snapshot timeframes definitions</h5>
+TBD
+
+<h4>Latest value propagation</h4>
+Imagine this scenario. Customer's OLTP system does not retain history. So you accumulate it ideally since the point you start acquire data. One of the object is a Sales Opportunity. This opportunity is tied to a User -> Sales Rep. They would like to track the Opportunities as they change in time which leads to snapshots usage. Also they have so many users that it would clutter the system so they ask if you could filter out the users other than sales. It looks easy until you dig deeper.
+
+Since the original system does not have history for some of those You do not know who the historical owner was. So when you create a snapshots and try to filter them out based on the owner-type = sales you will filter lots of those that will later be  (and maybe always was) associated to a sales people. 
+
+BAM cannot read history but what it can do is propagate the latest known value to all the snapshots. This basically would equal to something like "Whoever is the owner now always was an owner". We could enforce this behavior before storing the data but we do not want to do that. We want our raw data to be as close to the reality as possible.
+
+You can define this in a flow like this
+
+{% highlight ruby %}
+flow(:id => "user") do |f|
+
+  timeframe = [
+    {"startDateType" => "MONTHS", "startDateValue"=>"3","endDateType"=>"TOMORROW","endDateValue"=>"Tomorrow","interval"=>1,"intervalUnit"=>"DAYS","dayWithinPeriod"=>"LAST_DAY"},
+    {"startDateType" => "YEARS", "startDateValue"=>"3","endDateType"=>"MONTHS","endDateValue"=>"3","interval"=>1,"intervalUnit"=>"WEEKS","dayWithinPeriod"=>"LAST_DAY"}
+  ]
+
+  tap(:id => "user", :time_intervals => timeframe, :snapshots => true, :propagate_latest_value_for => ["Name"])
+
+end
+{% endhighlight %}
+
+The `:propagate_latest_value_for => ["Name"]` does the trick. It takes an array of metadata fields that should be propagated.
+
+<h3>Decomposition</h3>
+
+<p>In the below diagram, you can see how the BAM flow decomposes into individual CloudConnect components:</p>
+
+<p>
+  <img src="https://dl.dropboxusercontent.com/s/d91sg4894tocs47/Decomposed-Flow.png?token_hash=AAFQDggjYFuWqG38Lu63yasDWgdYiQ_-3ZXX37rkGvo1kQ" />
+</p>
+
