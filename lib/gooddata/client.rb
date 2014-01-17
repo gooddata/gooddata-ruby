@@ -87,6 +87,11 @@ module GoodData
     def connect(user, password, url = nil, options={})
       threaded[:connection] = Connection.new user, password, url, options
     end
+    
+    def disconnect
+      connection = nil
+    end
+    
 
     # Hepler for starting with SST easier
     # === Parameters
