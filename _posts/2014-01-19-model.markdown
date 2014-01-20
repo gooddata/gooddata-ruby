@@ -35,7 +35,6 @@ GoodData::Model::ProjectBuilder.create("gooddata-ruby test #{Time.now.to_i}") do
     d.add_reference("region_id", :dataset => 'regions', :reference => 'id')
   end
 end
-{% endhighlight %}
 
 Hopefully the model is self descriptive and if you are not strong on terminology like label, anchor etc please refer to "Building a model with GD".
 
@@ -60,13 +59,17 @@ p.upload([["id", "name"],
 {% endhighlight %}
 
 ### Loading data given by filename
+{% highlight ruby %}
 p.upload("/some/local_file.csv", :dataset => 'users')
 {% endhighlight %}
 
 ### Loading data given by filename
+{% highlight ruby %}
 p.upload("/some/local_file.csv", :dataset => "users")
+{% endhighlight %}
 
 ### Loading data given by web file
+{% highlight ruby %}
 p.upload("http://www.example.com/some/remote_file.csv", :dataset => "users")
 {% endhighlight %}
 
