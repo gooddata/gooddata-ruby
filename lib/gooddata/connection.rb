@@ -77,15 +77,18 @@ module GoodData
       @url        = url || DEFAULT_URL
       @auth_token = options.delete(:auth_token)
       @options    = options
-
-      @server = RestClient::Resource.new @url,
-        :timeout => @options[:timeout],
-        :headers => {
+      @headers    = options[:headers] || {}
+      
+      default_headers = {
           :content_type => :json,
           :accept => [ :json, :zip ],
           :user_agent => GoodData.gem_version_string,
-        }
-
+      }
+      default_headers.merge! @headers
+      
+      @server = RestClient::Resource.new @url,
+        :timeout => @options[:timeout],
+        :headers => default_headers
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.
