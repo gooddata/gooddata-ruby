@@ -89,7 +89,7 @@ module GoodData
     end
     
     def disconnect
-      connection.status = :not_connected
+      threaded[:connection] = nil
     end
     
 
