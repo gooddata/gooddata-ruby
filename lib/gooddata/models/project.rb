@@ -158,6 +158,10 @@ module GoodData
       dash.save
     end
 
+    def add_user(email_address, domain)
+      
+    end
+
     def upload(file, schema, mode = "FULL")
       schema.upload file, self, mode
     end

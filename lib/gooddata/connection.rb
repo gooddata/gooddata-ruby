@@ -70,11 +70,11 @@ module GoodData
     #
     # * +username+ - The GoodData account username
     # * +password+ - The GoodData account password
-    def initialize(username, password, url = nil, options = {})
+    def initialize(username, password, options = {})
       @status     = :not_connected
       @username   = username
       @password   = password
-      @url        = url || DEFAULT_URL
+      @url        = options[:server] || DEFAULT_URL
       @auth_token = options.delete(:auth_token)
       @options    = options
 

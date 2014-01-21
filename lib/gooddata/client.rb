@@ -1,5 +1,6 @@
 require 'gooddata/version'
 require 'gooddata/connection'
+require 'active_support/core_ext/string'
 
 # fastercsv is built in Ruby 1.9
 if RUBY_VERSION < "1.9"
@@ -84,8 +85,14 @@ module GoodData
     # * +user+ - A GoodData username
     # * +password+ - A GoodData password
     #
-    def connect(user, password, url = nil, options={})
-      threaded[:connection] = Connection.new user, password, url, options
+    def connect(options=nil, second_options=nil, third_options={})
+      if options.is_a? Hash
+        threaded[:connection] = Connection.new(options[:login], options[:password], options)
+        GoodData.project = options[:project] if options[:project]
+      elsif options.is_a?(String) && second_options.is_a?(String)
+        threaded[:connection] = Connection.new(options, second_options, third_options)
+      end
+      
     end
 
     # Hepler for starting with SST easier

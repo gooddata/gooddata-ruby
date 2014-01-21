@@ -35,6 +35,10 @@ default_value nil
 arg_name 'web dav server'
 flag [:w,:webdav_server]
 
+desc 'Token for project creation'
+default_value nil
+arg_name 'token'
+flag [:t, :token]
 
 desc 'Verbose mode'
 arg_name 'verbose'
@@ -178,6 +182,23 @@ command :project do |c|
     end
   end
 
+  c.command :build do |show|
+    show.action do |global_options,options,args|
+      spec_path = args.first || fail("You need to specify the path of the build spec")
+      opts = options.merge(global_options)
+      spec_path = Pathname.new(spec_path)
+
+      content = File.read(spec_path)
+      spec = if (spec_path.extname == ".rb")
+        eval(content)
+      elsif (spec_path.extname == ".json")
+        JSON.parse(spec_path, :symbolize_names => true)
+      end
+      new_project = GoodData::Model::ProjectCreator.migrate(opts.merge(:spec => spec))
+      puts "Migration was done. New project PID is #{new_project.pid}."
+    end
+  end
+
 end
 
 desc 'Run bricks locally'
@@ -224,10 +245,31 @@ command :run_ruby do |c|
   end
 end
 
+desc 'Manage your projects'
+arg_name 'project_command'
+command :project do |c|
+
+  c.command :list do |list|
+    list.action do |global_options,options,args|
+      list = GoodData::Command::Projects.list()
+      puts list.map {|p| [p.uri, p.title].join(",")}
+    end
+  end
+
+end
+
 pre do |global,command,options,args|
   require 'logger'
   GoodData.logger = Logger.new(STDOUT)
-  GoodData.connect(global[:username] || "svarovsky@gooddata.com", global[:password] || "MamaSlaVcera77", global[:server], global.merge(options))
+  username = global[:username]
+  password = global[:password]
+
+  GoodData.connect(global.merge(options).merge({
+    :login => username,
+    :password => password,
+    :server => global[:server]
+  }))
+                    
   # Pre logic here
   # Return true to proceed; false to abort and not call the
   # chosen command
@@ -250,4 +292,5 @@ on_error do |exception|
   pp exception
   true
 end
+
 exit run(ARGV)

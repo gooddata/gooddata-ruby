@@ -33,19 +33,17 @@ module GoodData
 
     SKIP_FIELD = false
 
-    BEGINNING_OF_TIMES = Date.parse('1/1/1900')
-
     class << self
       def add_dataset(name, columns, project = nil)
-          Schema.new('columns' => columns, 'title' => title)
+          Schema.new('columns' => columns, 'name' => name)
         add_schema(schema , project)
       end
 
       def add_schema(schema, project = nil)
-        unless schema.is_a?(Schema) || schema.is_a?(String) then
+        unless schema.respond_to?(:to_maql_create) || schema.is_a?(String) then
           raise ArgumentError.new("Schema object or schema file path expected, got '#{schema}'")
         end
-        schema = Schema.load schema unless schema.is_a? Schema
+        schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
         project = GoodData.project unless project
         ldm_links = GoodData.get project.md[LDM_CTG]
         ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
@@ -60,7 +58,7 @@ module GoodData
 
     class ProjectBuilder
 
-      attr_reader :title, :datasets, :reports, :metrics, :uploads, :users, :assert_report
+      attr_reader :title, :datasets, :reports, :metrics, :uploads, :users, :assert_report, :date_dimensions
 
       class << self
         
@@ -81,10 +79,15 @@ module GoodData
         @uploads = []
         @users = []
         @dashboards = []
+        @date_dimensions = []
       end
 
-      def add_dataset(title, &block)
-        builder = GoodData::Model::SchemaBuilder.new(title)
+      def add_date_dimension(name, options={})
+        @date_dimensions << {:urn => options[:urn], :name => name, :title => options[:title]}
+      end
+
+      def add_dataset(name, &block)
+        builder = GoodData::Model::SchemaBuilder.new(name)
         block.call(builder)
         @datasets << builder.to_hash
       end
@@ -127,6 +130,10 @@ module GoodData
         }
       end
 
+      def add_users(users)
+        @users << users
+      end
+
       def to_json
         JSON.pretty_generate(to_hash)
       end
@@ -140,7 +147,8 @@ module GoodData
           :metrics => @metrics,
           :reports => @reports,
           :users => @users,
-          :assert_tests => @assert_tests
+          :assert_tests => @assert_tests,
+          :date_dimensions => @date_dimensions
         }
       end
 
@@ -162,7 +170,7 @@ module GoodData
 
       def to_hash
         {
-          :title => @title,
+          :name => @name,
           :tabs => @tabs.map{|tab| tab.to_hash}
         }
       end
@@ -190,13 +198,11 @@ module GoodData
 
     class SchemaBuilder
 
-      def initialize(title=nil)
-        @title = title
-        @columns = []
-      end
+      attr_accessor :title, :name
 
-      def title=(a_title)
-        @title = a_title
+      def initialize(name=nil)
+        @name = name
+        @columns = []
       end
 
       def add_column(column_def)
@@ -219,33 +225,33 @@ module GoodData
         self
       end
 
-      def add_date_ref
-        
+      def add_label(name, options={})
+        add_column({ :type => :label, :name => name}.merge(options))
+        self
       end
 
-      def add_ref
-        
+      def add_date(name, options={})
+        add_column({ :type => :date, :name => name}.merge(options))
+      end
+
+      def add_reference(name, options={})
+        add_column({ :type => :reference, :name => name}.merge(options))
       end
 
       def to_schema
-        Schema.new({
-          :title => @title,
-          :columns => @columns
-        })
+        Schema.new(to_hash)
       end
 
       def to_json
-        JSON.pretty_generate({
-          :title => @title,
-          :columns => @columns
-        })
+        JSON.pretty_generate(to_hash)
       end
 
       def to_hash
-        {
-          :title => @title,
+        h = {
+          :name => @name,
           :columns => @columns
         }
+        h.has_key?(:title) ? h.merge({:title => h[:title]}) : h
       end
     end
 
@@ -253,13 +259,17 @@ module GoodData
       
       class << self
         def migrate(options={})
+
           spec = options[:spec] || fail("You need to provide spec for migration")
           spec = spec.to_hash
+          binding.pry
           project = options[:project]
-          new_project = GoodData::Project.create(:title => spec[:title], :auth_token => "INTNA000000GDPM")
+          token = options[:token] || fail("You need to specify token for project creation")
+          new_project = GoodData::Project.create(:title => spec[:title], :auth_token => token)
 
           begin
             GoodData.with_project(new_project) do |p|
+              migrate_date_dimensions(p, spec[:date_dimensions])
               migrate_datasets(p, spec[:datasets])
               load(p, spec)
               migrate_metrics(p, spec[:metrics])
@@ -269,12 +279,15 @@ module GoodData
               execute_tests(p, spec[:assert_tests])
               p
             end
-          # rescue RuntimeError => e
-          #   new_project.delete
-          #   GoodData::Project[project]
           end
         end
-        
+
+        def migrate_date_dimensions(project, spec)
+          spec.each do |dd|
+            Model.add_schema(DateDimension.new(dd), project)
+          end
+        end
+
         def migrate_datasets(project, spec)
           spec.each do |ds|
             project.add_dataset(GoodData::Model::Schema.new(ds))
@@ -300,15 +313,16 @@ module GoodData
         end
 
         def migrate_users(project, spec)
-          puts "would migrate"
+          spec.each do |user|
+            project.add_user(user)
+          end
         end
 
         def load(project, spec)
           spec[:uploads].each do |load|
-            schema = GoodData::Model::Schema.new(spec[:datasets].detect {|d| d[:title] == load[:dataset]})
+            schema = GoodData::Model::Schema.new(spec[:datasets].detect {|d| d[:name] == load[:dataset]})
             project.upload(load[:source], schema, load[:mode])
           end
-            
         end
 
         def execute_tests(project, spec)
@@ -317,9 +331,7 @@ module GoodData
             fail "Test did not pass. Got #{result.table.inspect}, expected #{assert[:result].inspect}" if result.table != assert[:result]
           end
         end
-
       end
-      
     end
     
     class MdObject
@@ -354,7 +366,8 @@ module GoodData
         Schema.new JSON.load(open(file))
       end
 
-      def initialize(config, title = nil)
+      def initialize(config, name = nil)
+        super()
         @fields = []
         @attributes = {}
         @facts = {}
@@ -365,29 +378,12 @@ module GoodData
         @references = {}
         @labels = []
 
-        config[:title] = title unless config[:title]
+        config[:name] = name unless config[:name]
+        config[:title] = config[:title] || config[:name].humanize
         fail 'Schema name not specified' unless config[:title]
         self.title = config[:title]
         self.config = config
       end
-
-      # def transform_header(headers)
-      #   result = fields.reduce([]) do |memo, f|
-      #     val = f.to_csv_header(headers)
-      #     memo << val unless val === SKIP_FIELD
-      #     memo
-      #   end
-      #   result.flatten
-      # end
-      # 
-      # def transform_row(headers, row)
-      #   result = fields.reduce([]) do |memo, f|
-      #     val = f.to_csv_data(headers, row)
-      #     memo << val unless val === SKIP_FIELD
-      #     memo
-      #   end
-      #   result.flatten
-      # end
 
       def config=(config)
         config[:columns].each do |c|
@@ -607,9 +603,10 @@ module GoodData
       attr_accessor :folder, :name, :title, :schema
 
       def initialize(hash, schema)
+        super()
         raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
         @name    = hash[:name] || raise("Data set fields must have their names defined")
-        @title   = hash[:title] || hash[:name]
+        @title   = hash[:title] || hash[:name].humanize
         @folder  = hash[:folder]
         @schema  = schema
       end
@@ -698,7 +695,7 @@ module GoodData
       # def initialize(hash, schema)
       def initialize(hash, attribute, schema)
         super hash, schema
-        @attribute = attribute || schema.fields.find {|field| field.name === hash["reference"]}
+        @attribute = attribute || schema.fields.find {|field| field.name === hash[:reference]}
       end
 
       def to_maql_create
@@ -793,10 +790,9 @@ module GoodData
       def initialize(column, schema)
         super column, schema
         # pp column
-
-        @name       = column['name']
-        @reference  = column['reference']
-        @schema_ref = column['schema_reference']
+        @name       = column[:name]
+        @reference  = column[:reference]
+        @schema_ref = column[:dataset]
         @schema     = schema
       end
 
@@ -836,40 +832,40 @@ module GoodData
     ##
     # Fact representation of a date.
     #
-    class DateFact < Fact
-
-      attr_accessor :format, :output_format
-
-      def initialize(column, schema)
-        super column, schema
-        @output_format = column["format"] || '("dd/MM/yyyy")'
-        @format = @output_format.gsub('yyyy', '%Y').gsub('MM', '%m').gsub('dd', '%d')
-      end
-
-      def column_prefix ; DATE_COLUMN_PREFIX ; end
-      def type_prefix ; DATE_FACT_PREFIX ; end
-
-      def to_csv_header(row)
-        "#{name}_fact"
-      end
-
-      def to_csv_data(headers, row)
-        val = row[name]
-        val.nil?() ? nil : (Date.strptime(val, format) - BEGINNING_OF_TIMES).to_i
-        rescue ArgumentError
-          raise "Value \"#{val}\" for column \"#{name}\" did not match the format: #{format}. " +
-            "Perhaps you need to add or change the \"format\" key in the data set configuration."
-      end
-
-      def to_manifest_part(mode)
-        {
-          'populates'  => [ identifier ],
-          'mode'       => mode,
-          'columnName' => "#{name}_fact"
-        }
-      end
-
-    end
+    # class DateFact < Fact
+    # 
+    #   attr_accessor :format, :output_format
+    # 
+    #   def initialize(column, schema)
+    #     super column, schema
+    #     @output_format = column["format"] || '("dd/MM/yyyy")'
+    #     @format = @output_format.gsub('yyyy', '%Y').gsub('MM', '%m').gsub('dd', '%d')
+    #   end
+    # 
+    #   def column_prefix ; DATE_COLUMN_PREFIX ; end
+    #   def type_prefix ; DATE_FACT_PREFIX ; end
+    # 
+    #   def to_csv_header(row)
+    #     "#{name}_fact"
+    #   end
+    # 
+    #   def to_csv_data(headers, row)
+    #     val = row[name]
+    #     val.nil?() ? nil : (Date.strptime(val, format) - BEGINNING_OF_TIMES).to_i
+    #     rescue ArgumentError
+    #       raise "Value \"#{val}\" for column \"#{name}\" did not match the format: #{format}. " +
+    #         "Perhaps you need to add or change the \"format\" key in the data set configuration."
+    #   end
+    # 
+    #   def to_manifest_part(mode)
+    #     {
+    #       'populates'  => [ identifier ],
+    #       'mode'       => mode,
+    #       'columnName' => "#{name}_fact"
+    #     }
+    #   end
+    # 
+    # end
 
     ##
     # Date as a reference to a date dimension
@@ -880,9 +876,9 @@ module GoodData
 
       def initialize(column, schema)
         super column, schema
-        @output_format = column["format"] || '("dd/MM/yyyy")'
+        @output_format = column["format"] || 'dd/MM/yyyy'
         @format = @output_format.gsub('yyyy', '%Y').gsub('MM', '%m').gsub('dd', '%d')
-        @urn = column["urn"] || "URN:GOODDATA:DATE"
+        @urn = column[:urn] || "URN:GOODDATA:DATE"
       end
 
       def identifier
@@ -899,14 +895,14 @@ module GoodData
         }
       end
 
-      def to_maql_create
-        # urn:chefs_warehouse_fiscal:date
-        super_maql = super
-        maql = ""
-        # maql = "# Include date dimensions\n"
-        # maql += "INCLUDE TEMPLATE \"#{urn}\" MODIFY (IDENTIFIER \"#{name}\", TITLE \"#{title || name}\");\n"
-        maql += super_maql
-      end
+      # def to_maql_create
+      #   # urn:chefs_warehouse_fiscal:date
+      #   super_maql = super
+      #   maql = ""
+      #   # maql = "# Include date dimensions\n"
+      #   # maql += "INCLUDE TEMPLATE \"#{urn}\" MODIFY (IDENTIFIER \"#{name}\", TITLE \"#{title || name}\");\n"
+      #   maql += super_maql
+      # end
 
     end
 
@@ -962,22 +958,22 @@ module GoodData
         super column, schema
         @parts = {} ; @facts = [] ; @attributes = []; @references = []
 
-        @facts << @parts[:date_fact] = DateFact.new(column, schema)
-        if column['schema_reference'] then
+        # @facts << @parts[:date_fact] = DateFact.new(column, schema)
+        if column[:dataset] then
           @parts[:date_ref] = DateReference.new column, schema
           @references << @parts[:date_ref]
         else
           @attributes << @parts[:date_attr] = DateAttribute.new(column, schema)
         end
-        if column['datetime'] then
-          puts "*** datetime"
-          @facts << @parts[:time_fact] = TimeFact.new(column, schema)
-          if column['schema_reference'] then
-            @parts[:time_ref] = TimeReference.new column, schema
-          else
-            @attributes << @parts[:time_attr] = TimeAttribute.new(column, schema)
-          end
-        end
+        # if column['datetime'] then
+        #   puts "*** datetime"
+        #   @facts << @parts[:time_fact] = TimeFact.new(column, schema)
+        #   if column['schema_reference'] then
+        #     @parts[:time_ref] = TimeReference.new column, schema
+        #   else
+        #     @attributes << @parts[:time_attr] = TimeAttribute.new(column, schema)
+        #   end
+        # end
       end
 
       def to_maql_create
@@ -1034,12 +1030,25 @@ module GoodData
     end
 
     class DateDimension < MdObject
+
+      def initialize(spec={})
+        super()
+        @name = spec[:name]
+        @title = spec[:title] || @name
+        @urn = spec[:urn] || "URN:GOODDATA:DATE"
+      end
+        
+
       def to_maql_create
-        # urn:chefs_warehouse_fiscal:date
+        # urn = "urn:chefs_warehouse_fiscal:date"
+        # title = "title"
+        # name = "name"
+
         maql = ""
-        maql += "INCLUDE TEMPLATE \"#{urn}\" MODIFY (IDENTIFIER \"#{name}\", TITLE \"#{title || name}\");"
+        maql += "INCLUDE TEMPLATE \"#{@urn}\" MODIFY (IDENTIFIER \"#{@name}\", TITLE \"#{@title}\");"
         maql
       end
+
     end
 
   end
