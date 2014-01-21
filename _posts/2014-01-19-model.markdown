@@ -43,12 +43,14 @@ Hopefully the model is self descriptive and if you are not strong on terminology
 ##Some rules
 Please note several things
 * we are trying to apply several conventions if you follow them it will be less typing for you but you can always override them
-* in all the cases where you type a name it is a string that will be used to create a technical name in gooddata also called identifier on the API. The user visible name which we call title will be inferrred if not provided. The infferation process is simple. We expect you to provide name in the snake case (as is typical in ruby, this means things like close_date, opportunity_dimension etc). These will be translated int human readable strings (Close date, Opportunity dimension). If you do not like the title you can specify it directly via:title => "My own title" 
+* in all the cases where you type a name it is a string that will be used to create a technical name in gooddata also called identifier on the API. The user visible name which we call title will be inferred if not provided. The inferring process is simple. We expect you to provide name in the snake case (as is typical in ruby, this means things like close_date, opportunity_dimension etc). These will be translated int human readable strings (Close date, Opportunity dimension). If you do not like the title you can specify it directly via:title => "My own title" 
 * the names are also used as reference names in the model. Notice how the date is using name of the close_date dimension and also the user_id reference is using reference users
 
 
 ##Executing the model
-TBD
+{% highlight ruby %}
+gooddata --username joe@example.com --password my_secret_pass --token my_token  project build model.rb
+{% endhighlight %}
 
 ##Loading data
 As part of the process we allow you to load data since sometimes some initial datasets should be part of the model and not ETL. The typical usecase is for the sake of defining reports which are filtered on certain values these values have to be present.
@@ -58,11 +60,6 @@ As part of the process we allow you to load data since sometimes some initial da
 p.upload([["id", "name"],
           ["1", "Tomas"],
           ["2", "Petr"]], :dataset => 'users')
-{% endhighlight %}
-
-### Loading data given by filename
-{% highlight ruby %}
-p.upload("/some/local_file.csv", :dataset => 'users')
 {% endhighlight %}
 
 ### Loading data given by filename
