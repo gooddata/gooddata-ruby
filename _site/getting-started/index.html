@@ -8,8 +8,8 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="http://gooddata.github.io/gooddata-ruby/css/bootstrap.css" rel="stylesheet">
-    <link href="http://gooddata.github.io/gooddata-ruby/gooddata-ruby/css/syntax.css" rel="stylesheet">
+    <link href="http://sdk.gooddata.com/gooddata-ruby/css/bootstrap.css" rel="stylesheet">
+    <link href="http://sdk.gooddata.com/gooddata-ruby/gooddata-ruby/css/syntax.css" rel="stylesheet">
 
     <style type="text/css">
       body {
@@ -81,17 +81,17 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="brand" href="http://gooddata.github.io/gooddata-ruby">GoodData Ruby</a>
+      <a class="brand" href="http://sdk.gooddata.com/gooddata-ruby">GoodData Ruby</a>
       <div class="nav-collapse collapse container">
         <ul class="nav">
           <li class="">
-            <a href="http://gooddata.github.io/gooddata-ruby/">Home</a>
+            <a href="http://sdk.gooddata.com/gooddata-ruby/">Home</a>
           </li>
           <li class="active">
-            <a href="http://gooddata.github.io/gooddata-ruby/getting-started">Quick Start</a>
+            <a href="http://sdk.gooddata.com/gooddata-ruby/getting-started">Quick Start</a>
           </li>
 		<li class="">
-            <a href="http://gooddata.github.io/gooddata-ruby/tutorials">Tutorials</a>
+            <a href="http://sdk.gooddata.com/gooddata-ruby/tutorials">Tutorials</a>
           </li>
          </ul>
       </div>
@@ -202,13 +202,18 @@ report.get_using
 
 <h2>Metric</h2>
 
-<p>Probably the most useful and complex obect is a metric. For its definition we are using language called MAQL. There is one big drawback to current MAQL definition and that is how it reffers to another object. If you imagine a simple metric definition like 'sum of all amounts' it could be described like this "SELECT SUM(Amount)". The problem is that the proper maql definition is this "SELECT SUM([/gdc/md/project_id/obj/123])". As you can see the reference to Amount fact is done via an URI. This has a big advantage of being unambiguous but it has a bg drawback that t cannot be written buy hand and also it is not transferable between projects without some translation.</p>
+<p>Probably the most useful and complex obect is a metric. For its definition we are using language called MAQL. There is one big drawback to current MAQL definition and that is how it reffers to another object. If you imagine a simple metric definition like 'sum of all amounts' it could be described like this "SELECT SUM(Amount)". The problem is that the proper maql definition is as follows 
 
-<p>Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation acurrently relies on titles of objects and might change. In XMAQL there are only 4 additions
-	1) fact is referenced like #"Amount"
-	2) attribute like @"User Name"
-	3) metric like ?"My metric"
-	4) attribute value like $"United States"</p>
+<pre>SELECT SUM([/gdc/md/project_id/obj/123])</pre>
+
+</p>As you can see the reference to Amount fact is done via an URI. This has a big advantage of being unambiguous but it has a bg drawback that t cannot be written buy hand and also it is not transferable between projects without some translation.</p>
+
+<p>Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation acurrently relies on titles of objects and might change. In XMAQL there are only 4 additions<br />
+	1) fact is referenced like #"Amount"<br />
+	2) attribute like @"User Name"<br />
+	3) metric like ?"My metric"<br />
+	4) attribute value like $"United States"<br />
+</p>
 
 <p>The aforementioned metric could be then expressed like this 'SELECT SUM(#"Amount")'. This allows to be explicit in what type you are reffering to since MAQL is fairly complex and allows you to write them by hand. Also transfering metrics nbetween objects is more transpoarent.</p>
 
