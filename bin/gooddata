@@ -195,7 +195,7 @@ command :project do |c|
         JSON.parse(spec_path, :symbolize_names => true)
       end
       new_project = GoodData::Model::ProjectCreator.migrate(opts.merge(:spec => spec))
-      puts "Migration was done. New project PID is #{new_project.pid}."
+      puts "Migration was done. New project PID is #{new_project.uri}."
     end
   end
 

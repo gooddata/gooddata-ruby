@@ -257,7 +257,6 @@ module GoodData
 
           spec = options[:spec] || fail("You need to provide spec for migration")
           spec = spec.to_hash
-          binding.pry
           project = options[:project]
           token = options[:token] || fail("You need to specify token for project creation")
           new_project = GoodData::Project.create(:title => spec[:title], :auth_token => token)
@@ -356,7 +355,7 @@ module GoodData
     # model abstractions.
     #
     class Schema < MdObject
-      attr_reader :fields, :attributes, :facts, :folders, :references, :labels
+      attr_reader :fields, :attributes, :facts, :folders, :references, :labels, :name, :title
 
       def self.load(file)
         Schema.new JSON.load(open(file))
@@ -376,7 +375,8 @@ module GoodData
 
         config[:name] = name unless config[:name]
         config[:title] = config[:title] || config[:name].humanize
-        fail 'Schema name not specified' unless config[:title]
+        fail 'Schema name not specified' unless config[:name]
+        self.name = config[:name]
         self.title = config[:title]
         self.config = config
       end
@@ -401,15 +401,6 @@ module GoodData
           end
         end
         @connection_point = RecordsOf.new(nil, self) unless @connection_point
-      end
-
-      def title
-        @title
-      end
-
-      def title=(title)
-        @name = title
-        @title = title
       end
 
       def type_prefix
@@ -612,7 +603,7 @@ module GoodData
       # non-Latin character and then dropping non-alphanumerical characters.
       #
       def identifier
-        @identifier ||= "#{self.type_prefix}.#{@schema.title}.#{name}"
+        @identifier ||= "#{self.type_prefix}.#{@schema.name}.#{name}"
       end
 
       def to_maql_drop
