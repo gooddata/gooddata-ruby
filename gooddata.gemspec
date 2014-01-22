@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.7"
   
-  s.add_development_dependency "bundler", "~> 1.3"
+  s.add_development_dependency "bundler",
   s.add_development_dependency "thoughtbot-shoulda"
   s.add_development_dependency "pry"
   s.add_development_dependency "rake"

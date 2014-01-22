@@ -1,4 +1,3 @@
-require 'iconv'
 require 'open-uri'
 
 ##
@@ -50,10 +49,6 @@ module GoodData
         GoodData.post ldm_uri, { 'manage' => { 'maql' => schema.to_maql_create } }
       end
 
-      def to_id(str)
-        Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
-                .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
-      end
     end
 
     class ProjectBuilder
@@ -350,7 +345,7 @@ module GoodData
       # non-Latin character and then dropping non-alphanumerical characters.
       #
       def identifier
-        @identifier ||= "#{self.type_prefix}.#{Model::to_id(name)}"
+        @identifier ||= "#{self.type_prefix}.#{name}"
       end
     end
 
@@ -424,7 +419,7 @@ module GoodData
       # Underlying fact table name
       #
       def table
-        @table ||= FACT_COLUMN_PREFIX + Model::to_id(name)
+        @table ||= FACT_COLUMN_PREFIX + name
       end
 
       ##
@@ -616,7 +611,7 @@ module GoodData
       # non-Latin character and then dropping non-alphanumerical characters.
       #
       def identifier
-        @identifier ||= "#{self.type_prefix}.#{Model::to_id @schema.title}.#{Model::to_id name}"
+        @identifier ||= "#{self.type_prefix}.#{@schema.title}.#{name}"
       end
 
       def to_maql_drop
@@ -625,7 +620,7 @@ module GoodData
 
       def visual
         visual = super
-        visual += ", FOLDER {#{folder_prefix}.#{Model::to_id(folder)}}" if folder
+        visual += ", FOLDER {#{folder_prefix}.#{(folder)}}" if folder
         visual
       end
 
@@ -662,10 +657,10 @@ module GoodData
       end
 
       def table
-        @table ||= "d_" + Model::to_id(@schema.name) + "_" + Model::to_id(name)
+        @table ||= "d_" + @schema.name + "_" + name
       end
 
-      def key ; "#{Model::to_id(@name)}#{FK_SUFFIX}" ; end
+      def key ; "#{@name}#{FK_SUFFIX}" ; end
 
       def to_maql_create
         maql = "CREATE ATTRIBUTE {#{identifier}} VISUAL (#{visual})" \
@@ -713,7 +708,7 @@ module GoodData
       end
 
       def column
-        "#{@attribute.table}.#{LABEL_COLUMN_PREFIX}#{Model::to_id name}"
+        "#{@attribute.table}.#{LABEL_COLUMN_PREFIX}#{name}"
       end
 
       alias :inspect_orig :inspect
@@ -739,7 +734,7 @@ module GoodData
       end
 
       def table
-        @table ||= "f_" + Model::to_id(@schema.name)
+        @table ||= "f_" + @schema.name
       end
 
       def to_maql_create
@@ -766,7 +761,7 @@ module GoodData
       end
 
       def column
-        @column ||= table + '.' + column_prefix + Model::to_id(name)
+        @column ||= table + '.' + column_prefix + name
       end
 
       def to_maql_create
@@ -802,13 +797,13 @@ module GoodData
       # from the reference key.
       #
       def identifier
-        @identifier ||= "#{ATTRIBUTE_PREFIX}.#{Model::to_id @schema_ref}.#{Model::to_id @reference}"
+        @identifier ||= "#{ATTRIBUTE_PREFIX}.#{@schema_ref}.#{@reference}"
       end
 
-      def key ; "#{Model::to_id @name}_id" ; end
+      def key ; "#{@name}_id" ; end
 
       def label_column
-        "#{LABEL_PREFIX}.#{Model::to_id @schema_ref}.#{Model::to_id @reference}"
+        "#{LABEL_PREFIX}.#{@schema_ref}.#{@reference}"
       end
 
       def to_maql_create
@@ -882,7 +877,7 @@ module GoodData
       end
 
       def identifier
-        @identifier ||= "#{Model::to_id @schema_ref}.#{DATE_ATTRIBUTE}"
+        @identifier ||= "#{@schema_ref}.#{DATE_ATTRIBUTE}"
       end
 
       def to_manifest_part(mode)
@@ -1008,7 +1003,7 @@ module GoodData
       end
 
       def to_maql_create
-        "CREATE FOLDER {#{type_prefix}.#{Model::to_id(name)}}" \
+        "CREATE FOLDER {#{type_prefix}.#{name}}" \
             + " VISUAL (#{visual}) TYPE #{type};\n"
       end
     end
