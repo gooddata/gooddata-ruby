@@ -309,7 +309,8 @@ module GoodData
 
         def migrate_users(project, spec)
           spec.each do |user|
-            project.add_user(user)
+            puts "Would migrate user #{user}"
+            # project.add_user(user)
           end
         end
 
