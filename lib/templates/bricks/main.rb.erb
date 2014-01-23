@@ -1,4 +1,4 @@
 require 'gooddata/bricks'
 require './mybrick'
 
-Gooddata::Bricks::Pipeline.prepare([LoggerMiddleware, BenchMiddleware, GoodDataMiddleware, MyBrick])
+GoodData::Bricks::Pipeline.prepare([LoggerMiddleware, BenchMiddleware, GoodDataMiddleware, MyBrick])

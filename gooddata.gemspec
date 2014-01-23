@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.authors = ["Pavel Kolesnikov", "Thomas Watson Steen"]
   s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
   s.date = %q{2012-12-17}
-  s.description = %q{Use the Gooddata::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
+  s.description = %q{Use the GoodData::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
   s.email = %q{pavel@gooddata.com}
   s.executables = ["gooddata"]
   s.extra_rdoc_files = [
