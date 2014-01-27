@@ -1,3 +1,10 @@
+require 'gooddata/bricks/utils'
+require 'gooddata/bricks/middleware/middleware'
+require 'gooddata/bricks/middleware/bench_middleware'
+require 'gooddata/bricks/middleware/gooddata_middleware'
+require 'gooddata/bricks/middleware/logger_middleware'
+require 'gooddata/bricks/middleware/stdout_middleware'
+
 module GoodData
   module Bricks
 
@@ -5,15 +12,6 @@ module GoodData
       def self.prepare(pipeline)
         pipeline.reverse.reduce(nil) {|memo, app| memo.nil? ? app.new : app.new(memo)}
       end
-    end
-
-    class Middleware
-      include GoodData::Bricks::Utils
-
-      def initialize(app)
-        @app = app
-      end
-      
     end
     
     class Brick

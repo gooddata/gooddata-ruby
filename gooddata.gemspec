@@ -40,6 +40,7 @@ Gem::Specification.new do |s|
   s.add_dependency "gli"
   s.add_dependency "pry"
   s.add_dependency "erubis"
+  s.add_dependency "activesupport"
   
 end
 

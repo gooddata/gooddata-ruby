@@ -1,3 +1,5 @@
+require 'benchmark'
+
 class BenchMiddleware < GoodData::Bricks::Middleware
 
   def call(params)

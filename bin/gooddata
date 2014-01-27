@@ -44,6 +44,11 @@ desc 'Verbose mode'
 arg_name 'verbose'
 switch [:v,:verbose]
 
+desc 'Http logger on stdout'
+arg_name 'logger'
+switch [:l,:logger]
+
+
 desc 'Describe list here'
 arg_name 'Describe arguments to list here'
 command :process do |c|
@@ -232,15 +237,15 @@ command :run_ruby do |c|
   c.action do |global_options, options, args|
 
     opts = options.merge(global_options).merge({:project_id => options[:project], "project_id" => options[:project], :type => "RUBY"})
-
     if options[:remote]
+      fail "You have to specify name of the deploy when deploying remotely" if options[:name].nil? || options[:name].empty?
       require 'gooddata/commands/process'
       GoodData::Command::Process.run(options[:dir], opts) do
         puts "would run"
       end
     else
       require 'gooddata/commands/runners'
-      GoodData::Command::Runners.run_ruby(options[:dir], options)
+      GoodData::Command::Runners.run_ruby_locally(options[:dir], options)
     end
   end
 end
@@ -260,7 +265,7 @@ end
 
 pre do |global,command,options,args|
   require 'logger'
-  GoodData.logger = Logger.new(STDOUT)
+  GoodData.logger = Logger.new(STDOUT) if global[:l]
   username = global[:username]
   password = global[:password]
 

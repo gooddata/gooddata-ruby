@@ -1,7 +1,9 @@
+require 'logger'
+
 class LoggerMiddleware < GoodData::Bricks::Middleware
 
   def call(params)
-    logger = params[:gdc_logger] = params[:gdc_logger_file].nil? ? Logger.new(STDOUT) : Logger.new(params[:gdc_logger_file])
+    logger = params[:gdc_logger] = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
     logger.info("Pipeline starts")
 
     returning(@app.call(params)) do |result|

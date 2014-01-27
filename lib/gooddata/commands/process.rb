@@ -34,7 +34,7 @@ module GoodData::Command
       
 
       type = options[:type] || fail("Type of deployment is not specified")
-      deploy_name = "AAAAA"
+      deploy_name = options[:name]
       verbose = options[:verbose] || false
       project_pid = options[:project_pid]
       puts HighLine::color("Deploying #{dir}", HighLine::BOLD) if verbose
@@ -78,7 +78,7 @@ module GoodData::Command
       if type == :ruby 
         result = GoodData.post(link, {
           :execution => {
-           :graph => dir + "main.rb",
+           :graph => (dir + "main.rb").to_s,
            :params => {}  
           }
         })
@@ -117,10 +117,10 @@ module GoodData::Command
     def self.run(dir, options={})
       email = options[:email]
       verbose = options[:v]
-
       dir = Pathname(dir)
+      name = options[:name] || "Temporary deploy[#{dir}][#{options[:project_name]}]"
 
-      with_deploy(dir, options.merge(:name => "Temporary deploy[#{dir}][#{options[:project_name]}]")) do |deploy_response|
+      with_deploy(dir, options.merge(:name => name)) do |deploy_response|
         puts HighLine::color("Executing", HighLine::BOLD) if verbose
         # if email.nil?
         #   result = execute_process(deploy_response["process"]["links"]["executions"], dir, options)

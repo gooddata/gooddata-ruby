@@ -1,6 +1,5 @@
 require 'gooddata/version'
 require 'gooddata/connection'
-require 'active_support/core_ext/string'
 
 # fastercsv is built in Ruby 1.9
 if RUBY_VERSION < "1.9"
@@ -112,9 +111,7 @@ module GoodData
     # * +options+ - :cookies => you can specify a hash of cookies
     # 
     def create_authenticated_connection(options={})
-      url = options[:server]
-
-      connect("", "", url, options)
+      connect(options)
       server_cookies = options[:cookies]
       connection.merge_cookies!(server_cookies)
       connection.status = :logged_in
