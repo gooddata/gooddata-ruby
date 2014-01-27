@@ -67,7 +67,6 @@ module GoodData
           end
         end
         puts HighLine::color("Deploy DONE #{dir}", HighLine::BOLD) if verbose
-        binding.pry
         res
       end
     end

@@ -25,12 +25,12 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.7"
   
-  s.add_development_dependency "bundler"
   s.add_development_dependency "thoughtbot-shoulda"
   s.add_development_dependency "pry"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
 
+  s.add_dependency "bundler"
   s.add_dependency "parseconfig"
   s.add_dependency "json_pure"
   s.add_dependency "rest-client"

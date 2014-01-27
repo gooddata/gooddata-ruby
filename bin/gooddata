@@ -235,7 +235,12 @@ command :run_ruby do |c|
   
 
   c.action do |global_options, options, args|
-
+    options[:params] = if (options[:params])
+      JSON.parse(File.read(options[:params]), :symbolize_names => true)
+    else
+      {}
+    end
+    
     opts = options.merge(global_options).merge({:project_id => options[:project], "project_id" => options[:project], :type => "RUBY"})
     if options[:remote]
       fail "You have to specify name of the deploy when deploying remotely" if options[:name].nil? || options[:name].empty?
@@ -245,7 +250,7 @@ command :run_ruby do |c|
       end
     else
       require 'gooddata/commands/runners'
-      GoodData::Command::Runners.run_ruby_locally(options[:dir], options)
+      GoodData::Command::Runners.run_ruby_locally(options[:dir], opts)
     end
   end
 end

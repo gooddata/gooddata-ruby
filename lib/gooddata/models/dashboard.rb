@@ -52,7 +52,6 @@ module GoodData
       end
 
       def create(options={})
-        binding.pry
         stuff = {
            "projectDashboard" => {
               "content" => {

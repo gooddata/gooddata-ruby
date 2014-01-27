@@ -79,7 +79,7 @@ module GoodData::Command
         result = GoodData.post(link, {
           :execution => {
            :graph => (dir + "main.rb").to_s,
-           :params => {}  
+           :params => options[:params]
           }
         })
         begin
@@ -127,7 +127,7 @@ module GoodData::Command
         # else
           # create_email_channel(options) do |channel_response|
             # subscribe_on_finish(:success, channel_response, deploy_response, options)
-            result = execute_process(deploy_response["process"]["links"]["executions"], dir)
+            result = execute_process(deploy_response["process"]["links"]["executions"], dir, options)
           # end
         # end
       end
