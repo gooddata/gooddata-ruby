@@ -199,7 +199,7 @@ module GoodData
     def upload(file, dir = nil, options={})
       ensure_connection
       # We should have followed a link. If it was correct.
-      
+
       stage_url = @options[:webdav_server] || @url.sub(/\./, '-di.')
       # Make a directory, if needed
       if dir then
@@ -208,29 +208,25 @@ module GoodData
         GoodData.logger.debug "#{method}: #{url}"
         begin
           # first check if it does exits
-          RestClient::Request.execute(
+          RestClient::Request.execute({
             :method => method,
             :url => url,
-            :user => @username,
-            :password => @password,
             :timeout => @options[:timeout],
             :headers => {
               :user_agent => GoodData.gem_version_string
-            }
+            }}.merge(cookies)
           )
         rescue RestClient::Exception => e
           if e.http_code == 404 then
             method = :mkcol
             GoodData.logger.debug "#{method}: #{url}"
-            RestClient::Request.execute(
+            RestClient::Request.execute({
               :method => method,
               :url => url,
-              :user => @username,
-              :password => @password,
               :timeout => @options[:timeout],
               :headers => {
                 :user_agent => GoodData.gem_version_string
-              }
+              }}.merge(cookies)
             )
           end
         end
@@ -242,17 +238,18 @@ module GoodData
       filename = options[:filename] || options[:stream] ? "randome-filename.txt" : File.basename(file)
 
       # Upload the file
-      RestClient::Request.execute(
+      req = RestClient::Request.new({
         :method => :put,
         :url => stage_url + STAGE_PATH + dir + '/' + filename,
-        :user => @username,
-        :password => @password,
         :timeout => @options[:timeout],
         :headers => {
           :user_agent => GoodData.gem_version_string,
         },
-        :payload => payload
-      )
+        :payload => payload,
+        :raw_response => true
+      }.merge(cookies))
+      resp = req.execute
+      pp e.inspect
     end
 
     def download(what, where)

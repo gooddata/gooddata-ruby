@@ -119,6 +119,7 @@ module GoodData
     end
 
     def with_project(project, &bl)
+      fail "You have to specify a project when using with_project" if project.nil? || project.empty?
       old_project = GoodData.project
       begin
         GoodData.use(project)
@@ -237,6 +238,10 @@ module GoodData
     #   GoodData.delete '/gdc/project/1'
     def delete(path, options = {})
       connection.delete path, options
+    end
+
+    def upload_webdav(file, options={})
+      connection.upload(file, options[:directory], options)
     end
 
     def poll(result, key, options={})
