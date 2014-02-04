@@ -109,6 +109,8 @@ module GoodData
     def obj_id
       uri.split('/').last
     end
+    alias :pid :obj_id
+
 
     def title
       data['meta']['title'] if data['meta']
