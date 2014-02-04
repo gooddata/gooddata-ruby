@@ -123,13 +123,6 @@ module GoodData
       old_project = GoodData.project
       begin
         GoodData.use(project)
-        server_url = case GoodData.project.data["content"]["cluster"]
-        when "na1"
-          "https://na1.gooddata.com"
-        else
-          "https://secure.gooddata.com"
-        end
-        connection.url = server_url
         bl.call(project)
       rescue Exception => e
         fail e
