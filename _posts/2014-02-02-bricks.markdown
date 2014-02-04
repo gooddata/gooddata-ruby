@@ -88,7 +88,9 @@ Let's have a look how it works visually.
 
 ![Example pipeline consisting of 3 middlewares](https://dl.dropboxusercontent.com/s/g5rymdmmx97hc61/middlewares.png?token_hash=AAE7qAjkOxA6tQGDk8UY17ltRu0ZG5UqwSJ_8ZtAl7ZNaA)
 
+This is a simple pipeline with 2 middlewares and one app. The arrows depict how the execution order would flow.
 
+### Executing a pipeline
 Your pipeline is executed. First middleware is called then the second and third. Then your app is called it does what it needs to and then the call goes back through the middlewares (so they can actually act twice).
 
 This probably does not seem that much useful so let's have a look at couple of examples where you might use it.
@@ -199,7 +201,46 @@ The file is simple JSON file. This file is used in both local or remote executio
 	  "param2" : "value2"
 	}
 
+##Local harness
+Let's talk a little about the harness that makes it possible to test things locally. It tries to run your bricks in similar environment as it would run on the server. This mainly means that you will get the same parameters etc. The goal is to provide you environment to debug and test before you deploy.
 
 
+###Run locally
 
+The most complete command 
+    
+    bundle exec gooddata -l -s https://secure.gooddata.com -Uname@gooddata.com -Pmy_pass -w https://secure-di.getgooddata.com run_ruby -p rjzbt1shubkj9c8es6f75t2avke748mj -d brick_test --name "some_deploy"
 
+looks intimidating but let's break it down. Many of these can be omitted and are there in case you can override everything.
+
+    bundle exec
+
+means you are executing it with exact the same libraries as you would on the server (we are expecting that your local repo is up to date).
+
+    -l
+
+Means that HTTP communication will be logged to STDOUT.
+
+    -s https://secure.gooddata.com
+
+Means which datacenter you are connecting to. If you are not going against something special you should be able to leave this out
+
+    -w https://secure-di.getgooddata.com
+
+File staging area used for uploading the files for execution. Similar case as for he server. By default you should not be forced to use it.
+
+  -p PID
+
+Currently only execution context we have is project context. You have to specify a project PID to be abel to run your brick
+
+  -d path_to_brick
+
+This tells the tool where brick lives. It expect the directory where the main.rb lives. Do not point this directly to a file.
+
+  --name some_name
+
+Used when deployed to name the process so later you can identify it
+
+###Run remotely
+
+The only change to do when you are running things remotely is to add `--remote` to the command. Everything else should remain the same.
