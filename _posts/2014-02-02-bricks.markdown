@@ -1,13 +1,11 @@
 ---
 layout: post
-title:  "Crunching numbers"
+title:  "Executing ruby on GoodData"
 date:   2014-01-19 13:56:00
 categories: recipe
 pygments: true
-perex: Regardless of how much other things there are in the project the most important thing is to get some numbers out. Let's do it.
+perex: ETL is the back bone of every project. But project is not just about crunching numbers. What to do with tasks that are very well suited for solving by a regular programming langugage, like Ruby?
 ---
-
-#Ruby executors
 
 You can run Ruby on GoodData platform. Let's have a look at the platform and walk step by step through doing the simplest possible deployment and then move to more advanced tasks.
 
@@ -21,6 +19,7 @@ GoodData Ruby SDK stack is built so you can easily develop things locally and de
 * Git
 * Ruby (JRuby recommended)
 * Ruby Gems
+
 
     git clone 
 
@@ -55,6 +54,8 @@ It will take some time but after a while you should see green DONE on your conso
 
 Let's see what is happening inside. Open the main.rb file in your favorite editor. You should see something like this.
 
+	require 'logger'
+
 	class HelloWorldBrick
 	
 	  def call(params)
@@ -64,7 +65,7 @@ Let's see what is happening inside. Open the main.rb file in your favorite edito
 	
 	end
 
-    return HelloWorldBrick.new
+  return HelloWorldBrick.new
 
 This is all. Let's dissect it. The interface is very simple. You have to provide an instance of an object that responds to a message :call (in other words does implement method call). This method takes one parameter and that is a hash map of parameters.
 
