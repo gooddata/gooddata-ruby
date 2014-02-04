@@ -6,7 +6,8 @@ module GoodData
         if key == :all
           GoodData.get("/gdc/projects/#{GoodData.project.pid}/dataload/metadata")
         else 
-          GoodData.get("/gdc/projects/#{GoodData.project.pid}/dataload/metadata/#{key}")
+          res = GoodData.get("/gdc/projects/#{GoodData.project.pid}/dataload/metadata/#{key}")
+          res["metadataItem"]["value"]
         end
       end
 
