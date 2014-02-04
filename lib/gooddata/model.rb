@@ -1,5 +1,3 @@
-require 'iconv'
-
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
 # elements, including the server-side data model.
@@ -51,8 +49,7 @@ module GoodData
       end
 
       def to_id(str)
-        Iconv.iconv('ascii//ignore//translit', 'utf-8', str) \
-                .to_s.gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
+        str.encode('ascii', 'utf-8').gsub(/[^\w\d_]/, '').gsub(/^[\d_]*/, '').downcase
       end
     end
 
