@@ -46,6 +46,18 @@ module GoodData
           end
         end
       end
+      
+            
+      # returning asyncToken
+      def validate(filter = nil)
+        raise(CommandFailed, "Specify the project key(s) for the project(s) you wish to validate.") if args.size == 0
+        connect
+        id = args.shift
+        project = Project[id]
+        project.validate(filter)
+      end
+      
+      
     end
   end
 end

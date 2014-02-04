@@ -9,6 +9,7 @@ module GoodData
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
     SLIS_PATH = '/ldm/singleloadinterface'
+    MD_PATH = '/gdc/md/%s'
 
     attr_accessor :connection
 
@@ -30,7 +31,7 @@ module GoodData
       #
       def [](id)
         if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
-          raise ArgumentError.new("wrong type of argument. Should be either project ID or path")
+          raise ArgumentError.new("wrong type of argument (#{id}). Should be either project ID or path")
         end
 
         id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
@@ -139,5 +140,26 @@ module GoodData
     def to_json
       @json
     end
+    
+    
+    def check_status
+        GoodData.get "#{MD_PATH % obj_id}/data/uploads_info" 
+    end
+        
+    
+    # Run validation on project
+    # Valid settins for validation are (default all):
+    # ldm - Checks the consistency of LDM objects.
+    # pdm Checks LDM to PDM mapping consistency, also checks PDM reference integrity.
+    # metric_filter - Checks metadata for inconsistent metric filters.
+    # invalid_objects - Checks metadata for invalid/corrupted objects.
+    # asyncTask response
+    
+    def validate(filters = ['ldm','pdm','metric_filter','invalid_objects'])
+      GoodData.logger.info "Starting project validation"
+      response = GoodData.post "#{MD_PATH % obj_id}/validate", { 'validateProject' => filters }
+      response['asyncTask']['link']['poll']
+    end
+    
   end
 end

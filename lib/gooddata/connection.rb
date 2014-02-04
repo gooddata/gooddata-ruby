@@ -309,7 +309,6 @@ module GoodData
         merge_cookies! response.cookies
         content_type = response.headers[:content_type]
         return response if options[:process] == false
-
         if content_type == "application/json" || content_type == "application/json;charset=UTF-8" then
           result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
           GoodData.logger.debug "Response: #{result.inspect}"
