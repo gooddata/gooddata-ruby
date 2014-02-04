@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Executing ruby on GoodData"
+title:  "Executing ruby on GoodData plaform"
 date:   2014-01-19 13:56:00
 categories: recipe
 pygments: true
@@ -9,7 +9,7 @@ perex: ETL is the back bone of every project. But project is not just about crun
 
 You can run Ruby on GoodData platform. Let's have a look at the platform and walk step by step through doing the simplest possible deployment and then move to more advanced tasks.
 
-##Not inventing the wheel
+##Not reinventing the wheel
 The main idea is that only minority of people should be forced to write code. The others should be happy running them without understanding the details. Soon we will introduce better UI to do just that. Until then it is more programatic but if you are not scared read on.
 
 ##Setting up the stage
@@ -20,10 +20,11 @@ GoodData Ruby SDK stack is built so you can easily develop things locally and de
 * Ruby (JRuby recommended)
 * Ruby Gems
 
+Go ahead and run
 
     git clone 
 
-We just cloned the remote repository which contains information about the used libraries and also contains some stuff that others created. We will investigate later. Let's continue with setting things up.
+We just cloned the remote repository which contains information about the used libraries and also contains some stuff that others created. We will investigate that later. Let's continue with setting things up.
 
 Run
 
@@ -84,6 +85,9 @@ We introduced three concepts.
 * _Pipelines_ - If you chain multiple middleweres and applications it creates a pipeline.
 
 Let's have a look how it works visually.
+
+![Example pipeline consisting of 3 middlewares](https://www.dropbox.com/s/g5rymdmmx97hc61/middlewares.png?export=1)
+
 
 Your pipeline is executed. First middleware is called then the second and third. Then your app is called it does what it needs to and then the call goes back through the middlewares (so they can actually act twice).
 
