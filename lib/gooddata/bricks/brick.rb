@@ -4,6 +4,8 @@ require 'gooddata/bricks/middleware/bench_middleware'
 require 'gooddata/bricks/middleware/gooddata_middleware'
 require 'gooddata/bricks/middleware/logger_middleware'
 require 'gooddata/bricks/middleware/stdout_middleware'
+require 'gooddata/bricks/middleware/restforce_middleware'
+require 'gooddata/bricks/middleware/twitter_middleware'
 
 module GoodData
   module Bricks
