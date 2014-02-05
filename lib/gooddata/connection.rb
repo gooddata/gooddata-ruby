@@ -32,10 +32,9 @@ module GoodData
     DEFAULT_URL = 'https://secure.gooddata.com'
     LOGIN_PATH = '/gdc/account/login'
     TOKEN_PATH = '/gdc/account/token'
-    STAGE_PATH = '/uploads/'
 
     attr_reader(:auth_token, :url)
-    attr_accessor :status
+    attr_accessor :status, :options
 
 
     # Options:
@@ -196,14 +195,15 @@ module GoodData
     # Uploads a file to GoodData server
     # /uploads/ resources are special in that they use a different
     # host and a basic authentication.
-    def upload(file, dir = nil, options={})
+    def upload(file, options={})
       ensure_connection
-      # We should have followed a link. If it was correct.
 
-      stage_url = @options[:webdav_server] || @url.sub(/\./, '-di.')
+      dir = options[:directory] || ''
+      staging_uri = options[:staging_url].to_s
+      url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
+      
       # Make a directory, if needed
-      if dir then
-        url = stage_url + STAGE_PATH + dir + '/'
+      unless dir.empty? then
         method = :get
         GoodData.logger.debug "#{method}: #{url}"
         begin
@@ -230,17 +230,17 @@ module GoodData
             )
           end
         end
-      else
-        dir = "."
       end
 
       payload = options[:stream] ? "file" : File.read(file)
       filename = options[:filename] || options[:stream] ? "randome-filename.txt" : File.basename(file)
 
       # Upload the file
+      puts "uploading the file #{URI.join(url, filename).to_s}"
+      
       req = RestClient::Request.new({
         :method => :put,
-        :url => stage_url + STAGE_PATH + dir + '/' + filename,
+        :url => URI.join(url, filename).to_s,
         :timeout => @options[:timeout],
         :headers => {
           :user_agent => GoodData.gem_version_string,
@@ -249,7 +249,7 @@ module GoodData
         :raw_response => true
       }.merge(cookies))
       resp = req.execute
-      pp e.inspect
+      true
     end
 
     def download(what, where)

@@ -491,7 +491,7 @@ module GoodData
         end
 
         # upload it
-        GoodData.connection.upload "#{dir}/upload.zip", File.basename(dir)
+        GoodData.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir))
         FileUtils.rm_rf dir
 
         # kick the load

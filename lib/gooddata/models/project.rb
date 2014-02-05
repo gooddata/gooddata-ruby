@@ -189,6 +189,10 @@ module GoodData
       raw_data["project"]
     end
 
+    def links
+      data["links"]
+    end
+
     def to_json
       raw_data.to_json
     end

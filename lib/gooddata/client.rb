@@ -119,7 +119,7 @@ module GoodData
     end
 
     def with_project(project, &bl)
-      fail "You have to specify a project when using with_project" if project.nil? || project.empty?
+      fail "You have to specify a project when using with_project" if project.nil? || (project.is_a?(String) && project.empty?)
       old_project = GoodData.project
       begin
         GoodData.use(project)
@@ -233,8 +233,22 @@ module GoodData
       connection.delete path, options
     end
 
-    def upload_webdav(file, options={})
-      connection.upload(file, options[:directory], options)
+    def upload_to_user_webdav(file, options={})
+      u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
+      url = URI.join(u.to_s.chomp(u.path.to_s), "/uploads/")
+      connection.upload(file, options.merge({
+        :directory    => options[:directory],
+        :staging_url  => url
+      }))
+    end
+
+    def upload_to_project_webdav(file, options={})
+      u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
+      url = URI.join(u.to_s.chomp(u.path.to_s), "/project-uploads/", "#{GoodData.project.pid}/")
+      connection.upload(file, options.merge({
+        :directory    => options[:directory],
+        :staging_url  => url
+      }))
     end
 
     def poll(result, key, options={})

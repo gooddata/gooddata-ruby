@@ -52,7 +52,7 @@ module GoodData::Command
           end
         end
 
-        GoodData.connection.upload(temp.path)
+        GoodData.upload_to_user_webdav(temp.path)
         process_id = options[:process]
         
         data = {
