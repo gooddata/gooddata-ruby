@@ -22,7 +22,7 @@ GoodData Ruby SDK stack is built so you can easily develop things locally and de
 
 Go ahead and run
 
-    git clone 
+    git clone TBD
 
 We just cloned the remote repository which contains information about the used libraries and also contains some stuff that others created. We will investigate that later. Let's continue with setting things up.
 
@@ -41,13 +41,13 @@ You are ready to go.
 
 ##Running your first brick
 
-The small pieces of ruby that are run on the platform are called bricks. Nobody knows where and why this name was emerged but there are rumors that it is supposed to reference the fact that out of brick just layed together you can create a solid wall.
+The small pieces of ruby that are run on the platform are called bricks. Nobody knows where and why this name emerged but there are rumors that it is supposed to reference the fact that out of brick just laid together you can create a solid wall.
 
 If you open the repository you will see there some directories. Find directory called misc/hello_world and open it. It contains only one file. Do not open it yet.
 
 Run this in console.
 
-    bundle exec gooddata -v run_ruby --remote asdas/asdadas
+    bundle exec gooddata -l -Uname@gooddata.com -Pmy_pass run_ruby -p project_pid -d hello_world_brick --name "some_deploy" --remote
 
 It will take some time but after a while you should see green DONE on your console and a link for the log. Open it in your browser and you should see there something like this. On one of the lines there should be hello world. Great you just ran your first ruby brick.
 
@@ -200,6 +200,8 @@ The file is simple JSON file. This file is used in both local or remote executio
 	  "param1" : "value1",
 	  "param2" : "value2"
 	}
+
+###Return parameters
 
 ##Local harness
 Let's talk a little about the harness that makes it possible to test things locally. It tries to run your bricks in similar environment as it would run on the server. This mainly means that you will get the same parameters etc. The goal is to provide you environment to debug and test before you deploy.
