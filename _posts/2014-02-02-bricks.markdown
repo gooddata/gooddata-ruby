@@ -55,18 +55,21 @@ It will take some time but after a while you should see green DONE on your conso
 
 Let's see what is happening inside. Open the main.rb file in your favorite editor. You should see something like this.
 
-	require 'logger'
+	require 'gooddata'
+  require 'logger'
 
-	class HelloWorldBrick
-	
-	  def call(params)
-	    logger = Logger.new(params[:gdc_logger])
-	    logger.info "Hello world"
-	  end
-	
-	end
+  module GoodData::Bricks
+    class HelloWorldBrick
 
-  return HelloWorldBrick.new
+      def call(params)
+        logger = Logger.new(params[:GDC_LOGGER_FILE])
+        logger.info "Hello world"
+      end
+
+    end
+  end
+
+  GoodData::Bricks::HelloWorldBrick.new
 
 This is all. Let's dissect it. The interface is very simple. You have to provide an instance of an object that responds to a message :call (in other words does implement method call). This method takes one parameter and that is a hash map of parameters.
 
