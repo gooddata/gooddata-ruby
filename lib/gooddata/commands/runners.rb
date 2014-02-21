@@ -15,7 +15,7 @@ module GoodData::Command
       sst = GoodData.connection.cookies[:cookies]["GDCAuthSST"]
       pwd = Pathname.new(Dir.pwd)
       logger_stream = STDOUT
-      
+
       server_uri = URI(options[:server]) unless options[:server].nil?
       scheme = server_uri.nil? ? "" : server_uri.scheme
       hostname = server_uri.nil? ? "" : server_uri.host
@@ -24,13 +24,15 @@ script_body = <<-script_body
       require 'fileutils'
       FileUtils::cd(\"#{pwd+brick_dir}\") do\
         require 'bundler/setup'
-        eval(File.read(\"main.rb\")).call({
+
+        $SCRIPT_PARAMS = {
           :GDC_SST => \"#{sst}\",
           :GDC_PROJECT_ID => \"#{pid}\",
           :GDC_PROTOCOL => \"#{scheme}\",
           :GDC_SERVER => \"#{hostname}\",
           :GDC_LOGGER_FILE => STDOUT
-        }.merge(#{params}))
+        }.merge(#{params})
+        eval(File.read(\"./main.rb\"))
       end
 script_body
 
