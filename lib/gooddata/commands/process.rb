@@ -46,7 +46,7 @@ module GoodData::Command
       if type == :ruby 
         result = GoodData.post(link, {
           :execution => {
-           :graph => (dir + "main.rb").to_s,
+           :graph => ("./main.rb").to_s,
            :params => options[:params]
           }
         })
@@ -109,13 +109,14 @@ module GoodData::Command
       res = nil
 
       Tempfile.open("deploy-graph-archive") do |temp|
-        
         Zip::OutputStream.open(temp.path) do |zio|
-          Dir.glob(dir + "**/*") do |item|
-            puts "including #{item}" if verbose
-            unless File.directory?(item)
-              zio.put_next_entry(item)
-              zio.print IO.read(item)
+          FileUtils::cd(dir) do
+            Dir.glob("./**/*") do |item|
+              puts "including #{item}" if verbose
+              unless File.directory?(item)
+                zio.put_next_entry(item)
+                zio.print IO.read(item)
+              end
             end
           end
         end
