@@ -112,5 +112,48 @@ But sometimes you can see some inconsistencies.
 
 This should not stop you most of the time. Just keep this in mind. Hopefully it will go completely away soon.
 
+##Defining a Report
 
+Ok we have our metric. Now it would be interesting to see a report. The metric broken down. If you are familiar with the model you know the metric is a summation of lines changed in all commits in all products made by all developers. Let's see, how developers contributed.
+
+    GoodData::ReportDefinition.execute(:top => ["attr.devs.id"], :left => [m])
+    > [ 1  |  2  |  3 ]
+      [1.0 | 3.0 | 5.0]
+
+Again, there are a lots of ways how to achieve the same result so let's have a look at what is available right now. You can already see that you can see a metric by reference and attribute can be referenced just by a string containing an identifier. Let's pass the attribute as an object as well.
+
+    a = GoodData::Attribute.get_by_id("attr.devs.id")
+    GoodData::ReportDefinition.execute(:top => [a], :left => [m])
+
+If you studied UI well you know that Report is defined using Display Forms (or labels) not by attribute. If you are specifying an attribute SDK will take the first one automatically. This works well most of the time since attributes have typically just one label. But sometimes they have many so you need to me more specific. Coincidently our attribute has 2 labels.
+
+    a.display_forms.count
+    > 2
+
+The identifiers are "label.devs.email" and "label.devs.id". Let's try using those
+
+    GoodData::ReportDefinition.execute(:top => ["label.devs.id"], :left => [m])
+    GoodData::ReportDefinition.execute(:top => ["label.devs.email"], :left => [m])
+
+You can even do something that you cannot do on UI and that is using both of the labels at the same time (sic).
+
+    GoodData::ReportDefinition.execute(:top => ["label.devs.id", "label.devs.email"], :left => [m])
+
+In almost all above cases we had only one thing in left or top section. You can save your fingers and not use the array literal if there is only one item in the section. SDK will wrap them for you.
+
+    GoodData::ReportDefinition.execute(:top => "label.devs.id", :left => m)
+
+Sometimes it might be useful to refer to the objects in a different way. You can do it by title
+
+    GoodData::ReportDefinition.execute(:top => [{:type => :attribute, :title => "Month/Year (committed_on)"}], :left => m)
+
+Since underneath it uses MdObject.find_first_by_title it also accepts RegExp literal
+
+    GoodData::ReportDefinition.execute(:top => [{:type => :attribute, :title => /Month\/Year/}], :left => m)
+
+    GoodData::ReportDefinition.execute(:top => [{:type => :attribute, :title => /month\/year/i}], :left => m)
+
+In our model we have two attributes of name Id. Since the title does not have to be unique this is ok. Currently it will pick the first for you but this behavior will likely change in the favor of throwing an ambiguous error much like your SQL client probably does.
+
+    GoodData::ReportDefinition.execute(:top => [{:type => :attribute, :title => "Id"}], :left => m)
 
