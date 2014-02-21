@@ -15,6 +15,8 @@ Imagine you have a small dev shop. You have couple of developers. They crank out
 ###Model
 This is how the model looks.
 
+![Model](https://dl.dropboxusercontent.com/s/1y97ziv5anmpn9s/gooddata_devs_demo_model.png?token_hash=AAENC89d8XOfCr9AnyQCrd9vwfhb-bDuYcORQ0AIRP2RQQ)
+
 ###Spinning it up
 Let's do this. I assume you have gooddata SDK installed and working. Run
 
@@ -42,4 +44,4 @@ Put your freshly acquired pid into an empty slot after "project_id". It should l
       "project_id"   : "HERE_COMES_YOUR NEW_TOKEN"
     }
 
-You are done. If you go to https://secure.gooddata.com you should be able to see your new project. Also locally you are ready for other tutorials
+You are done. If you go to [https://secure.gooddata.com/projects.html](https://secure.gooddata.com/projects.html) you should be able to see your new project. Also locally you are ready for other tutorials

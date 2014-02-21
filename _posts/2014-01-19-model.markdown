@@ -7,7 +7,7 @@ pygments: true
 perex: Model is a huge part of how to create a report. Let's have a look how to create it using Ruby SDK and compare with other approaches.
 ---
 
-There are several ways how to express a model and create it in GoodData. The most prominent way to do it is the cisual modeller that is part of the CloudConnect package. There are clear advantages like being visual but there are also drawbacks. It is not repeatable, it is not programmable and it is not text based. Let's have a look how to create a simple model using Ruby SDK.
+There are several ways how to express a model and create it in GoodData. The most prominent way to do it is the visual modeler that is part of the CloudConnect package. There are clear advantages like being visual but there are also drawbacks. It is not repeatable, it is not programmable and it is not text based. Let's have a look how to create a simple model using Ruby SDK.
 
 ##The model
 The model we will be creating is this
@@ -42,7 +42,7 @@ Hopefully the model is self descriptive and if you are not strong on terminology
 
 ##Some rules
 Please note several things
-* we are trying to apply several conventions if you follow them it will be less typing for you but you can always override them
+* we are trying to apply several conventions if you follow them it will be less typing for you but you can always override them.
 * in all the cases where you type a name it is a string that will be used to create a technical name in gooddata also called identifier on the API. The user visible name which we call title will be inferred if not provided. The inferring process is simple. We expect you to provide name in the snake case (as is typical in ruby, this means things like close_date, opportunity_dimension etc). These will be translated int human readable strings (Close date, Opportunity dimension). If you do not like the title you can specify it directly via:title => "My own title" 
 * the names are also used as reference names in the model. Notice how the date is using name of the close_date dimension and also the user_id reference is using reference users
 
