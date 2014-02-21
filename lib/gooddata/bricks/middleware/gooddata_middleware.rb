@@ -11,12 +11,14 @@ module GoodData::Bricks
       project_id = params[:GDC_PROJECT_ID]
 
       fail "SST (SuperSecureToken) not present in params" if params[token_name].nil?
-      logger.info "Connecting to GD with SST"
       server = if !params[protocol_name].empty? && !params[server_name].empty?
         params[protocol_name] + "://" + params[server_name]
       end
 
-      GoodData.connect(params[:GDC_USERANME], params[:GDC_PASSWORD], {:server => server})
+      fail "GoodData username is missing. Expected param :GDC_USERANME" if params[:GDC_USERNAME].nil?
+      fail "GoodData password is missing. Expected param :GDC_PASSWORD" if params[:GDC_PASSWORD].nil?
+
+      GoodData.connect(params[:GDC_USERNAME], params[:GDC_PASSWORD], {:server => server})
       GoodData.logger = logger
       GoodData.with_project(project_id) do |p|
         @app.call(params)
