@@ -9,7 +9,7 @@ module GoodData::Command
       fail "You have to specify directory of the brick run" if brick_dir.nil?
       fail "You specified file as a birck run directory. You have to specify directory." if File.exist?(brick_dir) && !File.directory?(brick_dir)
 
-      params = options[:params] || {}
+      params = options[:expanded_params] || {}
 
       GoodData.connection.connect!
       sst = GoodData.connection.cookies[:cookies]["GDCAuthSST"]

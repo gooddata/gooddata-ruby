@@ -16,10 +16,10 @@ module GoodData::Command
       end
     end
 
-    def self.deploy(dir, options={}) 
+    def self.deploy(dir, options={})
       verbose = options[:verbose] || false
       GoodData.with_project(options[:project_id]) do
-        deploy_graph(dir, options)
+        deploy_graph(dir, options.merge({:files_to_exclude => [options[:params]]}))
       end
     end
 
@@ -28,14 +28,14 @@ module GoodData::Command
       GoodData.with_project(options[:project_id]) do
         if block
           begin
-            res = deploy_graph(dir, options)
+            res = deploy_graph(dir, options.merge({:files_to_exclude => [options[:params]]}))
             block.call(res)
           ensure
             # self_link = res["process"]["links"]["self"]
             # GoodData.delete(self_link)
           end
         else
-          deploy_graph(dir, options)
+          deploy_graph(dir, options.merge({:files_to_exclude => [options[:params]]}))
         end
       end
     end
@@ -47,7 +47,7 @@ module GoodData::Command
         result = GoodData.post(link, {
           :execution => {
            :graph => ("./main.rb").to_s,
-           :params => options[:params]
+           :params => options[:expanded_params]
           }
         })
         begin
@@ -95,9 +95,11 @@ module GoodData::Command
     end
 
     private
-    def self.deploy_graph(dir, options={}) 
+    def self.deploy_graph(dir, options={})
       dir = Pathname(dir) || fail("Directory is not specified")
       fail "\"#{dir}\" is not a directory" unless dir.directory?
+      files_to_exclude = options[:files_to_exclude].map {|p| Pathname(p)}
+
       # project_id = options[:project_id] || fail("Project Id has to be specified")
       
 
@@ -111,7 +113,9 @@ module GoodData::Command
       Tempfile.open("deploy-graph-archive") do |temp|
         Zip::OutputStream.open(temp.path) do |zio|
           FileUtils::cd(dir) do
-            Dir.glob("./**/*") do |item|
+
+            files_to_pack = Dir.glob("./**/*").reject {|f| files_to_exclude.include?(Pathname(dir) + f)}
+            files_to_pack.each do |item|
               puts "including #{item}" if verbose
               unless File.directory?(item)
                 zio.put_next_entry(item)
