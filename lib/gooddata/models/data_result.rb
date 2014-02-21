@@ -1,36 +1,7 @@
+class BigDecimal; def pretty_print(p) p.text to_s; end; end
+
 module GoodData
-
-  class Row < CSV::Row
-    def ==(other)
-       len = length()
-       return false if len != other.length
-       result = true
-
-       len.times do |i|
-         result = false unless convert_field(field(i)) == convert_field(other.field(i))
-       end
-       result
-    end
-
-    private
-    def convert_field(val)
-      if val.is_a?(String) && val.match(/^[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?$/)
-        # Is it a Number?
-        val = val.scan(/[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?/).first
-        val = val.include?('.') ? val.to_f.round : val.to_i
-        return val
-      elsif val.nil? || (val.respond_to?(:strip) && val.strip.empty?)
-        #is ia a String
-        return ''
-      elsif val.respond_to? :round
-        # No idea what that one does
-        return val.round
-      else
-        return val
-      end
-    end
-  end
-
+  
   class DataResult
 
     attr_reader :data
@@ -43,14 +14,17 @@ module GoodData
       puts to_s
     end
 
-    def to_s
+    def to_s(options={})
+      with_indices = options[:index] || false
       a = to_table.to_a
-      a.transpose.unshift((1..a.length).to_a).each_with_index.map{|col, i|
-        col.unshift(i.zero?? nil : i)   # inserts row labels #
+      data = a.transpose
+      data.unshift((1..a.length).to_a) if with_indices
+      data.each_with_index.map{|col, i|
+        col.unshift(i.zero? ? nil : i) if with_indices  # inserts row labels #
         w = col.map{|cell| cell.to_s.length}.max   # w = "column width" #
         col.each_with_index.map{|cell, i|
-          i.zero?? cell.to_s.center(w) : cell.to_s.ljust(w)}   # alligns the column #
-      }.transpose.map{|row| "[#{row.join(' | ')}]"}.join("\n")
+          i.zero? ? cell.to_s.center(w) : cell.to_s.ljust(w)} # alligns the column #
+      }.transpose.map{|row| "[#{row.join(' | ')}]"}.unshift("").join("\n")
     end
 
     def to_table
@@ -72,7 +46,8 @@ module GoodData
     end
 
     def assemble_table
-      @table = CSV::Table.new([GoodData::Row.new([],[],false)])
+      @table = [[]]
+      # CSV::Table.new([GoodData::Row.new([],[],false)])
     end
 
     def to_table
@@ -92,68 +67,70 @@ module GoodData
     end
   end
 
-  class SFDataResult < DataResult
-
-    def initialize(data, options = {})
-      super(data)
-      @options = options
-      assemble_table
-    end
-
-    def assemble_table
-      sf_data = data[:queryResponse][:result][:records]
-      sf_data = sf_data.is_a?(Hash) ? [sf_data] : sf_data
-      if @options[:soql]
-        # puts @options[:soql]
-        fields = @options[:soql].strip.match(/SELECT (.*) FROM/i)[1]
-        @headers = fields.strip.split(",").map do |item|
-          item.strip.split(/\s/)
-        end.map do |item|
-          item.last.to_sym
-        end
-        # pp @headers
-      elsif @options[:headers]
-        @headers = @options[:headers]
-      else
-        @headers = sf_data.first.keys - [:type, :Id]
-      end
-      @table = CSV::Table.new(sf_data.collect do |line|
-        GoodData::Row.new([], @headers.map {|h| line[h] || ' '}, false)
-      end)
-    rescue
-      fail "Unable to assemble the table. Either the data provided are empty or the SOQL is malformed."
-    end
-
-    def to_table
-      @table
-    end
-
-    def == (otherDataResult)
-      result = true
-      len =  @table.length
-      other_table = otherDataResult.to_table
-      if len != other_table.length
-        # puts "TABLES ARE OF DIFFERENT SIZES"
-        return false
-      end
-
-      diff(otherDataResult).empty?() ? true : false
-
-    end
-
-    def diff(otherDataResult)
-      other_table = otherDataResult.to_table
-      differences = []
-
-      @table.each do |row|
-        differences << row unless other_table.detect {|r| r == row}
-      end
-      differences
-    end
-
-  end
+  # class SFDataResult < DataResult
+  # 
+  #     def initialize(data, options = {})
+  #       super(data)
+  #       @options = options
+  #       assemble_table
+  #     end
+  # 
+  #     def assemble_table
+  #       sf_data = data[:queryResponse][:result][:records]
+  #       sf_data = sf_data.is_a?(Hash) ? [sf_data] : sf_data
+  #       if @options[:soql]
+  #         # puts @options[:soql]
+  #         fields = @options[:soql].strip.match(/SELECT (.*) FROM/i)[1]
+  #         @headers = fields.strip.split(",").map do |item|
+  #           item.strip.split(/\s/)
+  #         end.map do |item|
+  #           item.last.to_sym
+  #         end
+  #         # pp @headers
+  #       elsif @options[:headers]
+  #         @headers = @options[:headers]
+  #       else
+  #         @headers = sf_data.first.keys - [:type, :Id]
+  #       end
+  #       @table = CSV::Table.new(sf_data.collect do |line|
+  #         GoodData::Row.new([], @headers.map {|h| line[h] || ' '}, false)
+  #       end)
+  #     rescue
+  #       fail "Unable to assemble the table. Either the data provided are empty or the SOQL is malformed."
+  #     end
+  # 
+  #     def to_table
+  #       @table
+  #     end
+  # 
+  #     def == (otherDataResult)
+  #       result = true
+  #       len =  @table.length
+  #       other_table = otherDataResult.to_table
+  #       if len != other_table.length
+  #         # puts "TABLES ARE OF DIFFERENT SIZES"
+  #         return false
+  #       end
+  # 
+  #       diff(otherDataResult).empty?() ? true : false
+  # 
+  #     end
+  # 
+  #     def diff(otherDataResult)
+  #       other_table = otherDataResult.to_table
+  #       differences = []
+  # 
+  #       @table.each do |row|
+  #         differences << row unless other_table.detect {|r| r == row}
+  #       end
+  #       differences
+  #     end
+  # 
+  #   end
 
   class ReportDataResult < DataResult
+
+    ROW_LIMIT = 10000000
 
     attr_reader :row_headers, :column_headers, :table, :headers_height, :headers_width
 
@@ -170,16 +147,32 @@ module GoodData
     end
 
     def without_column_headers
-      @table = table.transpose[headers_height, 1000000].transpose
+      @table = table.transpose[headers_height, ROW_LIMIT].transpose
       self
+    end
+
+    def to_data_table
+      table.transpose[headers_height, ROW_LIMIT].transpose[headers_width, ROW_LIMIT]
     end
 
     def each_line
       table.transpose.each {|line| yield line}
     end
 
+    def to_a
+      table.to_a
+    end
+
     def to_table
-      CSV::Table.new(table.transpose.map {|line| GoodData::Row.new([], line.map {|item| item || ' '}, false)})
+      table.transpose
+    end
+
+    def [](index)
+      table[index]
+    end
+
+    def include_row?(row)
+      to_table.include?(row)
     end
 
     def == (otherDataResult)
@@ -275,7 +268,7 @@ module GoodData
         (row_headers.size).times do |j|
           table[headers_width + i] ||= []
   #        puts "[#{headers_width + i}, #{headers_height + j}] [#{i}][#{j}]=#{xtab_data[j][i]}"
-          table[headers_width + i][headers_height + j] = xtab_data[j][i]
+          table[headers_width + i][headers_height + j] = BigDecimal(xtab_data[j][i])
         end
       end
     end

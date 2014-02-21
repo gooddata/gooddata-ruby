@@ -74,7 +74,7 @@ module GoodData
 
     def execute
       res = GoodData::ReportDefinition.execute(:left => self)
-      res.to_table[0][0]
+      res[0][0]
     end
 
     def validate

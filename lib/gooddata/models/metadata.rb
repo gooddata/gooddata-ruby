@@ -28,12 +28,20 @@ module GoodData
         self[:all].find_all {|r| r["tags"].split(",").include?(tag)}
       end
 
-      def find_first_by_title(title)
-        item = self[:all].find {|r| r["title"] == title}
-        self[item["link"]]
+      def get_by_id(id)
+        uri = GoodData::MdObject.id_to_uri(id)
+        self[uri] unless uri.nil?
       end
 
-      private
+      def find_first_by_title(title)
+        all = self[:all]
+        item = if title.is_a?(Regexp)
+          all.find {|r| r["title"] =~ title}
+        else
+          all.find {|r| r["title"] == title}
+        end
+        self[item["link"]] unless item.nil?
+      end
 
       def identifier_to_uri(id)
         raise NoProjectError.new "Connect to a project before searching for an object" unless GoodData.project
@@ -45,6 +53,9 @@ module GoodData
           response['identifiers'][0]['uri']
         end
       end
+
+      alias :id_to_uri :identifier_to_uri
+
     end
 
     def initialize(json)
@@ -52,7 +63,18 @@ module GoodData
     end
 
     def delete
-      GoodData.delete(uri)
+      if saved?
+        GoodData.delete(uri)
+        meta.delete("uri")
+        # ["uri"] = nil
+      end
+    end
+
+    def refresh
+      if saved?
+        @json = GoodData.get(uri)
+      end
+      self
     end
 
     def obj_id
@@ -64,7 +86,7 @@ module GoodData
     end
 
     def uri
-      meta['uri']
+      meta && meta['uri']
     end
 
     def browser_uri
@@ -100,11 +122,11 @@ module GoodData
     end
 
     def meta
-      data['meta']
+      data && data['meta']
     end
 
     def content
-      data['content']
+      data && data['content']
     end
 
     def project

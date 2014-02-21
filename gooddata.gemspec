@@ -41,6 +41,9 @@ Gem::Specification.new do |s|
   s.add_dependency "pry"
   s.add_dependency "erubis"
   s.add_dependency "activesupport"
+  s.add_dependency "restforce"
+  s.add_dependency "salesforce_bulk"
+  s.add_dependency "twitter"
   
 end
 

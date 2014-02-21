@@ -74,7 +74,7 @@ module GoodData
       @username   = username
       @password   = password
       @url        = options[:server] || DEFAULT_URL
-      @auth_token = options.delete(:auth_token)
+      @auth_token = options.delete(:token)
       @options    = options
 
       @server = create_server_connection(@url, @options)
@@ -118,9 +118,10 @@ module GoodData
     #
     #   Connection.new(username, password).post '/gdc/projects', { ... }
     def post(path, data, options = {})
-      payload = data.is_a?(Hash) ? data.to_json : data
-      GoodData.logger.debug "POST #{@server}#{path}, payload: #{payload}"
+      
+      GoodData.logger.debug("POST #{@server}#{path}, payload: #{scrub_params(data, [:password, :login, :authorizationToken])}")
       ensure_connection
+      payload = data.is_a?(Hash) ? data.to_json : data
       b = Proc.new { @server[path].post payload, cookies }
       process_response(options, &b)
     end
@@ -196,6 +197,7 @@ module GoodData
     # /uploads/ resources are special in that they use a different
     # host and a basic authentication.
     def upload(file, options={})
+
       ensure_connection
 
       dir = options[:directory] || ''
@@ -236,8 +238,7 @@ module GoodData
       filename = options[:filename] || options[:stream] ? "randome-filename.txt" : File.basename(file)
 
       # Upload the file
-      puts "uploading the file #{URI.join(url, filename).to_s}"
-      
+      # puts "uploading the file #{URI.join(url, filename).to_s}"
       req = RestClient::Request.new({
         :method => :put,
         :url => URI.join(url, filename).to_s,
@@ -246,24 +247,35 @@ module GoodData
           :user_agent => GoodData.gem_version_string,
         },
         :payload => payload,
-        :raw_response => true
-      }.merge(cookies))
+        :raw_response => true,
+        :user => @username,
+        :password => @password
+      })
+      # .merge(cookies))
       resp = req.execute
       true
     end
 
-    def download(what, where)
-      stage_url = @options[:webdav_server] || @url.sub(/\./, '-di.')
-      url = stage_url + STAGE_PATH + what
-      File.open(where, 'w') do |f|
-        resp = RestClient::Request.execute({
-          :method => 'GET',
-          :url => url,
-          :user => @username,
-          :password => @password,
-          :timeout => 0
-        }) do |chunk, x, y|
-          f.write chunk
+    def download(what, where, options={})
+      staging_uri = options[:staging_url].to_s
+      url = staging_uri + what
+      req = RestClient::Request.new({
+        :method => 'GET',
+        :url => url,
+        :user => @username,
+        :password => @password
+      })
+
+      if where.is_a?(String)
+        File.open(where, 'w') do |f|
+          req.execute do |chunk, x, y|
+            f.write chunk
+          end
+        end
+      else
+        # Assume it is a IO stream
+        req.execute do |chunk, x, y|
+          where.write chunk
         end
       end
     end
@@ -285,7 +297,7 @@ module GoodData
     end
 
     def connect
-      # GoodData.logger.info "Connecting to GoodData..."
+      GoodData.logger.info "Connecting to GoodData..."
       @status = :connecting
       authenticate
     end
@@ -350,5 +362,18 @@ module GoodData
         authenticate
       end
     end
+
+    def scrub_params(params, keys)
+      keys = keys.reduce([]) {|memo, k| memo.concat([k.to_s, k.to_sym])}
+
+      new_params = Marshal.load(Marshal.dump(params))
+      GoodData::Helpers.hash_dfs(new_params) do |k, key|
+        keys.each do |key_to_scrub|
+          k[key_to_scrub] = ("*" * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub)
+        end
+      end      
+      new_params
+    end
+
   end
 end

@@ -29,7 +29,6 @@ module GoodData::Bricks
           :client_secret  => client_secret,
         })
         credentials[:host] = host unless host.nil?
-        binding.pry
         SalesforceBulk::Api.new(credentials[:username], credentials[:password] + credentials[:security_token])
       end
       @app.call(params.merge(:salesforce_bulk_client => client))

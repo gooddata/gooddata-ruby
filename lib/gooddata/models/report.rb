@@ -49,9 +49,6 @@ module GoodData
       @json[:report][:content][:definitions] << a_definition
     end
     
-    def to_json(options={})
-      JSON.pretty_generate(@json, options)
-    end
 # ----
 
 

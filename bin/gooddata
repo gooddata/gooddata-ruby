@@ -3,6 +3,12 @@ require 'gli'
 require 'gooddata'
 require 'highline/import'
 require 'gooddata/commands/projects'
+require 'gooddata/commands/auth'
+require 'gooddata/commands/scaffold'
+require 'gooddata/commands/process'
+require 'gooddata/commands/api'
+require 'gooddata/commands/profile'
+require 'pp'
 
 include GLI::App
 
@@ -61,66 +67,77 @@ command :process do |c|
   c.default_value nil
   c.flag :dir
 
-  c.action do |global_options,options,args|
-    require 'gooddata/commands/process'
-    options = options.merge(global_options)
+  c.desc 'Specify type of deployment'
+  c.default_value nil
+  c.flag :type
 
-    case args.first
-    when "list"
-      pp GoodData::Command::Process.list(options)
-    when "get"
-      pp GoodData::Command::Process.get(options)
-    when "deploy"
-      GoodData::Command::Process.deploy_graph(options[:dir], options)
+  c.desc 'Specify name of deployed process'
+  c.default_value nil
+  c.flag :name
+
+  c.command :list do |list|
+    list.action do |global_options,options,args|
+      pp GoodData::Command::Process.list(options.merge(global_options))
     end
   end
+
+  c.command :get do |get|
+    get.action do |global_options,options,args|
+      pp GoodData::Command::Process.get(options.merge(global_options))
+    end
+  end
+
+  c.command :deploy do |deploy|
+    deploy.action do |global_options,options,args|
+      pp GoodData::Command::Process.deploy(options[:dir], options.merge(global_options))
+    end
+  end
+
 end
 
 desc 'Some basic API stuff directly from CLI'
 arg_name 'info|test|get|delete'
 command :api do |c|
 
-  c.action do |global_options,options,args|
-    require 'gooddata/commands/api'
-    options = options.merge(global_options)
-
-    case args.first
-    when "list", "index", "info"
+  c.command :info do |info|
+    info.action do |global_options,options,args|
       pp GoodData::Command::Api.info
-    when "get"
-      pp GoodData::Command::Api.get(args[1])
-    when "deploy"
-      GoodData::Command::Api.deploy_graph(options[:dir], options)
     end
   end
+
+  c.command :get do |get|
+    get.action do |global_options,options,args|
+      pp GoodData::Command::Api.get(args[0])
+    end
+  end
+
 end
 
 
 desc 'Describe add here'
 arg_name 'show'
 command :profile do |c|
-  c.action do |global_options, options, args|
-    require 'gooddata/commands/profile'
-    
-    case args.first
-    when "show"
+  
+  c.command :show do |show|
+    show.action do |global_options,options,args|
       pp GoodData::Command::Profile.show()
-    else
-      raise "command provided not right"
     end
   end
+  
 end
 
 desc 'Scaffold things'
 arg_name 'show'
 command :scaffold do |c|
   c.action do |global_options, options, args|
-    require 'gooddata/commands/scaffold'
-    case args.first
-    when "brick"
-      pp GoodData::Command::Scaffold.brick(args[1])
-    else
-      raise "command provided not right"
+
+    c.command :brick do |brick|
+      brick.arg_name 'name'
+      
+      name = args[1]
+      fail "Name of the brick has to be provided" if name.nil? || name.empty?
+      
+      GoodData::Command::Scaffold.brick(name)
     end
   end
 end
@@ -133,6 +150,26 @@ command :project do |c|
     list.action do |global_options,options,args|
       list = GoodData::Command::Projects.list()
       puts list.map {|p| [p.uri, p.title].join(",")}
+    end
+  end
+
+  c.command :jack_in do |jack|
+    jack.action do |global_options,options,args|
+
+      goodfile = JSON.parse(File.read(GoodData::Helpers.find_goodfile(Pathname('.'))), :symbolize_names => true)
+      model_key = goodfile[:model]
+      blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
+
+      project_id = global_options[:project_id] || goodfile[:project_id]
+      fail "You have to provide 'project_id'" if project_id.nil?
+
+      GoodData.with_project(project_id) do |project|
+        puts "Use 'exit' to quit the interactive session. Use 'q' to jump out of displaying a large output."
+        binding.pry(:quiet => true,
+          :prompt => [proc { |target_self, nest_level, pry|
+             "project_live_sesion: "
+           }])
+      end
     end
   end
 
@@ -189,9 +226,12 @@ command :project do |c|
 
   c.command :build do |show|
     show.action do |global_options,options,args|
-      spec_path = args.first || fail("You need to specify the path of the build spec")
+      goodfile = JSON.parse(File.read(GoodData::Helpers.find_goodfile(Pathname('.'))), :symbolize_names => true)
+      spec_path = goodfile[:model] || fail("You need to specify the path of the build spec")
+      fail "Model path provided in Goodfile \"#{spec_path}\" does not exist" unless File.exist?(spec_path) && !File.directory?(spec_path)
+
       opts = options.merge(global_options)
-      spec_path = Pathname.new(spec_path)
+      spec_path = Pathname(spec_path)
 
       content = File.read(spec_path)
       spec = if (spec_path.extname == ".rb")
@@ -206,6 +246,17 @@ command :project do |c|
 
 end
 
+desc 'Work with your credentials'
+command :auth do |c|
+
+  c.command :store do |store|
+    store.action do |global_options,options,args|
+      GoodData::Command::Auth.store
+    end
+  end
+
+end
+
 desc 'Run bricks locally'
 # arg_name 'show'
 command :run_ruby do |c|
@@ -213,10 +264,6 @@ command :run_ruby do |c|
   c.desc 'Directory of the ruby brick'
   c.default_value nil
   c.flag [:d, :dir]
-
-  c.desc 'Project id for which you would like to run the script'
-  c.default_value nil
-  c.flag [:p, :project, :project_id, :project_pid]
 
   c.desc 'Log file. If empty STDOUT will be used instead'
   c.default_value nil
@@ -241,7 +288,7 @@ command :run_ruby do |c|
       {}
     end
     
-    opts = options.merge(global_options).merge({:project_id => options[:project], "project_id" => options[:project], :type => "RUBY"})
+    opts = options.merge(global_options).merge({:type => "RUBY"})
     if options[:remote]
       fail "You have to specify name of the deploy when deploying remotely" if options[:name].nil? || options[:name].empty?
       require 'gooddata/commands/process'
@@ -255,29 +302,28 @@ command :run_ruby do |c|
   end
 end
 
-desc 'Manage your projects'
-arg_name 'project_command'
-command :project do |c|
-
-  c.command :list do |list|
-    list.action do |global_options,options,args|
-      list = GoodData::Command::Projects.list()
-      puts list.map {|p| [p.uri, p.title].join(",")}
-    end
-  end
-
-end
-
 pre do |global,command,options,args|
   require 'logger'
   GoodData.logger = Logger.new(STDOUT) if global[:l]
   username = global[:username]
   password = global[:password]
+  token = global[:token]
 
+  creds = GoodData::Command::Auth.read_credentials
+
+  username = creds[:username] if username.nil?
+  password = creds[:password] if password.nil?
+  token    = creds[:auth_token] if token.nil?
+  
+  global[:token] = token if global[:token].nil?
+  global[:username] = username if global[:username].nil?
+  global[:password] = password if global[:password].nil?
+    
   GoodData.connect(global.merge(options).merge({
     :login => username,
     :password => password,
-    :server => global[:server]
+    :server => global[:server],
+    :token => token
   }))
                     
   # Pre logic here

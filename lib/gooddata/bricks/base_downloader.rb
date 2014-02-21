@@ -47,7 +47,6 @@ module GoodData::Bricks
       backup(downloaded_data)
       downloaded_data = post_process(downloaded_data)
     
-      binding.pry
       downloaded_data.reduce([]) do |memo, item|
         item.has_key?(:state) ? memo.concat(item[:state]) : memo
       end.each do |item|

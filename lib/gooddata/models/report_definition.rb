@@ -57,11 +57,41 @@ module GoodData
           if item.respond_to?(:is_attribute?)
             item.display_forms.first
           elsif item.is_a?(String)
-            GoodData::Attribute.find_first_by_title(item).display_forms.first
-          elsif item.is_a?(Hash) && item[:type].to_s == "metric"
-            GoodData::Metric.find_first_by_title(item[:title])
-          elsif item.is_a?(Hash) && item[:type].to_s == "attribute"
-            GoodData::Attribute.find_first_by_title(item[:title]).display_forms.first
+            x = GoodData::MdObject.get_by_id(item)
+            fail "Object given by id \"#{item}\" could not be found" if x.nil?
+            case x.raw_data.keys.first.to_s
+            when "attribute"
+              GoodData::Attribute.new(x.raw_data).display_forms.first
+            when "attributeDisplayForm"
+              GoodData::DisplayForm.new(x.raw_data)
+            when "metric"
+              GoodData::Metric.new(x.raw_data)
+            end
+          elsif item.is_a?(Hash) && item.keys.include?(:title)
+            case item[:type].to_s
+            when "metric"
+              GoodData::Metric.find_first_by_title(item[:title])
+            when "attribute"
+              GoodData::Attribute.find_first_by_title(item[:title]).display_forms.first
+            end
+          elsif item.is_a?(Hash) && (item.keys.include?(:id))
+            case item[:type].to_s
+            when "metric"
+              GoodData::Metric.get_by_id(item[:id])
+            when "attribute"
+              GoodData::Attribute.get_by_id(item[:id]).display_forms.first
+            when "label"
+              GoodData::DisplayForm.get_by_id(item[:id])
+            end
+          elsif item.is_a?(Hash) && (item.keys.include?(:identifier))
+            case item[:type].to_s
+            when "metric"
+              GoodData::Metric.get_by_id(item[:identifier])
+            when "attribute"
+              GoodData::Attribute.get_by_id(item[:identifier]).display_forms.first
+            when "label"
+              GoodData::DisplayForm.get_by_id(item[:identifier])
+            end
           else
             item
           end
@@ -83,8 +113,8 @@ module GoodData
           rd.save
           rd.execute
         ensure
-          rd.delete if rd.saved? rescue nil
-          unsaved_metrics.each {|m| m.delete if m.saved?}
+          rd.delete if rd && rd.saved?
+          unsaved_metrics.each {|m| m.delete if m &&  m.saved?}
         end
       end
 
@@ -126,7 +156,12 @@ module GoodData
     end
 
     def execute
-      result = GoodData.post '/gdc/xtab2/executor3', {"report_req" => {"reportDefinition" => uri}}
+      result = if saved?
+        GoodData.post '/gdc/xtab2/executor3', {"report_req" => {"reportDefinition" => uri}}
+      else
+        # GoodData.post '/gdc/xtab2/executor3', {"report_req" => raw_data}
+        fail("this is currently unsupported. For executing unsaved report definitions please use class method execute.")
+      end
       data_result_uri = result["execResult"]["dataResult"]
       result = GoodData.get data_result_uri
       while result["taskState"] && result["taskState"]["status"] == "WAIT" do

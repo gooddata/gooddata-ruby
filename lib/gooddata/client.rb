@@ -1,5 +1,6 @@
 require 'gooddata/version'
 require 'gooddata/connection'
+require 'gooddata/helpers'
 
 # fastercsv is built in Ruby 1.9
 if RUBY_VERSION < "1.9"
@@ -94,6 +95,17 @@ module GoodData
       
     end
 
+    def logging_on
+      if logger.is_a? NilLogger
+        GoodData::logger = Logger.new(STDOUT)
+      end
+    end
+
+    def logging_off
+      GoodData::logger = NilLogger.new
+    end
+
+
     # Hepler for starting with SST easier
     # === Parameters
     #
@@ -123,7 +135,7 @@ module GoodData
       old_project = GoodData.project
       begin
         GoodData.use(project)
-        bl.call(project)
+        bl.call(GoodData.project)
       rescue Exception => e
         fail e
       ensure
@@ -247,6 +259,14 @@ module GoodData
       url = URI.join(u.to_s.chomp(u.path.to_s), "/project-uploads/", "#{GoodData.project.pid}/")
       connection.upload(file, options.merge({
         :directory    => options[:directory],
+        :staging_url  => url
+      }))
+    end
+
+    def download_form_user_webdav(file, where, options={})
+      u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
+      url = URI.join(u.to_s.chomp(u.path.to_s), "/uploads/")
+      connection.download(file, where, options.merge({
         :staging_url  => url
       }))
     end

@@ -1,5 +1,5 @@
 require 'open-uri'
-
+require 'active_support/all'
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
 # elements, including the server-side data model.
@@ -49,6 +49,134 @@ module GoodData
         GoodData.post ldm_uri, { 'manage' => { 'maql' => schema.to_maql_create } }
       end
 
+      # Load given file into a data set described by the given schema
+      def upload_data(path, manifest, options={})
+        project = options[:project] || GoodData.project
+        # mode = options[:mode] || "FULL"
+        path = path.path if path.respond_to? :path
+        inline_data = path.is_a?(String) ? false : true
+
+        # create a temporary zip file
+        dir = Dir.mktmpdir
+        begin
+          Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
+            # TODO make sure schema columns match CSV column names
+            zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(manifest) }
+            if inline_data
+              zip.get_output_stream('data.csv') do |f|
+                path.each do |row|
+                  f.puts row.to_csv
+                end
+              end
+            else
+              zip.add('data.csv', path)
+            end
+          end
+
+          # upload it
+          GoodData.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir))
+        ensure
+          FileUtils.rm_rf dir
+        end
+
+        # kick the load
+        pull = { 'pullIntegration' => File.basename(dir) }
+        link = project.md.links('etl')['pull']
+        task = GoodData.post link, pull
+        while (GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "RUNNING" || GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "PREPARED") do
+          sleep 30
+        end
+        if (GoodData.get(task["pullTask"]["uri"])["taskStatus"] == "ERROR")
+          s = StringIO.new
+          GoodData.download_form_user_webdav(File.basename(dir) + '/upload_status.json', s)
+          js = JSON.parse(s.string)
+          fail "Load Failed with error #{JSON.pretty_generate(js)}"
+        end
+        puts "Done loading"
+      end
+
+    end
+
+    class ProjectBlueprint
+
+      attr_accessor :data
+
+      def change(&block)
+        builder = ProjectBuilder.create_from_data(self)
+        block.call(builder)
+        builder
+        @data = builder.to_hash
+        self
+      end
+
+      def datasets
+        data[:datasets].map {|d| SchemaBlueprint.new(d)}
+      end
+
+      def get_dataset(name)
+        ds = data[:datasets].find {|d| d[:name] == name}
+        SchemaBlueprint.new(ds) unless ds.nil?
+      end
+
+      def initialize(init_data)
+        @data = init_data
+      end
+
+    end
+
+    class SchemaBlueprint
+
+      attr_accessor :data
+
+      def change(&block)
+        builder = SchemaBuilder.create_from_data(self)
+        block.call(builder)
+        builder
+        @data = builder.to_hash
+        self
+      end
+
+      def initialize(init_data)
+        @data = init_data
+      end
+
+      def upload(source, options={})
+        project = options[:project] || GoodData.project
+        mode = options[:load] || "FULL"
+        project.upload(source, to_schema, mode)
+      end
+
+      def name
+        data[:name]
+      end
+
+      def title
+        data[:title]
+      end
+
+      def to_hash
+        data
+      end
+
+      def columns
+        data[:columns]
+      end
+
+      def to_schema
+        Schema.new(to_hash)
+      end
+
+      def to_manifest
+        to_schema.to_manifest
+      end
+      
+      def pretty_print(printer)
+        printer.text "Schema <#{object_id}>:\n" 
+        printer.text " Name: #{name}\n"
+        printer.text " Columns: \n"
+        printer.text columns.map {|c| "  #{c[:name]}: #{c[:type]}"}.join("\n")
+      end
+
     end
 
     class ProjectBuilder
@@ -56,13 +184,19 @@ module GoodData
       attr_reader :title, :datasets, :reports, :metrics, :uploads, :users, :assert_report, :date_dimensions
 
       class << self
-        
+
+        def create_from_data(blueprint)
+          pb = ProjectBuilder.new
+          pb.data = blueprint.to_hash
+          pb
+        end
+
         def create(title, options={}, &block)
           pb = ProjectBuilder.new(title)
           block.call(pb)
           pb
         end
-        
+
       end
 
       def initialize(title)
@@ -129,8 +263,14 @@ module GoodData
         @users << users
       end
 
-      def to_json
-        JSON.pretty_generate(to_hash)
+      def to_json(options={})
+        eliminate_empty = options[:eliminate_empty] || false
+        
+        if eliminate_empty
+          JSON.pretty_generate(to_hash.reject {|k, v| v.is_a?(Enumerable) && v.empty?})
+        else
+          JSON.pretty_generate(to_hash)
+        end
       end
 
       def to_hash
@@ -147,10 +287,14 @@ module GoodData
         }
       end
 
+      def get_dataset(name)
+        datasets.find {|d| d.name == name}
+      end
+
     end
 
     class DashboardBuilder
-      
+
       def initialize(title)
         @title = title
         @tabs = []
@@ -172,7 +316,7 @@ module GoodData
     end
 
     class TabBuilder
-      
+
       def initialize(title)
         @title = title
         @stuff = []
@@ -193,15 +337,35 @@ module GoodData
 
     class SchemaBuilder
 
-      attr_accessor :title, :name
+      attr_accessor :data
+
+      class << self
+        
+        def create_from_data(blueprint)
+          sc = SchemaBuilder.new
+          sc.data = blueprint.to_hash
+          sc
+        end
+
+      end
 
       def initialize(name=nil)
-        @name = name
-        @columns = []
+        @data = {
+          :name => name,
+          :columns => []
+        }
+      end
+
+      def name
+        data[:name]
+      end
+
+      def columns
+        data[:columns]
       end
 
       def add_column(column_def)
-        @columns.push(column_def)
+        columns.push(column_def)
         self
       end
 
@@ -233,21 +397,18 @@ module GoodData
         add_column({ :type => :reference, :name => name}.merge(options))
       end
 
-      def to_schema
-        Schema.new(to_hash)
-      end
-
       def to_json
         JSON.pretty_generate(to_hash)
       end
 
       def to_hash
-        h = {
-          :name => @name,
-          :columns => @columns
-        }
-        h.has_key?(:title) ? h.merge({:title => h[:title]}) : h
+        data
       end
+
+      def to_schema
+        Schema.new(to_hash)
+      end
+
     end
 
     class ProjectCreator
@@ -257,20 +418,20 @@ module GoodData
 
           spec = options[:spec] || fail("You need to provide spec for migration")
           spec = spec.to_hash
-          project = options[:project]
+          
           token = options[:token] || fail("You need to specify token for project creation")
-          new_project = GoodData::Project.create(:title => spec[:title], :auth_token => token)
+          project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
 
           begin
-            GoodData.with_project(new_project) do |p|
-              migrate_date_dimensions(p, spec[:date_dimensions])
-              migrate_datasets(p, spec[:datasets])
+            GoodData.with_project(project) do |p|
+              migrate_date_dimensions(p, spec[:date_dimensions] || [])
+              migrate_datasets(p, spec[:datasets] || [])
               load(p, spec)
-              migrate_metrics(p, spec[:metrics])
-              migrate_reports(p, spec[:reports])
-              migrate_dashboards(p, spec[:dashboards])
-              migrate_users(p, spec[:users])
-              execute_tests(p, spec[:assert_tests])
+              migrate_metrics(p, spec[:metrics] || [])
+              migrate_reports(p, spec[:reports] || [])
+              migrate_dashboards(p, spec[:dashboards] || [])
+              migrate_users(p, spec[:users] || [])
+              execute_tests(p, spec[:assert_tests] || [])
               p
             end
           end
@@ -284,7 +445,9 @@ module GoodData
 
         def migrate_datasets(project, spec)
           spec.each do |ds|
-            project.add_dataset(GoodData::Model::Schema.new(ds))
+            schema = GoodData::Model::Schema.new(ds)
+            project.add_dataset(schema)
+            GoodData::ProjectMetadata["manifest_#{schema.name}"] = schema.to_manifest.to_json
           end
         end
 
@@ -459,55 +622,20 @@ module GoodData
           Tempfile.open('remote_file') do |temp|
             temp << open(path).read
             temp.flush
-            upload_data(temp, project, mode)
+            upload_data(temp, mode)
           end
         else
-          upload_data(path, project, mode)
+          upload_data(path, mode)
         end
       end
 
-      # Load given file into a data set described by the given schema
-      def upload_data(path, project = nil, mode = "FULL")
-        path = path.path if path.respond_to? :path
-
-        inline_data = path.is_a?(String) ? false : true
-
-        project = GoodData.project unless project
-
-        # create a temporary zip file
-        dir = Dir.mktmpdir
-        Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
-          # TODO make sure schema columns match CSV column names
-          zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(to_manifest(mode)) }
-          if inline_data
-            zip.get_output_stream('data.csv') do |f|
-              path.each do |row|
-                f.puts row.to_csv
-              end
-            end
-          else
-            zip.add('data.csv', path)
-          end
-        end
-
-        # upload it
-        GoodData.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir))
-        FileUtils.rm_rf dir
-
-        # kick the load
-        pull = { 'pullIntegration' => File.basename(dir) }
-        link = project.md.links('etl')['pull']
-        task = GoodData.post link, pull
-        while (GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "RUNNING" || GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "PREPARED") do
-          sleep 30
-        end
-        fail "Load Failed" if (GoodData.get(task["pullTask"]["uri"])["taskStatus"] == "ERROR")
-        puts "Done loading"
+      def upload_data(path, mode)
+        GoodData::Model.upload_data(path, to_manifest(mode))
       end
 
       # Generates the SLI manifest describing the data loading
       # 
-      def to_manifest(mode)
+      def to_manifest(mode="FULL")
         {
           'dataSetSLIManifest' => {
             'parts'   => fields.reduce([]) { |memo, f| val = f.to_manifest_part(mode); memo << val unless val.nil?; memo },
@@ -1024,7 +1152,6 @@ module GoodData
         @title = spec[:title] || @name
         @urn = spec[:urn] || "URN:GOODDATA:DATE"
       end
-        
 
       def to_maql_create
         # urn = "urn:chefs_warehouse_fiscal:date"

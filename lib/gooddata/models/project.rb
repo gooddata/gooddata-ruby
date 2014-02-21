@@ -90,7 +90,7 @@ module GoodData
 
     def delete
       raise "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
-      GoodData.delete data['links']['self']
+      GoodData.delete(uri)
     end
 
     def uri

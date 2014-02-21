@@ -2,14 +2,23 @@ module GoodData
   class ProjectMetadata
 
     class << self
+
+      def keys
+        ProjectMetadata[:all].keys
+      end
+
       def [](key)
         if key == :all
-          GoodData.get("/gdc/projects/#{GoodData.project.pid}/dataload/metadata")
+          res = GoodData.get("/gdc/projects/#{GoodData.project.pid}/dataload/metadata")
+          res["metadataItems"]["items"].reduce({}) {|memo, i| memo[i["metadataItem"]["key"]] = i["metadataItem"]["value"]; memo}
         else 
           res = GoodData.get("/gdc/projects/#{GoodData.project.pid}/dataload/metadata/#{key}")
           res["metadataItem"]["value"]
         end
       end
+
+      alias_method :get, :[]
+      alias_method :get_key, :[]
 
       def has_key?(key)
         begin

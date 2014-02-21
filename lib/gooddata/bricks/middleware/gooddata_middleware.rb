@@ -16,7 +16,7 @@ module GoodData::Bricks
         params[protocol_name] + "://" + params[server_name]
       end
 
-      GoodData.connect_with_sst(params[token_name], {:server => server})
+      GoodData.connect(params[:GDC_USERANME], params[:GDC_PASSWORD], {:server => server})
       GoodData.logger = logger
       GoodData.with_project(project_id) do |p|
         @app.call(params)

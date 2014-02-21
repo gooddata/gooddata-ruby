@@ -1,4 +1,4 @@
-require 'gooddata/goodzilla/goodzilla'
+require 'gooddata'
 
 describe GoodData::SmallGoodZilla do
   
