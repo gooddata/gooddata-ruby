@@ -18,7 +18,7 @@ Is not a MAQL statement (even though you probably have seen this on UI). The mor
 GoodData UI does a great job at hiding this complexity from you but this significantly hinders the use of MAQL over and API by regular Joes. Ruby SDK tries to alleviate the situation with some tricks. It also gives you many tools to programmatically define and deal with reports and lays the foundations for test driven BI.
 
 ###Jack in
-If you do not have one, plese create a project and jack in. Best would be the project from our tutorial so you can get predictable results.
+If you do not have a project best would be to create one by following our tutorial [Your first project](http://sdk.gooddata.com/gooddata-ruby/recipe/2014/01/19/your-first-project.html) so you can get predictable results.
 
 First let's look around. There are no metrics
 
