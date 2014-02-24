@@ -51,6 +51,8 @@ module GoodData::Command
         if File.exists?(credentials_file) then
           config = File.read(credentials_file)
           JSON.parser.new(config, :symbolize_names => true).parse
+        else
+          {}
         end
       end
 
