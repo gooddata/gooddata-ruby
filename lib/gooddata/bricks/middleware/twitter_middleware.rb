@@ -1,4 +1,4 @@
-require 'twitter'
+# require 'twitter'
 
 module GoodData::Bricks
   
