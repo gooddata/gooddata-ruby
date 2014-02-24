@@ -156,7 +156,12 @@ module GoodData
     end
 
     def each_line
-      table.transpose.each {|line| yield line}
+      to_table.each {|line| yield line}
+    end
+    alias :each_row :each_line
+
+    def each_column
+      table.each {|line| yield line}
     end
 
     def to_a
@@ -168,6 +173,11 @@ module GoodData
     end
 
     def [](index)
+      to_table[index]
+    end
+    alias :row :[]
+
+    def column(index)
       table[index]
     end
 
@@ -175,17 +185,22 @@ module GoodData
       to_table.include?(row)
     end
 
+    def include_column?(row)
+      table.include?(row)
+    end
+
     def == (otherDataResult)
       result = true
       csv_table = to_table
       len =  csv_table.length
-      return false if len != otherDataResult.to_table.length
-      result
+      table = otherDataResult.respond_to?(:to_table) ? otherDataResult.to_table : otherDataResult
+      return false if len != table.length
+      diff(otherDataResult).empty?() ? true : false
     end
 
     def diff(otherDataResult)
       csv_table = to_table
-      other_table = otherDataResult.to_table
+      other_table = otherDataResult.respond_to?(:to_table) ? otherDataResult.to_table : otherDataResult
       differences = []
 
       csv_table.each do |row|
@@ -268,7 +283,8 @@ module GoodData
         (row_headers.size).times do |j|
           table[headers_width + i] ||= []
   #        puts "[#{headers_width + i}, #{headers_height + j}] [#{i}][#{j}]=#{xtab_data[j][i]}"
-          table[headers_width + i][headers_height + j] = BigDecimal(xtab_data[j][i])
+          val = xtab_data[j][i]
+          table[headers_width + i][headers_height + j] = val.nil? ? val : BigDecimal(val)
         end
       end
     end

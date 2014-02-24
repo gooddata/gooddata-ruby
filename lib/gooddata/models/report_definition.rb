@@ -110,12 +110,30 @@ module GoodData
         begin
           unsaved_metrics.each {|m| m.save}
           rd = GoodData::ReportDefinition.create(options)
-          rd.save
-          rd.execute
+          get_data_result(execute_inline(rd))
         ensure
-          rd.delete if rd && rd.saved?
           unsaved_metrics.each {|m| m.delete if m &&  m.saved?}
         end
+      end
+
+      def execute_inline(rd)
+        rd = rd.respond_to?(:raw_data) ? rd.raw_data : rd
+        data = {
+          :report_req => {
+            :definitionContent => {
+              :content => rd,
+              :projectMetadata => GoodData::project.links["metadata"]}}}
+        GoodData.post("/gdc/app/projects/#{GoodData.project.pid}/execute", data)
+      end
+
+      def get_data_result(result)
+        data_result_uri = result["execResult"]["dataResult"]
+        result = GoodData.get data_result_uri
+        while result["taskState"] && result["taskState"]["status"] == "WAIT" do
+           sleep 10
+           result = GoodData.get data_result_uri
+         end
+        ReportDataResult.new(GoodData.get data_result_uri)
       end
 
       def create(options={})
@@ -124,6 +142,8 @@ module GoodData
 
         left = ReportDefinition.find(left)
         top = ReportDefinition.find(top)
+
+        fail "All metrics in report definition must be saved" unless (left + top).all? {|i| i.saved?}
 
         ReportDefinition.new({
            "reportDefinition" => {
@@ -157,18 +177,12 @@ module GoodData
 
     def execute
       result = if saved?
-        GoodData.post '/gdc/xtab2/executor3', {"report_req" => {"reportDefinition" => uri}}
+        GoodData.post '/gdc/xtab2/executor', {"report_req" => {"reportDefinition" => uri}}
       else
-        # GoodData.post '/gdc/xtab2/executor3', {"report_req" => raw_data}
-        fail("this is currently unsupported. For executing unsaved report definitions please use class method execute.")
+        ReportDefinition.execute_inline(self)
       end
-      data_result_uri = result["execResult"]["dataResult"]
-      result = GoodData.get data_result_uri
-      while result["taskState"] && result["taskState"]["status"] == "WAIT" do
-         sleep 10
-         result = GoodData.get data_result_uri
-       end
-      ReportDataResult.new(GoodData.get data_result_uri)
+      ReportDefinition::get_data_result(result)
     end
+
   end    
 end

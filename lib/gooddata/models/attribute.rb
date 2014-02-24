@@ -16,6 +16,7 @@ module GoodData
     def display_forms
       content["displayForms"].map {|df| GoodData::DisplayForm[df["meta"]["uri"]]}
     end
+    alias :labels :display_forms
 
     def is_attribute?
       true

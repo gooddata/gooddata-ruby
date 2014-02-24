@@ -136,8 +136,8 @@ module GoodData
       begin
         GoodData.use(project)
         bl.call(GoodData.project)
-      rescue Exception => e
-        fail e
+      rescue RestClient::ResourceNotFound => e
+        fail GoodData::ProjectNotFound.new(e)
       ensure
         GoodData.project = old_project
       end

@@ -43,14 +43,15 @@ module GoodData
         self[item["link"]] unless item.nil?
       end
 
-      def identifier_to_uri(id)
+      def identifier_to_uri(*ids)
         raise NoProjectError.new "Connect to a project before searching for an object" unless GoodData.project
         uri      = GoodData.project.md[IDENTIFIERS_CFG]
-        response = GoodData.post uri, { 'identifierToUri' => [id ] }
+        response = GoodData.post uri, { 'identifierToUri' => ids }
         if response['identifiers'].empty?
           nil
         else
-          response['identifiers'][0]['uri']
+          ids = response['identifiers'].map {|x| x['uri']}
+          ids.count == 1 ? ids.first : ids
         end
       end
 

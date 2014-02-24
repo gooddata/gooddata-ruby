@@ -1,8 +1,8 @@
 module GoodData
   class DataSet < MdObject
-    
+
     root_key :dataSet
-    
+
     SLI_CTG = 'singleloadinterface'
     DS_SLI_CTG = 'dataset-singleloadinterface'
 
@@ -16,5 +16,14 @@ module GoodData
       uri = slis[identifier]['link']
       MdObject[uri]
     end
+
+    def attributes
+      content["attributes"].map {|a| GoodData::Attribute[a]}
+    end
+
+    def facts
+      content["facts"].map {|a| GoodData::Attribute[a]}
+    end
+
   end
 end

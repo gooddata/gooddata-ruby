@@ -129,14 +129,20 @@ end
 desc 'Scaffold things'
 arg_name 'show'
 command :scaffold do |c|
-  c.action do |global_options, options, args|
 
-    c.command :brick do |brick|
-      brick.arg_name 'name'
-      
-      name = args[1]
+  c.command :project do |project|
+    project.action do |global_options, options, args|
+      name = args.first
+      fail "Name of the project has to be provided" if name.nil? || name.empty?
+      GoodData::Command::Scaffold.project(name)
+    end
+  end
+
+  c.command :brick do |brick|
+    # brick.arg_name 'name'
+    brick.action do |global_options, options, args|
+      name = args.first
       fail "Name of the brick has to be provided" if name.nil? || name.empty?
-      
       GoodData::Command::Scaffold.brick(name)
     end
   end
@@ -155,20 +161,26 @@ command :project do |c|
 
   c.command :jack_in do |jack|
     jack.action do |global_options,options,args|
-
-      goodfile = JSON.parse(File.read(GoodData::Helpers.find_goodfile(Pathname('.'))), :symbolize_names => true)
+      goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
+      goodfile = JSON.parse(File.read(goodfile_path), :symbolize_names => true)
       model_key = goodfile[:model]
       blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
+      FileUtils::cd(goodfile_path.dirname) do
 
-      project_id = global_options[:project_id] || goodfile[:project_id]
-      fail "You have to provide 'project_id'" if project_id.nil?
+        project_id = global_options[:project_id] || goodfile[:project_id]
+        fail "You have to provide 'project_id'. You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key \"project_id\". If you just started a project you have to create it first. One way might be through \"gooddata project build\"" if project_id.nil? || project_id.empty?
 
-      GoodData.with_project(project_id) do |project|
-        puts "Use 'exit' to quit the interactive session. Use 'q' to jump out of displaying a large output."
-        binding.pry(:quiet => true,
-          :prompt => [proc { |target_self, nest_level, pry|
-             "project_live_sesion: "
-           }])
+        begin
+          GoodData.with_project(project_id) do |project|
+            puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
+            binding.pry(:quiet => true,
+              :prompt => [proc { |target_self, nest_level, pry|
+                 "project_live_sesion: "
+               }])
+          end
+        rescue GoodData::ProjectNotFound => e
+          puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
+        end
       end
     end
   end
