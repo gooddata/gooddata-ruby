@@ -21,6 +21,9 @@ module GoodData::Command
           end
 
           FileUtils.mkdir("data")
+          FileUtils.cd("data") do
+            FileUtils.cp(Dir.glob(templates_path + 'project/data/*.csv'), ".")
+          end
 
           input = File.read(templates_path + 'project/Goodfile.erb')
           eruby = Erubis::Eruby.new(input)
