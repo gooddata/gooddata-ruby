@@ -7,7 +7,7 @@ pygments: true
 perex: Let's spin up a project that will be the basis for other tutorials. It will take only 5 mins. Promise.
 ---
 
-Ok welcome. Let's spin up a example project that we created so you can explore and see SDK in action. It is super simple. Since you are probably a developer we created simple project about developers.
+Ok welcome. Let's spin up an example project that we created so you can explore and see SDK in action. It is super simple. Since you are probably a developer we created simple project about developers.
 
 ###What we want to measure
 Imagine you have a small dev shop. You have couple of developers. They crank out code. You also have couple of repositories for products. You want to measure how many lines of code each of the devs create. you wanna be able to track it by time by repository and by person. You want to see how many lines of code they committed.
