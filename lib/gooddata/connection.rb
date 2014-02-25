@@ -74,7 +74,7 @@ module GoodData
       @username   = username
       @password   = password
       @url        = options[:server] || DEFAULT_URL
-      @auth_token = options.delete(:token)
+      @auth_token = options[:gdc_temporary_token]
       @options    = options
 
       @server = create_server_connection(@url, @options)
@@ -310,7 +310,6 @@ module GoodData
           'remember' => 1
         }
       }
-
       GoodData.logger.debug "Logging in..."
       @user = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
       refresh_token :dont_reauth => true # avoid infinite loop if refresh_token fails with 401
