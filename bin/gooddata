@@ -19,7 +19,7 @@ version GoodData::VERSION
 desc 'GoodData user name'
 default_value nil
 arg_name 'gooddata-login'
-flag [:U,:username]
+flag [:U,:username, :login]
 
 desc 'GoodData password'
 default_value nil
@@ -77,18 +77,24 @@ command :process do |c|
 
   c.command :list do |list|
     list.action do |global_options,options,args|
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       pp GoodData::Command::Process.list(options.merge(global_options))
     end
   end
 
   c.command :get do |get|
     get.action do |global_options,options,args|
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       pp GoodData::Command::Process.get(options.merge(global_options))
     end
   end
 
   c.command :deploy do |deploy|
     deploy.action do |global_options,options,args|
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       pp GoodData::Command::Process.deploy(options[:dir], options.merge(global_options))
     end
   end
@@ -101,12 +107,16 @@ command :api do |c|
 
   c.command :info do |info|
     info.action do |global_options,options,args|
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       pp GoodData::Command::Api.info
     end
   end
 
   c.command :get do |get|
     get.action do |global_options,options,args|
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       pp GoodData::Command::Api.get(args[0])
     end
   end
@@ -120,6 +130,8 @@ command :profile do |c|
   
   c.command :show do |show|
     show.action do |global_options,options,args|
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       pp GoodData::Command::Profile.show()
     end
   end
@@ -154,6 +166,8 @@ command :project do |c|
 
   c.command :list do |list|
     list.action do |global_options,options,args|
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       list = GoodData::Command::Projects.list()
       puts list.map {|p| [p.uri, p.title].join(",")}
     end
@@ -169,6 +183,9 @@ command :project do |c|
 
         project_id = global_options[:project_id] || goodfile[:project_id]
         fail "You have to provide 'project_id'. You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key \"project_id\". If you just started a project you have to create it first. One way might be through \"gooddata project build\"" if project_id.nil? || project_id.empty?
+
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
 
         begin
           GoodData.with_project(project_id) do |project|
@@ -192,6 +209,8 @@ command :project do |c|
       template = ask("Project template")
       token = ask("token")
       
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       project = GoodData::Command::Projects.create({
         :title => title,
         :summary => summary,
@@ -205,6 +224,8 @@ command :project do |c|
   c.command :delete do |delete|
     delete.action do |global_options,options,args|
       id = global_options[:project_id]
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       GoodData::Command::Projects.delete(id)
     end
   end
@@ -215,15 +236,12 @@ command :project do |c|
     clone.arg_name 'cloned_project_name'
     clone.flag [:n, :name]
 
-    clone.desc 'Token of the new project'
-    clone.default_value nil
-    clone.arg_name 'token'
-    clone.flag [:t, :token]
-
     clone.action do |global_options,options,args|
       id = global_options[:project_id]
       name = options[:name]
       token = options[:token]
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       GoodData::Command::Projects.clone(id, :name => name, :token => token)
     end
   end
@@ -231,6 +249,8 @@ command :project do |c|
   c.command :show do |show|
     show.action do |global_options,options,args|
       id = global_options[:project_id]
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
       p = GoodData::Command::Projects.show(id)
       pp p.data
     end
@@ -251,6 +271,7 @@ command :project do |c|
       elsif (spec_path.extname == ".json")
         JSON.parse(spec_path, :symbolize_names => true)
       end
+      GoodData.connect(opts)
       new_project = GoodData::Model::ProjectCreator.migrate(opts.merge(:spec => spec))
       puts "Migration was done. New project PID is #{new_project.uri}."
     end
@@ -269,7 +290,7 @@ command :auth do |c|
 
 end
 
-desc 'Run bricks locally'
+desc 'Run ruby bricks'
 # arg_name 'show'
 command :run_ruby do |c|
 
@@ -304,6 +325,7 @@ command :run_ruby do |c|
     if options[:remote]
       fail "You have to specify name of the deploy when deploying remotely" if options[:name].nil? || options[:name].empty?
       require 'gooddata/commands/process'
+      GoodData.connect(opts)
       GoodData::Command::Process.run(options[:dir], opts) do
         puts "would run"
       end
@@ -328,16 +350,8 @@ pre do |global,command,options,args|
   token    = creds[:auth_token] if token.nil?
   
   global[:token] = token if global[:token].nil?
-  global[:username] = username if global[:username].nil?
+  global[:login] = username if global[:login].nil?
   global[:password] = password if global[:password].nil?
-    
-  GoodData.connect(global.merge(options).merge({
-    :login => username,
-    :password => password,
-    :server => global[:server],
-    :token => token
-  }))
-                    
   # Pre logic here
   # Return true to proceed; false to abort and not call the
   # chosen command
