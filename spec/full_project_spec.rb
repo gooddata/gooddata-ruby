@@ -51,4 +51,21 @@ describe "Spin a project", :constraint => 'slow' do
       k.should include("manifest_devs")
     end
   end
+
+  it "should be able to interpolate metric based on" do
+    GoodData.with_project(@project) do |p|
+      res = GoodData::Metric.xexecute "SELECT SUM(![fact.commits.lines_changed])"
+      res.should == 9
+
+      res = GoodData::Metric.xexecute({:expression => "SELECT SUM(![fact.commits.lines_changed])"})
+      res.should == 9
+
+      res = GoodData::Metric.execute({:expression => "SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true})
+      res.should == 9
+
+      res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true)
+      res.should == 9
+    end
+  end
+
 end
