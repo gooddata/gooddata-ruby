@@ -95,6 +95,15 @@ module GoodData
         puts "Done loading"
       end
 
+      def merge_dataset_columns(a_schema_blueprint, b_schema_blueprint)
+         d = Marshal.load(Marshal.dump(a_schema_blueprint))
+         d[:columns] = d[:columns] + b_schema_blueprint[:columns]
+         d[:columns].uniq!
+         columns_that_failed_to_merge = d[:columns].group_by {|x| x[:name]}.map {|k, v| [k, v.count]}.find_all {|x| x[1] > 1}
+         fail "Columns #{columns_that_failed_to_merge} failed to merge. When merging columns with the same name they have to be identical." unless columns_that_failed_to_merge.empty?
+         d
+      end
+
     end
 
     class ProjectBlueprint
@@ -122,6 +131,28 @@ module GoodData
         @data = init_data
       end
 
+      def model_validate
+        if datasets.count == 1
+          []
+        else
+          x = datasets.reduce([]) {|memo, schema| schema.has_anchor? ? memo << [schema.name, schema.anchor[:name]] : memo }          
+          refs = datasets.reduce([]) do |memo, dataset|
+            memo.concat(dataset.references)
+          end
+          refs.reduce([]) do |memo, ref|
+            x.include?([ref[:dataset], ref[:reference]]) ? memo : memo.concat([ref])
+          end
+        end
+      end
+
+      def model_valid?
+        errors = model_validate
+        errors.empty? ? true :false
+      end
+
+      def title
+        data[:title]
+      end
     end
 
     class SchemaBlueprint
@@ -162,6 +193,34 @@ module GoodData
         data[:columns]
       end
 
+      def has_anchor?
+        columns.any? {|c| c[:type] == :anchor}
+      end
+
+      def anchor
+        find_column_by_type(:anchor, :first)
+      end
+
+      def references
+        find_column_by_type(:reference)
+      end
+
+      def find_column_by_type(type, all=:all)
+        if all == :all
+          columns.find_all {|c| c[:type] == type}
+        else
+          columns.find {|c| c[:type] == type}
+        end
+      end
+
+      def find_column_by_name(type, all=:all)
+        if all == :all
+          columns.find_all {|c| c[:name] == type}
+        else
+          columns.find {|c| c[:name] == type}
+        end
+      end
+
       def to_schema
         Schema.new(to_hash)
       end
@@ -175,6 +234,11 @@ module GoodData
         printer.text " Name: #{name}\n"
         printer.text " Columns: \n"
         printer.text columns.map {|c| "  #{c[:name]}: #{c[:type]}"}.join("\n")
+      end
+
+      def dup
+        deep_copy = Marshal.load(Marshal.dump(data))
+        SchemaBlueprint.new(deep_copy)
       end
 
     end
@@ -218,7 +282,15 @@ module GoodData
       def add_dataset(name, &block)
         builder = GoodData::Model::SchemaBuilder.new(name)
         block.call(builder)
-        @datasets << builder.to_hash
+        if @datasets.any? {|item| item[:name] == name}
+          ds = @datasets.find {|item| item[:name] == name}
+          index = @datasets.index(ds)
+          stuff = GoodData::Model.merge_dataset_columns(ds, builder.to_hash)
+          @datasets.delete_at(index)
+          @datasets.insert(index, stuff)
+        else
+          @datasets << builder.to_hash
+        end
       end
 
       def add_report(title, options={})
