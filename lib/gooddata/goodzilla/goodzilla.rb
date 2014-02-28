@@ -25,9 +25,14 @@ module GoodData::SmallGoodZilla
   end
 
   def self.interpolate_ids(*ids)
-    res = GoodData::MdObject.identifier_to_uri(*ids.flatten)
-    fail "Not all of the identifiers were resolved" if (Array(res).size != ids.flatten.size)
-    res
+    ids = ids.flatten
+    if ids.empty?
+      []
+    else
+      res = GoodData::MdObject.identifier_to_uri(*ids)
+      fail "Not all of the identifiers were resolved" if (Array(res).size != ids.size)
+      res
+    end
   end
 
   def self.interpolate_values(keys, values)
