@@ -25,13 +25,13 @@ module GoodData
       def create(options={})
         if options.is_a?(String)
           expression = options
-          extended_notation = true
+          extended_notation = false
           title = nil
         else
           title = options[:title]
           summary = options[:summary]
           expression = options[:expression] || fail("Metric has to have its expression defined")
-          extended_notation = options[:extended_notation]
+          extended_notation = options[:extended_notation] || false
         end
 
         expression = if extended_notation
@@ -62,12 +62,20 @@ module GoodData
       end
 
       def execute(expression, options={})
-        m = GoodData::Metric.create({:title => "Temporary metric to be deleted", :expression => expression}.merge(options))
+        m = if expression.is_a?(String)
+          GoodData::Metric.create({:title => "Temporary metric to be deleted", :expression => expression}.merge(options))
+        else
+          GoodData::Metric.create({:title => "Temporary metric to be deleted"}.merge(expression))
+        end
         m.execute
       end
 
       def xexecute(expression)
-        execute(expression, {:extended_notation => true})
+        if expression.is_a?(String)
+          execute({:expression => expression, :extended_notation => true})
+        else
+          execute(expression.merge({:extended_notation => true}))
+        end
       end
 
     end
