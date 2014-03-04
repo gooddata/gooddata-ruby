@@ -3,6 +3,7 @@ layout: post
 title:  "Your first project"
 date:   2014-01-19 13:56:00
 categories: recipe
+next_section: recipe/model
 pygments: true
 perex: Let's spin up a project that will be the basis for other tutorials. It will take only 5 mins. Promise.
 ---
