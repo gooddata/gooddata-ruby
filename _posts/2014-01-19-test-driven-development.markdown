@@ -3,6 +3,8 @@ layout: post
 title:  "Test driven development"
 date:   2014-01-19 13:56:00
 categories: recipe
+next_section: recipe/bricks
+previous_section: recipe/crunching-numbers
 pygments: true
 perex: Let's have a look how you can bump project development a little to achieve test driven development of your reports and projects.
 ---

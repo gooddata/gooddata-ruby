@@ -21,28 +21,38 @@ This is how the model looks.
 ###Spinning it up
 Let's do this. I assume you have gooddata SDK installed and working. Run
 
+{% highlight ruby %}
     gooddata scaffold project my_test_project
+{% endhighlight %}
 
 go to the directory
 
+{% highlight ruby %}
     cd my_test_project
+{% endhighlight %}
 
 and build project
 
+{% highlight ruby %}
     gooddata -U username -P pass -t token project build
+{% endhighlight %}
 
 If everything goes ok it will give you a PID also called a project_id. Open the my_test_project directory in your favorite text editor and open file called Goodfile. It should look like this
 
+{% highlight ruby %}
     {
       "model" : "./model/model.rb",
       "project_id"   : ""
     }
+{% endhighlight %}
 
 Put your freshly acquired pid into an empty slot after "project_id". It should look like this.
 
+{% highlight ruby %}
     {
       "model" : "./model/model.rb",
       "project_id"   : "HERE_COMES_YOUR NEW_TOKEN"
     }
+{% endhighlight %}
 
 You are done. If you go to [https://secure.gooddata.com/projects.html](https://secure.gooddata.com/projects.html) you should be able to see your new project. Also locally you are ready for other tutorials
