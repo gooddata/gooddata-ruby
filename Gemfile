@@ -1,7 +1,3 @@
 source 'https://rubygems.org'
+gemspec
 
-gem 'pry'
-gem 'rubyzip'
-gem 'rest-client'
-gem 'highline'
-gem 'salesforce_bulk'
