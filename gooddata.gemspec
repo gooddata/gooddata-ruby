@@ -5,7 +5,8 @@ require "gooddata/version"
 Gem::Specification.new do |s|
   s.name = %q{gooddata}
   s.version = GoodData::VERSION
-  
+  s.licenses = ['BSD']
+
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pavel Kolesnikov", "Thomas Watson Steen"]
   s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
@@ -14,32 +15,32 @@ Gem::Specification.new do |s|
   s.email = %q{pavel@gooddata.com}
   s.executables = ["gooddata"]
   s.extra_rdoc_files = [
-    "LICENSE",
-    "README.rdoc"
+      "LICENSE",
+      "README.rdoc"
   ]
   s.files = `git ls-files`.split($/)
   s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.7"
 
-  s.add_development_dependency "active_support"
-  s.add_development_dependency "rake"
-  s.add_development_dependency "rspec"
+  s.add_development_dependency "active_support", "~> 0"
+  s.add_development_dependency "rake", "~> 0"
+  s.add_development_dependency "rspec", "~> 0"
 
-  s.add_dependency "bundler"
-  s.add_dependency "parseconfig"
-  s.add_dependency "json_pure"
-  s.add_dependency "rest-client"
-  s.add_dependency "json"
-  s.add_dependency "rubyzip"
-  s.add_dependency "highline"
-  s.add_dependency "gli"
-  s.add_dependency "pry"
-  s.add_dependency "erubis"
-  s.add_dependency "activesupport"
-  s.add_dependency "restforce"
-  s.add_dependency "salesforce_bulk"
-  s.add_dependency "i18n"
-  
+  s.add_dependency "bundler", "~> 0"
+  s.add_dependency "parseconfig", "~> 0"
+  s.add_dependency "json_pure", "~> 0"
+  s.add_dependency "rest-client", "~> 0"
+  s.add_dependency "json", "~> 0"
+  s.add_dependency "rubyzip", "~> 0"
+  s.add_dependency "highline", "~> 0"
+  s.add_dependency "gli", "~> 0"
+  s.add_dependency "pry", "~> 0"
+  s.add_dependency "erubis", "~> 0"
+  s.add_dependency "activesupport", "~> 0"
+  s.add_dependency "restforce", "~> 0"
+  s.add_dependency "salesforce_bulk", "~> 0"
+  s.add_dependency "i18n", "~> 0"
+
 end
 
