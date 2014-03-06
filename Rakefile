@@ -1,10 +1,12 @@
 require 'rubygems'
+
 require 'bundler/setup'
-
 require 'bundler/gem_tasks'
-require 'rake/testtask'
 
+require 'rake/testtask'
 require 'rspec/core/rake_task'
+
+require 'yard'
 
 RSpec::Core::RakeTask.new(:spec)
 
@@ -17,5 +19,7 @@ Rake::TestTask.new(:test) do |test|
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end
+
+YARD::Rake::YardocTask.new
 
 task :default => [:usage]
