@@ -194,11 +194,11 @@ module GoodData
       end
 
       def has_anchor?
-        columns.any? {|c| c[:type] == :anchor}
+        columns.any? {|c| c[:type].to_s == "anchor"}
       end
 
       def anchor
-        find_column_by_type(:anchor, :first)
+       find_column_by_type(:anchor, :first)
       end
 
       def references
@@ -206,18 +206,20 @@ module GoodData
       end
 
       def find_column_by_type(type, all=:all)
+        type = type.to_s
         if all == :all
-          columns.find_all {|c| c[:type] == type}
+          columns.find_all {|c| c[:type].to_s == type}
         else
-          columns.find {|c| c[:type] == type}
+          columns.find {|c| c[:type].to_s == type}
         end
       end
 
       def find_column_by_name(type, all=:all)
+        type = type.to_s
         if all == :all
-          columns.find_all {|c| c[:name] == type}
+          columns.find_all {|c| c[:name].to_s == type}
         else
-          columns.find {|c| c[:name] == type}
+          columns.find {|c| c[:name].to_s == type}
         end
       end
 
