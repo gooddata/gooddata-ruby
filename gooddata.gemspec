@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec", "~> 2.14.1"
   s.add_development_dependency "simplecov", "~> 0.8.2"
   s.add_development_dependency "yard", "~> 0.8.7.3"
+  s.add_development_dependency "yard-rspec", "~> 0.1"
 
   s.add_dependency "activesupport", "~> 4.0.3"
   s.add_dependency "bundler", "~> 1.5.3"
