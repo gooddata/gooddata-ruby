@@ -6,16 +6,16 @@ categories: recipe
 next_section: recipe/crunching-numbers
 prev_section: recipe/your-first-project
 pygments: true
-perex: Model is a huge part of how to create a report. Let's have a look how to create it using Ruby SDK and compare with other approaches.
+perex: Model plays a huge role in the Reporting process. Let's have a look on how to create it using Ruby SDK and compare it with other approaches.
 ---
 
-There are several ways how to express a model and create it in GoodData. The most prominent way to do it is the visual modeler that is part of the CloudConnect package. There are clear advantages like being visual but there are also drawbacks. It is not repeatable, it is not programmable and it is not text based. Let's have a look how to create a simple model using Ruby SDK.
+There are several ways how to express and create data model in GoodData. The most prominent way how to build a model is the visual modeler that is part of the CloudConnect package. There are clear advantages like being visual, but there are also some drawbacks. It is not **repeatable**, it is **not programmable** and it is not **text based**. Let's have a look on how to create a simple model using the Ruby SDK.
 
-##The model
+##The Model
 The model we will be creating is this
 
-##The code
-Create a file called model.rb and put this inside.
+##The Code
+Create a file called model.rb in model folder (remember we've created one in the [previous tutorial]({{ site.url }}/recipe/your-first-project)) and put the following code inside:
 
 {% highlight ruby %}
 GoodData::Model::ProjectBuilder.create("gooddata-ruby test #{Time.now.to_i}") do |p|
@@ -40,38 +40,52 @@ GoodData::Model::ProjectBuilder.create("gooddata-ruby test #{Time.now.to_i}") do
 end
 {% endhighlight %}
 
-Hopefully the model is self descriptive and if you are not strong on terminology like label, anchor etc please refer to "Building a model with GD".
+Hopefully the model is self descriptive and if you are not strong on terminology like label, anchor etc please refer to [Building a Model in GoodData tutorial](https://developer.gooddata.com/getting-started/).
 
-##Some rules
+##Some Rules
+
 Please note several things
-* we are trying to apply several conventions if you follow them it will be less typing for you but you can always override them.
-* in all the cases where you type a name it is a string that will be used to create a technical name in gooddata also called identifier on the API. The user visible name which we call title will be inferred if not provided. The inferring process is simple. We expect you to provide name in the snake case (as is typical in ruby, this means things like close_date, opportunity_dimension etc). These will be translated int human readable strings (Close date, Opportunity dimension). If you do not like the title you can specify it directly via:title => "My own title" 
-* the names are also used as reference names in the model. Notice how the date is using name of the close_date dimension and also the user_id reference is using reference users
 
+* We are trying to apply several conventions if you follow them it will be less typing for you but you can always override them.
+* In all the cases where you type a name it is a **string that will be used to create a technical name in gooddata also called identifier** on the API. The user visible name which we call title will be inferred if not provided. The inferring process is simple. We expect you to provide name in the snake case (as is typical in ruby, it means names like **close_date**, **opportunity_dimension** etc). These will be translated into human readable strings like **Close date** or **Opportunity dimension**. If you do not like the title you can specify it directly using code `:title => "My own title"` 
+* The names are also used as reference names in the model. Notice how the date is using name of the **close_date** dimension and also the **user_id** reference is used to reference users.
 
-##Executing the model
+##Executing the Model
+
+Executing the model in the Platform? One liner.
+
 {% highlight ruby %}
-gooddata --username joe@example.com --password my_secret_pass --token my_token  project build model.rb
+gooddata --username joe@example.com --password my_secret_pass --token my_token project build model.rb
 {% endhighlight %}
 
-##Loading data
-As part of the process we allow you to load data since sometimes some initial datasets should be part of the model and not ETL. The typical usecase is for the sake of defining reports which are filtered on certain values these values have to be present.
+##Loading Data
 
-### Loading data given inline
+As a part of the process, we allow you to load data since sometimes some initial datasets should be part of the model and not ETL. The typical usecase is for the sake of defining reports which are filtered on certain values. These values have to be present.
+
+### Loading Data Given Inline
+
+You can load data in just by adding it inline to the model file
+
 {% highlight ruby %}
 p.upload([["id", "name"],
           ["1", "Tomas"],
           ["2", "Petr"]], :dataset => 'users')
 {% endhighlight %}
 
-### Loading data given by filename
+### Loading Data Given by Filename
+
+Another option is to load data that are in specific **csv file**
+
 {% highlight ruby %}
 p.upload("/some/local_file.csv", :dataset => "users")
 {% endhighlight %}
 
 ### Loading data given by web file
+
+The last but not least, you can upload data that is stored in file on the web
+
 {% highlight ruby %}
 p.upload("http://www.example.com/some/remote_file.csv", :dataset => "users")
 {% endhighlight %}
 
-In all cases the file has to have headers that has the same name as the name of the particular columns (not necessarily in the same order).
+**Remember:** In all cases the file must contain headers that has the same name as the name of the particular columns (not necessarily in the same order).
