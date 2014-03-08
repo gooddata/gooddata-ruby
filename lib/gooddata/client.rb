@@ -27,7 +27,7 @@ Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
 # == Usage
 #
 # To communicate with the API you first need a personal GoodData account.
-# {Sign up here}[https://secure.gooddata.com/registration.html] if you havent already.
+# (Sign up here)[https://secure.gooddata.com/registration.html] if you havent already.
 #
 # Now it is just a matter of initializing the GoodData connection via the connect
 # method:
@@ -42,7 +42,7 @@ Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
 #   GoodData.logger = Logger.new(STDOUT)
 #
 # For details about the logger options and methods, see the
-# {Logger module documentation}[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
+# (Logger module documentation)[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
 #
 module GoodData
   module Threaded
