@@ -1,7 +1,8 @@
 require 'gooddata/goodzilla/goodzilla'
 
 module GoodData
-  class Metric < GoodData::MdObject 
+  # Metric representation
+  class Metric < GoodData::MdObject
 
     root_key :metric
 

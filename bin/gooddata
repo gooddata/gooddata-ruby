@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 require 'gli'
 require 'gooddata'
 require 'highline/import'
@@ -19,27 +20,27 @@ version GoodData::VERSION
 desc 'GoodData user name'
 default_value nil
 arg_name 'gooddata-login'
-flag [:U,:username, :login]
+flag [:U, :username, :login]
 
 desc 'GoodData password'
 default_value nil
 arg_name 'gooddata-password'
-flag [:P,:password]
+flag [:P, :password]
 
 desc 'Project pid'
 default_value nil
 arg_name 'project-id'
-flag [:p,:project_id]
+flag [:p, :project_id]
 
 desc 'Server'
 default_value nil
 arg_name 'server'
-flag [:s,:server]
+flag [:s, :server]
 
 desc 'WEBDAV Server. Used for uploads of files'
 default_value nil
 arg_name 'web dav server'
-flag [:w,:webdav_server]
+flag [:w, :webdav_server]
 
 desc 'Token for project creation'
 default_value nil
@@ -48,11 +49,11 @@ flag [:t, :token]
 
 desc 'Verbose mode'
 arg_name 'verbose'
-switch [:v,:verbose]
+switch [:v, :verbose]
 
 desc 'Http logger on stdout'
 arg_name 'logger'
-switch [:l,:logger]
+switch [:l, :logger]
 
 
 desc 'Work with deployed processes'
@@ -77,7 +78,7 @@ command :process do |c|
 
   c.desc "Lists all user's processes deployed on the plaform"
   c.command :list do |list|
-    list.action do |global_options,options,args|
+    list.action do |global_options, options, args|
       opts = options.merge(global_options)
       GoodData.connect(opts)
       pp GoodData::Command::Process.list(options.merge(global_options))
@@ -86,7 +87,7 @@ command :process do |c|
 
   c.desc "Gives you some basic info about the process"
   c.command :get do |get|
-    get.action do |global_options,options,args|
+    get.action do |global_options, options, args|
       opts = options.merge(global_options)
       GoodData.connect(opts)
       pp GoodData::Command::Process.get(options.merge(global_options))
@@ -95,7 +96,7 @@ command :process do |c|
 
   c.desc "Deploys provided directory to the server"
   c.command :deploy do |deploy|
-    deploy.action do |global_options,options,args|
+    deploy.action do |global_options, options, args|
       opts = options.merge(global_options)
       GoodData.connect(opts)
       pp GoodData::Command::Process.deploy(options[:dir], options.merge(global_options))
@@ -110,7 +111,7 @@ command :api do |c|
 
   c.desc "Info about the API version etc"
   c.command :info do |info|
-    info.action do |global_options,options,args|
+    info.action do |global_options, options, args|
       opts = options.merge(global_options)
       GoodData.connect(opts)
       pp GoodData::Command::Api.info
@@ -119,7 +120,7 @@ command :api do |c|
 
   c.desc "GET request on our API"
   c.command :get do |get|
-    get.action do |global_options,options,args|
+    get.action do |global_options, options, args|
       opts = options.merge(global_options)
       GoodData.connect(opts)
       pp GoodData::Command::Api.get(args[0])
@@ -132,16 +133,16 @@ end
 desc 'Describe add here'
 arg_name 'show'
 command :profile do |c|
-  
+
   c.desc "Show your profile"
   c.command :show do |show|
-    show.action do |global_options,options,args|
+    show.action do |global_options, options, args|
       opts = options.merge(global_options)
       GoodData.connect(opts)
       pp GoodData::Command::Profile.show()
     end
   end
-  
+
 end
 
 desc 'Scaffold things'
@@ -174,17 +175,17 @@ command :project do |c|
 
   c.desc "Lists user's projects"
   c.command :list do |list|
-    list.action do |global_options,options,args|
+    list.action do |global_options, options, args|
       opts = options.merge(global_options)
       GoodData.connect(opts)
       list = GoodData::Command::Projects.list()
-      puts list.map {|p| [p.uri, p.title].join(",")}
+      puts list.map { |p| [p.uri, p.title].join(",") }
     end
   end
 
   c.desc "If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project"
   c.command :jack_in do |jack|
-    jack.action do |global_options,options,args|
+    jack.action do |global_options, options, args|
       goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
       goodfile = JSON.parse(File.read(goodfile_path), :symbolize_names => true)
       model_key = goodfile[:model]
@@ -201,9 +202,9 @@ command :project do |c|
           GoodData.with_project(project_id) do |project|
             puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
             binding.pry(:quiet => true,
-              :prompt => [proc { |target_self, nest_level, pry|
-                 "project_live_sesion: "
-               }])
+                        :prompt => [proc { |target_self, nest_level, pry|
+                          "project_live_sesion: "
+                        }])
           end
         rescue GoodData::ProjectNotFound => e
           puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
@@ -214,27 +215,27 @@ command :project do |c|
 
   c.desc "Create a gooddata project"
   c.command :create do |create|
-    create.action do |global_options,options,args|
+    create.action do |global_options, options, args|
       title = ask "Project name"
       summary = ask("Project summary") { |q| q.default = "" }
       template = ask("Project template")
       token = ask("token")
-      
+
       opts = options.merge(global_options)
       GoodData.connect(opts)
       project = GoodData::Command::Projects.create({
-        :title => title,
-        :summary => summary,
-        :template => template,
-        :token => token
-      })
+                                                       :title => title,
+                                                       :summary => summary,
+                                                       :template => template,
+                                                       :token => token
+                                                   })
       puts "Project '#{project.title}' with id #{project.uri} created successfully!"
     end
   end
 
   c.desc "Delete a project. Be careful this is impossible to revert"
   c.command :delete do |delete|
-    delete.action do |global_options,options,args|
+    delete.action do |global_options, options, args|
       id = global_options[:project_id]
       opts = options.merge(global_options)
       GoodData.connect(opts)
@@ -249,7 +250,7 @@ command :project do |c|
     clone.arg_name 'cloned_project_name'
     clone.flag [:n, :name]
 
-    clone.action do |global_options,options,args|
+    clone.action do |global_options, options, args|
       id = global_options[:project_id]
       name = options[:name]
       token = options[:token]
@@ -261,7 +262,7 @@ command :project do |c|
 
   c.desc "Shows basic info about a project"
   c.command :show do |show|
-    show.action do |global_options,options,args|
+    show.action do |global_options, options, args|
       id = global_options[:project_id]
       opts = options.merge(global_options)
       GoodData.connect(opts)
@@ -272,7 +273,7 @@ command :project do |c|
 
   c.desc "If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you."
   c.command :build do |show|
-    show.action do |global_options,options,args|
+    show.action do |global_options, options, args|
       goodfile = JSON.parse(File.read(GoodData::Helpers.find_goodfile(Pathname('.'))), :symbolize_names => true)
       spec_path = goodfile[:model] || fail("You need to specify the path of the build spec")
       fail "Model path provided in Goodfile \"#{spec_path}\" does not exist" unless File.exist?(spec_path) && !File.directory?(spec_path)
@@ -282,10 +283,10 @@ command :project do |c|
 
       content = File.read(spec_path)
       spec = if (spec_path.extname == ".rb")
-        eval(content)
-      elsif (spec_path.extname == ".json")
-        JSON.parse(spec_path, :symbolize_names => true)
-      end
+               eval(content)
+             elsif (spec_path.extname == ".json")
+               JSON.parse(spec_path, :symbolize_names => true)
+             end
       GoodData.connect(opts)
       new_project = GoodData::Model::ProjectCreator.migrate(opts.merge(:spec => spec))
       puts "Migration was done. New project PID is #{new_project.uri}."
@@ -299,7 +300,7 @@ command :auth do |c|
 
   c.desc "Store your credentials to ~/.gooddata so client does not have to ask you every single time"
   c.command :store do |store|
-    store.action do |global_options,options,args|
+    store.action do |global_options, options, args|
       GoodData::Command::Auth.store
     end
   end
@@ -328,14 +329,14 @@ command :run_ruby do |c|
   c.desc 'Name of the deployed process'
   c.default_value nil
   c.flag [:n, :name]
-  
+
   c.action do |global_options, options, args|
     options[:expanded_params] = if (options[:params])
-      JSON.parse(File.read(options[:params]), :symbolize_names => true)
-    else
-      {}
-    end
-    
+                                  JSON.parse(File.read(options[:params]), :symbolize_names => true)
+                                else
+                                  {}
+                                end
+
     opts = options.merge(global_options).merge({:type => "RUBY"})
     GoodData.connect(opts)
     if options[:remote]
@@ -351,7 +352,7 @@ command :run_ruby do |c|
   end
 end
 
-pre do |global,command,options,args|
+pre do |global, command, options, args|
   require 'logger'
   GoodData.logger = Logger.new(STDOUT) if global[:l]
   username = global[:username]
@@ -362,8 +363,8 @@ pre do |global,command,options,args|
 
   username = creds[:username] if username.nil?
   password = creds[:password] if password.nil?
-  token    = creds[:auth_token] if token.nil?
-  
+  token = creds[:auth_token] if token.nil?
+
   global[:token] = token if global[:token].nil?
   global[:login] = username if global[:login].nil?
   global[:password] = password if global[:password].nil?
@@ -375,7 +376,7 @@ pre do |global,command,options,args|
   true
 end
 
-post do |global,command,options,args|
+post do |global, command, options, args|
   # Post logic here
   # Use skips_post before a command to skip this
   # block on that command only
