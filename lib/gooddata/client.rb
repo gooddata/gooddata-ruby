@@ -86,7 +86,7 @@ module GoodData
     end
 
     # Identifier of gem version
-    # @returns Formatted gem version
+    # @return Formatted gem version
     def gem_version_string()
       "gooddata-gem/#{version}"
     end
@@ -96,6 +96,8 @@ module GoodData
     # @param options
     # @param second_options
     # @param third_options
+    #
+    #    Goodd
     def connect(options=nil, second_options=nil, third_options={})
       if options.is_a? Hash
         fail "You have to provide login and password" if ((options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?))
