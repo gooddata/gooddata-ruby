@@ -40,12 +40,12 @@ Dataset['dataset.test'].load 'data.csv'
 p1.datasets['dataset.test'].load GoodData::Source::CsvFile.new 'data.csv'
 
 # Populate a data set from the result of a SalesForce query
-Dataset['dataset.test'].load GoodData::Source::SalesForce.new {
+Dataset['dataset.test'].load GoodData::Source::SalesForce.new({
   :username => "test@example.org",
   :password => "blahblah",
   :key => "mkjlnlkh845n4lhasdsdagddddddfa",
   :query => "SELECT Id, Name FROM Account"
-}
+})
 
 # Get a representation of a specific project
 p1 = Project['afawtv356b6usdfsdf34vt']

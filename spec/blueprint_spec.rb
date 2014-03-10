@@ -4,46 +4,85 @@ require 'pry'
 describe GoodData::Model::ProjectBlueprint do
 
   before(:each) do
-    @valid_blueprint = blueprint = GoodData::Model::ProjectBlueprint.new(
-    {
-      :title => "x",
-      :datasets => [
+    @valid_blueprint = GoodData::Model::ProjectBlueprint.new(
         {
-          :name=>"payments",
-          :columns => [
-            {:type=>:attribute, :name=>"id"},
-            {:type=>:fact, :name=>"amount"},
-            {:type=>:reference, :name=>"user_id", :dataset => "users", :reference => "user_id"},
-            ]
-        },
+            title: 'x',
+            datasets: [
+                {
+                    name: 'payments',
+                    columns: [
+                        {
+                            type: 'attribute',
+                            name: 'id'
+                        },
+                        {
+                            type: 'fact',
+                            name: 'amount'
+                        },
+                        {
+                            type: 'reference',
+                            name: 'user_id',
+                            dataset: 'users',
+                            reference: 'user_id'
+                        },
+                    ]
+                },
+                {
+                    name: 'users',
+                    columns: [
+                        {
+                            type: 'anchor',
+                            name: 'user_id'
+                        },
+                        {
+                            type: 'fact',
+                            name: 'amount'
+                        }
+                    ]
+                }
+            ]})
+
+    @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(
         {
-          :name=>"users",
-          :columns => [
-            {:type=>:anchor, :name=>"user_id"},
-            {:type=>:fact, :name=>"amount"}]
-        }
-      ]})
-      
-    @invalid_blueprint = blueprint = GoodData::Model::ProjectBlueprint.new(
-    {
-      :title => "x",
-      :datasets => [
-        {
-          :name=>"payments",
-          :columns => [
-            {:type=>:attribute, :name=>"id"},
-            {:type=>:fact, :name=>"amount"},
-            {:type=>:reference, :name=>"user_id", :dataset => "users", :reference => "user_id"},
-            ]
-        },
-        {
-          :name=>"users",
-          :columns => [
-            {:type=>:attribute, :name=>"user_id"},
-            {:type=>:fact, :name=>"amount"}]
-        }
-      ]})
-    
+            title: 'x',
+            datasets: [
+                {
+                    name: 'payments',
+                    columns: [
+                        {
+                            type: 'attribute',
+                            name: 'id'
+                        },
+                        {
+                            type: 'fact',
+                            name: 'amount'
+                        },
+                        {
+                            type: 'reference',
+                            name: 'user_id',
+                            dataset: 'users',
+                            reference: 'user_id'
+                        },
+                    ]
+                },
+                {
+                    name: 'users',
+                    columns: [
+                        {
+                            type: 'attribute',
+                            name: 'user_id'
+                        },
+                        {
+                            type: 'fact',
+                            name: 'amount'
+                        }
+                    ]
+                }
+            ]})
+
+    # @valid_blueprint = blueprint = BlueprintHelper.blueprint_from_file(File.join(File.dirname(__FILE__), 'data', 'blueprint_valid.json'))
+
+    # @invalid_blueprint = BlueprintHelper.blueprint_from_file(File.join(File.dirname(__FILE__), 'data', 'blueprint_valid.json'))
   end
 
   it "valid blueprint should be marked as valid" do
@@ -61,10 +100,12 @@ describe GoodData::Model::ProjectBlueprint do
   it "invalid blueprint should give you list of violating references" do
     errors = @invalid_blueprint.model_validate
     errors.size.should == 1
-    errors.first.should == {:type=>:reference,
-      :name=>"user_id",
-      :dataset=>"users",
-      :reference=>"user_id"}
+    errors.first.should == {
+        type: 'reference',
+        name: 'user_id',
+        dataset: 'users',
+        reference: 'user_id'
+    }
   end
 
   it "references return empty array if there is no reference" do
@@ -87,6 +128,5 @@ describe GoodData::Model::ProjectBlueprint do
     ds.has_anchor?.should == false
   end
 
-  
 
 end

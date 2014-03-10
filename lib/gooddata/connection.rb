@@ -1,7 +1,5 @@
 require 'json'
-
-# silence the parenthesis warning in rest-client 1.6.1
-old_verbose, $VERBOSE = $VERBOSE, nil ; require 'rest-client' ; $VERBOSE = old_verbose
+require 'rest-client'
 
 module GoodData
 
