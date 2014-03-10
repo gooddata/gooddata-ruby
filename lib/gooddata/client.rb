@@ -10,39 +10,47 @@ else
   FasterCSV = CSV
 end
 
-# Metadata packages, such as report.rb, require this to be loaded first
-require File.dirname(__FILE__) + '/models/metadata.rb'
+# Initializes required dynamically loaded classes
+def init_gd_module()
+  # Metadata packages, such as report.rb, require this to be loaded first
+  require File.dirname(__FILE__) + '/models/metadata.rb'
 
-Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }
-Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
+  # Load models from models folder
+  Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }
 
-# = GoodData API wrapper
+  # Load collections
+  Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
+end
+
+init_gd_module()
+
+# # GoodData API wrapper
 #
 # A convenient Ruby wrapper around the GoodData RESTful API.
 #
 # The best documentation for the API can be found using these resources:
+#
 # * http://developer.gooddata.com/api
 # * https://secure.gooddata.com/gdc
 #
-# == Usage
+# ## Usage
 #
 # To communicate with the API you first need a personal GoodData account.
-# {Sign up here}[https://secure.gooddata.com/registration.html] if you havent already.
+# [Sign up here](https://secure.gooddata.com/registration.html) if you havent already.
 #
-# Now it is just a matter of initializing the GoodData connection via the connect
-# method:
+# Now it is just a matter of initializing the GoodData connection via the connect method:
 #
-#   GoodData.connect 'gooddata_user', 'gooddata_password'
+#     GoodData.connect 'gooddata_user', 'gooddata_password'
 #
 # This GoodData object can now be utalized to retrieve your GoodData profile, the available
 # projects etc.
 #
-# == Logging
+# ## Logging
 #
-#   GoodData.logger = Logger.new(STDOUT)
+#     GoodData.logger = Logger.new(STDOUT)
 #
 # For details about the logger options and methods, see the
-# {Logger module documentation}[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
+# (Logger module documentation)[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
 #
 module GoodData
   module Threaded
@@ -52,6 +60,7 @@ module GoodData
     end
   end
 
+  # Dummy implementation of logger
   class NilLogger
     def debug(*args) ; end
     alias :info :debug
@@ -59,6 +68,7 @@ module GoodData
     alias :error :debug
   end
 
+  # Assigns global/default GoodData project
   def project=(project)
     GoodData.project = project
     GoodData.project
@@ -70,21 +80,24 @@ module GoodData
 
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
+    # Version
     def version
       VERSION
     end
 
-    def gem_version_string
+    # Identifier of gem version
+    # @return Formatted gem version
+    def gem_version_string()
       "gooddata-gem/#{version}"
     end
 
     # Connect to the GoodData API
     #
-    # === Parameters
+    # @param options
+    # @param second_options
+    # @param third_options
     #
-    # * +user+ - A GoodData username
-    # * +password+ - A GoodData password
-    #
+    #    Goodd
     def connect(options=nil, second_options=nil, third_options={})
       if options.is_a? Hash
         fail "You have to provide login and password" if ((options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?))
@@ -94,36 +107,34 @@ module GoodData
         fail "You have to provide login and password" if ((options.nil? || options.empty?) && (second_options.nil? || second_options.empty?))
         threaded[:connection] = Connection.new(options, second_options, third_options)
       end
-      
     end
 
+    # Turn logging on
     def logging_on
       if logger.is_a? NilLogger
         GoodData::logger = Logger.new(STDOUT)
       end
     end
 
+    # Turn logging off
     def logging_off
       GoodData::logger = NilLogger.new
     end
 
 
     # Hepler for starting with SST easier
-    # === Parameters
     #
-    # * +token+ - SST token
-    # * +options+ - options get routed to connect eventually so everything that you can use there should be possible to use here.
+    # @param token SST token
+    # @param options Options get routed to connect eventually so everything that you can use there should be possible to use here.
     #
     def connect_with_sst(token, options={})
       create_authenticated_connection(options.merge({:cookies => {"GDCAuthSST" => token}}))
     end
 
     # This method is aimed at creating an authenticated connection in case you do not hae pass/login but you have SST
-    # === Parameters
     #
-    # * +options+ - :server => optional GD server uri. If nil it secure will be used 
-    # * +options+ - :cookies => you can specify a hash of cookies
-    # 
+    # @param options :server => optional GD server uri, If nil it secure will be used. :cookies => you can specify a hash of cookies
+    #
     def create_authenticated_connection(options={})
       connect(options)
       server_cookies = options[:cookies]
@@ -132,6 +143,10 @@ module GoodData
       connection
     end
 
+    # Perform block in context of another project than currently set
+    #
+    # @param project Project to use
+    # @param bl Block to be performed
     def with_project(project, &bl)
       fail "You have to specify a project when using with_project" if project.nil? || (project.is_a?(String) && project.empty?)
       old_project = GoodData.project
@@ -145,24 +160,21 @@ module GoodData
       end
     end
 
-    # Returns the active GoodData connection earlier initialized via
-    # GoodData.connect call
+    # Returns the active GoodData connection earlier initialized via GoodData.connect call
     #
     # @see GoodData.connect
-    #
     def connection
       threaded[:connection] || raise("Please authenticate with GoodData.connect first")
     end
 
     # Sets the active project
     #
-    # === Parameters
+    # @param project A project identifier
     #
-    # * +project+ - a project identifier
+    # ### Examples
     #
-    # === Examples
+    # The following calls are equivalent
     #
-    # The following calls are equivalent:
     # * GoodData.project = 'afawtv356b6usdfsdf34vt'
     # * GoodData.use 'afawtv356b6usdfsdf34vt'
     # * GoodData.use '/gdc/projects/afawtv356b6usdfsdf34vt'
@@ -190,12 +202,12 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
-    # === Examples
+    # ### Examples
     #
-    #   GoodData.get '/gdc/projects'
+    #     GoodData.get '/gdc/projects'
+    #
     def get(path, options = {})
       connection.get(path, options)
     end
@@ -204,14 +216,13 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # @param data The payload data in the format of a Hash object
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
-    # * +data+ - The payload data in the format of a Hash object
-    #
-    # === Examples
+    # ### Examples
     #
     #   GoodData.post '/gdc/projects', { ... }
+    #
     def post(path, data, options = {})
       connection.post path, data, options
     end
@@ -220,14 +231,15 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # ### Parameters
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
-    # * +data+ - The payload data in the format of a Hash object
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # @param data The payload data in the format of a Hash object
     #
-    # === Examples
+    # ### Examples
     #
     #   GoodData.put '/gdc/projects', { ... }
+    #
     def put(path, data, options = {})
       connection.put path, data, options
     end
@@ -236,13 +248,12 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # ### Examples
     #
-    # === Examples
+    #     GoodData.delete '/gdc/project/1'
     #
-    #   GoodData.delete '/gdc/project/1'
     def delete(path, options = {})
       connection.delete path, options
     end
@@ -306,10 +317,11 @@ module GoodData
     # For some serious logging, set the logger instance using
     # the logger= method
     #
-    # === Example
+    # ### Example
     #
-    #   require 'logger'
-    #   GoodData.logger = Logger.new(STDOUT)
+    #     require 'logger'
+    #     GoodData.logger = Logger.new(STDOUT)
+    #
     def logger
       @logger ||= NilLogger.new
     end
