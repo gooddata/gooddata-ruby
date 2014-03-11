@@ -16,8 +16,8 @@ describe GoodData::Model::SchemaBuilder do
     builder.add_fact("amount", :title => "Amount")
 
     schema = builder.to_schema
-    schema.attributes.keys.count == 1
-    schema.attributes["attr.payments.id"].title.should == "My Id"
+    schema.attributes.count == 1
+    schema.attributes.first.title.should == "My Id"
   end
 
 end
