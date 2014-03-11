@@ -21,7 +21,7 @@ GoodData Ruby SDK stack is built so you can easily develop things locally and de
 ###Prerequisites
 
 * Git
-* Ruby (JRuby recommended)
+* Ruby 1.9 and later (JRuby recommended)
 * Ruby Gems
 
 Go ahead and run
@@ -49,21 +49,39 @@ You are ready to go!
 
 ##Running your first brick
 
-The small pieces of ruby that are run on the platform are called **bricks**. Nobody knows where and why this name emerged but there are rumors that it is supposed to reference the fact that out of brick just laid together you can create a solid wall.
+The small pieces of ruby that are run on the platform are called **bricks**. Nobody knows where and why this name emerged but there are rumors that it is supposed to reference the fact that out of brick just laid together you can create a solid wall like with Legos.
 
-If you open the repository you will see some directories. Find directory called misc/hello_world and open it. It contains only one file. Do not open it yet.
+If you open the repository you will see some directories. Find directory called app/hello_world and open it. It contains only one file. Do not open it yet.
 
 Run following console command
 
 {% highlight ruby %}
-bundle exec gooddata -l -U name@gooddata.com -P my_pass -p project_pid run_ruby -d hello_world_brick --name "some_deploy" --remote
+bin/gooddata -l -U name@gooddata.com -P my_pass -p project_pid run_ruby -d hello_world_brick --name "Hello_world" --remote
 {% endhighlight %}
 
-It will take some time but after a while you should see green DONE on your console and a link for the log. Open it in your browser and you should see there something like this: On one of the lines there should be hello world. Great you just ran your first ruby brick!
+It will take some time but after a while you should see green DONE on your console and a link for the log. Open it in your browser (on mac Hold Command+double click your mouse on the link) and you should see there something like this: On one of the lines there should be hello world. Great you just ran your first ruby brick!
 
 ###Looking inside Hello World
 
 Let's see what is happening inside. Open the `main.rb` file in your favorite editor. You should see something like:
+
+{% highlight ruby %}
+puts "Hello world"
+{% endhighlight %}
+
+That's all! All you really have to do is write the code. Everything that goes to STDOUT is automatically logged as an infor level log output. As we will see later this is great but for something more complex we could be a little smarter. Please note that it is in the file called main.rb though it is not technically necessary all examples that we show follows this convetion and it allows people to know where to look.
+
+##Digging deeper
+
+It might be surprising if I tell you that this is not exactly how majority of the real bricks are implemented. What we showed you is fine and this is how we started but after we implemented some bricks we found out that we are repeating ourselves a lot. So we tried to come up with something better. How can we reuse common things that we are likely to do every single time (like logging to GD) without repeating ourselves? We took our inspiration from Rack or if you are familiar with Decorator pattern you will be right at home. 
+
+We introduce something we call **application**. This is what is responsible for carrying out the core of our business requirement. For example printing hello world or grabbing all the reports and tagging those who were not updated in last year for review. There is also something we call **middleware** which is responsible to do something like logging into GoodData. Both of those have the same interface so from the outside I cannot tell if I am interacting with one or the other. The only difference is that middleware knows there is somebody else who expects that is going to be called and it is middleware's responsibility to call him. This chain of middlewares and an application is called a pipeline.
+
+Let's have a look at something visual. This is a simple pipeline with 2 middlewares and one app. The arrows depict how the execution order would flow.
+
+![Example pipeline consisting of 3 middlewares](https://dl.dropboxusercontent.com/s/g5rymdmmx97hc61/middlewares.png?token_hash=AAE7qAjkOxA6tQGDk8UY17ltRu0ZG5UqwSJ_8ZtAl7ZNaA)
+
+Let's wark through the pieces. Let's imagine for a second that we are going to reimplement the hello world like this
 
 {% highlight ruby %}
 require 'gooddata'
@@ -73,88 +91,22 @@ module GoodData::Bricks
   class HelloWorldBrick
 
      def call(params)
-       logger = Logger.new(params[:GDC_LOGGER_FILE])
-       logger.info "Hello world"
+       puts "Hello world"
      end
 
   end
 end
 
-GoodData::Bricks::HelloWorldBrick.new
+GoodData::Bricks::HelloWorldBrick.new.call($SCRIPT_PARAMS)
 {% endhighlight %}
 
-That's all! Let's dissect it. The interface is very simple. You have to provide an instance of an object that responds to a message `:call` (in other words does implement method call). This method takes one parameter and that is a hash map of parameters.
-
-You can see that we have implemented such a class and returning an instance of that class. The method accepts params and you can see that we immediately make use of them when grabbing logger and then writing to it. Platform does the heavy lifting on the back and you have already seen the result.
-
-##Digging deeper
-
-It might be surprising if I tell you that this is not exactly how majority of the real bricks are implemented. What we showed you is fine and this is how we started but after we implemented some bricks we found out that we are repeating ourselves a lot. So we tried to come up with something better.
-
-**remark:** If you know how Rack or any similar framework works for abstracting web applications you would be right at home since that is where most of the inspiration came from.
-
-We introduce three **concepts**.
-
-* _Application_ - This part is responsible for doing the core of the task you are interested in. Structure of an app is pretty much what you have already seen.
-* _Middleware_ - very similar to app. The main difference is that you can chain them together. The main similarity is that it has the same interface as an app
-* _Pipelines_ - If you chain multiple middleweres and applications it creates a pipeline.
-
-Let's have a look on how it works visually.
-
-![Example pipeline consisting of 3 middlewares](https://dl.dropboxusercontent.com/s/g5rymdmmx97hc61/middlewares.png?token_hash=AAE7qAjkOxA6tQGDk8UY17ltRu0ZG5UqwSJ_8ZtAl7ZNaA)
-
-This is a simple pipeline with 2 middlewares and one app. The arrows depict how the execution order would flow.
-
-### Executing a pipeline
-Your pipeline is executed. First middleware is called then the second and third. Then your app is called it does what it needs to and then the call goes back through the middlewares (so they can actually act twice).
-
-This probably does not seem that much useful so let's have a look at couple of examples where you might use it.
-
-**Plumbing** -  just the plumbing. Did you notice how we had to set up the logger in our Hello World example? It is not a lot of code but imagine that you need to do 10 things like this. It can bog you down. There are couple of middlewares that try to help you with similar stuff. It is similar to what AOP style of programming tries to do.
-
-_Examples_
-
-* Log in to various systems and prepeare for action
-* Set up loggers
-
-**Decorators** - Imagine that you have done something great. For example computing hierarchy of people from some information. It is so much useful that you would like to let other people use it. But everybody has slightly different use case. Somebody wants to output it to web dav or s3 storage. Somebody want's to tweet about that it has finished, somebody might want to store this file into vertica. Implementing serialization in a separate middlewere means that you do not need to touch the actually code that.
-
-* measuring time
-* serializing stuff to various places
-* letting other people know
-
-###First pipeline
-
-Ok let's create our first pipeline. Let's open `misc/hello_world_pipeline_brick` in your browser
-
-You will see two files. Let's check the `hello_world.rb` first.
-
-{% highlight ruby %}
-module MyFirstBrick
-
-  class HelloWorldBrick
-    def call(params)
-      logger = params[:gdc_logger]
-      logger.info "Hello world"
-    end
-  end
-
-end
-{% endhighlight %}
-
-It looks exactly the same as in previosus case except for the logger setting up. Let's look at the other file main.rb
-
-??
-
-You see that at the top we are requiring the `hello_world.rb` and then we are setting up the pipeline. You can see that even this basic example uses quite a bit of middleare but hopefully their names are fairly self describing. Logging will hook up a logger. GoodData logs you in to GD and hooks the library to the logger if you want to. Timing will simply measure the execution of the app itself.
-
-Notice several things. Pipeline has exactly one app. It also has to be the last one in the pipeline. It has zero or more middlewares. When constructing a pipeline you can specify a stage either via a class or an instance. If it is a class we instatntiate it for you (without parameters). This is useful if you want to parametrize the middleware somehow.
+Like we said before the important thing is that our app has an interface. The one we have here is very simple. You have to provide an instance of an object that responds to a message `:call` (in other words does implement method named call). This method takes one parameter and that is a hash map of parameters. This is going to be our interface so you should not be surprised if you would see the same interface when we will later look at some middlewares. Like we said they have to have the same interface for this to work.
 
 ##Middlewares
 
 Let's have a look at some middlewares.
 
-App was not very challenging from programming perspective (which is the goal) and you will see that middleware is not any more complicated. There are generally two types of middleares. First is a middleware that wants to act only once. It is like fire and forget. For example setting up logger. You just create it and do not care any more. There is a second type and that is a middleware that wants to act twice. Once before the app itself was called. Second after an app was called. Typical example might be time measuring. You want to start your clock before the app itself is called but then you have to stop them sometimes. The difference is absolutely minimal let's walk through both of them.
+App was not very challenging from programming perspective (which is the goal) and you will see that middleware is not any more complicated. There are generally two types of middlewares. First is a middleware that wants to act only once. It is like fire and forget. For example setting up logger. You just create it and do not care any more. There is a second type and that is a middleware that wants to act twice. Once before the app itself was called. Second after an app was called. Typical example might be time measuring. You want to start your clock before the app itself is called but then you have to stop them sometimes. The difference is absolutely minimal let's walk through both of them.
 
 ###Logger middleware
 
@@ -199,7 +151,7 @@ module GoodData::Bricks
 end
 {% endhighlight %}
 
-You can see that there are really only minimal changes. Let's walk through a couple of important points more carefully. As we stated before difference between app and a middleware is mainly in the fact that you can chain middlewares. Thus middleware has to know who is the next on in the chain and at some point it is going to call him. That is the `@app.call(params)`. Notice how we are still using the same interface. This way it is no difference if the next guy is app or middleware. The second important piece might be the returning function but that is just a way how to be more dry. Returning will take one param evaluate it store it you can do some stuff on it and then its value is returned. These things are equivalent.
+You can see that there are really only minimal changes. Let's walk through a couple of important points more carefully. As we stated before difference between app and a middleware is mainly in the fact that you can chain middelewares. Thus middleware has to know who is the next on in the chain and at some point it is going to call him. That is the `@app.call(params)`. Notice how we are still using the same interface. This way it is no difference if the next guy is app or middleware. The second important piece might be the returning function but that is just a way how to be more dry. Returning will take one param evaluate it store it you can do some stuff on it and then its value is returned. These things are equivalent.
 
 {% highlight ruby %}
 returning(Person.new) do |o|
@@ -211,28 +163,25 @@ p.name = "Tomas"
 p
 {% endhighlight %}
 
-###Passing values
+##Putting it all together - Pipeline
 
-We haven't talk much explicitly about passing values. The recommended way how to pass parameters is through the `:call(params)` methods parameters. You can see example of that for example in the logger middleware. It creates a logger and puts it into the param object. All following middlewares that are called can benefit from it. You can again see the usage in the _HelloWorld_.
-
-###Providing initial sets of parameters
-
-When deploying you will have to either provide parameters during execution or to the scheduler. Since we are developing locally it would be great to have similar functionality during local execution. This is exactly what `--params` parameter does.
+Like we said before. Pipeline is something that puts the middlewares and and application together. We created a helper function that takes the classes (or you can provide the instances) and it joins them together. For example ike this.
 
 {% highlight ruby %}
-bundle exec gooddata -v run_ruby --remote asdas/asdadas --params path_to_params_file.json
+p = GoodData::Bricks::Pipeline.prepare([
+  LoggerMiddleware,
+  BenchMiddleware,
+  GoodDataMiddleware,
+  RestForceMiddleware,
+  BulkSalesforceMiddleware,
+  SalesForceHistoryBrick])
 {% endhighlight %}
 
-The file is simple JSON file. This file is used in both local or remote execution.
+p again has the same interface as a middleware or an app. Just call it and it will run the whole pipeline. This is not surprising since it actually just returns you the first middleware instance. So to call the whole pipeline we run something like this.
 
 {% highlight ruby %}
-{
-  "param1" : "value1",
-  "param2" : "value2"
-}
+p.call($SCRIPT_PARAMS)
 {% endhighlight %}
-
-###Return parameters
 
 ##Local harness
 
@@ -240,19 +189,19 @@ Let's talk a little about the harness that makes it possible to test things loca
 
 ###Run locally
 
-The most complete command 
+As you might have noticed when you installed gooddata ruby sdk it installed a CLI tool that has number of cool utilities that makes some tasks easier. One of those is running ruby bricks locally. The most complete command is
     
 {% highlight ruby %}
-bundle exec gooddata -l -s https://secure.gooddata.com -Uname@gooddata.com -Pmy_pass -w https://secure-di.getgooddata.com run_ruby -p rjzbt1shubkj9c8es6f75t2avke748mj -d brick_test --name "some_deploy"
+bin/exec gooddata -lv -s https://secure.gooddata.com -Uname@gooddata.com -Pmy_pass -w https://secure-di.getgooddata.com -p rjzbt1shubkj9c8es6f75t2avke748mj run_ruby -d brick_test --name "some_deploy" --params brick_test/params.json 
 {% endhighlight %}
 
-looks intimidating but let's break it down. Many of these can be omitted and are there in case you can override everything.
+looks intimidating but let's break it down. Many of these can be omitted in default case and are mentioned here in case you need to override the default.
 
 {% highlight ruby %}
-bundle exec
+bin/exec
 {% endhighlight %}
 
-means you are executing it with exact the same libraries as you would on the server (we are expecting that your local repo is up to date).
+when you installed the tooling through `bundle install --binstubs` it created local executables in local bin directory. It basically means you are executing it with exact the same libraries as you would on the server (we are expecting that your local repo is up to date).
 
 {% highlight ruby %}
  -l
@@ -261,10 +210,16 @@ means you are executing it with exact the same libraries as you would on the ser
 Means that HTTP communication will be logged to STDOUT.
 
 {% highlight ruby %}
+ -v
+{% endhighlight %}
+
+Runs in a verbose mode.
+
+{% highlight ruby %}
  -s https://secure.gooddata.com
 {% endhighlight %}
 
-Means which datacenter you are connecting to. If you are not going against something special you should be able to leave this out
+Means which datacenter you are connecting to. If you are not running against something special you should be able to leave this out our servers will figure out where to send you.
 
 {% highlight ruby %}
  -w https://secure-di.getgooddata.com
@@ -276,13 +231,13 @@ File staging area used for uploading the files for execution. Similar case as fo
  -p PID
 {% endhighlight %}
 
-Currently only execution context we have is project context. You have to specify a project `PID` to be able to run your brick
+Currently only execution context we have is project context. You have to specify a project `PID` to be able to run your brick.
 
 {% highlight ruby %}
  -d path_to_brick
 {% endhighlight %}
 
-This tells the tool where brick lives. It expect the directory where the `main.rb` lives. Do not point this directly to a file.
+This tells the tool where the brick lives. It expect the directory where the `main.rb` lives. Do not point this directly to a file. Though it is not technically necessary the file to be called main.rb it is a convention that we are exepecting.
 
 {% highlight ruby %}
  --name some_name
@@ -292,4 +247,4 @@ Used when deployed to name the process so later you can identify it.
 
 ###Run remotely
 
-The only change to do when you are running things remotely is to add `--remote` to the command. Everything else should remain the same. Let us know how it works for you!
+The only change to do when you are running things remotely is to add `--remote` to the command. Everything else should remain the same.
