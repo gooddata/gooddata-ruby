@@ -27,7 +27,13 @@ GoodData UI does a great job hiding this complexity from you but this significan
 
 If you do not have a project best would be to create one by following our tutorial - [Your first project](http://sdk.gooddata.com/gooddata-ruby/recipe/your-first-project) so you can get predictable results.
 
-First let's look around. There are no metrics
+If you have a project created according to that tutorial you should have a directory where a Goodfile with filled in projec_pid is. If you call gooddata jack_in it will try to log you in and spins up an interactive session inside that project. If you do not have a project like that or you want to explore on your own you can always override the behavior by explicitely specifying the project yourself like (obviously the mileage may vary)
+
+{% highlight%}
+gooddata -p project_id jack_in
+{% endhighlight %}
+
+So jack in your preferred way and let's look around. There are no metrics
 
 {% highlight ruby %}
 GoodData::Metric[:all]
@@ -216,7 +222,7 @@ GoodData::ReportDefinition.execute(
    :left => m)
 {% endhighlight%}
 
-In our model we have two attributes with the same name - `Id`. Since the title does not have to be unique this is ok. Currently, it will pick the first for you but this behavior will most likely change in the favor of throwing an ambiguous error, much like your SQL client probably does.
+In our model we have two attributes with the same name - `Id`. Since the title does not have to be unique this is ok. Currently, it will pick the first for you but this behavior will most likely change in the favor of throwing a "this is ambiguous" error, much like your SQL client probably does.
 
 {% highlight ruby %}
 GoodData::ReportDefinition.execute(:top => [{:type => :attribute, :title => "Id"}], :left => m)
@@ -234,12 +240,6 @@ GoodData::ReportDefinition.execute(:top => [{:type => :attribute, :title => "Id"
 Up until now we have been computing the reports just because. Maybe you wonder how you can actually create a report that would be saved. Simple.
 
 {% highlight ruby %}
-GoodData::ReportDefinition.execute(
-   :top => [{:type => :attribute, :title => /Month\/Year/}],
-   :left => m)
-{% endhighlight %}
-
-{% highlight ruby %}
 report = GoodData::Report.create(
    :title => "Fantastic report",
    :top => [{:type => :attribute, :title => /Month\/Year/}],
@@ -248,6 +248,7 @@ report = GoodData::Report.create(
 report.save
 {% endhighlight %}
 
+Note that we are using Report instead of ReportDefinition. Everything else being the same. Also report needs a title set at the time you would try saving it.
 
 ###Results
 
