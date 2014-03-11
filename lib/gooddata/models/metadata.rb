@@ -119,7 +119,7 @@ module GoodData
     end
 
     def tags=(list_of_tags)
-      data["meta"]["tags"] = tags
+      data["meta"]["tags"] = list_of_tags
     end
 
     def meta
