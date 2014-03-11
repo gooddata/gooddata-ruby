@@ -1,5 +1,3 @@
-# Homepage
-
 <div class="jumbotron">
     <!-- style="background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,white), color-stop(100%,#6d3353));"> -->
 
