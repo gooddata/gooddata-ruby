@@ -282,6 +282,14 @@ module GoodData
         find_column_by_type(:reference)
       end
 
+      def attributes
+        find_column_by_type(:attribute)
+      end
+
+      def facts
+        find_column_by_type(:fact)
+      end
+
       def find_column_by_type(type, all=:all)
         type = type.to_s
         if all == :all
