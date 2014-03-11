@@ -31,6 +31,18 @@ If you are using gems just
 
     gem install gooddata
 
+### Rake tasks
+
+There are some out of box working tasks. Run `rake -T` to show them.
+
+You should get output similar to this:
+
+    rake build    # Build gooddata-0.6.0.pre9.gem into the pkg directory
+    rake install  # Build and install gooddata-0.6.0.pre9.gem into system gems
+    rake release  # Create tag v0.6.0.pre9 and build and push gooddata-0.6.0.pre9.gem to Rubygems
+    rake spec     # Run RSpec code examples
+    rake test     # Run tests
+    rake yard     # Generate YARD Documentation
 
 ### Library usage
 
