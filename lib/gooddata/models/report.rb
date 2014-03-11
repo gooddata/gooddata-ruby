@@ -35,24 +35,6 @@ module GoodData
       end
     end
 
-# ----
-
-    def title=(a_title)
-      @json["report"]["meta"]["title"] = a_title
-    end
-
-    def summary=(a_summary)
-      @json[:report][:meta][:summary] = a_summary
-    end
-
-    def add_definition(a_definition)
-      @json[:report][:content][:definitions] << a_definition
-    end
-    
-# ----
-
-
-
     def results
       content["results"]
     end
