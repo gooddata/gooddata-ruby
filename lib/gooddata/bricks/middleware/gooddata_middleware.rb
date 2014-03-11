@@ -7,7 +7,7 @@ module GoodData::Bricks
       logger = params[:gdc_logger]
       token_name = :GDC_SST
       protocol_name = :GDC_PROTOCOL
-      server_name = :GDC_SERVER
+      server_name = :GDC_HOSTNAME
       project_id = params[:GDC_PROJECT_ID]
 
       fail "SST (SuperSecureToken) not present in params" if params[token_name].nil?

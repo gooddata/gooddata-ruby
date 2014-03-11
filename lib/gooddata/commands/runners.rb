@@ -29,7 +29,7 @@ script_body = <<-script_body
           :GDC_SST => \"#{sst}\",
           :GDC_PROJECT_ID => \"#{pid}\",
           :GDC_PROTOCOL => \"#{scheme}\",
-          :GDC_SERVER => \"#{hostname}\",
+          :GDC_HOSTNAME => \"#{hostname}\",
           :GDC_LOGGER_FILE => STDOUT
         }.merge(#{params})
         eval(File.read(\"./main.rb\"))
