@@ -15,7 +15,8 @@ module GoodData::Bricks
       pipeline.reverse.reduce(nil) {|memo, app| memo.nil? ? app.new : app.new(memo)}
     end
   end
-  
+
+  # Brick base class
   class Brick
 
     def log(message)
