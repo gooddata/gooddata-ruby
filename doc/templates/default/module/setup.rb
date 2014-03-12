@@ -1,15 +1,13 @@
 include Helpers::ModuleHelper
 
 def init
-  sections :header, :box_info, :pre_docstring, T('docstring'), :children,
+  sections :header, :box_info, :pre_docstring, T('docstring'), :specs, :children,
     :constant_summary, [T('docstring')], :inherited_constants,
     :attribute_summary, [:item_summary], :inherited_attributes,
     :method_summary, [:item_summary], :inherited_methods,
     :methodmissing, [T('method_details')],
     :attribute_details, [T('method_details')],
     :method_details_list, [T('method_details')]
-
-  sections.place(:specs).before(:children)
 end
 
 def pre_docstring
