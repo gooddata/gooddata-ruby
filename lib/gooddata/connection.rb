@@ -366,7 +366,11 @@ module GoodData
       new_params = Marshal.load(Marshal.dump(params))
       GoodData::Helpers.hash_dfs(new_params) do |k, key|
         keys.each do |key_to_scrub|
-          k[key_to_scrub] = ("*" * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub)
+          begin
+            k[key_to_scrub] = ("*" * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub) && k[key_to_scrub]
+          rescue
+            binding.pry
+          end
         end
       end      
       new_params
