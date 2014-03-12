@@ -383,7 +383,7 @@ module GoodData
             binding.pry
           end
         end
-      end      
+      end
       new_params
     end
 
