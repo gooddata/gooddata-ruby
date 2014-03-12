@@ -282,22 +282,24 @@ command :project do |c|
   c.desc "If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you."
   c.command :build do |show|
     show.action do |global_options, options, args|
-      goodfile = JSON.parse(File.read(GoodData::Helpers.find_goodfile(Pathname('.'))), :symbolize_names => true)
-      spec_path = goodfile[:model] || fail("You need to specify the path of the build spec")
-      fail "Model path provided in Goodfile \"#{spec_path}\" does not exist" unless File.exist?(spec_path) && !File.directory?(spec_path)
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
+      spec, project_id = GoodData::Command::Projects.get_spec_and_project_id(".")
+      new_project = GoodData::Command::Projects.build(opts.merge(:spec => spec))
+      puts "Project was created. New project PID is #{new_project.pid}, URI is #{new_project.uri}."
+    end
+  end
+
+  c.desc "If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you."
+  c.command :update do |show|
+    show.action do |global_options, options, args|
 
       opts = options.merge(global_options)
-      spec_path = Pathname(spec_path)
-
-      content = File.read(spec_path)
-      spec = if (spec_path.extname == ".rb")
-               eval(content)
-             elsif (spec_path.extname == ".json")
-               JSON.parse(spec_path, :symbolize_names => true)
-             end
       GoodData.connect(opts)
-      new_project = GoodData::Model::ProjectCreator.migrate(opts.merge(:spec => spec))
-      puts "Migration was done. New project PID is #{new_project.uri}."
+      spec, project_id = GoodData::Command::Projects.get_spec_and_project_id(".")
+      project = GoodData::Command::Projects.update(opts.merge(:spec => spec, :project_id => global_options[:project_id] || project_id))
+      puts "Migration was done. Project PID is #{project.pid}, URI is #{project.uri}."
+
     end
   end
 

@@ -66,6 +66,35 @@ module GoodData::Command
       p.delete
     end
 
+    def self.get_spec_and_project_id(base_path)
+      goodfile_path = GoodData::Helpers.find_goodfile(Pathname(base_path))
+      fail "Goodfile could not be located in any parent directory. Please make sure you are inside a gooddata project folder." if goodfile_path.nil?
+      goodfile = JSON.parse(File.read(goodfile_path), :symbolize_names => true)
+      spec_path = goodfile[:model] || fail("You need to specify the path of the build spec")
+      fail "Model path provided in Goodfile \"#{spec_path}\" does not exist" unless File.exist?(spec_path) && !File.directory?(spec_path)
+
+      spec_path = Pathname(spec_path)
+
+      content = File.read(spec_path)
+      spec = if (spec_path.extname == ".rb")
+               eval(content)
+             elsif (spec_path.extname == ".json")
+               JSON.parse(spec_path, :symbolize_names => true)
+             end
+      [spec, goodfile[:project_id]]
+    end
+
+    def self.update(options={})
+      project = options[:project]
+      project_id = project && project.pid
+      fail "You have to provide 'project_id'. You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key \"project_id\". If you just started a project you have to create it first. One way might be through \"gooddata project build\"" if project_id.nil? || project_id.empty?
+      GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :project => project_id)
+    end
+
+    def self.build(options={})
+      GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
+    end
+
   end
 end
 
