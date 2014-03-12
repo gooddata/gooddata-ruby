@@ -39,7 +39,7 @@
 
 
         <div>
-            <a href="/docs/file/doc/pages/tutorial/ON_GOOD_DATA_PLATFORM.md"><h3>Executing ruby on GoodData plaform</h3>
+            <a href="/docs/file/doc/pages/tutorial/BRICKS.md"><h3>Executing ruby on GoodData plaform</h3>
             </a>
 
             <div>ETL is the back bone of every project. But project is not just about crunching numbers. What to do with

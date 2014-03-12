@@ -98,7 +98,6 @@ obj is a resource that is probably the oldest in all GoodData. Obj are all the o
     obj.get_using
     obj.delete
 
-
 #### Working with reports
 
 Sometimes it is useful to compute reports outside of UI so there are couple of convenience methods for that.
