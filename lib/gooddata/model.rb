@@ -586,8 +586,9 @@ module GoodData
           spec = options[:spec] || fail("You need to provide spec for migration")
           spec = spec.to_hash
 
-          token = options[:token] || fail("You need to specify token for project creation")
+          token = options[:token]
           project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
+          fail("You need to specify token for project creation") if token.nil? && project.nil?
 
           begin
             GoodData.with_project(project) do |p|
