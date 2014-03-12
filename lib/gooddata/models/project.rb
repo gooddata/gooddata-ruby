@@ -49,7 +49,7 @@ module GoodData
       def create(attributes, &block)
         GoodData.logger.info "Creating project #{attributes[:title]}"
 
-        auth_token = attributes.delete(:auth_token) || GoodData.connection.auth_token
+        auth_token = attributes[:auth_token] || GoodData.connection.auth_token
 
         json = {:project =>
           {

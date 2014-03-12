@@ -19,23 +19,25 @@ module GoodData::Command
     def self.deploy(dir, options={})
       verbose = options[:verbose] || false
       GoodData.with_project(options[:project_id]) do
-        deploy_graph(dir, options.merge({:files_to_exclude => [options[:params]]}))
+        params = options[:params].nil? ? [] : [options[:params]]
+        deploy_graph(dir, options.merge({:files_to_exclude => params}))
       end
     end
 
     def self.with_deploy(dir, options={}, &block) 
       verbose = options[:verbose] || false
       GoodData.with_project(options[:project_id]) do
+      params = options[:params].nil? ? [] : [options[:params]]
         if block
           begin
-            res = deploy_graph(dir, options.merge({:files_to_exclude => [options[:params]]}))
+            res = deploy_graph(dir, options.merge({:files_to_exclude => params}))
             block.call(res)
           ensure
-            # self_link = res["process"]["links"]["self"]
-            # GoodData.delete(self_link)
+            self_link = res && res["process"]["links"]["self"]
+            GoodData.delete(self_link)
           end
         else
-          deploy_graph(dir, options.merge({:files_to_exclude => [options[:params]]}))
+          deploy_graph(dir, options.merge({:files_to_exclude => params}))
         end
       end
     end
@@ -100,8 +102,7 @@ module GoodData::Command
       fail "\"#{dir}\" is not a directory" unless dir.directory?
       files_to_exclude = options[:files_to_exclude].map {|p| Pathname(p)}
 
-      # project_id = options[:project_id] || fail("Project Id has to be specified")
-      
+      project_id = options[:project_id] || fail("Project Id has to be specified")
 
       type = options[:type] || "GRAPH"
       deploy_name = options[:name]
@@ -141,7 +142,7 @@ module GoodData::Command
           GoodData.put("/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{process_id}", data)
         end
       end
-      puts HighLine::color("Deploy DONE #{dir}", HighLine::BOLD) if verbose
+      puts HighLine::color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
       res
     end
 

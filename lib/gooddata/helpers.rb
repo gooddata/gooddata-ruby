@@ -26,7 +26,7 @@ module GoodData::Helpers
        end
        pwd = pwd.parent
     end until root == pwd
-    fail "Goodfile not found in #{pwd.to_s} or any parent up to #{root.to_s}"
+    nil
   end
 
   def self.hash_dfs(thing, &block)

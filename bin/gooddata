@@ -187,11 +187,8 @@ command :project do |c|
   c.command :jack_in do |jack|
     jack.action do |global_options, options, args|
       goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
-      goodfile = JSON.parse(File.read(goodfile_path), :symbolize_names => true)
-      model_key = goodfile[:model]
-      blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
-      FileUtils::cd(goodfile_path.dirname) do
 
+      spin_session = Proc.new do |goodfile, blueprint|
         project_id = global_options[:project_id] || goodfile[:project_id]
         fail "You have to provide 'project_id'. You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key \"project_id\". If you just started a project you have to create it first. One way might be through \"gooddata project build\"" if project_id.nil? || project_id.empty?
 
@@ -209,6 +206,17 @@ command :project do |c|
         rescue GoodData::ProjectNotFound => e
           puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
         end
+      end
+
+      if goodfile_path
+        goodfile = JSON.parse(File.read(goodfile_path), :symbolize_names => true)
+        model_key = goodfile[:model]
+        blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
+        FileUtils::cd(goodfile_path.dirname) do
+          spin_session.call(goodfile, blueprint)
+        end
+      else
+        spin_session.call({}, nil)
       end
     end
   end
@@ -274,22 +282,24 @@ command :project do |c|
   c.desc "If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you."
   c.command :build do |show|
     show.action do |global_options, options, args|
-      goodfile = JSON.parse(File.read(GoodData::Helpers.find_goodfile(Pathname('.'))), :symbolize_names => true)
-      spec_path = goodfile[:model] || fail("You need to specify the path of the build spec")
-      fail "Model path provided in Goodfile \"#{spec_path}\" does not exist" unless File.exist?(spec_path) && !File.directory?(spec_path)
+      opts = options.merge(global_options)
+      GoodData.connect(opts)
+      spec, project_id = GoodData::Command::Projects.get_spec_and_project_id(".")
+      new_project = GoodData::Command::Projects.build(opts.merge(:spec => spec))
+      puts "Project was created. New project PID is #{new_project.pid}, URI is #{new_project.uri}."
+    end
+  end
+
+  c.desc "If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you."
+  c.command :update do |show|
+    show.action do |global_options, options, args|
 
       opts = options.merge(global_options)
-      spec_path = Pathname(spec_path)
-
-      content = File.read(spec_path)
-      spec = if (spec_path.extname == ".rb")
-               eval(content)
-             elsif (spec_path.extname == ".json")
-               JSON.parse(spec_path, :symbolize_names => true)
-             end
       GoodData.connect(opts)
-      new_project = GoodData::Model::ProjectCreator.migrate(opts.merge(:spec => spec))
-      puts "Migration was done. New project PID is #{new_project.uri}."
+      spec, project_id = GoodData::Command::Projects.get_spec_and_project_id(".")
+      project = GoodData::Command::Projects.update(opts.merge(:spec => spec, :project_id => global_options[:project_id] || project_id))
+      puts "Migration was done. Project PID is #{project.pid}, URI is #{project.uri}."
+
     end
   end
 
@@ -331,6 +341,7 @@ command :run_ruby do |c|
   c.flag [:n, :name]
 
   c.action do |global_options, options, args|
+    verbose = global_options[:verbose]
     options[:expanded_params] = if (options[:params])
                                   JSON.parse(File.read(options[:params]), :symbolize_names => true)
                                 else
@@ -342,13 +353,12 @@ command :run_ruby do |c|
     if options[:remote]
       fail "You have to specify name of the deploy when deploying remotely" if options[:name].nil? || options[:name].empty?
       require 'gooddata/commands/process'
-      GoodData::Command::Process.run(options[:dir], opts) do
-        puts "would run"
-      end
+      GoodData::Command::Process.run(options[:dir], opts)
     else
       require 'gooddata/commands/runners'
       GoodData::Command::Runners.run_ruby_locally(options[:dir], opts)
     end
+    puts HighLine::color("Running ruby brick - DONE", HighLine::GREEN) if verbose
   end
 end
 

@@ -92,14 +92,15 @@ module GoodData
           js = JSON.parse(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end
-        puts "Done loading"
       end
 
       def merge_dataset_columns(a_schema_blueprint, b_schema_blueprint)
+        a_schema_blueprint = a_schema_blueprint.to_hash
+        b_schema_blueprint = b_schema_blueprint.to_hash
         d = Marshal.load(Marshal.dump(a_schema_blueprint))
         d[:columns] = d[:columns] + b_schema_blueprint[:columns]
         d[:columns].uniq!
-        columns_that_failed_to_merge = d[:columns].group_by { |x| x[:name] }.map { |k, v| [k, v.count] }.find_all { |x| x[1] > 1 }
+        columns_that_failed_to_merge = d[:columns].group_by {|x| x[:name]}.map {|k, v| [k, v.count]}.find_all {|x| x[1] > 1}
         fail "Columns #{columns_that_failed_to_merge} failed to merge. When merging columns with the same name they have to be identical." unless columns_that_failed_to_merge.empty?
         d
       end
@@ -109,6 +110,14 @@ module GoodData
     class ProjectBlueprint
 
       attr_accessor :data
+
+      def self.from_json(spec)
+        if spec.is_a?(String)
+          ProjectBlueprint.new(JSON.parse(File.read(spec), :symbolize_names => true))
+        else
+          ProjectBlueprint.new(spec)
+        end
+      end
 
       def change(&block)
         builder = ProjectBuilder.create_from_data(self)
@@ -120,6 +129,24 @@ module GoodData
 
       def datasets
         data[:datasets].map { |d| SchemaBlueprint.new(d) }
+      end
+
+      def add_dataset(a_dataset, index=nil)
+        if index.nil? || index > datasets.length
+          data[:datasets] << a_dataset.to_hash
+        else
+          data[:datasets].insert(index, a_dataset.to_hash)
+        end
+      end
+
+      def remove_dataset(dataset_name)
+        x = data[:datasets].find {|d| d[:name] == dataset_name}
+        index = data[:datasets].index(x)
+        data[:datasets].delete_at(index)
+      end
+
+      def date_dimensions
+        data[:date_dimensions]
       end
 
       def get_dataset(name)
@@ -150,9 +177,52 @@ module GoodData
         errors.empty? ? true : false
       end
 
+      def merge!(a_blueprint)
+        temp_blueprint = dup
+        a_blueprint.datasets.each do |dataset|
+          local_dataset = temp_blueprint.get_dataset(dataset.name)
+          if local_dataset.nil?
+            temp_blueprint.add_dataset(dataset.dup)
+          else
+            index = temp_blueprint.datasets.index(local_dataset)
+            local_dataset.merge!(dataset)
+            temp_blueprint.remove_dataset(local_dataset.name)
+            temp_blueprint.add_dataset(local_dataset, index)
+          end
+        end
+        @data = temp_blueprint.data
+        self
+      end
+
+      def dup
+        deep_copy = Marshal.load(Marshal.dump(data))
+        ProjectBlueprint.new(deep_copy)
+      end
+
       def title
         data[:title]
       end
+
+      def to_wire_model
+        {
+          "diffRequest" => {
+              "targetModel" => {
+                  "projectModel" => {
+                      "datasets" => datasets.map {|d| d.to_wire_model},
+                      "dateDimensions" => date_dimensions.map {|d|
+                        {
+                            "dateDimension" => {
+                                "name" => d[:name],
+                                "title" => d[:title] || d[:name].humanize
+                            }
+                        }}
+                      }}}}
+      end
+
+      def to_hash
+        @data
+      end
+
     end
 
     class SchemaBlueprint
@@ -173,8 +243,15 @@ module GoodData
 
       def upload(source, options={})
         project = options[:project] || GoodData.project
+        fail "You have to specify a project into which you want to load." if project.nil?
         mode = options[:load] || "FULL"
         project.upload(source, to_schema, mode)
+      end
+
+      def merge!(a_blueprint)
+        new_blueprint = GoodData::Model.merge_dataset_columns(self, a_blueprint)
+        @data = new_blueprint
+        self
       end
 
       def name
@@ -203,6 +280,14 @@ module GoodData
 
       def references
         find_column_by_type(:reference)
+      end
+
+      def attributes
+        find_column_by_type(:attribute)
+      end
+
+      def facts
+        find_column_by_type(:fact)
       end
 
       def find_column_by_type(type, all=:all)
@@ -241,6 +326,14 @@ module GoodData
       def dup
         deep_copy = Marshal.load(Marshal.dump(data))
         SchemaBlueprint.new(deep_copy)
+      end
+
+      def to_wire_model
+        to_schema.to_wire_model
+      end
+
+      def ==(other)
+        to_hash == other.to_hash
       end
 
     end
@@ -493,13 +586,14 @@ module GoodData
           spec = options[:spec] || fail("You need to provide spec for migration")
           spec = spec.to_hash
 
-          token = options[:token] || fail("You need to specify token for project creation")
+          token = options[:token]
           project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
+          fail("You need to specify token for project creation") if token.nil? && project.nil?
 
           begin
             GoodData.with_project(project) do |p|
-              migrate_date_dimensions(p, spec[:date_dimensions] || [])
-              migrate_datasets(p, spec[:datasets] || [])
+              # migrate_date_dimensions(p, spec[:date_dimensions] || [])
+              migrate_datasets(p, spec)
               load(p, spec)
               migrate_metrics(p, spec[:metrics] || [])
               migrate_reports(p, spec[:reports] || [])
@@ -518,9 +612,31 @@ module GoodData
         end
 
         def migrate_datasets(project, spec)
-          spec.each do |ds|
-            schema = GoodData::Model::Schema.new(ds)
-            project.add_dataset(schema)
+          bp = ProjectBlueprint.new(spec)
+          # schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
+          # project = GoodData.project unless project
+          result = GoodData.post("/gdc/projects/#{GoodData.project.pid}/model/diff", bp.to_wire_model)
+          link = result["asyncTask"]["link"]["poll"]
+          response = GoodData.get(link, :process => false)
+          # pp response
+          while response.code != 200
+            sleep 1
+            GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+              sleep 1
+              response = GoodData.get(link, :process => false)
+              # pp response
+            end
+          end
+          response = GoodData.get(link)
+          ldm_links = GoodData.get project.md[LDM_CTG]
+          ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
+          chunks = response["projectModelDiff"]["updateScripts"].find_all {|script| script["updateScript"]["preserveData"] == true && script["updateScript"]["cascadeDrops"] == false}.map {|x| x["updateScript"]["maqlDdlChunks"]}.flatten
+          chunks.each do |chunk|
+            GoodData.post ldm_uri, { 'manage' => { 'maql' => chunk } }
+          end
+
+          bp.datasets.each do |ds|
+            schema = ds.to_schema
             GoodData::ProjectMetadata["manifest_#{schema.name}"] = schema.to_manifest.to_json
           end
         end
@@ -551,9 +667,11 @@ module GoodData
         end
 
         def load(project, spec)
-          spec[:uploads].each do |load|
-            schema = GoodData::Model::Schema.new(spec[:datasets].detect { |d| d[:name] == load[:dataset] })
-            project.upload(load[:source], schema, load[:mode])
+          if spec.has_key?(:uploads)
+            spec[:uploads].each do |load|
+              schema = GoodData::Model::Schema.new(spec[:datasets].detect {|d| d[:name] == load[:dataset]})
+              project.upload(load[:source], schema, load[:mode])
+            end
           end
         end
 
@@ -592,7 +710,7 @@ module GoodData
     # model abstractions.
     #
     class Schema < MdObject
-      attr_reader :fields, :attributes, :facts, :folders, :references, :labels, :name, :title
+      attr_reader :fields, :attributes, :facts, :folders, :references, :labels, :name, :title, :anchor
 
       def self.load(file)
         Schema.new JSON.load(open(file))
@@ -601,13 +719,13 @@ module GoodData
       def initialize(config, name = nil)
         super()
         @fields = []
-        @attributes = {}
-        @facts = {}
+        @attributes = []
+        @facts = []
         @folders = {
             :facts => {},
             :attributes => {}
         }
-        @references = {}
+        @references = []
         @labels = []
 
         config[:name] = name unless config[:name]
@@ -621,23 +739,23 @@ module GoodData
       def config=(config)
         config[:columns].each do |c|
           case c[:type].to_s
-            when "attribute"
-              add_attribute c
-            when "fact"
-              add_fact c
-            when "date"
-              add_date c
-            when "anchor"
-              set_connection_point c
-            when "label"
-              add_label c
-            when "reference"
-              add_reference c
-            else
-              fail "Unexpected type #{c[:type]} in #{c.inspect}"
+          when "attribute"
+            add_attribute c
+          when "fact"
+            add_fact c
+          when "date"
+            add_date c
+          when "anchor"
+            set_anchor c
+          when "label"
+            add_label c
+          when "reference"
+            add_reference c
+          else
+            fail "Unexpected type #{c[:type]} in #{c.inspect}"
           end
         end
-        @connection_point = RecordsOf.new(nil, self) unless @connection_point
+        @anchor = Anchor.new(nil, self) unless @anchor
       end
 
       def type_prefix
@@ -668,7 +786,7 @@ module GoodData
       def to_maql_create
         maql = "# Create the '#{self.title}' data set\n"
         maql += "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n\n"
-        [attributes, facts, {1 => @connection_point}].each do |objects|
+        [ attributes, facts, { 1 => @anchor } ].each do |objects|
           objects.values.each do |obj|
             maql += "# Create '#{obj.title}' and add it to the '#{self.title}' data set.\n"
             maql += obj.to_maql_create
@@ -725,12 +843,23 @@ module GoodData
         }
       end
 
+      def to_wire_model
+        {
+          "dataset" => {
+                "identifier" => identifier,
+                "title" => title,
+                "anchor" => @anchor.to_wire_model,
+                "facts" => facts.map {|f| f.to_wire_model},
+                "attributes" => attributes.map {|a| a.to_wire_model},
+                "references" => references.map {|r| r.is_a?(DateReference) ? r.schema_ref : type_prefix + "." + r.schema_ref }}}
+      end
+
       private
 
       def add_attribute(column)
         attribute = Attribute.new column, self
         fields << attribute
-        add_to_hash(attributes, attribute)
+        attributes << attribute
         add_attribute_folder(attribute.folder)
         # folders[AttributeFolder.new(attribute.folder)] = 1 if attribute.folder
       end
@@ -744,7 +873,7 @@ module GoodData
       def add_fact(column)
         fact = Fact.new column, self
         fields << fact
-        add_to_hash(facts, fact)
+        facts << fact
         add_fact_folder(fact.folder)
         # folders[FactFolder.new(fact.folder)] = 1 if fact.folder
       end
@@ -764,26 +893,23 @@ module GoodData
       def add_reference(column)
         reference = Reference.new(column, self)
         fields << reference
-        add_to_hash(references, reference)
+        references << reference
       end
 
       def add_date(column)
         date = DateColumn.new column, self
         @fields << date
         date.parts.values.each { |p| @fields << p }
-        date.facts.each { |f| add_to_hash(self.facts, f) }
-        date.attributes.each { |a| add_to_hash(self.attributes, a) }
-        date.references.each { |r| add_to_hash(self.references, r) }
+        date.facts.each { |f| facts << f }
+        date.attributes.each { |a| attributes << a }
+        date.references.each {|r| references << r}
       end
 
-      def set_connection_point(column)
-        @connection_point = RecordsOf.new column, self
-        @fields << @connection_point
+      def set_anchor(column)
+        @anchor = Anchor.new column, self
+        @fields << @anchor
       end
 
-      def add_to_hash(hash, obj)
-        ; hash[obj.identifier] = obj;
-      end
     end
 
     ##
@@ -842,7 +968,7 @@ module GoodData
     # GoodData attribute abstraction
     #
     class Attribute < Column
-      attr_reader :primary_label
+      attr_reader :primary_label, :labels
 
       def type_prefix;
         ATTRIBUTE_PREFIX;
@@ -854,6 +980,7 @@ module GoodData
 
       def initialize(hash, schema)
         super hash, schema
+        @labels = []
         @primary_label = Label.new hash, self, schema
       end
 
@@ -880,6 +1007,25 @@ module GoodData
             'columnName' => name
         }
       end
+
+      def to_wire_model
+        {
+            "attribute" => {
+                "identifier" => identifier,
+                "title" => title,
+                "labels" => labels.map do |l|
+                  {
+                    "label" => {
+                        "identifier" => l.identifier,
+                        "title" => l.title,
+                        "type" => "GDC.text"
+                    }
+                  }
+                end
+            }
+        }
+      end
+
     end
 
     ##
@@ -888,14 +1034,17 @@ module GoodData
     # field
     #
     class Label < Column
-      def type_prefix;
-        'label';
-      end
+
+      attr_accessor :attribute
+
+      def type_prefix ; 'label' ; end
 
       # def initialize(hash, schema)
       def initialize(hash, attribute, schema)
         super hash, schema
-        @attribute = attribute || schema.fields.find { |field| field.name === hash[:reference] }
+        attribute = attribute.nil? ? schema.fields.find {|field| field.name === hash[:reference]} : attribute
+        @attribute = attribute
+        attribute.labels << self
       end
 
       def to_maql_create
@@ -927,15 +1076,14 @@ module GoodData
     # A GoodData attribute that represents a data set's connection point or a data set
     # without a connection point
     #
-    class RecordsOf < Attribute
+    class Anchor < Attribute
       def initialize(column, schema)
         if column then
           super
         else
-          @name = 'id'
-          @title = "Records of #{schema.name}"
-          @folder = nil
-          @schema = schema
+          super({:type => "anchor", :name => 'id'}, schema)
+          @labels = []
+          @primary_label = nil
         end
       end
 
@@ -952,6 +1100,7 @@ module GoodData
         end
         maql
       end
+
     end
 
     ##
@@ -990,12 +1139,24 @@ module GoodData
             'columnName' => name
         }
       end
+
+      def to_wire_model
+        {
+          "fact" => {
+            "identifier" => identifier,
+            "title" => title
+          }
+        }
+      end
     end
 
     ##
     # Reference to another data set
     #
     class Reference < Column
+
+      attr_accessor :reference, :schema_ref
+
       def initialize(column, schema)
         super column, schema
         # pp column
@@ -1041,44 +1202,6 @@ module GoodData
     end
 
     ##
-    # Fact representation of a date.
-    #
-    # class DateFact < Fact
-    # 
-    #   attr_accessor :format, :output_format
-    # 
-    #   def initialize(column, schema)
-    #     super column, schema
-    #     @output_format = column["format"] || '("dd/MM/yyyy")'
-    #     @format = @output_format.gsub('yyyy', '%Y').gsub('MM', '%m').gsub('dd', '%d')
-    #   end
-    # 
-    #   def column_prefix ; DATE_COLUMN_PREFIX ; end
-    #   def type_prefix ; DATE_FACT_PREFIX ; end
-    # 
-    #   def to_csv_header(row)
-    #     "#{name}_fact"
-    #   end
-    # 
-    #   def to_csv_data(headers, row)
-    #     val = row[name]
-    #     val.nil?() ? nil : (Date.strptime(val, format) - BEGINNING_OF_TIMES).to_i
-    #     rescue ArgumentError
-    #       raise "Value \"#{val}\" for column \"#{name}\" did not match the format: #{format}. " +
-    #         "Perhaps you need to add or change the \"format\" key in the data set configuration."
-    #   end
-    # 
-    #   def to_manifest_part(mode)
-    #     {
-    #       'populates'  => [ identifier ],
-    #       'mode'       => mode,
-    #       'columnName' => "#{name}_fact"
-    #     }
-    #   end
-    # 
-    # end
-
-    ##
     # Date as a reference to a date dimension
     #
     class DateReference < Reference
@@ -1114,7 +1237,6 @@ module GoodData
       #   # maql += "INCLUDE TEMPLATE \"#{urn}\" MODIFY (IDENTIFIER \"#{name}\", TITLE \"#{title || name}\");\n"
       #   maql += super_maql
       # end
-
     end
 
     ##
