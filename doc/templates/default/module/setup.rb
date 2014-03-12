@@ -8,6 +8,8 @@ def init
     :methodmissing, [T('method_details')],
     :attribute_details, [T('method_details')],
     :method_details_list, [T('method_details')]
+
+  sections.place(:specs).before(:children)
 end
 
 def pre_docstring
