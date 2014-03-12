@@ -9,34 +9,46 @@ pygments: true
 perex: Model plays a huge role in the Reporting process. Let's have a look on how to create it using Ruby SDK and compare it with other approaches.
 ---
 
-There are several ways how to express and create data model in GoodData. The most prominent way how to build a model is the visual modeler that is part of the CloudConnect package. There are clear advantages like being visual, but there are also some drawbacks. It is not **repeatable**, it is **not programmable** and it is not **text based**. Let's have a look on how to create a simple model using the Ruby SDK.
+There are several ways how to express and create data model in GoodData. The most prominent way how to build a model is the visual modeler that is part of the CloudConnect package. There are clear advantages like being visual, but there are also some drawbacks. It is not **repeatable**, it is **not programmable** and it is not **text based** so it is hard to cram into SCM. Let's have a look on how to create a simple model using the Ruby SDK.
 
 ##The Model
-The model we will be creating is this
+The model we will be creating is this ![Model](https://dl.dropboxusercontent.com/s/1y97ziv5anmpn9s/gooddata_devs_demo_model.png?token_hash=AAENC89d8XOfCr9AnyQCrd9vwfhb-bDuYcORQ0AIRP2RQQ) . Since we are developers let's talk about some developing. The model is briefly discussed in the article [Your first project](http://sdk.gooddata.com/gooddata-ruby/recipe/your-first-project).
 
 ##The Code
-Create a file called model.rb in model folder (remember we've created one in the [previous tutorial]({{ site.url }}/recipe/your-first-project)) and put the following code inside:
+
+The easiest way to set up a project from scratch is to use the scaffolding capabilities of the SDK. Run
 
 {% highlight ruby %}
-GoodData::Model::ProjectBuilder.create("gooddata-ruby test #{Time.now.to_i}") do |p|
-  p.add_date_dimension("closed_date")
+gooddata scaffold project my_test_project
+{% endhighlight %}
 
-  p.add_dataset("users") do |d|
+Open a file called model/model.rb and you see the following code inside:
+
+{% highlight ruby %}
+GoodData::Model::ProjectBuilder.create("my_test_project") do |p|
+  p.add_date_dimension("committed_on")
+
+  p.add_dataset("repos") do |d|
     d.add_anchor("id")
-    d.add_label("name", :reference => 'id')
+    d.add_label("name", :reference => "id")
   end
 
-  p.add_dataset("regions") do |d|
+  p.add_dataset("devs") do |d|
     d.add_anchor("id")
-    d.add_attribute("name")
+    d.add_label("email", :reference => "id")
   end
 
-  p.add_dataset("opportunities") do |d|
-    d.add_fact("amount")
-    d.add_date("closed_date", :dataset => "closed_date")
-    d.add_reference("user_id", :dataset => 'users', :reference => 'id')
-    d.add_reference("region_id", :dataset => 'regions', :reference => 'id')
+  p.add_dataset("commits") do |d|
+    d.add_fact("lines_changed")
+    d.add_date("committed_on", :dataset => "committed_on")
+    d.add_reference("dev_id", :dataset => 'devs', :reference => 'id')
+    d.add_reference("repo_id", :dataset => 'repos', :reference => 'id')
   end
+
+  p.upload("data/devs.csv", :dataset => 'devs')
+  p.upload("data/repos.csv", :dataset => 'repos')
+  p.upload("data/commits.csv", :dataset => 'commits')
+
 end
 {% endhighlight %}
 
@@ -50,17 +62,27 @@ Please note several things
 * In all the cases where you type a name it is a **string that will be used to create a technical name in gooddata also called identifier** on the API. The user visible name which we call title will be inferred if not provided. The inferring process is simple. We expect you to provide name in the snake case (as is typical in ruby, it means names like **close_date**, **opportunity_dimension** etc). These will be translated into human readable strings like **Close date** or **Opportunity dimension**. If you do not like the title you can specify it directly using code `:title => "My own title"` 
 * The names are also used as reference names in the model. Notice how the date is using name of the **close_date** dimension and also the **user_id** reference is used to reference users.
 
-##Executing the Model
+##Executing the model
 
-Executing the model in the Platform? One liner.
+Executing the model on the platform is just a one liner.
 
 {% highlight ruby %}
 gooddata --username joe@example.com --password my_secret_pass --token my_token project build model.rb
 {% endhighlight %}
 
+Note that we haven't provided a project_id so a new project will be created for us.
+
+##Updating the model
+
+{% highlight ruby %}
+gooddata --username joe@example.com --password my_secret_pass --token my_token project update model.rb
+{% endhighlight %}
+
+In this case you have to provide a project id in the Goodfile file. The model will be updated. Currently it will drop cascade all parts of the model so be careful (this will be changed).
+
 ##Loading Data
 
-As a part of the process, we allow you to load data since sometimes some initial datasets should be part of the model and not ETL. The typical usecase is for the sake of defining reports which are filtered on certain values. These values have to be present.
+As a part of the process, we allow you to load data since sometimes some initial datasets should be part of the model and not ETL. The typical use case is for sake of defining reports which are filtered on certain values. These values have to be present.
 
 ### Loading Data Given Inline
 
@@ -89,3 +111,6 @@ p.upload("http://www.example.com/some/remote_file.csv", :dataset => "users")
 {% endhighlight %}
 
 **Remember:** In all cases the file must contain headers that has the same name as the name of the particular columns (not necessarily in the same order).
+
+##Updating the model
+
