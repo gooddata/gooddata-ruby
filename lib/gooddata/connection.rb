@@ -278,6 +278,17 @@ module GoodData
       end
     end
 
+    def connected?
+      @status == :logged_in
+    end
+
+    def disconnect
+      if connected? && GoodData.connection.user["state"]
+        GoodData.delete(GoodData.connection.user["state"])
+        @status = :not_connected
+      end
+    end
+
     private
 
     def create_server_connection(url, options)
