@@ -6,7 +6,7 @@ describe GoodData::Command::Profile do
   end
 
   it "Is Possible to create GoodData::Command::Profile instance" do
-    # cmd = GoodData::Command::Profile.new(NEW_COMMAND_OPTIONS)
-    # cmd.should be_a(GoodData::Command::Profile)
+    cmd = GoodData::Command::Profile.new()
+    cmd.should be_a(GoodData::Command::Profile)
   end
 end
