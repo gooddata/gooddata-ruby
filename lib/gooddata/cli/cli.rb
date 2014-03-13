@@ -9,7 +9,6 @@ module GoodData
 
       # Require command implementations
       Dir[File.dirname(__FILE__) + '/commands/**/*_cmd.rb'].each do |file|
-        pp file
         require file
       end
 
