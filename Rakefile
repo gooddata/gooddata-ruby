@@ -14,23 +14,20 @@ task :usage do
   puts "No rake task specified, use rake -T to list them"
 end
 
-RSpec::Core::RakeTask.new(:unit) do |t|
-  t.warning = true
-  t.rcov = true
-  t.ruby_opts = ['-r spec/unit']
-end
+namespace :test do
+  RSpec::Core::RakeTask.new(:unit) do |t|
+    t.pattern = 'spec/unit/**/*.rb'
+  end
 
-RSpec::Core::RakeTask.new(:integration) do |t|
-  t.warning = true
-  t.rcov = true
-  t.ruby_opts = ['-r spec/integration']
+  RSpec::Core::RakeTask.new(:integration) do |t|
+    t.pattern = 'spec/integration/**/*.rb'
+  end
 
-end
-
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+  # Rake::TestTask.new(:legacy) do |test|
+  #   test.libs << 'lib' << 'test'
+  #   test.pattern = 'test/**/test_*.rb'
+  #   test.verbose = true
+  # end
 end
 
 YARD::Rake::YardocTask.new

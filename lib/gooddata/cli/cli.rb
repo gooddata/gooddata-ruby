@@ -18,7 +18,7 @@ module GoodData
     end
 
     def self.main(args = ARGV)
-      exit run(ARGV)
+      exit run(args)
     end
   end
 end
