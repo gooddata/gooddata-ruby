@@ -80,17 +80,6 @@ module GoodData
 
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
-    # Version
-    def version
-      VERSION
-    end
-
-    # Identifier of gem version
-    # @return Formatted gem version
-    def gem_version_string()
-      "gooddata-gem/#{version}"
-    end
-
     # Connect to the GoodData API
     #
     # @param options
