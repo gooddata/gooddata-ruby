@@ -1,4 +1,5 @@
 require 'benchmark'
+require File.join(File.dirname(__FILE__), "base_middleware")
 
 module GoodData::Bricks
 
