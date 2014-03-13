@@ -3,7 +3,7 @@ require 'gooddata/extract'
 
 module GoodData
   module Command
-    class Datasets < Base
+    class Datasets
 
       # List all data sets present in the project specified by the --project option
       #
