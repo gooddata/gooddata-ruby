@@ -1,3 +1,5 @@
+require 'gooddata/helpers'
+
 module GoodData
   module Command
 
