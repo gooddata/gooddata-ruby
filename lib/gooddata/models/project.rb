@@ -30,14 +30,18 @@ module GoodData
       #
       def [](id)
         return id if id.respond_to?(:is_project?) && id.is_project?
-        if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
-          raise ArgumentError.new("wrong type of argument. Should be either project ID or path")
+        if id == :all
+          Project.all
+        else
+          if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
+            raise ArgumentError.new("wrong type of argument. Should be either project ID or path")
+          end
+
+          id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
+
+          response = GoodData.get PROJECT_PATH % id
+          Project.new response
         end
-
-        id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
-
-        response = GoodData.get PROJECT_PATH % id
-        Project.new response
       end
 
       # Create a project from a given attributes

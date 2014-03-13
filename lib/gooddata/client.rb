@@ -97,6 +97,14 @@ module GoodData
       end
     end
 
+    # Disconnect (logout) if logged in
+    def disconnect
+      if threaded[:connection]
+        threaded[:connection].disconnect
+        threaded[:connection] = nil
+      end
+    end
+
     # Turn logging on
     def logging_on
       if logger.is_a? NilLogger
