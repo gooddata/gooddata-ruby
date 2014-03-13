@@ -1,10 +1,11 @@
-# GoodData Ruby wrapper and CLI
+# GoodData API Ruby wrapper and CLI
 
 A convenient Ruby wrapper around the GoodData RESTful API. The gem comes in two flavors.
 It has a CLI client and it is a library which you can integrate into your application.
 
 The best documentation for the GoodData API can be found using these resources:
 
+ * sdk.gooddata.com/gooddata-ruby/
  * http://docs.gooddata.apiary.io/
  * http://developer.gooddata.com/api
  * https://secure.gooddata.com/gdc
@@ -17,13 +18,13 @@ The best documentation for the GoodData API can be found using these resources:
 
 ## Install
 
-If you are using bundler. Add 
+If you are using bundler. Add
 
     gem "gooddata"
 
-into Gemfile 
+into Gemfile
 
-and run 
+and run
 
     bundle install
 
@@ -43,7 +44,7 @@ If you are using gems just
 
 ## Credits
 
-This project is developed and maintained by Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ] and Tomas Svarovsky <mailto:svarovsky.tomas@gmail.com>
+This project is developed and maintained by Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ] and Tomas Svarovsky [<mailto:svarovsky.tomas@gmail.com> / [@fluke777](http://twitter.com/fluke777)]
 
 Special thanks to Thomas Watson Steen [ <mailto:w@tson.dk> / [@wa7son](http://twitter.com/wa7son) ]
 
