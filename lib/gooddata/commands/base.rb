@@ -9,6 +9,7 @@ module GoodData
     # using the GoodData::Command::Base#ask method
     #
     def self.connect
+      # TODO: Probably needs refactoring as run_internal does not exists now
       run_internal('auth:connect', [])
     end
 
@@ -16,6 +17,7 @@ module GoodData
       include GoodData::Helpers
 
       attr_accessor :args
+      attr_reader :connected
 
       def initialize(args)
         @args = args
