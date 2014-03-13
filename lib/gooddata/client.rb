@@ -1,6 +1,6 @@
-require 'gooddata/version'
-require 'gooddata/connection'
-require 'gooddata/helpers'
+require File.join(File.dirname(__FILE__), 'version')
+require File.join(File.dirname(__FILE__), 'connection')
+require File.join(File.dirname(__FILE__), 'helpers')
 
 # fastercsv is built in Ruby 1.9
 if RUBY_VERSION < "1.9"
@@ -13,7 +13,7 @@ end
 # Initializes required dynamically loaded classes
 def init_gd_module()
   # Metadata packages, such as report.rb, require this to be loaded first
-  require File.dirname(__FILE__) + '/models/metadata.rb'
+  require File.join(File.dirname(__FILE__), '/models/metadata.rb')
 
   # Load models from models folder
   Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }

@@ -1,7 +1,7 @@
 require 'json'
 require 'rest-client'
 
-require 'gooddata/version'
+require File.join(File.dirname(__FILE__), 'version')
 
 module GoodData
 
