@@ -1,13 +1,11 @@
-require 'gooddata/bricks/utils'
-require 'gooddata/bricks/base_downloader'
-require 'gooddata/bricks/middleware/middleware'
-require 'gooddata/bricks/middleware/bench_middleware'
-require 'gooddata/bricks/middleware/gooddata_middleware'
-require 'gooddata/bricks/middleware/logger_middleware'
-require 'gooddata/bricks/middleware/stdout_middleware'
-require 'gooddata/bricks/middleware/restforce_middleware'
-require 'gooddata/bricks/middleware/bulk_salesforce_middleware.rb'
-require 'gooddata/bricks/middleware/twitter_middleware'
+require File.join(File.dirname(__FILE__), 'base_downloader')
+require File.join(File.dirname(__FILE__), 'utils')
+
+Dir[File.dirname(__FILE__) + '/commands/**/*_cmd.rb'].each do |file|
+  require file
+end
+
+require File.join(File.dirname(__FILE__), 'middleware/middleware')
 
 module GoodData::Bricks
   class Pipeline
@@ -15,7 +13,8 @@ module GoodData::Bricks
       pipeline.reverse.reduce(nil) {|memo, app| memo.nil? ? app.new : app.new(memo)}
     end
   end
-  
+
+  # Brick base class
   class Brick
 
     def log(message)

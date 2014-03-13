@@ -1,15 +1,16 @@
+# @title Your First Project
 
 Ok welcome. Let's spin up an example project that we created so you can explore and see SDK in action. It is super simple. Since you are probably a developer we created simple project about developers.
 
-###What we want to measure
+### What we want to measure
 Imagine you have a small dev shop. You have couple of developers. They crank out code. You also have couple of repositories for products. You want to measure how many lines of code each of the devs create. you wanna be able to track it by time by repository and by person. You want to see how many lines of code they committed.
 
-###Model
+### Model
 This is how the model looks.
 
 ![Model](https://dl.dropboxusercontent.com/s/1y97ziv5anmpn9s/gooddata_devs_demo_model.png?token_hash=AAENC89d8XOfCr9AnyQCrd9vwfhb-bDuYcORQ0AIRP2RQQ)
 
-###Spinning it up
+### Spinning it up
 Let's do this. I assume you have gooddata SDK installed and working. Run
 
     gooddata scaffold project my_test_project

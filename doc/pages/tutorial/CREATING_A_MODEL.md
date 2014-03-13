@@ -1,3 +1,5 @@
+# @title Creating A Model
+
 There are several ways how to express a model and create it in GoodData. The most prominent way to do it is the visual modeler that is part of the CloudConnect package. There are clear advantages like being visual but there are also drawbacks. It is not repeatable, it is not programmable and it is not text based. Let's have a look how to create a simple model using Ruby SDK.
 
 ## The model

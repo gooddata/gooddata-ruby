@@ -1,3 +1,8 @@
+require 'highline'
+require 'json'
+
+require File.join(File.dirname(__FILE__), '../helpers')
+
 module GoodData::Command
   class Auth
     
