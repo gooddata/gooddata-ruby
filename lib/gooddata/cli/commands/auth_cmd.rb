@@ -1,8 +1,7 @@
-require 'gli'
+require 'pp'
 
+require File.join(File.dirname(__FILE__), "../shared")
 require File.join(File.dirname(__FILE__), "../../commands/auth")
-
-include GLI::App
 
 desc 'Work with your locally stored credentials'
 command :auth do |c|

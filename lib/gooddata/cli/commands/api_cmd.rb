@@ -1,9 +1,7 @@
-require 'gli'
 require 'pp'
 
+require File.join(File.dirname(__FILE__), "../shared")
 require File.join(File.dirname(__FILE__), "../../commands/api")
-
-include GLI::App
 
 desc 'Some basic API stuff directly from CLI'
 arg_name 'info|test|get|delete'

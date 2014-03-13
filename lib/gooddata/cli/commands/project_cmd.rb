@@ -1,8 +1,7 @@
-require 'gli'
+require 'pp'
 
+require File.join(File.dirname(__FILE__), "../shared")
 require File.join(File.dirname(__FILE__), "../../commands/projects")
-
-include GLI::App
 
 desc 'Manage your projects'
 arg_name 'project_command'

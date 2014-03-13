@@ -1,8 +1,7 @@
-require 'gli'
+require 'pp'
 
+require File.join(File.dirname(__FILE__), "../shared")
 require File.join(File.dirname(__FILE__), "../../commands/process")
-
-include GLI::App
 
 desc 'Work with deployed processes'
 arg_name 'Describe arguments to list here'

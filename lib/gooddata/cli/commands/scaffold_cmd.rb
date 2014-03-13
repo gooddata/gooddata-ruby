@@ -1,8 +1,7 @@
-require 'gli'
+require 'pp'
 
+require File.join(File.dirname(__FILE__), "../shared")
 require File.join(File.dirname(__FILE__), "../../commands/scaffold")
-
-include GLI::App
 
 desc 'Scaffold things'
 arg_name 'show'

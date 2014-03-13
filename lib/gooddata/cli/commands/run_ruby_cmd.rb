@@ -1,9 +1,9 @@
-require 'gli'
+require 'pp'
 
+require File.join(File.dirname(__FILE__), "../shared")
 require File.join(File.dirname(__FILE__), "../../commands/process")
 require File.join(File.dirname(__FILE__), "../../commands/runners")
 
-include GLI::App
 
 desc 'Run ruby bricks either locally or remotely deployed on our server'
 # arg_name 'show'

@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'gli'
+
+include GLI::App
+
 require 'gooddata/cli/cli'
 
+# TODO: Replace with GoodData::CLI::main(ARGV)
 exit run(ARGV)

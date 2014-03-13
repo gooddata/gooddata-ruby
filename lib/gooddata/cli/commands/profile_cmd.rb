@@ -1,8 +1,7 @@
-require 'gli'
+require 'pp'
 
+require File.join(File.dirname(__FILE__), "../shared")
 require File.join(File.dirname(__FILE__), "../../commands/profile")
-
-include GLI::App
 
 desc 'Describe add here'
 arg_name 'show'
