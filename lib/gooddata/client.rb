@@ -86,7 +86,6 @@ module GoodData
     # @param second_options
     # @param third_options
     #
-    #    Goodd
     def connect(options=nil, second_options=nil, third_options={})
       if options.is_a? Hash
         fail "You have to provide login and password" if ((options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?))
@@ -210,7 +209,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   GoodData.post '/gdc/projects', { ... }
+    #     GoodData.post '/gdc/projects', { ... }
     #
     def post(path, data, options = {})
       connection.post path, data, options
@@ -227,7 +226,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   GoodData.put '/gdc/projects', { ... }
+    #     GoodData.put '/gdc/projects', { ... }
     #
     def put(path, data, options = {})
       connection.put path, data, options

@@ -41,9 +41,9 @@ module GoodData
     #
     # ### Example
     #
-    #   retryable(:tries => 1, :on => OpenURI::HTTPError) do
-    #     # your code here
-    #   end
+    #     retryable(:tries => 1, :on => OpenURI::HTTPError) do
+    #       # your code here
+    #     end
     #
     def retryable(options = {}, &block)
       opts = { :tries => 1, :on => Exception }.merge(options)
@@ -92,7 +92,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   Connection.new(username, password).get '/gdc/projects'
+    #     Connection.new(username, password).get '/gdc/projects'
     #
     def get(path, options = {})
       GoodData.logger.debug "GET #{@server}#{path}"
@@ -110,7 +110,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   Connection.new(username, password).post '/gdc/projects', { ... }
+    #     Connection.new(username, password).post '/gdc/projects', { ... }
     #
     def post(path, data, options = {})
       
@@ -130,7 +130,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   Connection.new(username, password).put '/gdc/projects', { ... }
+    #     Connection.new(username, password).put '/gdc/projects', { ... }
     #
     def put(path, data, options = {})
       payload = data.is_a?(Hash) ? data.to_json : data
@@ -148,7 +148,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   Connection.new(username, password).delete '/gdc/project/1'
+    #     Connection.new(username, password).delete '/gdc/project/1'
     #
     def delete(path, options = {})
       GoodData.logger.debug "DELETE #{@server}#{path}"
