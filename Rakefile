@@ -14,6 +14,19 @@ task :usage do
   puts "No rake task specified, use rake -T to list them"
 end
 
+RSpec::Core::RakeTask.new(:unit) do |t|
+  t.warning = true
+  t.rcov = true
+  t.ruby_opts = ['-r spec/unit']
+end
+
+RSpec::Core::RakeTask.new(:integration) do |t|
+  t.warning = true
+  t.rcov = true
+  t.ruby_opts = ['-r spec/integration']
+
+end
+
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
   test.pattern = 'test/**/test_*.rb'
