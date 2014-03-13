@@ -1,6 +1,6 @@
-require 'gooddata/version'
-require 'gooddata/connection'
-require 'gooddata/helpers'
+require File.join(File.dirname(__FILE__), 'version')
+require File.join(File.dirname(__FILE__), 'connection')
+require File.join(File.dirname(__FILE__), 'helpers')
 
 # fastercsv is built in Ruby 1.9
 if RUBY_VERSION < "1.9"
@@ -13,7 +13,7 @@ end
 # Initializes required dynamically loaded classes
 def init_gd_module()
   # Metadata packages, such as report.rb, require this to be loaded first
-  require File.dirname(__FILE__) + '/models/metadata.rb'
+  require File.join(File.dirname(__FILE__), '/models/metadata.rb')
 
   # Load models from models folder
   Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }
@@ -80,24 +80,12 @@ module GoodData
 
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
-    # Version
-    def version
-      VERSION
-    end
-
-    # Identifier of gem version
-    # @return Formatted gem version
-    def gem_version_string()
-      "gooddata-gem/#{version}"
-    end
-
     # Connect to the GoodData API
     #
     # @param options
     # @param second_options
     # @param third_options
     #
-    #    Goodd
     def connect(options=nil, second_options=nil, third_options={})
       if options.is_a? Hash
         fail "You have to provide login and password" if ((options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?))
@@ -107,6 +95,8 @@ module GoodData
         fail "You have to provide login and password" if ((options.nil? || options.empty?) && (second_options.nil? || second_options.empty?))
         threaded[:connection] = Connection.new(options, second_options, third_options)
       end
+
+      return threaded[:connection]
     end
 
     # Disconnect (logout) if logged in
@@ -183,10 +173,17 @@ module GoodData
     #
     # The following calls are equivalent
     #
-    # * GoodData.project = 'afawtv356b6usdfsdf34vt'
-    # * GoodData.use 'afawtv356b6usdfsdf34vt'
-    # * GoodData.use '/gdc/projects/afawtv356b6usdfsdf34vt'
-    # * GoodData.project = Project['afawtv356b6usdfsdf34vt']
+    #     # Assign project ID
+    #     GoodData.project = 'afawtv356b6usdfsdf34vt'
+    #
+    #     # Use project ID
+    #     GoodData.use 'afawtv356b6usdfsdf34vt'
+    #
+    #     # Use project URL
+    #     GoodData.use '/gdc/projects/afawtv356b6usdfsdf34vt'
+    #
+    #     # Select project using indexer on GoodData::Project class
+    #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
     #
     def project=(project)
       if project.is_a? Project
@@ -229,7 +226,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   GoodData.post '/gdc/projects', { ... }
+    #     GoodData.post '/gdc/projects', { ... }
     #
     def post(path, data, options = {})
       connection.post path, data, options
@@ -246,7 +243,7 @@ module GoodData
     #
     # ### Examples
     #
-    #   GoodData.put '/gdc/projects', { ... }
+    #     GoodData.put '/gdc/projects', { ... }
     #
     def put(path, data, options = {})
       connection.put path, data, options

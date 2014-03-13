@@ -1,3 +1,5 @@
+# @title Executing ruby on GoodData plaform
+
 You can run Ruby on GoodData platform. Let's have a look at the platform and walk step by step through doing the simplest possible deployment and then move to more advanced tasks.
 
 ## Not reinventing the wheel
@@ -9,6 +11,7 @@ The main idea is that only minority of people should be forced to write code. Th
 GoodData Ruby SDK stack is built so you can easily develop things locally and deploy them when you have tested them and are happy with how they work. You need to set up an environment first.
 
 ### Prerequisites
+
  * Git
  * Ruby (JRuby recommended)
  * Ruby Gems
@@ -44,7 +47,7 @@ Run this in console.
 
 It will take some time but after a while you should see green DONE on your console and a link for the log. Open it in your browser and you should see there something like this. On one of the lines there should be hello world. Great you just ran your first ruby brick.
 
-###Looking inside Hello World
+### Looking inside Hello World
 
 Let's see what is happening inside. Open the main.rb file in your favorite editor. You should see something like this.
 

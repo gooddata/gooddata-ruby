@@ -1,7 +1,7 @@
+# @title Tutorials
+
 <div class="container-narrow">
     <ul class="posts">
-
-
         <div>
             <a href="/docs/file/doc/pages/tutorial/YOUR_FIRST_PROJECT.md"><h3>Your first project</h3></a>
 
@@ -39,7 +39,7 @@
 
 
         <div>
-            <a href="/docs/file/doc/pages/tutorial/ON_GOOD_DATA_PLATFORM.md"><h3>Executing ruby on GoodData plaform</h3>
+            <a href="/docs/file/doc/pages/tutorial/BRICKS.md"><h3>Executing ruby on GoodData plaform</h3>
             </a>
 
             <div>ETL is the back bone of every project. But project is not just about crunching numbers. What to do with

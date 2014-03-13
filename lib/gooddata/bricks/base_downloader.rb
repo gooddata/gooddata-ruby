@@ -41,6 +41,7 @@ module GoodData::Bricks
       meta
     end
 
+    # Run downloader
     def run
       downloaded_data = download
       downloaded_data = pre_process(downloaded_data)

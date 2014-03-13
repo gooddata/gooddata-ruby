@@ -3,9 +3,6 @@ require 'gooddata/commands/projects'
 require 'pry'
 
 describe GoodData::Command::Projects, :constraint => 'slow' do
-
-  GD_PROJECT_TOKEN = ENV["GD_PROJECT_TOKEN"]
-
   before(:all) do
     @blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/test_project_model_spec.json")
     @module_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/additional_dataset_module.json")

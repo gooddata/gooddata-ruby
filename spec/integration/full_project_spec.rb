@@ -1,9 +1,6 @@
 require 'gooddata'
 
 describe "Spin a project", :constraint => 'slow' do
-
-  GD_PROJECT_TOKEN = ENV["GD_PROJECT_TOKEN"]
-
   before(:all) do
     spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     GoodData.connect("svarovsky+gem_tester@gooddata.com", "jindrisska")

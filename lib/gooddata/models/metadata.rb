@@ -1,4 +1,4 @@
-require 'gooddata/model'
+require File.join(File.dirname(__FILE__), '../model')
 
 module GoodData
   class MdObject

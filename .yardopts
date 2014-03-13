@@ -1,3 +1,5 @@
+--template-path doc/templates
+--plugin rspec
 --protected
 --no-private
 --verbose
@@ -10,10 +12,9 @@
 --hide-void-return
 --exclude LICENSE
 --output-dir doc/html
---template-path doc/templates
 lib/**/*.rb
 ext/**/*{.m,.c}
-spec/**/*.rb
+spec/**/*_spec.rb
 -
 README.md
 doc/pages/**/*.md

@@ -1,6 +1,4 @@
-<div markdown="1">
-    This is *true* markdown text.
-</div>
+# @title Crunching Numbers
 
 MAQL is a language that is fairly similar to SQL but it is aimed towards getting the data from OLAP system. You are never forced to talk about columns and specify joins explicitly. This is great but there are some drawbacks. Same as SQL MAQL is aimed towards users more than machines which does not help for automation but there is one more caveat that make it hard to use even for humans. Probably to your surprise
 

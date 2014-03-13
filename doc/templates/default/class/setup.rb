@@ -4,6 +4,7 @@ def init
   super
   sections.place(:subclasses).before(:children)
   sections.place(:constructor_details, [T('method_details')]).before(:methodmissing)
+  sections.place(:specs).before(:children)
 end
 
 def constructor_details
