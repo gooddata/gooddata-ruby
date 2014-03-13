@@ -95,6 +95,8 @@ module GoodData
         fail "You have to provide login and password" if ((options.nil? || options.empty?) && (second_options.nil? || second_options.empty?))
         threaded[:connection] = Connection.new(options, second_options, third_options)
       end
+
+      return threaded[:connection]
     end
 
     # Disconnect (logout) if logged in
@@ -171,10 +173,17 @@ module GoodData
     #
     # The following calls are equivalent
     #
-    # * GoodData.project = 'afawtv356b6usdfsdf34vt'
-    # * GoodData.use 'afawtv356b6usdfsdf34vt'
-    # * GoodData.use '/gdc/projects/afawtv356b6usdfsdf34vt'
-    # * GoodData.project = Project['afawtv356b6usdfsdf34vt']
+    #     # Assign project ID
+    #     GoodData.project = 'afawtv356b6usdfsdf34vt'
+    #
+    #     # Use project ID
+    #     GoodData.use 'afawtv356b6usdfsdf34vt'
+    #
+    #     # Use project URL
+    #     GoodData.use '/gdc/projects/afawtv356b6usdfsdf34vt'
+    #
+    #     # Select project using indexer on GoodData::Project class
+    #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
     #
     def project=(project)
       if project.is_a? Project
