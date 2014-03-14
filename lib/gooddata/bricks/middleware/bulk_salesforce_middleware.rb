@@ -1,6 +1,8 @@
 require 'gooddata'
 require 'salesforce_bulk'
 
+require File.join(File.dirname(__FILE__), "base_middleware")
+
 module GoodData::Bricks
   class BulkSalesforceMiddleware < GoodData::Bricks::Middleware
 

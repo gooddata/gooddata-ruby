@@ -2,7 +2,7 @@
 require 'json'
 
 # Local requires
-require 'gooddata/model'
+require 'gooddata/models/models'
 
 module BlueprintHelper
   def blueprint_from_file(bp)

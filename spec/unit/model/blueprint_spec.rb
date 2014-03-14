@@ -1,5 +1,5 @@
-require 'gooddata/model'
 require 'pry'
+require 'gooddata/models/model'
 
 describe GoodData::Model::ProjectBlueprint do
 

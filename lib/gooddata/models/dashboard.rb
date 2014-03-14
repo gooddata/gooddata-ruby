@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), "metadata")
+
 module GoodData
   class Dashboard < GoodData::MdObject 
 
