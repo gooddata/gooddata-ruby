@@ -1,6 +1,4 @@
-require 'gooddata/bricks/brick'
 require 'gooddata/bricks/bricks'
-require 'gooddata/bricks/middleware/middleware'
 
 describe GoodData::Bricks do
   it "Has GoodData::Bricks::Brick class" do

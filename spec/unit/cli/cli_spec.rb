@@ -10,6 +10,6 @@ describe GoodData::CLI do
   end
 
   it "Has GoodData::CLI::main() working" do
-    GoodData::CLI::main()
+    run(ARGV)
   end
 end
