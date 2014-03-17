@@ -1,4 +1,4 @@
-require 'highline'
+require 'highline/import'
 require 'json'
 
 require File.join(File.dirname(__FILE__), '../helpers')
@@ -63,9 +63,9 @@ module GoodData::Command
 
       def ask_for_credentials
         puts "Enter your GoodData credentials."
-        user = HighLine::ask("Email")
-        password = HighLine::ask("Password") { |q| q.echo = "x" }
-        auth_token = HighLine::ask("Authorization Token")
+        user = HighLine.new.ask("Email")
+        password = HighLine.new.ask("Password") { |q| q.echo = "x" }
+        auth_token = HighLine.new.ask("Authorization Token")
         { :username => user, :password => password, :auth_token => auth_token }
       end
 

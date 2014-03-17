@@ -1,6 +1,8 @@
-require 'pp'
+require 'gli'
 
-require File.join(File.dirname(__FILE__), "shared")
+include GLI::App
+
+require 'pp'
 
 pre do |global, command, options, args|
   require 'logger'

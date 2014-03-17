@@ -1,5 +1,3 @@
-require 'bundler'
-
 module GoodData::Command
   class Runners
 

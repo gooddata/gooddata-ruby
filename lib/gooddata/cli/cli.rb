@@ -3,23 +3,18 @@ require 'pp'
 
 # Define GoodData::CLI as GLI Wrapper
 module GoodData
-  include GLI::App
+  module CLI
+    include GLI::App
 
-  # Require shared part of GLI::App - flags, meta, etc
-  require File.join(File.dirname(__FILE__), 'shared.rb')
+    # Require shared part of GLI::App - flags, meta, etc
+    require File.join(File.dirname(__FILE__), 'shared.rb')
 
-  Dir[File.dirname(__FILE__) + '/commands/**/*_cmd.rb'].each do |file|
-    require file
-  end
+    # Require Hooks
+    require File.join(File.dirname(__FILE__), 'hooks.rb')
 
-  GLI::App.commands_from(File.join(File.dirname(__FILE__), 'commands'))
+    GLI::App.commands_from(File.join(File.dirname(__FILE__), 'commands'))
 
-  # Require Hooks
-  require File.join(File.dirname(__FILE__), 'hooks')
-
-  class CLI
     def self.init
-
     end
 
     def self.main(args = ARGV)
@@ -29,6 +24,5 @@ module GoodData
 end
 
 if __FILE__ == $0
-  GoodData::CLI::init()
-  GoodData::CLI::main()
+  GoodData::CLI.main(ARGV)
 end
