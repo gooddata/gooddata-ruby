@@ -17,8 +17,8 @@ module GoodData::Bricks
         params[protocol_name] + "://" + params[server_name]
       end
 
-      fail "GoodData username is missing. Expected param :GDC_USERNAME" if params["GDC_USERNAME"].nil?
-      fail "GoodData password is missing. Expected param :GDC_PASSWORD" if params["GDC_PASSWORD"].nil?
+      fail "GoodData username is missing. Expected param \"GDC_USERNAME\"" if params["GDC_USERNAME"].nil?
+      fail "GoodData password is missing. Expected param \"GDC_PASSWORD\"" if params["GDC_PASSWORD"].nil?
 
       GoodData.connect(params["GDC_USERNAME"], params["GDC_PASSWORD"], {:server => server})
       GoodData.logger = logger
