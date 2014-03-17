@@ -31,7 +31,7 @@ command :run_ruby do |c|
   c.action do |global_options, options, args|
     verbose = global_options[:verbose]
     options[:expanded_params] = if (options[:params])
-                                  JSON.parse(File.read(options[:params]), :symbolize_names => true)
+                                  JSON.parse(File.read(options[:params]))
                                 else
                                   {}
                                 end
