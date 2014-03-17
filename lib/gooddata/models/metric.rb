@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), "metadata")
 require File.join(File.dirname(__FILE__), '../goodzilla/goodzilla')
 
 module GoodData
