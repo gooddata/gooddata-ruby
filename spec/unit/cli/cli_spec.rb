@@ -5,12 +5,7 @@ describe GoodData::CLI do
     GoodData::CLI.should_not == nil
   end
 
-  it "Has GoodData::CLI::init() working" do
-    GoodData::CLI::init()
-  end
-
   it "Has GoodData::CLI::main() working" do
-    GoodData::CLI::init()
-    run(ARGV)
+    GoodData::CLI.main([])
   end
 end

@@ -4,44 +4,48 @@ require File.join(File.dirname(__FILE__), "../version")
 
 include GLI::App
 
-program_desc 'GoodData Ruby gem - a wrapper over GoodData API and several useful abstractions to make your everyday usage of GoodData easier.'
+GoodData::CLI.module_eval do
 
-version GoodData::VERSION
+  program_desc 'GoodData Ruby gem - a wrapper over GoodData API and several useful abstractions to make your everyday usage of GoodData easier.'
 
-desc 'GoodData user name'
-default_value nil
-arg_name 'gooddata-login'
-flag [:U, :username, :login]
+  version GoodData::VERSION
 
-desc 'GoodData password'
-default_value nil
-arg_name 'gooddata-password'
-flag [:P, :password]
+  desc 'GoodData user name'
+  default_value nil
+  arg_name 'gooddata-login'
+  flag [:U, :username, :login]
 
-desc 'Project pid'
-default_value nil
-arg_name 'project-id'
-flag [:p, :project_id]
+  desc 'GoodData password'
+  default_value nil
+  arg_name 'gooddata-password'
+  flag [:P, :password]
 
-desc 'Server'
-default_value nil
-arg_name 'server'
-flag [:s, :server]
+  desc 'Project pid'
+  default_value nil
+  arg_name 'project-id'
+  flag [:p, :project_id]
 
-desc 'WEBDAV Server. Used for uploads of files'
-default_value nil
-arg_name 'web dav server'
-flag [:w, :webdav_server]
+  desc 'Server'
+  default_value nil
+  arg_name 'server'
+  flag [:s, :server]
 
-desc 'Token for project creation'
-default_value nil
-arg_name 'token'
-flag [:t, :token]
+  desc 'WEBDAV Server. Used for uploads of files'
+  default_value nil
+  arg_name 'web dav server'
+  flag [:w, :webdav_server]
 
-desc 'Verbose mode'
-arg_name 'verbose'
-switch [:v, :verbose]
+  desc 'Token for project creation'
+  default_value nil
+  arg_name 'token'
+  flag [:t, :token]
 
-desc 'Http logger on stdout'
-arg_name 'logger'
-switch [:l, :logger]
+  desc 'Verbose mode'
+  arg_name 'verbose'
+  switch [:v, :verbose]
+
+  desc 'Http logger on stdout'
+  arg_name 'logger'
+  switch [:l, :logger]
+
+end
