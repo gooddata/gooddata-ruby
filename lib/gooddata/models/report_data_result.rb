@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), "data_result.rb")
+
 module GoodData
   class ReportDataResult < DataResult
 
