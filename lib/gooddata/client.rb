@@ -272,9 +272,13 @@ module GoodData
       }))
     end
 
-    def upload_to_project_webdav(file, options={})
+    def get_project_webdav_path(file, options={})
       u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
       url = URI.join(u.to_s.chomp(u.path.to_s), "/project-uploads/", "#{GoodData.project.pid}/")
+    end
+
+    def upload_to_project_webdav(file, options={})
+      url = get_project_webdav_path(file, options)
       connection.upload(file, options.merge({
         :directory    => options[:directory],
         :staging_url  => url
