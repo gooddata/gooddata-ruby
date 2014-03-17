@@ -68,6 +68,8 @@ gem install gooddata --version 0.6.0.pre10
 <a name="login"></a>
 <h2>Logging in</h2>
 
+You can connect as a user easily
+
 <pre>
 GoodData.connect( :login => 'svarovsky@gooddata.com',
                   :password => 'pass',
@@ -88,12 +90,39 @@ GoodData.project = 'project_pid'
 GoodData.use = 'project_pid'
 </pre>
 
+<h2>Working with a project</h2>
+
 <p>This will let you work with the project in a block. The project has the value you picked only inside the block afterwards it will reset the project value to whatever it was before.</p>
 
 <pre>
 GoodData.with_project('project_pid') do |project|
   puts project.uri
 end
+</pre>
+
+<p>you can create a project.</p>
+
+<pre>
+GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
+</pre>
+
+<p>You can clone a project. Currently only through a command method on project is coming.</p>
+
+<pre>
+GoodData::Command::Projects.clone(project_id, :title => "Title of the cloned project", :with_data => true, :with_users => true)
+</pre>
+
+<p>You can delete a project.</p>
+
+<pre>
+GoodData::Project['project_pid'].delete
+</pre>
+
+<p>You can delete all projects given a specific title. You have to be admin in the project and of course be careful this is a dangerous command</p>
+
+<pre>
+# CAREFUL
+GoodData::Project.all.find_all {|p| p.title =~ /to_be_deleted/i}.each {|p| p.delete}
 </pre>
 
 <a name="direct"></a>
@@ -270,23 +299,6 @@ File.open('dash.pdf', 'w') do |f|
   f.write(dash.export(:pdf, :tab => dash.tabs_ids.last))
 end
 </pre>
-
-<p>
-Project
-create a project
-clone a project
-rename a project
-delete a project
-TBD - add a user
-TBD - remove a user
-
-Domain (Organization)
-Add a user to a domain
-
-Project Datasets
-Create a model
-Load data
-</p>
 
 {% include section-nav.html %}
 
