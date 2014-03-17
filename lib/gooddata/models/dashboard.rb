@@ -8,7 +8,7 @@ module GoodData
     class << self
       def [](id)
         if id == :all
-          GoodData.get(GoodData.project.md['query'] + '/projectDashboard/')['query']['entries']
+          GoodData.get(GoodData.project.md['query'] + '/projectdashboards/')['query']['entries']
         else 
           super
         end

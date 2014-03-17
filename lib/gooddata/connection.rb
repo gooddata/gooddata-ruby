@@ -113,7 +113,6 @@ module GoodData
     #     Connection.new(username, password).post '/gdc/projects', { ... }
     #
     def post(path, data, options = {})
-      
       GoodData.logger.debug("POST #{@server}#{path}, payload: #{scrub_params(data, [:password, :login, :authorizationToken])}")
       ensure_connection
       payload = data.is_a?(Hash) ? data.to_json : data
