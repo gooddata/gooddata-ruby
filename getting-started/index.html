@@ -236,15 +236,17 @@ report.get_using
 </p>As you can see the reference to Amount fact is done via an URI. This has a big advantage of being unambiguous but it has a bg drawback that t cannot be written buy hand and also it is not transferable between projects without some translation.</p>
 
 <p>Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation acurrently relies on titles of objects and might change. In XMAQL there are only 4 additions<br />
-	1) fact is referenced like #"Amount"<br />
-	2) attribute like @"User Name"<br />
-	3) metric like ?"My metric"<br />
-	4) attribute value like $"United States"<br />
+  <ol>
+    <li>fact is referenced like #"Amount"</li>
+    <li>attribute like @"User Name"</li>
+    <li>metric like ?"My metric"</li>
+    <li>Not implemented yet - attribute value like $"United States"</li>
+  </ol>
 </p>
 
 <p>The aforementioned metric could be then expressed like this 'SELECT SUM(#"Amount")'. This allows to be explicit in what type you are reffering to since MAQL is fairly complex and allows you to write them by hand. Also transfering metrics nbetween objects is more transpoarent.</p>
 
-<p>You can create a metric</p>
+<h3>Metrics creation</h3>
 
 <pre>
 m = Metric.create(:title => "My metric", :expression => 'SELECT SUM(["/gdc/md/1231231/obj/12"])')
@@ -302,12 +304,22 @@ report.save
 
 <p>There are some rules that need explanation. The report is structured a little different than in UI. You specify left and top. It can either be an attribute or a metric. There can be multiple metrics but all of those need to be either in top or left section. The objects can be specified in several ways. You can provide Attribute but remember that eventually GoodData needs Label information (on API you can hit name display form). If you provide attribute it will resolve to its first Label. If an attribute has more than one it will take the first.</p>
 
-<p>1) MD object. Metric, Attribute and Label
-2) hash. If you do not have the object handy you can pass a hash structure like this {:type => :attribute, :title => 'some title'}. It will perform the lookup for you. This currently works for :attribute and :metric. If you want to perform the lookup through identifier you can do it as well. Since id is unique {:identifier => 'some id'}
-3) String. If you put there a string it is assumed it is a name of an attribute so 'some title' is equivalent with typing {:type => :attribute, :title => 'some title'}</p>
+<p>
+  <ol>
+    <li>MD object. Metric, Attribute and Label</li>
+    <li>hash. If you do not have the object handy you can pass a hash structure like this
+      <pre>
+        {:type => :attribute, :title => 'some title'}
+      </pre>. It will perform the lookup for you. This currently works for :attribute and :metric. If you want to perform the lookup through identifier you can do it as well. Since id is unique <pre>{:identifier => 'some id'}
+    </li>
+    <li>
+      String. If you put there a string it is assumed it is a name of an attribute so 'some title' is equivalent with typing
+      <pre>{:type => :attribute, :title => 'some title'}</pre>
+    </li>
+  </ol>
+</p>
 
-<p>TODO
-Describe filtering</p>
+<p>TODO - Describe filtering</p>
 
 <a name="dashboards"></a>
 <h2>Dashboards</h2>
@@ -333,7 +345,7 @@ end
 <a name="direct"></a>
 <h2>Directly accessing API</h2>
 
-<p>This is the most crude method and while you can do anything with it is also most cumbersome. It is needed sometimes though so we are mentioneing it here. Gem will make sure that it does the plumbing like keeping you logged in etc and you can just use the HTTP methods you are used to</p>
+<p>This is the most crude method and while you can do anything with it is also most cumbersome. It is needed sometimes though so we are mentioning it here. Gem will make sure that it does the plumbing like keeping you logged in etc and you can just use the HTTP methods you are used to. Anything that you see in the Web client can be achieved through APIs and these methods.</p>
 
 <pre>
 GoodData.get("uri")
