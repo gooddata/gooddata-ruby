@@ -8,8 +8,9 @@ require 'rspec/core/rake_task'
 
 require 'yard'
 
-task :usage do
-  puts "No rake task specified, use rake -T to list them"
+desc "Run Rubocop"
+task :cop do
+  exec "rubocop"
 end
 
 RSpec::Core::RakeTask.new(:test)
@@ -36,6 +37,10 @@ end
 
 desc "Run all tests"
 task :test => 'test:all'
+
+task :usage do
+  puts "No rake task specified, use rake -T to list them"
+end
 
 YARD::Rake::YardocTask.new
 
