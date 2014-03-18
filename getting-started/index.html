@@ -41,17 +41,60 @@ title: Getting Started | GoodData Ruby SDK
 You just installed the Ruby GEM and want to start playing around, right? Follow this guide to learn more about the basics and most common use cases.  
 </p>
 <p>
-And what you will learn? You will learn how to:<br /><br />
-<a class="topics" href="#login">Login to GoodData with gem</a><br />
-<a class="topics" href="#direct">Direct Post Requests</a><br />
-<a class="topics" href="#retrieve">Retrieving Objects</a><br />
-<a class="topics" href="#metrics">Metrics (not only) Creation</a><br />
-<a class="topics" href="#reports">Report Handling</a><br />
-<a class="topics" href="#dashboards">Dashboard Operations</a><br />
-</p>
 
+<h2>Disclaimer</h2>
+<div>
+This SDK is intended for developers. Programming experience is required. Some operations that can be executed using the SDK can be destructive to your projects and data. For more information, please contact GoodData Customer Support.
+</div>
+
+
+<h2>
+  Table of Contents
+</h2>
+<ul>
+  <li>
+    <a class="topics" href="#prerequisites">Install</a>
+  </li>
+  <li>
+    <a class="topics" href="#install">Install</a>
+  </li>
+  <li>
+    <a class="topics" href="#login">Login to GoodData with gem</a>
+  </li>
+  <li>
+    <a class="topics" href="#retrieve">Retrieving Objects</a>
+  </li>
+  <li>
+    <a class="topics" href="#metrics">Metrics (not only) Creation</a>
+  </li>
+  <li>
+    <a class="topics" href="#reports">Report Handling</a>
+  </li>
+  <li>
+    <a class="topics" href="#dashboards">Dashboard Operations</a>
+  </li>
+  <li>
+    <a class="topics" href="#direct">Direct Post Requests</a>
+  </li>
+</ul>
+
+
+<a name="prerequisites"></a>
+<h2>Prerequisites</h2>
+
+<ol>
+  <li>Acquired a GoodData platform account.</li>
+  <li>Set up your Ruby environment.</li>
+  <li>Acquired a project authentication key if you are creating new projects or have Administrator access to any project that you wish to modify using this SDK.</li>
+</ol>
+
+<a name="install"></a>
 <h2>Install</h2>
 
+<p>If you are using gems just</p>
+<pre>
+gem install gooddata --version 0.6.0.pre10
+</pre>
 <p>If you are using bundler. Add</p>
 <pre>
 gem "gooddata"
@@ -60,22 +103,23 @@ gem "gooddata"
 <pre>
 bundle install
 </pre>
-<p>If you are using gems just</p>
-<pre>
-gem install gooddata --version 0.6.0.pre10
-</pre>
 
 <a name="login"></a>
 <h2>Logging in</h2>
 
-You can connect as a user easily
+You can connect as a user easily.
+
+<pre>
+GoodData.connect("john@example.com", "password)
+</pre>
+
+This will assume our default servers and the webdav server used for uploading files will be determined automatically. If you need to explicitly provide such information you can also use another form.
 
 <pre>
 GoodData.connect( :login => 'svarovsky@gooddata.com',
                   :password => 'pass',
                   :server => "https://na1.secure.gooddata.com",
-                  :webdav_server => "https://na1-di.gooddata.com",
-                  :token => "asdasdas")
+                  :webdav_server => "https://na1-di.gooddata.com")
 </pre>
 
 <p>Picking project to work with. There are several ways how to do it.</p>
@@ -124,20 +168,6 @@ GoodData::Project['project_pid'].delete
 # CAREFUL
 GoodData::Project.all.find_all {|p| p.title =~ /to_be_deleted/i}.each {|p| p.delete}
 </pre>
-
-<a name="direct"></a>
-<h2>Directly accessing API</h2>
-
-<p>This is the most crude method and while you can do anything with it is also most cumbersome. It is needed sometimes though so we are mentioneing it here. Gem will make sure that it does the plumbing like keeping you logged in etc and you can just use the HTTP methods you are used to</p>
-
-<pre>
-GoodData.get("uri")
-GoodData.post("uri", {:name => "John Doe"})
-GoodData.put("uri", {:name => "John Doe"})
-GoodData.delete("uri")
-</pre>
-
-<p>Nothing surprising</p>
 
 <a name="retrieve"></a>
 <h2>Retrieving objects</h2>
@@ -299,6 +329,21 @@ File.open('dash.pdf', 'w') do |f|
   f.write(dash.export(:pdf, :tab => dash.tabs_ids.last))
 end
 </pre>
+
+<a name="direct"></a>
+<h2>Directly accessing API</h2>
+
+<p>This is the most crude method and while you can do anything with it is also most cumbersome. It is needed sometimes though so we are mentioneing it here. Gem will make sure that it does the plumbing like keeping you logged in etc and you can just use the HTTP methods you are used to</p>
+
+<pre>
+GoodData.get("uri")
+GoodData.post("uri", {:name => "John Doe"})
+GoodData.put("uri", {:name => "John Doe"})
+GoodData.delete("uri")
+</pre>
+
+<p>Nothing surprising</p>
+
 
 {% include section-nav.html %}
 
