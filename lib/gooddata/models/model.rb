@@ -88,7 +88,7 @@ module GoodData
         end
         if (GoodData.get(task["pullTask"]["uri"])["taskStatus"] == "ERROR")
           s = StringIO.new
-          GoodData.download_form_user_webdav(File.basename(dir) + '/upload_status.json', s)
+          GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
           js = JSON.parse(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end

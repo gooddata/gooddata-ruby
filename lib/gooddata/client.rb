@@ -285,9 +285,13 @@ module GoodData
       }))
     end
 
-    def download_form_user_webdav(file, where, options={})
+    def get_user_webdav_path(file, options={})
       u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
       url = URI.join(u.to_s.chomp(u.path.to_s), "/uploads/")
+    end
+
+    def download_from_user_webdav(file, where, options={})
+      url = get_user_webdav_path(file, options)
       connection.download(file, where, options.merge({
         :staging_url  => url
       }))

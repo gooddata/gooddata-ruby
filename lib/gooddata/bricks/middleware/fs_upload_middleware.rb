@@ -18,8 +18,8 @@ module GoodData::Bricks
           path = f[:path]
           case destination.to_s
           when "staging"
-            url = GoodData.get_project_webdav_path(path)
-            GoodData.upload_to_project_webdav(path)
+            url = GoodData.get_user_webdav_path(path)
+            GoodData.upload_to_user_webdav(path)
             puts "Uploaded local file \"#{path}\" to url \"#{url + path}\""
           end
         end
