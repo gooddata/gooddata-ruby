@@ -1,14 +1,16 @@
+# encoding: UTF-8
+
 require 'pp'
 
-require File.join(File.dirname(__FILE__), "../shared")
-require File.join(File.dirname(__FILE__), "../../commands/api")
+require File.join(File.dirname(__FILE__), '../shared')
+require File.join(File.dirname(__FILE__), '../../commands/api')
 
 GoodData::CLI.module_eval do
   desc 'Some basic API stuff directly from CLI'
   arg_name 'info|test|get|delete'
   command :api do |c|
 
-    c.desc "Info about the API version etc"
+    c.desc 'Info about the API version etc'
     c.command :info do |info|
       info.action do |global_options, options, args|
         opts = options.merge(global_options)
@@ -17,7 +19,7 @@ GoodData::CLI.module_eval do
       end
     end
 
-    c.desc "GET request on our API"
+    c.desc 'GET request on our API'
     c.command :get do |get|
       get.action do |global_options, options, args|
         opts = options.merge(global_options)

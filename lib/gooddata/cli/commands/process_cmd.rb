@@ -1,7 +1,9 @@
+# encoding: UTF-8
+
 require 'pp'
 
-require File.join(File.dirname(__FILE__), "../shared")
-require File.join(File.dirname(__FILE__), "../../commands/process")
+require File.join(File.dirname(__FILE__), '../shared')
+require File.join(File.dirname(__FILE__), '../../commands/process')
 
 GoodData::CLI.module_eval do
 
@@ -34,7 +36,7 @@ GoodData::CLI.module_eval do
       end
     end
 
-    c.desc "Gives you some basic info about the process"
+    c.desc 'Gives you some basic info about the process'
     c.command :get do |get|
       get.action do |global_options, options, args|
         opts = options.merge(global_options)
@@ -43,7 +45,7 @@ GoodData::CLI.module_eval do
       end
     end
 
-    c.desc "Deploys provided directory to the server"
+    c.desc 'Deploys provided directory to the server'
     c.command :deploy do |deploy|
       deploy.action do |global_options, options, args|
         opts = options.merge(global_options)

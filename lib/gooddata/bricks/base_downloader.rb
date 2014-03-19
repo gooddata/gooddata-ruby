@@ -1,6 +1,7 @@
+# encoding: UTF-8
+
 module GoodData::Bricks
   class BaseDownloader
-
     def initialize(params)
       @params = params
     end
@@ -10,12 +11,12 @@ module GoodData::Bricks
     end
 
     def download
-      puts "would download data"
+      puts 'would download data'
       []
     end
 
     def backup(meta)
-      puts "would send a backup list of files to backup"
+      puts 'would send a backup list of files to backup'
       files = meta.reduce([]) do |memo, item|
         memo << item[:filename]
       end
@@ -37,7 +38,7 @@ module GoodData::Bricks
     end
 
     def post_process(meta)
-      puts "Maybe some postprocessing"
+      puts 'Maybe some postprocessing'
       meta
     end
 
@@ -47,17 +48,16 @@ module GoodData::Bricks
       downloaded_data = pre_process(downloaded_data)
       backup(downloaded_data)
       downloaded_data = post_process(downloaded_data)
-    
+
       downloaded_data.reduce([]) do |memo, item|
         item.has_key?(:state) ? memo.concat(item[:state]) : memo
       end.each do |item|
         key = item[:key]
         val = item[:value]
 
-        puts "Saving metadata #{}"
+        puts "Saving metadata #{key} => #{val}"
         GoodData::ProjectMetadata[key] = val
       end
     end
-
   end
 end

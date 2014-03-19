@@ -1,8 +1,10 @@
+# encoding: UTF-8
+
+# GoodData Module
 module GoodData
-  VERSION = "0.6.0.pre10"
+  VERSION = '0.6.0.pre10'
 
   class << self
-
     # Version
     def version
       VERSION
@@ -10,7 +12,7 @@ module GoodData
 
     # Identifier of gem version
     # @return Formatted gem version
-    def gem_version_string()
+    def gem_version_string
       "gooddata-gem/#{VERSION}"
     end
   end

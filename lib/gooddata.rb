@@ -1,4 +1,8 @@
-module GoodData; end
+# encoding: UTF-8
+
+# GoodData Module
+module GoodData
+end
 
 require 'active_support/all'
 

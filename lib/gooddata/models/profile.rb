@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module GoodData
   class Profile
     private_class_method :new
@@ -26,7 +28,7 @@ module GoodData
 
     def initialize
       @json = GoodData.get GoodData.connection.user['profile']
-      @user = @json['accountSetting']['firstName'] + " " + @json['accountSetting']['lastName']
+      @user = @json['accountSetting']['firstName'] + ' ' + @json['accountSetting']['lastName']
     end
   end
 end

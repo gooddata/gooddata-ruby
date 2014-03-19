@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module GoodData::Helpers
   def self.home_directory
     running_on_windows? ? ENV['USERPROFILE'] : ENV['HOME']
@@ -17,14 +19,14 @@ module GoodData::Helpers
   end
 
   def self.find_goodfile(pwd, options={})
-    root = Pathname(options[:root] || '/' )
+    root = Pathname(options[:root] || '/')
     pwd = Pathname(pwd).expand_path
     begin
-       gf = pwd + "Goodfile"
-       if gf.exist?
-         return gf
-       end
-       pwd = pwd.parent
+      gf = pwd + 'Goodfile'
+      if gf.exist?
+        return gf
+      end
+      pwd = pwd.parent
     end until root == pwd
     nil
   end

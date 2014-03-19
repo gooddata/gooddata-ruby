@@ -1,7 +1,9 @@
+# encoding: UTF-8
+
 require 'pp'
 
-require File.join(File.dirname(__FILE__), "../shared")
-require File.join(File.dirname(__FILE__), "../../commands/projects")
+require File.join(File.dirname(__FILE__), '../shared')
+require File.join(File.dirname(__FILE__), '../../commands/projects')
 
 GoodData::CLI.module_eval do
 
@@ -15,11 +17,11 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         GoodData.connect(opts)
         list = GoodData::Command::Projects.list()
-        puts list.map { |p| [p.uri, p.title].join(",") }
+        puts list.map { |p| [p.uri, p.title].join(',') }
       end
     end
 
-    c.desc "If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project"
+    c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
     c.command :jack_in do |jack|
       jack.action do |global_options, options, args|
         goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
@@ -36,7 +38,7 @@ GoodData::CLI.module_eval do
               puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
               binding.pry(:quiet => true,
                           :prompt => [proc { |target_self, nest_level, pry|
-                            "project_live_sesion: "
+                            'project_live_sesion: '
                           }])
             end
           rescue GoodData::ProjectNotFound => e
@@ -57,27 +59,27 @@ GoodData::CLI.module_eval do
       end
     end
 
-    c.desc "Create a gooddata project"
+    c.desc 'Create a gooddata project'
     c.command :create do |create|
       create.action do |global_options, options, args|
-        title = ask "Project name"
-        summary = ask("Project summary") { |q| q.default = "" }
-        template = ask("Project template")
-        token = ask("token")
+        title = ask 'Project name'
+        summary = ask('Project summary') { |q| q.default = '' }
+        template = ask('Project template')
+        token = ask('token')
 
         opts = options.merge(global_options)
         GoodData.connect(opts)
         project = GoodData::Command::Projects.create({
-                                                         :title => title,
-                                                         :summary => summary,
-                                                         :template => template,
-                                                         :token => token
+                                                       :title => title,
+                                                       :summary => summary,
+                                                       :template => template,
+                                                       :token => token
                                                      })
         puts "Project '#{project.title}' with id #{project.uri} created successfully!"
       end
     end
 
-    c.desc "Delete a project. Be careful this is impossible to revert"
+    c.desc 'Delete a project. Be careful this is impossible to revert'
     c.command :delete do |delete|
       delete.action do |global_options, options, args|
         id = global_options[:project_id]
@@ -87,7 +89,7 @@ GoodData::CLI.module_eval do
       end
     end
 
-    c.desc "Clones a project. Useful for testing"
+    c.desc 'Clones a project. Useful for testing'
     c.command :clone do |clone|
       clone.desc 'Name of the new project'
       clone.default_value nil
@@ -104,7 +106,7 @@ GoodData::CLI.module_eval do
       end
     end
 
-    c.desc "Shows basic info about a project"
+    c.desc 'Shows basic info about a project'
     c.command :show do |show|
       show.action do |global_options, options, args|
         id = global_options[:project_id]
@@ -115,24 +117,24 @@ GoodData::CLI.module_eval do
       end
     end
 
-    c.desc "If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you."
+    c.desc 'If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you.'
     c.command :build do |show|
       show.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        spec, project_id = GoodData::Command::Projects.get_spec_and_project_id(".")
+        spec, project_id = GoodData::Command::Projects.get_spec_and_project_id('.')
         new_project = GoodData::Command::Projects.build(opts.merge(:spec => spec))
         puts "Project was created. New project PID is #{new_project.pid}, URI is #{new_project.uri}."
       end
     end
 
-    c.desc "If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you."
+    c.desc 'If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you.'
     c.command :update do |show|
       show.action do |global_options, options, args|
 
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        spec, project_id = GoodData::Command::Projects.get_spec_and_project_id(".")
+        spec, project_id = GoodData::Command::Projects.get_spec_and_project_id('.')
         project = GoodData::Command::Projects.update(opts.merge(:spec => spec, :project_id => global_options[:project_id] || project_id))
         puts "Migration was done. Project PID is #{project.pid}, URI is #{project.uri}."
 

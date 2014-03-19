@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module GoodData
   class Links
     attr_reader :data
@@ -8,7 +10,7 @@ module GoodData
         category = item['category']
         if @data[category] then
           if @data[category]['category'] == category then
-            @data[category] = { @data[category]['identifier'] => @data[category] }
+            @data[category] = {@data[category]['identifier'] => @data[category]}
           end
           @data[category][item['identifier']] = item
         else

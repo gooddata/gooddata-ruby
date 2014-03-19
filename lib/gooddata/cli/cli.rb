@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gli'
 require 'pp'
 

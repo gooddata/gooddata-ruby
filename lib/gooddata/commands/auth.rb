@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'highline/import'
 require 'json'
 
@@ -5,16 +7,15 @@ require File.join(File.dirname(__FILE__), '../helpers')
 
 module GoodData::Command
   class Auth
-    
     class << self
       def connect
         unless defined? @connected
           GoodData.connect({
-            :login    => user,
-            :password => password,
-            :server   => url,
-            :auth_token => auth_token
-          })
+                             :login => user,
+                             :password => password,
+                             :server => url,
+                             :auth_token => auth_token
+                           })
           @connected = true
         end
         @connected
@@ -62,22 +63,22 @@ module GoodData::Command
       end
 
       def ask_for_credentials
-        puts "Enter your GoodData credentials."
-        user = HighLine.new.ask("Email")
-        password = HighLine.new.ask("Password") { |q| q.echo = "x" }
-        auth_token = HighLine.new.ask("Authorization Token")
-        { :username => user, :password => password, :auth_token => auth_token }
+        puts 'Enter your GoodData credentials.'
+        user = HighLine.new.ask('Email')
+        password = HighLine.new.ask('Password') { |q| q.echo = 'x' }
+        auth_token = HighLine.new.ask('Authorization Token')
+        {:username => user, :password => password, :auth_token => auth_token}
       end
 
       def store
         credentials = ask_for_credentials
 
         ovewrite = if File.exist?(credentials_file)
-          HighLine::ask("Overwrite existing stored credentials (y/n)")
-           # { |q| q.validate = /[y,n]/ }
-        else
-          'y'
-        end
+                     HighLine::ask('Overwrite existing stored credentials (y/n)')
+                     # { |q| q.validate = /[y,n]/ }
+                   else
+                     'y'
+                   end
         if ovewrite == 'y'
           File.open(credentials_file, 'w', 0600) do |f|
             f.puts JSON.pretty_generate(credentials)
