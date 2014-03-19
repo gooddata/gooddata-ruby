@@ -74,7 +74,6 @@ module GoodData::Command
 
         ovewrite = if File.exist?(credentials_file)
           HighLine::ask("Overwrite existing stored credentials (y/n)")
-           # { |q| q.validate = /[y,n]/ }
         else
           'y'
         end
