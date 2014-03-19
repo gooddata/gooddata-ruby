@@ -1,4 +1,7 @@
 require 'rspec'
+require 'coveralls'
+
+Coveralls.wear!
 
 # Automagically include all helpers/*_helper.rb
 
