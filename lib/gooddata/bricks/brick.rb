@@ -12,9 +12,9 @@ module GoodData::Bricks
     def self.prepare(pipeline)
       pipeline.reverse.reduce(nil) do |memo, app|
         if memo.nil?
-          app.respond_to?(:new) ? (puts "new"; app.new) : app
+          app.respond_to?(:new) ? (app.new) : app
         else
-          app.respond_to?(:new) ? (puts "new"; app.new(memo)) : (app.app = memo; app)
+          app.respond_to?(:new) ? (app.new(:app => memo)) : (app.app = memo; app)
         end
       end
     end
