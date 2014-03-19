@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), "metadata.rb")
+
 module GoodData
   class DataSet < MdObject
 

@@ -1,4 +1,7 @@
-require File.join(File.dirname(__FILE__), 'base_downloader')
-require File.join(File.dirname(__FILE__), 'brick')
-require File.join(File.dirname(__FILE__), 'utils')
-require File.join(File.dirname(__FILE__), 'middleware/middleware')
+base = Pathname(__FILE__).dirname.expand_path
+Dir.glob(base + '*.rb').each do |file|
+  require file
+end
+
+# Require all middleware
+require File.join(File.dirname(__FILE__), "middleware/middleware")
