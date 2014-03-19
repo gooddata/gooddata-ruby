@@ -14,41 +14,20 @@ This SDK is intended for developers. Programming experience is required. Some op
 
 ##Table of Contents
 
-<ul>
-  <li>
-    <a class="topics" href="#prerequisites">Prerequisites</a>
-  </li>
-  <li>
-    <a class="topics" href="#install">Install</a>
-  </li>
-  <li>
-    <a class="topics" href="#login">Login to GoodData with gem</a>
-  </li>
-  <li>
-    <a class="topics" href="#retrieve">Retrieving Objects</a>
-  </li>
-  <li>
-    <a class="topics" href="#metrics">Metrics (not only) Creation</a>
-  </li>
-  <li>
-    <a class="topics" href="#reports">Report Handling</a>
-  </li>
-  <li>
-    <a class="topics" href="#dashboards">Dashboard Operations</a>
-  </li>
-  <li>
-    <a class="topics" href="#direct">Direct Post Requests</a>
-  </li>
-</ul>
-
+- [Prerequisities](#prerequisites)
+- [Install](#install)
+- [Login to GoodData with gem](#login)
+- [Retrieving Objects](#retrieve)
+- [Metrics (not only) Creation](#metrics)
+- [Report Handling](#reports)
+- [Dashboard Operations](#dashboards)
+- [Direct Post Requests](#direct)
 
 ##Prerequisites
 
-<ol>
-  <li>Acquired a GoodData platform account.</li>
-  <li>Set up your Ruby environment.</li>
-  <li>Acquired a project authentication key if you are creating new projects or have Administrator access to any project that you wish to modify using this SDK.</li>
-</ol>
+1. Acquired a GoodData platform account.
+2. Set up your Ruby environment.
+3. Acquired a project authentication key if you are creating new projects or have Administrator access to any project that you wish to modify using this SDK.
 
 ##Install
 
@@ -70,7 +49,7 @@ into Gemfile and run
 bundle install
 {% endhighlight %}
 
-##Logging in
+##Logging in{#login}
 
 You can connect as a user easily.
 
@@ -99,7 +78,7 @@ GoodData.project = 'project_pid'
 GoodData.use = 'project_pid'
 {% endhighlight %}
 
-##Working with a project
+##Working with a project{#project}
 
 This will let you work with the project in a block. The project has the value you picked only inside the block afterwards it will reset the project value to whatever it was before.
 
@@ -134,7 +113,7 @@ You can delete all projects given a specific title. You have to be admin in the 
 GoodData::Project.all.find_all {|p| p.title =~ /to_be_deleted/i}.each {|p| p.delete}
 {% endhighlight %}
 
-##Retrieving objects
+##Retrieving objects{#retrieve}
 
 There are several wrappers for different types of objects. There are some common things you can do with them.
 
@@ -150,7 +129,6 @@ You can retrieve specific one
 report = GoodData::Report["/gdc/md/pid/12"]
 report = GoodData::Report[12]
 {% endhighlight %}
-
 
 You can retrieve reports based on tags
 
@@ -192,7 +170,7 @@ report.get_using
 
 What we just showed you can be done with all Metadata objects. These include Report, Dashboard, Metric, Attribute, Fact
 
-##Metrics
+##Metrics{#metrics}
 
 Probably the most useful and complex obect is a metric. For its definition we are using language called MAQL. There is one big drawback to current MAQL definition and that is how it reffers to another object. If you imagine a simple metric definition like 'sum of all amounts' it could be described like this "SELECT SUM(Amount)". The problem is that the proper maql definition is as follows 
 
@@ -202,18 +180,16 @@ SELECT SUM([/gdc/md/project_id/obj/123])
 
 As you can see the reference to Amount fact is done via an URI. This has a big advantage of being unambiguous but it has a bg drawback that t cannot be written buy hand and also it is not transferable between projects without some translation.
 
-Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation acurrently relies on titles of objects and might change. In XMAQL there are only 4 additions<br />
-  <ol>
-    <li>fact is referenced like #"Amount"</li>
-    <li>attribute like @"User Name"</li>
-    <li>metric like ?"My metric"</li>
-    <li>Not implemented yet - attribute value like $"United States"</li>
-  </ol>
-
+Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation acurrently relies on titles of objects and might change. In XMAQL there are only 4 additions  
+  
+1. Fact is referenced like #"Amount"
+2. Attribute like @"User Name"
+3. Metric like ?"My metric"
+4. Not implemented yet - attribute value like $"United States"
 
 The aforementioned metric could be then expressed like this 'SELECT SUM(#"Amount")'. This allows to be explicit in what type you are reffering to since MAQL is fairly complex and allows you to write them by hand. Also transfering metrics nbetween objects is more transpoarent.
 
-<h3>Metrics creation</h3>
+###Metrics creation
 
 {% highlight ruby %}
 m = Metric.create(:title => "My metric", :expression => 'SELECT SUM(["/gdc/md/1231231/obj/12"])')
@@ -235,7 +211,7 @@ m.execute
 
 Note on executing metrics. Since GoodData currently cannot execute metric which is not saved there is some behavior that might surprise you when executing unsaved metrics on the fly. If you execute a metric or use a metric in a report it takes all unsaved metrics and saves them. After execution it takes those that it had to save and deletes them so they are not visible and cluttering the system. If you are creating a metric to be really saved do save it immediately. This will hopefully change as we will allow execution of metrics that are inlined in execution description.
 
-##Reports
+##Reports{#reports}
 
 You can execute report
 
@@ -270,24 +246,17 @@ report.save
 
 There are some rules that need explanation. The report is structured a little different than in UI. You specify left and top. It can either be an attribute or a metric. There can be multiple metrics but all of those need to be either in top or left section. The objects can be specified in several ways. You can provide Attribute but remember that eventually GoodData needs Label information (on API you can hit name display form). If you provide attribute it will resolve to its first Label. If an attribute has more than one it will take the first.
 
-
-<ol>
-    <li>MD object. Metric, Attribute and Label</li>
-    <li>hash. If you do not have the object handy you can pass a hash structure like this
+1. MD object. Metric, Attribute and Label
+2. hash. If you do not have the object handy you can pass a hash structure like this
       {% highlight ruby %}{:type => :attribute, :title => 'some title'}{% endhighlight %} 
 It will perform the lookup for you. This currently works for :attribute and :metric. If you want to perform the lookup through identifier you can do it as well. Since id is unique 
 	  {% highlight ruby %}{:identifier => 'some id'}{% endhighlight %}
-    </li>
-    <li>
-      String. If you put there a string it is assumed it is a name of an attribute so 'some title' is equivalent with typing
+3. String. If you put there a string it is assumed it is a name of an attribute so 'some title' is equivalent with typing
       {% highlight ruby %}{:type => :attribute, :title => 'some title'}{% endhighlight %}
-    </li>
-</ol>
-
 
 TODO - Describe filtering
 
-##Dashboards
+##Dashboards{#dashboards}
 
 You can export whole dashboards
 
@@ -307,7 +276,7 @@ File.open('dash.pdf', 'w') do |f|
 end
 {% endhighlight %}
 
-##Directly accessing API
+##Directly accessing API{#direct}
 
 This is the most crude method and while you can do anything with it is also most cumbersome. It is needed sometimes though so we are mentioning it here. Gem will make sure that it does the plumbing like keeping you logged in etc and you can just use the HTTP methods you are used to. Anything that you see in the Web client can be achieved through APIs and these methods.
 
