@@ -5,8 +5,8 @@ module GoodData::Bricks
 
     include GoodData::Bricks::Utils
 
-    def initialize(app=nil)
-      @app = app
+    def initialize(options={})
+      @app = options[:app]
     end
 
   end
