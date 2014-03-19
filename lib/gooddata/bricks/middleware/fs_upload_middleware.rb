@@ -2,10 +2,10 @@ require 'uri'
 require 'net/http'
 require 'pathname'
 
+require File.join(File.dirname(__FILE__), 'base_middleware')
+
 module GoodData::Bricks
-
   class FsUploadMiddleware < GoodData::Bricks::Middleware
-
     def initialize(options={})
       super
       @destination = options[:destination]
@@ -25,6 +25,5 @@ module GoodData::Bricks
         end
       end
     end
-
   end
 end
