@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
 require 'gli'
-
 require 'pp'
 
 GoodData::CLI.module_eval do
@@ -44,3 +43,5 @@ GoodData::CLI.module_eval do
     true
   end
 end
+
+

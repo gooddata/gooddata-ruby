@@ -74,11 +74,11 @@ module GoodData::Command
         credentials = ask_for_credentials
 
         ovewrite = if File.exist?(credentials_file)
-                     HighLine::ask('Overwrite existing stored credentials (y/n)')
-                     # { |q| q.validate = /[y,n]/ }
+                     HighLine::ask("Overwrite existing stored credentials (y/n)")
                    else
                      'y'
                    end
+
         if ovewrite == 'y'
           File.open(credentials_file, 'w', 0600) do |f|
             f.puts JSON.pretty_generate(credentials)

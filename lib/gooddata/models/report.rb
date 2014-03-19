@@ -71,6 +71,10 @@ module GoodData
       ReportDataResult.new(GoodData.get data_result_uri)
     end
 
+    def exportable?
+      true
+    end
+
     def export(format)
       result = GoodData.post('/gdc/xtab2/executor3', {'report_req' => {'report' => uri}})
       result1 = GoodData.post('/gdc/exporter/executor', {:result_req => {:format => format, :result => result}})

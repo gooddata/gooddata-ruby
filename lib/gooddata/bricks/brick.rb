@@ -12,7 +12,13 @@ require File.join(File.dirname(__FILE__), 'middleware/middleware')
 module GoodData::Bricks
   class Pipeline
     def self.prepare(pipeline)
-      pipeline.reverse.reduce(nil) { |memo, app| memo.nil? ? app.new : app.new(memo) }
+      pipeline.reverse.reduce(nil) do |memo, app|
+        if memo.nil?
+          app.respond_to?(:new) ? (app.new) : app
+        else
+          app.respond_to?(:new) ? (app.new(:app => memo)) : (app.app = memo; app)
+        end
+      end
     end
   end
 

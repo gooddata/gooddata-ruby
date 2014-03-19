@@ -181,5 +181,10 @@ module GoodData
     def validate
       true
     end
+
+    def exportable?
+      false
+    end
+
   end
 end

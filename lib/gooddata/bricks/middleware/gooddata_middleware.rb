@@ -7,7 +7,7 @@ require File.join(File.dirname(__FILE__), 'base_middleware')
 module GoodData::Bricks
   class GoodDataMiddleware < GoodData::Bricks::Middleware
     def call(params)
-      logger = params['gdc_logger']
+      logger = params['GDC_LOGGER']
       token_name = 'GDC_SST'
       protocol_name = 'GDC_PROTOCOL'
       server_name = 'GDC_HOSTNAME'

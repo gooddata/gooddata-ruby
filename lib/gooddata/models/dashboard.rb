@@ -71,6 +71,10 @@ module GoodData
       end
     end
 
+    def exportable?
+      true
+    end
+
     def export(format, options={})
       supported_formats = [:pdf]
       fail "Wrong format provied \"#{format}\". Only supports formats #{supported_formats.join(', ')}" unless supported_formats.include?(format)

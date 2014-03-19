@@ -278,18 +278,26 @@ module GoodData
                                             }))
     end
 
+    def get_project_webdav_path(file, options={})
+      u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
+      url = URI.join(u.to_s.chomp(u.path.to_s), "/project-uploads/", "#{GoodData.project.pid}/")
+    end
+
     def upload_to_project_webdav(file, options={})
-      u = URI(connection.options[:webdav_server] || GoodData.project.links['uploads'])
-      url = URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{GoodData.project.pid}/")
+      url = get_project_webdav_path(file, options)
       connection.upload(file, options.merge({
                                               :directory => options[:directory],
                                               :staging_url => url
                                             }))
     end
 
-    def download_form_user_webdav(file, where, options={})
-      u = URI(connection.options[:webdav_server] || GoodData.project.links['uploads'])
-      url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+    def get_user_webdav_path(file, options={})
+      u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
+      url = URI.join(u.to_s.chomp(u.path.to_s), "/uploads/")
+    end
+
+    def download_from_user_webdav(file, where, options={})
+      url = get_user_webdav_path(file, options)
       connection.download(file, where, options.merge({
                                                        :staging_url => url
                                                      }))
