@@ -1,5 +1,6 @@
 def init
-  sections :header, [:method_signature, T('docstring'), :source]
+  super
+  sections :header, [:method_signature, T('docstring'), :source, :specs]
 end
 
 def source

@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), "metadata")
+
 module GoodData
   class Dashboard < GoodData::MdObject 
 
@@ -6,7 +8,7 @@ module GoodData
     class << self
       def [](id)
         if id == :all
-          GoodData.get(GoodData.project.md['query'] + '/projectDashboard/')['query']['entries']
+          GoodData.get(GoodData.project.md['query'] + '/projectdashboards/')['query']['entries']
         else 
           super
         end

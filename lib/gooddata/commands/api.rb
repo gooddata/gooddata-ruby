@@ -8,6 +8,7 @@ module GoodData::Command
         puts "  Released: #{json['releaseDate']}"
         puts "  For more info see #{json['releaseNotesUri']}"
       end
+
       alias :index :info
 
       def test

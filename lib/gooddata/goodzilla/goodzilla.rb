@@ -1,17 +1,29 @@
 module GoodData::SmallGoodZilla
 
+  # Get IDs from MAQL string
+  # @param a_maql_string Input MAQL string
+  # @return [Array<String>] List of IDS
   def self.get_ids(a_maql_string)
     a_maql_string.scan(/!\[([^\"]+)\]/).flatten
   end
 
+  # Get Facts from MAQL string
+  # @param a_maql_string Input MAQL string
+  # @return [Array<String>] List of Facts
   def self.get_facts(a_maql_string)
     a_maql_string.scan(/#\"([^\"]+)\"/).flatten
   end
 
+  # Get Attributes from MAQL string
+  # @param a_maql_string Input MAQL string
+  # @return [Array<String>] List of Attributes
   def self.get_attributes(a_maql_string)
     a_maql_string.scan(/@\"([^\"]+)\"/).flatten
   end
 
+  # Get Metrics from MAQL string
+  # @param a_maql_string Input MAQL string
+  # @return [Array<String>] List of Metrics
   def self.get_metrics(a_maql_string)
     a_maql_string.scan(/\?"([^\"]+)\"/).flatten
   end

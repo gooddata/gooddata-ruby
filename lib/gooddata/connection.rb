@@ -1,9 +1,11 @@
 require 'json'
 require 'rest-client'
 
+require File.join(File.dirname(__FILE__), 'version')
+
 module GoodData
 
-  # = GoodData HTTP wrapper
+  # # GoodData HTTP wrapper
   #
   # Provides a convenient HTTP wrapper for talking with the GoodData API.
   #
@@ -16,12 +18,11 @@ module GoodData
   # makes sure that the session is stored between requests and that the JSON is
   # parsed both when sending and receiving.
   #
-  # == Usage
+  # ## Usage
   #
-  # Before a connection can be made to the GoodData API, you have to supply the user
-  # credentials using the set_credentials method:
+  # Before a connection can be made to the GoodData API, you have to supply the user credentials like this:
   #
-  #   Connection.new(username, password).set_credentials(username, password)
+  #   Connection.new(username, password)
   #
   # To send a HTTP request use either the get, post or delete methods documented below.
   #
@@ -34,16 +35,15 @@ module GoodData
     attr_reader(:auth_token, :url)
     attr_accessor :status, :options
 
-
     # Options:
     # * :tries - Number of retries to perform. Defaults to 1.
     # * :on - The Exception on which a retry will be performed. Defaults to Exception, which retries on any Exception.
     #
-    # Example
-    # =======
-    #   retryable(:tries => 1, :on => OpenURI::HTTPError) do
-    #     # your code here
-    #   end
+    # ### Example
+    #
+    #     retryable(:tries => 1, :on => OpenURI::HTTPError) do
+    #       # your code here
+    #     end
     #
     def retryable(options = {}, &block)
       opts = { :tries => 1, :on => Exception }.merge(options)
@@ -63,10 +63,9 @@ module GoodData
     #
     # This have to be performed before any calls to the API.
     #
-    # === Parameters
+    # @param username The GoodData account username
+    # @param password The GoodData account password
     #
-    # * +username+ - The GoodData account username
-    # * +password+ - The GoodData account password
     def initialize(username, password, options = {})
       @status     = :not_connected
       @username   = username
@@ -89,13 +88,12 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # ### Examples
     #
-    # === Examples
+    #     Connection.new(username, password).get '/gdc/projects'
     #
-    #   Connection.new(username, password).get '/gdc/projects'
     def get(path, options = {})
       GoodData.logger.debug "GET #{@server}#{path}"
       ensure_connection
@@ -107,16 +105,14 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # @param data The payload data in the format of a Hash object
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
-    # * +data+ - The payload data in the format of a Hash object
+    # ### Examples
     #
-    # === Examples
+    #     Connection.new(username, password).post '/gdc/projects', { ... }
     #
-    #   Connection.new(username, password).post '/gdc/projects', { ... }
     def post(path, data, options = {})
-      
       GoodData.logger.debug("POST #{@server}#{path}, payload: #{scrub_params(data, [:password, :login, :authorizationToken])}")
       ensure_connection
       payload = data.is_a?(Hash) ? data.to_json : data
@@ -128,14 +124,13 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # @param data The payload data in the format of a Hash object
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
-    # * +data+ - The payload data in the format of a Hash object
+    # ### Examples
     #
-    # === Examples
+    #     Connection.new(username, password).put '/gdc/projects', { ... }
     #
-    #   Connection.new(username, password).put '/gdc/projects', { ... }
     def put(path, data, options = {})
       payload = data.is_a?(Hash) ? data.to_json : data
       GoodData.logger.debug "PUT #{@server}#{path}, payload: #{payload}"
@@ -148,13 +143,12 @@ module GoodData
     #
     # Retuns the JSON response formatted as a Hash object.
     #
-    # === Parameters
+    # @param path The HTTP path on the GoodData server (must be prefixed with a forward slash)
     #
-    # * +path+ - The HTTP path on the GoodData server (must be prefixed with a forward slash)
+    # ### Examples
     #
-    # === Examples
+    #     Connection.new(username, password).delete '/gdc/project/1'
     #
-    #   Connection.new(username, password).delete '/gdc/project/1'
     def delete(path, options = {})
       GoodData.logger.debug "DELETE #{@server}#{path}"
       ensure_connection
@@ -278,6 +272,17 @@ module GoodData
       end
     end
 
+    def connected?
+      @status == :logged_in
+    end
+
+    def disconnect
+      if connected? && GoodData.connection.user["state"]
+        GoodData.delete(GoodData.connection.user["state"])
+        @status = :not_connected
+      end
+    end
+
     private
 
     def create_server_connection(url, options)
@@ -286,7 +291,7 @@ module GoodData
         :headers => {
           :content_type => :json,
           :accept => [ :json, :zip ],
-          :user_agent => GoodData.gem_version_string,
+          :user_agent => GoodData::gem_version_string,
         }
     end
 
@@ -372,7 +377,7 @@ module GoodData
             binding.pry
           end
         end
-      end      
+      end
       new_params
     end
 

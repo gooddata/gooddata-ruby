@@ -1,5 +1,3 @@
-require 'bundler'
-
 module GoodData::Command
   class Runners
 
@@ -26,11 +24,12 @@ script_body = <<-script_body
         require 'bundler/setup'
 
         $SCRIPT_PARAMS = {
-          :GDC_SST => \"#{sst}\",
-          :GDC_PROJECT_ID => \"#{pid}\",
-          :GDC_PROTOCOL => \"#{scheme}\",
-          :GDC_HOSTNAME => \"#{hostname}\",
-          :GDC_LOGGER_FILE => STDOUT
+          "GDC_SST" => \"#{sst}\",
+          "GDC_PROJECT_ID" => \"#{pid}\",
+          "GDC_PROTOCOL" => \"#{scheme}\",
+          "GDC_HOSTNAME" => \"#{hostname}\",
+          "GDC_LOGGER_FILE" => STDOUT,
+          "GDC_ENV_LOCAL" => true
         }.merge(#{params})
         eval(File.read(\"./main.rb\"))
       end

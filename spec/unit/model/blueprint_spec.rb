@@ -1,5 +1,5 @@
-require 'gooddata/model'
 require 'pry'
+require 'gooddata/models/model'
 
 describe GoodData::Model::ProjectBlueprint do
 
@@ -80,9 +80,9 @@ describe GoodData::Model::ProjectBlueprint do
                 }
             ]})
 
-    # @valid_blueprint = blueprint = BlueprintHelper.blueprint_from_file(File.join(File.dirname(__FILE__), 'data', 'blueprint_valid.json'))
+    # @valid_blueprint = blueprint = BlueprintHelper.blueprint_from_file(File.join(File.dirname(__FILE__), '../data', 'blueprint_valid.json'))
 
-    # @invalid_blueprint = BlueprintHelper.blueprint_from_file(File.join(File.dirname(__FILE__), 'data', 'blueprint_valid.json'))
+    # @invalid_blueprint = BlueprintHelper.blueprint_from_file(File.join(File.dirname(__FILE__), '../data', 'blueprint_valid.json'))
   end
 
   it "valid blueprint should be marked as valid" do

@@ -1,3 +1,5 @@
+# @title Get Started
+
 <div class="container-narrow">
 
 <h1>Get Started</h1>
@@ -240,11 +242,10 @@ report.save
     resolve to its first Label. If an attribute has more than one it will take the first.</p>
 
 <p>1) MD object. Metric, Attribute and Label
-    2) hash. If you do not have the object handy you can pass a hash structure like this {:type => :attribute, :title =>
-    'some title'}. It will perform the lookup for you. This currently works for :attribute and :metric. If you want to
-    perform the lookup through identifier you can do it as well. Since id is unique {:identifier => 'some id'}
+    2) hash. If you do not have the object handy you can pass a hash structure like this <pre>{:type => :attribute, :title => 'some title'}</pre>. It will perform the lookup for you. This currently works for :attribute and :metric. If you want to
+    perform the lookup through identifier you can do it as well. Since id is unique <pre>{:identifier => 'some id'}</pre>
     3) String. If you put there a string it is assumed it is a name of an attribute so 'some title' is equivalent with
-    typing {:type => :attribute, :title => 'some title'}</p>
+    typing <pre>{:type => :attribute, :title => 'some title'}</pre></p>
 
 <p>TODO
     Describe filtering</p>

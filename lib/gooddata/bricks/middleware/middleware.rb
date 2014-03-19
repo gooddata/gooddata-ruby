@@ -1,11 +1,4 @@
-module GoodData::Bricks
-
-  class Middleware
-    include GoodData::Bricks::Utils
-
-    def initialize(app)
-      @app = app
-    end
-    
-  end
+base = Pathname(__FILE__).dirname.expand_path
+Dir.glob(base + '*_middleware.*').each do | file |
+  require file
 end
