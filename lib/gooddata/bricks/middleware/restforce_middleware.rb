@@ -16,8 +16,6 @@ module GoodData::Bricks
       refresh_token = params[:salesforce_refresh_token]
       host = params[:salesforce_host]
 
-      credentials = {}
-
       credentials = if (username && password && token)
                       {
                         :username => username,
