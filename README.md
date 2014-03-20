@@ -15,7 +15,7 @@ The best documentation for the GoodData API can be found using these resources:
 [![Gem Version](https://badge.fury.io/rb/gooddata.png)](http://badge.fury.io/rb/gooddata)
 [![Dependency Status](https://gemnasium.com/gooddata/gooddata-ruby.png)](https://gemnasium.com/gooddata/gooddata-ruby)
 [![Code Climate](https://codeclimate.com/github/gooddata/gooddata-ruby.png)](https://codeclimate.com/github/gooddata/gooddata-ruby)
-[![Coverage Status](https://coveralls.io/repos/korczis/gooddata-ruby/badge.png)](https://coveralls.io/r/korczis/gooddata-ruby)
+[![Coverage Status](https://coveralls.io/repos/korczis/gooddata-ruby/badge.png?branch=refactor)](https://coveralls.io/r/korczis/gooddata-ruby)
 [![Build Status](https://travis-ci.org/korczis/gooddata-ruby.png?branch=refactor)](https://travis-ci.org/korczis/gooddata-ruby)
 
 ## Install
