@@ -5,7 +5,7 @@ describe GoodData::CLI do
     args = %w(api)
 
     out = run_cli(args)
-    out.should include("Command 'api' requires a subcommand info, get")
+    out.should include("Command 'api' requires a subcommand info,get")
   end
 
   it "Has working 'api info' command" do
