@@ -4,8 +4,13 @@ module GoodData::Command
   class Api
     class << self
       def info
-        json = {}
-        puts 'GoodDat a API'
+        json = {
+          'releaseName' => 'N/A',
+          'releaseDate' => 'N/A',
+          'releaseNotesUri' => 'N/A'
+        }
+
+        puts 'GoodData API'
         puts "  Version: #{json['releaseName']}"
         puts "  Released: #{json['releaseDate']}"
         puts "  For more info see #{json['releaseNotesUri']}"
