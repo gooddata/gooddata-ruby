@@ -5,10 +5,13 @@ Coveralls.wear!
 
 # Automagically include all helpers/*_helper.rb
 
-require File.join(File.dirname(__FILE__), 'helpers/blueprint_helper')
-require File.join(File.dirname(__FILE__), 'helpers/connection_helper.rb')
+base = Pathname(__FILE__).dirname.expand_path
+Dir.glob(base + 'helpers/*_helper.rb').each do |file|
+  require file
+end
 
 RSpec.configure do |config|
   include BlueprintHelper
+  include CliHelper
   include ConnectionHelper
 end

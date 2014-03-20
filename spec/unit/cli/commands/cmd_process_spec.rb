@@ -2,10 +2,8 @@ require 'gooddata/cli/cli'
 
 describe GoodData::CLI do
   it "Has working 'process' command" do
-    args = [
-        'process'
-    ]
+    args = %w(process)
 
-    GoodData::CLI.main(args)
+    run_cli(args)
   end
 end

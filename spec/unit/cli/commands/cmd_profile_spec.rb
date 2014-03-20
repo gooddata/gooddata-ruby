@@ -2,10 +2,8 @@ require 'gooddata/cli/cli'
 
 describe GoodData::CLI do
   it "Has working 'profile' command" do
-    args = [
-        'profile'
-    ]
+    args = %w(profile)
 
-    GoodData::CLI.main(args)
+    run_cli(args)
   end
 end
