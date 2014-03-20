@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), '../shared')
-require File.join(File.dirname(__FILE__), '../../commands/auth')
+require_relative '../shared'
+require_relative '../../commands/auth'
 
 GoodData::CLI.module_eval do
 

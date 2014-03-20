@@ -9,10 +9,10 @@ module GoodData
     include GLI::App
 
     # Require shared part of GLI::App - flags, meta, etc
-    require File.join(File.dirname(__FILE__), 'shared.rb')
+    require_relative 'shared.rb'
 
     # Require Hooks
-    require File.join(File.dirname(__FILE__), 'hooks.rb')
+    require_relative 'hooks.rb'
 
     GLI::App.commands_from(File.join(File.dirname(__FILE__), 'commands'))
 

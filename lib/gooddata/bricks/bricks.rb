@@ -6,4 +6,4 @@ Dir.glob(base + '*.rb').each do |file|
 end
 
 # Require all middleware
-require File.join(File.dirname(__FILE__), 'middleware/middleware')
+require_relative 'middleware/middleware'

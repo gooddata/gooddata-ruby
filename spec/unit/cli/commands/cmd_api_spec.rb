@@ -14,6 +14,12 @@ describe GoodData::CLI do
     run_cli(args)
   end
 
+  it "Has working 'api get' command" do
+    args = %w(api get)
+
+    run_cli(args)
+  end
+
   it "Has working 'api get /gdc' command" do
     args = %w(api get /gdc)
 

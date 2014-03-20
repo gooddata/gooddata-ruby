@@ -1,13 +1,13 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), 'base_downloader')
-require File.join(File.dirname(__FILE__), 'utils')
+require_relative 'base_downloader'
+require_relative 'utils'
 
 Dir[File.dirname(__FILE__) + '/commands/**/*_cmd.rb'].each do |file|
   require file
 end
 
-require File.join(File.dirname(__FILE__), 'middleware/middleware')
+require_relative 'middleware/middleware'
 
 module GoodData::Bricks
   class Pipeline

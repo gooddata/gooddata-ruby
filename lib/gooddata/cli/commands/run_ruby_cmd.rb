@@ -2,10 +2,10 @@
 
 require 'pp'
 
-require File.join(File.dirname(__FILE__), '../shared')
-require File.join(File.dirname(__FILE__), '../../commands/process')
-require File.join(File.dirname(__FILE__), '../../commands/runners')
-require File.join(File.dirname(__FILE__), '../../client')
+require_relative '../shared'
+require_relative '../../commands/process'
+require_relative '../../commands/runners'
+require_relative '../../client'
 
 GoodData::CLI.module_eval do
 
@@ -44,10 +44,10 @@ GoodData::CLI.module_eval do
       GoodData.connect(opts)
       if options[:remote]
         fail 'You have to specify name of the deploy when deploying remotely' if options[:name].nil? || options[:name].empty?
-        require File.join(File.dirname(__FILE__), '../../commands/process')
+        require_relative '../../commands/process'
         GoodData::Command::Process.run(options[:dir], opts)
       else
-        require File.join(File.dirname(__FILE__), '../../commands/runners')
+        require_relative '../../commands/runners'
         GoodData::Command::Runners.run_ruby_locally(options[:dir], opts)
       end
       puts HighLine::color('Running ruby brick - DONE', HighLine::GREEN) if verbose

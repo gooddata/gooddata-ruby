@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), 'metadata.rb')
+require_relative 'metadata.rb'
 
 module GoodData
   class DataSet < MdObject

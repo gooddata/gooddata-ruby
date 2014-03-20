@@ -2,8 +2,8 @@
 
 require 'pp'
 
-require File.join(File.dirname(__FILE__), '../shared')
-require File.join(File.dirname(__FILE__), '../../commands/api')
+require_relative '../shared'
+require_relative '../../commands/api'
 
 GoodData::CLI.module_eval do
   desc 'Some basic API stuff directly from CLI'

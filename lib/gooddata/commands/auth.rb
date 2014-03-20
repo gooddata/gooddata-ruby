@@ -3,7 +3,7 @@
 require 'highline/import'
 require 'json'
 
-require File.join(File.dirname(__FILE__), '../helpers')
+require_relative '../helpers'
 
 module GoodData::Command
   class Auth

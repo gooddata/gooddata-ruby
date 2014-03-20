@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), 'metadata')
+require_relative 'metadata'
 
 module GoodData
   class Attribute < GoodData::MdObject

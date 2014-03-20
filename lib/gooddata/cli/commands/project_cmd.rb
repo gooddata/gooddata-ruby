@@ -2,8 +2,8 @@
 
 require 'pp'
 
-require File.join(File.dirname(__FILE__), '../shared')
-require File.join(File.dirname(__FILE__), '../../commands/projects')
+require_relative '../shared'
+require_relative '../../commands/projects'
 
 GoodData::CLI.module_eval do
 

@@ -3,7 +3,7 @@
 require 'json'
 require 'rest-client'
 
-require File.join(File.dirname(__FILE__), 'version')
+require_relative 'version'
 
 module GoodData
   # # GoodData HTTP wrapper

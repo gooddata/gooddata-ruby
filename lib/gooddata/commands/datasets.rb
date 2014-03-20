@@ -3,8 +3,8 @@
 require 'date'
 
 
-require File.join(File.dirname(__FILE__), '../extract')
-require File.join(File.dirname(__FILE__), '../exceptions/command_failed')
+require_relative '../extract'
+require_relative '../exceptions/command_failed'
 
 module GoodData
   module Command

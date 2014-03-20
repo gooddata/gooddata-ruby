@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), 'metadata')
-require File.join(File.dirname(__FILE__), '../goodzilla/goodzilla')
+require_relative 'metadata'
+require_relative '../goodzilla/goodzilla'
 
 module GoodData
   # Metric representation

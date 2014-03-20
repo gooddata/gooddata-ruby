@@ -7,16 +7,16 @@ end
 require 'active_support/all'
 
 # Modules
-require File.join(File.dirname(__FILE__), 'gooddata/bricks/bricks')
-require File.join(File.dirname(__FILE__), 'gooddata/cli/cli')
-require File.join(File.dirname(__FILE__), 'gooddata/commands/commands')
-require File.join(File.dirname(__FILE__), 'gooddata/core/core')
-require File.join(File.dirname(__FILE__), 'gooddata/exceptions/exceptions')
-require File.join(File.dirname(__FILE__), 'gooddata/models/models')
+require_relative 'gooddata/bricks/bricks'
+require_relative 'gooddata/cli/cli'
+require_relative 'gooddata/commands/commands'
+require_relative 'gooddata/core/core'
+require_relative 'gooddata/exceptions/exceptions'
+require_relative 'gooddata/models/models'
 
 # Files
-require File.join(File.dirname(__FILE__), 'gooddata/client')
-require File.join(File.dirname(__FILE__), 'gooddata/connection')
-require File.join(File.dirname(__FILE__), 'gooddata/extract')
-require File.join(File.dirname(__FILE__), 'gooddata/helpers')
-require File.join(File.dirname(__FILE__), 'gooddata/version')
+require_relative 'gooddata/client'
+require_relative 'gooddata/connection'
+require_relative 'gooddata/extract'
+require_relative 'gooddata/helpers'
+require_relative 'gooddata/version'

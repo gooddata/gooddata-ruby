@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), '../exceptions/command_failed')
+require_relative '../exceptions/command_failed'
 
 module GoodData::Command
   class Api
@@ -29,13 +29,13 @@ module GoodData::Command
       end
 
       def get(path)
-        raise(CommandFailed, 'Specify the path you want to GET.') if path.nil?
+        raise(GoodData::CommandFailed, 'Specify the path you want to GET.') if path.nil?
         result = GoodData.get path
         result rescue puts result
       end
 
       def delete(path)
-        raise(CommandFailed, 'Specify the path you want to DELETE.') if path.nil?
+        raise(GoodData::CommandFailed, 'Specify the path you want to DELETE.') if path.nil?
         result = GoodData.delete path
         result rescue puts result
       end

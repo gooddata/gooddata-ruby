@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), 'data_result.rb')
+require_relative 'data_result.rb'
 
 module GoodData
   class EmptyResult < DataResult

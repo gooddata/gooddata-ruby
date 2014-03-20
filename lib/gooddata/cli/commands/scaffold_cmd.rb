@@ -2,8 +2,8 @@
 
 require 'pp'
 
-require File.join(File.dirname(__FILE__), '../shared')
-require File.join(File.dirname(__FILE__), '../../commands/scaffold')
+require_relative '../shared'
+require_relative '../../commands/scaffold'
 
 GoodData::CLI.module_eval do
 

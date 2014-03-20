@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.join(File.dirname(__FILE__), 'model')
+require_relative 'model'
 
 module GoodData
   class MdObject

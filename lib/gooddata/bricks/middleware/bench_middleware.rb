@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 require 'benchmark'
-require File.join(File.dirname(__FILE__), 'base_middleware')
+require_relative 'base_middleware'
 
 module GoodData::Bricks
   class BenchMiddleware < GoodData::Bricks::Middleware

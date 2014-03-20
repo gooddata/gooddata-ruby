@@ -2,7 +2,7 @@
 
 require 'gooddata'
 
-require File.join(File.dirname(__FILE__), 'base_middleware')
+require_relative 'base_middleware'
 
 module GoodData::Bricks
   class GoodDataMiddleware < GoodData::Bricks::Middleware
