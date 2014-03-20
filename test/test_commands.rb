@@ -1,8 +1,7 @@
 require 'logger'
 require 'tempfile'
 
-require 'helper'
-require 'gooddata/command'
+require 'gooddata/commands/commands'
 
 GoodData.logger = Logger.new(STDOUT)
 

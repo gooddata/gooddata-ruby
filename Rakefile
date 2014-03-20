@@ -28,11 +28,10 @@ namespace :test do
     t.pattern = 'spec/integration/**/*.rb'
   end
 
-  # Rake::TestTask.new(:legacy) do |test|
-  #   test.libs << 'lib' << 'test'
-  #   test.pattern = 'test/**/test_*.rb'
-  #   test.verbose = true
-  # end
+  desc "Run legacy tests"
+  RSpec::Core::RakeTask.new(:legacy) do |t|
+    t.pattern = 'test/**/test_*.rb'
+  end
 
   task :all => [:unit, :integration]
 end
