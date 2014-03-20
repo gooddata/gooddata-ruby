@@ -2,12 +2,7 @@
 
 require 'active_support/all'
 
-# TODO: Move to some shared helper
-class BigDecimal;
-  def pretty_print(p)
-    p.text to_s;
-  end
-end
+require_relative '../extensions/big_decimal'
 
 module GoodData
   class DataResult
