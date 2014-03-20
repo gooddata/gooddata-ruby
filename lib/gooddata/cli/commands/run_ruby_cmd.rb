@@ -44,10 +44,10 @@ GoodData::CLI.module_eval do
       GoodData.connect(opts)
       if options[:remote]
         fail 'You have to specify name of the deploy when deploying remotely' if options[:name].nil? || options[:name].empty?
-        require 'gooddata/commands/process'
+        require File.join(File.dirname(__FILE__), '../../commands/process')
         GoodData::Command::Process.run(options[:dir], opts)
       else
-        require 'gooddata/commands/runners'
+        require File.join(File.dirname(__FILE__), '../../commands/runners')
         GoodData::Command::Runners.run_ruby_locally(options[:dir], opts)
       end
       puts HighLine::color('Running ruby brick - DONE', HighLine::GREEN) if verbose

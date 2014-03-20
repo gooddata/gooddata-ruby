@@ -1,4 +1,5 @@
-require 'gooddata/bricks'
+require File.join(File.dirname(__FILE__), '../../gooddata/bricks/bricks')
+
 require './mybrick'
 
 GoodData::Bricks::Pipeline.prepare([LoggerMiddleware, BenchMiddleware, GoodDataMiddleware, MyBrick])

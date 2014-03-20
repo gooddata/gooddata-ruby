@@ -1,7 +1,10 @@
 # encoding: UTF-8
 
 require 'date'
-require 'gooddata/extract'
+
+
+require File.join(File.dirname(__FILE__), '../extract')
+require File.join(File.dirname(__FILE__), '../exceptions/command_failed')
 
 module GoodData
   module Command
