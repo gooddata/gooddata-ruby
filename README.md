@@ -5,7 +5,7 @@ It has a CLI client and it is a library which you can integrate into your applic
 
 The best documentation for the GoodData API can be found using these resources:
 
- * sdk.gooddata.com/gooddata-ruby/
+ * http://sdk.gooddata.com/gooddata-ruby/
  * http://docs.gooddata.apiary.io/
  * http://developer.gooddata.com/api
  * https://secure.gooddata.com/gdc
@@ -15,9 +15,9 @@ The best documentation for the GoodData API can be found using these resources:
 [![Gem Version](https://badge.fury.io/rb/gooddata.png)](http://badge.fury.io/rb/gooddata)
 [![Dependency Status](https://gemnasium.com/gooddata/gooddata-ruby.png)](https://gemnasium.com/gooddata/gooddata-ruby)
 [![Code Climate](https://codeclimate.com/github/gooddata/gooddata-ruby.png)](https://codeclimate.com/github/gooddata/gooddata-ruby)
-[![Coverage Status](https://coveralls.io/repos/korczis/gooddata-ruby/badge.png)](https://coveralls.io/r/korczis/gooddata-ruby)
-[![Build Status](https://travis-ci.org/korczis/gooddata-ruby.png?branch=refactor)](https://travis-ci.org/korczis/gooddata-ruby)
-[![Coverage Status](https://coveralls.io/repos/korczis/gooddata-ruby/badge.png?branch=refactor)](https://coveralls.io/r/korczis/gooddata-ruby)
+[![Build Status](https://travis-ci.org/gooddata/gooddata-ruby.png)](https://travis-ci.org/gooddata/gooddata-ruby)
+[![Coverage Status](https://coveralls.io/repos/gooddata/gooddata-ruby/badge.png)](https://coveralls.io/r/gooddata/gooddata-ruby)
+[![Build Status](https://travis-ci.org/gooddata/gooddata-ruby.png)](https://travis-ci.org/gooddata/gooddata-ruby)
 
 ## Install
 
