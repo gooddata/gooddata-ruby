@@ -22,7 +22,7 @@ module GoodData
         exit 1
       end
 
-      def find_goodfile(pwd, options={})
+      def find_goodfile(pwd=`pwd`.strip!, options={})
         root = Pathname(options[:root] || '/')
         pwd = Pathname(pwd).expand_path
         begin
@@ -50,7 +50,7 @@ module GoodData
       end
 
       def sanitize_string(str)
-        str = ActiveSupport::Inflector.transliterate(str)
+        str = ActiveSupport::Inflector.transliterate(str).downcase
         str.gsub(/[^a-z]/, '')
       end
     end

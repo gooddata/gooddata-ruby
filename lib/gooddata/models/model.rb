@@ -1,7 +1,10 @@
 # encoding: UTF-8
 
+require_relative '../helpers'
+
 require 'open-uri'
 require 'active_support/all'
+
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
 # elements, including the server-side data model.
@@ -705,7 +708,7 @@ module GoodData
         Schema.new JSON.load(open(file))
       end
 
-      def initialize(config, name = nil)
+      def initialize(config, name = 'Default Name', title = 'Default Title')
         super()
         @fields = []
         @attributes = []
@@ -718,7 +721,10 @@ module GoodData
         @labels = []
 
         config[:name] = name unless config[:name]
-        config[:title] = config[:title] || config[:name].humanize
+        config[:title] = config[:name] unless config[:title]
+        config[:title] = title unless config[:title]
+        config[:title] = config[:title].humanize
+
         fail 'Schema name not specified' unless config[:name]
         self.name = config[:name]
         self.title = config[:title]
@@ -912,7 +918,11 @@ module GoodData
       def initialize(hash, schema)
         super()
         raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
-        @name = hash[:name] || raise('Data set fields must have their names defined')
+        raise('Data set fields must have their names defined') if hash[:name].nil?
+
+        hash[:name] = GoodData::Helpers.sanitize_string(hash[:name])
+
+        @name = hash[:name]
         @title = hash[:title] || hash[:name].humanize
         @folder = hash[:folder]
         @schema = schema
@@ -1337,7 +1347,7 @@ module GoodData
     class Folder < MdObject
       def initialize(title)
         @title = title
-        @name = title
+        @name = GoodData::Helpers.sanitize_string(title)
       end
 
       def to_maql_create
