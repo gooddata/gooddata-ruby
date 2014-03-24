@@ -1,20 +1,24 @@
 # encoding: UTF-8
 
+require 'erubis'
+require 'fileutils'
+
 module GoodData::Command
   class Scaffold
-    class << self
-      def project(name)
-        require 'erubis'
-        require 'fileutils'
+    TEMPLATES_PATH = Pathname(__FILE__) + '../../../templates'
 
-        templates_path = Pathname(__FILE__) + '../../../templates'
+    class << self
+      # Scaffolds new project
+      # TODO: Add option for custom output dir
+      def project(name)
+        fail ArgumentError, 'No name specified' if name.nil?
 
         FileUtils.mkdir(name)
         FileUtils.cd(name) do
 
           FileUtils.mkdir('model')
           FileUtils.cd('model') do
-            input = File.read(templates_path + 'project/model/model.rb.erb')
+            input = File.read(TEMPLATES_PATH + 'project/model/model.rb.erb')
             eruby = Erubis::Eruby.new(input)
             File.open('model.rb', 'w') do |f|
               f.write(eruby.result(:name => name))
@@ -23,10 +27,10 @@ module GoodData::Command
 
           FileUtils.mkdir('data')
           FileUtils.cd('data') do
-            FileUtils.cp(Dir.glob(templates_path + 'project/data/*.csv'), '.')
+            FileUtils.cp(Dir.glob(TEMPLATES_PATH + 'project/data/*.csv'), '.')
           end
 
-          input = File.read(templates_path + 'project/Goodfile.erb')
+          input = File.read(TEMPLATES_PATH + 'project/Goodfile.erb')
           eruby = Erubis::Eruby.new(input)
           File.open('Goodfile', 'w') do |f|
             f.write(eruby.result())
@@ -34,21 +38,20 @@ module GoodData::Command
         end
       end
 
+      # Scaffolds new brick
+      # TODO: Add option for custom output dir
       def brick(name)
-        require 'erubis'
-        require 'fileutils'
-
-        templates_path = Pathname(__FILE__) + '../../../templates'
+        fail ArgumentError, 'No name specified' if name.nil?
 
         FileUtils.mkdir(name)
         FileUtils.cd(name) do
-          input = File.read(templates_path + 'bricks/brick.rb.erb')
+          input = File.read(TEMPLATES_PATH + 'bricks/brick.rb.erb')
           eruby = Erubis::Eruby.new(input)
           File.open('brick.rb', 'w') do |f|
             f.write(eruby.result())
           end
 
-          input = File.read(templates_path + 'bricks/main.rb.erb')
+          input = File.read(TEMPLATES_PATH + 'bricks/main.rb.erb')
           eruby = Erubis::Eruby.new(input)
           File.open('main.rb', 'w') do |f|
             f.write(eruby.result())

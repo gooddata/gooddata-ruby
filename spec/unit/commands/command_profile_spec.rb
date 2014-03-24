@@ -9,4 +9,10 @@ describe GoodData::Command::Profile do
     cmd = GoodData::Command::Profile.new()
     cmd.should be_a(GoodData::Command::Profile)
   end
+
+  describe "#show" do
+    it "Shows profile" do
+      GoodData::Command::Profile.show
+    end
+  end
 end

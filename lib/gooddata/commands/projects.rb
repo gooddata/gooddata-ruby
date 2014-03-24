@@ -7,6 +7,7 @@ module GoodData::Command
         GoodData::Project.all
       end
 
+      # Create new project based on options supplied
       def create(options={})
         title = options[:title]
         summary = options[:summary]
@@ -16,10 +17,12 @@ module GoodData::Command
         GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
       end
 
+      # Show existing project
       def show(id)
         GoodData::Project[id]
       end
 
+      # Clone existing project
       def clone(project_id, options)
         with_data = options[:with_data]
         with_users = options[:with_users]
@@ -63,11 +66,13 @@ module GoodData::Command
         true
       end
 
+      # Delete existing project
       def delete(project_id)
         p = GoodData::Project[project_id]
         p.delete
       end
 
+      # Get Spec and ID (of project)
       def get_spec_and_project_id(base_path)
         goodfile_path = GoodData::Helpers.find_goodfile(Pathname(base_path))
         fail 'Goodfile could not be located in any parent directory. Please make sure you are inside a gooddata project folder.' if goodfile_path.nil?
@@ -86,6 +91,7 @@ module GoodData::Command
         [spec, goodfile[:project_id]]
       end
 
+      # Update project
       def update(options={})
         project = options[:project]
         project_id = project && project.pid
@@ -93,6 +99,7 @@ module GoodData::Command
         GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :project => project_id)
       end
 
+      # Build project
       def build(options={})
         GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
       end
