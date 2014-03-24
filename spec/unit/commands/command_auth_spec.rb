@@ -1,6 +1,14 @@
+require 'highline'
+
 require 'gooddata/commands/auth'
 
 describe GoodData::Command::Auth do
+  before(:all) do
+    @input = StringIO.new
+    @output = StringIO.new
+    @terminal = HighLine.new(@input, @output)
+  end
+
   before(:each) do
     @connection = ConnectionHelper::create_default_connection
   end
