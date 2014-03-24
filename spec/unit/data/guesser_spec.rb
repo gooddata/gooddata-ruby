@@ -1,17 +1,17 @@
 require 'gooddata'
 
-describe GoodData::Command::Guesser do
+describe GoodData::Data::Guesser do
   it "order LDM types as follows: cp, fact, date, attribute" do
     expect = [:connection_point, :fact, :date, :attribute]
-    result = GoodData::Command::Guesser::sort_types([:fact, :attribute, :connection_point, :date])
+    result = GoodData::Data::Guesser::sort_types([:fact, :attribute, :connection_point, :date])
     result.should == expect
 
     expect = [:fact]
-    result = GoodData::Command::Guesser::sort_types([:fact])
+    result = GoodData::Data::Guesser::sort_types([:fact])
     result.should == expect
 
     expect = []
-    result = GoodData::Command::Guesser::sort_types([])
+    result = GoodData::Data::Guesser::sort_types([])
     result.should == expect
   end
 
@@ -24,9 +24,9 @@ describe GoodData::Command::Guesser do
       ['4', 'one', 'huh', '2010-02-28 08:12:34', '1970-10-23', nil]
     ]
 
-    fields = GoodData::Command::Guesser.new(csv).guess(csv.size + 10)
+    fields = GoodData::Data::Guesser.new(csv).guess(csv.size + 10)
 
-    expect = GoodData::Command::Guesser::sort_types([:connection_point, :fact, :attribute])
+    expect = GoodData::Data::Guesser::sort_types([:connection_point, :fact, :attribute])
     result = fields['cp']
     result.should == expect
 
@@ -38,15 +38,15 @@ describe GoodData::Command::Guesser do
     result = fields['a2']
     result.should == expect
 
-    expect = GoodData::Command::Guesser::sort_types([:attribute, :connection_point, :date])
+    expect = GoodData::Data::Guesser::sort_types([:attribute, :connection_point, :date])
     result = fields['d1']
     result.should == expect
 
-    expect = GoodData::Command::Guesser::sort_types([:attribute, :date])
+    expect = GoodData::Data::Guesser::sort_types([:attribute, :date])
     result = fields['d2']
     result.should == expect
 
-    expect = GoodData::Command::Guesser::sort_types([:attribute, :connection_point, :fact])
+    expect = GoodData::Data::Guesser::sort_types([:attribute, :connection_point, :fact])
     result = fields['f']
     result.should == expect
 

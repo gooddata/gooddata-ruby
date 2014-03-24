@@ -29,9 +29,9 @@ SimpleCov.start do
   add_group 'Bricks', 'lib/gooddata/bricks'
   add_group 'CLI', 'lib/gooddata/cli'
   add_group 'Commands', 'lib/gooddata/commands'
-  add_group 'Commands', 'lib/gooddata/core'
-  add_group 'Commands', 'lib/gooddata/exceptions'
-  add_group 'Commands', 'lib/gooddata/extensions'
+  add_group 'Core', 'lib/gooddata/core'
+  add_group 'Exceptions', 'lib/gooddata/exceptions'
+  add_group 'Extensions', 'lib/gooddata/extensions'
   add_group 'Goodzilla', 'lib/gooddata/goodzilla'
   add_group 'Models', 'lib/gooddata/models'
 end
