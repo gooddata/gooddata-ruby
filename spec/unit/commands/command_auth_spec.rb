@@ -61,8 +61,21 @@ describe GoodData::Command::Auth do
   end
 
   describe "#ask_for_credentials" do
+    credentials = {
+      :email => 'joedoe@example.com',
+      :password => 'secretPassword',
+      :token => 't0k3n1sk0',
+    }
+
     it 'Interactively asks user for crendentials' do
       pending("Mock STDIO")
+
+      @input << credentials[:email] << "\n"
+      @input << credentials[:password] << "\n"
+      @input << credentials[:token] << "\n"
+      @input.rewind
+
+      GoodData::Command::Auth.ask_for_credentials
     end
   end
 
@@ -74,7 +87,7 @@ describe GoodData::Command::Auth do
 
   describe "#unstore" do
     it 'Removes stored credentials' do
-      pending("Mock STDIO")
+      pending("Mock fileutils")
     end
   end
 end
