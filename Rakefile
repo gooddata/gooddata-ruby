@@ -15,6 +15,11 @@ task :cop do
   exec "rubocop lib/"
 end
 
+Coveralls::RakeTask.new
+
+desc 'Run tests with coveralls'
+task :coveralls => ['test:unit', 'coveralls:push']
+
 RSpec::Core::RakeTask.new(:test)
 
 namespace :test do
@@ -42,11 +47,6 @@ task :test => 'test:all'
 task :usage do
   puts "No rake task specified, use rake -T to list them"
 end
-
-Coveralls::RakeTask.new
-
-desc 'Run tests with coveralls'
-task :test_with_coveralls => ['test:unit', 'coveralls:push']
 
 YARD::Rake::YardocTask.new
 
