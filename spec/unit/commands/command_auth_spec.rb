@@ -1,13 +1,23 @@
 require 'highline'
 
+require 'gooddata/cli/terminal'
 require 'gooddata/commands/auth'
 
 describe GoodData::Command::Auth do
+  ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL
+
   before(:all) do
     @input = StringIO.new
     @output = StringIO.new
     @terminal = HighLine.new(@input, @output)
+
+    GoodData::CLI::DEFAULT_TERMINAL = @terminal
   end
+
+  after(:all) do
+    GoodData::CLI::DEFAULT_TERMINAL = ORIG_TERMINAL
+  end
+
 
   before(:each) do
     @connection = ConnectionHelper::create_default_connection
@@ -68,7 +78,7 @@ describe GoodData::Command::Auth do
     }
 
     it 'Interactively asks user for crendentials' do
-      pending("Mock STDIO")
+      # pending("Mock STDIO")
 
       @input << credentials[:email] << "\n"
       @input << credentials[:password] << "\n"

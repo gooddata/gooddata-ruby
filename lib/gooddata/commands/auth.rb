@@ -3,6 +3,7 @@
 require 'highline/import'
 require 'json'
 
+require_relative '../cli/terminal'
 require_relative '../helpers'
 
 module GoodData::Command
@@ -74,9 +75,10 @@ module GoodData::Command
       # Ask for credentials
       def ask_for_credentials
         puts 'Enter your GoodData credentials.'
-        user = HighLine.new.ask('Email')
-        password = HighLine.new.ask('Password') { |q| q.echo = 'x' }
-        auth_token = HighLine.new.ask('Authorization Token')
+        user = GoodData::CLI.terminal.ask('Email')
+        password = GoodData::CLI.terminal.ask('Password') { |q| q.echo = 'x' }
+        auth_token = GoodData::CLI.terminal.ask('Authorization Token')
+
         {:username => user, :password => password, :auth_token => auth_token}
       end
 
@@ -85,7 +87,7 @@ module GoodData::Command
         credentials = ask_for_credentials
 
         ovewrite = if File.exist?(credentials_file)
-                     HighLine::ask("Overwrite existing stored credentials (y/n)")
+                     GoodData::CLI.terminal.ask("Overwrite existing stored credentials (y/n)")
                    else
                      'y'
                    end

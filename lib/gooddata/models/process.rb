@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
 require 'pry'
-require 'highline'
 
 module GoodData
   class Process
