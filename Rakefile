@@ -17,8 +17,14 @@ end
 
 Coveralls::RakeTask.new
 
+desc "Create rspec coverage"
+task :coverage do
+  ENV['COVERAGE'] = 'true'
+  Rake::Task["test:unit"].execute
+end
+
 desc 'Run tests with coveralls'
-task :coveralls => ['test:unit', 'coveralls:push']
+task :coveralls => ['coverage', 'coveralls:push']
 
 RSpec::Core::RakeTask.new(:test)
 
