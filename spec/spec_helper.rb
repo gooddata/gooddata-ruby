@@ -23,8 +23,8 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
 ]
 
 SimpleCov.start do
-  # add_filter 'spec/'
-  # add_filter 'test/'
+  add_filter 'spec/'
+  add_filter 'test/'
 
   add_group 'Bricks', 'lib/gooddata/bricks'
   add_group 'CLI', 'lib/gooddata/cli'
