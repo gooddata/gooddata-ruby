@@ -19,6 +19,7 @@ The best documentation for the GoodData API can be found using these resources:
 [![Coverage Status](https://coveralls.io/repos/gooddata/gooddata-ruby/badge.png)](https://coveralls.io/r/gooddata/gooddata-ruby)
 [![Build Status](https://travis-ci.org/gooddata/gooddata-ruby.png)](https://travis-ci.org/gooddata/gooddata-ruby)
 
+
 ## Install
 
 If you are using bundler. Add
