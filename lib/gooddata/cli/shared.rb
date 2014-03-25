@@ -1,6 +1,8 @@
+# encoding: UTF-8
+
 require 'gli'
 
-require File.join(File.dirname(__FILE__), "../version")
+require_relative '../version'
 
 include GLI::App
 

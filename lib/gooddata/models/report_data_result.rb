@@ -1,9 +1,11 @@
-require File.join(File.dirname(__FILE__), "data_result.rb")
+# encoding: UTF-8
+
+require_relative 'data_result.rb'
 
 module GoodData
   class ReportDataResult < DataResult
-
-    ROW_LIMIT = 10000000
+    # Row limit
+    ROW_LIMIT = 10_000_000
 
     attr_reader :row_headers, :column_headers, :table, :headers_height, :headers_width
 
@@ -88,19 +90,19 @@ module GoodData
     def each_level(table, level, children, lookup)
       max_level = level + 1
       children.each do |kid|
-        first = kid["first"]
-        last = kid["last"]
+        first = kid['first']
+        last = kid['last']
         repetition = last - first + 1
         repetition.times do |i|
           table[first + i] ||= []
-          if kid["type"] == 'total'
-            table[first + i][level] = kid["id"]
+          if kid['type'] == 'total'
+            table[first + i][level] = kid['id']
           else
-            table[first + i][level] = lookup[level][kid["id"].to_s]
+            table[first + i][level] = lookup[level][kid['id'].to_s]
           end
         end
-        if (!kid["children"].empty?)
-          new_level = each_level(table, level+1, kid["children"], lookup)
+        if (!kid['children'].empty?)
+          new_level = each_level(table, level+1, kid['children'], lookup)
           max_level = [max_level, new_level].max
         end
       end
@@ -108,29 +110,30 @@ module GoodData
     end
 
     def tabularize_rows
-      rows = data["xtab_data"]["rows"]
-      kids = rows["tree"]["children"]
+      rows = data['xtab_data']['rows']
+      kids = rows['tree']['children']
 
       if kids.empty? || (kids.size == 1 && kids.first['type'] == 'metric')
         headers, size = [[nil]], 0
       else
         headers = []
-        size = each_level(headers, 0, rows["tree"]["children"], rows["lookups"])
+        size = each_level(headers, 0, rows['tree']['children'], rows['lookups'])
       end
-      return headers, size
+      return headers, size # rubocop:disable RedundantReturn
     end
 
     def tabularize_columns
-      columns = data["xtab_data"]["columns"]
-      kids = columns["tree"]["children"]
+      columns = data['xtab_data']['columns']
+      kids = columns['tree']['children']
 
       if kids.empty? || (kids.size == 1 && kids.first['type'] == 'metric')
         headers, size = [[nil]], 0
       else
         headers = []
-        size = each_level(headers, 0, columns["tree"]["children"], columns["lookups"])
+        size = each_level(headers, 0, columns['tree']['children'], columns['lookups'])
       end
-      return headers, size
+
+      return headers, size # rubocop:disable RedundantReturn
     end
 
     def assemble_table()
@@ -152,7 +155,7 @@ module GoodData
         end
       end
 
-      xtab_data = data["xtab_data"]["data"]
+      xtab_data = data['xtab_data']['data']
       #    puts "=== DATA === #{column_headers.size}x#{row_headers.size}"
       (column_headers.size).times do |i|
         (row_headers.size).times do |j|

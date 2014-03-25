@@ -1,9 +1,11 @@
-require File.join(File.dirname(__FILE__), 'version')
-require File.join(File.dirname(__FILE__), 'connection')
-require File.join(File.dirname(__FILE__), 'helpers')
+# encoding: UTF-8
+
+require_relative 'version'
+require_relative 'connection'
+require_relative 'helpers'
 
 # fastercsv is built in Ruby 1.9
-if RUBY_VERSION < "1.9"
+if RUBY_VERSION < '1.9'
   require 'fastercsv'
 else
   require 'csv'
@@ -13,7 +15,7 @@ end
 # Initializes required dynamically loaded classes
 def init_gd_module()
   # Metadata packages, such as report.rb, require this to be loaded first
-  require File.join(File.dirname(__FILE__), '/models/metadata.rb')
+  require_relative 'models/metadata.rb'
 
   # Load models from models folder
   Dir[File.dirname(__FILE__) + '/models/*.rb'].each { |file| require file }
@@ -62,7 +64,10 @@ module GoodData
 
   # Dummy implementation of logger
   class NilLogger
-    def debug(*args) ; end
+    def debug(*args)
+      ;
+    end
+
     alias :info :debug
     alias :warn :debug
     alias :error :debug
@@ -73,6 +78,7 @@ module GoodData
     GoodData.project = project
     GoodData.project
   end
+
   alias :use :project=
 
   class << self
@@ -88,11 +94,11 @@ module GoodData
     #
     def connect(options=nil, second_options=nil, third_options={})
       if options.is_a? Hash
-        fail "You have to provide login and password" if ((options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?))
+        fail 'You have to provide login and password' if ((options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?))
         threaded[:connection] = Connection.new(options[:login], options[:password], options)
         GoodData.project = options[:project] if options[:project]
       elsif options.is_a?(String) && second_options.is_a?(String)
-        fail "You have to provide login and password" if ((options.nil? || options.empty?) && (second_options.nil? || second_options.empty?))
+        fail 'You have to provide login and password' if ((options.nil? || options.empty?) && (second_options.nil? || second_options.empty?))
         threaded[:connection] = Connection.new(options, second_options, third_options)
       end
 
@@ -126,7 +132,7 @@ module GoodData
     # @param options Options get routed to connect eventually so everything that you can use there should be possible to use here.
     #
     def connect_with_sst(token, options={})
-      create_authenticated_connection(options.merge({:cookies => {"GDCAuthSST" => token}}))
+      create_authenticated_connection(options.merge({:cookies => {'GDCAuthSST' => token}}))
     end
 
     # This method is aimed at creating an authenticated connection in case you do not hae pass/login but you have SST
@@ -146,7 +152,7 @@ module GoodData
     # @param project Project to use
     # @param bl Block to be performed
     def with_project(project, &bl)
-      fail "You have to specify a project when using with_project" if project.nil? || (project.is_a?(String) && project.empty?)
+      fail 'You have to specify a project when using with_project' if project.nil? || (project.is_a?(String) && project.empty?)
       old_project = GoodData.project
       begin
         GoodData.use(project)
@@ -162,7 +168,7 @@ module GoodData
     #
     # @see GoodData.connect
     def connection
-      threaded[:connection] || raise("Please authenticate with GoodData.connect first")
+      threaded[:connection] || raise('Please authenticate with GoodData.connect first')
     end
 
     # Sets the active project
@@ -264,12 +270,12 @@ module GoodData
     end
 
     def upload_to_user_webdav(file, options={})
-      u = URI(connection.options[:webdav_server] || GoodData.project.links["uploads"])
-      url = URI.join(u.to_s.chomp(u.path.to_s), "/uploads/")
+      u = URI(connection.options[:webdav_server] || GoodData.project.links['uploads'])
+      url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
       connection.upload(file, options.merge({
-        :directory    => options[:directory],
-        :staging_url  => url
-      }))
+                                              :directory => options[:directory],
+                                              :staging_url => url
+                                            }))
     end
 
     def get_project_webdav_path(file, options={})
@@ -280,9 +286,9 @@ module GoodData
     def upload_to_project_webdav(file, options={})
       url = get_project_webdav_path(file, options)
       connection.upload(file, options.merge({
-        :directory    => options[:directory],
-        :staging_url  => url
-      }))
+                                              :directory => options[:directory],
+                                              :staging_url => url
+                                            }))
     end
 
     def get_user_webdav_path(file, options={})
@@ -293,13 +299,13 @@ module GoodData
     def download_from_user_webdav(file, where, options={})
       url = get_user_webdav_path(file, options)
       connection.download(file, where, options.merge({
-        :staging_url  => url
-      }))
+                                                       :staging_url => url
+                                                     }))
     end
 
     def poll(result, key, options={})
       sleep_interval = options[:sleep_interval] || 10
-      link = result[key]["links"]["poll"]
+      link = result[key]['links']['poll']
       response = GoodData.get(link, :process => false)
       while response.code != 204
         sleep sleep_interval

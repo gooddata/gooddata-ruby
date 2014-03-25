@@ -1,5 +1,6 @@
-module GoodData::Bricks
+# encoding: UTF-8
 
+module GoodData::Bricks
   class Middleware
     attr_accessor :app
 
@@ -8,6 +9,5 @@ module GoodData::Bricks
     def initialize(options={})
       @app = options[:app]
     end
-
   end
 end

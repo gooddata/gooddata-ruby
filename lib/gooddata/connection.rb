@@ -1,10 +1,11 @@
+# encoding: UTF-8
+
 require 'json'
 require 'rest-client'
 
-require File.join(File.dirname(__FILE__), 'version')
+require_relative 'version'
 
 module GoodData
-
   # # GoodData HTTP wrapper
   #
   # Provides a convenient HTTP wrapper for talking with the GoodData API.
@@ -27,7 +28,6 @@ module GoodData
   # To send a HTTP request use either the get, post or delete methods documented below.
   #
   class Connection
-
     DEFAULT_URL = 'https://secure.gooddata.com'
     LOGIN_PATH = '/gdc/account/login'
     TOKEN_PATH = '/gdc/account/token'
@@ -46,7 +46,7 @@ module GoodData
     #     end
     #
     def retryable(options = {}, &block)
-      opts = { :tries => 1, :on => Exception }.merge(options)
+      opts = {:tries => 1, :on => Exception}.merge(options)
 
       retry_exception, retries = opts[:on], opts[:tries]
 
@@ -67,15 +67,14 @@ module GoodData
     # @param password The GoodData account password
     #
     def initialize(username, password, options = {})
-      @status     = :not_connected
-      @username   = username
-      @password   = password
-      @url        = options[:server] || DEFAULT_URL
+      @status = :not_connected
+      @username = username
+      @password = password
+      @url = options[:server] || DEFAULT_URL
       @auth_token = options[:gdc_temporary_token]
-      @options    = options
+      @options = options
 
       @server = create_server_connection(@url, @options)
-      
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.
@@ -158,7 +157,7 @@ module GoodData
 
     # Get the cookies associated with the current connection.
     def cookies
-      @cookies ||= { :cookies => {} }
+      @cookies ||= {:cookies => {}}
     end
 
     # Set the cookies used when communicating with the GoodData API.
@@ -189,13 +188,12 @@ module GoodData
     # /uploads/ resources are special in that they use a different
     # host and a basic authentication.
     def upload(file, options={})
-
       ensure_connection
 
       dir = options[:directory] || ''
       staging_uri = options[:staging_url].to_s
       url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
-      
+
       # Make a directory, if needed
       unless dir.empty? then
         method = :get
@@ -203,46 +201,46 @@ module GoodData
         begin
           # first check if it does exits
           RestClient::Request.execute({
-            :method => method,
-            :url => url,
-            :timeout => @options[:timeout],
-            :headers => {
-              :user_agent => GoodData.gem_version_string
-            }}.merge(cookies)
+                                        :method => method,
+                                        :url => url,
+                                        :timeout => @options[:timeout],
+                                        :headers => {
+                                          :user_agent => GoodData.gem_version_string
+                                        }}.merge(cookies)
           )
         rescue RestClient::Exception => e
           if e.http_code == 404 then
             method = :mkcol
             GoodData.logger.debug "#{method}: #{url}"
             RestClient::Request.execute({
-              :method => method,
-              :url => url,
-              :timeout => @options[:timeout],
-              :headers => {
-                :user_agent => GoodData.gem_version_string
-              }}.merge(cookies)
+                                          :method => method,
+                                          :url => url,
+                                          :timeout => @options[:timeout],
+                                          :headers => {
+                                            :user_agent => GoodData.gem_version_string
+                                          }}.merge(cookies)
             )
           end
         end
       end
 
-      payload = options[:stream] ? "file" : File.read(file)
-      filename = options[:filename] || options[:stream] ? "randome-filename.txt" : File.basename(file)
+      payload = options[:stream] ? 'file' : File.read(file)
+      filename = options[:filename] || options[:stream] ? 'randome-filename.txt' : File.basename(file)
 
       # Upload the file
       # puts "uploading the file #{URI.join(url, filename).to_s}"
       req = RestClient::Request.new({
-        :method => :put,
-        :url => URI.join(url, filename).to_s,
-        :timeout => @options[:timeout],
-        :headers => {
-          :user_agent => GoodData.gem_version_string,
-        },
-        :payload => payload,
-        :raw_response => true,
-        :user => @username,
-        :password => @password
-      })
+                                      :method => :put,
+                                      :url => URI.join(url, filename).to_s,
+                                      :timeout => @options[:timeout],
+                                      :headers => {
+                                        :user_agent => GoodData.gem_version_string,
+                                      },
+                                      :payload => payload,
+                                      :raw_response => true,
+                                      :user => @username,
+                                      :password => @password
+                                    })
       # .merge(cookies))
       resp = req.execute
       true
@@ -252,11 +250,11 @@ module GoodData
       staging_uri = options[:staging_url].to_s
       url = staging_uri + what
       req = RestClient::Request.new({
-        :method => 'GET',
-        :url => url,
-        :user => @username,
-        :password => @password
-      })
+                                      :method => 'GET',
+                                      :url => url,
+                                      :user => @username,
+                                      :password => @password
+                                    })
 
       if where.is_a?(String)
         File.open(where, 'w') do |f|
@@ -277,8 +275,8 @@ module GoodData
     end
 
     def disconnect
-      if connected? && GoodData.connection.user["state"]
-        GoodData.delete(GoodData.connection.user["state"])
+      if connected? && GoodData.connection.user['state']
+        GoodData.delete(GoodData.connection.user['state'])
         @status = :not_connected
       end
     end
@@ -287,12 +285,12 @@ module GoodData
 
     def create_server_connection(url, options)
       RestClient::Resource.new url,
-        :timeout => options[:timeout],
-        :headers => {
-          :content_type => :json,
-          :accept => [ :json, :zip ],
-          :user_agent => GoodData::gem_version_string,
-        }
+                               :timeout => options[:timeout],
+                               :headers => {
+                                 :content_type => :json,
+                                 :accept => [:json, :zip],
+                                 :user_agent => GoodData::gem_version_string,
+                               }
     end
 
     def ensure_connection
@@ -300,7 +298,7 @@ module GoodData
     end
 
     def connect
-      GoodData.logger.info "Connecting to GoodData..."
+      GoodData.logger.info 'Connecting to GoodData...'
       @status = :connecting
       authenticate
     end
@@ -313,7 +311,7 @@ module GoodData
           'remember' => 1
         }
       }
-      GoodData.logger.debug "Logging in..."
+      GoodData.logger.debug 'Logging in...'
       @user = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
       refresh_token :dont_reauth => true # avoid infinite loop if refresh_token fails with 401
 
@@ -333,20 +331,20 @@ module GoodData
         content_type = response.headers[:content_type]
         return response if options[:process] == false
 
-        if content_type == "application/json" || content_type == "application/json;charset=UTF-8" then
+        if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8' then
           result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
           GoodData.logger.debug "Response: #{result.inspect}"
-        elsif content_type == "application/zip" then
+        elsif content_type == 'application/zip' then
           result = response
-          GoodData.logger.debug "Response: a zipped stream"
+          GoodData.logger.debug 'Response: a zipped stream'
         elsif response.headers[:content_length].to_s == '0'
           result = nil
-          GoodData.logger.debug "Response: Empty response possibly 204"
+          GoodData.logger.debug 'Response: Empty response possibly 204'
         elsif response.code == 204
           result = nil
-          GoodData.logger.debug "Response: 204 no content"
+          GoodData.logger.debug 'Response: 204 no content'
         else
-          raise "Unsupported response content type '%s':\n%s" % [ content_type, response.to_str[0..127] ]
+          raise "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
         end
         result
       rescue RestClient::Exception => e
@@ -356,7 +354,7 @@ module GoodData
     end
 
     def refresh_token(options = {})
-      GoodData.logger.debug "Getting authentication token..."
+      GoodData.logger.debug 'Getting authentication token...'
       begin
         get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
       rescue RestClient::Unauthorized
@@ -366,13 +364,13 @@ module GoodData
     end
 
     def scrub_params(params, keys)
-      keys = keys.reduce([]) {|memo, k| memo.concat([k.to_s, k.to_sym])}
+      keys = keys.reduce([]) { |memo, k| memo.concat([k.to_s, k.to_sym]) }
 
       new_params = Marshal.load(Marshal.dump(params))
       GoodData::Helpers.hash_dfs(new_params) do |k, key|
         keys.each do |key_to_scrub|
           begin
-            k[key_to_scrub] = ("*" * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub) && k[key_to_scrub]
+            k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub) && k[key_to_scrub]
           rescue
             binding.pry
           end
@@ -380,6 +378,5 @@ module GoodData
       end
       new_params
     end
-
   end
 end

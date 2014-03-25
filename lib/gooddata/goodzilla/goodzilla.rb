@@ -1,5 +1,6 @@
-module GoodData::SmallGoodZilla
+# encoding: UTF-8
 
+module GoodData::SmallGoodZilla
   # Get IDs from MAQL string
   # @param a_maql_string Input MAQL string
   # @return [Array<String>] List of IDS
@@ -42,7 +43,7 @@ module GoodData::SmallGoodZilla
       []
     else
       res = GoodData::MdObject.identifier_to_uri(*ids)
-      fail "Not all of the identifiers were resolved" if (Array(res).size != ids.size)
+      fail 'Not all of the identifiers were resolved' if (Array(res).size != ids.size)
       res
     end
   end
@@ -54,20 +55,18 @@ module GoodData::SmallGoodZilla
 
   def self.interpolate_metric(metric, dictionary)
     interpolated = interpolate({
-      :facts => GoodData::SmallGoodZilla.get_facts(metric),
-      :attributes => GoodData::SmallGoodZilla.get_attributes(metric),
-      :metrics => GoodData::SmallGoodZilla.get_metrics(metric)
-    }, dictionary)
+                                 :facts => GoodData::SmallGoodZilla.get_facts(metric),
+                                 :attributes => GoodData::SmallGoodZilla.get_attributes(metric),
+                                 :metrics => GoodData::SmallGoodZilla.get_metrics(metric)
+                               }, dictionary)
 
     ids = GoodData::SmallGoodZilla.get_ids(metric)
     interpolated_ids = ids.zip(Array(interpolate_ids(ids)))
 
-    metric = interpolated[:facts].reduce(metric) {|memo, item| memo.sub("#\"#{item[0]}\"", "[#{item[1]}]")}
-    metric = interpolated[:attributes].reduce(metric) {|memo, item| memo.sub("@\"#{item[0]}\"", "[#{item[1]}]")}
-    metric = interpolated[:metrics].reduce(metric) {|memo, item| memo.sub("?\"#{item[0]}\"", "[#{item[1]}]")}
-    metric = interpolated_ids.reduce(metric) {|memo, item| memo.sub("![#{item[0]}]", "[#{item[1]}]")}
+    metric = interpolated[:facts].reduce(metric) { |memo, item| memo.sub("#\"#{item[0]}\"", "[#{item[1]}]") }
+    metric = interpolated[:attributes].reduce(metric) { |memo, item| memo.sub("@\"#{item[0]}\"", "[#{item[1]}]") }
+    metric = interpolated[:metrics].reduce(metric) { |memo, item| memo.sub("?\"#{item[0]}\"", "[#{item[1]}]") }
+    metric = interpolated_ids.reduce(metric) { |memo, item| memo.sub("![#{item[0]}]", "[#{item[1]}]") }
     metric
-
   end
-
 end

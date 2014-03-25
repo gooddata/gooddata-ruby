@@ -1,6 +1,10 @@
 require 'gooddata/commands/scaffold'
 
 describe GoodData::Command::Scaffold do
+  before(:all) do
+    @suffix = Time.now.strftime('%Y%m%d%H%M%S')
+  end
+
   before(:each) do
     @connection = ConnectionHelper::create_default_connection
   end
@@ -9,4 +13,45 @@ describe GoodData::Command::Scaffold do
     cmd = GoodData::Command::Scaffold.new()
     cmd.should be_a(GoodData::Command::Scaffold)
   end
+
+  describe "#brick" do
+    before(:each) do
+      @brick_name = "test_brick_#{@suffix}"
+    end
+
+    after(:each) do
+      FileUtils.rm_rf @brick_name
+    end
+
+    it "Throws ArgumentError exception if no name specified" do
+      expect do
+        GoodData::Command::Scaffold.brick(nil)
+      end.to raise_exception
+    end
+
+    it "Scaffolds new brick" do
+      GoodData::Command::Scaffold.brick(@brick_name)
+    end
+  end
+
+  describe "#project" do
+    before(:each) do
+      @project_name = "test_project_#{@suffix}"
+    end
+
+    after(:each) do
+      FileUtils.rm_rf @project_name
+    end
+
+    it "Throws ArgumentError exception if no name specified" do
+      expect do
+        GoodData::Command::Scaffold.project(nil)
+      end.to raise_exception
+    end
+
+    it "Scaffolds new project" do
+      GoodData::Command::Scaffold.project(@project_name)
+    end
+  end
+
 end

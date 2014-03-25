@@ -4,6 +4,8 @@ require 'gooddata/models/model'
 describe GoodData::Model::SchemaBuilder do
 
   it "should create a schema" do
+    # pending("Using of humanize")
+
     builder = GoodData::Model::SchemaBuilder.new("a_title")
     schema = builder.to_schema
     schema.title.should == "A title"

@@ -4,4 +4,7 @@ rvm:
   - 2.1.0
   - ruby-head
 
+before_script:
+  - cp spec/data/.gooddata ~/
+
 script: rake test:unit

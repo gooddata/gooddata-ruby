@@ -1,8 +1,9 @@
-require File.join(File.dirname(__FILE__), "data_result.rb")
+# encoding: UTF-8
+
+require_relative 'data_result.rb'
 
 module GoodData
   class EmptyResult < DataResult
-
     def initialize(data, options = {})
       super(data)
       @options = options
@@ -10,7 +11,7 @@ module GoodData
     end
 
     def to_s
-      "No Data"
+      'No Data'
     end
 
     def assemble_table

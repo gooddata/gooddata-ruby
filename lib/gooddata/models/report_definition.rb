@@ -1,40 +1,46 @@
-require File.join(File.dirname(__FILE__), "metadata")
+# encoding: UTF-8
 
+require_relative 'metadata'
+
+# GoodData Module
 module GoodData
-  class ReportDefinition < GoodData::MdObject 
-
+  # Report Definition
+  # TODO: Add more doc ...
+  class ReportDefinition < GoodData::MdObject
     root_key :reportDefinition
 
     class << self
       def [](id)
         if id == :all
-          GoodData.get(GoodData.project.md['query'] + '/reportdefinition/')['query']['entries']
-        else 
+          uri = GoodData.project.md['query'] + '/reportdefinition/'
+          result = GoodData.get(uri)
+          result['query']['entries']
+        else
           super
         end
       end
 
       def create_metrics_part(left, top)
         stuff = Array(left) + Array(top)
-        stuff.find_all {|item| item.respond_to?(:is_metric?)}.map do |metric|
+        stuff.select { |item| item.respond_to?(:is_metric?) }.map do |metric|
           create_metric_part(metric)
         end
       end
 
       def create_metric_part(metric)
         {
-          "alias" => metric.title,
-          "uri" => metric.uri
+          'alias' => metric.title,
+          'uri' => metric.uri
         }
       end
 
       def create_attribute_part(attrib)
         {
-           "attribute" => {
-              "alias" => "",
-              "totals" => [],
-              "uri" => attrib.uri
-           }
+          'attribute' => {
+            'alias' => '',
+            'totals' => [],
+            'uri' => attrib.uri
+          }
         }
       end
 
@@ -48,8 +54,8 @@ module GoodData
           end
           memo
         end
-        if stuff.any? {|item| item.respond_to?(:is_metric?)}
-          parts << "metricGroup"
+        if stuff.any? { |item| item.respond_to?(:is_metric?) }
+          parts << 'metricGroup'
         end
         parts
       end
@@ -62,36 +68,38 @@ module GoodData
             x = GoodData::MdObject.get_by_id(item)
             fail "Object given by id \"#{item}\" could not be found" if x.nil?
             case x.raw_data.keys.first.to_s
-            when "attribute"
+            when 'attribute'
               GoodData::Attribute.new(x.raw_data).display_forms.first
-            when "attributeDisplayForm"
+            when 'attributeDisplayForm'
               GoodData::DisplayForm.new(x.raw_data)
-            when "metric"
+            when 'metric'
               GoodData::Metric.new(x.raw_data)
             end
           elsif item.is_a?(Hash) && item.keys.include?(:title)
             case item[:type].to_s
-            when "metric"
+            when 'metric'
               GoodData::Metric.find_first_by_title(item[:title])
-            when "attribute"
-              GoodData::Attribute.find_first_by_title(item[:title]).display_forms.first
+            when 'attribute'
+              result = GoodData::Attribute.find_first_by_title(item[:title])
+              result.display_forms.first
             end
           elsif item.is_a?(Hash) && (item.keys.include?(:id))
             case item[:type].to_s
-            when "metric"
+            when 'metric'
               GoodData::Metric.get_by_id(item[:id])
-            when "attribute"
+            when 'attribute'
               GoodData::Attribute.get_by_id(item[:id]).display_forms.first
-            when "label"
+            when 'label'
               GoodData::DisplayForm.get_by_id(item[:id])
-            end
+          end
           elsif item.is_a?(Hash) && (item.keys.include?(:identifier))
             case item[:type].to_s
-            when "metric"
+            when 'metric'
               GoodData::Metric.get_by_id(item[:identifier])
-            when "attribute"
-              GoodData::Attribute.get_by_id(item[:identifier]).display_forms.first
-            when "label"
+            when 'attribute'
+              result = GoodData::Attribute.get_by_id(item[:identifier])
+              result.display_forms.first
+            when 'label'
               GoodData::DisplayForm.get_by_id(item[:identifier])
             end
           else
@@ -100,91 +108,104 @@ module GoodData
         end
       end
 
-      def execute(options={})
+      def execute(options = {})
         left = Array(options[:left])
         top = Array(options[:top])
 
-        metrics = (left + top).find_all {|item| item.respond_to?(:is_metric?)}
+        metrics = (left + top).select { |item| item.respond_to?(:is_metric?) }
 
-        unsaved_metrics = metrics.reject {|i| i.saved?}
-        unsaved_metrics.each {|m| m.title = "Untitled metric" unless m.title}
+        unsaved_metrics = metrics.reject { |i| i.saved? }
+        unsaved_metrics.each { |m| m.title = 'Untitled metric' unless m.title }
 
         begin
-          unsaved_metrics.each {|m| m.save}
+          unsaved_metrics.each { |m| m.save }
           rd = GoodData::ReportDefinition.create(options)
           get_data_result(execute_inline(rd))
         ensure
-          unsaved_metrics.each {|m| m.delete if m &&  m.saved?}
+          unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
       end
 
       def execute_inline(rd)
         rd = rd.respond_to?(:raw_data) ? rd.raw_data : rd
         data = {
-          :report_req => {
-            :definitionContent => {
-              :content => rd,
-              :projectMetadata => GoodData::project.links["metadata"]}}}
-        GoodData.post("/gdc/app/projects/#{GoodData.project.pid}/execute", data)
+          report_req: {
+            definitionContent: {
+              content: rd,
+              projectMetadata: GoodData.project.links['metadata']
+            }
+          }
+        }
+        uri = "/gdc/app/projects/#{GoodData.project.pid}/execute"
+        GoodData.post(uri, data)
       end
 
       def get_data_result(result)
-        data_result_uri = result["execResult"]["dataResult"]
+        data_result_uri = result['execResult']['dataResult']
         result = GoodData.get data_result_uri
-        while result["taskState"] && result["taskState"]["status"] == "WAIT" do
-           sleep 10
-           result = GoodData.get data_result_uri
-         end
+
+        while result['taskState'] && result['taskState']['status'] == 'WAIT'
+          sleep 10
+          result = GoodData.get data_result_uri
+        end
+
         ReportDataResult.new(GoodData.get data_result_uri)
       end
 
-      def create(options={})
+      def create(options = {})
         left = Array(options[:left])
         top = Array(options[:top])
 
         left = ReportDefinition.find(left)
         top = ReportDefinition.find(top)
 
-        fail "All metrics in report definition must be saved" unless (left + top).all? {|i| i.saved?}
+        # TODO: Put somewhere for i18n
+        fail_msg = 'All metrics in report definition must be saved'
+        fail fail_msg unless (left + top).all? { |i| i.saved? }
 
-        ReportDefinition.new({
-           "reportDefinition" => {
-              "content" => {
-                 "grid" => {
-                    "sort" => {
-                      "columns" => [],
-                      "rows" => []
-                      },
-                    "columnWidths" => [],
-                    "columns" => ReportDefinition.create_part(top),
-                    "metrics" => ReportDefinition.create_metrics_part(left, top),
-                    "rows" => ReportDefinition.create_part(left),
-                 },
-                 "format" => "grid",
-                 "filters" => []
+        pars = {
+          'reportDefinition' => {
+            'content' => {
+              'grid' => {
+                'sort' => {
+                  'columns' => [],
+                  'rows' => []
+                },
+                'columnWidths' => [],
+                'columns' => ReportDefinition.create_part(top),
+                'metrics' => ReportDefinition.create_metrics_part(left, top),
+                'rows' => ReportDefinition.create_part(left)
               },
-              "meta" => {
-                 "tags" => "",
-                 "summary" => "",
-                 "title" => "Untitled report definition"
-              }
-           }
-        })
+              'format' => 'grid',
+              'filters' => []
+            },
+            'meta' => {
+              'tags' => '',
+              'summary' => '',
+              'title' => 'Untitled report definition'
+            }
+          }
+        }
+
+        ReportDefinition.new(pars)
       end
     end
 
-    def metrics 
-      content["grid"]["metrics"].map {|i| GoodData::Metric[i["uri"]]}
+    def metrics
+      content['grid']['metrics'].map { |i| GoodData::Metric[i['uri']] }
     end
 
     def execute
       result = if saved?
-        GoodData.post '/gdc/xtab2/executor', {"report_req" => {"reportDefinition" => uri}}
-      else
-        ReportDefinition.execute_inline(self)
-      end
-      ReportDefinition::get_data_result(result)
-    end
+                 pars = {
+                   'report_req' => { 'reportDefinition' => uri }
+                 }
+                 GoodData.post '/gdc/xtab2/executor', pars
+               else
+                 ReportDefinition.execute_inline(self)
+               end
 
-  end    
+      get_data_result(result)
+    end
+  end
 end

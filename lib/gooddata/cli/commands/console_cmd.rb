@@ -1,6 +1,6 @@
 require 'pp'
 
-require File.join(File.dirname(__FILE__), "../shared")
+require_relative "../shared"
 
 GoodData::CLI.module_eval do
   desc 'Interactive session with gooddata sdk loaded'

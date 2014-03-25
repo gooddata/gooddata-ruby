@@ -1,7 +1,6 @@
-# require File.join(File.dirname(__FILE__), "")
+# encoding: UTF-8
 
 module GoodData
-
   # Core of GoodData Gem
   class Core
   end

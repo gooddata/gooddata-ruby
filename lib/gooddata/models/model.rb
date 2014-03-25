@@ -1,13 +1,16 @@
+# encoding: UTF-8
+
+require_relative '../helpers'
+
 require 'open-uri'
 require 'active_support/all'
+
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
 # elements, including the server-side data model.
 #
 module GoodData
-
   module Model
-
     # GoodData REST API categories
     LDM_CTG = 'ldm'
     LDM_MANAGE_CTG = 'ldm-manage'
@@ -24,7 +27,7 @@ module GoodData
     LABEL_PREFIX = 'label'
     FACT_PREFIX = 'fact'
     DATE_FACT_PREFIX = 'dt'
-    DATE_ATTRIBUTE = "date"
+    DATE_ATTRIBUTE = 'date'
     DATE_ATTRIBUTE_DEFAULT_DISPLAY_FORM = 'mdyy'
     TIME_FACT_PREFIX = 'tm.dt'
     TIME_ATTRIBUTE_PREFIX = 'attr.time'
@@ -83,10 +86,10 @@ module GoodData
         pull = {'pullIntegration' => File.basename(dir)}
         link = project.md.links('etl')['pull']
         task = GoodData.post link, pull
-        while (GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "RUNNING" || GoodData.get(task["pullTask"]["uri"])["taskStatus"] === "PREPARED") do
+        while GoodData.get(task['pullTask']['uri'])['taskStatus'] === 'RUNNING' || GoodData.get(task['pullTask']['uri'])['taskStatus'] === 'PREPARED'
           sleep 30
         end
-        if (GoodData.get(task["pullTask"]["uri"])["taskStatus"] == "ERROR")
+        if GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'ERROR'
           s = StringIO.new
           GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
           js = JSON.parse(s.string)
@@ -100,15 +103,13 @@ module GoodData
         d = Marshal.load(Marshal.dump(a_schema_blueprint))
         d[:columns] = d[:columns] + b_schema_blueprint[:columns]
         d[:columns].uniq!
-        columns_that_failed_to_merge = d[:columns].group_by {|x| x[:name]}.map {|k, v| [k, v.count]}.find_all {|x| x[1] > 1}
+        columns_that_failed_to_merge = d[:columns].group_by { |x| x[:name] }.map { |k, v| [k, v.count] }.find_all { |x| x[1] > 1 }
         fail "Columns #{columns_that_failed_to_merge} failed to merge. When merging columns with the same name they have to be identical." unless columns_that_failed_to_merge.empty?
         d
       end
-
     end
 
     class ProjectBlueprint
-
       attr_accessor :data
 
       def self.from_json(spec)
@@ -140,7 +141,7 @@ module GoodData
       end
 
       def remove_dataset(dataset_name)
-        x = data[:datasets].find {|d| d[:name] == dataset_name}
+        x = data[:datasets].find { |d| d[:name] == dataset_name }
         index = data[:datasets].index(x)
         data[:datasets].delete_at(index)
       end
@@ -205,28 +206,26 @@ module GoodData
 
       def to_wire_model
         {
-          "diffRequest" => {
-              "targetModel" => {
-                  "projectModel" => {
-                      "datasets" => datasets.map {|d| d.to_wire_model},
-                      "dateDimensions" => date_dimensions.map {|d|
-                        {
-                            "dateDimension" => {
-                                "name" => d[:name],
-                                "title" => d[:title] || d[:name].humanize
-                            }
-                        }}
-                      }}}}
+          'diffRequest' => {
+            'targetModel' => {
+              'projectModel' => {
+                'datasets' => datasets.map { |d| d.to_wire_model },
+                'dateDimensions' => date_dimensions.map { |d|
+                  {
+                    'dateDimension' => {
+                      'name' => d[:name],
+                      'title' => d[:title] || d[:name].humanize
+                    }
+                  } }
+              }}}}
       end
 
       def to_hash
         @data
       end
-
     end
 
     class SchemaBlueprint
-
       attr_accessor :data
 
       def change(&block)
@@ -243,8 +242,8 @@ module GoodData
 
       def upload(source, options={})
         project = options[:project] || GoodData.project
-        fail "You have to specify a project into which you want to load." if project.nil?
-        mode = options[:load] || "FULL"
+        fail 'You have to specify a project into which you want to load.' if project.nil?
+        mode = options[:load] || 'FULL'
         project.upload(source, to_schema, mode)
       end
 
@@ -271,7 +270,7 @@ module GoodData
       end
 
       def has_anchor?
-        columns.any? { |c| c[:type].to_s == "anchor" }
+        columns.any? { |c| c[:type].to_s == 'anchor' }
       end
 
       def anchor
@@ -335,17 +334,14 @@ module GoodData
       def ==(other)
         to_hash == other.to_hash
       end
-
     end
 
     class ProjectBuilder
-
       attr_reader :title, :datasets, :reports, :metrics, :uploads, :users, :assert_report, :date_dimensions
 
       class << self
-
-        def create_from_data(blueprint)
-          pb = ProjectBuilder.new
+        def create_from_data(blueprint, title = 'Title')
+          pb = ProjectBuilder.new(title)
           pb.data = blueprint.to_hash
           pb
         end
@@ -355,7 +351,6 @@ module GoodData
           block.call(pb)
           pb
         end
-
       end
 
       def initialize(title)
@@ -370,8 +365,14 @@ module GoodData
         @date_dimensions = []
       end
 
-      def add_date_dimension(name, options={})
-        @date_dimensions << {:urn => options[:urn], :name => name, :title => options[:title]}
+      def add_date_dimension(name, options = {})
+        dimension = {
+          urn: options[:urn],
+          name: name,
+          title: options[:title]
+        }
+
+        @date_dimensions << dimension
       end
 
       def add_dataset(name, &block)
@@ -417,12 +418,12 @@ module GoodData
       end
 
       def upload(data, options={})
-        mode = options[:mode] || "FULL"
+        mode = options[:mode] || 'FULL'
         dataset = options[:dataset]
         @uploads << {
-            :source => data,
-            :mode => mode,
-            :dataset => dataset
+          :source => data,
+          :mode => mode,
+          :dataset => dataset
         }
       end
 
@@ -442,26 +443,24 @@ module GoodData
 
       def to_hash
         {
-            :title => @title,
-            :datasets => @datasets,
-            :uploads => @uploads,
-            :dashboards => @dashboards,
-            :metrics => @metrics,
-            :reports => @reports,
-            :users => @users,
-            :assert_tests => @assert_tests,
-            :date_dimensions => @date_dimensions
+          :title => @title,
+          :datasets => @datasets,
+          :uploads => @uploads,
+          :dashboards => @dashboards,
+          :metrics => @metrics,
+          :reports => @reports,
+          :users => @users,
+          :assert_tests => @assert_tests,
+          :date_dimensions => @date_dimensions
         }
       end
 
       def get_dataset(name)
         datasets.find { |d| d.name == name }
       end
-
     end
 
     class DashboardBuilder
-
       def initialize(title)
         @title = title
         @tabs = []
@@ -476,14 +475,13 @@ module GoodData
 
       def to_hash
         {
-            :name => @name,
-            :tabs => @tabs.map { |tab| tab.to_hash }
+          :name => @name,
+          :tabs => @tabs.map { |tab| tab.to_hash }
         }
       end
     end
 
     class TabBuilder
-
       def initialize(title)
         @title = title
         @stuff = []
@@ -495,31 +493,27 @@ module GoodData
 
       def to_hash
         {
-            :title => @title,
-            :items => @stuff
+          :title => @title,
+          :items => @stuff
         }
       end
-
     end
 
     class SchemaBuilder
-
       attr_accessor :data
 
       class << self
-
         def create_from_data(blueprint)
           sc = SchemaBuilder.new
           sc.data = blueprint.to_hash
           sc
         end
-
       end
 
       def initialize(name=nil)
         @data = {
-            :name => name,
-            :columns => []
+          :name => name,
+          :columns => []
         }
       end
 
@@ -575,20 +569,17 @@ module GoodData
       def to_schema
         Schema.new(to_hash)
       end
-
     end
 
     class ProjectCreator
-
       class << self
         def migrate(options={})
-
-          spec = options[:spec] || fail("You need to provide spec for migration")
+          spec = options[:spec] || fail('You need to provide spec for migration')
           spec = spec.to_hash
 
           token = options[:token]
           project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
-          fail("You need to specify token for project creation") if token.nil? && project.nil?
+          fail('You need to specify token for project creation') if token.nil? && project.nil?
 
           begin
             GoodData.with_project(project) do |p|
@@ -615,8 +606,9 @@ module GoodData
           bp = ProjectBlueprint.new(spec)
           # schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
           # project = GoodData.project unless project
-          result = GoodData.post("/gdc/projects/#{GoodData.project.pid}/model/diff", bp.to_wire_model)
-          link = result["asyncTask"]["link"]["poll"]
+          uri = "/gdc/projects/#{GoodData.project.pid}/model/diff"
+          result = GoodData.post(uri, bp.to_wire_model)
+          link = result['asyncTask']['link']['poll']
           response = GoodData.get(link, :process => false)
           # pp response
           while response.code != 200
@@ -630,9 +622,9 @@ module GoodData
           response = GoodData.get(link)
           ldm_links = GoodData.get project.md[LDM_CTG]
           ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
-          chunks = response["projectModelDiff"]["updateScripts"].find_all {|script| script["updateScript"]["preserveData"] == true && script["updateScript"]["cascadeDrops"] == false}.map {|x| x["updateScript"]["maqlDdlChunks"]}.flatten
+          chunks = response['projectModelDiff']['updateScripts'].find_all { |script| script['updateScript']['preserveData'] == true && script['updateScript']['cascadeDrops'] == false }.map { |x| x['updateScript']['maqlDdlChunks'] }.flatten
           chunks.each do |chunk|
-            GoodData.post ldm_uri, { 'manage' => { 'maql' => chunk } }
+            GoodData.post ldm_uri, {'manage' => {'maql' => chunk}}
           end
 
           bp.datasets.each do |ds|
@@ -669,7 +661,7 @@ module GoodData
         def load(project, spec)
           if spec.has_key?(:uploads)
             spec[:uploads].each do |load|
-              schema = GoodData::Model::Schema.new(spec[:datasets].detect {|d| d[:name] == load[:dataset]})
+              schema = GoodData::Model::Schema.new(spec[:datasets].detect { |d| d[:name] == load[:dataset] })
               project.upload(load[:source], schema, load[:mode])
             end
           end
@@ -716,20 +708,23 @@ module GoodData
         Schema.new JSON.load(open(file))
       end
 
-      def initialize(config, name = nil)
+      def initialize(config, name = 'Default Name', title = 'Default Title')
         super()
         @fields = []
         @attributes = []
         @facts = []
         @folders = {
-            :facts => {},
-            :attributes => {}
+          :facts => {},
+          :attributes => {}
         }
         @references = []
         @labels = []
 
         config[:name] = name unless config[:name]
-        config[:title] = config[:title] || config[:name].humanize
+        config[:title] = config[:name] unless config[:title]
+        config[:title] = title unless config[:title]
+        config[:title] = config[:title].humanize
+
         fail 'Schema name not specified' unless config[:name]
         self.name = config[:name]
         self.title = config[:title]
@@ -739,17 +734,17 @@ module GoodData
       def config=(config)
         config[:columns].each do |c|
           case c[:type].to_s
-          when "attribute"
+          when 'attribute'
             add_attribute c
-          when "fact"
+          when 'fact'
             add_fact c
-          when "date"
+          when 'date'
             add_date c
-          when "anchor"
+          when 'anchor'
             set_anchor c
-          when "label"
+          when 'label'
             add_label c
-          when "reference"
+          when 'reference'
             add_reference c
           else
             fail "Unexpected type #{c[:type]} in #{c.inspect}"
@@ -773,7 +768,7 @@ module GoodData
       # Generates MAQL DDL script to drop this data set and included pieces
       #
       def to_maql_drop
-        maql = ""
+        maql = ''
         [attributes, facts].each do |obj|
           maql += obj.to_maql_drop
         end
@@ -784,9 +779,10 @@ module GoodData
       # Generates MAQL DDL script to create this data set and included pieces
       #
       def to_maql_create
+        # TODO: Use template (.erb)
         maql = "# Create the '#{self.title}' data set\n"
         maql += "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n\n"
-        [ attributes, facts, { 1 => @anchor } ].each do |objects|
+        [attributes, facts, {1 => @anchor}].each do |objects|
           objects.values.each do |obj|
             maql += "# Create '#{obj.title}' and add it to the '#{self.title}' data set.\n"
             maql += obj.to_maql_create
@@ -809,7 +805,7 @@ module GoodData
         folders_maql + "\n" + maql + "SYNCHRONIZE {#{identifier}};\n"
       end
 
-      def upload(path, project = nil, mode = "FULL")
+      def upload(path, project = nil, mode = 'FULL')
         if path =~ URI::regexp
           Tempfile.open('remote_file') do |temp|
             temp << open(path).read
@@ -827,31 +823,32 @@ module GoodData
 
       # Generates the SLI manifest describing the data loading
       # 
-      def to_manifest(mode="FULL")
+      def to_manifest(mode = 'FULL')
         {
-            'dataSetSLIManifest' => {
-                'parts' => fields.reduce([]) { |memo, f| val = f.to_manifest_part(mode); memo << val unless val.nil?; memo },
-                'dataSet' => self.identifier,
-                'file' => 'data.csv', # should be configurable
-                'csvParams' => {
-                    'quoteChar' => '"',
-                    'escapeChar' => '"',
-                    'separatorChar' => ',',
-                    'endOfLine' => "\n"
-                }
+          'dataSetSLIManifest' => {
+            'parts' => fields.reduce([]) { |memo, f| val = f.to_manifest_part(mode); memo << val unless val.nil?; memo },
+            'dataSet' => self.identifier,
+            'file' => 'data.csv', # should be configurable
+            'csvParams' => {
+              'quoteChar' => '"',
+              'escapeChar' => '"',
+              'separatorChar' => ',',
+              'endOfLine' => "\n"
             }
+          }
         }
       end
 
       def to_wire_model
         {
-          "dataset" => {
-                "identifier" => identifier,
-                "title" => title,
-                "anchor" => @anchor.to_wire_model,
-                "facts" => facts.map {|f| f.to_wire_model},
-                "attributes" => attributes.map {|a| a.to_wire_model},
-                "references" => references.map {|r| r.is_a?(DateReference) ? r.schema_ref : type_prefix + "." + r.schema_ref }}}
+          'dataset' => {
+            'identifier' => identifier,
+            'title' => title,
+            'anchor' => @anchor.to_wire_model,
+            'facts' => facts.map { |f| f.to_wire_model },
+            'attributes' => attributes.map { |a| a.to_wire_model },
+            'references' => references.map { |r| r.is_a?(DateReference) ? r.schema_ref : type_prefix + '.' + r.schema_ref }}
+        }
       end
 
       private
@@ -902,14 +899,13 @@ module GoodData
         date.parts.values.each { |p| @fields << p }
         date.facts.each { |f| facts << f }
         date.attributes.each { |a| attributes << a }
-        date.references.each {|r| references << r}
+        date.references.each { |r| references << r }
       end
 
       def set_anchor(column)
         @anchor = Anchor.new column, self
         @fields << @anchor
       end
-
     end
 
     ##
@@ -922,7 +918,11 @@ module GoodData
       def initialize(hash, schema)
         super()
         raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
-        @name = hash[:name] || raise("Data set fields must have their names defined")
+        raise('Data set fields must have their names defined') if hash[:name].nil?
+
+        hash[:name] = GoodData::Helpers.sanitize_string(hash[:name])
+
+        @name = hash[:name]
         @title = hash[:title] || hash[:name].humanize
         @folder = hash[:folder]
         @schema = schema
@@ -985,7 +985,7 @@ module GoodData
       end
 
       def table
-        @table ||= "d_" + @schema.name + "_" + name
+        @table ||= 'd_' + @schema.name + '_' + name
       end
 
       def key;
@@ -1001,31 +1001,30 @@ module GoodData
 
       def to_manifest_part(mode)
         {
-            'referenceKey' => 1,
-            'populates' => [@primary_label.identifier],
-            'mode' => mode,
-            'columnName' => name
+          'referenceKey' => 1,
+          'populates' => [@primary_label.identifier],
+          'mode' => mode,
+          'columnName' => name
         }
       end
 
       def to_wire_model
         {
-            "attribute" => {
-                "identifier" => identifier,
-                "title" => title,
-                "labels" => labels.map do |l|
-                  {
-                    "label" => {
-                        "identifier" => l.identifier,
-                        "title" => l.title,
-                        "type" => "GDC.text"
-                    }
-                  }
-                end
-            }
+          'attribute' => {
+            'identifier' => identifier,
+            'title' => title,
+            'labels' => labels.map do |l|
+              {
+                'label' => {
+                  'identifier' => l.identifier,
+                  'title' => l.title,
+                  'type' => 'GDC.text'
+                }
+              }
+            end
+          }
         }
       end
-
     end
 
     ##
@@ -1034,30 +1033,31 @@ module GoodData
     # field
     #
     class Label < Column
-
       attr_accessor :attribute
 
-      def type_prefix ; 'label' ; end
+      def type_prefix;
+        'label';
+      end
 
       # def initialize(hash, schema)
       def initialize(hash, attribute, schema)
         super hash, schema
-        attribute = attribute.nil? ? schema.fields.find {|field| field.name === hash[:reference]} : attribute
+        attribute = attribute.nil? ? schema.fields.find { |field| field.name === hash[:reference] } : attribute
         @attribute = attribute
         attribute.labels << self
       end
 
       def to_maql_create
-        "# LABEL FROM LABEL"
+        '# LABEL FROM LABEL'
         "ALTER ATTRIBUTE {#{@attribute.identifier}} ADD LABELS {#{identifier}}" \
               + " VISUAL (TITLE #{title.inspect}) AS {#{column}};\n"
       end
 
       def to_manifest_part(mode)
         {
-            'populates' => [identifier],
-            'mode' => mode,
-            'columnName' => name
+          'populates' => [identifier],
+          'mode' => mode,
+          'columnName' => name
         }
       end
 
@@ -1068,7 +1068,7 @@ module GoodData
       alias :inspect_orig :inspect
 
       def inspect
-        inspect_orig.sub(/>$/, " @attribute=" + @attribute.to_s.sub(/>$/, " @name=#{@attribute.name}") + '>')
+        inspect_orig.sub(/>$/, " @attribute=#{@attribute.to_s.sub(/>$/, " @name=#{@attribute.name}")}>")
       end
     end
 
@@ -1081,14 +1081,14 @@ module GoodData
         if column then
           super
         else
-          super({:type => "anchor", :name => 'id'}, schema)
+          super({:type => 'anchor', :name => 'id'}, schema)
           @labels = []
           @primary_label = nil
         end
       end
 
       def table
-        @table ||= "f_" + @schema.name
+        @table ||= 'f_' + @schema.name
       end
 
       def to_maql_create
@@ -1100,7 +1100,6 @@ module GoodData
         end
         maql
       end
-
     end
 
     ##
@@ -1134,17 +1133,17 @@ module GoodData
 
       def to_manifest_part(mode)
         {
-            'populates' => [identifier],
-            'mode' => mode,
-            'columnName' => name
+          'populates' => [identifier],
+          'mode' => mode,
+          'columnName' => name
         }
       end
 
       def to_wire_model
         {
-          "fact" => {
-            "identifier" => identifier,
-            "title" => title
+          'fact' => {
+            'identifier' => identifier,
+            'title' => title
           }
         }
       end
@@ -1154,7 +1153,6 @@ module GoodData
     # Reference to another data set
     #
     class Reference < Column
-
       attr_accessor :reference, :schema_ref
 
       def initialize(column, schema)
@@ -1193,10 +1191,10 @@ module GoodData
 
       def to_manifest_part(mode)
         {
-            'populates' => [label_column],
-            'mode' => mode,
-            'columnName' => name,
-            'referenceKey' => 1
+          'populates' => [label_column],
+          'mode' => mode,
+          'columnName' => name,
+          'referenceKey' => 1
         }
       end
     end
@@ -1205,14 +1203,13 @@ module GoodData
     # Date as a reference to a date dimension
     #
     class DateReference < Reference
-
       attr_accessor :format, :output_format, :urn
 
       def initialize(column, schema)
         super column, schema
-        @output_format = column["format"] || 'dd/MM/yyyy'
+        @output_format = column['format'] || 'dd/MM/yyyy'
         @format = @output_format.gsub('yyyy', '%Y').gsub('MM', '%m').gsub('dd', '%d')
-        @urn = column[:urn] || "URN:GOODDATA:DATE"
+        @urn = column[:urn] || 'URN:GOODDATA:DATE'
       end
 
       def identifier
@@ -1221,11 +1218,11 @@ module GoodData
 
       def to_manifest_part(mode)
         {
-            'populates' => ["#{identifier}.#{DATE_ATTRIBUTE_DEFAULT_DISPLAY_FORM}"],
-            'mode' => mode,
-            'constraints' => {"date" => output_format},
-            'columnName' => name,
-            'referenceKey' => 1
+          'populates' => ["#{identifier}.#{DATE_ATTRIBUTE_DEFAULT_DISPLAY_FORM}"],
+          'mode' => mode,
+          'constraints' => {'date' => output_format},
+          'columnName' => name,
+          'referenceKey' => 1
         }
       end
 
@@ -1249,10 +1246,10 @@ module GoodData
 
       def to_manifest_part(mode)
         {
-            'populates' => ['label.stuff.mmddyy'],
-            "format" => "unknown",
-            "mode" => mode,
-            "referenceKey" => 1
+          'populates' => ['label.stuff.mmddyy'],
+          'format' => 'unknown',
+          'mode' => mode,
+          'referenceKey' => 1
         }
       end
     end
@@ -1274,7 +1271,6 @@ module GoodData
     # Time as a reference to a time-of-a-day dimension
     #
     class TimeReference < Reference
-
     end
 
     ##
@@ -1343,7 +1339,6 @@ module GoodData
       def to_manifest_part(mode)
         nil
       end
-
     end
 
     ##
@@ -1352,7 +1347,7 @@ module GoodData
     class Folder < MdObject
       def initialize(title)
         @title = title
-        @name = title
+        @name = GoodData::Helpers.sanitize_string(title)
       end
 
       def to_maql_create
@@ -1366,11 +1361,11 @@ module GoodData
     #
     class AttributeFolder < Folder
       def type;
-        "ATTRIBUTE";
+        'ATTRIBUTE'
       end
 
       def type_prefix;
-        "dim";
+        'dim'
       end
     end
 
@@ -1379,21 +1374,20 @@ module GoodData
     #
     class FactFolder < Folder
       def type;
-        "FACT";
+        'FACT'
       end
 
       def type_prefix;
-        "ffld";
+        'ffld'
       end
     end
 
     class DateDimension < MdObject
-
       def initialize(spec={})
         super()
         @name = spec[:name]
         @title = spec[:title] || @name
-        @urn = spec[:urn] || "URN:GOODDATA:DATE"
+        @urn = spec[:urn] || 'URN:GOODDATA:DATE'
       end
 
       def to_maql_create
@@ -1401,12 +1395,10 @@ module GoodData
         # title = "title"
         # name = "name"
 
-        maql = ""
+        maql = ''
         maql += "INCLUDE TEMPLATE \"#{@urn}\" MODIFY (IDENTIFIER \"#{@name}\", TITLE \"#{@title}\");"
         maql
       end
-
     end
-
   end
 end

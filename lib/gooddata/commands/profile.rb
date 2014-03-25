@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module GoodData::Command
   class Profile
     class << self

@@ -1,8 +1,11 @@
+# encoding: UTF-8
+
 require 'zip'
 require 'fileutils'
 
 module GoodData
-  class NoProjectError < RuntimeError ; end
+  class NoProjectError < RuntimeError;
+  end
 
   class Project
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
@@ -34,7 +37,7 @@ module GoodData
           Project.all
         else
           if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
-            raise ArgumentError.new("wrong type of argument. Should be either project ID or path")
+            raise ArgumentError.new('wrong type of argument. Should be either project ID or path')
           end
 
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
@@ -56,17 +59,17 @@ module GoodData
         auth_token = attributes[:auth_token] || GoodData.connection.auth_token
 
         json = {:project =>
-          {
-            'meta' => {
-              'title' => attributes[:title],
-              'summary' => attributes[:summary] || "No summary"
-            },
-            'content' => {
-              'guidedNavigation' => 1,
-              'authorizationToken' => auth_token,
-              "driver" => "Pg"
-            }
-          }
+                  {
+                    'meta' => {
+                      'title' => attributes[:title],
+                      'summary' => attributes[:summary] || 'No summary'
+                    },
+                    'content' => {
+                      'guidedNavigation' => 1,
+                      'authorizationToken' => auth_token,
+                      'driver' => 'Pg'
+                    }
+                  }
         }
         json['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
@@ -104,7 +107,7 @@ module GoodData
     def browser_uri(options={})
       ui = options[:ui]
       if ui
-        GoodData.connection.url + "#s=" + uri
+        GoodData.connection.url + '#s=' + uri
       else
         GoodData.connection.url + uri
       end
@@ -113,6 +116,7 @@ module GoodData
     def obj_id
       uri.split('/').last
     end
+
     alias :pid :obj_id
 
 
@@ -136,20 +140,20 @@ module GoodData
     #
     def add_dataset(schema_def, columns = nil, &block)
       schema = if block
-        builder = block.call(Model::SchemaBuilder.new(schema_def))
-        builder.to_schema
-      else
-        sch = { :title => schema_def, :columns => columns } if columns
-        sch = Model::Schema.new schema_def if schema_def.is_a? Hash
-        sch = schema_def if schema_def.is_a?(Model::Schema)
-        raise ArgumentError.new("Required either schema object or title plus columns array") unless schema_def.is_a? Model::Schema
-        sch
-      end
+                 builder = block.call(Model::SchemaBuilder.new(schema_def))
+                 builder.to_schema
+               else
+                 sch = {:title => schema_def, :columns => columns} if columns
+                 sch = Model::Schema.new schema_def if schema_def.is_a? Hash
+                 sch = schema_def if schema_def.is_a?(Model::Schema)
+                 raise ArgumentError.new('Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
+                 sch
+               end
       Model.add_schema(schema, self)
     end
 
     def add_metric(options={})
-      expression = options[:expression] || fail("Metric has to have its expression defined")
+      expression = options[:expression] || fail('Metric has to have its expression defined')
       m1 = GoodData::Metric.create(options)
       m1.save
     end
@@ -165,23 +169,25 @@ module GoodData
     end
 
     def add_user(email_address, domain)
-      
+      raise 'Not implemented'
     end
 
-    def upload(file, schema, mode = "FULL")
+    def upload(file, schema, mode = 'FULL')
       schema.upload file, self, mode
     end
 
     def slis
       link = "#{data['links']['metadata']}#{SLIS_PATH}"
+
+      # TODO: Review what to do with passed extra argument
       Metadata.new GoodData.get(link)
     end
 
     def datasets
-      datasets_uri  = "#{md['data']}/sets"
-      response      = GoodData.get datasets_uri
+      datasets_uri = "#{md['data']}/sets"
+      response = GoodData.get datasets_uri
       response['dataSetsInfo']['sets'].map do |ds|
-        DataSet[ds["meta"]["uri"]]
+        DataSet[ds['meta']['uri']]
       end
     end
 
@@ -190,11 +196,11 @@ module GoodData
     end
 
     def data
-      raw_data["project"]
+      raw_data['project']
     end
 
     def links
-      data["links"]
+      data['links']
     end
 
     def to_json
@@ -204,6 +210,5 @@ module GoodData
     def is_project?
       true
     end
-
   end
 end
