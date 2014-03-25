@@ -63,14 +63,23 @@ module GoodData::Command
       end
 
       # Read credentials
-      def read_credentials
-        if File.exists?(credentials_file) then
-          config = File.read(credentials_file)
+      def read_credentials(credentials_file_path = credentials_file)
+        if File.exists?(credentials_file_path) then
+          config = File.read(credentials_file_path)
           JSON.parser.new(config, :symbolize_names => true).parse
         else
           {}
         end
       end
+
+      # Writes credentials
+      def write_credentials(credentials, credentials_file_path = credentials_file)
+        File.open(credentials_file_path, 'w', 0600) do |f|
+          f.puts JSON.pretty_generate(credentials)
+        end
+        credentials
+      end
+
 
       # Ask for credentials
       def ask_for_credentials
@@ -83,27 +92,25 @@ module GoodData::Command
       end
 
       # Ask for credentials and store them
-      def store
+      def store(credentials_file_path = credentials_file)
         credentials = ask_for_credentials
 
-        ovewrite = if File.exist?(credentials_file)
+        ovewrite = if File.exist?(credentials_file_path)
                      GoodData::CLI.terminal.ask("Overwrite existing stored credentials (y/n)")
                    else
                      'y'
                    end
 
         if ovewrite == 'y'
-          File.open(credentials_file, 'w', 0600) do |f|
-            f.puts JSON.pretty_generate(credentials)
-          end
+          write_credentials(credentials, credentials_file_path)
         else
           puts 'Aborting...'
         end
       end
 
       # Delete stored credentials
-      def unstore
-        FileUtils.rm_f(credentials_file)
+      def unstore(credentials_file_path = credentials_file)
+        FileUtils.rm_f(credentials_file_path)
       end
     end
   end
