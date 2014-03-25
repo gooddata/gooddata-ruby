@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/commands/profile'
 
 describe GoodData::Command::Profile do

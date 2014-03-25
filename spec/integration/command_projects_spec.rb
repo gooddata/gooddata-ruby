@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata'
 require 'gooddata/commands/projects'
 require 'pry'

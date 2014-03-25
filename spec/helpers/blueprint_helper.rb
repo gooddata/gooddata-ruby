@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 # Global requires
 require 'json'
 

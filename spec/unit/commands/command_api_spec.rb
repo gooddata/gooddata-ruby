@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/commands/api'
 
 describe GoodData::Command::Api do

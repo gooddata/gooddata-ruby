@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/commands/datasets'
 
 describe GoodData::Command::Datasets do

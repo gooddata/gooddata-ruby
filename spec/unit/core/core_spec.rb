@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/core/core'
 
 describe GoodData::Core do

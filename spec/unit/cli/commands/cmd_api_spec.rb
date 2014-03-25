@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/cli/cli'
 
 describe GoodData::CLI do

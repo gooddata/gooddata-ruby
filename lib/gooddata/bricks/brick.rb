@@ -13,14 +13,17 @@ module GoodData::Bricks
       logger.info(message) unless logger.nil?
     end
 
+    # Name of the brick
     def name
       self.class
     end
 
+    # Version of brick, this should be implemented in subclasses
     def version
-      fail 'Method version should be reimplemented'
+      fail NotImplementedError, 'Method version should be reimplemented'
     end
 
+    # Bricks implementation which can be 'called'
     def call(params={})
       @params = params
       ''

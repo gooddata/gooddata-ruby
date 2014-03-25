@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/commands/projects'
 
 describe GoodData::Command::Projects do

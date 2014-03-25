@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/commands/scaffold'
 
 describe GoodData::Command::Scaffold do
