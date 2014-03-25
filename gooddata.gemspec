@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.7"
 
-  s.add_development_dependency "rake", "~> 10.1.1"
+  s.add_development_dependency "rake", "~> 10.2.0"
   s.add_development_dependency "redcarpet", "~> 3.1.1"
   s.add_development_dependency "rspec", "~> 2.14.1"
   s.add_development_dependency "rubocop", "~> 0.19.1"
