@@ -27,6 +27,7 @@ SimpleCov.start do
   add_filter 'test/'
 
   add_group 'Bricks', 'lib/gooddata/bricks'
+  add_group 'Middleware', 'lib/gooddata/bricks/middleware'
   add_group 'CLI', 'lib/gooddata/cli'
   add_group 'Commands', 'lib/gooddata/commands'
   add_group 'Core', 'lib/gooddata/core'
