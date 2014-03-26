@@ -120,6 +120,11 @@ module GoodData
     def logging_off
       GoodData::logger = NilLogger.new
     end
+    
+    def disconnect
+      threaded[:connection] = nil
+    end
+    
 
 
     # Hepler for starting with SST easier
