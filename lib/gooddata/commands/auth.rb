@@ -1,5 +1,5 @@
 require 'highline/import'
-require 'json'
+require 'multi_json'
 
 require File.join(File.dirname(__FILE__), '../helpers')
 
@@ -55,7 +55,7 @@ module GoodData::Command
       def read_credentials
         if File.exists?(credentials_file) then
           config = File.read(credentials_file)
-          JSON.parser.new(config, :symbolize_names => true).parse
+          MultiJson.load(config, :symbolize_keys => true).parse
         else
           {}
         end

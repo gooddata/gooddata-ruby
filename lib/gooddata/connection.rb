@@ -1,4 +1,4 @@
-require 'json'
+require 'multi_json'
 require 'rest-client'
 
 require File.join(File.dirname(__FILE__), 'version')
@@ -334,7 +334,7 @@ module GoodData
         return response if options[:process] == false
 
         if content_type == "application/json" || content_type == "application/json;charset=UTF-8" then
-          result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
+          result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
           GoodData.logger.debug "Response: #{result.inspect}"
         elsif content_type == "application/zip" then
           result = response

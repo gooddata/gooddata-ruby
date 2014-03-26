@@ -33,7 +33,7 @@ GoodData::CLI.module_eval do
     c.action do |global_options, options, args|
       verbose = global_options[:verbose]
       options[:expanded_params] = if (options[:params])
-                                    JSON.parse(File.read(options[:params]))
+                                    MultiJson.load(File.read(options[:params]))
                                   else
                                     {}
                                   end

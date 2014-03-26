@@ -84,7 +84,7 @@ module GoodData
       x = GoodData.post("#{GoodData.project.uri}/clientexport", {"clientExport" => {"url" => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", "name" => title}}, :process => false)
       while (x.code == 202) do
         sleep(1)
-        uri = JSON.parse(x.body)["asyncTask"]["link"]["poll"]
+        uri = MultiJson.load(x.body)["asyncTask"]["link"]["poll"]
         x = GoodData.get(uri, :process => false)
       end
       x

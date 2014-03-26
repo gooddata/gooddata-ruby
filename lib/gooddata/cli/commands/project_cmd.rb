@@ -45,7 +45,7 @@ GoodData::CLI.module_eval do
         end
 
         if goodfile_path
-          goodfile = JSON.parse(File.read(goodfile_path), :symbolize_names => true)
+          goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
           model_key = goodfile[:model]
           blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
           FileUtils::cd(goodfile_path.dirname) do

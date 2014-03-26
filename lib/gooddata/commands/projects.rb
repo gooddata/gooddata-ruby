@@ -69,7 +69,7 @@ module GoodData::Command
     def self.get_spec_and_project_id(base_path)
       goodfile_path = GoodData::Helpers.find_goodfile(Pathname(base_path))
       fail "Goodfile could not be located in any parent directory. Please make sure you are inside a gooddata project folder." if goodfile_path.nil?
-      goodfile = JSON.parse(File.read(goodfile_path), :symbolize_names => true)
+      goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
       spec_path = goodfile[:model] || fail("You need to specify the path of the build spec")
       fail "Model path provided in Goodfile \"#{spec_path}\" does not exist" unless File.exist?(spec_path) && !File.directory?(spec_path)
 
@@ -79,7 +79,7 @@ module GoodData::Command
       spec = if (spec_path.extname == ".rb")
                eval(content)
              elsif (spec_path.extname == ".json")
-               JSON.parse(spec_path, :symbolize_names => true)
+               MultiJson.load(spec_path, :symbolize_keys => true)
              end
       [spec, goodfile[:project_id]]
     end
