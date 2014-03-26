@@ -41,7 +41,6 @@ Gem::Specification.new do |s|
   s.add_dependency "gli", "~> 2.9.0"
   s.add_dependency "highline", "~> 1.6.21"
   s.add_dependency "i18n", "~> 0.6.9"
-  s.add_dependency "json", "~> 1.8.1"
   s.add_dependency "json_pure", "~> 1.8.1"
   s.add_dependency "multi_json", "~> 1.9.0"
   s.add_dependency "parseconfig", "~> 1.0.4"
