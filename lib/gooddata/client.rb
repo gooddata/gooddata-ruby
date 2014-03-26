@@ -1,16 +1,12 @@
 # encoding: UTF-8
 
+require 'csv'
+
 require_relative 'version'
 require_relative 'connection'
 require_relative 'helpers'
 
-# fastercsv is built in Ruby 1.9
-if RUBY_VERSION < '1.9'
-  require 'fastercsv'
-else
-  require 'csv'
-  FasterCSV = CSV
-end
+FasterCSV = CSV
 
 # Initializes required dynamically loaded classes
 def init_gd_module()

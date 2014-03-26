@@ -66,7 +66,7 @@ module GoodData::Command
       def read_credentials(credentials_file_path = credentials_file)
         if File.exists?(credentials_file_path) then
           config = File.read(credentials_file_path)
-          MultiJson.load(config, :symbolize_keys => true).parse
+          MultiJson.load(config, :symbolize_keys => true)
         else
           {}
         end

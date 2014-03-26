@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+require_relative '../hacks'
 require_relative '../helpers'
 
 require 'open-uri'
@@ -580,6 +581,9 @@ module GoodData
           token = options[:token]
           project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
           fail('You need to specify token for project creation') if token.nil? && project.nil?
+
+          # TODO: Remove this ugly hack introduced by @korczis
+          GoodData::Hacks.sleep_some_time(5)
 
           begin
             GoodData.with_project(project) do |p|
