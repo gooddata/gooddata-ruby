@@ -79,6 +79,7 @@ module GoodData
             block.call(p)
           end
         end
+        sleep 3
         project
       end
     end
