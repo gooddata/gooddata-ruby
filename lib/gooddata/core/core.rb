@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
-module GoodData
-  # Core of GoodData Gem
-  class Core
-  end
+base = Pathname(__FILE__).dirname.expand_path
+Dir.glob(base + '*.rb').each do |file|
+  require file
 end
