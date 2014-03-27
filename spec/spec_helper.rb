@@ -14,9 +14,10 @@ Dir.glob(base + 'helpers/*_helper.rb').each do |file|
 end
 
 RSpec.configure do |config|
-  include BlueprintHelper
-  include CliHelper
-  include ConnectionHelper
+  config.include BlueprintHelper
+  config.include CliHelper
+  config.include ConnectionHelper
+  config.include ProjectHelper
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[

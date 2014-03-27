@@ -3,11 +3,6 @@
 require 'gooddata/connection'
 
 describe GoodData::Connection do
-  before(:all) do
-    USERNAME = DEFAULT_USERNAME
-    PASSWORD = DEFAULT_PASSWORD
-  end
-
   it "Has DEFAULT_URL defined" do
     GoodData::Connection::DEFAULT_URL.should be_a(String)
   end
@@ -21,7 +16,7 @@ describe GoodData::Connection do
   end
 
   it "Connects using username and password" do
-    c = ConnectionHelper::create_default_connection(USERNAME, PASSWORD)
+    c = ConnectionHelper::create_default_connection(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
     c.should be_a(GoodData::Connection)
   end
 end
