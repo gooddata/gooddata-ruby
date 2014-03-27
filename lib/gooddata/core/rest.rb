@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative 'connection'
+
 module GoodData
  class << self
    # Performs a HTTP GET request.

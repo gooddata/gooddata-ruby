@@ -1,17 +1,28 @@
 # encoding: UTF-8
 
+require_relative 'nil_logger'
 require_relative 'threaded'
 
 module GoodData
   class << self
     # Turn logging on
+    #
+    # ### Example
+    #
+    #     GoodData.logging_on
+    #
     def logging_on
       if logger.is_a? NilLogger
         GoodData::logger = Logger.new(STDOUT)
       end
     end
 
-    # Turn logging off
+    # Turn logging on
+    #
+    # ### Example
+    #
+    #     GoodData.logging_off
+    #
     def logging_off
       GoodData::logger = NilLogger.new
     end
