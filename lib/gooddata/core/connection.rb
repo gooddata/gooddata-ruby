@@ -39,11 +39,6 @@ module GoodData
       end
     end
 
-    def disconnect
-      threaded[:connection] = nil
-    end
-
-
     # Hepler for starting with SST easier
     #
     # @param token SST token
