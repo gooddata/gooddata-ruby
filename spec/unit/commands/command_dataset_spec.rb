@@ -4,7 +4,6 @@ require 'gooddata/commands/datasets'
 
 describe GoodData::Command::Datasets do
   before(:each) do
-    @connection = ConnectionHelper::create_default_connection
     @cmd = GoodData::Command::Datasets.new()
   end
 

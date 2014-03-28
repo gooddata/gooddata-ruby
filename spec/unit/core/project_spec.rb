@@ -1,10 +1,20 @@
 # encoding: UTF-8
 
+require 'gooddata/connection'
+require 'gooddata/core/connection'
 require 'gooddata/core/project'
 require 'gooddata/models/project'
 
 describe GoodData do
   describe '#project=' do
+    before(:all) do
+      ConnectionHelper.create_default_connection
+    end
+
+    after(:all) do
+      GoodData.disconnect
+    end
+
     it 'Assigns nil' do
       GoodData.project = nil
     end
