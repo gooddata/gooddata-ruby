@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'md_object'
+require_relative '../md_object'
 
 module GoodData
   module Model

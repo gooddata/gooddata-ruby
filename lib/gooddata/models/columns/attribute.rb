@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'column'
+require_relative '../metadata/column'
 
 module GoodData
   module Model
@@ -21,7 +21,7 @@ module GoodData
       def initialize(hash, schema)
         super hash, schema
         @labels = []
-        @primary_label = Label.new hash, self, schema
+        @primary_label = GoodData::Model::Label.new hash, self, schema
       end
 
       def table

@@ -3,9 +3,16 @@
 require_relative '../core/connection'
 require_relative '../core/rest'
 
+require_relative 'attributes/attributes'
+require_relative 'columns/columns'
+require_relative 'facts/facts'
+require_relative 'folders/folders'
+require_relative 'metadata/metadata'
+require_relative 'references/references'
+
 require_relative 'links'
 require_relative 'module_constants'
-require_relative 'schema'
+require_relative 'metadata/schema'
 
 require 'fileutils'
 require 'multi_json'

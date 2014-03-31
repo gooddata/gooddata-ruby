@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'column'
+require_relative '../metadata/column'
 
 module GoodData
   module Model

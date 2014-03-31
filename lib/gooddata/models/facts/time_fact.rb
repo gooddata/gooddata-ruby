@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'fact'
+require_relative '../metadata/fact'
 
 module GoodData
   module Model

@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'column'
+require_relative '../metadata/column'
 
 module GoodData
   module Model
@@ -9,7 +9,7 @@ module GoodData
     # of an attribute column or an additional representation defined in a LABEL
     # field
     #
-    class Label < Column
+    class   Label < Column
       attr_accessor :attribute
 
       def type_prefix;

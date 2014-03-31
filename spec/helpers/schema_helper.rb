@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'gooddata/models/metadata/schema'
+
 module SchemaHelper
   COLUMNS = [
     {:type => :anchor, :name => 'cp', 'title' => 'CP', 'folder' => 'test'},

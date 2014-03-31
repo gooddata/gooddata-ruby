@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'folder'
+require_relative '../metadata/folder'
 
 module GoodData
   module Model
