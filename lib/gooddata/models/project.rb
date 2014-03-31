@@ -58,7 +58,7 @@ module GoodData
 
         auth_token = attributes[:auth_token] || GoodData.connection.auth_token
 
-        json = {:project =>
+        json = {"project" =>
                   {
                     'meta' => {
                       'title' => attributes[:title],
@@ -71,11 +71,14 @@ module GoodData
                     }
                   }
         }
-        json['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
+        json["project"]['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
         project.save
 
         while project.state.to_s != "enabled"
+          if project.state.to_s == "deleted"
+            fail "Project was marked as deleted during creation. This usually means you were trying to create from template and it failed."
+          end
           project.reload!
         end
 
