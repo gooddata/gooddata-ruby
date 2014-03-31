@@ -3,7 +3,7 @@
 require_relative 'metadata'
 
 module GoodData
-  class Dashboard < GoodData::MdObject
+  class Dashboard < MdObject
     root_key :projectDashboard
 
     class << self

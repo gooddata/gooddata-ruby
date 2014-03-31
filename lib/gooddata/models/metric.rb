@@ -5,7 +5,7 @@ require_relative '../goodzilla/goodzilla'
 
 module GoodData
   # Metric representation
-  class Metric < GoodData::MdObject
+  class Metric < MdObject
     root_key :metric
 
     class << self

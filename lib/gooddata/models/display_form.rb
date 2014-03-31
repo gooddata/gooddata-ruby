@@ -3,7 +3,7 @@
 require_relative 'metadata'
 
 module GoodData
-  class DisplayForm < GoodData::MdObject
+  class DisplayForm < MdObject
     root_key :attributeDisplayForm
   end
 end

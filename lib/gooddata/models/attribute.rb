@@ -3,7 +3,7 @@
 require_relative 'metadata'
 
 module GoodData
-  class Attribute < GoodData::MdObject
+  class Attribute < MdObject
     root_key :attribute
 
     class << self

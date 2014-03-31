@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require 'gooddata/models/anchor'
+require 'gooddata/models/attributes/anchor'
 
 describe GoodData::Model::Anchor do
   SCHEMA = []

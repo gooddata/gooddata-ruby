@@ -6,7 +6,7 @@ require_relative 'metadata'
 module GoodData
   # Report Definition
   # TODO: Add more doc ...
-  class ReportDefinition < GoodData::MdObject
+  class ReportDefinition < MdObject
     root_key :reportDefinition
 
     class << self

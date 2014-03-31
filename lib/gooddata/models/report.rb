@@ -3,7 +3,7 @@
 require_relative 'metadata'
 
 module GoodData
-  class Report < GoodData::MdObject
+  class Report < MdObject
     root_key :report
 
     class << self
