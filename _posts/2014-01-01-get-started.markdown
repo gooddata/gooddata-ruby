@@ -75,7 +75,7 @@ GoodData.connect( :login => 'svarovsky@gooddata.com',
 
 GoodData.project = 'project_pid'
 
-GoodData.use = 'project_pid'
+GoodData.use 'project_pid'
 {% endhighlight %}
 
 ##Working with a project{#project}
