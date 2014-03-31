@@ -2,6 +2,7 @@
 
 require 'pry'
 require 'gooddata/models/model'
+require 'gooddata/models/project_blueprint'
 
 describe GoodData::Model::ProjectBlueprint do
 

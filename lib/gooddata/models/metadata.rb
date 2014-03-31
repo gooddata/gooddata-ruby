@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-require_relative 'model'
-
 module GoodData
   class MdObject
     MD_OBJ_CTG = 'obj'
