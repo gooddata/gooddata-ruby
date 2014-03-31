@@ -16,7 +16,5 @@ module GoodData
       end
     end
   end
-
-  module Model
-  end
 end
+
