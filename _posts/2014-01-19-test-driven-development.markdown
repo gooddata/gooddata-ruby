@@ -1,18 +1,22 @@
 ---
 layout: post
-title:  "Test driven development"
+title:  "Test-driven development"
 date:   2014-01-19 13:56:00
 categories: recipe
 next_section: recipe/bricks
 prev_section: recipe/crunching-numbers
 pygments: true
-perex: Let's have a look how you can bump project development a little to achieve test driven development of your reports and projects. 
+perex: Let's have a look how you can enhance project development to achieve test-driven development of your reports and projects. 
 ---
 
-Test driven development is a holy grail for many developers. It gives you an additional sense of security and you can rely on the test suite to give you a safety net when you are refactoring and tweaking existing code. Testing reports was always quite hard. Until now.
+Often called a “holy grail” of development, test-driven development delivers an additional sense of security, as the test suite is your safety net when you are refactoring and tweaking existing code. 
 
-##The model
-Let's reuse the model that we have from [previous chapters](http://sdk.gooddata.com/gooddata-ruby/recipe/model). Just create a file called `model.rb` and put this inside.
+In this example, a report is developed using test-driven methodology and is validated and delivered much more rapidly.
+
+
+##The Data Model
+
+Let's use the model described in [this page](http://sdk.gooddata.com/gooddata-ruby/recipe/model). Create a file called `model.rb` and put the following in it:
 
 {% highlight ruby %}
 GoodData::Model::ProjectBuilder.create("gooddata-ruby test #{Time.now.to_i}") do |p|
@@ -53,15 +57,24 @@ end
 {% endhighlight %}
 
 ##The Test
-Let's say that you have some not so simple metric and you want test it to make sure it works as expected. The easiest way to do it is create a testing project and prepare some made up data and then "spin it up". You already know how to create a model and load data. Let's talk about how to define your first test case.
 
-The trick is to use assert_report helper. This means that the report will be executed and if the result will be different it will fail. The helper takes 2 parameters. First is a report definition second is the result expected. Currently it stops on the first failure but this will change soon and we will run all the tests and collect the results.
+Let's say that you have a complex metric, and you wish to verify that it works as expected. 
+
+The easiest way: create a testing project and prepare some dummy data before spinning up the project. You have already stepped through the process of creating your model and loading it with data. For more information, see [this page](http://sdk.gooddata.com/gooddata-ruby/recipe/model).
+
+Let's talk about how to define your first test case.The trick is to use assert_report helper. 
+
+This method executes the report and including an expected result as a parameter. The first parameter is a report definition, and the second one is the expected result. If the generated result does not match the second parameter, the assertion fails.
+
+Currently, this method stops on the first failure. In a future release, all tests will be executed before results are delivered back to you.
+
+Execute assert_report:
 
 {% highlight ruby %}
 p.assert_report({:top => [{:type => :metric, :title => "Sum Amount"}]}, [["3"]])
 {% endhighlight %}
 
-Go ahead and test it
+Go ahead and test it:
 
 {% highlight ruby %}
 gooddata --username joe@example.com --password my_secret_pass --token my_token project build model.rb
@@ -69,11 +82,14 @@ gooddata --username joe@example.com --password my_secret_pass --token my_token p
 
 ##Production
 
-The way we have it set up right now doesn't force us to use the same metrics to build the report. This is a problem. Ideally, we wanna make sure that the same report in test project is used also in production later. If somebody changes the project because of the business requirements we want the same report to be used in the test and **if something fails we want to know**.
 
-The easiest to achieve this is by extracting the metrics and the model to separate file that can later be used to define the project. You can then reference the same file from your production and testing project and make sure they are built using the same source.
+The current configuration of our project does not force us to use the same metrics to build the report. This is a problem. 
 
-The description might look like this
+Ideally, we must ensure that the same report used in the test project is also used later in production. If somebody changes the project due to changes in business requirements, we want the same report to be used in the test and **if something fails, we want to know**.
+
+The easiest way: extract the metrics and the model to separate files that can later be used to define the project. You can then reference the same file from your production and testing project to ensure that they are built from the same source.
+
+The description might look like the following:
 
 {% highlight ruby %}
 GoodData::Model::ProjectBuilder.create("gooddata-ruby test #{Time.now.to_i}") do |p|
@@ -115,8 +131,9 @@ GoodData::Model::ProjectBuilder.create("gooddata-ruby test #{Time.now.to_i}") do
 end
 {% endhighlight %}
 
-We are externalizing only the metrics but you can hopefully see that it might make sense to do it for the model as well.
+In the above, we are externalizing only the metrics. You can see how it might make sense to externalize the model, as well.
 
-#Rinse repeat
+#Rinse, repeat
 
-If you have any experience with TDD you know that your tests have to run daily to have any effect. This has TBD :-)
+If you have any experience with test-driven development, you know that your tests must run daily to maintain integrity. This scheduling step is TBD :-)
+

@@ -1,28 +1,37 @@
 ---
 layout: post
-title:  "Creating a model"
+title:  "Creating a data model"
 date:   2014-01-19 13:56:00
 categories: recipe
 next_section: recipe/crunching-numbers
 prev_section: recipe/your-first-project
 pygments: true
-perex: Model plays a huge role in the Reporting process. Let's have a look on how to create it using Ruby SDK and compare it with other approaches.
+perex: The logical data model (LDM) defines the facts and attributes in your project, as well as their relationships. Let’s have a look at how to create a project’s LDM using Ruby SDK. Then, we compare this method with other approaches.
 ---
 
-There are several ways how to express and create data model in GoodData. The most prominent way how to build a model is the visual modeler that is part of the CloudConnect package. There are clear advantages like being visual, but there are also some drawbacks. It is not **repeatable**, it is **not programmable** and it is not **text based** so it is hard to cram into SCM. Let's have a look on how to create a simple model using the Ruby SDK.
+There are several ways to express and create a data model in GoodData. The most prominent way is to use the LDM Modeler, a visual modeler included in the CloudConnect package. The visual approach has clear advantages, but there are some drawbacks.
 
-##The Model
-The model we will be creating is this ![Model](https://dl.dropboxusercontent.com/s/1y97ziv5anmpn9s/gooddata_devs_demo_model.png?token_hash=AAENC89d8XOfCr9AnyQCrd9vwfhb-bDuYcORQ0AIRP2RQQ) . Since we are developers let's talk about some developing. The model is briefly discussed in the article [Your first project](http://sdk.gooddata.com/gooddata-ruby/recipe/your-first-project).
+Visual development is **not repeatable**, **not programmable**, and **not text-based**, which makes it hard to fit into SCM. 
+
+Let's have a look on how to create a simple data model using the Ruby SDK.
+
+##The Data Model
+
+The model we will be creating is the following: ![Model](https://dl.dropboxusercontent.com/s/1y97ziv5anmpn9s/gooddata_devs_demo_model.png?token_hash=AAENC89d8XOfCr9AnyQCrd9vwfhb-bDuYcORQ0AIRP2RQQ). 
+
+The model is briefly discussed in this article: [Your first project](http://sdk.gooddata.com/gooddata-ruby/recipe/your-first-project).
+
+Let's discuss it from a developer's perspective.
 
 ##The Code
 
-The easiest way to set up a project from scratch is to use the scaffolding capabilities of the SDK. Run
+The easiest way to set up a project from scratch is to use the scaffolding capabilities of the SDK. Execute the following:
 
 {% highlight ruby %}
 gooddata scaffold project my_test_project
 {% endhighlight %}
 
-Open a file called model/model.rb and you see the following code inside:
+Open the file called model/model.rb, and you see the following code:
 
 {% highlight ruby %}
 GoodData::Model::ProjectBuilder.create("my_test_project") do |p|
@@ -52,25 +61,25 @@ GoodData::Model::ProjectBuilder.create("my_test_project") do |p|
 end
 {% endhighlight %}
 
-Hopefully the model is self descriptive and if you are not strong on terminology like label, anchor etc please refer to [Building a Model in GoodData tutorial](https://developer.gooddata.com/getting-started/).
+Hopefully, the above model is fairly self-explanatory. If you need a refresher on modeling terminology such as label and dataset, please refer to [Building a Model in GoodData tutorial](https://developer.gooddata.com/getting-started/).
 
-##Some Rules
+##Some Conventions
 
-Please note several things
+Please note the following rules:
 
-* We are trying to apply several conventions if you follow them it will be less typing for you but you can always override them.
-* In all the cases where you type a name it is a **string that will be used to create a technical name in gooddata also called identifier** on the API. The user visible name which we call title will be inferred if not provided. The inferring process is simple. We expect you to provide name in the snake case (as is typical in ruby, it means names like **close_date**, **opportunity_dimension** etc). These will be translated into human readable strings like **Close date** or **Opportunity dimension**. If you do not like the title you can specify it directly using code `:title => "My own title"` 
-* The names are also used as reference names in the model. Notice how the date is using name of the **close_date** dimension and also the **user_id** reference is used to reference users.
+* We are trying to apply conventions to the modeling process. Follow them to reduce the keystrokes. You may always override them.
+* In all cases where you enter a name, the value is a **string used to create a technical name in gooddata (an identifier)** using the API. The user-visible name (called the title) will be inferred, if it is not explicitly provided. The inferring process is simple. The Ruby SDK expect you to provide a name in the snake case. Typically in ruby, names like **close_date**, **opportunity_dimension** and more are translated into human-readable strings like **Close date** or **Opportunity dimension**. If you do not like the inferred title, you can specify it directly using code `:title => "My own title"`. 
+* Names are also used as reference names in the data model. Notice how the date is using the name of the **close_date** dimension, and the **user_id** reference is used to reference users.
 
 ##Executing the model
 
-Executing the model on the platform is just a one liner.
+Execute the model on the platform is just a one-liner:
 
 {% highlight ruby %}
 gooddata --username joe@example.com --password my_secret_pass --token my_token project build model.rb
 {% endhighlight %}
 
-Note that we haven't provided a project_id so a new project will be created for us.
+Since no project_id was provided, a new project is created for us.
 
 ##Updating the model
 
@@ -78,15 +87,15 @@ Note that we haven't provided a project_id so a new project will be created for 
 gooddata --username joe@example.com --password my_secret_pass --token my_token project update model.rb
 {% endhighlight %}
 
-In this case you have to provide a project id in the Goodfile file. The model will be updated. Currently it will drop cascade all parts of the model so be careful (this will be changed).
+In this case, you must provide a project id in the Goodfile file, and that project's model will be updated. Currently, this updating will **drop cascade all parts of the model**, so be careful. This will be changed in a future release.
 
-##Loading Data
+##Loading data
 
-As a part of the process, we allow you to load data since sometimes some initial datasets should be part of the model and not ETL. The typical use case is for sake of defining reports which are filtered on certain values. These values have to be present.
+As a part of the modeling process, you may load data using it, as some initial datasets should be part of the model, instead of ETL. For example, suppose you are defining reports that are filtered on certain values. These values must be present for the report to work properly.
 
-### Loading Data Given Inline
+### Loading data inline
 
-You can load data in just by adding it inline to the model file
+You can load data inline just by adding it to the model file:
 
 {% highlight ruby %}
 p.upload([["id", "name"],
@@ -94,20 +103,20 @@ p.upload([["id", "name"],
           ["2", "Petr"]], :dataset => 'users')
 {% endhighlight %}
 
-### Loading Data Given by Filename
+### Loading data from a file
 
-Another option is to load data that are in specific **csv file**
+Another option is to load data stored in a **csv file**:
 
 {% highlight ruby %}
 p.upload("/some/local_file.csv", :dataset => "users")
 {% endhighlight %}
 
-### Loading data given by web file
+### Loading data from a web file
 
-The last but not least, you can upload data that is stored in file on the web
+You may also upload data stored in a file on the web:
 
 {% highlight ruby %}
 p.upload("http://www.example.com/some/remote_file.csv", :dataset => "users")
 {% endhighlight %}
 
-**Remember:** In all cases the file must contain headers that has the same name as the name of the particular columns (not necessarily in the same order).
+**Remember:** In all cases, the file must contain headers matching the names of the particular columns, although maintaining the same order is not necessary.

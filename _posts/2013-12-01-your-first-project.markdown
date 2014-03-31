@@ -5,39 +5,45 @@ date:   2014-01-19 13:56:00
 categories: recipe
 next_section: recipe/model
 pygments: true
-perex: Let's spin up a project that will be the base for other tutorials. It will take only 5 mins. Promise.
+perex: Spin up a project that you can use for the other tutorials. It will take only 5 minutes. Promise.
 ---
 
-Welcome. Let's spin up an example project that so you can explore and see SDK in action. It's super simple. Since you are probably a developer we created simple project about developers.
+Before you begin, you must install Ruby and the GoodData SDK and have appropriate access to the GoodData platform and the ability to create or modify projects. See ![Getting Started](http://sdk.gooddata.com/gooddata-ruby/getting-started).
+
+Welcome. Let's spin up an example project, so you can explore the SDK and see it in action. It's super simple. We've created simple project for our developers about developers.
 
 ###What we want to measure
-Imagine you have a small dev shop. You have a couple of developers. They crank out code. You also have several repositories for your products. You want to measure how many lines of code each of the devs create. You wanna be able to track it by time, by repository and by person. You want to see how many lines of code they committed.
+In any project, success is often determined by identifying what you are trying to measure. 
+
+Imagine you have a small development shop with a couple of developers. They crank out lots of code. You also have several repositories for your products. You want to measure how many lines of code each developer creates. You want to track output by time, by repository and by person. You want to see the number of lines of code each of them committed.
 
 ###Model
-This is how the model looks. Simple enough to understand main principles and how Ruby SDK works.
+Here's how the model looks: simple enough to understand the main principles and how the Ruby SDK works.
 
 ![Model](https://dl.dropboxusercontent.com/s/1y97ziv5anmpn9s/gooddata_devs_demo_model.png?token_hash=AAENC89d8XOfCr9AnyQCrd9vwfhb-bDuYcORQ0AIRP2RQQ)
 
 ###Spinning it up
-Open the command line and start coding. I assume you already have GoodData Ruby SDK installed and working on your computer. Run
+Open the command line and start coding (assuming you have GoodData Ruby SDK installed and working on your computer). Run the following:
 
 {% highlight ruby %}
     gooddata scaffold project my_test_project
 {% endhighlight %}
 
-go to the new project directory
+Go to the new project directory:
 
 {% highlight ruby %}
     cd my_test_project
 {% endhighlight %}
 
-and build project by running
+Now, build the project:
 
 {% highlight ruby %}
     gooddata -U username -P pass -t token project build
 {% endhighlight %}
 
-The _token_ above is well know authentication token that you need to create an empty project in GoodData Platform. Don't have one? Register to our [Developer Trial Program](https://developer.gooddata.com/trial). It is **free** and you can play around with GoodData for 60 days. If everything goes ok it will give you a PID also called a `project_id`. Open the `my_test_project` directory in your favorite text editor and open file called Goodfile. It should look like this
+The above _token_ value is an authentication token needed to create an empty project in the GoodData Platform. Don't have one? You may register to our [Developer Trial Program](https://developer.gooddata.com/trial). It is **free**, and you can play around with GoodData for 60 days. 
+
+If everything goes well with the build, the command returns a PID, also called a `project_id`. Open the `my_test_project` directory in your favorite text editor. Open the file called, `Goodfile`. It should look the following:
 
 {% highlight ruby %}
     {
@@ -46,13 +52,15 @@ The _token_ above is well know authentication token that you need to create an e
     }
 {% endhighlight %}
 
-Put your freshly acquired pid into an empty slot after "project_id". See the example below
+In the file, insert your freshly acquired pid into the empty slot after "project_id", as in the following example:
 
 {% highlight ruby %}
     {
       "model" : "./model/model.rb",
-      "project_id"   : "HERE_COMES_YOUR NEW_TOKEN"
+      "project_id"   : "THIS_IS_YOUR_NEW_TOKEN"
     }
 {% endhighlight %}
 
-You are done. If you go to [https://secure.gooddata.com/projects.html](https://secure.gooddata.com/projects.html) you should be able to see your new project! You are now fully prepared to the next tutorial. It's time to move forward! 
+You are done. Visit [https://secure.gooddata.com/projects.html](https://secure.gooddata.com/projects.html) to see your new project. 
+
+You're ready for the next tutorial. Onward! 
