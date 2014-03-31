@@ -8,7 +8,6 @@ module ConnectionHelper
   DEFAULT_PASSWORD = "jindrisska"
 
   def self.create_default_connection(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD)
-    GoodData::Connection.new(username, password)
+    GoodData.connect(username, password)
   end
-
 end

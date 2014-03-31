@@ -49,9 +49,9 @@ module GoodData
         end
       end
 
-      def sanitize_string(str)
+      def sanitize_string(str, filter=/[^a-z_]/, replacement='')
         str = ActiveSupport::Inflector.transliterate(str).downcase
-        str.gsub(/[^a-z]/, '')
+        str.gsub(filter, replacement)
       end
     end
   end

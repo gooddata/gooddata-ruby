@@ -924,9 +924,7 @@ module GoodData
         raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
         raise('Data set fields must have their names defined') if hash[:name].nil?
 
-        hash[:name] = GoodData::Helpers.sanitize_string(hash[:name])
-
-        @name = hash[:name]
+        @name = GoodData::Helpers.sanitize_string(hash[:name])
         @title = hash[:title] || hash[:name].humanize
         @folder = hash[:folder]
         @schema = schema

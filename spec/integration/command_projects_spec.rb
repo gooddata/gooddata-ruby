@@ -10,7 +10,7 @@ describe GoodData::Command::Projects, :constraint => 'slow' do
     @module_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/additional_dataset_module.json")
 
     GoodData.connect("svarovsky+gem_tester@gooddata.com", "jindrisska")
-    @project = GoodData::Command::Projects.build({:spec => @blueprint, :token => GD_PROJECT_TOKEN})
+    @project = GoodData::Command::Projects.build({:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN})
   end
 
   after(:all) do
