@@ -75,8 +75,10 @@ module GoodData
         project = Project.new json
         project.save
 
+        # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
         while project.state.to_s != "enabled"
           if project.state.to_s == "deleted"
+            # if project is switched to deleted state, fail. This is usually problem of creating a template which is invalid.
             fail "Project was marked as deleted during creation. This usually means you were trying to create from template and it failed."
           end
           project.reload!
