@@ -3,8 +3,12 @@
 require 'gooddata/commands/api'
 
 describe GoodData::Command::Api do
-  before(:all) do
+  before(:each) do
     ConnectionHelper.create_default_connection
+  end
+
+  after(:each) do
+    GoodData.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Api instance" do

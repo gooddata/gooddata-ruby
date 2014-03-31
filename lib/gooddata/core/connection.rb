@@ -88,7 +88,6 @@ module GoodData
                                          :headers => default_headers
 
       @server = create_server_connection(@url, @options)
-      authenticate
     end
 
     # Returns the user JSON object of the currently logged in GoodData user account.

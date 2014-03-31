@@ -4,7 +4,11 @@ require 'gooddata/commands/projects'
 
 describe GoodData::Command::Projects do
   before(:each) do
-    @connection = ConnectionHelper::create_default_connection
+    ConnectionHelper.create_default_connection
+  end
+
+  after(:each) do
+    GoodData.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Projects instance" do

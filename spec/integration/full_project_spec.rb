@@ -5,7 +5,7 @@ require 'gooddata'
 describe "Spin a project", :constraint => 'slow' do
   before(:all) do
     spec = MultiJson.load(File.read("./spec/data/test_project_model_spec.json"), :symbolize_keys => true)
-    GoodData.connect("svarovsky+gem_tester@gooddata.com", "jindrisska")
+    GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
 
     @project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
   end

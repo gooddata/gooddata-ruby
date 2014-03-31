@@ -6,7 +6,11 @@ describe GoodData::Command::Process do
   deploy_dir = './'
 
   before(:each) do
-    @connection = ConnectionHelper::create_default_connection
+    ConnectionHelper.create_default_connection
+  end
+
+  after(:each) do
+    GoodData.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Process instance" do

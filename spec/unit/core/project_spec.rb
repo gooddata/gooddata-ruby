@@ -6,15 +6,15 @@ require 'gooddata/core/project'
 require 'gooddata/models/project'
 
 describe GoodData do
+  before(:each) do
+    ConnectionHelper.create_default_connection
+  end
+
+  after(:each) do
+    GoodData.disconnect
+  end
+
   describe '#project=' do
-    before(:all) do
-      ConnectionHelper.create_default_connection
-    end
-
-    after(:all) do
-      GoodData.disconnect
-    end
-
     it 'Assigns nil' do
       GoodData.project = nil
     end
