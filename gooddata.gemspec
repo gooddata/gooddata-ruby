@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "coveralls", "~> 0.7.0"
 
   s.add_dependency "activesupport", "~> 4.0.3"
-  s.add_dependency "bundler", "~> 1.6.0"
+  s.add_dependency "bundler", "~> 1.5.3"
   s.add_dependency "erubis", "~> 2.7.0"
   s.add_dependency "gli", "~> 2.9.0"
   s.add_dependency "highline", "~> 1.6.21"
