@@ -3,6 +3,8 @@
 require_relative '../md_object'
 require_relative '../../helpers'
 
+require_relative '../attributes/anchor'
+
 module GoodData
   module Model
     ##
