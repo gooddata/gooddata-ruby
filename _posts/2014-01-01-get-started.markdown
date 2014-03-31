@@ -26,7 +26,7 @@ This SDK is intended for developers. Programming experience is required. Some op
 ##Prerequisites
 
 1. Acquired a GoodData platform account.
-2. Set up your Ruby environment.
+2. Set up your Ruby environment. Supported versions of ruby are 1.9, 2.0 and higher. Jruby 1.7 and higher. 1.8 is not supported.
 3. Acquired a project authentication key if you are creating new projects or have Administrator access to any project that you wish to modify using this SDK.
 
 ##Install
@@ -34,7 +34,7 @@ This SDK is intended for developers. Programming experience is required. Some op
 If you are using gems just
 
 {% highlight ruby %}
-gem install gooddata --version 0.6.0.pre10
+gem install gooddata --version 0.6.0.pre11
 {% endhighlight %}
 
 If you are using bundler. Add
