@@ -74,6 +74,11 @@ module GoodData
         json['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
         project.save
+
+        while project.state.to_s != "enabled"
+          project.reload!
+        end
+
         if block
           GoodData::with_project(project) do |p|
             block.call(p)
@@ -93,6 +98,18 @@ module GoodData
         response = GoodData.get response['uri']
         @json = response
       end
+    end
+
+    def saved?
+      !!uri
+    end
+
+    def reload!
+      if saved?
+        response = GoodData.get(uri)
+        @json = response
+      end
+      self
     end
 
     def delete
