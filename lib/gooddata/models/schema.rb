@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require_relative 'md_object'
+require_relative '../helpers'
 
 module GoodData
   module Model
@@ -31,7 +32,7 @@ module GoodData
         config[:name] = name unless config[:name]
         config[:title] = config[:name] unless config[:title]
         config[:title] = title unless config[:title]
-        config[:title] = config[:title].humanize
+        config[:title] = GoodData::Helpers.humanize(config[:title])
 
         fail 'Schema name not specified' unless config[:name]
         self.name = config[:name]

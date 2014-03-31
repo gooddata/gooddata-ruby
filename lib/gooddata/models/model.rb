@@ -27,7 +27,6 @@ require_relative 'time_attribute'
 require_relative 'time_fact'
 require_relative 'time_reference'
 
-require 'active_support/all'
 require 'multi_json'
 require 'open-uri'
 
