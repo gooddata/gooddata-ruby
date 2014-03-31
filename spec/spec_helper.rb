@@ -18,6 +18,7 @@ RSpec.configure do |config|
   config.include CliHelper
   config.include ConnectionHelper
   config.include ProjectHelper
+  config.include SchemaHelper
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[

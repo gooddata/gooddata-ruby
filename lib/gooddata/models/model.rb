@@ -1,34 +1,16 @@
 # encoding: UTF-8
 
-require_relative 'anchor'
-require_relative 'attribute_column'
-require_relative 'attribute_folder'
-require_relative 'column'
-require_relative 'dashboard_builder'
-require_relative 'date_attribute'
-require_relative 'date_column'
-require_relative 'date_dimension'
-require_relative 'date_reference'
-require_relative 'fact'
-require_relative 'fact_folder'
-require_relative 'fact_model'
-require_relative 'folder'
-require_relative 'label'
-require_relative 'md_object'
-require_relative 'project_blueprint'
-require_relative 'project_builder'
-require_relative 'project_creator'
-require_relative 'reference'
-require_relative 'schema'
-require_relative 'schema_blueprint'
-require_relative 'schema_builder'
-require_relative 'tab_builder'
-require_relative 'time_attribute'
-require_relative 'time_fact'
-require_relative 'time_reference'
+require_relative '../core/connection'
+require_relative '../core/rest'
 
+require_relative 'links'
+require_relative 'module_constants'
+require_relative 'schema'
+
+require 'fileutils'
 require 'multi_json'
 require 'open-uri'
+require 'zip'
 
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
@@ -36,30 +18,6 @@ require 'open-uri'
 #
 module GoodData
   module Model
-    # GoodData REST API categories
-    LDM_CTG = 'ldm'
-    LDM_MANAGE_CTG = 'ldm-manage'
-
-    # Model naming conventions
-    FIELD_PK = 'id'
-    FK_SUFFIX = '_id'
-    FACT_COLUMN_PREFIX = 'f_'
-    DATE_COLUMN_PREFIX = 'dt_'
-    TIME_COLUMN_PREFIX = 'tm_'
-    LABEL_COLUMN_PREFIX = 'nm_'
-    ATTRIBUTE_FOLDER_PREFIX = 'dim'
-    ATTRIBUTE_PREFIX = 'attr'
-    LABEL_PREFIX = 'label'
-    FACT_PREFIX = 'fact'
-    DATE_FACT_PREFIX = 'dt'
-    DATE_ATTRIBUTE = 'date'
-    DATE_ATTRIBUTE_DEFAULT_DISPLAY_FORM = 'mdyy'
-    TIME_FACT_PREFIX = 'tm.dt'
-    TIME_ATTRIBUTE_PREFIX = 'attr.time'
-    FACT_FOLDER_PREFIX = 'ffld'
-
-    SKIP_FIELD = false
-
     class << self
       def add_dataset(name, columns, project = nil)
         Schema.new('columns' => columns, 'name' => name)
