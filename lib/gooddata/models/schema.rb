@@ -190,7 +190,7 @@ module GoodData
       end
 
       def add_label(column)
-        label = Label.new(column, nil, self)
+        label = GoodData::Model::Label.new(column, nil, self)
         labels << label
         fields << label
       end

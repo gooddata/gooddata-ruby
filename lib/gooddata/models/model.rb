@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-# require_relative 'fact'
 require_relative 'anchor'
 require_relative 'attribute_column'
 require_relative 'attribute_folder'
@@ -10,6 +9,7 @@ require_relative 'date_attribute'
 require_relative 'date_column'
 require_relative 'date_dimension'
 require_relative 'date_reference'
+require_relative 'fact'
 require_relative 'fact_folder'
 require_relative 'fact_model'
 require_relative 'folder'
@@ -26,9 +26,6 @@ require_relative 'tab_builder'
 require_relative 'time_attribute'
 require_relative 'time_fact'
 require_relative 'time_reference'
-
-# require_relative '../hacks'
-# require_relative '../helpers'
 
 require 'active_support/all'
 require 'multi_json'

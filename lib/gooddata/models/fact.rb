@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
 require_relative 'metadata'
-require_relative 'md_object'
 
 module GoodData
   class Fact < GoodData::MdObject

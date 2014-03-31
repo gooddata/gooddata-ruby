@@ -1,5 +1,8 @@
 # encoding: UTF-8
 
+require_relative '../core/connection'
+require_relative '../core/project'
+
 module GoodData
   class MdObject
     MD_OBJ_CTG = 'obj'
