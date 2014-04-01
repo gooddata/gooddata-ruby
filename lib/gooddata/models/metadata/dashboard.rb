@@ -1,9 +1,14 @@
 # encoding: UTF-8
 
+require_relative '../../core/core'
+require_relative '../metadata'
 require_relative 'metadata'
+require_relative 'report'
+
+require 'multi_json'
 
 module GoodData
-  class Dashboard < MdObject
+  class Dashboard < GoodData::MdObject
     root_key :projectDashboard
 
     class << self
