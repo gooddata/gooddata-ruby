@@ -25,6 +25,16 @@ module GoodData::Command
         {:username => user, :password => password, :auth_token => auth_token}
       end
 
+      # Read credentials
+      def read_credentials
+        if File.exists?(credentials_file) then
+          config = File.read(credentials_file)
+          JSON.parser.new(config, :symbolize_names => true).parse
+        else
+          {}
+        end
+      end
+
       # Ask for credentials and store them
       def store
         credentials = ask_for_credentials
