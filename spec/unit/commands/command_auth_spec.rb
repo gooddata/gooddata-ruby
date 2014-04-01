@@ -28,36 +28,6 @@ describe GoodData::Command::Auth do
     cmd.should be_a(GoodData::Command::Auth)
   end
 
-  describe "#connect" do
-    it "Connects to GoodData Platform" do
-      GoodData::Command::Auth.connect
-    end
-  end
-
-  describe "#user" do
-    it "Returns user" do
-      GoodData::Command::Auth.user
-    end
-  end
-
-  describe "#password" do
-    it "Returns password" do
-      GoodData::Command::Auth.user
-    end
-  end
-
-  describe "#url" do
-    it "Returns url" do
-      GoodData::Command::Auth.url
-    end
-  end
-
-  describe "#auth_token" do
-    it "Returns authentication token" do
-      GoodData::Command::Auth.auth_token
-    end
-  end
-
   describe "#credentials_file" do
     it "Returns credentials_file" do
       GoodData::Command::Auth.credentials_file
@@ -78,7 +48,7 @@ describe GoodData::Command::Auth do
     }
 
     it 'Interactively asks user for crendentials' do
-      # pending("Mock STDIO")
+      pending("Mock STDIO")
 
       @input << credentials[:email] << "\n"
       @input << credentials[:password] << "\n"
