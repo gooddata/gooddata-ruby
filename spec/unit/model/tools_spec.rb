@@ -19,6 +19,7 @@ describe GoodData::Model do
   end
 
   it 'generate identifiers starting with letters and without ugly characters' do
+    pending "We need o figure out what is the right way to do it"
     expect = 'fact.test.blah'
     result = GoodData::Model::Fact.new({:name =>'blah'}, SCHEMA).identifier
     result.should == expect

@@ -920,8 +920,6 @@ module GoodData
         raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
         raise('Data set fields must have their names defined') if hash[:name].nil?
 
-        hash[:name] = GoodData::Helpers.sanitize_string(hash[:name])
-
         @name = hash[:name]
         @title = hash[:title] || hash[:name].humanize
         @folder = hash[:folder]
@@ -1346,6 +1344,8 @@ module GoodData
     #
     class Folder < MdObject
       def initialize(title)
+        # TODO: should a super be here?
+        # how to deal with name vs title?
         @title = title
         @name = GoodData::Helpers.sanitize_string(title)
       end
