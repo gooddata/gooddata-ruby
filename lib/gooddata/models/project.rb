@@ -57,6 +57,7 @@ module GoodData
         GoodData.logger.info "Creating project #{attributes[:title]}"
 
         auth_token = attributes[:auth_token] || GoodData.connection.auth_token
+        fail "You have to provide your token for creating projects as :auth_token parameter" if auth_token.nil? || auth_token.empty?
 
         json = {"project" =>
                   {
