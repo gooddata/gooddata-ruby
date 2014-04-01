@@ -1,12 +1,13 @@
 # encoding: UTF-8
 
+require_relative '../metadata'
 require_relative 'metadata'
 
 # GoodData Module
 module GoodData
   # Report Definition
   # TODO: Add more doc ...
-  class ReportDefinition < MdObject
+  class ReportDefinition < GoodData::MdObject
     root_key :reportDefinition
 
     class << self
