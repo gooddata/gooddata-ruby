@@ -91,6 +91,7 @@ module GoodData
         end
         project
       end
+
     end
 
     def initialize(json)
@@ -140,7 +141,6 @@ module GoodData
     end
 
     alias :pid :obj_id
-
 
     def title
       data['meta']['title'] if data['meta']
@@ -232,5 +232,48 @@ module GoodData
     def is_project?
       true
     end
+
+    def partial_md_export(objects, options={})
+      # TODO: refactor polling to md_polling in client
+
+      fail "Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate" if objects.nil? || objects.empty?
+      target_project = options[:project]
+      fail "You have to provide a project instance or project pid to migrate to" if target_project.nil?
+      target_project = GoodData::Project[target_project]
+      objects = objects.map {|obj| GoodData::MdObject[obj]}
+      GoodData.logging_on
+      export_payload = {
+          :partialMDExport => {
+              :uris => objects.map {|obj| obj.uri}
+          }
+      }
+      result = GoodData.post("#{GoodData.project.md['maintenance']}/partialmdexport", export_payload)
+      polling_url = result["partialMDArtifact"]["status"]["uri"]
+      token = result["partialMDArtifact"]["token"]
+
+      polling_result = GoodData.get(polling_url)
+      while polling_result["wTaskStatus"]["poll"]["status"] == "RUNNING"
+        polling_result = GoodData.get(polling_url)
+      end
+      fail "Exporting objects failed" if polling_result["wTaskStatus"]["poll"]["status"] == "ERROR"
+
+      import_payload = {
+      :partialMDImport => {
+        :token => token,
+         :overwriteNewer => "1",
+         :updateLDMObjects => "0"
+        }
+      }
+
+      result = GoodData.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
+      polling_uri = result["uri"]
+      polling_result = GoodData.get(polling_url)
+      while polling_result["wTaskStatus"]["poll"]["status"] == "RUNNING"
+        polling_result = GoodData.get(polling_url)
+      end
+      fail "Exporting objects failed" if polling_result["wTaskStatus"]["poll"]["status"] == "ERROR"
+
+    end
+
   end
 end
