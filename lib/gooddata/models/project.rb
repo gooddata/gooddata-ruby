@@ -57,7 +57,7 @@ module GoodData
 
         auth_token = attributes[:auth_token] || GoodData.connection.auth_token
 
-        json = {:project =>
+        json = {"project" =>
                   {
                     'meta' => {
                       'title' => attributes[:title],
@@ -70,9 +70,19 @@ module GoodData
                     }
                   }
         }
-        json['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
+        json["project"]['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
         project.save
+
+        # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
+        while project.state.to_s != "enabled"
+          if project.state.to_s == "deleted"
+            # if project is switched to deleted state, fail. This is usually problem of creating a template which is invalid.
+            fail "Project was marked as deleted during creation. This usually means you were trying to create from template and it failed."
+          end
+          project.reload!
+        end
+
         if block
           GoodData::with_project(project) do |p|
             block.call(p)
@@ -93,6 +103,18 @@ module GoodData
         response = GoodData.get response['uri']
         @json = response
       end
+    end
+
+    def saved?
+      !!uri
+    end
+
+    def reload!
+      if saved?
+        response = GoodData.get(uri)
+        @json = response
+      end
+      self
     end
 
     def delete
