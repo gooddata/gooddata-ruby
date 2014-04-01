@@ -92,7 +92,7 @@ module GoodData
         if GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'ERROR'
           s = StringIO.new
           GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
-          js = JSON.parse(s.string)
+          js = MultiJson.load(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end
       end
@@ -114,7 +114,7 @@ module GoodData
 
       def self.from_json(spec)
         if spec.is_a?(String)
-          ProjectBlueprint.new(JSON.parse(File.read(spec), :symbolize_names => true))
+          ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
         else
           ProjectBlueprint.new(spec)
         end
@@ -404,12 +404,12 @@ module GoodData
       end
 
       def load_metrics(file)
-        new_metrics = JSON.parse(open(file).read, :symbolize_names => true)
+        new_metrics = MultiJson.load(open(file).read, :symbolize_keys => true)
         @metrics = @metrics + new_metrics
       end
 
       def load_datasets(file)
-        new_metrics = JSON.parse(open(file).read, :symbolize_names => true)
+        new_metrics = MultiJson.load(open(file).read, :symbolize_keys => true)
         @datasets = @datasets + new_metrics
       end
 
