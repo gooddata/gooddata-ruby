@@ -38,7 +38,7 @@ If you created the above Ruby project, please locate the directory where a Goodf
 You may use the gooddata jack_in command to log in to the platform and to spin up an interactive session inside your example project. If you do not have such a project or wish to explore on your own, you can override the behavior by explicitly specifying the project yourself, as in the following:
 
 {% highlight sql %}
-    gooddata -p project_id jack_in
+    gooddata -p project_id project jack_in
 {% endhighlight %}
 
 After you jack in, let's have a look around. From the tutorial project, there are no metrics:

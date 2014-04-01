@@ -54,7 +54,7 @@ bundle install
 You can connect as a user easily.
 
 {% highlight ruby %}
-GoodData.connect("john@example.com", "password)
+GoodData.connect("john@example.com", "password")
 {% endhighlight %}
 
 This will assume our default servers and the webdav server used for uploading files will be determined automatically. If you need to explicitly provide such information you can also use another form.
