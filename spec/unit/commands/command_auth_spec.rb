@@ -20,7 +20,7 @@ describe GoodData::Command::Auth do
 
 
   before(:each) do
-    @connection = ConnectionHelper::create_default_connection
+    ConnectionHelper::create_default_connection
   end
 
   it "Is Possible to create GoodData::Command::Auth instance" do

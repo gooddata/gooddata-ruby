@@ -19,6 +19,7 @@ describe GoodData::Connection do
   end
 
   it "Connects using username and password" do
+    pending("This will no longer work. Discuss with Korczis")
     c = ConnectionHelper::create_default_connection(USERNAME, PASSWORD)
     c.should be_a(GoodData::Connection)
   end

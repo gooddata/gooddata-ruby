@@ -7,7 +7,7 @@ describe GoodData::Command::Projects, :constraint => 'slow' do
     @blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/test_project_model_spec.json")
     @module_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/additional_dataset_module.json")
 
-    GoodData.connect("svarovsky+gem_tester@gooddata.com", "jindrisska")
+    ConnectionHelper::create_default_connection
     @project = GoodData::Command::Projects.build({:spec => @blueprint, :token => GD_PROJECT_TOKEN})
   end
 
