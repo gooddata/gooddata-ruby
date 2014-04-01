@@ -1,9 +1,10 @@
 # encoding: UTF-8
 
-require_relative '../md_object'
 require_relative '../../helpers'
 
 require_relative '../attributes/anchor'
+require_relative '../columns/columns'
+require_relative '../md_object'
 
 module GoodData
   module Model
