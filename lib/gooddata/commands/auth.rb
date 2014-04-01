@@ -10,66 +10,9 @@ module GoodData::Command
   class Auth
     class << self
 
-      # Connect to GoodData platform
-      def connect
-        unless defined? @connected
-          GoodData.connect({
-                             :login => user,
-                             :password => password,
-                             :server => url,
-                             :auth_token => auth_token
-                           })
-          @connected = true
-        end
-        @connected
-      end
-
-      # Get credentials user
-      def user
-        ensure_credentials
-        @credentials[:username]
-      end
-
-      # Get credentials password
-      def password
-        ensure_credentials
-        @credentials[:password]
-      end
-
-      # Get credentials url
-      def url
-        ensure_credentials
-        @credentials[:url]
-      end
-
-      # Get auth token from ensured credentials
-      def auth_token
-        ensure_credentials
-        @credentials[:auth_token]
-      end
-
       # Get path of .gooddata config
       def credentials_file
         "#{GoodData::Helpers.home_directory}/.gooddata"
-      end
-
-      # Ensure credentials existence
-      def ensure_credentials
-        return if defined? @credentials
-        unless @credentials = read_credentials
-          @credentials = ask_for_credentials
-        end
-        @credentials
-      end
-
-      # Read credentials
-      def read_credentials
-        if File.exists?(credentials_file) then
-          config = File.read(credentials_file)
-          MultiJson.load(config, :symbolize_keys => true).parse
-        else
-          {}
-        end
       end
 
       # Ask for credentials
