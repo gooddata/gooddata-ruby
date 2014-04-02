@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'gooddata/commands/process'
 
 describe GoodData::Command::Process do

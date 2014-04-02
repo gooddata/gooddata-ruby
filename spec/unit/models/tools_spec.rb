@@ -4,8 +4,19 @@ require 'gooddata/client'
 require 'gooddata/models/model'
 
 describe GoodData::Model do
+  COLUMNS = [
+    {:type =>:anchor, :name =>'cp', 'title' => 'CP', 'folder' => 'test'},
+    {:type =>:attribute, :name =>'a1', 'title' => 'A1', 'folder' => 'test'},
+    {:type =>:attribute, :name =>'a2', 'title' => 'A2', 'folder' => 'test'},
+    {:type =>:date, :name =>'event', 'title' => 'Event', 'folder' => 'test'},
+    {:type =>:fact, :name =>'f1', 'title' => 'F1', 'folder' => 'test'},
+    {:type =>:fact, :name =>'f2', 'title' => 'F2', 'folder' => 'test'},
+  ] unless const_defined?(:COLUMNS)
+
+  SCHEMA = GoodData::Model::Schema.new :name => 'test', :title => 'test', :columns => COLUMNS unless const_defined?(:SCHEMA)
+
   before(:all) do
-    ConnectionHelper.create_default_connection
+    GoodData::connect
   end
 
   after(:all) do
@@ -13,7 +24,7 @@ describe GoodData::Model do
   end
 
   it 'generate identifiers starting with letters and without ugly characters' do
-    pending('Research what is desired behavior')
+    pending "We need o figure out what is the right way to do it"
 
     expect = 'fact.test.blah'
     result = GoodData::Model::Fact.new({:name =>'blah'}, SchemaHelper::SCHEMA).identifier

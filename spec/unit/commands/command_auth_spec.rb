@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'highline'
 
 require 'gooddata/cli/terminal'
@@ -19,7 +17,7 @@ describe GoodData::Command::Auth do
     :password => 'lokomotiva',
     :token => 'briketa',
   }
-  
+
   DEFAULT_CREDENTIALS_TEMP_FILE_NAME = 'credentials'
 
   before(:all) do
@@ -34,8 +32,9 @@ describe GoodData::Command::Auth do
     GoodData::CLI::DEFAULT_TERMINAL = ORIG_TERMINAL
   end
 
+
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @connection = ConnectionHelper::create_default_connection
   end
 
   after(:each) do
@@ -47,50 +46,15 @@ describe GoodData::Command::Auth do
     cmd.should be_a(GoodData::Command::Auth)
   end
 
-  describe "#connect" do
-    it "Connects to GoodData Platform" do
-      GoodData::Command::Auth.connect
-    end
-  end
-
-  describe "#user" do
-    it "Returns user" do
-      GoodData::Command::Auth.user
-    end
-  end
-
-  describe "#password" do
-    it "Returns password" do
-      GoodData::Command::Auth.user
-    end
-  end
-
-  describe "#url" do
-    it "Returns url" do
-      GoodData::Command::Auth.url
-    end
-  end
-
-  describe "#auth_token" do
-    it "Returns authentication token" do
-      GoodData::Command::Auth.auth_token
-    end
-  end
-
   describe "#credentials_file" do
     it "Returns credentials_file" do
       GoodData::Command::Auth.credentials_file
     end
   end
 
-  describe "#ensure_credentials" do
-    it "Ensures credentials existence" do
-      pending("Mock STDIO")
-    end
-  end
-
   describe "#ask_for_credentials" do
     it 'Interactively asks user for crendentials' do
+      pending("Mock STDIO")
       @input.string = ''
       @input << DEFAULT_CREDENTIALS[:email] << "\n"
       @input << DEFAULT_CREDENTIALS[:password] << "\n"

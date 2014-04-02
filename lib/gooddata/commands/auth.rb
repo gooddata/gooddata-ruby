@@ -10,56 +10,19 @@ module GoodData::Command
   class Auth
     class << self
 
-      # Connect to GoodData platform
-      def connect
-        unless defined? @connected
-          GoodData.connect({
-                             :login => user,
-                             :password => password,
-                             :server => url,
-                             :auth_token => auth_token
-                           })
-          @connected = true
-        end
-        @connected
-      end
-
-      # Get credentials user
-      def user
-        ensure_credentials
-        @credentials[:username]
-      end
-
-      # Get credentials password
-      def password
-        ensure_credentials
-        @credentials[:password]
-      end
-
-      # Get credentials url
-      def url
-        ensure_credentials
-        @credentials[:url]
-      end
-
-      # Get auth token from ensured credentials
-      def auth_token
-        ensure_credentials
-        @credentials[:auth_token]
-      end
-
       # Get path of .gooddata config
       def credentials_file
         "#{GoodData::Helpers.home_directory}/.gooddata"
       end
 
-      # Ensure credentials existence
-      def ensure_credentials
-        return if defined? @credentials
-        unless @credentials = read_credentials
-          @credentials = ask_for_credentials
-        end
-        @credentials
+      # Ask for credentials
+      def ask_for_credentials
+        puts 'Enter your GoodData credentials.'
+        user = GoodData::CLI.terminal.ask('Email')
+        password = GoodData::CLI.terminal.ask('Password') { |q| q.echo = 'x' }
+        auth_token = GoodData::CLI.terminal.ask('Authorization Token')
+
+        {:username => user, :password => password, :auth_token => auth_token}
       end
 
       # Read credentials
@@ -75,20 +38,9 @@ module GoodData::Command
       # Writes credentials
       def write_credentials(credentials, credentials_file_path = credentials_file)
         File.open(credentials_file_path, 'w', 0600) do |f|
-          f.puts JSON.pretty_generate(credentials)
+          f.puts MultiJson.encode(credentials, :pretty => true)
         end
         credentials
-      end
-
-
-      # Ask for credentials
-      def ask_for_credentials
-        puts 'Enter your GoodData credentials.'
-        user = GoodData::CLI.terminal.ask('Email')
-        password = GoodData::CLI.terminal.ask('Password') { |q| q.echo = 'x' }
-        auth_token = GoodData::CLI.terminal.ask('Authorization Token')
-
-        {:username => user, :password => password, :auth_token => auth_token}
       end
 
       # Ask for credentials and store them

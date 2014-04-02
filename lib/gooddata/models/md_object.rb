@@ -2,7 +2,7 @@
 
 module GoodData
   module Model
-    class   MdObject
+    class MdObject
       attr_accessor :name, :title
 
       def visual

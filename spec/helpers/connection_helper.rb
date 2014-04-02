@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'gooddata/connection'
 
 module ConnectionHelper
@@ -8,6 +6,7 @@ module ConnectionHelper
   DEFAULT_PASSWORD = "jindrisska"
 
   def self.create_default_connection(username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD)
-    GoodData.connect(username, password)
+    GoodData::connect(username, password)
   end
+
 end

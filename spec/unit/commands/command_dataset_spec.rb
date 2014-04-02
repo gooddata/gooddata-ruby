@@ -1,10 +1,8 @@
-# encoding: UTF-8
-
 require 'gooddata/commands/datasets'
 
 describe GoodData::Command::Datasets do
   before(:each) do
-    ConnectionHelper.create_default_connection
+    ConnectionHelper::create_default_connection
     @cmd = GoodData::Command::Datasets.new()
   end
 

@@ -9,6 +9,8 @@ module GoodData
     #
     class Folder < MdObject
       def initialize(title)
+        # TODO: should a super be here?
+        # how to deal with name vs title?
         @title = title
         @name = GoodData::Helpers.sanitize_string(title)
       end

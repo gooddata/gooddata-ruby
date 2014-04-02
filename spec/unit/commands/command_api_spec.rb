@@ -1,14 +1,8 @@
-# encoding: UTF-8
-
 require 'gooddata/commands/api'
 
 describe GoodData::Command::Api do
   before(:each) do
-    ConnectionHelper.create_default_connection
-  end
-
-  after(:each) do
-    GoodData.disconnect
+    @connection = ConnectionHelper::create_default_connection
   end
 
   it "Is Possible to create GoodData::Command::Api instance" do
@@ -18,14 +12,13 @@ describe GoodData::Command::Api do
 
   describe "#get" do
     it "Call without arguments" do
-      GoodData::Command::Api.get('/gdc')
+      GoodData::Command::Api.test()
     end
   end
 
   describe "#delete" do
     it "Call without arguments" do
-      pending('Create resource which can be deleted first')
-      GoodData::Command::Api.delete('/some/resource')
+      GoodData::Command::Api.test()
     end
   end
 

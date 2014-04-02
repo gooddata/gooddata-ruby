@@ -35,7 +35,7 @@ module GoodData
         config[:name] = name unless config[:name]
         config[:title] = config[:name] unless config[:title]
         config[:title] = title unless config[:title]
-        config[:title] = GoodData::Helpers.humanize(config[:title])
+        config[:title] = config[:title].humanize
 
         fail 'Schema name not specified' unless config[:name]
         self.name = config[:name]
@@ -194,7 +194,7 @@ module GoodData
       end
 
       def add_label(column)
-        label = GoodData::Model::Label.new(column, nil, self)
+        label = Label.new(column, nil, self)
         labels << label
         fields << label
       end
