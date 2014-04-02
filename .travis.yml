@@ -5,6 +5,8 @@ rvm:
   - ruby-head
 
 before_script:
+  - gem update --system
+  - gem update bundler
   - cp spec/data/.gooddata ~/
 
 script: rake test:unit

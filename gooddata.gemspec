@@ -10,7 +10,9 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [
       "Pavel Kolesnikov",
-      "Thomas Watson Steen"
+      "Thomas Watson Steen",
+      "Tomas Svarovsky",
+      "Tomas Korcak"
   ]
 
   s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
@@ -38,7 +40,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "coveralls", "~> 0.7.0"
 
   s.add_dependency "activesupport", "~> 4.0.3"
-  s.add_dependency "bundler", ">= 1.5.3"
+  s.add_dependency "bundler", ">= 1.6.1"
   s.add_dependency 'docile', '~> 1.1.3'
   s.add_dependency "erubis", "~> 2.7.0"
   s.add_dependency "gli", "~> 2.9.0"
