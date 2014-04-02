@@ -29,7 +29,7 @@ module GoodData
 
         def with_deploy(dir, options={}, &block)
           verbose = options[:verbose] || false
-          GoodData.with_project(options[:project_id]) do
+          GoodData.with_project(options[:project_id]) do |project|
             params = options[:params].nil? ? [] : [options[:params]]
             if block
               begin
