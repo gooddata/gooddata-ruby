@@ -1,4 +1,8 @@
 language: ruby
+
+env:
+  - TEST_SUITE=test:unit
+
 rvm:
   - 1.9.3
   - 2.1.0
@@ -11,4 +15,4 @@ before_install:
 before_script:
   - cp spec/data/.gooddata ~/
 
-script: rake test:unit
+script: rake $TEST_SUITE

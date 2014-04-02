@@ -1,9 +1,11 @@
 # encoding: UTF-8
 
+require_relative '../metadata'
+require_relative '../../core/rest'
 require_relative 'metadata'
 
 module GoodData
-  class Fact < MdObject
+  class Fact < GoodData::MdObject
     root_key :fact
 
     class << self

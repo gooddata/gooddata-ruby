@@ -1,7 +1,8 @@
 # encoding: UTF-8
 
-require_relative 'metadata'
 require_relative '../../goodzilla/goodzilla'
+require_relative '../metadata'
+require_relative 'metadata'
 
 module GoodData
   # Metric representation

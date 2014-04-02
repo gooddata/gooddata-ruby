@@ -1,9 +1,10 @@
 # encoding: UTF-8
 
-require_relative 'metadata.rb'
+require_relative '../metadata.rb'
+require_relative 'metadata'
 
 module GoodData
-  class DataSet < MdObject
+  class DataSet < GoodData::MdObject
     root_key :dataSet
 
     SLI_CTG = 'singleloadinterface'
