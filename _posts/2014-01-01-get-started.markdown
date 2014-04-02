@@ -192,15 +192,15 @@ The aforementioned metric could be then expressed like this 'SELECT SUM(#"Amount
 ###Metrics creation
 
 {% highlight ruby %}
-m = Metric.create(:title => "My metric", :expression => 'SELECT SUM(["/gdc/md/1231231/obj/12"])')
+m = Metric.create(:title => "My metric", :expression => 'SELECT SUM([/gdc/md/1231231/obj/12])')
 m.save
 {% endhighlight %}
 
 If you want to use eXtended notation use xcreate or pass :extended => true option to the create method
 
 {% highlight ruby %}
-m = Metric.create(:title => "My metric", :expression => 'SELECT SUM(#"Amount")', :extended => true)
-m = Metric.xcreate(:title => "My metric", :expression => 'SELECT SUM(#"Amount")')
+m = GoodData::Metric.create(:title => "My metric", :expression => 'SELECT SUM(#"Amount")', :extended => true)
+m = GoodData::Metric.xcreate(:title => "My metric", :expression => 'SELECT SUM(#"Amount")')
 {% endhighlight %}
 
 You can directly execute it which will return a number
