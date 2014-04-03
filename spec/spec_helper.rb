@@ -3,6 +3,7 @@
 require 'simplecov'
 require 'rspec'
 require 'coveralls'
+require 'pathname'
 
 Coveralls.wear!
 

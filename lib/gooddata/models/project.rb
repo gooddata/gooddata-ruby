@@ -81,6 +81,7 @@ module GoodData
             # if project is switched to deleted state, fail. This is usually problem of creating a template which is invalid.
             fail "Project was marked as deleted during creation. This usually means you were trying to create from template and it failed."
           end
+          sleep(3)
           project.reload!
         end
 
