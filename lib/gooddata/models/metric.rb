@@ -10,6 +10,7 @@ module GoodData
 
     class << self
       def [](id)
+        raise RuntimeError, 'No project selected. You need to choose a project first.' if GoodData.project.nil?
         if id == :all
           GoodData.get(GoodData.project.md['query'] + '/metrics/')['query']['entries']
         else
