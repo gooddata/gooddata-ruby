@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-require 'gooddata/models/project_blueprint'
-
 module GoodData
   module Model
     class ProjectBlueprint
