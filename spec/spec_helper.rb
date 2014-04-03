@@ -20,6 +20,14 @@ RSpec.configure do |config|
   config.include ConnectionHelper
   config.include ProjectHelper
   config.include SchemaHelper
+
+  config.before(:suite) do
+    # TODO: Setup test project
+  end
+
+  config.after(:suite) do
+    # TODO: Delete test project
+  end
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
