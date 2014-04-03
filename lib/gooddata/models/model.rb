@@ -92,7 +92,7 @@ module GoodData
         if GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'ERROR'
           s = StringIO.new
           GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
-          js = JSON.parse(s.string)
+          js = MultiJson.load(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end
       end
@@ -114,7 +114,7 @@ module GoodData
 
       def self.from_json(spec)
         if spec.is_a?(String)
-          ProjectBlueprint.new(JSON.parse(File.read(spec), :symbolize_names => true))
+          ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
         else
           ProjectBlueprint.new(spec)
         end
@@ -404,12 +404,12 @@ module GoodData
       end
 
       def load_metrics(file)
-        new_metrics = JSON.parse(open(file).read, :symbolize_names => true)
+        new_metrics = MultiJson.load(open(file).read, :symbolize_keys => true)
         @metrics = @metrics + new_metrics
       end
 
       def load_datasets(file)
-        new_metrics = JSON.parse(open(file).read, :symbolize_names => true)
+        new_metrics = MultiJson.load(open(file).read, :symbolize_keys => true)
         @datasets = @datasets + new_metrics
       end
 
@@ -920,8 +920,6 @@ module GoodData
         raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
         raise('Data set fields must have their names defined') if hash[:name].nil?
 
-        hash[:name] = GoodData::Helpers.sanitize_string(hash[:name])
-
         @name = hash[:name]
         @title = hash[:title] || hash[:name].humanize
         @folder = hash[:folder]
@@ -1346,6 +1344,8 @@ module GoodData
     #
     class Folder < MdObject
       def initialize(title)
+        # TODO: should a super be here?
+        # how to deal with name vs title?
         @title = title
         @name = GoodData::Helpers.sanitize_string(title)
       end

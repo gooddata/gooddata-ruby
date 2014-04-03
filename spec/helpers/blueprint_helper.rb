@@ -1,5 +1,5 @@
 # Global requires
-require 'json'
+require 'multi_json'
 
 # Local requires
 require 'gooddata/models/models'
@@ -11,7 +11,7 @@ module BlueprintHelper
 
     # TODO: Try to load as relative path if failed
 
-    parsed = JSON.parse(raw, :symbolize_names => true)
+    parsed = MultiJson.load(raw, :symbolize_keys => true)
     return GoodData::Model::ProjectBlueprint.new(parsed)
   end
 end

@@ -5,7 +5,7 @@ describe GoodData::Connection, :constraint => 'slow' do
 
   it "should log in and disconnect" do
 
-    GoodData.connect("svarovsky+gem_tester@gooddata.com", "jindrisska")
+    ConnectionHelper::create_default_connection
     GoodData.get("/gdc/md")
 
     conn = GoodData.connection

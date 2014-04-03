@@ -154,7 +154,8 @@ module GoodData
     end
 
     def data
-      raw_data[root_key]
+      key = methods.include?(:root_key) ? root_key : raw_data.keys.first
+      raw_data[key]
     end
 
     def saved?

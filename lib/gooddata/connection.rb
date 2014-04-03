@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require 'json'
+require 'multi_json'
 require 'rest-client'
 
 require_relative 'version'
@@ -331,8 +331,8 @@ module GoodData
         content_type = response.headers[:content_type]
         return response if options[:process] == false
 
-        if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8' then
-          result = response.to_str == '""' ? {} : JSON.parse(response.to_str)
+        if content_type == "application/json" || content_type == "application/json;charset=UTF-8" then
+          result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
           GoodData.logger.debug "Response: #{result.inspect}"
         elsif content_type == 'application/zip' then
           result = response
@@ -369,11 +369,7 @@ module GoodData
       new_params = Marshal.load(Marshal.dump(params))
       GoodData::Helpers.hash_dfs(new_params) do |k, key|
         keys.each do |key_to_scrub|
-          begin
-            k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub) && k[key_to_scrub]
-          rescue
-            binding.pry
-          end
+          k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub) && k[key_to_scrub]
         end
       end
       new_params

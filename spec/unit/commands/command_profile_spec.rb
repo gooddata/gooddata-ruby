@@ -2,7 +2,7 @@ require 'gooddata/commands/profile'
 
 describe GoodData::Command::Profile do
   before(:each) do
-    @connection = ConnectionHelper::create_default_connection
+    ConnectionHelper::create_default_connection
   end
 
   it "Is Possible to create GoodData::Command::Profile instance" do
