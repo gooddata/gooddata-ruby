@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-require_relative '../hacks'
 require_relative 'project'
 require_relative 'project_blueprint'
 
