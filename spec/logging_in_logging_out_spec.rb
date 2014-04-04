@@ -1,10 +1,11 @@
+# encoding: UTF-8
+
 require 'gooddata'
 require 'pry'
 
 describe GoodData::Connection, :constraint => 'slow' do
 
   it "should log in and disconnect" do
-
     ConnectionHelper::create_default_connection
     GoodData.get("/gdc/md")
 

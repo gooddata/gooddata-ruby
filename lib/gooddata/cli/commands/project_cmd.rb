@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+require 'pathname'
 require 'pp'
 
 require_relative '../shared'

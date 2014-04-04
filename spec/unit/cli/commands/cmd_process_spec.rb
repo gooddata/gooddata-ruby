@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/cli/cli'
 
 describe GoodData::CLI do
@@ -20,7 +22,11 @@ describe GoodData::CLI do
   end
 
   it "Has working 'process list' command" do
-    args = %w(process list)
+    args = [
+      'process',
+      'list',
+      ProjectHelper::PROJECT_ID
+    ]
 
     run_cli(args)
   end

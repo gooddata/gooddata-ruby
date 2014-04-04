@@ -2,6 +2,7 @@
 
 require 'erubis'
 require 'fileutils'
+require 'pathname'
 
 module GoodData::Command
   class Scaffold

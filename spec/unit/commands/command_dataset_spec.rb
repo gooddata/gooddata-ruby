@@ -6,6 +6,10 @@ describe GoodData::Command::Datasets do
     @cmd = GoodData::Command::Datasets.new()
   end
 
+  after(:each) do
+    GoodData.disconnect
+  end
+
   it "Is Possible to create GoodData::Command::Datasets instance" do
     @cmd.should be_a(GoodData::Command::Datasets)
   end
