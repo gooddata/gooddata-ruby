@@ -3,25 +3,9 @@
 require_relative 'base_downloader'
 require_relative 'utils'
 
-Dir[File.dirname(__FILE__) + '/commands/**/*_cmd.rb'].each do |file|
-  require file
-end
-
 require_relative 'middleware/middleware'
 
 module GoodData::Bricks
-  class Pipeline
-    def self.prepare(pipeline)
-      pipeline.reverse.reduce(nil) do |memo, app|
-        if memo.nil?
-          app.respond_to?(:new) ? (app.new) : app
-        else
-          app.respond_to?(:new) ? (app.new(:app => memo)) : (app.app = memo; app)
-        end
-      end
-    end
-  end
-
   # Brick base class
   class Brick
     def log(message)
@@ -29,14 +13,17 @@ module GoodData::Bricks
       logger.info(message) unless logger.nil?
     end
 
+    # Name of the brick
     def name
       self.class
     end
 
+    # Version of brick, this should be implemented in subclasses
     def version
-      fail 'Method version should be reimplemented'
+      fail NotImplementedError, 'Method version should be reimplemented'
     end
 
+    # Bricks implementation which can be 'called'
     def call(params={})
       @params = params
       ''

@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
-require_relative 'model'
+require_relative '../core/connection'
+require_relative '../core/project'
 
 module GoodData
   class MdObject

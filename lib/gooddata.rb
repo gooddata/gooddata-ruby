@@ -4,8 +4,6 @@
 module GoodData
 end
 
-require 'active_support/all'
-
 # Modules
 require_relative 'gooddata/bricks/bricks'
 require_relative 'gooddata/cli/cli'

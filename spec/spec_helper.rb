@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'simplecov'
 require 'rspec'
 require 'coveralls'
@@ -13,9 +15,19 @@ Dir.glob(base + 'helpers/*_helper.rb').each do |file|
 end
 
 RSpec.configure do |config|
-  include BlueprintHelper
-  include CliHelper
-  include ConnectionHelper
+  config.include BlueprintHelper
+  config.include CliHelper
+  config.include ConnectionHelper
+  config.include ProjectHelper
+  config.include SchemaHelper
+
+  config.before(:suite) do
+    # TODO: Setup test project
+  end
+
+  config.after(:suite) do
+    # TODO: Delete test project
+  end
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
@@ -28,6 +40,7 @@ SimpleCov.start do
   add_filter 'test/'
 
   add_group 'Bricks', 'lib/gooddata/bricks'
+  add_group 'Middleware', 'lib/gooddata/bricks/middleware'
   add_group 'CLI', 'lib/gooddata/cli'
   add_group 'Commands', 'lib/gooddata/commands'
   add_group 'Core', 'lib/gooddata/core'

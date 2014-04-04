@@ -32,7 +32,8 @@ GoodData::CLI.module_eval do
       list.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        pp GoodData::Command::Process.list(options.merge(global_options))
+        opts = opts.merge({:project_id => args[0]}) if args.length > 0
+        pp GoodData::Command::Process.list(opts)
       end
     end
 

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 # This file shows how the GoodData Ruby API could be used from
 # a client code
 # 

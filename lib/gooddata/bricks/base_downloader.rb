@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'pathname'
+
 module GoodData::Bricks
   class BaseDownloader
     def initialize(params)

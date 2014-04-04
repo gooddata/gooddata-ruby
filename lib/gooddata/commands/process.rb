@@ -1,5 +1,9 @@
 # encoding: UTF-8
 
+require 'pathname'
+
+require_relative '../core/core'
+
 module GoodData
   module Command
     class Process

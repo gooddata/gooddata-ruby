@@ -5,8 +5,8 @@ describe "Spin a project", :constraint => 'slow' do
     spec = MultiJson.load(File.read("./spec/data/test_project_model_spec.json"), :symbolize_keys => true)
     ConnectionHelper::create_default_connection
 
-    @source_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => GD_PROJECT_TOKEN})
-    @target_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => GD_PROJECT_TOKEN})
+    @source_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
+    @target_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
   end
 
   after(:all) do
