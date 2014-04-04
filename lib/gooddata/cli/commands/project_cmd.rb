@@ -141,6 +141,16 @@ GoodData::CLI.module_eval do
 
       end
     end
+
+    c.desc 'You can run project validation which will check RI integrity and other problems.'
+     c.command :validation do |show|
+       show.action do |global_options, options, args|
+         opts = options.merge(global_options)
+         GoodData.connect(opts)
+         pp GoodData::Command::Projects.validate(global_options[:project_id])
+       end
+     end
+
   end
 
 end

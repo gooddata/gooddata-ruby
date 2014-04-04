@@ -105,6 +105,13 @@ module GoodData::Command
       def build(options={})
         GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
       end
+
+      def validate(project_id)
+        GoodData.with_project(project_id) do |p|
+          p.validate
+        end
+      end
+
     end
   end
 end
