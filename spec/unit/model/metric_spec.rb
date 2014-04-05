@@ -1,5 +1,5 @@
 require 'gooddata/client'
-require 'gooddata/models/metric'
+require 'gooddata/models/metadata/metric'
 
 describe GoodData::Metric do
   before(:all) do
