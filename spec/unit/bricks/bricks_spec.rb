@@ -1,22 +1,30 @@
+# encoding: UTF-8
+
 require 'gooddata/bricks/bricks'
 
-describe GoodData::Bricks do
+describe GoodData::Bricks::Brick do
   it "Has GoodData::Bricks::Brick class" do
     GoodData::Bricks::Brick.should_not == nil
   end
 
-  it "should be possible to execute a brick" do
+  describe '#version' do
+    it 'Throws NotImplemented on base class' do
+      brick = GoodData::Bricks::Brick.new
+      expect do
+        brick.version
+      end.to raise_error(NotImplementedError)
+    end
+  end
 
-    class DummyBrick < GoodData::Bricks::Brick
+  it "should be possible to execute custom brick" do
+    class CustomBrick < GoodData::Bricks::Brick
 
       def call(params)
-        puts "hello"
+        puts 'hello'
       end
     end
 
-    include GoodData::Bricks
-
-    p = GoodData::Bricks::Pipeline.prepare([GoodData::Bricks::BenchMiddleware, DummyBrick])
+    p = GoodData::Bricks::Pipeline.prepare([CustomBrick])
 
     p.call({})
   end

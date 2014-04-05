@@ -10,7 +10,9 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [
       "Pavel Kolesnikov",
-      "Thomas Watson Steen"
+      "Thomas Watson Steen",
+      "Tomas Svarovsky",
+      "Tomas Korcak"
   ]
 
   s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
@@ -27,10 +29,11 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.7"
 
-  s.add_development_dependency "rake", "~> 10.1.1"
+  s.add_development_dependency "rake", "~> 10.2.2"
+  s.add_development_dependency "rake-notes", "~> 0.2.0"
   s.add_development_dependency "redcarpet", "~> 3.1.1"
   s.add_development_dependency "rspec", "~> 2.14.1"
-  s.add_development_dependency "rubocop", "~> 0.19.1"
+  s.add_development_dependency "rubocop", "~> 0.20.0"
   s.add_development_dependency "simplecov", "~> 0.8.2"
   s.add_development_dependency "yard", "~> 0.8.7.3"
   s.add_development_dependency "yard-rspec", "~> 0.1"
@@ -38,7 +41,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "coveralls", "~> 0.7.0"
 
   s.add_dependency "activesupport", "~> 4.0.3"
-  s.add_dependency "bundler", "~> 1.6.0"
+  s.add_dependency "bundler", ">= 1.6.1"
+  s.add_dependency 'docile', '~> 1.1.3'
   s.add_dependency "erubis", "~> 2.7.0"
   s.add_dependency "gli", "~> 2.9.0"
   s.add_dependency "highline", "~> 1.6.21"
