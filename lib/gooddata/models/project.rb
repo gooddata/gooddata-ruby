@@ -3,10 +3,9 @@
 require 'zip'
 require 'fileutils'
 
-module GoodData
-  class NoProjectError < RuntimeError;
-  end
+require_relative '../exceptions/no_project_error'
 
+module GoodData
   class Project
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
     PROJECTS_PATH = '/gdc/projects'
@@ -91,6 +90,7 @@ module GoodData
             block.call(p)
           end
         end
+        sleep 3
         project
       end
 

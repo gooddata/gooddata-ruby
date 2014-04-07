@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'rubygems'
 
 require 'bundler/setup'
@@ -6,6 +8,7 @@ require 'bundler/gem_tasks'
 require 'coveralls/rake/task'
 
 require 'rake/testtask'
+require 'rake/notes/rake_task'
 require 'rspec/core/rake_task'
 
 require 'yard'

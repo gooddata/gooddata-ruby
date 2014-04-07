@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require 'active_support/inflections'
+require 'active_support/all'
 require 'pathname'
 
 module GoodData
@@ -50,10 +50,17 @@ module GoodData
         end
       end
 
-      def sanitize_string(str)
+      # TODO: Implement without using ActiveSupport
+      def sanitize_string(str, filter=/[^a-z_]/, replacement='')
         str = ActiveSupport::Inflector.transliterate(str).downcase
-        str.gsub(/[^a-z]/, '')
+        str.gsub(filter, replacement)
       end
+
+      # TODO: Implement without using ActiveSupport
+      def humanize(str)
+        return ActiveSupport::Inflector.humanize(str)
+      end
+
     end
   end
 end

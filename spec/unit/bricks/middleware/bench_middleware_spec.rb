@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'gooddata/bricks/brick'
 require 'gooddata/bricks/bricks'
 require 'gooddata/bricks/middleware/bench_middleware'
