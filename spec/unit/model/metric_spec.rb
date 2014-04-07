@@ -11,6 +11,10 @@ describe GoodData::Metric do
   end
 
   describe '#[]' do
+    before(:all) do
+      GoodData.project = nil
+    end
+
     it 'Raises RuntimeError when no project selected' do
       expect { GoodData::Metric[:all] }.to raise_error(RuntimeError)
     end
