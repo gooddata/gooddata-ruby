@@ -3,6 +3,7 @@
 require 'gli'
 
 require_relative '../version'
+require_relative '../core/core'
 
 include GLI::App
 
@@ -28,7 +29,7 @@ GoodData::CLI.module_eval do
   flag [:p, :project_id]
 
   desc 'Server'
-  default_value nil
+  default_value GoodData::Connection::DEFAULT_URL
   arg_name 'server'
   flag [:s, :server]
 
