@@ -15,7 +15,7 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         GoodData.connect(opts)
 
-        pid = args.first
+        pid = global_options[:project_id]
         fail 'Project ID has to be provided' if pid.nil? || pid.empty?
 
         user_list = GoodData::Command::User.list(pid)
