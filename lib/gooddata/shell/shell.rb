@@ -11,6 +11,7 @@ module GoodData
   class Shell
     EXCLUDE_CMDS = [:_doc, :console, :shell]
     GLOBAL_OPTS = [:P, :U, :p, :s, :t, :w]
+    QUIT_CMDS = ['x', 'exit', 'q', 'quit']
 
     # Constructs prompt for usage
     def prompt
@@ -68,7 +69,7 @@ module GoodData
         return true
       end
 
-      if ['x', 'exit', 'q', 'quit'].include?(line.downcase)
+      if QUIT_CMDS.include?(line.downcase)
         return false
       end
 
