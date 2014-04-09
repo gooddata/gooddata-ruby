@@ -47,8 +47,6 @@ module GoodData
       Readline.completion_proc = Proc.new { |line| completion(line) }
       Readline.basic_word_break_characters = ''
 
-      res = completion('api ')
-
       while (line = Readline.readline(prompt, true))
         if line.empty?
           print_usage
