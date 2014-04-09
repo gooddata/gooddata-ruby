@@ -9,11 +9,12 @@ require_relative '../cli/cli'
 module GoodData
   # Interactive shell
   class Shell
-    EXCLUDE_CMDS = [:_doc]
+    EXCLUDE_CMDS = [:_doc, :shell]
+    GLOBAL_OPTS = [:P, :U, :p, :s, :t, :w]
 
     # Constructs prompt for usage
     def prompt
-      return '> '
+     return '> '
     end
 
     # Prints basic shell usage
@@ -22,10 +23,19 @@ module GoodData
       puts "Type '(q)uit', or 'e(x)it' for quit"
     end
 
+    def hack_global_opts(opts)
+      res = ''
+      GLOBAL_OPTS.each do |opt_name|
+        res = res + "-#{opt_name.to_s} #{opts[opt_name]}" if (opts[opt_name])
+      end
+      res
+    end
+
     # Processes one line
-    def process_line(line)
-      argv = line.split
-      res = GoodData::CLI.main(argv)
+    def process_line(line, opts={})
+      hacked_line = hack_global_opts(opts) + ' ' + line
+      argv = hacked_line.split
+      res = GoodData::CLI.main(argv, opts)
       puts res
       res
     end
@@ -47,17 +57,26 @@ module GoodData
       Readline.completion_proc = Proc.new { |line| completion(line) }
       Readline.basic_word_break_characters = ''
 
+      # TODO: Investigate why this is not working as expected
+      GLI::AppSupport.override_defaults_based_on_config(opts)
+
       while (line = Readline.readline(prompt, true))
         if line.empty?
           print_usage
           next
         end
 
+        if line.downcase == 'shell'
+          puts 'Dear hacker, running shell in shell is disabled'
+          next
+        end
+
+
         if ['x', 'exit', 'q', 'quit'].include?(line.downcase)
           break
         end
 
-        process_line(line)
+        process_line(line, opts)
       end
     end
 

@@ -16,7 +16,7 @@ module GoodData
 
     GLI::App.commands_from(File.join(File.dirname(__FILE__), 'commands'))
 
-    def self.main(args = ARGV)
+    def self.main(args = ARGV, opts = {})
       run(args)
     end
 
