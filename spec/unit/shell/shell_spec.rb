@@ -30,7 +30,7 @@ describe GoodData::Shell do
 
     it "Processes 'help' line"  do
       expected = 0
-      res = @shell.process_line('help')
+      res = @shell.process_ruby_cmd('help')
       res.should == expected
     end
   end
