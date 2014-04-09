@@ -32,7 +32,7 @@ module GoodData
     end
 
     # Processes one line
-    def process_line(line, opts={})
+    def process_ruby_cmd(line, opts={})
       hacked_line = hack_global_opts(opts) + ' ' + line
       argv = hacked_line.split
 
@@ -41,6 +41,36 @@ module GoodData
       res = GoodData::CLI.main(argv, opts)
       puts res
       res
+    end
+
+    def process_os_cmd(line)
+      bash_cmd = line
+      bash_cmd.slice!(0)
+      system bash_cmd
+      # TODO: puts exit code to be consistent with interactive commands
+    end
+
+    def process_cmd(line, opts = {}, args = [])
+      if line.empty?
+        print_usage
+        return true
+      end
+
+      if EXCLUDE_CMDS.include?(line.to_sym)
+        puts "Dear hacker, running '#{line}' in shell is disabled"
+        return true
+      end
+
+      if line[0] == '!'
+        return process_os_cmd(line)
+        return true
+      end
+
+      if ['x', 'exit', 'q', 'quit'].include?(line.downcase)
+        return false
+      end
+
+      return process_ruby_cmd(line, opts)
     end
 
     # Completes line
@@ -64,29 +94,7 @@ module GoodData
       GLI::AppSupport.override_defaults_based_on_config(opts)
 
       while (line = Readline.readline(prompt, true))
-        if line.empty?
-          print_usage
-          next
-        end
-
-        if EXCLUDE_CMDS.include?(line.to_sym)
-          puts "Dear hacker, running '#{line}' in shell is disabled"
-          next
-        end
-
-        if line[0] == '!'
-          bash_cmd = line
-          bash_cmd.slice!(0)
-          system bash_cmd
-          # TODO: puts exit code to be consistent with interactive commands
-          next
-        end
-
-        if ['x', 'exit', 'q', 'quit'].include?(line.downcase)
-          break
-        end
-
-        process_line(line, opts)
+        break if process_cmd(line, opts, args) == false
       end
     end
 
