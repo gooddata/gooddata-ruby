@@ -19,6 +19,11 @@ module GoodData
     def self.main(args = ARGV)
       run(args)
     end
+
+    def self.list_commands
+      return commands
+    end
+
   end
 end
 
