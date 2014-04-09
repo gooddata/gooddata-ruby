@@ -11,6 +11,7 @@ GoodData::CLI.module_eval do
   command :shell do |shell_cmd|
     shell_cmd.action do |global_options, options, args|
       opts = options.merge(global_options)
+      GoodData.connect(opts)
 
       shell = GoodData::Shell.new
       shell.run(opts, args)
