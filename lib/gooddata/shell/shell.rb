@@ -9,7 +9,7 @@ require_relative '../cli/cli'
 module GoodData
   # Interactive shell
   class Shell
-    EXCLUDE_CMDS = [:_doc, :shell]
+    EXCLUDE_CMDS = [:_doc, :console, :shell]
     GLOBAL_OPTS = [:P, :U, :p, :s, :t, :w]
 
     # Constructs prompt for usage
@@ -26,7 +26,7 @@ module GoodData
     def hack_global_opts(opts)
       res = ''
       GLOBAL_OPTS.each do |opt_name|
-        res = res + "-#{opt_name.to_s} #{opts[opt_name]}" if (opts[opt_name])
+        res = res + " -#{opt_name.to_s} #{opts[opt_name]}" if (opts[opt_name])
       end
       res
     end
@@ -35,6 +35,9 @@ module GoodData
     def process_line(line, opts={})
       hacked_line = hack_global_opts(opts) + ' ' + line
       argv = hacked_line.split
+
+      GoodData.logger.info hacked_line
+
       res = GoodData::CLI.main(argv, opts)
       puts res
       res
@@ -66,8 +69,8 @@ module GoodData
           next
         end
 
-        if line.downcase == 'shell'
-          puts 'Dear hacker, running shell in shell is disabled'
+        if EXCLUDE_CMDS.include?(line.to_sym)
+          puts "Dear hacker, running '#{line}' in shell is disabled"
           next
         end
 
