@@ -71,6 +71,14 @@ module GoodData
           next
         end
 
+        if line[0] == '!'
+          bash_cmd = line
+          bash_cmd.slice!(0)
+          puts "Executing '#{bash_cmd}'"
+          system bash_cmd
+          # TODO: puts exit code to be consistent with interactive commands
+          next
+        end
 
         if ['x', 'exit', 'q', 'quit'].include?(line.downcase)
           break
