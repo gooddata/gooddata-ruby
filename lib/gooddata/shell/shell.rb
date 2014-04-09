@@ -31,7 +31,7 @@ module GoodData
       res
     end
 
-    # Processes one line
+    # Processes as gooddata-ruby gem command
     def process_ruby_cmd(line, opts={})
       hacked_line = hack_global_opts(opts) + ' ' + line
       argv = hacked_line.split
@@ -43,6 +43,7 @@ module GoodData
       res
     end
 
+    # Process command as OS (bash/cmd-line) command
     def process_os_cmd(line)
       bash_cmd = line
       bash_cmd.slice!(0)
@@ -50,6 +51,7 @@ module GoodData
       # TODO: puts exit code to be consistent with interactive commands
     end
 
+    # Process one line
     def process_cmd(line, opts = {}, args = [])
       if line.empty?
         print_usage
