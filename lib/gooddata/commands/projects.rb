@@ -26,10 +26,9 @@ module GoodData::Command
 
       # Clone existing project
       def clone(project_id, options)
-        with_data = options[:with_data]
-        with_users = options[:with_users]
+        with_data = options[:data] || true
+        with_users = options[:users] || false
         title = options[:title]
-
         export = {
           :exportProject => {
             :exportUsers => with_users ? 1 : 0,

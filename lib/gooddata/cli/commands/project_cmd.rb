@@ -97,13 +97,19 @@ GoodData::CLI.module_eval do
       clone.arg_name 'cloned_project_name'
       clone.flag [:n, :name]
 
+      clone.default_value false
+      clone.switch [:u, :users]
+
+      clone.default_value true
+      clone.switch [:data, :data]
+
       clone.action do |global_options, options, args|
-        id = global_options[:project_id]
-        name = options[:name]
-        token = options[:token]
         opts = options.merge(global_options)
+        id = global_options[:project_id]
+        name = opts[:name]
+        token = opts[:token]
         GoodData.connect(opts)
-        GoodData::Command::Projects.clone(id, :name => name, :token => token)
+        GoodData::Command::Projects.clone(id, opts)
       end
     end
 
