@@ -65,9 +65,9 @@ module GoodData
                       'summary' => attributes[:summary] || 'No summary'
                     },
                     'content' => {
-                      'guidedNavigation' => 1,
+                      'guidedNavigation' => attributes[:guided_navigation] || 1,
                       'authorizationToken' => auth_token,
-                      'driver' => 'Pg'
+                      'driver' => attributes[:driver] || 'Pg'
                     }
                   }
         }
