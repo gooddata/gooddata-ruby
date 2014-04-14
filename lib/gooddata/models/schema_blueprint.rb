@@ -68,6 +68,10 @@ module GoodData
         find_column_by_type(:fact)
       end
 
+      def attributes_and_anchors
+        attributes + [anchor]
+      end
+
       def find_column_by_type(type, all=:all)
         type = type.to_s
         if all == :all
@@ -83,6 +87,13 @@ module GoodData
           columns.find_all { |c| c[:name].to_s == type }
         else
           columns.find { |c| c[:name].to_s == type }
+        end
+      end
+
+      def suggest_metrics
+        identifiers = facts.map{|f| identifier_for(f)}
+        identifiers.zip(facts).map do |id, fact|
+          Metric.xcreate :title => fact[:name].titleize,:expression => "SELECT SUM(![#{id}])"
         end
       end
 
@@ -113,6 +124,23 @@ module GoodData
       def ==(other)
         to_hash == other.to_hash
       end
+
+      def eql?(other)
+        to_hash == other.to_hash
+      end
+
+      def identifier_for(column)
+        column = find_column_by_name(column) if column.is_a?(String)
+        case column[:type].to_sym
+        when :attribute
+          "attr.#{name}.#{column[:name]}"
+        when :anchor
+          "attr.#{name}.#{column[:name]}"
+        when :fact
+          "fact.#{name}.#{column[:name]}"
+        end
+      end
+
     end
   end
 end
