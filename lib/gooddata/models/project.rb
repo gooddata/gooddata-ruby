@@ -215,6 +215,24 @@ module GoodData
       end
     end
 
+    # Run validation on project
+    # Valid settins for validation are (default all):
+    # ldm - Checks the consistency of LDM objects.
+    # pdm Checks LDM to PDM mapping consistency, also checks PDM reference integrity.
+    # metric_filter - Checks metadata for inconsistent metric filters.
+    # invalid_objects - Checks metadata for invalid/corrupted objects.
+    # asyncTask response
+    def validate(filters = ['ldm','pdm','metric_filter','invalid_objects'])
+      response = GoodData.post "#{GoodData.project.md['validate-project']}", { 'validateProject' => filters }
+      polling_link = response['asyncTask']['link']['poll']
+      polling_result = GoodData.get(polling_link)
+      while polling_result["wTaskStatus"] && polling_result["wTaskStatus"]["status"] == "RUNNING"
+        sleep(3)
+        polling_result = GoodData.get(polling_link)
+      end
+      polling_result
+    end
+
     def raw_data
       @json
     end
