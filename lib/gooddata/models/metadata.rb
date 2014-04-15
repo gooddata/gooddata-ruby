@@ -211,5 +211,18 @@ module GoodData
       false
     end
 
+    # TODO: generate fill for other subtypes
+    def is_fact?
+      false
+    end
+
+    def is_attribute?
+      false
+    end
+
+    def is_metric?
+      false
+    end
+
   end
 end
