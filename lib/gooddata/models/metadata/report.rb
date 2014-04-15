@@ -23,20 +23,23 @@ module GoodData
         rd = options[:rd] || ReportDefinition.create(:top => options[:top], :left => options[:left])
         rd.save
 
-        report = Report.new({
-                              'report' => {
-                                'content' => {
-                                  'domains' => [],
-                                  'definitions' => [rd.uri]
-                                },
-                                'meta' => {
-                                  'tags' => '',
-                                  'deprecated' => '0',
-                                  'summary' => summary,
-                                  'title' => title
-                                }
-                              }
-                            })
+        report = {
+                   'report' => {
+                     'content' => {
+                       'domains' => [],
+                       'definitions' => [rd.uri]
+                     },
+                     'meta' => {
+                       'tags' => '',
+                       'deprecated' => '0',
+                       'summary' => summary,
+                       'title' => title
+                     }
+                   }
+                 }
+        # TODO write test for report definitions with explicit identifiers
+        report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
+        Report.new report
       end
     end
 
