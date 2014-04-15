@@ -253,6 +253,48 @@ module GoodData
       true
     end
 
+    def clone(options={})
+      with_data = options[:data] || true
+      with_users = options[:users] || false
+      title = options[:title]
+      export = {
+        :exportProject => {
+          :exportUsers => with_users ? 1 : 0,
+          :exportData => with_data ? 1 : 0
+        }
+      }
+
+      result = GoodData.post("/gdc/md/#{obj_id}/maintenance/export", export)
+      export_token = result['exportArtifact']['token']
+      status_url = result['exportArtifact']['status']['uri']
+
+      state = GoodData.get(status_url)['taskState']['status']
+      while state == 'RUNNING'
+        sleep 5
+        result = GoodData.get(status_url)
+        state = result['taskState']['status']
+      end
+
+      old_project = self
+      new_project = GoodData::Project.create(options.merge({:title => "Clone of #{old_project.title}"}))
+
+      import = {
+        :importProject => {
+          :token => export_token
+        }
+      }
+
+      result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
+      status_url = result['uri']
+      state = GoodData.get(status_url)['taskState']['status']
+      while state == 'RUNNING'
+        sleep 5
+        result = GoodData.get(status_url)
+        state = result['taskState']['status']
+      end
+      new_project
+    end
+
     def partial_md_export(objects, options={})
       # TODO: refactor polling to md_polling in client
 

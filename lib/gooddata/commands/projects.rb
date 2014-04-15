@@ -26,44 +26,8 @@ module GoodData::Command
 
       # Clone existing project
       def clone(project_id, options)
-        with_data = options[:data] || true
-        with_users = options[:users] || false
-        title = options[:title]
-        export = {
-          :exportProject => {
-            :exportUsers => with_users ? 1 : 0,
-            :exportData => with_data ? 1 : 0
-          }
-        }
-
-        result = GoodData.post("/gdc/md/#{project_id}/maintenance/export", export)
-        export_token = result['exportArtifact']['token']
-        status_url = result['exportArtifact']['status']['uri']
-
-        state = GoodData.get(status_url)['taskState']['status']
-        while state == 'RUNNING'
-          sleep 5
-          result = GoodData.get(status_url)
-          state = result['taskState']['status']
-        end
-
-        old_project = GoodData::Project[project_id]
-        project_uri = self.create(options.merge({:title => "Clone of #{old_project.title}"}))
-        new_project = GoodData::Project[project_uri]
-
-        import = {
-          :importProject => {
-            :token => export_token
-          }
-        }
-        result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
-        status_url = result['uri']
-        state = GoodData.get(status_url)['taskState']['status']
-        while state == 'RUNNING'
-          sleep 5
-          result = GoodData.get(status_url)
-          state = result['taskState']['status']
-        end
+        fail "When cloning project_id has to be provided." if project_id.nil? || project_id.empty?
+        GoodData::Project[project_id].clone(options.merge(:auth_token => options[:token]))
         true
       end
 
