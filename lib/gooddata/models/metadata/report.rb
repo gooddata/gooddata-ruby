@@ -72,10 +72,19 @@ module GoodData
     # TODO: Cover with test. You would probably need something that will be able to create a report easily from a definition
     def remove_definition_but_latest
       to_remove = definitions - [get_latest_report_definition_uri]
-      binding.pry
       to_remove.each do |uri|
         remove_definition(uri)
       end
+      self
+    end
+
+    def purge_report_of_unused_definitions!
+      full_list = self.definitions
+      self.remove_definition_but_latest
+      purged_list = self.definitions
+      to_remove = full_list - purged_list
+      self.save
+      to_remove.each { |uri| GoodData.delete(uri) }
       self
     end
 
