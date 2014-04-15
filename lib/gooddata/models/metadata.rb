@@ -73,12 +73,14 @@ module GoodData
       end
     end
 
-    def refresh
+    def reload!
       if saved?
         @json = GoodData.get(uri)
       end
       self
     end
+
+    alias :refresh :reload!
 
     def obj_id
       uri.split('/').last

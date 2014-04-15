@@ -47,21 +47,36 @@ module GoodData
       content['results']
     end
 
+    def definitions
+      content['definitions']
+    end
+
     def get_latest_report_definition_uri
-      report_result = get_latest_report_result
-      report_result.content['reportDefinition']
+      definitions.last
     end
 
     def get_latest_report_definition
       GoodData::MdObject[get_latest_report_definition_uri]
     end
 
-    def get_latest_report_result_uri
-      results.last
+    def remove_definition(definition)
+      def_uri = if is_a?(GoodData::ReportDefinition)
+        definition.uri
+      else
+        definition
+      end
+      content["definitions"] = definitions.reject { |x| x == def_uri }
+      self
     end
 
-    def get_latest_report_result
-      GoodData::MdObject[get_latest_report_result_uri]
+    # TODO: Cover with test. You would probably need something that will be able to create a report easily from a definition
+    def remove_definition_but_latest
+      to_remove = definitions - [get_latest_report_definition_uri]
+      binding.pry
+      to_remove.each do |uri|
+        remove_definition(uri)
+      end
+      self
     end
 
     def execute
