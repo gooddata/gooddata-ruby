@@ -7,14 +7,14 @@ require_relative 'base_middleware'
 module GoodData::Bricks
   class RestForceMiddleware < GoodData::Bricks::Middleware
     def call(params)
-      username = params[:salesforce_username]
-      password = params[:salesforce_password]
-      token = params[:salesforce_token]
-      client_id = params[:salesforce_client_id]
-      client_secret = params[:salesforce_client_secret]
-      oauth_token = params[:salesforce_oauth_token]
-      refresh_token = params[:salesforce_refresh_token]
-      host = params[:salesforce_host]
+      username = params["salesforce_username"]
+      password = params["salesforce_password"]
+      token = params["salesforce_token"]
+      client_id = params["salesforce_client_id"]
+      client_secret = params["salesforce_client_secret"]
+      oauth_token = params["salesforce_oauth_token"]
+      refresh_token = params["salesforce_refresh_token"]
+      host = params["salesforce_host"]
 
       credentials = if (username && password && token)
                       {
@@ -22,7 +22,7 @@ module GoodData::Bricks
                         :password => password,
                         :security_token => token
                       }
-                    elsif (oauth_token && refresh_token)
+                    elsif (oauth_token && refresh_token) && ((!oauth_token.empty?) && (!refresh_token.empty?))
                       {
                         :oauth_token => oauth_token,
                         :refresh_token => refresh_token
@@ -39,7 +39,7 @@ module GoodData::Bricks
                  Restforce.log = true if params[:salesforce_client_logger]
                  Restforce.new(credentials)
                end
-      @app.call(params.merge(:salesforce_client => client))
+      @app.call(params.merge("salesforce_client" => client))
     end
   end
 end
