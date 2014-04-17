@@ -178,10 +178,10 @@ Probably the most useful and complex obect is a metric. For its definition we ar
 SELECT SUM([/gdc/md/project_id/obj/123])
 {% endhighlight %}
 
-As you can see the reference to Amount fact is done via an URI. This has a big advantage of being unambiguous but it has a bg drawback that t cannot be written buy hand and also it is not transferable between projects without some translation.
+As you can see the reference to Amount fact is done via an URI. This has a big advantage of being unambiguous but it has a big drawback that it cannot be written by hand and also it is not transferable between projects without some translation.
 
-Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation acurrently relies on titles of objects and might change. In XMAQL there are only 4 additions  
-  
+Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation currently relies on titles of objects and this detail might change. In XMAQL there are currenlty 4 additions
+
 1. Fact is referenced like #"Amount"
 2. Attribute like @"User Name"
 3. Metric like ?"My metric"
