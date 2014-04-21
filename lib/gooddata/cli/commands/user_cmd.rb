@@ -22,6 +22,9 @@ GoodData::CLI.module_eval do
         role = args[1]
         fail 'Role name has to be provided' if role.nil? || role.empty?
 
+        msg = args[2]
+        msg = GoodData::Command::User::DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
+
         opts = options.merge(global_options)
         GoodData.connect(opts)
 
@@ -32,7 +35,7 @@ GoodData::CLI.module_eval do
           role_url = role if role_url.nil?
         end
 
-        GoodData::Command::User.invite(project_id, email, role_url)
+        GoodData::Command::User.invite(project_id, email, role_url, msg)
       end
     end
 

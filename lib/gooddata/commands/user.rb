@@ -7,8 +7,12 @@ require 'multi_json'
 
 module GoodData::Command
   class User
+    DEFAULT_INVITE_MESSAGE = 'Join us!'
+
     class << self
-      def invite(project_id, email, role, msg = 'Join us!')
+      def invite(project_id, email, role, msg = DEFAULT_INVITE_MESSAGE)
+        msg = DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
+
         puts "Inviting #{email}, role: #{role}"
 
         data = {
