@@ -1,6 +1,6 @@
-require 'gooddata/commands/projects'
+require 'gooddata/commands/project'
 
-describe GoodData::Command::Projects do
+describe GoodData::Command::Project do
   before(:each) do
     ConnectionHelper.create_default_connection
   end
@@ -9,8 +9,8 @@ describe GoodData::Command::Projects do
     GoodData.disconnect
   end
 
-  it "Is Possible to create GoodData::Command::Projects instance" do
-    cmd = GoodData::Command::Projects.new()
-    cmd.should be_a(GoodData::Command::Projects)
+  it "Is Possible to create GoodData::Command::Project instance" do
+    cmd = GoodData::Command::Project.new()
+    cmd.should be_a(GoodData::Command::Project)
   end
 end

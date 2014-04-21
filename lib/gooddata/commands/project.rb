@@ -3,7 +3,7 @@
 require 'pathname'
 
 module GoodData::Command
-  class Projects
+  class Project
     class << self
       def list
         GoodData::Project.all
@@ -108,7 +108,16 @@ module GoodData::Command
         return res
       end
 
-      def get_role_by_name(project_id, role_name)
+      def get_role_by_identifier(project_id, role_name)
+        tmp = get_roles(project_id)
+        tmp.each do |role|
+          if role['role']['projectRole']['meta']['identifier'].downcase == role_name.downcase
+            return role
+          end
+        end
+      end
+
+      def get_role_by_title(project_id, role_name)
         tmp = get_roles(project_id)
         tmp.each do |role|
           if role['role']['projectRole']['meta']['title'].downcase == role_name.downcase

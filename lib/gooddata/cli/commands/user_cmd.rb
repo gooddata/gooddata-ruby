@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 require_relative '../shared'
-require_relative '../../commands/projects'
+require_relative '../../commands/project'
 require_relative '../../commands/role'
 require_relative '../../commands/user'
 
@@ -29,7 +29,8 @@ GoodData::CLI.module_eval do
         GoodData.connect(opts)
 
         if role.index('/gdc/') != 0
-          tmp = GoodData::Command::Projects.get_role_by_name(project_id, role)
+          tmp = GoodData::Command::Project.get_role_by_identifier(project_id, role)
+          tmp = GoodData::Command::Project.get_role_by_title(project_id, role) if tmp.nil?
           role_url = tmp['url'] if tmp
         else
           role_url = role if role_url.nil?
