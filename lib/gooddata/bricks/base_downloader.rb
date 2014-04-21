@@ -28,6 +28,8 @@ module GoodData::Bricks
       downloaded_data = pre_process(downloaded_data)
       downloaded_data = post_process(downloaded_data)
 
+      # some weird attempt to save something to the project metadata, omitting
+=begin
       downloaded_data.reduce([]) do |memo, item|
         item.has_key?(:state) ? memo.concat(item[:state]) : memo
       end.each do |item|
@@ -37,6 +39,7 @@ module GoodData::Bricks
         puts "Saving metadata #{key} => #{val}"
         GoodData::ProjectMetadata[key] = val
       end
+=end
     end
   end
 end

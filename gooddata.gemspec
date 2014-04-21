@@ -54,5 +54,5 @@ Gem::Specification.new do |s|
   s.add_dependency "restforce", "~> 1.4.3"
   s.add_dependency "rest-client", "~> 1.6.7"
   s.add_dependency "rubyzip", "~> 1.1.0"
-  s.add_dependency "salesforce_bulk", "~> 1.0.3"
+  s.add_dependency "salesforce_bulk_api", "~> 0.0.8"
 end
