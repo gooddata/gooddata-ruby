@@ -99,7 +99,10 @@ module GoodData::Command
 
         tmp = GoodData.get(url)
         tmp['projectRoles']['roles'].each do |role_url|
-          res << GoodData.get(role_url)
+          res << {
+            'url' => role_url,
+            'role' => GoodData.get(role_url)
+          }
         end
 
         return res
