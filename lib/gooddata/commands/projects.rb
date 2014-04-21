@@ -108,6 +108,15 @@ module GoodData::Command
         return res
       end
 
+      def get_role_by_name(project_id, role_name)
+        tmp = get_roles(project_id)
+        tmp.each do |role|
+          if role['role']['projectRole']['meta']['title'].downcase == role_name.downcase
+            return role
+          end
+        end
+      end
+
       # Update project
       def update(options={})
         project = options[:project]
