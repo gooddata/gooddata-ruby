@@ -132,6 +132,20 @@ GoodData::CLI.module_eval do
       end
     end
 
+    c.desc 'List users'
+    c.command :list_users do |list|
+      list.action do |global_options, options, args|
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+
+        pid = global_options[:project_id]
+        fail 'Project ID has to be provided' if pid.nil? || pid.empty?
+
+        user_list = GoodData::Command::Project.list_users(pid)
+        puts user_list.map { |u| [u[:last_name], u[:first_name], u[:login], u[:uri]].join(',') }
+      end
+    end
+
     c.desc 'Shows basic info about a project'
     c.command :show do |show|
       show.action do |global_options, options, args|
