@@ -8,20 +8,9 @@ require_relative '../../commands/project'
 
 GoodData::CLI.module_eval do
 
-  desc 'Manage your projects'
+  desc 'Manage your project'
   arg_name 'project_command'
   command :project do |c|
-
-    c.desc "Lists user's projects"
-    c.command :list do |list|
-      list.action do |global_options, options, args|
-        opts = options.merge(global_options)
-        GoodData.connect(opts)
-        list = GoodData::Command::Project.list()
-        puts list.map { |p| [p.uri, p.title].join(',') }
-      end
-    end
-
     c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
     c.command :jack_in do |jack|
       jack.action do |global_options, options, args|

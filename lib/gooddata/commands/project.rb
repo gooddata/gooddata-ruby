@@ -5,10 +5,6 @@ require 'pathname'
 module GoodData::Command
   class Project
     class << self
-      def list
-        GoodData::Project.all
-      end
-
       # Create new project based on options supplied
       def create(options={})
         title = options[:title]
