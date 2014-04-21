@@ -92,6 +92,19 @@ module GoodData::Command
         [spec, goodfile[:project_id]]
       end
 
+      def get_roles(project_id)
+        url = "/gdc/projects/#{project_id}/roles"
+
+        res = []
+
+        tmp = GoodData.get(url)
+        tmp['projectRoles']['roles'].each do |role_url|
+          res << GoodData.get(role_url)
+        end
+
+        return res
+      end
+
       # Update project
       def update(options={})
         project = options[:project]

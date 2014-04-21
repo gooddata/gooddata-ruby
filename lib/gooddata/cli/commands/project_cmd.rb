@@ -148,6 +148,20 @@ GoodData::CLI.module_eval do
       end
     end
 
+    c.desc 'Roles'
+    c.command :roles do |roles|
+      roles.action do |global_options, options, args|
+        project_id = global_options[:project_id]
+        fail 'Project ID has to be provided' if project_id.nil? || project_id.empty?
+
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+
+        roles = GoodData::Command::Projects.get_roles(project_id)
+        pp roles
+      end
+    end
+
     c.desc 'You can run project validation which will check RI integrity and other problems.'
      c.command :validation do |show|
        show.action do |global_options, options, args|
