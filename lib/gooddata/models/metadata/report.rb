@@ -23,20 +23,23 @@ module GoodData
         rd = options[:rd] || ReportDefinition.create(:top => options[:top], :left => options[:left])
         rd.save
 
-        report = Report.new({
-                              'report' => {
-                                'content' => {
-                                  'domains' => [],
-                                  'definitions' => [rd.uri]
-                                },
-                                'meta' => {
-                                  'tags' => '',
-                                  'deprecated' => '0',
-                                  'summary' => summary,
-                                  'title' => title
-                                }
-                              }
-                            })
+        report = {
+                   'report' => {
+                     'content' => {
+                       'domains' => [],
+                       'definitions' => [rd.uri]
+                     },
+                     'meta' => {
+                       'tags' => '',
+                       'deprecated' => '0',
+                       'summary' => summary,
+                       'title' => title
+                     }
+                   }
+                 }
+        # TODO write test for report definitions with explicit identifiers
+        report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
+        Report.new report
       end
     end
 
@@ -44,21 +47,45 @@ module GoodData
       content['results']
     end
 
+    def definitions
+      content['definitions']
+    end
+
     def get_latest_report_definition_uri
-      report_result = get_latest_report_result
-      report_result.content['reportDefinition']
+      definitions.last
     end
 
     def get_latest_report_definition
       GoodData::MdObject[get_latest_report_definition_uri]
     end
 
-    def get_latest_report_result_uri
-      results.last
+    def remove_definition(definition)
+      def_uri = if is_a?(GoodData::ReportDefinition)
+        definition.uri
+      else
+        definition
+      end
+      content["definitions"] = definitions.reject { |x| x == def_uri }
+      self
     end
 
-    def get_latest_report_result
-      GoodData::MdObject[get_latest_report_result_uri]
+    # TODO: Cover with test. You would probably need something that will be able to create a report easily from a definition
+    def remove_definition_but_latest
+      to_remove = definitions - [get_latest_report_definition_uri]
+      to_remove.each do |uri|
+        remove_definition(uri)
+      end
+      self
+    end
+
+    def purge_report_of_unused_definitions!
+      full_list = self.definitions
+      self.remove_definition_but_latest
+      purged_list = self.definitions
+      to_remove = full_list - purged_list
+      self.save
+      to_remove.each { |uri| GoodData.delete(uri) }
+      self
     end
 
     def execute

@@ -73,12 +73,14 @@ module GoodData
       end
     end
 
-    def refresh
+    def reload!
       if saved?
         @json = GoodData.get(uri)
       end
       self
     end
+
+    alias :refresh :reload!
 
     def obj_id
       uri.split('/').last
@@ -169,9 +171,30 @@ module GoodData
       if saved?
         GoodData.put(uri, to_json)
       else
+        explicit_identifier = meta['identifier']
+        # Pre-check to provide a user-friendly error rather than
+        # failing later
+        if explicit_identifier && MdObject[explicit_identifier] then
+          raise "Identifier '#{explicit_identifier}' already in use"
+        end
         result = GoodData.post(GoodData.project.md['obj'], to_json)
         saved_object = self.class[result['uri']]
+        # TODO add test for explicitly provided identifier
         @json = saved_object.raw_data
+        if explicit_identifier then
+          # Object creation API discards the identifier. If an identifier
+          # was explicitely provided in the origina object, we need to set
+          # it explicitly with an extra PUT call.
+          meta['identifier'] = explicit_identifier
+          begin
+            GoodData.put(uri, to_json)
+          rescue => e
+            # Cannot change the identifier (perhaps because it's in use
+            # already?), cleaning up.
+            GoodData.delete(uri)
+            raise e
+          end
+        end
       end
       self
     end
@@ -185,6 +208,19 @@ module GoodData
     end
 
     def exportable?
+      false
+    end
+
+    # TODO: generate fill for other subtypes
+    def is_fact?
+      false
+    end
+
+    def is_attribute?
+      false
+    end
+
+    def is_metric?
       false
     end
 

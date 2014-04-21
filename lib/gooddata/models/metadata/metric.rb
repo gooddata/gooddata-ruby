@@ -50,19 +50,22 @@ module GoodData
                        expression
                      end
 
-        Metric.new({
-                     'metric' => {
-                       'content' => {
-                         'format' => '#,##0',
-                         'expression' => expression
-                       },
-                       'meta' => {
-                         'tags' => '',
-                         'summary' => summary,
-                         'title' => title,
-                       }
+        metric = {
+                   'metric' => {
+                     'content' => {
+                       'format' => '#,##0',
+                       'expression' => expression
+                     },
+                     'meta' => {
+                       'tags' => '',
+                       'summary' => summary,
+                       'title' => title,
                      }
-                   })
+                   }
+                 }
+        # TODO add test for explicitly provided identifier
+        metric['metric']['meta']['identifier'] = options[:identifier] if options[:identifier]
+        Metric.new(metric)
       end
 
       def execute(expression, options={})
