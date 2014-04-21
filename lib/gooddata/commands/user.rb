@@ -2,9 +2,33 @@
 
 require_relative '../core/core'
 
+require 'highline/import'
+require 'multi_json'
+
 module GoodData::Command
   class User
     class << self
+      def invite(project_id, email, role, msg = 'Join us!')
+        puts "Inviting #{email}, role: #{role}"
+
+        data = {
+          :invitations => [{
+                             :invitation => {
+                               :content => {
+                                 :email => email,
+                                 :role => role,
+                                 :action => {
+                                   :setMessage => msg
+                                 }
+                               }
+                             }
+                           }]
+        }
+
+        url = "/gdc/projects/#{project_id}/invitations"
+        GoodData.post(url, data)
+      end
+      
       def list(pid)
         users = []
         finished = false

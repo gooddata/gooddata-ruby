@@ -26,10 +26,9 @@ module GoodData::Command
 
       # Clone existing project
       def clone(project_id, options)
-        with_data = options[:with_data]
-        with_users = options[:with_users]
+        with_data = options[:data] || true
+        with_users = options[:users] || false
         title = options[:title]
-
         export = {
           :exportProject => {
             :exportUsers => with_users ? 1 : 0,
@@ -93,6 +92,22 @@ module GoodData::Command
         [spec, goodfile[:project_id]]
       end
 
+      def get_roles(project_id)
+        url = "/gdc/projects/#{project_id}/roles"
+
+        res = []
+
+        tmp = GoodData.get(url)
+        tmp['projectRoles']['roles'].each do |role_url|
+          res << {
+            'url' => role_url,
+            'role' => GoodData.get(role_url)
+          }
+        end
+
+        return res
+      end
+
       # Update project
       def update(options={})
         project = options[:project]
@@ -105,6 +120,13 @@ module GoodData::Command
       def build(options={})
         GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
       end
+
+      def validate(project_id)
+        GoodData.with_project(project_id) do |p|
+          p.validate
+        end
+      end
+
     end
   end
 end

@@ -97,13 +97,19 @@ GoodData::CLI.module_eval do
       clone.arg_name 'cloned_project_name'
       clone.flag [:n, :name]
 
+      clone.default_value false
+      clone.switch [:u, :users]
+
+      clone.default_value true
+      clone.switch [:data, :data]
+
       clone.action do |global_options, options, args|
-        id = global_options[:project_id]
-        name = options[:name]
-        token = options[:token]
         opts = options.merge(global_options)
+        id = global_options[:project_id]
+        name = opts[:name]
+        token = opts[:token]
         GoodData.connect(opts)
-        GoodData::Command::Projects.clone(id, :name => name, :token => token)
+        GoodData::Command::Projects.clone(id, opts)
       end
     end
 
@@ -141,6 +147,31 @@ GoodData::CLI.module_eval do
 
       end
     end
+
+    c.desc 'Roles'
+    c.command :roles do |roles|
+      roles.action do |global_options, options, args|
+        project_id = global_options[:project_id]
+        fail 'Project ID has to be provided' if project_id.nil? || project_id.empty?
+
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+
+        roles = GoodData::Command::Projects.get_roles(project_id)
+
+        puts roles.map { |r| [r['url'], r['role']['projectRole']['meta']['title']].join(',') }
+      end
+    end
+
+    c.desc 'You can run project validation which will check RI integrity and other problems.'
+     c.command :validation do |show|
+       show.action do |global_options, options, args|
+         opts = options.merge(global_options)
+         GoodData.connect(opts)
+         pp GoodData::Command::Projects.validate(global_options[:project_id])
+       end
+     end
+
   end
 
 end

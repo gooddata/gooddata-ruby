@@ -71,6 +71,64 @@ module GoodData
         errors.empty? ? true : false
       end
 
+      def referenced_by(dataset)
+        dataset = get_dataset(dataset) if dataset.is_a?(String)
+        dataset.references.map do |ds|
+          get_dataset(ds[:dataset])
+        end
+      end
+
+      def can_break(dataset)
+        dataset = get_dataset(dataset) if dataset.is_a?(String)
+        referenced_by(dataset).reduce([]) do |memo, ds|
+          ds.attributes_and_anchors.each do |attr|
+            memo.push([ds, attr])
+          end
+          memo
+        end
+      end
+
+      def find_star_centers
+        referenced = datasets.map {|d| referenced_by(d)}
+        referenced.flatten!
+        res = datasets.map(&:to_hash) - referenced.map(&:to_hash)
+        res.map {|d| SchemaBlueprint.new(d)}
+      end
+
+      def suggest_reports(options = {})
+        strategy = options[:strategy] || :stupid
+        case strategy
+        when :stupid
+          reports = suggest_metrics.reduce([]) do |memo, items|
+            star, metrics = items
+            metrics.each {|m| m.save}
+            reports_stubs = metrics.map do |m|
+              breaks = can_break(star).map {|ds, a| ds.identifier_for(a)}
+              # [breaks.sample((breaks.length/10.0).ceil), m]
+              [breaks, m]
+            end
+            memo.concat(reports_stubs)
+          end
+          reports.reduce([]) do |memo, items|
+            attrs, metric = items
+
+            attrs.each do |a|
+              memo << GoodData::Report.create(
+                    :title => "Fantastic report",
+                    :top => [a],
+                    :left => metric)
+            end
+            memo
+          end
+        end
+      end
+
+      def suggest_metrics
+        stars = find_star_centers
+        metrics = stars.map {|s| s.suggest_metrics}
+        stars.zip(metrics)
+      end
+
       def merge!(a_blueprint)
         temp_blueprint = dup
         a_blueprint.datasets.each do |dataset|
