@@ -108,7 +108,7 @@ Sometimes it is useful to redeploy an existing process. You can do it like this
 
 {% highlight ruby %}
   graph_to_execute = p.executables.first // just an example you have to pick whichever makes sense for you
-  process.execute_process(graph_to_execute, {"param1" => "value1", "param2" => "value2"})
+  process.execute_process(graph_to_execute, :params => {"param1" => "value1", "param2" => "value2"}, :hidden_params => {"param1" => "value1"})
 {% endhighlight %}
 
 ###Execute a schedule
