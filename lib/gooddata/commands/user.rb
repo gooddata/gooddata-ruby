@@ -7,32 +7,7 @@ require 'multi_json'
 
 module GoodData::Command
   class User
-    DEFAULT_INVITE_MESSAGE = 'Join us!'
-
     class << self
-      def invite(project_id, email, role, msg = DEFAULT_INVITE_MESSAGE)
-        msg = DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
-
-        puts "Inviting #{email}, role: #{role}"
-
-        data = {
-          :invitations => [{
-                             :invitation => {
-                               :content => {
-                                 :email => email,
-                                 :role => role,
-                                 :action => {
-                                   :setMessage => msg
-                                 }
-                               }
-                             }
-                           }]
-        }
-
-        url = "/gdc/projects/#{project_id}/invitations"
-        GoodData.post(url, data)
-      end
-      
       def list(pid)
         users = []
         finished = false
@@ -76,6 +51,10 @@ module GoodData::Command
           }
         end
         roles
+      end
+
+      def show
+        GoodData.profile.to_json
       end
     end
   end

@@ -4,6 +4,8 @@ require 'pathname'
 
 module GoodData::Command
   class Project
+    DEFAULT_INVITE_MESSAGE = 'Join us!'
+
     class << self
       # Create new project based on options supplied
       def create(options={})
@@ -18,6 +20,29 @@ module GoodData::Command
       # Show existing project
       def show(id)
         GoodData::Project[id]
+      end
+
+      def invite(project_id, email, role, msg = DEFAULT_INVITE_MESSAGE)
+        msg = DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
+
+        puts "Inviting #{email}, role: #{role}"
+
+        data = {
+          :invitations => [{
+                             :invitation => {
+                               :content => {
+                                 :email => email,
+                                 :role => role,
+                                 :action => {
+                                   :setMessage => msg
+                                 }
+                               }
+                             }
+                           }]
+        }
+
+        url = "/gdc/projects/#{project_id}/invitations"
+        GoodData.post(url, data)
       end
 
       # Clone existing project
@@ -111,6 +136,7 @@ module GoodData::Command
             return role
           end
         end
+        return nil
       end
 
       def get_role_by_title(project_id, role_name)
@@ -120,6 +146,7 @@ module GoodData::Command
             return role
           end
         end
+        return nil
       end
 
       # Update project

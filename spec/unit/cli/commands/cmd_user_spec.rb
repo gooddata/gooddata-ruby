@@ -12,4 +12,10 @@ describe GoodData::CLI do
 
     run_cli(args)
   end
+
+  it "Has working 'user show' command" do
+    args = %w(user show)
+
+    run_cli(args)
+  end
 end
