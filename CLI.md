@@ -115,6 +115,10 @@ Manage domain
 
 Add user to domain
 
+```
+tomaskorcak@kx-mac:~/dev/gooddata-ruby$ ./gooddata domain add_user gooddata-tomas-korcak joe doe joe.doe@example.com password
+```
+
 ### domain list_users
 
 List users in domain
@@ -123,6 +127,7 @@ List users in domain
 tomaskorcak@kx-mac:~/$ gooddata domain list_users gooddata-tomas-korcak
 Tomas,Korcak,tomas.korcak@gooddata.com
 tomas,korcak,korczis@gmail.com
+joe,doe,joe.doe@example.com
 ```
 
 ## help
