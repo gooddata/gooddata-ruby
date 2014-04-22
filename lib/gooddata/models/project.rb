@@ -307,7 +307,6 @@ module GoodData
       fail "You have to provide a project instance or project pid to migrate to" if target_project.nil?
       target_project = GoodData::Project[target_project]
       objects = objects.map {|obj| GoodData::MdObject[obj]}
-      GoodData.logging_on
       export_payload = {
           :partialMDExport => {
               :uris => objects.map {|obj| obj.uri}
@@ -316,12 +315,13 @@ module GoodData
       result = GoodData.post("#{GoodData.project.md['maintenance']}/partialmdexport", export_payload)
       polling_url = result["partialMDArtifact"]["status"]["uri"]
       token = result["partialMDArtifact"]["token"]
-
       polling_result = GoodData.get(polling_url)
-      while polling_result["wTaskStatus"]["poll"]["status"] == "RUNNING"
+
+      while polling_result["wTaskStatus"]["status"] == "RUNNING"
+        sleep(3)
         polling_result = GoodData.get(polling_url)
       end
-      fail "Exporting objects failed" if polling_result["wTaskStatus"]["poll"]["status"] == "ERROR"
+      fail "Exporting objects failed" if polling_result["wTaskStatus"]["status"] == "ERROR"
 
       import_payload = {
       :partialMDImport => {
@@ -334,10 +334,11 @@ module GoodData
       result = GoodData.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
       polling_uri = result["uri"]
       polling_result = GoodData.get(polling_url)
-      while polling_result["wTaskStatus"]["poll"]["status"] == "RUNNING"
+      while polling_result["wTaskStatus"]["status"] == "RUNNING"
+        sleep(3)
         polling_result = GoodData.get(polling_url)
       end
-      fail "Exporting objects failed" if polling_result["wTaskStatus"]["poll"]["status"] == "ERROR"
+      fail "Exporting objects failed" if polling_result["wTaskStatus"]["status"] == "ERROR"
 
     end
 
