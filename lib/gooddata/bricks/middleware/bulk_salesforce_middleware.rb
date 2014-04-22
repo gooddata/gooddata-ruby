@@ -2,6 +2,9 @@
 
 require 'salesforce_bulk_api'
 
+SalesforceBulkApi::Api.class_eval("@@SALESFORCE_API_VERSION='29.0'")
+
+
 require_relative 'base_middleware'
 
 module GoodData::Bricks
