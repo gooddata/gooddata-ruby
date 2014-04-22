@@ -210,6 +210,10 @@ Project 'Test Project' with id /gdc/projects/uq7vmjkmfj86jihofsavdxgtfmxwofrh cr
 
 Delete a project. Be careful this is impossible to revert
 
+```
+tomaskorcak@kx-mac:~/$ gooddata -p uq7vmjkmfj86jihofsavdxgtfmxwofrh project delete
+```
+
 ### project invite
 
 Invites user to project
