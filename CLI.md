@@ -8,6 +8,65 @@ Some basic API stuff directly from CLI
 
 GET request on our API
 
+```
+tomaskorcak@kx-mac:~/$ gooddata api get /gdc
+{"about"=>
+  {"summary"=>"Use links to navigate the services.",
+   "category"=>"GoodData API root",
+   "links"=>
+    [{"link"=>"/gdc/", "summary"=>"", "category"=>"home", "title"=>"home"},
+     {"link"=>"/gdc/account/token",
+      "summary"=>"Temporary token generator.",
+      "category"=>"token",
+      "title"=>"token"},
+     {"link"=>"/gdc/account/login",
+      "summary"=>"Authentication service.",
+      "category"=>"login",
+      "title"=>"login"},
+     {"link"=>"/gdc/md",
+      "summary"=>"Metadata resources.",
+      "category"=>"md",
+      "title"=>"metadata"},
+     {"link"=>"/gdc/xtab2",
+      "summary"=>"Report execution resource.",
+      "category"=>"xtab",
+      "title"=>"xtab"},
+     {"link"=>"/gdc/availableelements",
+      "summary"=>
+       "Resource used to determine valid attribute values in the context of a report.",
+      "category"=>"availablelements",
+      "title"=>"AvailableElements"},
+     {"link"=>"/gdc/exporter",
+      "summary"=>"Report exporting resource.",
+      "category"=>"report-exporter",
+      "title"=>"exporter"},
+     {"link"=>"/gdc/account",
+      "summary"=>"Resource for logged in account manipulation.",
+      "category"=>"account",
+      "title"=>"account"},
+     {"link"=>"/gdc/projects",
+      "summary"=>"Resource for user and project management.",
+      "category"=>"projects",
+      "title"=>"projects"},
+     {"link"=>"/gdc/tool",
+      "summary"=>"Miscellaneous resources.",
+      "category"=>"tool",
+      "title"=>"tool"},
+     {"link"=>"/gdc/templates",
+      "summary"=>"Template resource - for internal use only.",
+      "category"=>"templates",
+      "title"=>"templates"},
+     {"link"=>"/gdc/releaseInfo",
+      "summary"=>"Release information.",
+      "category"=>"releaseInfo",
+      "title"=>"releaseInfo"},
+     {"link"=>"https://secure-di.gooddata.com/uploads",
+      "summary"=>"User data staging area.",
+      "category"=>"uploads",
+      "title"=>"user-uploads"}]}}
+
+```
+
 ### api info
 
 Info about the API version etc
