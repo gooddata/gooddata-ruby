@@ -202,15 +202,23 @@ You can run project validation which will check RI integrity and other problems.
 
 Manage your projects
 
-### list
+### projects list
 
 Lists user's projects
+
+```
+tomaskorcak@kx-mac:~/$ gooddata projects list
+/gdc/projects/la84vcyhrq8jwbu4wpipw66q2sqeb923,GoodSales Demo
+/gdc/projects/pouwty5dezpuib8nil16fv4i1jz80oju,GoodSample Demo
+/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb,Training March
+
+```
 
 ## role
 
 Basic Role Management
 
-### list
+### role list
 
 List roles
 
