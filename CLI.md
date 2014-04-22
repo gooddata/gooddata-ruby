@@ -222,6 +222,12 @@ Basic Role Management
 
 List roles
 
+```
+tomaskorcak@kx-mac:~/$ gooddata -p pouwty5dezpuib8nil16fv4i1jz80oju role list
+dashboardOnlyRole,/gdc/projects/pouwty5dezpuib8nil16fv4i1jz80oju/roles/3
+readOnlyUserRole,/gdc/projects/pouwty5dezpuib8nil16fv4i1jz80oju/roles/4
+```
+
 ## run_ruby
 
 Run ruby bricks either locally or remotely deployed on our server
