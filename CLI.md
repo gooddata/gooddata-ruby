@@ -240,6 +240,18 @@ Scaffold things
 
 Scaffold a gooddata ruby brick. This is a piece of code that you can run on our platform
 
+```
+tomaskorcak@kx-mac:~/$ gooddata scaffold brick mybrick
+
+tomaskorcak@kx-mac:~/$ ls -la mybrick/
+total 16
+drwxr-xr-x   4 tomaskorcak  staff   136 Apr 22 14:10 .
+drwxr-xr-x  31 tomaskorcak  staff  1054 Apr 22 14:10 ..
+-rw-r--r--   1 tomaskorcak  staff   103 Apr 22 14:10 brick.rb
+-rw-r--r--   1 tomaskorcak  staff   179 Apr 22 14:10 main.rb
+
+```
+
 ### scaffold project
 
 Scaffold a gooddata project blueprint
