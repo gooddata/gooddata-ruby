@@ -188,6 +188,20 @@ Clones a project. Useful for testing
 
 Create a gooddata project
 
+```
+tomaskorcak@kx-mac:~/$ gooddata project create
+Project name
+Test Project
+Project summary  ||
+Test Project Summary Text
+Project template
+
+token
+SUPERSECRETTOKENHERE
+Project 'Test Project' with id /gdc/projects/uq7vmjkmfj86jihofsavdxgtfmxwofrh created successfully!
+
+```
+
 ### project delete
 
 Delete a project. Be careful this is impossible to revert
