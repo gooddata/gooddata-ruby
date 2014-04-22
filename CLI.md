@@ -225,6 +225,24 @@ If you are in a gooddata project blueprint it will apply the changes. If you do 
 
 You can run project validation which will check RI integrity and other problems.
 
+```
+tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb project validation
+{"projectValidateResult"=>
+  {"error_found"=>0,
+   "fatal_error_found"=>0,
+   "results"=>
+    [{"body"=>{"error"=>0, "log"=>[]}, "from"=>"pdm"},
+     {"body"=>{"error"=>0, "log"=>[]}, "from"=>"pdm::transitivity"},
+     {"body"=>{"error"=>0, "log"=>[]}, "from"=>"pdm::elem_validation"},
+     {"body"=>{"error"=>0, "log"=>[]}, "from"=>"metric_filter"},
+     {"body"=>{"error"=>0, "log"=>[]}, "from"=>"ldm"},
+     {"body"=>{"error"=>0, "log"=>[]}, "from"=>"invalid_objects"},
+     {"body"=>{"error"=>0, "log"=>[]}, "from"=>"pdm::pdm_vs_dwh"},
+     {"body"=>{"error"=>0, "log"=>[]}, "from"=>"pdm::pk_fk_consistency"}],
+   "meta"=>{"start_time"=>1398202260, "finished_time"=>1398202262}}}
+
+```
+
 ## projects
 
 Manage your projects
