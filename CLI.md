@@ -217,6 +217,46 @@ Roles
 
 Shows basic info about a project
 
+```
+tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb project show
+{"content"=>
+  {"cluster"=>"",
+   "authorizationToken"=>"INTNA000000SRVS",
+   "guidedNavigation"=>"1",
+   "isPublic"=>"0",
+   "driver"=>"Pg",
+   "state"=>"ENABLED"},
+ "links"=>
+  {"ldm_thumbnail"=>
+    "/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/ldm?thumbnail=1",
+   "self"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb",
+   "clearCaches"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/clearCaches",
+   "invitations"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/invitations",
+   "users"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/users?link=1",
+   "uploads"=>
+    "https://secure-di.gooddata.com/project-uploads/tk6192gsnav58crp6o1ahsmtuniq8khb/",
+   "ldm"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/ldm",
+   "metadata"=>"/gdc/md/tk6192gsnav58crp6o1ahsmtuniq8khb",
+   "publicartifacts"=>
+    "/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/publicartifacts",
+   "roles"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles",
+   "dataload"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/dataload",
+   "connectors"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/connectors",
+   "execute"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/execute",
+   "schedules"=>"/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/schedules",
+   "templates"=>"/gdc/md/tk6192gsnav58crp6o1ahsmtuniq8khb/templates",
+   "eventstores"=>
+    "/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/dataload/eventstore/stores"},
+ "meta"=>
+  {"created"=>"2014-03-03 14:24:51",
+   "summary"=>"",
+   "updated"=>"2014-03-03 14:24:51",
+   "author"=>"/gdc/account/profile/c6f1b9dc57a3aac97ed70e467b27bbd9",
+   "title"=>"Training March",
+   "contributor"=>"/gdc/account/profile/c6f1b9dc57a3aac97ed70e467b27bbd9"}}
+
+```
+
 ### project update
 
 If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you.
