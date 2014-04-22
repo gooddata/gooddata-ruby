@@ -27,6 +27,10 @@ module GoodData
         self.new(GoodData.get uri) unless uri.nil?
       end
 
+      def all
+        self[:all]
+      end
+
       def find_by_tag(tag)
         self[:all].find_all { |r| r['tags'].split(',').include?(tag) }
       end
