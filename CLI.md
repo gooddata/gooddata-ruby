@@ -70,7 +70,17 @@ tomaskorcak@kx-mac:~/$ gooddata api get /gdc
 ### api info
 
 Info about the API version etc
-    
+   
+```
+tomaskorcak@kx-mac:~/$ gooddata api info
+GoodData API
+  Version: N/A
+  Released: N/A
+  For more info see N/A
+nil
+
+```
+
 ## auth
 
 Work with your locally stored credentials
