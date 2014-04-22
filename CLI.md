@@ -250,6 +250,21 @@ drwxr-xr-x  31 tomaskorcak  staff  1054 Apr 22 14:10 ..
 -rw-r--r--   1 tomaskorcak  staff   103 Apr 22 14:10 brick.rb
 -rw-r--r--   1 tomaskorcak  staff   179 Apr 22 14:10 main.rb
 
+tomaskorcak@kx-mac:~/$ cat mybrick/brick.rb 
+class MyBrick < GoodData::Bricks::Brick
+
+    def call(params)
+        # do something here
+    end
+
+end
+
+tomaskorcak@kx-mac:~/$ cat mybrick/main.rb 
+require_relative '../../gooddata/bricks/bricks'
+
+require_relative './mybrick'
+
+
 ```
 
 ### scaffold project
