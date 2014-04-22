@@ -119,6 +119,12 @@ Add user to domain
 
 List users in domain
 
+```
+tomaskorcak@kx-mac:~/$ gooddata domain list_users gooddata-tomas-korcak
+Tomas,Korcak,tomas.korcak@gooddata.com
+tomas,korcak,korczis@gmail.com
+```
+
 ## help
 
 Shows a list of commands or help for one command
