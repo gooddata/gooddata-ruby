@@ -185,7 +185,7 @@ If you are in a gooddata project blueprint it will apply the changes. If you do 
 Clones a project. Useful for testing
 
 ```
-tomaskorcak@kx-mac:~/Z$ gooddata -p uq7vmjkmfj86jihofsavdxgtfmxwofrh project clone
+tomaskorcak@kx-mac:~/$ gooddata -p uq7vmjkmfj86jihofsavdxgtfmxwofrh project clone
 ```
 
 ### project create
