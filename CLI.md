@@ -222,11 +222,11 @@ Run ruby bricks either locally or remotely deployed on our server
 
 Scaffold things
 
-### brick
+### scaffold brick
 
 Scaffold a gooddata ruby brick. This is a piece of code that you can run on our platform
 
-### project
+### scaffold project
 
 Scaffold a gooddata project blueprint
 
@@ -234,6 +234,29 @@ Scaffold a gooddata project blueprint
 
 User management
 
-### show
+### user show
 
 Show your profile
+
+```
+tomaskorcak@kx-mac:~/dev/gooddata-ruby$ ./gooddata user show
+{"accountSetting"=>
+  {"country"=>nil,
+   "firstName"=>"Tomas",
+   "ssoProvider"=>nil,
+   "timezone"=>nil,
+   "position"=>nil,
+   "authenticationModes"=>[],
+   "companyName"=>"GoodData",
+   "login"=>"tomas.korcak@gooddata.com",
+   "email"=>"tomas.korcak@gooddata.com",
+   "created"=>"2014-03-03 11:28:51",
+   "updated"=>"2014-04-22 22:58:51",
+   "lastName"=>"Korcak",
+   "phoneNumber"=>"00420775995881",
+   "links"=>
+    {"self"=>"/gdc/account/profile/c6f1b9dc57a3aac97ed70e467b27bbd9",
+     "projects"=>
+      "/gdc/account/profile/c6f1b9dc57a3aac97ed70e467b27bbd9/projects"}}}
+
+```
