@@ -17,7 +17,19 @@ GoodData::CLI.module_eval do
         domain = args[0]
         fail 'Domain name has to be provided' if domain.nil? || domain.empty?
 
-        GoodData::Command::Domain.add_user(domain)
+        first = args[1]
+        fail 'Firstname has to be provided' if first.nil? || first.empty?
+
+        last = args[2]
+        fail 'Lastname has to be provided' if last.nil? || last.empty?
+
+        email = args[3]
+        fail 'Email has to be provided' if email.nil? || email.empty?
+
+        password = args[4]
+        fail 'Password has to be provided' if password.nil? || password.empty?
+
+        GoodData::Command::Domain.add_user(domain, first, last, email, password)
       end
     end
 
@@ -29,6 +41,7 @@ GoodData::CLI.module_eval do
 
         domain = args[0]
         fail 'Domain name has to be provided' if domain.nil? || domain.empty?
+
 
         users = GoodData::Command::Domain.list_users(domain)
         puts users.map { |u| [u['firstName'], u['lastName'], u['login']].join(',') }
