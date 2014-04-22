@@ -150,6 +150,28 @@ Gives you some basic info about the process
 
 Lists all user's processes deployed on the plaform
 
+```
+tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb process list
+{"processes"=>
+  {"items"=>
+    [{"process"=>
+       {"type"=>"GRAPH",
+        "name"=>"Training March",
+        "graphs"=>["Training March/graph/graph.grf"],
+        "executables"=>["Training March/graph/graph.grf"],
+        "links"=>
+         {"self"=>
+           "/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/dataload/processes/f12975d2-5958-4248-9c3d-4c8f2e1f067d",
+          "executions"=>
+           "/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/dataload/processes/f12975d2-5958-4248-9c3d-4c8f2e1f067d/executions",
+          "source"=>
+           "/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/dataload/processes/f12975d2-5958-4248-9c3d-4c8f2e1f067d/source"}}}],
+   "links"=>
+    {"self"=>
+      "/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/dataload/processes"}}}
+
+```
+
 ## project
 
 Manage your project
@@ -270,6 +292,19 @@ require_relative './mybrick'
 ### scaffold project
 
 Scaffold a gooddata project blueprint
+
+```
+tomaskorcak@kx-mac:~/$ gooddata scaffold project myproj
+
+tomaskorcak@kx-mac:~/$ ls -la myproj/
+total 8
+drwxr-xr-x   5 tomaskorcak  staff   170 Apr 22 14:13 .
+drwxr-xr-x  31 tomaskorcak  staff  1054 Apr 22 14:13 ..
+-rw-r--r--   1 tomaskorcak  staff    53 Apr 22 14:13 Goodfile
+drwxr-xr-x   5 tomaskorcak  staff   170 Apr 22 14:13 data
+drwxr-xr-x   3 tomaskorcak  staff   102 Apr 22 14:13 model
+
+```
 
 ## user
 
