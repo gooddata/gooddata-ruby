@@ -204,6 +204,11 @@ If you are in a gooddata project blueprint or if you provide a project id it wil
 
 List users
 
+```
+tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb project list_users
+Korcak,Tomas,tomas.korcak@gooddata.com,/gdc/account/profile/c6f1b9dc57a3aac97ed70e467b27bbd9
+```
+
 ### project roles
 
 Roles
