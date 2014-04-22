@@ -85,9 +85,23 @@ nil
 
 Work with your locally stored credentials
 
-### api store
+### auth store
 
 Store your credentials to ~/.gooddata so client does not have to ask you every single time
+
+```
+tomaskorcak@kx-mac:~/$ gooddata auth store
+Enter your GoodData credentials.
+Email
+tomas.korcak@gooddata.com
+Password
+xxxxxxxxxxxxxxxx
+Authorization Token
+ABCDEF123
+Overwrite existing stored credentials (y/n)
+y
+
+```
 
 ## console
 
