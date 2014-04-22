@@ -116,7 +116,7 @@ Manage domain
 Add user to domain
 
 ```
-tomaskorcak@kx-mac:~/dev/gooddata-ruby$ ./gooddata domain add_user gooddata-tomas-korcak joe doe joe.doe@example.com password
+tomaskorcak@kx-mac:~/$ gooddata domain add_user gooddata-tomas-korcak joe doe joe.doe@example.com password
 ```
 
 ### domain list_users
@@ -253,7 +253,7 @@ User management
 Show your profile
 
 ```
-tomaskorcak@kx-mac:~/dev/gooddata-ruby$ ./gooddata user show
+tomaskorcak@kx-mac:~/$ gooddata user show
 {"accountSetting"=>
   {"country"=>nil,
    "firstName"=>"Tomas",
