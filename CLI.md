@@ -213,6 +213,17 @@ Korcak,Tomas,tomas.korcak@gooddata.com,/gdc/account/profile/c6f1b9dc57a3aac97ed7
 
 Roles
 
+```
+tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb project roles
+/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/2,Admin
+/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/7,Connectors System User
+/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/5,Editor
+/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/3,Embedded Dashboard Only
+/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/1,Unverified Admin
+/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/4,Viewer
+
+```
+
 ### project show
 
 Shows basic info about a project
