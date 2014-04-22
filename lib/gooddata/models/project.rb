@@ -295,6 +295,10 @@ module GoodData
       new_project
     end
 
+    def delete_dashboards
+      Dashboard.all.map { |data| Dashboard[data["link"]]}.each { |d| d.delete }
+    end
+
     def partial_md_export(objects, options={})
       # TODO: refactor polling to md_polling in client
 
