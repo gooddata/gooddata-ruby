@@ -256,7 +256,7 @@ module GoodData
     def clone(options={})
       with_data = options[:data] || true
       with_users = options[:users] || false
-      title = options[:title]
+      title = options[:title] || "Clone of #{title}"
       export = {
         :exportProject => {
           :exportUsers => with_users ? 1 : 0,
@@ -276,7 +276,7 @@ module GoodData
       end
 
       old_project = self
-      new_project = GoodData::Project.create(options.merge({:title => "Clone of #{old_project.title}"}))
+      new_project = GoodData::Project.create(options.merge({ :title => title }))
 
       import = {
         :importProject => {
