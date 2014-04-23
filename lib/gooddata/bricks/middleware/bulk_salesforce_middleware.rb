@@ -2,13 +2,12 @@
 
 require 'salesforce_bulk_api'
 
-SalesforceBulkApi::Api.class_eval("@@SALESFORCE_API_VERSION='29.0'")
-
-
 require_relative 'base_middleware'
 
 module GoodData::Bricks
   class BulkSalesforceMiddleware < GoodData::Bricks::Middleware
+    DEFAULT_VERSION = '29.0'
+
     def call(params)
       username = params["salesforce_username"]
       password = params["salesforce_password"]
@@ -17,6 +16,7 @@ module GoodData::Bricks
       client_id = params["salesforce_client_id"]
       client_secret = params["salesforce_client_secret"]
       host = params["salesforce_host"]
+      version = params["salesforce_api_version"] || DEFAULT_VERSION
 
       app_info = {
         :client_id => client_id,
@@ -43,7 +43,11 @@ module GoodData::Bricks
 
       if client_params
         Restforce.log = true if params["salesforce_client_logger"]
-        client = Restforce.new(client_params)
+
+        client_params[:api_version] = version
+        SalesforceBulkApi::Api.class_eval("@@SALESFORCE_API_VERSION='#{version}'")
+
+        client = params["salesforce_client"] || Restforce.new(client_params)
         client.authenticate!
 
         salesforce = SalesforceBulkApi::Api.new(client)
