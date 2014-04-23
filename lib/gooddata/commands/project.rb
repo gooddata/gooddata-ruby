@@ -25,24 +25,10 @@ module GoodData::Command
       def invite(project_id, email, role, msg = DEFAULT_INVITE_MESSAGE)
         msg = DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
 
-        puts "Inviting #{email}, role: #{role}"
+        project = GoodData::Project[project_id]
+        fail "Invalid project id '#{project_id}' specified" if project.nil?
 
-        data = {
-          :invitations => [{
-                             :invitation => {
-                               :content => {
-                                 :email => email,
-                                 :role => role,
-                                 :action => {
-                                   :setMessage => msg
-                                 }
-                               }
-                             }
-                           }]
-        }
-
-        url = "/gdc/projects/#{project_id}/invitations"
-        GoodData.post(url, data)
+        project.invite(email, role, msg)
       end
 
       # Clone existing project
@@ -111,42 +97,6 @@ module GoodData::Command
                  JSON.parse(spec_path, :symbolize_names => true)
                end
         [spec, goodfile[:project_id]]
-      end
-
-      def get_roles(project_id)
-        url = "/gdc/projects/#{project_id}/roles"
-
-        res = []
-
-        tmp = GoodData.get(url)
-        tmp['projectRoles']['roles'].each do |role_url|
-          res << {
-            'url' => role_url,
-            'role' => GoodData.get(role_url)
-          }
-        end
-
-        return res
-      end
-
-      def get_role_by_identifier(project_id, role_name)
-        tmp = get_roles(project_id)
-        tmp.each do |role|
-          if role['role']['projectRole']['meta']['identifier'].downcase == role_name.downcase
-            return role
-          end
-        end
-        return nil
-      end
-
-      def get_role_by_title(project_id, role_name)
-        tmp = get_roles(project_id)
-        tmp.each do |role|
-          if role['role']['projectRole']['meta']['title'].downcase == role_name.downcase
-            return role
-          end
-        end
-        return nil
       end
 
       def list_users(pid)

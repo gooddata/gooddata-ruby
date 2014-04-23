@@ -13,6 +13,7 @@ module GoodData
     SLIS_PATH = '/ldm/singleloadinterface'
 
     attr_accessor :connection
+    attr_reader :project_id
 
     class << self
       # Returns an array of all projects accessible by
@@ -93,11 +94,79 @@ module GoodData
         sleep 3
         project
       end
-
     end
+
+    def get_roles
+      url = "/gdc/projects/#{self.project_id}/roles"
+
+      res = []
+
+      tmp = GoodData.get(url)
+      tmp['projectRoles']['roles'].each do |role_url|
+        res << {
+          'url' => role_url,
+          'role' => GoodData.get(role_url)
+        }
+      end
+
+      return res
+    end
+
+    def get_role_by_identifier(role_name)
+      tmp = get_roles
+      tmp.each do |role|
+        if role['role']['projectRole']['meta']['identifier'].downcase == role_name.downcase
+          return role
+        end
+      end
+      return nil
+    end
+
+    def get_role_by_title(role_name)
+      tmp = get_roles
+      tmp.each do |role|
+        if role['role']['projectRole']['meta']['title'].downcase == role_name.downcase
+          return role
+        end
+      end
+      return nil
+    end
+
 
     def initialize(json)
       @json = json
+      self.project_id = @json['project']['links']['self'].split('/').last
+      @json
+    end
+
+    def invite(email, role, msg)
+      puts "Inviting #{email}, role: #{role}"
+
+      role_url = nil
+      if role.index('/gdc/') != 0
+        tmp = get_role_by_identifier(role)
+        tmp = get_role_by_title(role) if tmp.nil?
+        role_url = tmp['url'] if tmp
+      else
+        role_url = role if role_url.nil?
+      end
+
+      data = {
+        :invitations => [{
+                           :invitation => {
+                             :content => {
+                               :email => email,
+                               :role => role_url,
+                               :action => {
+                                 :setMessage => msg
+                               }
+                             }
+                           }
+                         }]
+      }
+
+      url = "/gdc/projects/#{project_id}/invitations"
+      GoodData.post(url, data)
     end
 
     def save
@@ -347,6 +416,12 @@ module GoodData
 
     end
     alias :transfer_objects :partial_md_export
+
+    private
+
+    def project_id=(pid)
+      @project_id = pid
+    end
 
   end
 end

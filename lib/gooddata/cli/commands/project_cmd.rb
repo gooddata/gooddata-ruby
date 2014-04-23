@@ -124,15 +124,7 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         GoodData.connect(opts)
 
-        if role.index('/gdc/') != 0
-          tmp = GoodData::Command::Project.get_role_by_identifier(project_id, role)
-          tmp = GoodData::Command::Project.get_role_by_title(project_id, role) if tmp.nil?
-          role_url = tmp['url'] if tmp
-        else
-          role_url = role if role_url.nil?
-        end
-
-        GoodData::Command::Project.invite(project_id, email, role_url, msg)
+        GoodData::Command::Project.invite(project_id, email, role, msg)
       end
     end
 
