@@ -254,9 +254,15 @@ module GoodData
     end
 
     def clone(options={})
+      # TODO: Refactor so if export or import fails the new_project will be cleaned
       with_data = options[:data] || true
       with_users = options[:users] || false
       title = options[:title] || "Clone of #{title}"
+
+      # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
+      old_project = self
+      new_project = GoodData::Project.create(options.merge({ :title => title }))
+
       export = {
         :exportProject => {
           :exportUsers => with_users ? 1 : 0,
@@ -274,9 +280,6 @@ module GoodData
         result = GoodData.get(status_url)
         state = result['taskState']['status']
       end
-
-      old_project = self
-      new_project = GoodData::Project.create(options.merge({ :title => title }))
 
       import = {
         :importProject => {
