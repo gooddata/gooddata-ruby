@@ -5,7 +5,7 @@ require 'rspec'
 require 'coveralls'
 require 'pathname'
 
-Coveralls.wear!
+Coveralls.wear_merged!
 
 # Automagically include all helpers/*_helper.rb
 
