@@ -306,6 +306,8 @@ module GoodData
       # TODO: refactor polling to md_polling in client
 
       fail "Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate" if objects.nil? || objects.empty?
+      fail "The objects to migrate has to be provided as an array" unless objects.is_a?(Array)
+
       target_project = options[:project]
       fail "You have to provide a project instance or project pid to migrate to" if target_project.nil?
       target_project = GoodData::Project[target_project]
@@ -344,6 +346,7 @@ module GoodData
       fail "Exporting objects failed" if polling_result["wTaskStatus"]["status"] == "ERROR"
 
     end
+    alias :transfer_objects :partial_md_export
 
   end
 end
