@@ -83,9 +83,10 @@ GoodData::CLI.module_eval do
     c.desc 'Clones a project. Useful for testing'
     c.command :clone do |clone|
       clone.desc 'Name of the new project'
+
       clone.default_value nil
       clone.arg_name 'cloned_project_name'
-      clone.flag [:n, :name]
+      clone.flag [:t, :title]
 
       clone.default_value false
       clone.switch [:u, :users]
@@ -96,7 +97,6 @@ GoodData::CLI.module_eval do
       clone.action do |global_options, options, args|
         opts = options.merge(global_options)
         id = global_options[:project_id]
-        name = opts[:name]
         token = opts[:token]
 
         fail "You have to provide a token for creating a project. Please use parameter --token" if token.nil? || token.empty?
