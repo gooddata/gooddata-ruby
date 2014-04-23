@@ -20,6 +20,14 @@ end
 
 Coveralls::RakeTask.new
 
+desc 'Run continuous integration test'
+task :ci do
+  Rake::Task['test:unit'].invoke
+  unless ENV['TRAVIS'] == 'true' && ENV['TRAVIS_SECURE_ENV_VARS'] == 'false'
+    Rake::Task['test:integration'].invoke
+  end
+end
+
 desc "Create rspec coverage"
 task :coverage do
   ENV['COVERAGE'] = 'true'
