@@ -4,24 +4,13 @@ require 'pathname'
 require 'pp'
 
 require_relative '../shared'
-require_relative '../../commands/projects'
+require_relative '../../commands/project'
 
 GoodData::CLI.module_eval do
 
-  desc 'Manage your projects'
+  desc 'Manage your project'
   arg_name 'project_command'
   command :project do |c|
-
-    c.desc "Lists user's projects"
-    c.command :list do |list|
-      list.action do |global_options, options, args|
-        opts = options.merge(global_options)
-        GoodData.connect(opts)
-        list = GoodData::Command::Projects.list()
-        puts list.map { |p| [p.uri, p.title].join(',') }
-      end
-    end
-
     c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
     c.command :jack_in do |jack|
       jack.action do |global_options, options, args|
@@ -70,7 +59,7 @@ GoodData::CLI.module_eval do
 
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        project = GoodData::Command::Projects.create({
+        project = GoodData::Command::Project.create({
                                                        :title => title,
                                                        :summary => summary,
                                                        :template => template,
@@ -86,7 +75,7 @@ GoodData::CLI.module_eval do
         id = global_options[:project_id]
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        GoodData::Command::Projects.delete(id)
+        GoodData::Command::Project.delete(id)
       end
     end
 
@@ -109,7 +98,51 @@ GoodData::CLI.module_eval do
         name = opts[:name]
         token = opts[:token]
         GoodData.connect(opts)
-        GoodData::Command::Projects.clone(id, opts)
+        GoodData::Command::Project.clone(id, opts)
+      end
+    end
+
+    c.desc 'Invites user to project'
+    c.command :invite do |store|
+      store.action do |global_options, options, args|
+        project_id = global_options[:project_id]
+        fail 'Project ID has to be provided' if project_id.nil? || project_id.empty?
+
+        email = args.first
+        fail 'Email of user to be invited has to be provided' if email.nil? || email.empty?
+
+        role = args[1]
+        fail 'Role name has to be provided' if role.nil? || role.empty?
+
+        msg = args[2]
+        msg = GoodData::Command::Project::DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
+
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+
+        if role.index('/gdc/') != 0
+          tmp = GoodData::Command::Project.get_role_by_identifier(project_id, role)
+          tmp = GoodData::Command::Project.get_role_by_title(project_id, role) if tmp.nil?
+          role_url = tmp['url'] if tmp
+        else
+          role_url = role if role_url.nil?
+        end
+
+        GoodData::Command::Project.invite(project_id, email, role_url, msg)
+      end
+    end
+
+    c.desc 'List users'
+    c.command :list_users do |list|
+      list.action do |global_options, options, args|
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+
+        pid = global_options[:project_id]
+        fail 'Project ID has to be provided' if pid.nil? || pid.empty?
+
+        user_list = GoodData::Command::Project.list_users(pid)
+        puts user_list.map { |u| [u[:last_name], u[:first_name], u[:login], u[:uri]].join(',') }
       end
     end
 
@@ -119,7 +152,7 @@ GoodData::CLI.module_eval do
         id = global_options[:project_id]
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        p = GoodData::Command::Projects.show(id)
+        p = GoodData::Command::Project.show(id)
         pp p.data
       end
     end
@@ -129,8 +162,8 @@ GoodData::CLI.module_eval do
       show.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        spec, project_id = GoodData::Command::Projects.get_spec_and_project_id('.')
-        new_project = GoodData::Command::Projects.build(opts.merge(:spec => spec))
+        spec, project_id = GoodData::Command::Project.get_spec_and_project_id('.')
+        new_project = GoodData::Command::Project.build(opts.merge(:spec => spec))
         puts "Project was created. New project PID is #{new_project.pid}, URI is #{new_project.uri}."
       end
     end
@@ -141,10 +174,25 @@ GoodData::CLI.module_eval do
 
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        spec, project_id = GoodData::Command::Projects.get_spec_and_project_id('.')
-        project = GoodData::Command::Projects.update(opts.merge(:spec => spec, :project_id => global_options[:project_id] || project_id))
+        spec, project_id = GoodData::Command::Project.get_spec_and_project_id('.')
+        project = GoodData::Command::Project.update(opts.merge(:spec => spec, :project_id => global_options[:project_id] || project_id))
         puts "Migration was done. Project PID is #{project.pid}, URI is #{project.uri}."
 
+      end
+    end
+
+    c.desc 'Roles'
+    c.command :roles do |roles|
+      roles.action do |global_options, options, args|
+        project_id = global_options[:project_id]
+        fail 'Project ID has to be provided' if project_id.nil? || project_id.empty?
+
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+
+        roles = GoodData::Command::Project.get_roles(project_id)
+
+        puts roles.map { |r| [r['url'], r['role']['projectRole']['meta']['title']].join(',') }
       end
     end
 
@@ -153,7 +201,7 @@ GoodData::CLI.module_eval do
        show.action do |global_options, options, args|
          opts = options.merge(global_options)
          GoodData.connect(opts)
-         pp GoodData::Command::Projects.validate(global_options[:project_id])
+         pp GoodData::Command::Project.validate(global_options[:project_id])
        end
      end
 
