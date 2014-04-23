@@ -13,6 +13,10 @@ The basic building block is a project. There are several useful things that you 
 
 Before we delve into APIs let's briefly explore the capabilities of command line interface for project manipulation
 
+###Create a project
+
+TBD
+
 ###Clone project
 You can easily clone project. This is very useful for testing and making backups of your project.
 
@@ -27,12 +31,44 @@ This will make an exact same clone of your project. There are three main paramet
 
 The defaults are with data but without all users.
 
-###Get process details
+###Delete project
 
-This command returns details about the specified project's process:
+Be careful this cannot be reverted
 
 {% highlight ruby %}
-  gooddata -p PROJECT_ID  process show --process_id PROCESS_ID
+  gooddata -p PROJECT_ID  project delete
+{% endhighlight %}
+
+###Show info 
+
+You can inspect a basic info about a project
+
+{% highlight ruby %}
+  gooddata -p PROJECT_ID  project show
+{% endhighlight %}
+
+###Validation
+
+This will run a project validation. It would report for example referential integrity or other problems. It is a good practice to run this from time to time and keep it clean.
+
+{% highlight ruby %}
+  gooddata -p PROJECT_ID  project validate
+{% endhighlight %}
+
+###List users
+
+You can list all the users in a project.
+
+{% highlight ruby %}
+  gooddata -p PROJECT_ID  project users
+{% endhighlight %}
+
+###List roles
+
+You can list all the roles in a project.
+
+{% highlight ruby %}
+  gooddata -p PROJECT_ID  project roles
 {% endhighlight %}
 
 ##API
@@ -109,6 +145,9 @@ project_from.object_transfer(objects, :project => project_to)
 {% endhighlight %}
 
 You can use any of the ways to specify both project or objects. Project id or project object for projects and object_id, uri and the object itself for the objects.
+
+###Inviting a user
+TBD
 
 ###Usual stuff
 You can do the typical small stuf with a project
