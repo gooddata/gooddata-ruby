@@ -49,6 +49,7 @@ GoodData::CLI.module_eval do
       end
     end
 
+    # TODO: Move away the ask methods. Provide params
     c.desc 'Create a gooddata project'
     c.command :create do |create|
       create.action do |global_options, options, args|
@@ -90,13 +91,16 @@ GoodData::CLI.module_eval do
       clone.switch [:u, :users]
 
       clone.default_value true
-      clone.switch [:data, :data]
+      clone.switch [:d, :data]
 
       clone.action do |global_options, options, args|
         opts = options.merge(global_options)
         id = global_options[:project_id]
         name = opts[:name]
         token = opts[:token]
+
+        fail "You have to provide a token for creating a project. Please use parameter --token" if token.nil? || token.empty?
+
         GoodData.connect(opts)
         GoodData::Command::Project.clone(id, opts)
       end
@@ -133,7 +137,7 @@ GoodData::CLI.module_eval do
     end
 
     c.desc 'List users'
-    c.command :list_users do |list|
+    c.command :users do |list|
       list.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
@@ -197,7 +201,7 @@ GoodData::CLI.module_eval do
     end
 
     c.desc 'You can run project validation which will check RI integrity and other problems.'
-     c.command :validation do |show|
+     c.command :validate do |show|
        show.action do |global_options, options, args|
          opts = options.merge(global_options)
          GoodData.connect(opts)
