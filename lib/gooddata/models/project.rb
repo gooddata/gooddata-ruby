@@ -135,7 +135,10 @@ module GoodData
 
     def initialize(json)
       @json = json
-      self.project_id = @json['project']['links']['self'].split('/').last
+      if @json['project']['links'] && @json['project']['links']['self']
+        self.project_id = @json['project']['links']['self'].split('/').last
+      end
+
       @json
     end
 
@@ -171,6 +174,9 @@ module GoodData
 
     def save
       response = GoodData.post PROJECTS_PATH, raw_data
+
+      self.project_id = response['uri'].split('/').last
+      
       if uri == nil
         response = GoodData.get response['uri']
         @json = response
