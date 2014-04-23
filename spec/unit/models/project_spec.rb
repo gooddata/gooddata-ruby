@@ -20,12 +20,14 @@ describe GoodData::Project do
 
   describe '#all' do
     it 'Returns all projects' do
+      pending 'Throws 403 sometimes on some machines, investigate why'
       GoodData::Project.all
     end
   end
 
   describe '#[]' do
     it 'Accepts :all parameter' do
+      pending 'Throws 403 sometimes on some machines, investigate why'
       GoodData::Project[:all]
     end
   end
