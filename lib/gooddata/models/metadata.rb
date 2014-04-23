@@ -15,6 +15,8 @@ module GoodData
 
       def [](id)
         raise "Cannot search for nil #{self.class}" unless id
+        raise RuntimeError, 'No project selected. You need to choose a project first.' if GoodData.project.nil?
+
         uri = if id.is_a? Integer or id =~ /^\d+$/
                 "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
               elsif id !~ /\//
