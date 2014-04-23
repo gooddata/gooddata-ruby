@@ -13,7 +13,6 @@ module GoodData
     SLIS_PATH = '/ldm/singleloadinterface'
 
     attr_accessor :connection
-    attr_reader :project_id
 
     class << self
       # Returns an array of all projects accessible by
@@ -97,7 +96,7 @@ module GoodData
     end
 
     def get_roles
-      url = "/gdc/projects/#{self.project_id}/roles"
+      url = "/gdc/projects/#{self.pid}/roles"
 
       res = []
 
@@ -135,11 +134,6 @@ module GoodData
 
     def initialize(json)
       @json = json
-      if @json['project']['links'] && @json['project']['links']['self']
-        self.project_id = @json['project']['links']['self'].split('/').last
-      end
-
-      @json
     end
 
     def invite(email, role, msg)
@@ -168,14 +162,12 @@ module GoodData
                          }]
       }
 
-      url = "/gdc/projects/#{project_id}/invitations"
+      url = "/gdc/projects/#{self.pid}/invitations"
       GoodData.post(url, data)
     end
 
     def save
       response = GoodData.post PROJECTS_PATH, raw_data
-
-      self.project_id = response['uri'].split('/').last
       
       if uri == nil
         response = GoodData.get response['uri']
@@ -422,12 +414,6 @@ module GoodData
 
     end
     alias :transfer_objects :partial_md_export
-
-    private
-
-    def project_id=(pid)
-      @project_id = pid
-    end
 
   end
 end
