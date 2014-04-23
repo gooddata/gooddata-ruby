@@ -78,41 +78,6 @@ GoodData.project = 'project_pid'
 GoodData.use 'project_pid'
 {% endhighlight %}
 
-##Working with a project{#project}
-
-This will let you work with the project in a block. The project has the value you picked only inside the block afterwards it will reset the project value to whatever it was before.
-
-{% highlight ruby %}
-GoodData.with_project('project_pid') do |project|
-  puts project.uri
-end
-{% endhighlight %}
-
-you can create a project.
-
-{% highlight ruby %}
-GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
-{% endhighlight %}
-
-You can clone a project. Currently only through a command method on project is coming.
-
-{% highlight ruby %}
-GoodData::Command::Projects.clone(project_id, :title => "Title of the cloned project", :with_data => true, :with_users => true)
-{% endhighlight %}
-
-You can delete a project.
-
-{% highlight ruby %}
-GoodData::Project['project_pid'].delete
-{% endhighlight %}
-
-You can delete all projects given a specific title. You have to be admin in the project and of course be careful this is a dangerous command
-
-{% highlight ruby %}
-# CAREFUL
-GoodData::Project.all.find_all {|p| p.title =~ /to_be_deleted/i}.each {|p| p.delete}
-{% endhighlight %}
-
 ##Retrieving objects{#retrieve}
 
 There are several wrappers for different types of objects. There are some common things you can do with them.
