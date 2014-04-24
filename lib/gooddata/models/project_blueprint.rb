@@ -16,7 +16,6 @@ module GoodData
       def change(&block)
         builder = ProjectBuilder.create_from_data(self)
         block.call(builder)
-        builder
         @data = builder.to_hash
         self
       end
@@ -25,7 +24,7 @@ module GoodData
         data[:datasets].map { |d| SchemaBlueprint.new(d) }
       end
 
-      def add_dataset(a_dataset, index=nil)
+      def add_dataset(a_dataset, index = nil)
         if index.nil? || index > datasets.length
           data[:datasets] << a_dataset.to_hash
         else
@@ -56,12 +55,12 @@ module GoodData
         if datasets.count == 1
           []
         else
-          x = datasets.reduce([]) { |memo, schema| schema.has_anchor? ? memo << [schema.name, schema.anchor[:name]] : memo }
-          refs = datasets.reduce([]) do |memo, dataset|
-            memo.concat(dataset.references)
+          x = datasets.reduce([]) { |a, e| e.anchor? ? a << [e.name, e.anchor[:name]] : a }
+          refs = datasets.reduce([]) do |a, e|
+            a.concat(e.references)
           end
-          refs.reduce([]) do |memo, ref|
-            x.include?([ref[:dataset], ref[:reference]]) ? memo : memo.concat([ref])
+          refs.reduce([]) do |a, e|
+            x.include?([e[:dataset], e[:reference]]) ? a : a.concat([e])
           end
         end
       end
@@ -80,52 +79,52 @@ module GoodData
 
       def can_break(dataset)
         dataset = get_dataset(dataset) if dataset.is_a?(String)
-        referenced_by(dataset).reduce([]) do |memo, ds|
-          ds.attributes_and_anchors.each do |attr|
-            memo.push([ds, attr])
+        referenced_by(dataset).reduce([]) do |a, e|
+          e.attributes_and_anchors.each do |attr|
+            a.push([e, attr])
           end
-          memo
+          a
         end
       end
 
       def find_star_centers
-        referenced = datasets.map {|d| referenced_by(d)}
+        referenced = datasets.map { |d| referenced_by(d) }
         referenced.flatten!
         res = datasets.map(&:to_hash) - referenced.map(&:to_hash)
-        res.map {|d| SchemaBlueprint.new(d)}
+        res.map { |d| SchemaBlueprint.new(d) }
       end
 
       def suggest_reports(options = {})
         strategy = options[:strategy] || :stupid
         case strategy
         when :stupid
-          reports = suggest_metrics.reduce([]) do |memo, items|
-            star, metrics = items
-            metrics.each {|m| m.save}
+          reports = suggest_metrics.reduce([]) do |a, e|
+            star, metrics = e
+            metrics.each { |m| m.save }
             reports_stubs = metrics.map do |m|
-              breaks = can_break(star).map {|ds, a| ds.identifier_for(a)}
+              breaks = can_break(star).map { |ds, a| ds.identifier_for(a) }
               # [breaks.sample((breaks.length/10.0).ceil), m]
               [breaks, m]
             end
-            memo.concat(reports_stubs)
+            a.concat(reports_stubs)
           end
-          reports.reduce([]) do |memo, items|
-            attrs, metric = items
+          reports.reduce([]) do |a, e|
+            attrs, metric = e
 
-            attrs.each do |a|
-              memo << GoodData::Report.create(
-                    :title => "Fantastic report",
-                    :top => [a],
+            attrs.each do |attr|
+              a << GoodData::Report.create(
+                    :title => 'Fantastic report',
+                    :top => [attr],
                     :left => metric)
             end
-            memo
+            a
           end
         end
       end
 
       def suggest_metrics
         stars = find_star_centers
-        metrics = stars.map {|s| s.suggest_metrics}
+        metrics = stars.map { |s| s.suggest_metrics }
         stars.zip(metrics)
       end
 
@@ -161,14 +160,18 @@ module GoodData
             'targetModel' => {
               'projectModel' => {
                 'datasets' => datasets.map { |d| d.to_wire_model },
-                'dateDimensions' => date_dimensions.map { |d|
+                'dateDimensions' => date_dimensions.map do |d|
                   {
                     'dateDimension' => {
                       'name' => d[:name],
                       'title' => d[:title] || d[:name].humanize
                     }
-                  } }
-              }}}}
+                  }
+                end
+              }
+            }
+          }
+        }
       end
 
       def to_hash

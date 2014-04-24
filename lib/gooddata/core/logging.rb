@@ -5,6 +5,8 @@ require_relative 'threaded'
 
 module GoodData
   class << self
+    attr_writer :logger
+
     # Turn logging on
     #
     # ### Example
@@ -12,9 +14,7 @@ module GoodData
     #     GoodData.logging_on
     #
     def logging_on
-      if logger.is_a? NilLogger
-        GoodData::logger = Logger.new(STDOUT)
-      end
+      GoodData.logger = Logger.new(STDOUT) if logger.is_a? NilLogger
     end
 
     # Turn logging on
@@ -24,7 +24,7 @@ module GoodData
     #     GoodData.logging_off
     #
     def logging_off
-      GoodData::logger = NilLogger.new
+      GoodData.logger = NilLogger.new
     end
 
     # Returns the logger instance. The default implementation
@@ -39,11 +39,6 @@ module GoodData
     #
     def logger
       @logger ||= NilLogger.new
-    end
-
-    # Sets the logger instance
-    def logger=(logger)
-      @logger = logger
     end
   end
 end

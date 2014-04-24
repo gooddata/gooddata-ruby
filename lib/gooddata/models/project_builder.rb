@@ -15,7 +15,7 @@ module GoodData
           pb
         end
 
-        def create(title, options={}, &block)
+        def create(title, options = {}, &block)
           pb = ProjectBuilder.new(title)
           block.call(pb)
           pb
@@ -58,12 +58,12 @@ module GoodData
         end
       end
 
-      def add_report(title, options={})
-        @reports << {:title => title}.merge(options)
+      def add_report(title, options = {})
+        @reports << { :title => title }.merge(options)
       end
 
-      def add_metric(title, options={})
-        @metrics << {:title => title}.merge(options)
+      def add_metric(title, options = {})
+        @metrics << { :title => title }.merge(options)
       end
 
       def add_dashboard(title, &block)
@@ -74,19 +74,19 @@ module GoodData
 
       def load_metrics(file)
         new_metrics = MultiJson.load(open(file).read, :symbolize_keys => true)
-        @metrics = @metrics + new_metrics
+        @metrics += new_metrics
       end
 
       def load_datasets(file)
         new_metrics = MultiJson.load(open(file).read, :symbolize_keys => true)
-        @datasets = @datasets + new_metrics
+        @datasets += new_metrics
       end
 
       def assert_report(report, result)
-        @assert_tests << {:report => report, :result => result}
+        @assert_tests << { :report => report, :result => result }
       end
 
-      def upload(data, options={})
+      def upload(data, options = {})
         mode = options[:mode] || 'FULL'
         dataset = options[:dataset]
         @uploads << {
@@ -100,7 +100,7 @@ module GoodData
         @users << users
       end
 
-      def to_json(options={})
+      def to_json(options = {})
         eliminate_empty = options[:eliminate_empty] || false
 
         if eliminate_empty

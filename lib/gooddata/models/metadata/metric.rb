@@ -20,13 +20,13 @@ module GoodData
 
       def xcreate(options)
         if options.is_a?(String)
-          create({:expression => options, :extended_notation => true})
+          create(:expression => options, :extended_notation => true)
         else
-          create(options.merge({:extended_notation => true}))
+          create(options.merge(:extended_notation => true))
         end
       end
 
-      def create(options={})
+      def create(options = {})
         if options.is_a?(String)
           expression = options
           extended_notation = false
@@ -40,9 +40,18 @@ module GoodData
 
         expression = if extended_notation
                        dict = {
-                         :facts => GoodData::Fact[:all].reduce({}) { |memo, item| memo[item['title']] = item['link']; memo },
-                         :attributes => GoodData::Attribute[:all].reduce({}) { |memo, item| memo[item['title']] = item['link']; memo },
-                         :metrics => GoodData::Metric[:all].reduce({}) { |memo, item| memo[item['title']] = item['link']; memo },
+                         :facts => GoodData::Fact[:all].reduce({}) do |memo, item|
+                           memo[item['title']] = item['link']
+                           memo
+                         end,
+                         :attributes => GoodData::Attribute[:all].reduce({}) do |memo, item|
+                           memo[item['title']] = item['link']
+                           memo
+                         end,
+                         :metrics => GoodData::Metric[:all].reduce({}) do |memo, item|
+                           memo[item['title']] = item['link']
+                           memo
+                         end
                        }
                        interpolated_metric = GoodData::SmallGoodZilla.interpolate_metric(expression, dict)
                        interpolated_metric
@@ -51,37 +60,37 @@ module GoodData
                      end
 
         metric = {
-                   'metric' => {
-                     'content' => {
-                       'format' => '#,##0',
-                       'expression' => expression
-                     },
-                     'meta' => {
-                       'tags' => '',
-                       'summary' => summary,
-                       'title' => title,
-                     }
-                   }
-                 }
-        # TODO add test for explicitly provided identifier
+          'metric' => {
+            'content' => {
+              'format' => '#,##0',
+              'expression' => expression
+            },
+            'meta' => {
+              'tags' => '',
+              'summary' => summary,
+              'title' => title
+            }
+          }
+        }
+        # TODO: add test for explicitly provided identifier
         metric['metric']['meta']['identifier'] = options[:identifier] if options[:identifier]
         Metric.new(metric)
       end
 
-      def execute(expression, options={})
+      def execute(expression, options = {})
         m = if expression.is_a?(String)
-              GoodData::Metric.create({:title => 'Temporary metric to be deleted', :expression => expression}.merge(options))
+              GoodData::Metric.create({ :title => 'Temporary metric to be deleted', :expression => expression }.merge(options))
             else
-              GoodData::Metric.create({:title => 'Temporary metric to be deleted'}.merge(expression))
+              GoodData::Metric.create({ :title => 'Temporary metric to be deleted' }.merge(expression))
             end
         m.execute
       end
 
       def xexecute(expression)
         if expression.is_a?(String)
-          execute({:expression => expression, :extended_notation => true})
+          execute(:expression => expression, :extended_notation => true)
         else
-          execute(expression.merge({:extended_notation => true}))
+          execute(expression.merge(:extended_notation => true))
         end
       end
     end
@@ -96,7 +105,7 @@ module GoodData
       true
     end
 
-    def is_metric?
+    def metric?
       true
     end
   end

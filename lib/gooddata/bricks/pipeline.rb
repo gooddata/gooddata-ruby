@@ -14,7 +14,12 @@ module GoodData
           if memo.nil?
             app.respond_to?(:new) ? (app.new) : app
           else
-            app.respond_to?(:new) ? (app.new(:app => memo)) : (app.app = memo; app)
+            if app.respond_to?(:new)
+              app.new(:app => memo)
+            else
+              app.app = memo
+              app
+            end
           end
         end
       end

@@ -8,23 +8,25 @@ module GoodData
     MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
+    attr_reader :json
+
     class << self
       def root_key(a_key)
-        define_method :root_key, Proc.new { a_key.to_s }
+        define_method :root_key, proc { a_key.to_s }
       end
 
       def [](id)
-        raise "Cannot search for nil #{self.class}" unless id
-        uri = if id.is_a? Integer or id =~ /^\d+$/
+        fail "Cannot search for nil #{self.class}" unless id
+        uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
               elsif id !~ /\//
                 identifier_to_uri id
               elsif id =~ /^\//
                 id
               else
-                raise 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
+                fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
               end
-        self.new(GoodData.get uri) unless uri.nil?
+        new(GoodData.get uri) unless uri.nil?
       end
 
       def all
@@ -32,7 +34,7 @@ module GoodData
       end
 
       def find_by_tag(tag)
-        self[:all].find_all { |r| r['tags'].split(',').include?(tag) }
+        self[:all].select { |r| r['tags'].split(',').include?(tag) }
       end
 
       def get_by_id(id)
@@ -51,9 +53,9 @@ module GoodData
       end
 
       def identifier_to_uri(*ids)
-        raise NoProjectError.new 'Connect to a project before searching for an object' unless GoodData.project
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
         uri = GoodData.project.md[IDENTIFIERS_CFG]
-        response = GoodData.post uri, {'identifierToUri' => ids}
+        response = GoodData.post uri, 'identifierToUri' => ids
         if response['identifiers'].empty?
           nil
         else
@@ -62,7 +64,7 @@ module GoodData
         end
       end
 
-      alias :id_to_uri :identifier_to_uri
+      alias_method :id_to_uri, :identifier_to_uri
     end
 
     def initialize(json)
@@ -78,13 +80,11 @@ module GoodData
     end
 
     def reload!
-      if saved?
-        @json = GoodData.get(uri)
-      end
+      @json = GoodData.get(uri) if saved?
       self
     end
 
-    alias :refresh :reload!
+    alias_method :refresh, :reload!
 
     def obj_id
       uri.split('/').last
@@ -142,12 +142,12 @@ module GoodData
       @project ||= Project[uri.gsub(/\/obj\/\d+$/, '')]
     end
 
-    def get_usedby
+    def usedby
       result = GoodData.get "#{GoodData.project.md['usedby2']}/#{obj_id}"
       result['entries']
     end
 
-    def get_using
+    def using
       result = GoodData.get "#{GoodData.project.md['using2']}/#{obj_id}"
       result['entries']
     end
@@ -156,9 +156,7 @@ module GoodData
       @json.to_json
     end
 
-    def raw_data
-      @json
-    end
+    alias_method :raw_data, :json
 
     def data
       key = methods.include?(:root_key) ? root_key : raw_data.keys.first
@@ -166,7 +164,7 @@ module GoodData
     end
 
     def saved?
-      !!uri
+      !uri.nil?
     end
 
     def save
@@ -178,14 +176,14 @@ module GoodData
         explicit_identifier = meta['identifier']
         # Pre-check to provide a user-friendly error rather than
         # failing later
-        if explicit_identifier && MdObject[explicit_identifier] then
-          raise "Identifier '#{explicit_identifier}' already in use"
+        if explicit_identifier && MdObject[explicit_identifier]
+          fail "Identifier '#{explicit_identifier}' already in use"
         end
         result = GoodData.post(GoodData.project.md['obj'], to_json)
         saved_object = self.class[result['uri']]
-        # TODO add test for explicitly provided identifier
+        # TODO: add test for explicitly provided identifier
         @json = saved_object.raw_data
-        if explicit_identifier then
+        if explicit_identifier
           # Object creation API discards the identifier. If an identifier
           # was explicitely provided in the origina object, we need to set
           # it explicitly with an extra PUT call.
@@ -216,17 +214,16 @@ module GoodData
     end
 
     # TODO: generate fill for other subtypes
-    def is_fact?
+    def fact?
       false
     end
 
-    def is_attribute?
+    def attribute?
       false
     end
 
-    def is_metric?
+    def metric?
       false
     end
-
   end
 end

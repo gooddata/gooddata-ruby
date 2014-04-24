@@ -8,9 +8,9 @@ module GoodData
       @data = {}
       items.values[0]['links'].each do |item|
         category = item['category']
-        if @data[category] then
-          if @data[category]['category'] == category then
-            @data[category] = {@data[category]['identifier'] => @data[category]}
+        if @data[category]
+          if @data[category]['category'] == category
+            @data[category] = { @data[category]['identifier'] => @data[category] }
           end
           @data[category][item['identifier']] = item
         else
@@ -29,12 +29,12 @@ module GoodData
       @data[category]
     end
 
-    def is_unique?(category)
+    def unique?(category)
       @data[category]['link'].is_a? String
     end
 
-    def is_ambiguous?(category)
-      !is_unique?(category)
+    def ambiguous?(category)
+      !unique?(category)
     end
 
     def get(category, identifier)

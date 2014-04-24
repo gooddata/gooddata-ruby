@@ -36,7 +36,7 @@ GoodData::CLI.module_eval do
       list.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        opts = opts.merge({:project_id => args[0]}) if args.length > 0
+        opts = opts.merge(:project_id => args[0]) if args.length > 0
         processes = GoodData::Command::Process.list(opts)
         processes.each do |process|
           puts "#{process.name},#{GoodData.connection.url + process.uri}"
@@ -59,8 +59,8 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         dir = opts[:dir]
         name = opts[:name]
-        fail "You have to provide a directory or a file to deploy. Use --dir param" if dir.nil? || dir.empty?
-        fail "You have to provide a name of the deployed process.  Use --name param" if name.nil? || name.empty?
+        fail 'You have to provide a directory or a file to deploy. Use --dir param' if dir.nil? || dir.empty?
+        fail 'You have to provide a name of the deployed process.  Use --name param' if name.nil? || name.empty?
         GoodData.connect(opts)
         pp GoodData::Command::Process.deploy(dir, options.merge(global_options))
       end
@@ -71,7 +71,7 @@ GoodData::CLI.module_eval do
       deploy.action do |global_options, options, args|
         opts = options.merge(global_options)
         process_id = opts[:process_id]
-        fail "You have to provide a process id. Use --process_id param" if process_id.nil? || process_id.empty?
+        fail 'You have to provide a process id. Use --process_id param' if process_id.nil? || process_id.empty?
         GoodData.connect(opts)
         pp GoodData::Command::Process.delete(process_id, opts)
       end
@@ -84,8 +84,8 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         process_id = opts[:process_id]
         executable = opts[:executable]
-        fail "You have to provide a process id. Use --process_id param" if process_id.nil? || process_id.empty?
-        fail "You have to provide an executable for the process. Use --executable param" if executable.nil? || executable.empty?
+        fail 'You have to provide a process id. Use --process_id param' if process_id.nil? || process_id.empty?
+        fail 'You have to provide an executable for the process. Use --executable param' if executable.nil? || executable.empty?
         GoodData.connect(opts)
         pp GoodData::Command::Process.execute_process(process_id, executable, opts)
       end

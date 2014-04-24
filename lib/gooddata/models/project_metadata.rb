@@ -11,7 +11,10 @@ module GoodData
         if key == :all
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/metadata"
           res = GoodData.get(uri)
-          res['metadataItems']['items'].reduce({}) { |memo, i| memo[i['metadataItem']['key']] = i['metadataItem']['value']; memo }
+          res['metadataItems']['items'].reduce({}) do |memo, i|
+            memo[i['metadataItem']['key']] = i['metadataItem']['value']
+            memo
+          end
         else
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/metadata/#{key}"
           res = GoodData.get(uri)
@@ -22,13 +25,11 @@ module GoodData
       alias_method :get, :[]
       alias_method :get_key, :[]
 
-      def has_key?(key)
-        begin
-          ProjectMetadata[key]
-          true
-        rescue RestClient::ResourceNotFound => e
-          false
-        end
+      def key?(key)
+        ProjectMetadata[key]
+        true
+      rescue RestClient::ResourceNotFound
+        false
       end
 
       def []=(key, val)
@@ -41,7 +42,7 @@ module GoodData
         uri = "/gdc/projects/#{GoodData.project.pid}/dataload/metadata/"
         update_uri = uri + key
 
-        if has_key?(key)
+        if key?(key)
           GoodData.put(update_uri, data)
         else
           GoodData.post(uri, data)

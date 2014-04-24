@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
 module GoodData
-  class NoProjectError < RuntimeError;
+  class NoProjectError < RuntimeError
   end
 end

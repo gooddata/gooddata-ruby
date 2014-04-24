@@ -65,9 +65,16 @@ module GoodData
         # TODO: Review following connect replacement/reimplementation
         # connect
         with_project do |project_id|
-          cfg_file = args.shift rescue nil
-          raise(CommandFailed, "Usage: #{$0} <dataset config>") unless cfg_file
-          config = JSON.load open(cfg_file) rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
+          begin
+            cfg_file = args.shift
+          rescue
+          end
+          fail(CommandFailed, "Usage: #{$PROGRAM_NAME} <dataset config>") unless cfg_file
+          config = begin
+            JSON.load open(cfg_file)
+          rescue
+            raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
+          end
           objects = Project[project_id].add_dataset config['title'], config['columns']
           puts "Dataset #{config['title']} added to the project, #{objects['uris'].length} metadata objects affected"
         end
@@ -88,7 +95,7 @@ module GoodData
         # connect
         with_project do |project_id|
           file, cfg_file = args
-          raise(CommandFailed, "Usage: #{$0} datasets:load <file> <dataset config>") unless cfg_file
+          fail(CommandFailed, "Usage: #{$PROGRAM_NAME} datasets:load <file> <dataset config>") unless cfg_file
           config = JSON.load open(cfg_file) rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
           schema = Model::Schema.new config
           Project[project_id].upload file, schema
@@ -100,7 +107,7 @@ module GoodData
       def with_project
         unless @project_id
           @project_id = extract_option('--project')
-          raise CommandFailed.new('Project not specified, use the --project switch') unless @project_id
+          fail(CommandFailed, 'Project not specified, use the --project switch') unless @project_id
         end
         yield @project_id
       end
@@ -124,7 +131,7 @@ module GoodData
       def create_dataset
         file = extract_option('--file-csv')
         return Extract::CsvFile.new(file) if file
-        raise CommandFailed.new('Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)')
+        fail(CommandFailed, 'Unknown data set. Please specify a data set using --file-csv option (more supported data sources to come!)')
       end
     end
   end

@@ -14,8 +14,8 @@ module GoodData
 
       def initialize(hash, schema)
         super()
-        raise ArgumentError.new("Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
-        raise('Data set fields must have their names defined') if hash[:name].nil?
+        fail(ArgumentError, "Schema must be provided, got #{schema.class}") unless schema.is_a? Schema
+        fail('Data set fields must have their names defined') if hash[:name].nil?
 
         @name = hash[:name]
         @title = hash[:title] || hash[:name].humanize
@@ -28,11 +28,11 @@ module GoodData
       # non-Latin character and then dropping non-alphanumerical characters.
       #
       def identifier
-        @identifier ||= "#{self.type_prefix}.#{@schema.name}.#{name}"
+        @identifier ||= "#{type_prefix}.#{@schema.name}.#{name}"
       end
 
       def to_maql_drop
-        "DROP {#{self.identifier}};\n"
+        "DROP {#{identifier}};\n"
       end
 
       def visual
@@ -48,7 +48,6 @@ module GoodData
       def to_csv_data(headers, row)
         row[name]
       end
-
 
       # Overriden to prevent long strings caused by the @schema attribute
       #

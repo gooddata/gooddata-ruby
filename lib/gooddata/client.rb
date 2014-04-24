@@ -43,7 +43,7 @@ module GoodData
     RELEASE_INFO_PATH = '/gdc/releaseInfo'
 
     # Initializes required dynamically loaded classes
-    def init_module()
+    def init_module
       # Metadata packages, such as report.rb, require this to be loaded first
       require_relative 'models/metadata.rb'
 

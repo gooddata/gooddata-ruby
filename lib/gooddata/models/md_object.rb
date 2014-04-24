@@ -18,7 +18,7 @@ module GoodData
       # non-Latin character and then dropping non-alphanumerical characters.
       #
       def identifier
-        @identifier ||= "#{self.type_prefix}.#{name}"
+        @identifier ||= "#{type_prefix}.#{name}"
       end
     end
   end

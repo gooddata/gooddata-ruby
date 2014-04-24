@@ -23,7 +23,7 @@ module GoodData
 
       def create_metrics_part(left, top)
         stuff = Array(left) + Array(top)
-        stuff.select { |item| item.respond_to?(:is_metric?) && item.is_metric? }.map do |metric|
+        stuff.select { |item| item.respond_to?(:metric?) && item.metric? }.map do |metric|
           create_metric_part(metric)
         end
       end
@@ -48,14 +48,14 @@ module GoodData
       def create_part(stuff)
         stuff = Array(stuff)
         parts = stuff.reduce([]) do |memo, item|
-          if item.respond_to?(:is_metric?) && item.is_metric?
+          if item.respond_to?(:metric?) && item.metric?
             memo
           else
             memo << create_attribute_part(item)
           end
           memo
         end
-        if stuff.any? { |item| item.respond_to?(:is_metric?) && item.is_metric? }
+        if stuff.any? { |item| item.respond_to?(:metric?) && item.metric? }
           parts << 'metricGroup'
         end
         parts
@@ -63,7 +63,7 @@ module GoodData
 
       def find(stuff)
         stuff.map do |item|
-          if item.respond_to?(:is_attribute?) && item.is_attribute?
+          if item.respond_to?(:attribute?) && item.attribute?
             item.display_forms.first
           elsif item.is_a?(String)
             x = GoodData::MdObject.get_by_id(item)
@@ -113,7 +113,7 @@ module GoodData
         left = Array(options[:left])
         top = Array(options[:top])
 
-        metrics = (left + top).select { |item| item.respond_to?(:is_metric?) && item.is_metric? }
+        metrics = (left + top).select { |item| item.respond_to?(:metric?) && item.metric? }
 
         unsaved_metrics = metrics.reject { |i| i.saved? }
         unsaved_metrics.each { |m| m.title = 'Untitled metric' unless m.title }
@@ -187,7 +187,7 @@ module GoodData
             }
           }
         }
-        # TODO write test for report definitions with explicit identifiers
+        # TODO: write test for report definitions with explicit identifiers
         pars['reportDefinition']['meta']['identifier'] = options[:identifier] if options[:identifier]
 
         ReportDefinition.new(pars)

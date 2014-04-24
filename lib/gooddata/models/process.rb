@@ -4,17 +4,19 @@ require 'pry'
 
 module GoodData
   class Process
+    attr_reader :data
+
     class << self
       def [](id)
         if id == :all
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes"
           data = GoodData.get(uri)
-          data["processes"]["items"].map do |process_data|
+          data['processes']['items'].map do |process_data|
             Process.new(process_data)
           end
         else
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{id}"
-          self.new(GoodData.get(uri))
+          new(GoodData.get(uri))
         end
       end
 
@@ -23,20 +25,20 @@ module GoodData
       end
 
       # TODO: Check the params.
-      def with_deploy(dir, options={}, &block)
+      def with_deploy(dir, options = {}, &block)
         # verbose = options[:verbose] || false
         GoodData.with_project(options[:project_id]) do |project|
           params = options[:params].nil? ? [] : [options[:params]]
           if block
             begin
-              res = GoodData::Process.deploy(dir, options.merge({:files_to_exclude => params}))
+              res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
             ensure
               self_link = res && res['process']['links']['self']
               GoodData.delete(self_link)
             end
           else
-            GoodData::Process.deploy(dir, options.merge({:files_to_exclude => params}))
+            GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
           end
         end
       end
@@ -44,7 +46,7 @@ module GoodData
       def upload_package(dir, files_to_exclude)
         Tempfile.open('deploy-graph-archive') do |temp|
           Zip::OutputStream.open(temp.path) do |zio|
-            FileUtils::cd(dir) do
+            FileUtils.cd(dir) do
 
               files_to_pack = Dir.glob('./**/*').reject { |f| files_to_exclude.include?(Pathname(dir) + f) }
               files_to_pack.each do |item|
@@ -61,7 +63,7 @@ module GoodData
         end
       end
 
-      def deploy(dir, options={})
+      def deploy(dir, options = {})
         dir = Pathname(dir) || fail('Directory is not specified')
         fail "\"#{dir}\" is not a directory" unless dir.directory?
         files_to_exclude = options[:files_to_exclude].map { |p| Pathname(p) }
@@ -70,7 +72,7 @@ module GoodData
         type = options[:type] || 'GRAPH'
         deploy_name = options[:name]
         verbose = options[:verbose] || false
-        puts HighLine::color("Deploying #{dir}", HighLine::BOLD) if verbose
+        puts HighLine.color("Deploying #{dir}", HighLine::BOLD) if verbose
         deployed_path = Process.upload_package(dir, files_to_exclude)
         data = {
           :process => {
@@ -85,7 +87,7 @@ module GoodData
                 GoodData.put("/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{process_id}", data)
               end
         process = Process.new(res)
-        puts HighLine::color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
+        puts HighLine.color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
         process
       end
     end
@@ -98,22 +100,22 @@ module GoodData
       GoodData.delete(uri)
     end
 
-    def deploy(dir, options={})
+    def deploy(dir, options = {})
       process = Process.upload(dir, options.merge(:process_id => process_id))
-      puts HighLine::color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
+      puts HighLine.color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
       process
     end
 
     def process
-      raw_data["process"]
+      raw_data['process']
     end
 
     def name
-      process["name"]
+      process['name']
     end
 
     def type
-      process["type"].downcase.to_sym
+      process['type'].downcase.to_sym
     end
 
     def links
@@ -123,43 +125,40 @@ module GoodData
     def link
       links['self']
     end
-    alias :uri :link
+    alias_method :uri, :link
 
     def obj_id
       uri.split('/').last
     end
-    alias :process_id :obj_id
+    alias_method :process_id, :obj_id
 
     def executions_link
       links['executions']
     end
 
     def graphs
-      process["graphs"]
+      process['graphs']
     end
 
     def executables
-      process["executables"]
+      process['executables']
     end
 
-    def raw_data
-      @data
-    end
+    alias_method :raw_data, :data
 
-    def execute_process(executable, options={})
+    def execute_process(executable, options = {})
       params = options[:params] || {}
       hidden_params = options[:hidden_params] || {}
-      result = GoodData.post(executions_link, {
-        :execution => {
-          :graph => executable.to_s,
-          :params => params,
-          :hiddenParams => hidden_params
-        }
-      })
+      result = GoodData.post(executions_link,
+                             :execution => {
+                               :graph => executable.to_s,
+                               :params => params,
+                               :hiddenParams => hidden_params
+                             })
       begin
         GoodData.poll(result, 'executionTask')
       rescue RestClient::RequestFailed => e
-
+        raise(e)
       ensure
         result = GoodData.get(result['executionTask']['links']['detail'])
         if result['executionDetail']['status'] == 'ERROR'
@@ -168,6 +167,5 @@ module GoodData
       end
       result
     end
-
   end
 end

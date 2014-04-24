@@ -14,7 +14,7 @@ GoodData::CLI.module_eval do
       show.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        pp GoodData::Command::User.show()
+        pp GoodData::Command::User.show
       end
     end
   end

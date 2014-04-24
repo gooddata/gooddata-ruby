@@ -8,11 +8,11 @@ module GoodData
     # GoodData attribute folder abstraction
     #
     class AttributeFolder < Folder
-      def type;
+      def type
         'ATTRIBUTE'
       end
 
-      def type_prefix;
+      def type_prefix
         'dim'
       end
     end

@@ -10,7 +10,6 @@ module GoodData
       def change(&block)
         builder = SchemaBuilder.create_from_data(self)
         block.call(builder)
-        builder
         @data = builder.to_hash
         self
       end
@@ -19,7 +18,7 @@ module GoodData
         @data = init_data
       end
 
-      def upload(source, options={})
+      def upload(source, options = {})
         project = options[:project] || GoodData.project
         fail 'You have to specify a project into which you want to load.' if project.nil?
         mode = options[:load] || 'FULL'
@@ -48,7 +47,7 @@ module GoodData
         data[:columns]
       end
 
-      def has_anchor?
+      def anchor?
         columns.any? { |c| c[:type].to_s == 'anchor' }
       end
 
@@ -72,28 +71,30 @@ module GoodData
         attributes + [anchor]
       end
 
-      def find_column_by_type(type, all=:all)
+      def find_column_by_type(type, all = :all)
         type = type.to_s
         if all == :all
-          columns.find_all { |c| c[:type].to_s == type }
+          columns.select { |c| c[:type].to_s == type }
         else
           columns.find { |c| c[:type].to_s == type }
         end
       end
 
-      def find_column_by_name(type, all=:all)
+      def find_column_by_name(type, all = :all)
         type = type.to_s
         if all == :all
-          columns.find_all { |c| c[:name].to_s == type }
+          columns.select { |c| c[:name].to_s == type }
         else
           columns.find { |c| c[:name].to_s == type }
         end
       end
 
       def suggest_metrics
-        identifiers = facts.map{|f| identifier_for(f)}
+        identifiers = facts.map { |f| identifier_for(f) }
         identifiers.zip(facts).map do |id, fact|
-          Metric.xcreate :title => fact[:name].titleize,:expression => "SELECT SUM(![#{id}])"
+          Metric.xcreate(
+            :title => fact[:name].titleize,
+            :expression => "SELECT SUM(![#{id}])")
         end
       end
 
@@ -109,7 +110,9 @@ module GoodData
         printer.text "Schema <#{object_id}>:\n"
         printer.text " Name: #{name}\n"
         printer.text " Columns: \n"
-        printer.text columns.map { |c| "  #{c[:name]}: #{c[:type]}" }.join("\n")
+        printer.text columns.map do |c|
+          "  #{c[:name]}: #{c[:type]}"
+        end.join("\n")
       end
 
       def dup
@@ -140,7 +143,6 @@ module GoodData
           "fact.#{name}.#{column[:name]}"
         end
       end
-
     end
   end
 end

@@ -28,7 +28,7 @@ module GoodData
         }
       end
 
-      def create_report_tab_item(options={})
+      def create_report_tab_item(options = {})
         title = options[:title]
 
         report = GoodData::Report.find_first_by_title(title)
@@ -58,7 +58,7 @@ module GoodData
         }
       end
 
-      def create(options={})
+      def create(options = {})
         stuff = {
           'projectDashboard' => {
             'content' => {
@@ -80,16 +80,16 @@ module GoodData
       true
     end
 
-    def export(format, options={})
+    def export(format, options = {})
       supported_formats = [:pdf]
       fail "Wrong format provied \"#{format}\". Only supports formats #{supported_formats.join(', ')}" unless supported_formats.include?(format)
       tab = options[:tab] || ''
 
       req_uri = "/gdc/projects/#{GoodData.project.uri}/clientexport"
-      x = GoodData.post(req_uri, {'clientExport' => {'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title}}, :process => false)
-      while (x.code == 202) do
+      x = GoodData.post(req_uri, { 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title } }, :process => false)
+      while x.code == 202
         sleep(1)
-        uri = MultiJson.load(x.body)["asyncTask"]["link"]["poll"]
+        uri = MultiJson.load(x.body)['asyncTask']['link']['poll']
         x = GoodData.get(uri, :process => false)
       end
       x

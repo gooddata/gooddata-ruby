@@ -15,7 +15,7 @@ module GoodData
     end
 
     def sli
-      raise NoProjectError.new 'Connect to a project before searching for an object' unless GoodData.project
+      fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
       slis = GoodData.project.md.links(Model::LDM_CTG).links(SLI_CTG)[DS_SLI_CTG]
       uri = slis[identifier]['link']
       MdObject[uri]
