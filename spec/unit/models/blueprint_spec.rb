@@ -123,12 +123,12 @@ describe GoodData::Model::ProjectBlueprint do
 
   it "should tell you it has anchor when it does" do
     ds = @valid_blueprint.get_dataset("users")
-    ds.has_anchor?.should == true
+    ds.anchor?.should == true
   end
 
   it "should tell you it does not have anchor when it does not" do
     ds = @invalid_blueprint.get_dataset("users")
-    ds.has_anchor?.should == false
+    ds.anchor?.should == false
   end
 
 

@@ -10,10 +10,10 @@ module GoodData
     #
     class Anchor < Attribute
       def initialize(column, schema)
-        if column then
+        if column
           super
         else
-          super({:type => 'anchor', :name => 'id'}, schema)
+          super({ :type => 'anchor', :name => 'id' }, schema)
           @labels = []
           @primary_label = nil
         end
@@ -25,7 +25,7 @@ module GoodData
 
       def to_maql_create
         maql = super
-        maql += "\n# Connect '#{self.title}' to all attributes of this data set\n"
+        maql += "\n# Connect '#{title}' to all attributes of this data set\n"
         @schema.attributes.values.each do |c|
           maql += "ALTER ATTRIBUTE {#{c.identifier}} ADD KEYS " \
                 + "{#{table}.#{c.key}};\n"

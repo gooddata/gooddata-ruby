@@ -28,8 +28,8 @@ module GoodData
         @identifier ||= "#{ATTRIBUTE_PREFIX}.#{@schema_ref}.#{@reference}"
       end
 
-      def key;
-        "#{@name}_id";
+      def key
+        "#{@name}_id"
       end
 
       def label_column
@@ -37,11 +37,11 @@ module GoodData
       end
 
       def to_maql_create
-        "ALTER ATTRIBUTE {#{self.identifier}} ADD KEYS {#{@schema.table}.#{key}};\n"
+        "ALTER ATTRIBUTE {#{identifier}} ADD KEYS {#{@schema.table}.#{key}};\n"
       end
 
       def to_maql_drop
-        "ALTER ATTRIBUTE {#{self.identifier} DROP KEYS {#{@schema.table}.#{key}};\n"
+        "ALTER ATTRIBUTE {#{identifier} DROP KEYS {#{@schema.table}.#{key}};\n"
       end
 
       def to_manifest_part(mode)

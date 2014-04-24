@@ -8,8 +8,8 @@ module GoodData
     # Date field that's not connected to a date dimension
     #
     class DateAttribute < Attribute
-      def key;
-        "#{DATE_COLUMN_PREFIX}#{super}";
+      def key
+        "#{DATE_COLUMN_PREFIX}#{super}"
       end
 
       def to_manifest_part(mode)

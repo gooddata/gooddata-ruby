@@ -1,9 +1,9 @@
+# encoding: UTF-8
 
 module GoodData
   # Dummy implementation of logger
   class NilLogger
     def debug(*args)
-      ;
     end
 
     alias_method :info, :debug

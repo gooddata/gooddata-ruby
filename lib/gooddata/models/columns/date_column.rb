@@ -16,10 +16,13 @@ module GoodData
 
       def initialize(column, schema)
         super column, schema
-        @parts = {}; @facts = []; @attributes = []; @references = []
+        @parts = {}
+        @facts = []
+        @attributes = []
+        @references = []
 
         # @facts << @parts[:date_fact] = DateFact.new(column, schema)
-        if column[:dataset] then
+        if column[:dataset]
           @parts[:date_ref] = DateReference.new column, schema
           @references << @parts[:date_ref]
         else

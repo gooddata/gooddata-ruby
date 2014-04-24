@@ -1,6 +1,8 @@
 # encoding: UTF-8
 
-module GoodData::Command
-  class Base
+module GoodData
+  module Command
+    class Base
+    end
   end
 end

@@ -25,7 +25,7 @@ module GoodData
         {
           'populates' => ["#{identifier}.#{DATE_ATTRIBUTE_DEFAULT_DISPLAY_FORM}"],
           'mode' => mode,
-          'constraints' => {'date' => output_format},
+          'constraints' => { 'date' => output_format },
           'columnName' => name,
           'referenceKey' => 1
         }

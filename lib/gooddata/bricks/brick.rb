@@ -5,28 +5,30 @@ require_relative 'utils'
 
 require_relative 'middleware/middleware'
 
-module GoodData::Bricks
-  # Brick base class
-  class Brick
-    def log(message)
-      logger = @params[:gdc_logger]
-      logger.info(message) unless logger.nil?
-    end
+module GoodData
+  module Bricks
+    # Brick base class
+    class Brick
+      def log(message)
+        logger = @params[:gdc_logger]
+        logger.info(message) unless logger.nil?
+      end
 
-    # Name of the brick
-    def name
-      self.class
-    end
+      # Name of the brick
+      def name
+        self.class
+      end
 
-    # Version of brick, this should be implemented in subclasses
-    def version
-      fail NotImplementedError, 'Method version should be reimplemented'
-    end
+      # Version of brick, this should be implemented in subclasses
+      def version
+        fail NotImplementedError, 'Method version should be reimplemented'
+      end
 
-    # Bricks implementation which can be 'called'
-    def call(params={})
-      @params = params
-      ''
+      # Bricks implementation which can be 'called'
+      def call(params = {})
+        @params = params
+        ''
+      end
     end
   end
 end

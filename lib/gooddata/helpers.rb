@@ -23,14 +23,13 @@ module GoodData
         exit 1
       end
 
-      def find_goodfile(pwd=`pwd`.strip!, options={})
+      # FIXME: Windows incompatible
+      def find_goodfile(pwd = `pwd`.strip!, options = {})
         root = Pathname(options[:root] || '/')
         pwd = Pathname(pwd).expand_path
         begin
           gf = pwd + 'Goodfile'
-          if gf.exist?
-            return gf
-          end
+          return gf if gf.exist?
           pwd = pwd.parent
         end until root == pwd
         nil
@@ -51,16 +50,15 @@ module GoodData
       end
 
       # TODO: Implement without using ActiveSupport
-      def sanitize_string(str, filter=/[^a-z_]/, replacement='')
+      def sanitize_string(str, filter = /[^a-z_]/, replacement = '')
         str = ActiveSupport::Inflector.transliterate(str).downcase
         str.gsub(filter, replacement)
       end
 
       # TODO: Implement without using ActiveSupport
       def humanize(str)
-        return ActiveSupport::Inflector.humanize(str)
+        ActiveSupport::Inflector.humanize(str)
       end
-
     end
   end
 end

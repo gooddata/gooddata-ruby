@@ -22,6 +22,4 @@ module GoodData
   end
 end
 
-if __FILE__ == $0
-  GoodData::CLI.main(ARGV)
-end
+GoodData::CLI.main(ARGV) if __FILE__ == $PROGRAM_NAME

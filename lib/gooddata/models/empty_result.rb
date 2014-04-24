@@ -4,6 +4,8 @@ require_relative 'data_result.rb'
 
 module GoodData
   class EmptyResult < DataResult
+    attr_reader :table
+
     def initialize(data, options = {})
       super(data)
       @options = options
@@ -19,15 +21,10 @@ module GoodData
       # CSV::Table.new([GoodData::Row.new([],[],false)])
     end
 
-    def to_table
-      @table
-    end
+    alias_method :to_table, :table
+    alias_method :without_column_headers, :table
 
-    def without_column_headers
-      @table
-    end
-
-    def == (otherDataResult)
+    def ==(other)
       false
     end
 

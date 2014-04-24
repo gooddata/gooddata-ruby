@@ -8,12 +8,12 @@ module GoodData
     # Fact representation of a time of a day
     #
     class TimeFact < Fact
-      def column_prefix;
-        TIME_COLUMN_PREFIX;
+      def column_prefix
+        TIME_COLUMN_PREFIX
       end
 
-      def type_prefix;
-        TIME_FACT_PREFIX;
+      def type_prefix
+        TIME_FACT_PREFIX
       end
     end
   end
