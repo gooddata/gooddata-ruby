@@ -26,6 +26,7 @@ task :ci do
   unless ENV['TRAVIS'] == 'true' && ENV['TRAVIS_SECURE_ENV_VARS'] == 'false'
     Rake::Task['test:integration'].invoke
   end
+  Rake::Task['test:cop'].invoke
 end
 
 desc "Create rspec coverage"
@@ -55,7 +56,12 @@ namespace :test do
     t.pattern = 'test/**/test_*.rb'
   end
 
-  task :all => [:unit, :integration]
+  desc "Run coding style tests"
+  RSpec::Core::RakeTask.new(:cop) do |t|
+    Rake::Task['cop'].invoke
+  end
+
+  task :all => [:unit, :integration, :cop]
 end
 
 desc "Run all tests"
