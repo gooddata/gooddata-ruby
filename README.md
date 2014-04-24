@@ -42,6 +42,8 @@ If you are using gems just
   future version unintentionally.
 * Commit, do not mess with rakefile, version, or history.
   (if you want to have your own version, that is fine but bump version in a commit by itself we can ignore when we pull)
+* run `rake test` and make sure all tests passes
+* run `rake cop` and make sure you did not introduced any new coding rules issues 
 * Send us a pull request. Bonus points for topic branches.
 
 ## Credits
