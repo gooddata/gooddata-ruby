@@ -26,7 +26,7 @@ task :ci do
   unless ENV['TRAVIS'] == 'true' && ENV['TRAVIS_SECURE_ENV_VARS'] == 'false'
     Rake::Task['test:integration'].invoke
   end
-  Rake::Task['test:cop'].invoke
+  Rake::Task['test:cop'].invoke if RUBY_VERSION.starts_with('2.1') == false
 end
 
 desc "Create rspec coverage"
