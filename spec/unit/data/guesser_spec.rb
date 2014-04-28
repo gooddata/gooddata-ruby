@@ -19,6 +19,8 @@ describe GoodData::Data::Guesser do
   end
 
   it "guess facts, dates and connection points from a simple CSV" do
+    pending('Guesser is disabled for now')
+
     csv = [
       ['cp', 'a1', 'a2', 'd1', 'd2', 'f'],
       ['1', 'one', 'huh', '2001-01-02', nil, '-1'],

@@ -26,16 +26,9 @@ task :ci do
   unless ENV['TRAVIS'] == 'true' && ENV['TRAVIS_SECURE_ENV_VARS'] == 'false'
     Rake::Task['test:integration'].invoke
   end
+  Rake::Task['test:cop'].invoke if RUBY_VERSION.start_with?('2.2') == false
+  Rake::Task['coveralls:push'].invoke
 end
-
-desc "Create rspec coverage"
-task :coverage do
-  ENV['COVERAGE'] = 'true'
-  Rake::Task["test:unit"].execute
-end
-
-desc 'Run tests with coveralls'
-task :coveralls => ['coverage', 'coveralls:push']
 
 RSpec::Core::RakeTask.new(:test)
 
@@ -55,7 +48,12 @@ namespace :test do
     t.pattern = 'test/**/test_*.rb'
   end
 
-  task :all => [:unit, :integration]
+  desc "Run coding style tests"
+  RSpec::Core::RakeTask.new(:cop) do |t|
+    Rake::Task['cop'].invoke
+  end
+
+  task :all => [:unit, :integration, :cop]
 end
 
 desc "Run all tests"

@@ -117,7 +117,7 @@ module GoodData
                 :last_name => as['content']['lastname'],
                 :role => as['content']['userRoles'].first,
                 :status => as['content']['status']
-              )
+              })
             end
             if result['users'].count == limit
               offset += limit
