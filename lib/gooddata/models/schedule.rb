@@ -1,4 +1,3 @@
-require 'gooddata'
 require 'pathname'
 
 require_relative '../core/core'
