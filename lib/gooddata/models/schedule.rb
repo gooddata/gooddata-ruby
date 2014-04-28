@@ -2,7 +2,7 @@ require 'gooddata'
 require 'pathname'
 
 require_relative '../core/core'
-require_relative 'process'
+require_relative './process'
 
 module GoodData
   class Schedule
@@ -18,6 +18,21 @@ module GoodData
           uri = "/gdc/projects/#{GoodData.project.pid}/schedules/#{id}"
           Schedule.new(GoodData.get(uri))
         end
+      end
+
+      def list(pid = nil)
+        tmp_pid = pid || GoodData.project.pid
+
+        fail 'You have to provide project_id' if tmp_pid.nil?
+
+        res = []
+
+        uri = "/gdc/projects/#{tmp_pid}/schedules"
+        schedules = GoodData.get(uri)
+        schedules['schedules']['items'].each do |schedule|
+          res << schedule['schedule']
+        end
+        res
       end
     end
 
