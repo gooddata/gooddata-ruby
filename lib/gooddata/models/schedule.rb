@@ -16,7 +16,7 @@ module GoodData
           end
         else
           uri = "/gdc/projects/#{GoodData.project.pid}/schedules/#{id}"
-          schedule = Schedule.new(GoodData.get(uri))
+          Schedule.new(GoodData.get(uri))
         end
       end
     end
@@ -84,13 +84,17 @@ module GoodData
       @schedule['params']['PROCESS_ID']
     end
 
+#  body: "{\n    \"schedule\" : {\n        \"type\" : \"MSETL\",\n        \"timezone\" : \"UTC\",\n        \"cron\" : \"0 15 27 7 *\",\n        \"params\": {\n            \"PROCESS_ID\" : \"{process-id}\",\n            \"EXECUTABLE\" : \"graph/run.grf\",\n            \"PARAM1_NAME\" : \"PARAM1_VALUE\",\n            \"PARAM2_NAME\" : \"PARAM2_VALUE\"\n        },\n        \"hiddenParams\" : {\n            \"HPARAM1_NAME\" : \"HPARAM1_VALUE\",\n            \"HPARAM2_NAME\" : \"HPARAM2_VALUE\"\n        }\n    }\n}",
+
     def create(options={})
 
-      if options['cron'] && options['params']['PROCESS_ID'] && options['type']
+      if options['type'] && options['cron'] && options['params']['PROCESS_ID'] && options['params']['EXECUTABLE']
         Schedule.new(options)
+        Schedule.save
       else
         throw "Schedule object is not formatted correctly."
       end
+
     end
 
   end
