@@ -48,6 +48,21 @@ module GoodData
         end
         res
       end
+
+      def state(pid = nil, sid = nil)
+        if pid == nil && sid == nil
+          @schedule['state']
+        else
+          GoodData.get("/gdc/projects/#{pid}/schedules/#{sid}")['state']
+        end
+      end
+
+      def delete(pid=nil, sid=nil)
+        pid = GoodData.project.pid if pid.nil? || pid.empty?
+        uri = "/gdc/projects/#{pid}/schedules/#{sid}"
+        GoodData.delete(uri)
+      end
+
     end
 
     def initialize(data)
@@ -56,12 +71,6 @@ module GoodData
 
     def all
       Schedule[:all]
-    end
-
-    def delete(pid=nil, sid)
-      pid = GoodData.project.pid if pid.nil? || pid.empty?
-      uri = uri = "/gdc/projects/#{pid}/schedules/#{sid}"
-      GoodData.delete(uri)
     end
 
     def type
@@ -80,15 +89,6 @@ module GoodData
       links['self']
     end
 
-    def state
-      state = @schedule['state']
-      if state == "ENABLED"
-        return 1
-      else
-        return 0
-      end
-    end
-
     def timezone
       @schedule['timezone']
     end
@@ -97,9 +97,8 @@ module GoodData
       @schedule['name']
     end
 
-    def save
-      #TODO: Confused on how to set up the conditional when to post/put
-      if @schedule['params']['PROCESS_ID']
+    def save(pid = nil, sid = nil)
+      pid = GoodData.project.pid if pid.nil? || pid.empty?
         GoodData.put(uri, @schedule)
       else
         GoodData.post(uri, @schedule)
@@ -113,8 +112,6 @@ module GoodData
     def process_id
       @schedule['params']['PROCESS_ID']
     end
-
-#  body: "{\n    \"schedule\" : {\n        \"type\" : \"MSETL\",\n        \"timezone\" : \"UTC\",\n        \"cron\" : \"0 15 27 7 *\",\n        \"params\": {\n            \"PROCESS_ID\" : \"{process-id}\",\n            \"EXECUTABLE\" : \"graph/run.grf\",\n            \"PARAM1_NAME\" : \"PARAM1_VALUE\",\n            \"PARAM2_NAME\" : \"PARAM2_VALUE\"\n        },\n        \"hiddenParams\" : {\n            \"HPARAM1_NAME\" : \"HPARAM1_VALUE\",\n            \"HPARAM2_NAME\" : \"HPARAM2_VALUE\"\n        }\n    }\n}",
 
     def create(options={})
 

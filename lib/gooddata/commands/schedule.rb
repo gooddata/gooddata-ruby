@@ -17,6 +17,10 @@ module GoodData::Command
         return GoodData::Schedule.delete(pid, sid)
       end
 
+      def state(pid = nil, sid = nil)
+        return GoodData::Schedule.state(pid, sid)
+      end
+
     end
   end
 end
