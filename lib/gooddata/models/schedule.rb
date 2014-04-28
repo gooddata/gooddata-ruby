@@ -1,4 +1,3 @@
-require 'gooddata'
 require 'pathname'
 
 require_relative '../core/core'
@@ -59,7 +58,9 @@ module GoodData
       Schedule[:all]
     end
 
-    def delete
+    def delete(pid=nil, sid)
+      pid = GoodData.project.pid if pid.nil? || pid.empty?
+      uri = uri = "/gdc/projects/#{pid}/schedules/#{sid}"
       GoodData.delete(uri)
     end
 
@@ -80,7 +81,6 @@ module GoodData
     end
 
     def state
-      #TODO: Changed state to type BOOL.
       state = @schedule['state']
       if state == "ENABLED"
         return 1

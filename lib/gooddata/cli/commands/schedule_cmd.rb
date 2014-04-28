@@ -44,5 +44,23 @@ GoodData::CLI.module_eval do
       end
     end
 
+    c.desc 'Delete schedule'
+    c.command :delete do |del|
+      del.action do |global_options, options, args|
+        opts = options.merge(global_options)
+
+        pid = global_options[:project_id]
+        fail 'Project ID has to be provided' if pid.nil? || pid.empty?
+
+        sid = args.first
+        fail 'Schedule ID is required.' if sid.nil? || sid.empty?
+
+        GoodData.connect(opts)
+
+        GoodData::Command::Schedule.delete(pid, sid)
+
+      end
+    end
+
   end
 end

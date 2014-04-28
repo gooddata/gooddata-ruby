@@ -13,6 +13,10 @@ module GoodData::Command
         return GoodData::Schedule.show(pid, sid)
       end
 
+      def delete(pid = nil, sid = nil)
+        return GoodData::Schedule.delete(pid, sid)
+      end
+
     end
   end
 end
