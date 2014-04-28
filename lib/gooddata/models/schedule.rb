@@ -40,9 +40,9 @@ module GoodData
 
         schedules = self.list(pid)
         schedules.each do |schedule|
-          if(sid === 'all')
+          if (sid === 'all')
             res << schedule
-          elsif(sid == schedule['params']['PROCESS_ID'])
+          elsif (sid == schedule['params']['PROCESS_ID'])
             res << schedule
           end
         end
@@ -99,30 +99,29 @@ module GoodData
 
     def save(pid = nil, sid = nil)
       pid = GoodData.project.pid if pid.nil? || pid.empty?
-        GoodData.put(uri, @schedule)
-      else
-        GoodData.post(uri, @schedule)
-      end
+      GoodData.put(uri, @schedule)
+    else
+      GoodData.post(uri, @schedule)
     end
+  end
 
-    def executable
-      @schedule['params']['EXECUTABLE']
-    end
+  def executable
+    @schedule['params']['EXECUTABLE']
+  end
 
-    def process_id
-      @schedule['params']['PROCESS_ID']
-    end
+  def process_id
+    @schedule['params']['PROCESS_ID']
+  end
 
-    def create(options={})
+  def create(options={})
 
-      if options['type'] && options['cron'] && options['params']['PROCESS_ID'] && options['params']['EXECUTABLE']
-        Schedule.new(options)
-        Schedule.save
-      else
-        throw "Schedule object is not formatted correctly."
-      end
-
+    if options['type'] && options['cron'] && options['params']['PROCESS_ID'] && options['params']['EXECUTABLE']
+      Schedule.new(options)
+      Schedule.save
+    else
+      throw "Schedule object is not formatted correctly."
     end
 
   end
+
 end
