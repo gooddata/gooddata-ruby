@@ -90,24 +90,22 @@ describe GoodData::CLI do
 
   end
 
-  describe "Has working 'domain list_users' command" do
-    describe 'domain list_users' do
-      it 'Complains when no parameters specified' do
-        args = %w(domain list_users)
+  describe 'domain list_users' do
+    it 'Complains when no parameters specified' do
+      args = %w(domain list_users)
 
-        out = run_cli(args)
-        out.should include 'Domain name has to be provided'
-      end
+      out = run_cli(args)
+      out.should include 'Domain name has to be provided'
+    end
 
-      it 'Works' do
-        args = [
-          'domain',
-          'list_users',
-          'gooddata'
-        ]
+    it 'Works' do
+      args = [
+        'domain',
+        'list_users',
+        'gooddata'
+      ]
 
-        out = run_cli(args)
-      end
+      out = run_cli(args)
     end
   end
 end
