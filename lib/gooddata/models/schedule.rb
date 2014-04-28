@@ -4,102 +4,94 @@ require 'pathname'
 require_relative '../core/core'
 require_relative 'process'
 
-# Schedule Class
 module GoodData
-
   class Schedule
-
     class << self
-
-      def list(options={})
-        GoodData.with_project(options[:project_id]) do
-          url = "/gdc/projects/#{:project_id}/schedules"
-          list = []
-          schedules = GoodData.get(url)
+      def [](id)
+        if id == :all
+          uri = "/gdc/projects/#{GoodData.project.pid}/schedules"
+          schedules = GoodData.get(uri)
           schedules['schedules']['items'].each do |schedule|
-            list << schedule['schedule']
+            Schedule.new(schedule)
           end
+        else
+          uri = "/gdc/projects/#{GoodData.project.pid}/schedules/#{id}"
+          schedule = Schedule.new(GoodData.get(uri))
         end
       end
-
-      def update(schedule={}, options={})
-        GoodData.with_project(options[:project_id]) do |p|
-          url = "/gdc/projects/#{p.obj_id}/schedules/#{schedule[:schedule_id]}"
-          payload = {
-            'schedule' => {
-              'type' => "MSETL",
-              'timezone' => schedule['timezone'] ? schedule['timezone'] : "UTC",
-              'cron' => schedule['cron'],
-              'params' => {
-                schedule['params'],
-              }
-              'hiddenParams' => {
-                schedule['hiddenParams'],
-              }
-            }
-          }.to_json
-          res = GoodData.put(url, payload)
-        end
-      end
-
-      def create(schedule={}, options={})
-        GoodData.with_project(options[:project_id]) do |p|
-          url = "/gdc/projects/#{p.obj_id}/schedules"
-          payload = {
-            'schedule' => {
-              'type' => "MSETL",
-              'timezone' => schedule['timezone'] ? schedule['timezone'] : "UTC",
-              'cron' => schedule['cron'],
-              'params' => {
-                schedule['params'],
-              }
-              'hiddenParams' => {
-                schedule['hiddenParams'],
-              }
-            }
-          }.to_json
-          res = GoodData.post(url, payload)
-        end
-      end
-
-      def delete(schedule={}, options={})
-        GoodData.with_project(options[:project_id], schedule) do |p|
-          url = "/gdc/projects/#{p.obj_id}/schedules/#{schedule_id}/executions"
-          res = GoodData.delete(url, schedule['process_id'])
-        end
-      end
-
-      def exec_list(schedule={}, options={})
-        GoodData.with_project(options[:project_id]) do
-          url = "#{schedule['link']['executions']}"
-          list = []
-          executions = GoodData.get(url)
-          executions['executions']['items'].each do |execution|
-            list << execution
-          end
-        end
-      end
-
-      # Going through with_project in this case is not needed, I left if it is needed.
-      def exec(executable, options={})
-        GoodData::Process.execute_process(executable, options={})
-        # TODO: Tomas check to see if this is a good call to link these two.
-        #def execute_process(executable, options={})
-        #GoodData.with_project(options[:project_id]) do
-        #  url = "#{schedule['link']['executions']}/#{schedule_id}"
-        #  payload  = "{\n    \"execution\": {}\n}"
-        #  execution = GoodData.post(url, payload)
-        #end
-      end
-
-      # Also uncessary SEE ABOVE "def exec"
-      def exec_status(schedule={})
-        GoodData.with_project(options[:project_id]) do
-          url = "#{schedule['link']['self']}/execution"
-          execution = GoodData.get(url)
-        end
-      end
-
     end
+
+    def initialize(data)
+      @schedule = data
+    end
+
+    def all
+      Schedule[:all]
+    end
+
+    def delete
+      GoodData.delete(uri)
+    end
+
+    def type
+      @schedule['type']
+    end
+
+    def params
+      @schedule['params']
+    end
+
+    def links
+      process['links']
+    end
+
+    def self
+      links['self']
+    end
+
+    def state
+      #TODO: Changed state to type BOOL.
+      state = @schedule['state']
+      if state == "ENABLED"
+        return 1
+      else
+        return 0
+      end
+    end
+
+    def timezone
+      @schedule['timezone']
+    end
+
+    def cron
+      @schedule['name']
+    end
+
+    def save
+      #TODO: Confused on how to set up the conditional when to post/put
+      if @schedule['params']['PROCESS_ID']
+        GoodData.put(uri, @schedule)
+      else
+        GoodData.post(uri, @schedule)
+      end
+    end
+
+    def executable
+      @schedule['params']['EXECUTABLE']
+    end
+
+    def process_id
+      @schedule['params']['PROCESS_ID']
+    end
+
+    def create(options={})
+
+      if options['cron'] && options['params']['PROCESS_ID'] && options['type']
+        Schedule.new(options)
+      else
+        throw "Schedule object is not formatted correctly."
+      end
+    end
+
   end
 end
