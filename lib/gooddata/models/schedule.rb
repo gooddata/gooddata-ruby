@@ -2,22 +2,52 @@ require 'gooddata'
 require 'pathname'
 
 require_relative '../core/core'
-require_relative 'process'
+require_relative './process'
 
 module GoodData
   class Schedule
     class << self
       def [](id)
         if id == :all
-          uri = "/gdc/projects/#{GoodData.project.pid}/schedules"
-          schedules = GoodData.get(uri)
-          schedules['schedules']['items'].each do |schedule|
+          schedules = self.list
+          schedules.each do |schedule|
             Schedule.new(schedule)
           end
         else
           uri = "/gdc/projects/#{GoodData.project.pid}/schedules/#{id}"
           Schedule.new(GoodData.get(uri))
         end
+      end
+
+      def list(pid = nil)
+        pid = pid || GoodData.project.pid
+
+        fail 'You have to provide project_id' if pid.nil?
+
+        res = []
+
+        uri = "/gdc/projects/#{pid}/schedules"
+        schedules = GoodData.get(uri)
+        schedules['schedules']['items'].each do |schedule|
+          res << schedule['schedule']
+        end
+        res
+      end
+
+      def show(pid = nil, sid = nil)
+        fail 'You have to provide project_id' if pid.nil?
+
+        res = []
+
+        schedules = self.list(pid)
+        schedules.each do |schedule|
+          if(sid === 'all')
+            res << schedule
+          elsif(sid == schedule['params']['PROCESS_ID'])
+            res << schedule
+          end
+        end
+        res
       end
     end
 
