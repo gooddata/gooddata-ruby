@@ -21,6 +21,10 @@ module GoodData::Command
         return GoodData::Schedule.state(pid, sid)
       end
 
+      def create(pid = nil, schedule)
+        return GoodData::Schedule.create(pid, schedule)
+      end
+
     end
   end
 end

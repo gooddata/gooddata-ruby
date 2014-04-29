@@ -103,6 +103,7 @@ module GoodData
     else
       GoodData.post(uri, @schedule)
     end
+
   end
 
   def executable
@@ -113,13 +114,15 @@ module GoodData
     @schedule['params']['PROCESS_ID']
   end
 
-  def create(options={})
+  def create(pid=nil, sch=nil)
+    pid = GoodData.project.pid if pid.nil? || pid.empty?
+    fail 'Schedule object is required to create new schedule' if sch.nil?
 
-    if options['type'] && options['cron'] && options['params']['PROCESS_ID'] && options['params']['EXECUTABLE']
-      Schedule.new(options)
+    if sch['type'] && sch['cron'] && sch['params']['PROCESS_ID'] && sch['params']['EXECUTABLE']
+      Schedule.new(sch)
       Schedule.save
     else
-      throw "Schedule object is not formatted correctly."
+      raise "Schedule object is not formatted correctly."
     end
 
   end
