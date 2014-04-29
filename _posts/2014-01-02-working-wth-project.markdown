@@ -4,36 +4,36 @@ title:  "Working with a project"
 date:   2014-01-19 13:56:00
 categories: recipe
 pygments: true
-perex: Learn how to work with a project. Clone it copy reports and different things.
+perex: "Learn how to work with a project: clone it, copy reports, and do various other tasks."
 ---
 
-The basic building block is a project. There are several useful things that you can do with it. Let's see
+In the GoodData platform, the basic building block is a project, which corresponds to a datamart. In this section, we go over several useful project-related tasks and how to execute them using the Ruby SDK.
 
 ##CLI
 
-Before we delve into APIs let's briefly explore the capabilities of command line interface for project manipulation
+Before we dig into the APIs, let's briefly explore the capabilities of the command line interface for project manipulation.
 
 ###Create a project
 
 TBD
 
 ###Clone project
-You can easily clone project. This is very useful for testing and making backups of your project.
+Cloning a project is easy and very useful for testing and making backups:
 
 {% highlight ruby %}
   gooddata -p PROJECT_ID project clone --data --users --name "Name of the new project"
 {% endhighlight %}
 
-This will make an exact same clone of your project. There are three main parameters that you can use.
+This command creates an exact clone of your project. The following parameters can be applied:
 
---data/--no-data will clone the project including data.
---users/--no-users will clone the project including all the users. If you opt out it will bring in just the user that is performing the cloning
+--data/--no-data does or does not clone the data in the source project into the clone.
+--users/--no-users does or does not clone the users in the source project into the clone. The user who creates the clone is always added as the owner and project Administrator of the clone. 
 
-The defaults are with data but without all users.
+By default, a project is cloned with data and without all users.
 
 ###Delete project
 
-Be careful this cannot be reverted
+**WARNING: Deleting a project cannot be reverted.**
 
 {% highlight ruby %}
   gooddata -p PROJECT_ID  project delete
@@ -41,7 +41,7 @@ Be careful this cannot be reverted
 
 ###Show info 
 
-You can inspect a basic info about a project
+Use the following to review basic information about a project:
 
 {% highlight ruby %}
   gooddata -p PROJECT_ID  project show
@@ -49,7 +49,9 @@ You can inspect a basic info about a project
 
 ###Validation
 
-This will run a project validation. It would report for example referential integrity or other problems. It is a good practice to run this from time to time and keep it clean.
+The following command executes a project validation, including any detected problems with referential integrity. 
+
+**Tip:** From time to time, you should run this command to keep your project clean.
 
 {% highlight ruby %}
   gooddata -p PROJECT_ID  project validate
@@ -57,7 +59,7 @@ This will run a project validation. It would report for example referential inte
 
 ###List users
 
-You can list all the users in a project.
+List all users in a specified project:
 
 {% highlight ruby %}
   gooddata -p PROJECT_ID  project users
@@ -65,7 +67,9 @@ You can list all the users in a project.
 
 ###List roles
 
-You can list all the roles in a project.
+List all roles in a specified project:
+
+**NOTE:** Project roles are specific to a project. Users cannot be added to a project without a project role.
 
 {% highlight ruby %}
   gooddata -p PROJECT_ID  project roles
@@ -73,7 +77,7 @@ You can list all the roles in a project.
 
 ##API
 
-Let's see at the capabilities of the SDK
+Using the GoodData APIs, you can begin exploring the capabilities of the Ruby SDK:
 
 ###Creating a project
 
@@ -81,11 +85,12 @@ Let's see at the capabilities of the SDK
 GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
 {% endhighlight %}
 
-###Setting up a working project
+* For API documentation, see [Project API](https://developer.gooddata.com/api#project).
 
-Majority of the operations that you want to perform is hapenning inside a project. So before you can work with it you have to select particular project. There are several ways to do it
+###Defining a working project
 
-These are all equivalent
+Most of your platform operations occur inside a project. As part of your basic workflow, you must select a specific project. All of the following are equivalent methods for selecting a project:
+
 {% highlight ruby %}
   GoodData.use(project_id)
 {% endhighlight %}
@@ -99,7 +104,9 @@ These are all equivalent
   GoodData.project = project
 {% endhighlight %}
 
-The project will stay set until you will change it. Sometimes you are working with several projects and you would like to be sure you are working on a specific project and not on some that might be set up somewhere up the stream. There is a useful method `with_project`.
+The project remains the selected one until you change it. 
+
+If you are working with several projects at the same, you can specify individual commands to apply to a specific project, in case the active project has been specified somewhere further upstream. Use the `with_project` method:
 
 {% highlight ruby %}
   GoodData.with_project(project_id) do
@@ -107,11 +114,15 @@ The project will stay set until you will change it. Sometimes you are working wi
   end
 {% endhighlight %}
 
-You can provide either string or a project. You also have to provide a block with one parameter which will always be the GoodData::Project object. Nice thing about this method is that the project is only set up inside the project. Once the block finishes the project is set to the value that was set there previously.
+The `project_id` value can be specified as either a string or a project identifier. 
+* The `project_id` value is applied only within the code block. When the block completes execution, the active project is reverted to the value that was set before the code block execution. 
+* You must provide a code block with one parameter, which must be the GoodData::Project object. 
 
 ###Cloning a project
 
-You can clone a project. The meaning of the parameters and their defaults are the same as in the case of CLI.
+You can clone a project through the APIs. The parameters and their defaults are the same as those specified for the command-line interface version, enabling you to choose to optionally include data and users from the source project into the clone. 
+
+* For API documentation, see [Project API](https://developer.gooddata.com/api#project).
 
 {% highlight ruby %}
 project = GoodData::Project['project_id']
@@ -119,7 +130,8 @@ project.clone(:title => "Title of the cloned project", :with_data => true, :with
 {% endhighlight %}
 
 ###Deleting a project
-You can delete a project.
+
+**WARNING: Deleting a project cannot be reverted.**
 
 {% highlight ruby %}
 project = GoodData::Project['project_id']
@@ -127,15 +139,22 @@ project.delete
 {% endhighlight %}
 
 ###Validating a project
-You can validate a project. This would report some problems like referential integrity issues etc.
+
+Use the following to validate a project, which also checks for referential integrity issues:
 
 {% highlight ruby %}
 project = GoodData::Project['project_id']
 project.validate
 {% endhighlight %}
+* For API documentation, see [Data Model API](https://developer.gooddata.com/api#data-model).
 
-###Objects transfer
-Imagine you have a project. You cloned it created some new report or dashboard and would like to transfer it back to the original project. This is what `transfer_objects` is for. You can transfer metrics, dashboards and reports. The models of the projects should ideally be identical.
+###Transfer objects between projects
+
+Suppose you have two projects. In one, you have created a new report, and you would like to transfer this object to the other project. 
+
+The `transfer_objects` can be used to transfer metrics, dashboards and reports. 
+
+**NOTE:** Before you transfer objects, please verify that the logical data models of the projects are identical or are unlikely to cause conflicts with the imported objects.
 
 {% highlight ruby %}
 project_from = GoodData::Project['project_id_from_which_migrate']
@@ -144,13 +163,15 @@ objects = GoodData::Report.all.first
 project_from.object_transfer(objects, :project => project_to)
 {% endhighlight %}
 
-You can use any of the ways to specify both project or objects. Project id or project object for projects and object_id, uri and the object itself for the objects.
+You can use one of multiple supported methods for specifying projects and objects: Project id or project object for projects and object_id, uri and the object itself for the objects.
+
+* For API documentation, see [Metadata API](https://developer.gooddata.com/api#metadata).
 
 ###Inviting a user
 TBD
 
-###Usual stuff
-You can do the typical small stuf with a project
+###Project management
+You can use the following commands to manage basic aspects of your project:
 
 {% highlight ruby %}
 project = GoodData::Project['project_id']
