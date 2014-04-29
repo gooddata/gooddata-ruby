@@ -5,7 +5,7 @@ require_relative '../md_object'
 module GoodData
   module Model
     class DateDimension < MdObject
-      def initialize(spec={})
+      def initialize(spec = {})
         super()
         @name = spec[:name]
         @title = spec[:title] || @name

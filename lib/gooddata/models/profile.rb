@@ -3,7 +3,7 @@
 module GoodData
   class Profile
     private_class_method :new
-    attr_reader :user
+    attr_reader :user, :json
 
     class << self
       def load
@@ -16,9 +16,7 @@ module GoodData
       @json['accountSetting']['links']['projects']
     end
 
-    def to_json
-      @json
-    end
+    alias_method :to_json, :json
 
     def [](key)
       @json['accountSetting'][key]

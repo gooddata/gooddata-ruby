@@ -11,12 +11,12 @@ module GoodData
     class Attribute < Column
       attr_reader :primary_label, :labels
 
-      def type_prefix;
-        ATTRIBUTE_PREFIX;
+      def type_prefix
+        ATTRIBUTE_PREFIX
       end
 
-      def folder_prefix;
-        ATTRIBUTE_FOLDER_PREFIX;
+      def folder_prefix
+        ATTRIBUTE_FOLDER_PREFIX
       end
 
       def initialize(hash, schema)
@@ -29,8 +29,8 @@ module GoodData
         @table ||= 'd_' + @schema.name + '_' + name
       end
 
-      def key;
-        "#{@name}#{FK_SUFFIX}";
+      def key
+        "#{@name}#{FK_SUFFIX}"
       end
 
       def to_maql_create

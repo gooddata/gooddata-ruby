@@ -34,15 +34,19 @@ module GoodData
         # Get resource
         # @param path Resource path
         def get(path)
-          raise(GoodData::CommandFailed, 'Specify the path you want to GET.') if path.nil?
+          fail(GoodData::CommandFailed, 'Specify the path you want to GET.') if path.nil?
           result = GoodData.get path
-          result rescue puts result
+          begin
+            result
+          rescue
+            puts result
+          end
         end
 
         # Delete resource
         # @param path Resource path
         def delete(path)
-          raise(GoodData::CommandFailed, 'Specify the path you want to DELETE.') if path.nil?
+          fail(GoodData::CommandFailed, 'Specify the path you want to DELETE.') if path.nil?
           result = GoodData.delete path
           result rescue puts result
         end

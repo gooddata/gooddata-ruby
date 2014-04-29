@@ -46,7 +46,7 @@ module GoodData
     #     end
     #
     def retryable(options = {}, &block)
-      opts = {:tries => 1, :on => Exception}.merge(options)
+      opts = { :tries => 1, :on => Exception }.merge(options)
 
       retry_exception, retries = opts[:on], opts[:tries]
 
@@ -79,7 +79,7 @@ module GoodData
       default_headers = {
         :content_type => :json,
         :accept => [:json, :zip],
-        :user_agent => GoodData.gem_version_string,
+        :user_agent => GoodData.gem_version_string
       }
       default_headers.merge! @headers
 
@@ -109,7 +109,7 @@ module GoodData
     def get(path, options = {})
       GoodData.logger.debug "GET #{@server}#{path}"
       ensure_connection
-      b = Proc.new { @server[path].get cookies }
+      b = proc { @server[path].get cookies }
       process_response(options, &b)
     end
 
@@ -128,7 +128,7 @@ module GoodData
       GoodData.logger.debug("POST #{@server}#{path}, payload: #{scrub_params(data, [:password, :login, :authorizationToken])}")
       ensure_connection
       payload = data.is_a?(Hash) ? data.to_json : data
-      b = Proc.new { @server[path].post payload, cookies }
+      b = proc { @server[path].post payload, cookies }
       process_response(options, &b)
     end
 
@@ -147,7 +147,7 @@ module GoodData
       payload = data.is_a?(Hash) ? data.to_json : data
       GoodData.logger.debug "PUT #{@server}#{path}, payload: #{payload}"
       ensure_connection
-      b = Proc.new { @server[path].put payload, cookies }
+      b = proc { @server[path].put payload, cookies }
       process_response(options, &b)
     end
 
@@ -164,13 +164,13 @@ module GoodData
     def delete(path, options = {})
       GoodData.logger.debug "DELETE #{@server}#{path}"
       ensure_connection
-      b = Proc.new { @server[path].delete cookies }
+      b = proc { @server[path].delete cookies }
       process_response(options, &b)
     end
 
     # Get the cookies associated with the current connection.
     def cookies
-      @cookies ||= {:cookies => {}}
+      @cookies ||= { :cookies => {} }
     end
 
     # Set the cookies used when communicating with the GoodData API.
@@ -185,7 +185,7 @@ module GoodData
       @status == :logged_in
     end
 
-    def url=(url=nil)
+    def url=(url = nil)
       @url = url || DEFAULT_URL
       @server = create_server_connection(@url, @options)
     end
@@ -200,7 +200,7 @@ module GoodData
     # Uploads a file to GoodData server
     # /uploads/ resources are special in that they use a different
     # host and a basic authentication.
-    def upload(file, options={})
+    def upload(file, options = {})
       ensure_connection
 
       dir = options[:directory] || ''
@@ -208,31 +208,32 @@ module GoodData
       url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
 
       # Make a directory, if needed
-      unless dir.empty? then
+      unless dir.empty?
         method = :get
         GoodData.logger.debug "#{method}: #{url}"
         begin
           # first check if it does exits
           RestClient::Request.execute({
-                                        :method => method,
-                                        :url => url,
-                                        :timeout => @options[:timeout],
-                                        :headers => {
-                                          :user_agent => GoodData.gem_version_string
-                                        }}.merge(cookies)
+            :method => method,
+            :url => url,
+            :timeout => @options[:timeout],
+            :headers => {
+              :user_agent => GoodData.gem_version_string
+              }
+            }.merge(cookies)
           )
         rescue RestClient::Exception => e
-          if e.http_code == 404 then
+          if e.http_code == 404
             method = :mkcol
             GoodData.logger.debug "#{method}: #{url}"
             RestClient::Request.execute({
-                                          :method => method,
-                                          :url => url,
-                                          :timeout => @options[:timeout],
-                                          :headers => {
-                                            :user_agent => GoodData.gem_version_string
-                                          }}.merge(cookies)
-            )
+              :method => method,
+              :url => url,
+              :timeout => @options[:timeout],
+              :headers => {
+                :user_agent => GoodData.gem_version_string
+              }
+            }.merge(cookies))
           end
         end
       end
@@ -242,32 +243,31 @@ module GoodData
 
       # Upload the file
       # puts "uploading the file #{URI.join(url, filename).to_s}"
-      req = RestClient::Request.new({
-                                      :method => :put,
-                                      :url => URI.join(url, filename).to_s,
-                                      :timeout => @options[:timeout],
-                                      :headers => {
-                                        :user_agent => GoodData.gem_version_string,
-                                      },
-                                      :payload => payload,
-                                      :raw_response => true,
-                                      :user => @username,
-                                      :password => @password
-                                    })
+      req = RestClient::Request.new(
+        :method => :put,
+        :url => URI.join(url, filename).to_s,
+        :timeout => @options[:timeout],
+        :headers => {
+          :user_agent => GoodData.gem_version_string
+        },
+        :payload => payload,
+        :raw_response => true,
+        :user => @username,
+        :password => @password
+      )
       # .merge(cookies))
-      resp = req.execute
+      req.execute
       true
     end
 
-    def download(what, where, options={})
+    def download(what, where, options = {})
       staging_uri = options[:staging_url].to_s
       url = staging_uri + what
-      req = RestClient::Request.new({
-                                      :method => 'GET',
-                                      :url => url,
-                                      :user => @username,
-                                      :password => @password
-                                    })
+      req = RestClient::Request.new(
+        :method => 'GET',
+        :url => url,
+        :user => @username,
+        :password => @password)
 
       if where.is_a?(String)
         File.open(where, 'w') do |f|
@@ -302,7 +302,7 @@ module GoodData
                                :headers => {
                                  :content_type => :json,
                                  :accept => [:json, :zip],
-                                 :user_agent => GoodData::gem_version_string,
+                                 :user_agent => GoodData.gem_version_string
                                }
     end
 
@@ -333,37 +333,35 @@ module GoodData
 
     def process_response(options = {}, &block)
       begin
-        begin
-          response = block.call
-        rescue RestClient::Unauthorized
-          raise $! if options[:dont_reauth]
-          refresh_token
-          response = block.call
-        end
-        merge_cookies! response.cookies
-        content_type = response.headers[:content_type]
-        return response if options[:process] == false
-
-        if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8' then
-          result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
-          GoodData.logger.debug "Response: #{result.inspect}"
-        elsif content_type == 'application/zip' then
-          result = response
-          GoodData.logger.debug 'Response: a zipped stream'
-        elsif response.headers[:content_length].to_s == '0'
-          result = nil
-          GoodData.logger.debug 'Response: Empty response possibly 204'
-        elsif response.code == 204
-          result = nil
-          GoodData.logger.debug 'Response: 204 no content'
-        else
-          raise "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
-        end
-        result
-      rescue RestClient::Exception => e
-        GoodData.logger.debug "Response: #{e.response}"
-        raise $!
+        response = block.call
+      rescue RestClient::Unauthorized
+        raise $ERROR_INFO if options[:dont_reauth]
+        refresh_token
+        response = block.call
       end
+      merge_cookies! response.cookies
+      content_type = response.headers[:content_type]
+      return response if options[:process] == false
+
+      if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
+        result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
+        GoodData.logger.debug "Response: #{result.inspect}"
+      elsif content_type == 'application/zip'
+        result = response
+        GoodData.logger.debug 'Response: a zipped stream'
+      elsif response.headers[:content_length].to_s == '0'
+        result = nil
+        GoodData.logger.debug 'Response: Empty response possibly 204'
+      elsif response.code == 204
+        result = nil
+        GoodData.logger.debug 'Response: 204 no content'
+      else
+        fail "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
+      end
+      result
+    rescue RestClient::Exception => e
+      GoodData.logger.debug "Response: #{e.response}"
+      raise $ERROR_INFO
     end
 
     def refresh_token(options = {})
@@ -371,18 +369,18 @@ module GoodData
       begin
         get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
       rescue RestClient::Unauthorized
-        raise $! if options[:dont_reauth]
+        raise $ERROR_INFO if options[:dont_reauth]
         authenticate
       end
     end
 
     def scrub_params(params, keys)
-      keys = keys.reduce([]) { |memo, k| memo.concat([k.to_s, k.to_sym]) }
+      keys = keys.reduce([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
 
       new_params = Marshal.load(Marshal.dump(params))
       GoodData::Helpers.hash_dfs(new_params) do |k, key|
         keys.each do |key_to_scrub|
-          k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.has_key?(key_to_scrub) && k[key_to_scrub]
+          k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.key?(key_to_scrub) && k[key_to_scrub]
         end
       end
       new_params

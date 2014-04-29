@@ -34,13 +34,13 @@ GoodData::CLI.module_eval do
 
     c.action do |global_options, options, args|
       verbose = global_options[:verbose]
-      options[:expanded_params] = if (options[:params])
+      options[:expanded_params] = if options[:params]
                                     MultiJson.load(File.read(options[:params]))
                                   else
                                     {}
                                   end
 
-      opts = options.merge(global_options).merge({:type => 'RUBY'})
+      opts = options.merge(global_options).merge(:type => 'RUBY')
       GoodData.connect(opts)
       if options[:remote]
         fail 'You have to specify name of the deploy when deploying remotely' if options[:name].nil? || options[:name].empty?
@@ -50,7 +50,7 @@ GoodData::CLI.module_eval do
         require_relative '../../commands/runners'
         GoodData::Command::Runners.run_ruby_locally(options[:dir], opts)
       end
-      puts HighLine::color('Running ruby brick - DONE', HighLine::GREEN) if verbose
+      puts HighLine.color('Running ruby brick - DONE', HighLine::GREEN) if verbose
     end
   end
 

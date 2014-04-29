@@ -2,14 +2,16 @@
 
 require 'csv'
 
-module GoodData::Extract
-  class CsvFile
-    def initialize(file)
-      @file = file
-    end
+module GoodData
+  module Extract
+    class CsvFile
+      def initialize(file)
+        @file = file
+      end
 
-    def read(&block)
-      CSV.open @file, 'r', &block
+      def read(&block)
+        CSV.open @file, 'r', &block
+      end
     end
   end
 end

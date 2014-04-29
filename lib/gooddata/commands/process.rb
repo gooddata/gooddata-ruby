@@ -8,13 +8,13 @@ module GoodData
   module Command
     class Process
       class << self
-        def list(options={})
+        def list(options = {})
           GoodData.with_project(options[:project_id]) do
-            processes = GoodData::Process[:all]
+            GoodData::Process[:all]
           end
         end
 
-        def get(options={})
+        def get(options = {})
           id = options[:process_id]
           fail 'Unspecified process id' if id.nil?
 
@@ -23,7 +23,7 @@ module GoodData
           end
         end
 
-        def delete(process_id, options={})
+        def delete(process_id, options = {})
           GoodData.with_project(options[:project_id]) do
             process = GoodData::Process[process_id]
             process.delete
@@ -31,21 +31,25 @@ module GoodData
         end
 
         # TODO: check files_to_exclude param. Does it do anything? It should check that in case of using CLI, it makes sure the files are not deployed
+<<<<<<< HEAD
         def deploy(dir, options={})
           verbose = options[:verbose]
+=======
+        def deploy(dir, options = {})
+          options[:verbose] || false
+>>>>>>> upstream/master
           GoodData.with_project(options[:project_id]) do
             params = options[:params].nil? ? [] : [options[:params]]
-            GoodData::Process.deploy(dir, options.merge({:files_to_exclude => params}))
+            GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
           end
         end
 
-        def execute_process(process_id, executable, options={})
+        def execute_process(process_id, executable, options = {})
           GoodData.with_project(options[:project_id]) do
             process = GoodData::Process[process_id]
             process.execute_process(executable, options)
           end
         end
-
       end
     end
   end

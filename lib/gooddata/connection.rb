@@ -5,13 +5,12 @@ require_relative 'core/logging'
 require_relative 'core/threaded'
 
 module GoodData
-
   class << self
     # Returns the active GoodData connection earlier initialized via GoodData.connect call
     #
     # @see GoodData.connect
     def connection
-      threaded[:connection] || raise('Please authenticate with GoodData.connect first')
+      threaded[:connection] || fail('Please authenticate with GoodData.connect first')
     end
 
     # Connect to the GoodData API
@@ -20,19 +19,19 @@ module GoodData
     # @param second_options
     # @param third_options
     #
-    def connect(options=nil, second_options=nil, third_options={})
+    def connect(options = nil, second_options = nil, third_options = {})
       GoodData.logger.debug 'GoodData#connect'
 
       if options.is_a? Hash
-        fail 'You have to provide login and password' if ((options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?))
+        fail 'You have to provide login and password' if (options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?)
         threaded[:connection] = Connection.new(options[:login], options[:password], options)
         GoodData.project = options[:project] if options[:project]
       elsif options.is_a?(String) && second_options.is_a?(String)
-        fail 'You have to provide login and password' if ((options.nil? || options.empty?) && (second_options.nil? || second_options.empty?))
+        fail 'You have to provide login and password' if (options.nil? || options.empty?) && (second_options.nil? || second_options.empty?)
         threaded[:connection] = Connection.new(options, second_options, third_options)
       end
 
-      return threaded[:connection]
+      threaded[:connection]
     end
 
     # Disconnect (logout) if logged in
@@ -50,21 +49,20 @@ module GoodData
     # @param token SST token
     # @param options Options get routed to connect eventually so everything that you can use there should be possible to use here.
     #
-    def connect_with_sst(token, options={})
-      create_authenticated_connection(options.merge({:cookies => {'GDCAuthSST' => token}}))
+    def connect_with_sst(token, options = {})
+      create_authenticated_connection(options.merge(:cookies => { 'GDCAuthSST' => token }))
     end
 
     # This method is aimed at creating an authenticated connection in case you do not hae pass/login but you have SST
     #
     # @param options :server => optional GD server uri, If nil it secure will be used. :cookies => you can specify a hash of cookies
     #
-    def create_authenticated_connection(options={})
+    def create_authenticated_connection(options = {})
       connect(options)
       server_cookies = options[:cookies]
       connection.merge_cookies!(server_cookies)
       connection.status = :logged_in
       connection
     end
-
   end
 end

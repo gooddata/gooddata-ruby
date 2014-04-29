@@ -32,18 +32,18 @@ module GoodData
       end
 
       def add_schema(schema, project = nil)
-        unless schema.respond_to?(:to_maql_create) || schema.is_a?(String) then
-          raise ArgumentError.new("Schema object or schema file path expected, got '#{schema}'")
+        unless schema.respond_to?(:to_maql_create) || schema.is_a?(String)
+          fail(ArgumentError, "Schema object or schema file path expected, got '#{schema}'")
         end
         schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
         project = GoodData.project unless project
         ldm_links = GoodData.get project.md[LDM_CTG]
         ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
-        GoodData.post ldm_uri, {'manage' => {'maql' => schema.to_maql_create}}
+        GoodData.post ldm_uri, 'manage' => { 'maql' => schema.to_maql_create }
       end
 
       # Load given file into a data set described by the given schema
-      def upload_data(path, manifest, options={})
+      def upload_data(path, manifest, options = {})
         project = options[:project] || GoodData.project
         # mode = options[:mode] || "FULL"
         path = path.path if path.respond_to? :path
@@ -53,7 +53,7 @@ module GoodData
         dir = Dir.mktmpdir
         begin
           Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
-            # TODO make sure schema columns match CSV column names
+            # TODO: make sure schema columns match CSV column names
             zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(manifest) }
             if inline_data
               zip.get_output_stream('data.csv') do |f|
@@ -73,10 +73,11 @@ module GoodData
         end
 
         # kick the load
-        pull = {'pullIntegration' => File.basename(dir)}
+        pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull']
         task = GoodData.post link, pull
-        while GoodData.get(task['pullTask']['uri'])['taskStatus'] === 'RUNNING' || GoodData.get(task['pullTask']['uri'])['taskStatus'] === 'PREPARED'
+        # TODO: Refactor the task status out
+        while GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'RUNNING' || GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'PREPARED'
           sleep 30
         end
         if GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'ERROR'
@@ -93,7 +94,7 @@ module GoodData
         d = Marshal.load(Marshal.dump(a_schema_blueprint))
         d[:columns] = d[:columns] + b_schema_blueprint[:columns]
         d[:columns].uniq!
-        columns_that_failed_to_merge = d[:columns].group_by { |x| x[:name] }.map { |k, v| [k, v.count] }.find_all { |x| x[1] > 1 }
+        columns_that_failed_to_merge = d[:columns].group_by { |x| x[:name] }.map { |k, v| [k, v.count] }.select { |x| x[1] > 1 }
         fail "Columns #{columns_that_failed_to_merge} failed to merge. When merging columns with the same name they have to be identical." unless columns_that_failed_to_merge.empty?
         d
       end

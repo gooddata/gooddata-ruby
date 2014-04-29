@@ -9,7 +9,6 @@ require_relative '../helpers'
 module GoodData::Command
   class Auth
     class << self
-
       # Get path of .gooddata config
       def credentials_file
         "#{GoodData::Helpers.home_directory}/.gooddata"
@@ -22,12 +21,12 @@ module GoodData::Command
         password = GoodData::CLI.terminal.ask('Password') { |q| q.echo = 'x' }
         auth_token = GoodData::CLI.terminal.ask('Authorization Token')
 
-        {:username => user, :password => password, :auth_token => auth_token}
+        { :username => user, :password => password, :auth_token => auth_token }
       end
 
       # Read credentials
       def read_credentials(credentials_file_path = credentials_file)
-        if File.exists?(credentials_file_path) then
+        if File.exist?(credentials_file_path)
           config = File.read(credentials_file_path)
           MultiJson.load(config, :symbolize_keys => true)
         else
@@ -48,7 +47,7 @@ module GoodData::Command
         credentials = ask_for_credentials
 
         ovewrite = if File.exist?(credentials_file_path)
-                     GoodData::CLI.terminal.ask("Overwrite existing stored credentials (y/n)")
+                     GoodData::CLI.terminal.ask('Overwrite existing stored credentials (y/n)')
                    else
                      'y'
                    end

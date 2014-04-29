@@ -9,7 +9,7 @@ module GoodData
     GoodData.project
   end
 
-  alias :use :project=
+  alias_method :use, :project=
 
   class << self
     # Sets the active project
@@ -42,7 +42,7 @@ module GoodData
       end
     end
 
-    alias :use :project=
+    alias_method :use, :project=
 
     # Returns the active project
     #
@@ -61,7 +61,7 @@ module GoodData
         GoodData.use(project)
         bl.call(GoodData.project)
       rescue RestClient::ResourceNotFound => e
-        fail GoodData::ProjectNotFound.new(e)
+        raise GoodData::ProjectNotFound.new(e)
       ensure
         GoodData.project = old_project
       end

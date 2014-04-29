@@ -9,7 +9,7 @@ module GoodData
   module Model
     class ProjectCreator
       class << self
-        def migrate(options={})
+        def migrate(options = {})
           spec = options[:spec] || fail('You need to provide spec for migration')
           spec = spec.to_hash
 
@@ -58,9 +58,9 @@ module GoodData
           response = GoodData.get(link)
           ldm_links = GoodData.get project.md[LDM_CTG]
           ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
-          chunks = response['projectModelDiff']['updateScripts'].find_all { |script| script['updateScript']['preserveData'] == true && script['updateScript']['cascadeDrops'] == false }.map { |x| x['updateScript']['maqlDdlChunks'] }.flatten
+          chunks = response['projectModelDiff']['updateScripts'].select { |script| script['updateScript']['preserveData'] == true && script['updateScript']['cascadeDrops'] == false }.map { |x| x['updateScript']['maqlDdlChunks'] }.flatten
           chunks.each do |chunk|
-            GoodData.post ldm_uri, {'manage' => {'maql' => chunk}}
+            GoodData.post ldm_uri, 'manage' => { 'maql' => chunk }
           end
 
           bp.datasets.each do |ds|
@@ -95,9 +95,9 @@ module GoodData
         end
 
         def load(project, spec)
-          if spec.has_key?(:uploads)
+          if spec.key?(:uploads)
             spec[:uploads].each do |load|
-              schema = GoodData::Model::Schema.new(spec[:datasets].detect { |d| d[:name] == load[:dataset] })
+              schema = GoodData::Model::Schema.new(spec[:datasets].find { |d| d[:name] == load[:dataset] })
               project.upload(load[:source], schema, load[:mode])
             end
           end

@@ -16,7 +16,7 @@ GoodData::CLI.module_eval do
       jack.action do |global_options, options, args|
         goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
 
-        spin_session = Proc.new do |goodfile, blueprint|
+        spin_session = proc do |goodfile, blueprint|
           project_id = global_options[:project_id] || goodfile[:project_id]
           fail "You have to provide 'project_id'. You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key \"project_id\". If you just started a project you have to create it first. One way might be through \"gooddata project build\"" if project_id.nil? || project_id.empty?
 
@@ -27,11 +27,11 @@ GoodData::CLI.module_eval do
             GoodData.with_project(project_id) do |project|
               puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
               binding.pry(:quiet => true,
-                          :prompt => [proc { |target_self, nest_level, pry|
+                          :prompt => [proc do |target_self, nest_level, pry|
                             'project_live_sesion: '
-                          }])
+                          end])
             end
-          rescue GoodData::ProjectNotFound => e
+          rescue GoodData::ProjectNotFound
             puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
           end
         end
@@ -40,7 +40,7 @@ GoodData::CLI.module_eval do
           goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
           model_key = goodfile[:model]
           blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
-          FileUtils::cd(goodfile_path.dirname) do
+          FileUtils.cd(goodfile_path.dirname) do
             spin_session.call(goodfile, blueprint)
           end
         else
@@ -60,12 +60,12 @@ GoodData::CLI.module_eval do
 
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        project = GoodData::Command::Project.create({
-                                                       :title => title,
-                                                       :summary => summary,
-                                                       :template => template,
-                                                       :token => token
-                                                     })
+        project = GoodData::Command::Project.create(
+          :title => title,
+          :summary => summary,
+          :template => template,
+          :token => token
+        )
         puts "Project '#{project.title}' with id #{project.uri} created successfully!"
       end
     end
@@ -99,7 +99,7 @@ GoodData::CLI.module_eval do
         id = global_options[:project_id]
         token = opts[:token]
 
-        fail "You have to provide a token for creating a project. Please use parameter --token" if token.nil? || token.empty?
+        fail 'You have to provide a token for creating a project. Please use parameter --token' if token.nil? || token.empty?
 
         GoodData.connect(opts)
         GoodData::Command::Project.clone(id, opts)
@@ -158,7 +158,7 @@ GoodData::CLI.module_eval do
       show.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
-        spec, project_id = GoodData::Command::Project.get_spec_and_project_id('.')
+        spec, _ = GoodData::Command::Project.get_spec_and_project_id('.')
         new_project = GoodData::Command::Project.build(opts.merge(:spec => spec))
         puts "Project was created. New project PID is #{new_project.pid}, URI is #{new_project.uri}."
       end
@@ -193,14 +193,12 @@ GoodData::CLI.module_eval do
     end
 
     c.desc 'You can run project validation which will check RI integrity and other problems.'
-     c.command :validate do |show|
-       show.action do |global_options, options, args|
-         opts = options.merge(global_options)
-         GoodData.connect(opts)
-         pp GoodData::Command::Project.validate(global_options[:project_id])
-       end
-     end
-
+    c.command :validate do |show|
+      show.action do |global_options, options, args|
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+        pp GoodData::Command::Project.validate(global_options[:project_id])
+      end
+    end
   end
-
 end

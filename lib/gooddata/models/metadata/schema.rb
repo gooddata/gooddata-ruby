@@ -20,7 +20,7 @@ module GoodData
         Schema.new JSON.load(open(file))
       end
 
-      def initialize(config, name = 'Default Name', title = 'Default Title')
+      def initialize(a_config, a_name = 'Default Name', a_title = 'Default Title')
         super()
         @fields = []
         @attributes = []
@@ -32,34 +32,34 @@ module GoodData
         @references = []
         @labels = []
 
-        config[:name] = name unless config[:name]
-        config[:title] = config[:name] unless config[:title]
-        config[:title] = title unless config[:title]
-        config[:title] = config[:title].humanize
+        a_config[:name] = a_name unless a_config[:name]
+        a_config[:title] = a_config[:name] unless a_config[:title]
+        a_config[:title] = a_title unless a_config[:title]
+        a_config[:title] = a_config[:title].humanize
 
-        fail 'Schema name not specified' unless config[:name]
-        self.name = config[:name]
-        self.title = config[:title]
-        self.config = config
+        fail 'Schema name not specified' unless a_config[:name]
+        @name = a_config[:name]
+        @title = a_config[:title]
+        self.config=(a_config)
       end
 
       def config=(config)
         config[:columns].each do |c|
           case c[:type].to_s
-            when 'attribute'
-              add_attribute c
-            when 'fact'
-              add_fact c
-            when 'date'
-              add_date c
-            when 'anchor'
-              set_anchor c
-            when 'label'
-              add_label c
-            when 'reference'
-              add_reference c
-            else
-              fail "Unexpected type #{c[:type]} in #{c.inspect}"
+          when 'attribute'
+            add_attribute c
+          when 'fact'
+            add_fact c
+          when 'date'
+            add_date c
+          when 'anchor'
+            set_anchor c
+          when 'label'
+            add_label c
+          when 'reference'
+            add_reference c
+          else
+            fail "Unexpected type #{c[:type]} in #{c.inspect}"
           end
         end
         @anchor = Anchor.new(nil, self) unless @anchor
@@ -84,7 +84,7 @@ module GoodData
         [attributes, facts].each do |obj|
           maql += obj.to_maql_drop
         end
-        maql += "DROP {#{self.identifier}};\n"
+        maql += "DROP {#{identifier}};\n"
       end
 
       ##
@@ -92,13 +92,13 @@ module GoodData
       #
       def to_maql_create
         # TODO: Use template (.erb)
-        maql = "# Create the '#{self.title}' data set\n"
-        maql += "CREATE DATASET {#{self.identifier}} VISUAL (TITLE \"#{self.title}\");\n\n"
-        [attributes, facts, {1 => @anchor}].each do |objects|
+        maql = "# Create the '#{title}' data set\n"
+        maql += "CREATE DATASET {#{identifier}} VISUAL (TITLE \"#{title}\");\n\n"
+        [attributes, facts, { 1 => @anchor }].each do |objects|
           objects.values.each do |obj|
-            maql += "# Create '#{obj.title}' and add it to the '#{self.title}' data set.\n"
+            maql += "# Create '#{obj.title}' and add it to the '#{title}' data set.\n"
             maql += obj.to_maql_create
-            maql += "ALTER DATASET {#{self.identifier}} ADD {#{obj.identifier}};\n\n"
+            maql += "ALTER DATASET {#{identifier}} ADD {#{obj.identifier}};\n\n"
           end
         end
 
@@ -118,7 +118,7 @@ module GoodData
       end
 
       def upload(path, project = nil, mode = 'FULL')
-        if path =~ URI::regexp
+        if path =~ URI.regexp
           Tempfile.open('remote_file') do |temp|
             temp << open(path).read
             temp.flush
@@ -138,8 +138,12 @@ module GoodData
       def to_manifest(mode = 'FULL')
         {
           'dataSetSLIManifest' => {
-            'parts' => fields.reduce([]) { |memo, f| val = f.to_manifest_part(mode); memo << val unless val.nil?; memo },
-            'dataSet' => self.identifier,
+            'parts' => fields.reduce([]) do |memo, f|
+              val = f.to_manifest_part(mode)
+              memo << val unless val.nil?
+              memo
+            end,
+            'dataSet' => identifier,
             'file' => 'data.csv', # should be configurable
             'csvParams' => {
               'quoteChar' => '"',
@@ -159,8 +163,8 @@ module GoodData
             'anchor' => @anchor.to_wire_model,
             'facts' => facts.map { |f| f.to_wire_model },
             'attributes' => attributes.map { |a| a.to_wire_model },
-            'references' => references.map { |r| r.is_a?(DateReference) ? r.schema_ref : type_prefix + '.' + r.schema_ref }}
-        }
+            'references' => references.map { |r| r.is_a?(DateReference) ? r.schema_ref : type_prefix + '.' + r.schema_ref }
+            } }
       end
 
       private
@@ -175,7 +179,7 @@ module GoodData
 
       def add_attribute_folder(name)
         return if name.nil?
-        return if folders[:attributes].has_key?(name)
+        return if folders[:attributes].key?(name)
         folders[:attributes][name] = AttributeFolder.new(name)
       end
 
@@ -189,7 +193,7 @@ module GoodData
 
       def add_fact_folder(name)
         return if name.nil?
-        return if folders[:facts].has_key?(name)
+        return if folders[:facts].key?(name)
         folders[:facts][name] = FactFolder.new(name)
       end
 

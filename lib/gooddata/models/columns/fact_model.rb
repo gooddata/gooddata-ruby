@@ -8,16 +8,16 @@ module GoodData
     # GoodData fact abstraction
     #
     class Fact < Column
-      def type_prefix;
-        FACT_PREFIX;
+      def type_prefix
+        FACT_PREFIX
       end
 
-      def column_prefix;
-        FACT_COLUMN_PREFIX;
+      def column_prefix
+        FACT_COLUMN_PREFIX
       end
 
-      def folder_prefix;
-        FACT_FOLDER_PREFIX;
+      def folder_prefix
+        FACT_FOLDER_PREFIX
       end
 
       def table
@@ -29,7 +29,7 @@ module GoodData
       end
 
       def to_maql_create
-        "CREATE FACT {#{self.identifier}} VISUAL (#{visual})" \
+        "CREATE FACT {#{identifier}} VISUAL (#{visual})" \
                + " AS {#{column}};\n"
       end
 

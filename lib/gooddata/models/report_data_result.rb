@@ -34,7 +34,7 @@ module GoodData
       to_table.each { |line| yield line }
     end
 
-    alias :each_row :each_line
+    alias_method :each_row, :each_line
 
     def each_column
       table.each { |line| yield line }
@@ -52,7 +52,7 @@ module GoodData
       to_table[index]
     end
 
-    alias :row :[]
+    alias_method :row, :[]
 
     def column(index)
       table[index]
@@ -66,13 +66,12 @@ module GoodData
       table.include?(row)
     end
 
-    def == (otherDataResult)
-      result = true
+    def ==(other)
       csv_table = to_table
       len = csv_table.length
-      table = otherDataResult.respond_to?(:to_table) ? otherDataResult.to_table : otherDataResult
+      table = other.respond_to?(:to_table) ? other.to_table : other
       return false if len != table.length
-      diff(otherDataResult).empty?() ? true : false
+      diff(other).empty? ? true : false
     end
 
     def diff(otherDataResult)
@@ -81,12 +80,13 @@ module GoodData
       differences = []
 
       csv_table.each do |row|
-        differences << row unless other_table.detect { |r| r == row }
+        differences << row unless other_table.find { |r| r == row }
       end
       differences
     end
 
     private
+
     def each_level(table, level, children, lookup)
       max_level = level + 1
       children.each do |kid|
@@ -101,8 +101,8 @@ module GoodData
             table[first + i][level] = lookup[level][kid['id'].to_s]
           end
         end
-        if (!kid['children'].empty?)
-          new_level = each_level(table, level+1, kid['children'], lookup)
+        unless kid['children'].empty?
+          new_level = each_level(table, level + 1, kid['children'], lookup)
           max_level = [max_level, new_level].max
         end
       end
@@ -136,7 +136,7 @@ module GoodData
       return headers, size # rubocop:disable RedundantReturn
     end
 
-    def assemble_table()
+    def assemble_table
       #    puts "=== COLUMNS === #{column_headers.size}x#{headers_height}"
       (column_headers.size).times do |i|
         (headers_height).times do |j|

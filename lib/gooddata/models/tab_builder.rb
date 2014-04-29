@@ -8,8 +8,8 @@ module GoodData
         @stuff = []
       end
 
-      def add_report(options={})
-        @stuff << {:type => :report}.merge(options)
+      def add_report(options = {})
+        @stuff << { :type => :report }.merge(options)
       end
 
       def to_hash

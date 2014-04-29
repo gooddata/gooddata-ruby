@@ -8,11 +8,11 @@ module GoodData
     # GoodData fact folder abstraction
     #
     class FactFolder < Folder
-      def type;
+      def type
         'FACT'
       end
 
-      def type_prefix;
+      def type_prefix
         'ffld'
       end
     end

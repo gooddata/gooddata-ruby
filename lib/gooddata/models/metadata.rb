@@ -8,23 +8,41 @@ module GoodData
     MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
+    attr_reader :json
+
+    alias_method :raw_data, :json
+    alias_method :to_hash, :json
+    alias_method :data, :json
+
     class << self
       def root_key(a_key)
-        define_method :root_key, Proc.new { a_key.to_s }
+        define_method :root_key, proc { a_key.to_s }
+      end
+
+      def metadata_property_reader(*props)
+        props.each do |prop|
+          define_method prop, proc { meta[prop.to_s] }
+        end
+      end
+
+      def metadata_property_writer(*props)
+        props.each do |prop|
+          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
+        end
       end
 
       def [](id)
-        raise "Cannot search for nil #{self.class}" unless id
-        uri = if id.is_a? Integer or id =~ /^\d+$/
+        fail "Cannot search for nil #{self.class}" unless id
+        uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
               elsif id !~ /\//
                 identifier_to_uri id
               elsif id =~ /^\//
                 id
               else
-                raise 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
+                fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
               end
-        self.new(GoodData.get uri) unless uri.nil?
+        new(GoodData.get uri) unless uri.nil?
       end
 
       def all
@@ -32,12 +50,7 @@ module GoodData
       end
 
       def find_by_tag(tag)
-        self[:all].find_all { |r| r['tags'].split(',').include?(tag) }
-      end
-
-      def get_by_id(id)
-        uri = GoodData::MdObject.id_to_uri(id)
-        self[uri] unless uri.nil?
+        self[:all].select { |r| r['tags'].split(',').include?(tag) }
       end
 
       def find_first_by_title(title)
@@ -50,10 +63,11 @@ module GoodData
         self[item['link']] unless item.nil?
       end
 
+      # TODO: Add test
       def identifier_to_uri(*ids)
-        raise NoProjectError.new 'Connect to a project before searching for an object' unless GoodData.project
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
         uri = GoodData.project.md[IDENTIFIERS_CFG]
-        response = GoodData.post uri, {'identifierToUri' => ids}
+        response = GoodData.post uri, 'identifierToUri' => ids
         if response['identifiers'].empty?
           nil
         else
@@ -62,11 +76,21 @@ module GoodData
         end
       end
 
-      alias :id_to_uri :identifier_to_uri
+      alias_method :id_to_uri, :identifier_to_uri
+
+      alias_method :get_by_id, :[]
+
     end
 
-    def initialize(json)
-      @json = json
+    metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
+    metadata_property_writer :tags, :summary, :title
+
+    def root_key
+      raw_data.keys.first
+    end
+
+    def initialize(data)
+      @json = data.to_hash
     end
 
     def delete
@@ -78,13 +102,11 @@ module GoodData
     end
 
     def reload!
-      if saved?
-        @json = GoodData.get(uri)
-      end
+      @json = GoodData.get(uri) if saved?
       self
     end
 
-    alias :refresh :reload!
+    alias_method :refresh, :reload!
 
     def obj_id
       uri.split('/').last
@@ -94,40 +116,30 @@ module GoodData
       data['links']
     end
 
-    def uri
-      meta && meta['uri']
-    end
-
     def browser_uri
       GoodData.connection.url + meta['uri']
     end
 
-    def identifier
-      meta['identifier']
+    def updated
+      Time.parse(meta['updated'])
     end
 
-    def title
-      meta['title']
+    def created
+      Time.parse(meta['created'])
     end
 
-    def summary
-      meta['summary']
+    def deprecated=(flag)
+      if flag == "1" || flag == 1
+        meta["deprecated"] = "1"
+      elsif flag == "0" || flag == 0
+        meta["deprecated"] = "0"
+      else
+        fail "You have to provide flag as either 1 or \"1\" or 0 or \"0\""
+      end
     end
 
-    def title=(a_title)
-      data['meta']['title'] = a_title
-    end
-
-    def summary=(a_summary)
-      data['meta']['summary'] = a_summary
-    end
-
-    def tags
-      data['meta']['tags']
-    end
-
-    def tags=(list_of_tags)
-      data['meta']['tags'] = list_of_tags
+    def data
+      raw_data[root_key]
     end
 
     def meta
@@ -142,31 +154,30 @@ module GoodData
       @project ||= Project[uri.gsub(/\/obj\/\d+$/, '')]
     end
 
-    def get_usedby
-      result = GoodData.get "#{GoodData.project.md['usedby2']}/#{obj_id}"
-      result['entries']
+    def usedby(key = nil)
+      dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
+    end
+    alias_method :used_by, :usedby
+
+    def using(key = nil)
+      dependency("#{GoodData.project.md['using2']}/#{obj_id}", key)
     end
 
-    def get_using
-      result = GoodData.get "#{GoodData.project.md['using2']}/#{obj_id}"
-      result['entries']
+    def usedby?(obj)
+      dependency?(:usedby, obj)
+    end
+    alias_method :used_by?, :usedby?
+
+    def using?(obj)
+      dependency?(:using, obj)
     end
 
     def to_json
       @json.to_json
     end
 
-    def raw_data
-      @json
-    end
-
-    def data
-      key = methods.include?(:root_key) ? root_key : raw_data.keys.first
-      raw_data[key]
-    end
-
     def saved?
-      !!uri
+      !uri.nil?
     end
 
     def save
@@ -178,14 +189,14 @@ module GoodData
         explicit_identifier = meta['identifier']
         # Pre-check to provide a user-friendly error rather than
         # failing later
-        if explicit_identifier && MdObject[explicit_identifier] then
-          raise "Identifier '#{explicit_identifier}' already in use"
+        if explicit_identifier && MdObject[explicit_identifier]
+          fail "Identifier '#{explicit_identifier}' already in use"
         end
         result = GoodData.post(GoodData.project.md['obj'], to_json)
         saved_object = self.class[result['uri']]
-        # TODO add test for explicitly provided identifier
+        # TODO: add test for explicitly provided identifier
         @json = saved_object.raw_data
-        if explicit_identifier then
+        if explicit_identifier
           # Object creation API discards the identifier. If an identifier
           # was explicitely provided in the origina object, we need to set
           # it explicitly with an extra PUT call.
@@ -204,7 +215,7 @@ module GoodData
     end
 
     def ==(other)
-      other.uri == uri
+      other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
     end
 
     def validate
@@ -216,17 +227,40 @@ module GoodData
     end
 
     # TODO: generate fill for other subtypes
-    def is_fact?
+    def fact?
       false
     end
 
-    def is_attribute?
+    def attribute?
       false
     end
 
-    def is_metric?
+    def metric?
       false
     end
 
+    private
+
+    def dependency(uri, key = nil)
+      result = GoodData.get("#{uri}/#{obj_id}")["entries"]
+      if key.nil?
+        result
+      elsif key.respond_to?(:category)
+        result.select { |item| item["category"] == key.category }
+      else
+        result.select { |item| item["category"] == key }
+      end
+    end
+
+    def dependency?(type, uri)
+      objs = case type
+             when :usedby
+               usedby
+             when :using
+               using
+             end
+      uri = uri.respond_to?(:uri) ? uri.uri : uri
+      objs.any? { |obj| obj['link'] == uri }
+    end
   end
 end
