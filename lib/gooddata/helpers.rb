@@ -27,11 +27,12 @@ module GoodData
       def find_goodfile(pwd = `pwd`.strip!, options = {})
         root = Pathname(options[:root] || '/')
         pwd = Pathname(pwd).expand_path
-        begin
+        loop do
           gf = pwd + 'Goodfile'
           return gf if gf.exist?
           pwd = pwd.parent
-        end until root == pwd
+          break unless root == pwd
+        end
         nil
       end
 
