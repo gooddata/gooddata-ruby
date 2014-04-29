@@ -43,6 +43,55 @@ describe "Spin a project", :constraint => 'slow' do
     end
   end
 
+  it "should exercise the object relations and getting them in various ways" do
+    GoodData.with_project(@project) do |p|
+      # Find a metric by name
+      metric = GoodData::Metric.find_first_by_title('My metric')
+
+      # grab fact in several different ways
+      fact1 = GoodData::Fact.find_first_by_title('Lines changed')
+      fact2 = GoodData::Fact[fact1.identifier]
+      fact3 = GoodData::Fact[fact2.obj_id]
+      fact4 = GoodData::Fact[fact3.uri]
+      fact5 = GoodData::Fact.new(fact4)
+
+      # All should be the same
+      fact1.should == fact2
+      fact1.should == fact2
+      fact1.should == fact3
+      fact1.should == fact4
+      fact1.should == fact5
+
+      fact3.title = "Somewhat changed title"
+      fact1.should_not == fact3
+
+      metric.using
+      metric.using('fact').count.should == 1
+
+      fact1.used_by
+      fact1.used_by('metric').count.should == 1
+
+      metric.using?(fact1).should == true
+      fact1.using?(metric).should == false
+
+      metric.used_by?(fact1).should == false
+      fact1.used_by?(metric).should == true
+    end
+  end
+
+  it "should try setting and getting by tags" do
+    GoodData.with_project(@project) do |p|
+      fact = GoodData::Fact.find_first_by_title('Lines changed')
+      fact.tags.should be_empty
+
+      fact.tags = "tag1,tag2,tag3"
+      fact.save
+
+      tagged_facts = GoodData::Fact.find_by_tag('tag3')
+      tagged_facts.count.should == 1
+    end
+  end
+
   it "should contain metadata for each dataset in project metadata" do
     GoodData.with_project(@project) do |p|
       k = GoodData::ProjectMetadata.keys
