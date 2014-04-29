@@ -40,7 +40,7 @@ module GoodData
         fail 'Schema name not specified' unless a_config[:name]
         @name = a_config[:name]
         @title = a_config[:title]
-        self.config=(a_config)
+        self.config = (a_config)
       end
 
       def config=(config)

@@ -14,7 +14,7 @@ module GoodData
       puts to_s
     end
 
-    def to_s(options={})
+    def to_s(options = {})
       with_indices = options[:index]
 
       a = to_table.to_a

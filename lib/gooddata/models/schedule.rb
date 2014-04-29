@@ -20,7 +20,7 @@ module GoodData
       end
 
       def list(pid = nil)
-        pid = pid || GoodData.project.pid
+        pid ||= GoodData.project.pid
 
         fail 'You have to provide project_id' if pid.nil?
 
@@ -58,18 +58,35 @@ module GoodData
         end
       end
 
-      def delete(pid=nil, sid=nil)
+      def delete(pid = nil, sid = nil)
         pid = GoodData.project.pid if pid.nil? || pid.empty?
         uri = "/gdc/projects/#{pid}/schedules/#{sid}"
         GoodData.delete(uri)
       end
 
-      def save(pid = nil, sid = nil)
-        if pid.nil? || pid.empty?
-          pid = GoodData.project.pid
+      def save(pid = nil, sid = nil, sch = nil)
+
+        if sch.nil?
+          uri = @schedule['links']['self']
+          GoodData.put(uri, @schedule)
+        else
+          pid = GoodData.project.pid if pid.nil? || pid.empty?
+          uri = "/gdc/projects/#{pid}/schedules"
+          GoodData.post(uri, sch)
         end
-        GoodData.put(uri, @schedule)
+
       end
+
+      def create(pid = nil, file = nil)
+        pid = GoodData.project.pid if pid.nil? || pid.empty?
+        if file.nil? || file.empty?
+          fail 'No JSON Schedule file was found.'
+        else
+          Schedule.new(file['schedule'])
+          Schedule.save(pid, nil, file)
+        end
+      end
+
     end
 
     def initialize(data)
@@ -112,19 +129,6 @@ module GoodData
 
   def process_id
     @schedule['params']['PROCESS_ID']
-  end
-
-  def create(pid=nil, sch=nil)
-    pid = GoodData.project.pid if pid.nil? || pid.empty?
-    fail 'Schedule object is required to create new schedule' if sch.nil?
-    pp sch
-    if sch['type'] && sch['cron'] && sch['params']['PROCESS_ID'] && sch['params']['EXECUTABLE']
-      Schedule.new(sch)
-      Schedule.save
-    else
-      raise "Schedule object is not formatted correctly."
-    end
-
   end
 
 end

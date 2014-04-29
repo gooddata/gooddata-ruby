@@ -102,7 +102,7 @@ module GoodData
             star, metrics = e
             metrics.each { |m| m.save }
             reports_stubs = metrics.map do |m|
-              breaks = can_break(star).map { |ds, a| ds.identifier_for(a) }
+              breaks = can_break(star).map { |ds, aM| ds.identifier_for(aM) }
               # [breaks.sample((breaks.length/10.0).ceil), m]
               [breaks, m]
             end

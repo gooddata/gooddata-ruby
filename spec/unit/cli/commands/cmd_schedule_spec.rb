@@ -38,7 +38,7 @@ describe GoodData::CLI do
   end
 
   describe "schedule show {process-id}" do
-    it 'Should throw error' do
+    it 'Should fail when a no Project ID is provided.' do
       args = %w(schedule show 432909234)
 
       out = run_cli(args)
@@ -57,15 +57,14 @@ describe GoodData::CLI do
     end
   end
 
-  describe "-p {project-id} schedule create {process-id}" do
-    it 'Should create a new scheduled process with the provided Project.' do
-      args = %w(-p 23293490 schedule create "MSLT" "UTC" "0 15 27 9" "23423" "graph/run.grf")
+  describe "-p {project-id} schedule create {file.json}" do
+    it 'Should fail if no file is present to import.' do
+      args = %w(-p 23293490 schedule create)
 
       out = run_cli(args)
-      out.should include 'Project ID must be provided.'
+      out.should include 'can\'t convert nil into String'
 
     end
   end
-
 
 end
