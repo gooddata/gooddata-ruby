@@ -95,7 +95,7 @@ module GoodData
       end
     end
 
-    def get_roles
+    def get_roles # rubocop:disable AccessorMethodName
       url = "/gdc/projects/#{self.pid}/roles"
 
       res = []
