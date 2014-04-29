@@ -105,9 +105,9 @@ module GoodData
           offset = 0
           # Limit set to 1000 to be safe
           limit = 1000
-          while (!finished) do
-            result = GoodData.get("/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{limit}")
-            result["users"].map do |u|
+          while (!finished)
+            result = GoodData.get('/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{limit}')
+            result['users'].map do |u|
               as = u['user']
               users.push(
                 {

@@ -129,12 +129,12 @@ module GoodData
     end
 
     def deprecated=(flag)
-      if flag == "1" || flag == 1
-        meta["deprecated"] = "1"
-      elsif flag == "0" || flag == 0
-        meta["deprecated"] = "0"
+      if flag == '1' || flag == 1
+        meta['deprecated'] = '1'
+      elsif flag == '0' || flag == 0
+        meta['deprecated'] = '0'
       else
-        fail "You have to provide flag as either 1 or \"1\" or 0 or \"0\""
+        fail 'You have to provide flag as either 1 or "1" or 0 or "0"'
       end
     end
 
@@ -157,6 +157,7 @@ module GoodData
     def usedby(key = nil)
       dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
     end
+
     alias_method :used_by, :usedby
 
     def using(key = nil)
@@ -166,6 +167,7 @@ module GoodData
     def usedby?(obj)
       dependency?(:usedby, obj)
     end
+
     alias_method :used_by?, :usedby?
 
     def using?(obj)
@@ -242,24 +244,23 @@ module GoodData
     private
 
     def dependency(uri, key = nil)
-      result = GoodData.get("#{uri}/#{obj_id}")["entries"]
+      result = GoodData.get("#{uri}/#{obj_id}")['entries']
       if key.nil?
         result
       elsif key.respond_to?(:category)
-        result.select { |item| item["category"] == key.category }
+        result.select { |item| item['category'] == key.category }
       else
-        result.select { |item| item["category"] == key }
+        result.select { |item| item['category'] == key }
       end
     end
 
     def dependency?(type, uri)
-      objs =  case type
-              when :usedby
-                usedby
-              when :using
-                using
-              end
-
+      objs = case type
+             when :usedby
+               usedby
+             when :using
+               using
+             end
       uri = uri.respond_to?(:uri) ? uri.uri : uri
       objs.any? { |obj| obj['link'] == uri }
     end

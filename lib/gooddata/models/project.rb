@@ -196,11 +196,11 @@ module GoodData
     end
 
     def browser_uri(options = {})
-      ui = options[:ui]
-      if ui
-        GoodData.connection.url + '#s=' + uri
-      else
+      grey = options[:grey]
+      if grey
         GoodData.connection.url + uri
+      else
+        GoodData.connection.url + '#s=' + uri
       end
     end
 

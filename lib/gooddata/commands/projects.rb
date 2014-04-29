@@ -11,4 +11,3 @@ module GoodData::Command
     end
   end
 end
-
