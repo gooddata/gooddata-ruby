@@ -82,7 +82,12 @@ Using the GoodData APIs, you can begin exploring the capabilities of the Ruby SD
 ###Creating a project
 
 {% highlight ruby %}
-GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
+GoodData::Project.create(
+  :title => title,
+  :summary => summary,
+  :template => template,
+  :auth_token => token
+)
 {% endhighlight %}
 
 * For API documentation, see [Project API](https://developer.gooddata.com/api#project).
@@ -126,7 +131,11 @@ You can clone a project through the APIs. The parameters and their defaults are 
 
 {% highlight ruby %}
 project = GoodData::Project['project_id']
-project.clone(:title => "Title of the cloned project", :with_data => true, :with_users => true)
+project.clone(
+  :title => "Title of the cloned project",
+  :with_data => true,
+  :with_users => true
+)
 {% endhighlight %}
 
 ###Deleting a project
