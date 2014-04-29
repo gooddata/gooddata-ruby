@@ -108,7 +108,8 @@ GoodData::CLI.module_eval do
           GoodData::Command::Schedule.create(pid, sch)
 
         else
-          #TODO: Enter interactive.
+          #TODO: Enter interactive command line.
+          raise 'Arguments must be passed in order to create a new schedule.'
         end
 
       end
