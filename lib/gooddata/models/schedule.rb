@@ -1,4 +1,5 @@
 require 'pathname'
+require 'pp'
 
 require_relative '../core/core'
 require_relative './process'
@@ -64,12 +65,11 @@ module GoodData
       end
 
       def save(pid = nil, sid = nil)
-        pid = GoodData.project.pid if pid.nil? || pid.empty?
+        if pid.nil? || pid.empty?
+          pid = GoodData.project.pid
+        end
         GoodData.put(uri, @schedule)
-      else
-        GoodData.post(uri, @schedule)
       end
-
     end
 
     def initialize(data)
@@ -117,7 +117,7 @@ module GoodData
   def create(pid=nil, sch=nil)
     pid = GoodData.project.pid if pid.nil? || pid.empty?
     fail 'Schedule object is required to create new schedule' if sch.nil?
-
+    pp sch
     if sch['type'] && sch['cron'] && sch['params']['PROCESS_ID'] && sch['params']['EXECUTABLE']
       Schedule.new(sch)
       Schedule.save

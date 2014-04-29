@@ -30,7 +30,7 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
 
         pid = global_options[:project_id]
-        fail 'Project ID must be provided' if pid.nil? || pid.empty?
+        fail 'Project ID must be provided.' if pid.nil? || pid.empty?
 
         sid = args.first
         sid = 'all' if sid.nil? || sid.empty?
@@ -45,8 +45,8 @@ GoodData::CLI.module_eval do
     end
 
     c.desc 'Delete Schedule by ID.'
-    c.command :delete do |del|
-      del.action do |global_options, options, args|
+    c.command :delete do |delete|
+      delete.action do |global_options, options, args|
         opts = options.merge(global_options)
 
         pid = global_options[:project_id]
@@ -68,7 +68,7 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
 
         pid = global_options[:project_id]
-        fail 'Project ID must be provided' if pid.nil? || pid.empty?
+        fail 'Project ID must be provided.' if pid.nil? || pid.empty?
 
         sid = args.first
         fail 'Schedule ID must be provided.' if sid.nil? || sid.empty?
@@ -86,7 +86,7 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
 
         pid = global_options[:project_id]
-        fail 'Project ID must be provided' if pid.nil? || pid.empty?
+        fail 'Project ID must be provided.' if pid.nil? || pid.empty?
 
         # Example post body.
         # body: "{\n    \"schedule\" : {\n        \"type\" : \"MSETL\",\n        \"timezone\" : \"UTC\",\n        \"cron\" : \"0 15 27 7 *\",\n        \"params\": {\n            \"PROCESS_ID\" : \"{process-id}\",\n            \"EXECUTABLE\" : \"graph/run.grf\",\n            \"PARAM1_NAME\" : \"PARAM1_VALUE\",\n            \"PARAM2_NAME\" : \"PARAM2_VALUE\"\n        },\n        \"hiddenParams\" : {\n            \"HPARAM1_NAME\" : \"HPARAM1_VALUE\",\n            \"HPARAM2_NAME\" : \"HPARAM2_VALUE\"\n        }\n    }\n}",

@@ -22,7 +22,7 @@ module GoodData::Command
       end
 
       def create(pid = nil, schedule)
-        return GoodData::Schedule.save(pid, schedule)
+        return GoodData::Schedule.create(pid, schedule)
       end
 
     end
