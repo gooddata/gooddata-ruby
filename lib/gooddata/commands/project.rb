@@ -26,11 +26,11 @@ module GoodData
         def invite(project_id, email, role, msg = DEFAULT_INVITE_MESSAGE)
           msg = DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
 
-        project = GoodData::Project[project_id]
-        fail "Invalid project id '#{project_id}' specified" if project.nil?
+          project = GoodData::Project[project_id]
+          fail "Invalid project id '#{project_id}' specified" if project.nil?
 
-        project.invite(email, role, msg)
-      end
+          project.invite(email, role, msg)
+        end
 
         # Clone existing project
         def clone(project_id, options)
