@@ -27,7 +27,7 @@ module GoodData
 
       def metadata_property_writer(*props)
         props.each do |prop|
-          define_method "#{prop.to_s}=", proc { |val| meta[prop.to_s] = val }
+          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
         end
       end
 
@@ -154,12 +154,12 @@ module GoodData
       @project ||= Project[uri.gsub(/\/obj\/\d+$/, '')]
     end
 
-    def usedby(key=nil)
+    def usedby(key = nil)
       dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
     end
     alias_method :used_by, :usedby
 
-    def using(key=nil)
+    def using(key = nil)
       dependency("#{GoodData.project.md['using2']}/#{obj_id}", key)
     end
 
@@ -241,7 +241,7 @@ module GoodData
 
     private
 
-    def dependency(uri, key=nil)
+    def dependency(uri, key = nil)
       result = GoodData.get("#{uri}/#{obj_id}")["entries"]
       if key.nil?
         result
@@ -253,12 +253,13 @@ module GoodData
     end
 
     def dependency?(type, uri)
-      objs = case type
-      when :usedby
-        usedby
-      when :using
-        using
-      end
+      objs =  case type
+              when :usedby
+                usedby
+              when :using
+                using
+              end
+
       uri = uri.respond_to?(:uri) ? uri.uri : uri
       objs.any? { |obj| obj['link'] == uri }
     end
