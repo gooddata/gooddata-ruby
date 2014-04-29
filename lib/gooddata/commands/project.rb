@@ -33,8 +33,8 @@ module GoodData::Command
 
       # Clone existing project
       def clone(project_id, options)
-        with_data = options[:data] || true
-        with_users = options[:users] || false
+        with_data = true
+        with_users = options[:users]
         title = options[:title]
         export = {
           :exportProject => {

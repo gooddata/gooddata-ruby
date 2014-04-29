@@ -63,6 +63,13 @@ module GoodData
         GoodData.delete(uri)
       end
 
+      def save(pid = nil, sid = nil)
+        pid = GoodData.project.pid if pid.nil? || pid.empty?
+        GoodData.put(uri, @schedule)
+      else
+        GoodData.post(uri, @schedule)
+      end
+
     end
 
     def initialize(data)
@@ -95,13 +102,6 @@ module GoodData
 
     def cron
       @schedule['name']
-    end
-
-    def save(pid = nil, sid = nil)
-      pid = GoodData.project.pid if pid.nil? || pid.empty?
-      GoodData.put(uri, @schedule)
-    else
-      GoodData.post(uri, @schedule)
     end
 
   end

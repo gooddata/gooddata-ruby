@@ -88,7 +88,7 @@ GoodData::CLI.module_eval do
         pid = global_options[:project_id]
         fail 'Project ID must be provided' if pid.nil? || pid.empty?
 
-        # TODO: Tomas Check Please, how to pass hidden parameters?
+        # Example post body.
         # body: "{\n    \"schedule\" : {\n        \"type\" : \"MSETL\",\n        \"timezone\" : \"UTC\",\n        \"cron\" : \"0 15 27 7 *\",\n        \"params\": {\n            \"PROCESS_ID\" : \"{process-id}\",\n            \"EXECUTABLE\" : \"graph/run.grf\",\n            \"PARAM1_NAME\" : \"PARAM1_VALUE\",\n            \"PARAM2_NAME\" : \"PARAM2_VALUE\"\n        },\n        \"hiddenParams\" : {\n            \"HPARAM1_NAME\" : \"HPARAM1_VALUE\",\n            \"HPARAM2_NAME\" : \"HPARAM2_VALUE\"\n        }\n    }\n}",
 
         if args.length > 0
@@ -99,6 +99,7 @@ GoodData::CLI.module_eval do
               'cron' => args[2],
               'process_id' => args[3],
               'executable' => args[4],
+              #TODO: Tomas, how to pass hidden params?
               'hidden_params' => args[5..9]
           }
 
