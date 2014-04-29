@@ -15,6 +15,8 @@ Before we start there is one important thing to understand. Whenever you upload 
 ##Loading data interactively
 If you are playing around with project, creating metrics trying different things it is very helpful if you can load data without a big ceremony.
 
+###Loading data from array
+
 {% highlight ruby %}
   gooddata -p PROJECT_ID project jack_in
 
@@ -24,7 +26,7 @@ If you are playing around with project, creating metrics trying different things
 
 You can load data from an array. The only thing you have to provide is the array of arrays of data. The first line has to contain the names of the colums. The order of colums does not matter but the names has to be in sync with the name defined in the model.
 
-##Loading data from files
+###Loading data from files
 
 The array are useful for having exact per value control but sometimes you just want to load larger amount of data and array become clunky. You can of course load a file. The accepted format is currently CSV. It expects valid CSV with comma as a separator and " as a quote. The lines are separated with a newline. This currently cannot be changed.
 
