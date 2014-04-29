@@ -66,6 +66,7 @@ module GoodData
 
     private
 
+    # Private setter of domain name
     def name=(domain_name) # rubocop:disable TrivialAccessors
       @name = domain_name
     end
