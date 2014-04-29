@@ -31,6 +31,7 @@ module GoodData
       end
 
       def [](domain_name)
+        fail "Using pseudo-id 'all' is not supported by GoodData::Domain" if domain_name.to_s == 'all'
         GoodData::Domain.new(domain_name)
       end
     end
