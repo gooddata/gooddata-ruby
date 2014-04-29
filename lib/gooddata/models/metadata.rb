@@ -157,6 +157,7 @@ module GoodData
     def usedby(key = nil)
       dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
     end
+
     alias_method :used_by, :usedby
 
     def using(key = nil)
@@ -166,6 +167,7 @@ module GoodData
     def usedby?(obj)
       dependency?(:usedby, obj)
     end
+
     alias_method :used_by?, :usedby?
 
     def using?(obj)
