@@ -3,8 +3,8 @@ layout: post
 title:  "Part III - Loading data"
 date:   2014-01-19 13:56:00
 categories: tutorial
-next_section: recipe/crunching-numbers
-prev_section: recipe/your-first-project
+next_section: tutorial/tutorial-part-4-looking-around-project
+prev_section: tutorial/tutorial-part-2-model
 pygments: true
 perex: The logical data model (LDM) defines the facts and attributes in your project, as well as their relationships. Let’s have a look at how to create a project’s LDM using Ruby SDK. Then, we compare this method with other approaches.
 ---

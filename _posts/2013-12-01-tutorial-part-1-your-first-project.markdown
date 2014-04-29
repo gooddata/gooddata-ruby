@@ -3,7 +3,7 @@ layout: post
 title:  "Part I - Your first project"
 date:   2014-01-19 13:56:00
 categories: tutorial
-next_section: recipe/model
+next_section: tutorial/tutorial-part-2-model
 pygments: true
 perex: Spin up a project that you can use for the other tutorials. It will take only 5 minutes. Promise.
 ---
