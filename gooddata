@@ -2,6 +2,12 @@
 
 require_relative "lib/gooddata/cli/cli"
 
-res = GoodData::CLI.main(ARGV)
+require_relative 'lib/gooddata/models/domain'
 
-exit(res)
+GoodData.connect 'tomas.korcak@gooddata.com', 'pjtrn,gd86'
+domain = GoodData::Domain['gooddata-tomas-korcak']
+domain.list_users
+
+# res = GoodData::CLI.main(ARGV)
+
+# exit(res)

@@ -1,37 +1,21 @@
 # encoding: UTF-8
 
 require_relative '../exceptions/command_failed'
+require_relative '../models/domain'
 
 module GoodData
   module Command
     # Low level access to GoodData API
     class Domain
-      class << self
-        def add_user(domain, firstname, lastname, login, password)
-          data = {
-            :accountSetting => {
-              :login => login,
-              :password => password,
-              :verifyPassword => password,
-              :email => login,
-              :firstName => firstname,
-              :lastName => lastname
-            }
-          }
+      attr_reader :name
 
-          url = "/gdc/account/domains/#{domain}/users"
-          GoodData.post(url, data)
+      class << self
+        def add_user(domain, login, password)
+          GoodData::Domain.add_user(domain, login, password)
         end
 
         def list_users(domain)
-          result = []
-
-          tmp = GoodData.get("/gdc/account/domains/#{domain}/users")
-          tmp['accountSettings']['items'].each do |account|
-            result << account['accountSetting']
-          end
-
-          result
+          GoodData::Domain.list_users(domain)
         end
       end
     end
