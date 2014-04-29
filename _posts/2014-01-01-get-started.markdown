@@ -10,18 +10,9 @@ You just installed the Ruby GEM and want to start playing around, right? Follow 
 
 ##Disclaimer
 
-This SDK is intended for developers. Programming experience is required. Some operations that can be executed using the SDK can be destructive to your projects and data. For more information, please contact GoodData Customer Support.
+Though we did everything in our power to make it simple. This SDK is still intended for developers. Programming experience is required. Some operations that can be executed using the SDK can be destructive to your projects and data. For more information, please contact GoodData Customer Support or let the authors know. Any feedback is appreciated.
 
-##Table of Contents
-
-- [Prerequisities](#prerequisites)
-- [Install](#install)
-- [First steps](#first)
-- [Retrieving Objects](#retrieve)
-- [Metrics (not only) Creation](#metrics)
-- [Report Handling](#reports)
-- [Dashboard Operations](#dashboards)
-- [Direct Post Requests](#direct)
+Also take note that we still have not reach version 1.0.0 which means the API could and will change. We try to be as gentle as possible but sometimes if we want to make progress we have to break things.
 
 ##Prerequisites
 
@@ -170,33 +161,8 @@ A simple program that does something useful is the following:
 Save this into a file called `my_first.rb`. Run it using the following command: 
 `ruby my_first.rb`
 
-The following sections assume that you are using one of the above methods and are comfortable using the SDK. 
+##What did you learn
+You should be able to install the ruby gem and understand various way how to interact with the API through Ruby SDK. Either via its command line interface, its programming interface or an interactive console.
 
-##Logging in{#login}
-
-You can connect as a user easily.
-
-{% highlight ruby %}
-GoodData.connect("john@example.com", "password")
-{% endhighlight %}
-
-This will assume our default servers and the webdav server used for uploading files will be determined automatically. If you need to explicitly provide such information you can also use another form.
-
-{% highlight ruby %}
-GoodData.connect( :login => 'svarovsky@gooddata.com',
-                  :password => 'pass',
-                  :server => "https://na1.secure.gooddata.com",
-                  :webdav_server => "https://na1-di.gooddata.com")
-{% endhighlight %}
-
-Picking project to work with. There are several ways how to do it.
-
-{% highlight ruby %}
-GoodData.connect( :login => 'svarovsky@gooddata.com',
-                  :password => 'pass',
-                  :project => 'project_pid')
-
-GoodData.project = 'project_pid'
-
-GoodData.use 'project_pid'
-{% endhighlight %}
+##Where to go next
+In the next section we will spin up a project so you have a foundation for playing around.

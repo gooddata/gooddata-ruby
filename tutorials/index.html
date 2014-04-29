@@ -36,8 +36,8 @@ title: Tutorials | GoodData Ruby SDK
 
 <div class="container-narrow">
   <ul class="posts">
-    {% for post in site.posts %}
-      {% if post.categories contains 'recipe' %}
+    {% for post in site.posts reversed %}
+      {% if post.categories contains 'tutorial' %}
         <div>
           <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
           <div>{{ post.perex }}</div>
