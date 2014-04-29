@@ -4,7 +4,6 @@ describe "Spin a project", :constraint => 'slow' do
   before(:all) do
     spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     ConnectionHelper::create_default_connection
-
     @project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
   end
 
