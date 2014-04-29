@@ -39,8 +39,9 @@ namespace :hook do
       puts 'Git pre-commit hook is already installed'
     else
       File.open(hook_path, 'w') do |file|
-        file.write('#! /usr/bin/env bash\n')
-        file.write('rake cop')
+        file.write("#! /usr/bin/env bash\n")
+        file.write("\n")
+        file.write("rake cop\n")
       end
       system "chmod 755 #{hook_path}"
       puts 'Git commit hook was installed'
