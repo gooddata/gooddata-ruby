@@ -24,4 +24,10 @@ describe GoodData do
       GoodData.upload_to_project_webdav('spec/data/test-ci-data.csv')
     end
   end
+
+  describe '#get_user_webdav_path' do
+    it 'Gets the path' do
+      GoodData.get_user_webdav_path('test.csv')
+    end
+  end
 end

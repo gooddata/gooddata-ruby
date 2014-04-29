@@ -1,21 +1,29 @@
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
-  it "Has working 'user' command" do
-    args = %w(user)
+describe 'GoodData::CLI - user' do
+  describe 'user' do
+    it 'Complains when no subcommand specified' do
+      args = %w(user)
 
-    run_cli(args)
+      out = run_cli(args)
+      out.should include "Command 'user' requires a subcommand show"
+    end
   end
 
-  it "Has working 'user list' command" do
-    args = %w(user list)
+  describe 'user list' do
+    it "Has working 'user list' command" do
+      args = %w(user list)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'user show' command" do
-    args = %w(user show)
+  describe 'user show' do
+    it "Has working 'user show' command" do
+      args = %w(user show)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
+
 end
