@@ -3,7 +3,7 @@
 require 'gooddata/cli/cli'
 
 describe GoodData::CLI do
-  describe 'role' do
+  describe 'r' do
     it 'Complains when no parameters specified' do
       args = %w(role)
 
@@ -12,22 +12,24 @@ describe GoodData::CLI do
     end
 
     describe 'role list' do
-      it 'Complains when no project_id specified' do
+      it 'Complains when no project ID specified' do
         args = %w(role list)
 
         out = run_cli(args)
         out.should include 'Project ID has to be provided'
       end
 
-      it 'Works when valid project ID specified' do
+      it 'List roles when passing project ID' do
         args = [
           '-p',
           'la84vcyhrq8jwbu4wpipw66q2sqeb923',
           'role',
-          'list'
+          'list',
         ]
 
         out = run_cli(args)
+        out.should include 'dashboardOnlyRole,/gdc/projects/la84vcyhrq8jwbu4wpipw66q2sqeb923/roles/3'
+        out.should include 'readOnlyUserRole,/gdc/projects/la84vcyhrq8jwbu4wpipw66q2sqeb923/roles/7'
       end
     end
   end

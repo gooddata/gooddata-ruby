@@ -10,9 +10,25 @@ module GoodData
 
     attr_reader :json
 
+    alias_method :raw_data, :json
+    alias_method :to_hash, :json
+    alias_method :data, :json
+
     class << self
       def root_key(a_key)
         define_method :root_key, proc { a_key.to_s }
+      end
+
+      def metadata_property_reader(*props)
+        props.each do |prop|
+          define_method prop, proc { meta[prop.to_s] }
+        end
+      end
+
+      def metadata_property_writer(*props)
+        props.each do |prop|
+          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
+        end
       end
 
       def [](id)
@@ -37,11 +53,6 @@ module GoodData
         self[:all].select { |r| r['tags'].split(',').include?(tag) }
       end
 
-      def get_by_id(id)
-        uri = GoodData::MdObject.id_to_uri(id)
-        self[uri] unless uri.nil?
-      end
-
       def find_first_by_title(title)
         all = self[:all]
         item = if title.is_a?(Regexp)
@@ -52,6 +63,7 @@ module GoodData
         self[item['link']] unless item.nil?
       end
 
+      # TODO: Add test
       def identifier_to_uri(*ids)
         fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
         uri = GoodData.project.md[IDENTIFIERS_CFG]
@@ -65,10 +77,20 @@ module GoodData
       end
 
       alias_method :id_to_uri, :identifier_to_uri
+
+      alias_method :get_by_id, :[]
+
     end
 
-    def initialize(json)
-      @json = json
+    metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
+    metadata_property_writer :tags, :summary, :title
+
+    def root_key
+      raw_data.keys.first
+    end
+
+    def initialize(data)
+      @json = data.to_hash
     end
 
     def delete
@@ -94,40 +116,30 @@ module GoodData
       data['links']
     end
 
-    def uri
-      meta && meta['uri']
-    end
-
     def browser_uri
       GoodData.connection.url + meta['uri']
     end
 
-    def identifier
-      meta['identifier']
+    def updated
+      Time.parse(meta['updated'])
     end
 
-    def title
-      meta['title']
+    def created
+      Time.parse(meta['created'])
     end
 
-    def summary
-      meta['summary']
+    def deprecated=(flag)
+      if flag == '1' || flag == 1
+        meta['deprecated'] = '1'
+      elsif flag == '0' || flag == 0
+        meta['deprecated'] = '0'
+      else
+        fail 'You have to provide flag as either 1 or "1" or 0 or "0"'
+      end
     end
 
-    def title=(a_title)
-      data['meta']['title'] = a_title
-    end
-
-    def summary=(a_summary)
-      data['meta']['summary'] = a_summary
-    end
-
-    def tags
-      data['meta']['tags']
-    end
-
-    def tags=(list_of_tags)
-      data['meta']['tags'] = list_of_tags
+    def data
+      raw_data[root_key]
     end
 
     def meta
@@ -142,25 +154,28 @@ module GoodData
       @project ||= Project[uri.gsub(/\/obj\/\d+$/, '')]
     end
 
-    def usedby
-      result = GoodData.get "#{GoodData.project.md['usedby2']}/#{obj_id}"
-      result['entries']
+    def usedby(key = nil)
+      dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
     end
 
-    def using
-      result = GoodData.get "#{GoodData.project.md['using2']}/#{obj_id}"
-      result['entries']
+    alias_method :used_by, :usedby
+
+    def using(key = nil)
+      dependency("#{GoodData.project.md['using2']}/#{obj_id}", key)
+    end
+
+    def usedby?(obj)
+      dependency?(:usedby, obj)
+    end
+
+    alias_method :used_by?, :usedby?
+
+    def using?(obj)
+      dependency?(:using, obj)
     end
 
     def to_json
       @json.to_json
-    end
-
-    alias_method :raw_data, :json
-
-    def data
-      key = methods.include?(:root_key) ? root_key : raw_data.keys.first
-      raw_data[key]
     end
 
     def saved?
@@ -202,7 +217,7 @@ module GoodData
     end
 
     def ==(other)
-      other.uri == uri
+      other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
     end
 
     def validate
@@ -224,6 +239,30 @@ module GoodData
 
     def metric?
       false
+    end
+
+    private
+
+    def dependency(uri, key = nil)
+      result = GoodData.get("#{uri}/#{obj_id}")['entries']
+      if key.nil?
+        result
+      elsif key.respond_to?(:category)
+        result.select { |item| item['category'] == key.category }
+      else
+        result.select { |item| item['category'] == key }
+      end
+    end
+
+    def dependency?(type, uri)
+      objs = case type
+             when :usedby
+               usedby
+             when :using
+               using
+             end
+      uri = uri.respond_to?(:uri) ? uri.uri : uri
+      objs.any? { |obj| obj['link'] == uri }
     end
   end
 end

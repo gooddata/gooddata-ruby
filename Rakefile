@@ -30,6 +30,49 @@ task :ci do
   Rake::Task['coveralls:push'].invoke
 end
 
+namespace :hook do
+  hook_path = File.join(File.dirname(__FILE__), '.git', 'hooks', 'pre-commit').to_s
+
+  desc 'Installs git pre-commit hook running rubocop'
+  task :install do |t|
+    if(File.exist?(hook_path))
+      puts 'Git pre-commit hook is already installed'
+    else
+      File.open(hook_path, 'w') do |file|
+        file.write("#! /usr/bin/env bash\n")
+        file.write("\n")
+        file.write("rake cop\n")
+      end
+      system "chmod 755 #{hook_path}"
+      puts 'Git commit hook was installed'
+    end
+  end
+
+  desc 'Uninstalls git pre-commit hook'
+  task :uninstall do |t|
+    res = File.exist?(hook_path)
+    if res
+      puts 'Uninstalling git pre-commit hook'
+      system "rm #{hook_path}"
+      puts 'Git pre-commit hook was uninstalled'
+    else
+      puts 'Git pre-commit hook is not installed'
+    end
+  end
+
+  desc 'Checks if is git pre-commit hook installed'
+  task :check do
+    res = File.exist?(hook_path)
+    if res
+      puts 'Git pre-commit IS installed'
+    else
+      puts 'Git pre-commit IS NOT installed'
+    end
+  end
+
+end
+
+
 RSpec::Core::RakeTask.new(:test)
 
 namespace :test do

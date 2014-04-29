@@ -2,7 +2,7 @@
 
 require 'gooddata/core/logging'
 
-describe GoodData do
+describe 'GoodData - logging' do
   TEST_MESSAGE = 'Hello World!'
 
   def test_error

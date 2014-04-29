@@ -95,7 +95,7 @@ module GoodData
       end
     end
 
-    def get_roles
+    def get_roles # rubocop:disable AccessorMethodName
       url = "/gdc/projects/#{self.pid}/roles"
 
       res = []
@@ -196,11 +196,11 @@ module GoodData
     end
 
     def browser_uri(options = {})
-      ui = options[:ui]
-      if ui
-        GoodData.connection.url + '#s=' + uri
-      else
+      grey = options[:grey]
+      if grey
         GoodData.connection.url + uri
+      else
+        GoodData.connection.url + '#s=' + uri
       end
     end
 
