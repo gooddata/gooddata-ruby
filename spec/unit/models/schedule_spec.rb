@@ -12,6 +12,8 @@ describe GoodData::Schedule do
   it 'Will get schedules for process' do
     GoodData.project = 'tk6192gsnav58crp6o1ahsmtuniq8khb'
 
+    proj = GoodData.project
+
     data = {
         'schedule' => {
             'type' => 'MSETL',
@@ -19,7 +21,7 @@ describe GoodData::Schedule do
             'cron' => '0 15 27 7 *',
             'params' => {
                 'PROCESS_ID' => 'f12975d2-5958-4248-9c3d-4c8f2e1f067d',
-                'EXECUTABLE' => '/graph/graph.grf'
+                'EXECUTABLE' => "#{proj.title}/graph/graph.grf"
             },
             'hiddenParams' => {
                 'HPARAM1_NAME' => 'HPARAM1_VALUE'
