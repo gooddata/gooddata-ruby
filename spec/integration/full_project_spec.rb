@@ -1,6 +1,6 @@
 require 'gooddata'
 
-describe "Spin a project", :constraint => 'slow' do
+describe "Ful project implementation", :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     ConnectionHelper::create_default_connection
@@ -9,6 +9,12 @@ describe "Spin a project", :constraint => 'slow' do
 
   after(:all) do
     @project.delete unless @project.nil?
+  end
+
+  it "should contain datasets" do
+    GoodData.with_project(@project) do |p|
+      p.datasets.count.should == 4
+    end
   end
 
   it "should compute an empty metric" do
