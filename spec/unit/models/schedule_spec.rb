@@ -12,19 +12,21 @@ describe GoodData::Schedule do
   it 'Will get schedules for process' do
     GoodData.project = 'tk6192gsnav58crp6o1ahsmtuniq8khb'
 
-    proj = GoodData.project
-    proc = proj.processes.first
-
-    sched = proc.schedules.first
-
-    puts "type: #{sched.type}"
-    puts "state: #{sched.state}"
-    puts "graph: #{sched.graph}"
-
     data = {
-      :field => '111'
+        'schedule' => {
+            'type' => 'MSETL',
+            'timezone' => 'UTC',
+            'cron' => '0 15 27 7 *',
+            'params' => {
+                'PROCESS_ID' => 'f12975d2-5958-4248-9c3d-4c8f2e1f067d',
+                'EXECUTABLE' => '/graph/graph.grf'
+            },
+            'hiddenParams' => {
+                'HPARAM1_NAME' => 'HPARAM1_VALUE'
+            }
+        }
     }
-    
+
     sched = GoodData::Schedule.create(data)
     pp sched
 
