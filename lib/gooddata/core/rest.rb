@@ -107,5 +107,15 @@ module GoodData
         end
       end
     end
+
+    def wait_for_polling_result(polling_url)
+      polling_result = GoodData.get(polling_url)
+      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
+        sleep(3)
+        polling_result = GoodData.get(polling_url)
+      end
+      polling_result
+    end
+
   end
 end

@@ -291,12 +291,7 @@ module GoodData
     def validate(filters = %w(ldm, pdm, metric_filter, invalid_objects))
       response = GoodData.post "#{GoodData.project.md['validate-project']}", 'validateProject' => filters
       polling_link = response['asyncTask']['link']['poll']
-      polling_result = GoodData.get(polling_link)
-      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_link)
-      end
-      polling_result
+      GoodData.wait_for_polling_result(polling_link)
     end
 
     def data
@@ -380,12 +375,9 @@ module GoodData
       result = GoodData.post("#{GoodData.project.md['maintenance']}/partialmdexport", export_payload)
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
-      polling_result = GoodData.get(polling_url)
 
-      while polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_url)
-      end
+      polling_result = GoodData.wait_for_polling_result(polling_url)
+
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
 
       import_payload = {
@@ -398,11 +390,8 @@ module GoodData
 
       result = GoodData.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
       polling_url = result['uri']
-      polling_result = GoodData.get(polling_url)
-      while polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_url)
-      end
+      polling_result = GoodData.wait_for_polling_result(polling_url)
+
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
     end
     alias_method :transfer_objects, :partial_md_export
