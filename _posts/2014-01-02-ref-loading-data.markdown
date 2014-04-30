@@ -1,8 +1,8 @@
 ---
-layout: post
+layout: reference
 title:  "Loading data into a project"
 date:   2014-01-19 13:56:00
-categories: recipe
+categories: reference
 pygments: true
 perex: Whatever you do you need data. Let's look at options how to get them into the project.
 ---
@@ -10,7 +10,7 @@ perex: Whatever you do you need data. Let's look at options how to get them into
 We strive to make the loading as simple as possible. There are different times and different needs. If you are playing around it is mandatory to be able to load data quickly in an iterative fashion. On the other hand once you deploy you are caring more about speed and correct error messages.
 
 ##Warning
-Before we start there is one important thing to understand. Whenever you upload a file through APIs as of know it is not enough just to load data. You also have to generate a file that is called a *manifest*. Ruby SDK does it for you but it has to have information from which it could generate it and just having the file to load is not enough. What it means when you are using Ruby SDK is to have the model created as described in article. Loading to an arbitrary project without the model description would not work as of now.
+Before we start there is one important thing to understand. Whenever you upload a file through APIs as of now it is not enough just to load data. You also have to generate a file that is called a *manifest* and upload it along with the data. Ruby SDK does it for you but it has to have information from which it could generate it and just having the file to load is not enough. What it means when you are using Ruby SDK is to have the model created as described in article [Creating the model](tutorial/tutorial-part-2-model). The model.rb that you use to describe Loading to an arbitrary project without the model description would not work as of now.
 
 ##Loading data interactively
 If you are playing around with project, creating metrics trying different things it is very helpful if you can load data without a big ceremony.

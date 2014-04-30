@@ -1,8 +1,8 @@
 ---
-layout: post
+layout: reference
 title:  "Working with a project"
 date:   2014-01-19 13:56:00
-categories: recipe
+categories: reference
 pygments: true
 perex: "Learn how to work with a project: clone it, copy reports, and do various other tasks."
 ---

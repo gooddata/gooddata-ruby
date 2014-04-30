@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: tutorial
 title:  "Part IV - Looking around project"
 date:   2014-01-19 13:56:00
 categories: tutorial
