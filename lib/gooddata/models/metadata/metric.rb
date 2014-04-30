@@ -100,6 +100,10 @@ module GoodData
       res[0][0]
     end
 
+    def expression
+      content['expression']
+    end
+
     def validate
       fail 'Meric needs to have title' if title.nil?
       true
