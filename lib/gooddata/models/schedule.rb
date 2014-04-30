@@ -10,18 +10,18 @@ module GoodData
 
       def create(process_id, cron, executable, options = {})
         default_opts = {
-            'type' => 'MSETL',
-            'timezone' => 'UTC',
-            'cron' => cron,
-            'params' => {
-                'PROCESS_ID' => process_id,
-                'EXECUTABLE' => executable
-            },
-            'hiddenParams' => {}
+          'type' => 'MSETL',
+          'timezone' => 'UTC',
+          'cron' => cron,
+          'params' => {
+            'PROCESS_ID' => process_id,
+            'EXECUTABLE' => executable
+          },
+          'hiddenParams' => {}
         }
 
         json = {
-            'schedule' => default_opts.merge(options)
+          'schedule' => default_opts.merge(options)
         }
         pp json
 
@@ -54,8 +54,7 @@ module GoodData
     end
 
     def delete
-      url = @json['schedule']['links']['self']
-      GoodData.delete url
+      GoodData.delete self.uri
     end
 
     def execute
@@ -79,6 +78,10 @@ module GoodData
 
     def graph
       @json['schedule']['params']['GRAPH']
+    end
+
+    def uri
+      @json['schedule']['links']['self'] if @json && @json['schedule'] && @json['schedule']['links']
     end
 
   end
