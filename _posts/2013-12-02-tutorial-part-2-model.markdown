@@ -3,8 +3,8 @@ layout: post
 title:  "Part II - Creating a data model"
 date:   2014-01-19 13:56:00
 categories: tutorial
-next_section: tutorial/tutorial-part-3-loading-dataect
-prev_section: tutorial/tutorial-part-1-your-first-proj
+next_section: tutorial/tutorial-part-3-loading-data
+prev_section: tutorial/tutorial-part-1-your-first-project
 pygments: true
 perex: The logical data model (LDM) defines the facts and attributes in your project, as well as their relationships. Let’s have a look at how to create a project’s LDM using Ruby SDK. Then, we compare this method with other approaches.
 ---
@@ -30,20 +30,20 @@ GoodData::Model::ProjectBuilder.create("my_test_project") do |p|
   p.add_date_dimension("committed_on")
 
   p.add_dataset("repos") do |d|
-    d.add_anchor("id")
-    d.add_label("name", :reference => "id")
+    d.add_anchor("repo_id")
+    d.add_label("name", :reference => "repo_id")
   end
 
   p.add_dataset("devs") do |d|
-    d.add_anchor("id")
-    d.add_label("email", :reference => "id")
+    d.add_anchor("dev_id")
+    d.add_label("email", :reference => "dev_id")
   end
 
   p.add_dataset("commits") do |d|
     d.add_fact("lines_changed")
     d.add_date("committed_on", :dataset => "committed_on")
-    d.add_reference("dev_id", :dataset => 'devs', :reference => 'id')
-    d.add_reference("repo_id", :dataset => 'repos', :reference => 'id')
+    d.add_reference("dev_id", :dataset => 'devs', :reference => 'dev_id')
+    d.add_reference("repo_id", :dataset => 'repos', :reference => 'repo_id')
   end
 
 end

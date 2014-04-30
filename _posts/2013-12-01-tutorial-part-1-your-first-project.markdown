@@ -70,7 +70,7 @@ In the file, insert your freshly acquired pid into the empty slot after "project
 {% highlight ruby %}
 {
   "model" : "./model/model.rb",
-  "project_id"   : "THIS_IS_YOUR_NEW_TOKEN"
+  "project_id"   : "THIS_IS_YOUR_NEW_PROJECT_ID"
 }
 {% endhighlight %}
 

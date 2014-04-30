@@ -47,10 +47,8 @@ devs.upload("data/devs.csv")
 
 Now exit the interactive session by typing `exit`.
 
-
 ##What did you learn
 You have just seen how easy it is to load data into a project. We will show other ways in the future but it iwll be just a variation on what you have seen.
 
 ##Where to go next
 Next section we will validate that the data are indeed in the project and create our first metric.
-
