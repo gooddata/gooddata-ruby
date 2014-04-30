@@ -16,6 +16,18 @@ describe GoodData::Schedule do
     proc = proj.processes.first
 
     sched = proc.schedules.first
-    sched.execute
+
+    puts "type: #{sched.type}"
+    puts "state: #{sched.state}"
+    puts "graph: #{sched.graph}"
+
+    data = {
+      :field => '111'
+    }
+    
+    sched = GoodData::Schedule.create(data)
+    pp sched
+
+    sched.delete
   end
 end
