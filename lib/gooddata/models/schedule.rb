@@ -17,7 +17,8 @@ module GoodData
     end
 
     def delete
-      GoodData.delete self.execution_url
+      url = @json['schedule']['links']['self']
+      GoodData.delete url
     end
 
     def execute
