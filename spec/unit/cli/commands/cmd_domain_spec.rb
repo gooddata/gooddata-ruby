@@ -2,12 +2,14 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
-  it "Has working 'domain' command" do
-    args = %w(domain)
+describe 'GoodData::CLI - domain' do
+  describe 'domain' do
+    it 'Complains when no subcommand specified' do
+      args = %w(domain)
 
-    out = run_cli(args)
-    out.should include "Command 'domain' requires a subcommand add_user,list_users"
+      out = run_cli(args)
+      out.should include "Command 'domain' requires a subcommand add_user,list_users"
+    end
   end
 
   describe "domain add_user" do

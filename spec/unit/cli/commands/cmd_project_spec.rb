@@ -2,61 +2,80 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
-  it "Has working 'project' command" do
-    args = %w(project)
+describe 'GoodData::CLI - project' do
+  describe 'project' do
+    it 'Complains when no subcommand specified' do
+      args = %w(project)
 
-    run_cli(args)
+      out = run_cli(args)
+      out.should include "Command 'project' requires a subcommand jack_in,create,delete,clone,invite,users,show,build,update,roles,validate"
+    end
   end
 
-  it "Has working 'project build' command" do
-    args = %w(project build)
+  describe 'project build' do
+    it 'Can be called without arguments' do
+      args = %w(project build)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'project clone' command" do
-    args = %w(project clone)
+  describe 'project clone' do
+    it 'Can be called without arguments' do
+      args = %w(project clone)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'project create' command" do
-    args = %w(project create)
+  describe 'project create' do
+    it 'Can be called without arguments' do
+      args = %w(project create)
 
-    # TODO: Pass all required args to prevent interaction
-    # TODO: Investigate, fix and enable execution
-    # run_cli(args)
+      # TODO: Pass all required args to prevent interaction
+      # TODO: Investigate, fix and enable execution
+      # run_cli(args)
+    end
   end
 
-  it "Has working 'project delete' command" do
-    args = %w(project delete)
+  describe 'project delete' do
+    it 'Can be called without arguments' do
+      args = %w(project delete)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'project jack_in' command" do
-    args = %w(project jack_in)
+  describe 'project jack_in' do
+    it 'Can be called without arguments' do
+      args = %w(project jack_in)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'project list' command" do
-    args = %w(project list)
+  describe 'project list' do
+    it 'Can be called without arguments' do
+      args = %w(project list)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'project show' command" do
-    args = %w(project show)
+  describe 'project show' do
+    it 'Can be called without arguments' do
+      args = %w(project show)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'project update' command" do
-    args = %w(project update)
+  describe 'project update' do
+    it 'Can be called without arguments' do
+      args = %w(project update)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
 end

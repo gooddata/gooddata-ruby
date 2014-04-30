@@ -2,32 +2,42 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
-  it "Has working 'process' command" do
-    args = %w(process)
+describe 'GoodData::CLI - process' do
+  describe 'process' do
+    it 'Complains when no subcommand specified' do
+      args = %w(process)
 
-    run_cli(args)
+      out = run_cli(args)
+      out.should include "Command 'process' requires a subcommand list,show,deploy,delete,execute"
+    end
   end
 
-  it "Has working 'process deploy' command" do
-    args = %w(process deploy)
+  describe 'process deploy' do
+    it 'Can be called without arguments' do
+      args = %w(process deploy)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'process get' command" do
-    args = %w(process get)
+  describe 'process get' do
+    it 'Can be called without arguments' do
+      args = %w(process get)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'process list' command" do
-    args = [
-      'process',
-      'list',
-      ProjectHelper::PROJECT_ID
-    ]
+  describe 'process list' do
+    it 'Lists processes when project ID specified' do
+      args = [
+        'process',
+        'list',
+        ProjectHelper::PROJECT_ID
+      ]
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
+
 end
