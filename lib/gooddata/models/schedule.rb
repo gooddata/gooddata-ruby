@@ -8,6 +8,7 @@ module GoodData
   class Schedule
     class << self
       def [](id)
+        pp id
         if id == :all
           schedules = self.list
           schedules.each do |schedule|
@@ -34,47 +35,8 @@ module GoodData
         res
       end
 
-      def show(pid = nil, sid = nil)
-        fail 'You have to provide project_id' if pid.nil?
-
-        res = []
-
-        schedules = self.list(pid)
-        schedules.each do |schedule|
-          if (sid === 'all')
-            res << schedule
-          elsif (sid == schedule['params']['PROCESS_ID'])
-            res << schedule
-          end
-        end
-        res
-      end
-
-      def state(pid = nil, sid = nil)
-        if pid == nil && sid == nil
-          @schedule['state']
-        else
-          GoodData.get("/gdc/projects/#{pid}/schedules/#{sid}")['state']
-        end
-      end
-
-      def delete(pid = nil, sid = nil)
-        pid = GoodData.project.pid if pid.nil? || pid.empty?
-        uri = "/gdc/projects/#{pid}/schedules/#{sid}"
-        GoodData.delete(uri)
-      end
-
-      def save(pid = nil, sid = nil, sch = nil)
-
-        if sch.nil?
-          uri = @schedule['links']['self']
-          GoodData.put(uri, @schedule)
-        else
-          pid = GoodData.project.pid if pid.nil? || pid.empty?
-          uri = "/gdc/projects/#{pid}/schedules"
-          GoodData.post(uri, sch)
-        end
-
+      def all
+        Schedule[:all]
       end
 
       def create(pid = nil, file = nil)
@@ -93,8 +55,32 @@ module GoodData
       @schedule = data
     end
 
-    def all
-      Schedule[:all]
+    def state(pid = nil, sid = nil)
+      if pid == nil && sid == nil
+        @schedule['state']
+      else
+        GoodData.get("/gdc/projects/#{pid}/schedules/#{sid}")['state']
+      end
+    end
+
+    def save(pid = nil, sid = nil, sch = nil)
+
+      if sch.nil?
+        uri = @schedule['links']['self']
+        GoodData.put(uri, @schedule)
+      else
+        pid = GoodData.project.pid if pid.nil? || pid.empty?
+        uri = "/gdc/projects/#{pid}/schedules"
+        GoodData.post(uri, sch)
+      end
+
+    end
+
+    def delete(pid = nil, sid = nil)
+      pid = GoodData.project.pid if pid.nil? || pid.empty?
+      links['']
+      uri = "/gdc/projects/#{pid}/schedules/#{sid}"
+      GoodData.delete(uri)
     end
 
     def type
@@ -103,10 +89,6 @@ module GoodData
 
     def params
       @schedule['params']
-    end
-
-    def links
-      process['links']
     end
 
     def self
