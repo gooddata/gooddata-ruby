@@ -9,6 +9,8 @@ module GoodData
         data = {
           :accountSetting => {
             :login => login,
+            :firstName => 'FirstName',
+            :lastName => 'LastName',
             :password => password,
             :verifyPassword => password,
             :email => login
