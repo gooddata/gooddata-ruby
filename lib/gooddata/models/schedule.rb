@@ -12,10 +12,8 @@ module GoodData
         url = "/gdc/projects/#{GoodData.project.pid}/schedules"
         res = GoodData.post url, json
 
-        pp res
-
-        # new_obj_json = GoodData.get res['links']['self']
-        # GoodData::Schedule.new(new_obj_json)
+        new_obj_json = GoodData.get res['schedule']['links']['self']
+        GoodData::Schedule.new(new_obj_json)
       end
     end
 
