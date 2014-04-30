@@ -17,19 +17,13 @@ GoodData::CLI.module_eval do
         domain = args[0]
         fail 'Domain name has to be provided' if domain.nil? || domain.empty?
 
-        first = args[1]
-        fail 'Firstname has to be provided' if first.nil? || first.empty?
-
-        last = args[2]
-        fail 'Lastname has to be provided' if last.nil? || last.empty?
-
-        email = args[3]
+        email = args[1]
         fail 'Email has to be provided' if email.nil? || email.empty?
 
-        password = args[4]
+        password = args[2]
         fail 'Password has to be provided' if password.nil? || password.empty?
 
-        GoodData::Command::Domain.add_user(domain, first, last, email, password)
+        GoodData::Command::Domain.add_user(domain, email, password)
       end
     end
 

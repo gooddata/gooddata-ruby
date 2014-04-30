@@ -60,7 +60,15 @@ module GoodData
           ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
           chunks = response['projectModelDiff']['updateScripts'].select { |script| script['updateScript']['preserveData'] == true && script['updateScript']['cascadeDrops'] == false }.map { |x| x['updateScript']['maqlDdlChunks'] }.flatten
           chunks.each do |chunk|
-            GoodData.post ldm_uri, 'manage' => { 'maql' => chunk }
+            response = GoodData.post ldm_uri, 'manage' => { 'maql' => chunk }
+            polling_url = response['entries'].first['link']
+
+            polling_result = GoodData.get(polling_url)
+            while polling_result['wTaskStatus']['status'] == 'RUNNING'
+              polling_result = GoodData.get(polling_url)
+            end
+            fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+
           end
 
           bp.datasets.each do |ds|

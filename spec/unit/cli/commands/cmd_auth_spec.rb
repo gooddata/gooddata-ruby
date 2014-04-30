@@ -2,10 +2,12 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
-  it "Has working 'auth' command" do
-    args = %w(auth)
+describe 'GoodData::CLI - auth' do
+  describe 'auth' do
+    it 'Can be called without arguments' do
+      args = %w(auth)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 end

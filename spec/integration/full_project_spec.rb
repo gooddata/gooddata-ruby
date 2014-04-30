@@ -1,15 +1,47 @@
 require 'gooddata'
 
-describe "Spin a project", :constraint => 'slow' do
+describe "Ful project implementation", :constraint => 'slow' do
   before(:all) do
-    spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
+    @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     ConnectionHelper::create_default_connection
-
-    @project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
+    @project = GoodData::Model::ProjectCreator.migrate({:spec => @spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
   end
 
   after(:all) do
     @project.delete unless @project.nil?
+  end
+
+  it "should contain datasets" do
+    GoodData.with_project(@project) do |p|
+      p.datasets.count.should == 4
+    end
+  end
+
+  it "should compute an empty metric" do
+    GoodData.with_project(@project) do |p|
+      f = GoodData::Fact.find_first_by_title('Lines changed')
+      metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")")
+      metric.execute.should be_nil
+    end
+  end
+
+  it "should load the data" do
+    GoodData.with_project(@project) do |p|
+      blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      commits_data = [
+        ["lines_changed","committed_on","dev_id","repo_id"],
+        [1,"01/01/2014",1,1],
+        [3,"01/02/2014",2,2],
+        [5,"05/02/2014",3,1]]
+      blueprint.get_dataset('commits').upload(commits_data)
+
+      devs_data = [
+        ["id", "email"],
+        [1, "tomas@gooddata.com"],
+        [2, "petr@gooddata.com"],
+        [3, "jirka@gooddata.com"]]
+      blueprint.get_dataset('devs').upload(devs_data)
+    end
   end
 
   it "should compute a metric" do

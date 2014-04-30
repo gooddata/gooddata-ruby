@@ -2,10 +2,12 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
-  it "Has working 'run_ruby' command" do
-    args = %w(run_ruby)
+describe 'GoodData::CLI - run_ruby' do
+  describe 'run_ruby' do
+    it 'Can be called without arguments' do
+      args = %w(run_ruby)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 end

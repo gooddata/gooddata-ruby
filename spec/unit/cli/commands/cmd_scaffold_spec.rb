@@ -2,47 +2,57 @@ require 'fileutils'
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
+describe 'GoodData::CLI - scaffold' do
   TEST_PROJECT_NAME = 'test-project'
   TEST_BRICK_NAME = 'test-brick'
 
-  it "Has working 'scaffold' command" do
-    args = %w(scaffold)
+  describe 'scaffold' do
+    it 'Complains when no subcommand specified' do
+      args = %w(scaffold)
 
-    run_cli(args)
+      out = run_cli(args)
+      out.should include "Command 'scaffold' requires a subcommand project,brick"
+    end
   end
 
-  it "Has working 'scaffold brick' command" do
-    args = %w(scaffold brick)
+  describe 'scaffold brick' do
+    it 'Complains when brick name is not specified' do
+      args = %w(scaffold brick)
 
-    run_cli(args)
+      out = run_cli(args)
+      out.should include 'Name of the brick has to be provided'
+    end
+
+    it 'Scaffolds brick if the name is specified' do
+      args = [
+        'scaffold',
+        'brick',
+        TEST_BRICK_NAME
+      ]
+
+      run_cli(args)
+      FileUtils.rm_rf(TEST_BRICK_NAME)
+    end
   end
 
-  it "Has working 'scaffold project' command" do
-    args = %w(scaffold project)
+  describe 'scaffold project' do
+    it 'Complains when project name is not specified' do
+      args = %w(scaffold project)
 
-    run_cli(args)
+      out = run_cli(args)
+      out.should include 'Name of the project has to be provided'
+    end
+
+    it "Scaffolds project if the name is specified" do
+      args = [
+        'scaffold',
+        'project',
+        TEST_PROJECT_NAME
+      ]
+
+      run_cli(args)
+      FileUtils.rm_rf(TEST_PROJECT_NAME)
+    end
   end
 
-  it "Has working 'scaffold brick <brick-name>' command" do
-    args = [
-      'scaffold',
-      'brick',
-      TEST_BRICK_NAME
-    ]
-
-    run_cli(args)
-    FileUtils.rm_rf(TEST_BRICK_NAME)
-  end
-
-  it "Has working 'scaffold project <project-name>' command" do
-    args = [
-      'scaffold',
-      'project',
-      TEST_PROJECT_NAME
-    ]
-
-    run_cli(args)
-    FileUtils.rm_rf(TEST_PROJECT_NAME)
-  end
 end

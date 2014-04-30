@@ -4,7 +4,7 @@ module GoodData
   module Model
     # GoodData REST API categories
     LDM_CTG = 'ldm'
-    LDM_MANAGE_CTG = 'ldm-manage'
+    LDM_MANAGE_CTG = 'ldm-manage2'
 
     # Model naming conventions
     FIELD_PK = 'id'

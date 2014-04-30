@@ -36,7 +36,7 @@ module GoodData
       end
 
       def title
-        data[:title]
+        data[:title] || name.titleize
       end
 
       def to_hash
@@ -68,7 +68,7 @@ module GoodData
       end
 
       def attributes_and_anchors
-        attributes + [anchor]
+        anchor? ? attributes + [anchor] : attributes
       end
 
       def find_column_by_type(type, all = :all)

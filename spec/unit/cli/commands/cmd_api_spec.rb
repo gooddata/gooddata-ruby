@@ -2,29 +2,35 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
-  it "Has working 'api' command" do
-    args = %w(api)
+describe 'GoodData::CLI - api' do
+  describe 'api' do
+    it 'Complains when no subcommand specified' do
+      args = %w(api)
 
-    out = run_cli(args)
-    out.should include("Command 'api' requires a subcommand info,get")
+      out = run_cli(args)
+      out.should include("Command 'api' requires a subcommand info,get")
+    end
   end
 
-  it "Has working 'api info' command" do
-    args = %w(api info)
+  describe 'api info' do
+    it 'Can be called without arguments' do
+      args = %w(api info)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 
-  it "Has working 'api get' command" do
-    args = %w(api get)
+  describe 'api get' do
+    it 'Can be called without arguments' do
+      args = %w(api get)
 
-    run_cli(args)
-  end
+      run_cli(args)
+    end
 
-  it "Has working 'api get /gdc' command" do
-    args = %w(api get /gdc)
+    it 'Is able to get /gdc' do
+      args = %w(api get /gdc)
 
-    run_cli(args)
+      run_cli(args)
+    end
   end
 end

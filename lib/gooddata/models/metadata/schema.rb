@@ -218,7 +218,7 @@ module GoodData
         date.references.each { |r| references << r }
       end
 
-      def set_anchor(column)
+      def set_anchor(column) # rubocop:disable AccessorMethodName
         @anchor = Anchor.new column, self
         @fields << @anchor
       end

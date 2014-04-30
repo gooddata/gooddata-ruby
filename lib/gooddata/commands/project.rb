@@ -34,15 +34,15 @@ module GoodData
 
         # Clone existing project
         def clone(project_id, options)
-          with_data = true
-          with_users = options[:users]
-          title = options[:title]
+          with_data = options[:data] || true
+          with_users = options[:users] || false
           export = {
-              :exportProject => {
-                  :exportUsers => with_users ? 1 : 0,
-                  :exportData => with_data ? 1 : 0
-              }
+            :exportProject => {
+              :exportUsers => with_users ? 1 : 0,
+              :exportData => with_data ? 1 : 0
+            }
           }
+
           result = GoodData.post("/gdc/md/#{project_id}/maintenance/export", export)
           export_token = result['exportArtifact']['token']
           status_url = result['exportArtifact']['status']['uri']
@@ -59,9 +59,9 @@ module GoodData
           new_project = GoodData::Project[project_uri]
 
           import = {
-              :importProject => {
-                  :token => export_token
-              }
+            :importProject => {
+              :token => export_token
+            }
           }
           result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
           status_url = result['uri']
@@ -105,19 +105,19 @@ module GoodData
           offset = 0
           # Limit set to 1000 to be safe
           limit = 1000
-          while (!finished)
-            result = GoodData.get("/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{limit}")
-            result["users"].map do |u|
+          until finished
+            result = GoodData.get('/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{limit}')
+            result['users'].map do |u|
               as = u['user']
               users.push(
-                  {
-                      :login => as['content']['email'],
-                      :uri => as['links']['self'],
-                      :first_name => as['content']['firstname'],
-                      :last_name => as['content']['lastname'],
-                      :role => as['content']['userRoles'].first,
-                      :status => as['content']['status']
-                  })
+                {
+                  :login => as['content']['email'],
+                  :uri => as['links']['self'],
+                  :first_name => as['content']['firstname'],
+                  :last_name => as['content']['lastname'],
+                  :role => as['content']['userRoles'].first,
+                  :status => as['content']['status']
+                })
             end
             if result['users'].count == limit
               offset += limit

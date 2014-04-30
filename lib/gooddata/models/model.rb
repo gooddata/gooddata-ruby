@@ -26,21 +26,21 @@ require 'zip'
 module GoodData
   module Model
     class << self
-      def add_dataset(name, columns, project = nil)
-        Schema.new('columns' => columns, 'name' => name)
-        add_schema(schema, project)
-      end
+      # def add_dataset(name, columns, project = nil)
+      #   Schema.new('columns' => columns, 'name' => name)
+      #   add_schema(schema, project)
+      # end
 
-      def add_schema(schema, project = nil)
-        unless schema.respond_to?(:to_maql_create) || schema.is_a?(String)
-          fail(ArgumentError, "Schema object or schema file path expected, got '#{schema}'")
-        end
-        schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
-        project = GoodData.project unless project
-        ldm_links = GoodData.get project.md[LDM_CTG]
-        ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
-        GoodData.post ldm_uri, 'manage' => { 'maql' => schema.to_maql_create }
-      end
+      # def add_schema(schema, project = nil)
+      #   unless schema.respond_to?(:to_maql_create) || schema.is_a?(String)
+      #     fail(ArgumentError, "Schema object or schema file path expected, got '#{schema}'")
+      #   end
+      #   schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
+      #   project = GoodData.project unless project
+      #   ldm_links = GoodData.get project.md[LDM_CTG]
+      #   ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
+      #   GoodData.post ldm_uri, 'manage' => { 'maql' => schema.to_maql_create }
+      # end
 
       # Load given file into a data set described by the given schema
       def upload_data(path, manifest, options = {})
