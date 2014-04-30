@@ -15,23 +15,12 @@ describe GoodData::Schedule do
     proj = GoodData.project
 
     data = {
-        'schedule' => {
-            'type' => 'MSETL',
-            'timezone' => 'UTC',
-            'cron' => '0 15 27 7 *',
-            'params' => {
-                'PROCESS_ID' => 'f12975d2-5958-4248-9c3d-4c8f2e1f067d',
-                'EXECUTABLE' => "#{proj.title}/graph/graph.grf"
-            },
-            'hiddenParams' => {
-                'HPARAM1_NAME' => 'HPARAM1_VALUE'
-            }
-        }
+      'timezone' => 'UTC',
+      'cron' => '2 2 2 2 *'
     }
 
-    sched = GoodData::Schedule.create(data)
-    pp sched
-
-    sched.delete
+    sched = GoodData::Schedule.create('f12975d2-5958-4248-9c3d-4c8f2e1f067d', '0 15 27 7 *', "#{proj.title}/graph/graph.grf", data)
+    # pp sched
+    # sched.delete
   end
 end

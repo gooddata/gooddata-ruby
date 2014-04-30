@@ -8,7 +8,39 @@ module GoodData
         GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules"
       end
 
-      def create(json)
+      def create(process_id, cron, executable, options = {})
+        default_opts = {
+            'type' => 'MSETL',
+            'timezone' => 'UTC',
+            'cron' => cron,
+            'params' => {
+                'PROCESS_ID' => process_id,
+                'EXECUTABLE' => executable
+            },
+            'hiddenParams' => {}
+        }
+
+        json = {
+            'schedule' => default_opts.merge(options)
+        }
+        pp json
+
+        tmp = json['schedule']['params']['PROCESS_ID']
+        fail 'Process ID has to be provided' if tmp.nil? || tmp.empty?
+
+        tmp = json['schedule']['params']['EXECUTABLE']
+        fail 'Executable has to be provided' if tmp.nil? || tmp.empty?
+
+        tmp = json['schedule']['cron']
+        fail 'Cron schedule has to be provided' if tmp.nil? || tmp.empty?
+
+        tmp = json['schedule']['timezone']
+        fail 'A timezone has to be provided' if tmp.nil? || tmp.empty?
+
+        tmp = json['schedule']['type']
+        fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
+
+
         url = "/gdc/projects/#{GoodData.project.pid}/schedules"
         res = GoodData.post url, json
 
