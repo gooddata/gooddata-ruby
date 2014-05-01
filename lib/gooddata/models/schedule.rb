@@ -40,9 +40,10 @@ module GoodData
         tmp = json['schedule']['type']
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
-
         url = "/gdc/projects/#{GoodData.project.pid}/schedules"
         res = GoodData.post url, json
+
+        fail 'Unable to create new schedule' if res.nil?
 
         new_obj_json = GoodData.get res['schedule']['links']['self']
         GoodData::Schedule.new(new_obj_json)
