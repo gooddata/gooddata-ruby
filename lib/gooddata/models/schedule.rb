@@ -114,7 +114,7 @@ module GoodData
       @dirty = true
     end
 
-    def hiddenParams=(new_hidden_param)
+    def hidden_params=(new_hidden_param)
       @json['schedule']['hiddenParams'].merge!(new_hidden_param)
       @dirty = true
     end
