@@ -155,6 +155,36 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#execute' do
+    it 'Executes schedule on process' do
+      # Create one a schedule
+      sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+
+      execution_time = Time.new
+      exec = sched.execute
+
+      # Call execute
+      executed = false
+      start_time = Time.new
+      while(Time.new - start_time < 30)
+        # Check if the last execution time
+        sched.executions.each do |execution|
+          next if execution['execution'].nil? || execution['execution']['startTime'].nil?
+          parsed_time = Time.parse(execution['execution']['startTime'])
+          executed_schedule = exec['execution']['links']['self'] == execution['execution']['links']['self']
+          if(execution_time <= parsed_time && executed_schedule)
+            executed = true
+            break
+          end
+        end
+        break if executed
+        sleep 1
+      end
+
+      expect(executed).to be(true)
+    end
+  end
+
   describe '#timezone' do
     before(:each) do
       @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
