@@ -85,7 +85,74 @@ describe GoodData::Schedule do
         tmp_sched.uri.should_not equal(sched.uri)
       end
     end
+  end
 
+  describe '#execution_url' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution URL as string' do
+      res = @schedule.execution_url
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
+
+  describe '#type' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution type as string' do
+      res = @schedule.type
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
+
+  describe '#state' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution state as string' do
+      res = @schedule.state
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
+
+  describe '#params' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution params as hash' do
+      res = @schedule.params
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(Hash)
+    end
   end
 
   describe '#execute' do
@@ -118,5 +185,21 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#timezone' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return timezone as string' do
+      res = @schedule.timezone
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
 
 end
