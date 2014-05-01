@@ -70,6 +70,5 @@ module GoodData
     def name=(domain_name) # rubocop:disable TrivialAccessors
       @name = domain_name
     end
-
   end
 end

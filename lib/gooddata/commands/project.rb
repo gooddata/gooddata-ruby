@@ -110,14 +110,13 @@ module GoodData
             result['users'].map do |u|
               as = u['user']
               users.push(
-                {
                   :login => as['content']['email'],
                   :uri => as['links']['self'],
                   :first_name => as['content']['firstname'],
                   :last_name => as['content']['lastname'],
                   :role => as['content']['userRoles'].first,
                   :status => as['content']['status']
-                })
+            )
             end
             if result['users'].count == limit
               offset += limit
