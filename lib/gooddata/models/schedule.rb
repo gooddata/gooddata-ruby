@@ -110,6 +110,14 @@ module GoodData
       @dirty = true
     end
 
+    def executions
+      if @json
+        url = @json['schedule']['links']['executions']
+        res = GoodData.get url
+        res['executions']['items']
+      end
+    end
+
     def params=(new_param)
       @json['schedule']['params'].merge!(new_param)
       @dirty = true
