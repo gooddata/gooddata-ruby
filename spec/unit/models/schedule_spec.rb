@@ -161,7 +161,7 @@ describe GoodData::Schedule do
       sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
 
       execution_time = Time.new
-      exec = sched.execute
+      execution_request = sched.execute
 
       # Call execute
       executed = false
@@ -171,7 +171,7 @@ describe GoodData::Schedule do
         sched.executions.each do |execution|
           next if execution['execution'].nil? || execution['execution']['startTime'].nil?
           parsed_time = Time.parse(execution['execution']['startTime'])
-          executed_schedule = exec['execution']['links']['self'] == execution['execution']['links']['self']
+          executed_schedule = execution_request['execution']['links']['self'] == execution['execution']['links']['self']
           if(execution_time <= parsed_time && executed_schedule)
             executed = true
             break
