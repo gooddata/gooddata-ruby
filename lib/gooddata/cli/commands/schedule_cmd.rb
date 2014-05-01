@@ -89,7 +89,7 @@ GoodData::CLI.module_eval do
         fail 'Project ID must be provided.' if pid.nil? || pid.empty?
         fail 'A JSON Schedule file was not found.' if args.first.empty?
 
-        file = JSON.load(File.open(args.first, "r"))
+        file = JSON.load(File.open(args.first, 'r'))
 
         GoodData.connect(opts)
 

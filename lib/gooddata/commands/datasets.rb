@@ -96,7 +96,11 @@ module GoodData
         with_project do |project_id|
           file, cfg_file = args
           fail(CommandFailed, "Usage: #{$PROGRAM_NAME} datasets:load <file> <dataset config>") unless cfg_file
-          config = JSON.load open(cfg_file) rescue raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
+          begin
+            config = JSON.load open(cfg_file)
+          rescue
+            raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
+          end
           schema = Model::Schema.new config
           Project[project_id].upload file, schema
         end
