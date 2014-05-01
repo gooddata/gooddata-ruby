@@ -85,6 +85,7 @@ module GoodData
     end
 
     def execute
+      fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
       result = GoodData.post '/gdc/xtab2/executor3', 'report_req' => { 'report' => uri }
       data_result_uri = result['execResult']['dataResult']
       result = GoodData.get data_result_uri

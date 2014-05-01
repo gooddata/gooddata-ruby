@@ -147,4 +147,19 @@ describe "Ful project implementation", :constraint => 'slow' do
     end
   end
 
+  it "should load the data" do
+    GoodData.with_project(@project) do |p|
+      blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      devs_data = [
+        ["id", "email"],
+        [4, "josh@gooddata.com"]]
+      blueprint.get_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
+    end
+  end
+
+  it "should have more users" do
+    GoodData.with_project(@project) do |p|
+      GoodData::Attribute['attr.devs.id'].create_metric.execute
+    end
+  end
 end
