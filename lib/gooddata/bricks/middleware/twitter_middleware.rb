@@ -6,7 +6,7 @@ require_relative 'base_middleware'
 
 module GoodData
   module Bricks
-    class TwitterMiddleware < GoodData::Bricks::Middleware
+    class TwitterMiddleware < Bricks::Middleware
       def call(params)
         client = Twitter::REST::Client.new do |config|
           config.consumer_key = params[:twitter_consumer_key]

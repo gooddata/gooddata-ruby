@@ -4,7 +4,7 @@ require_relative 'base_middleware'
 
 module GoodData
   module Bricks
-    class STDOUTLoggingMiddleware < GoodData::Bricks::Middleware
+    class STDOUTLoggingMiddleware < Bricks::Middleware
       def call(params)
         logger = Logger.new(STDOUT)
         params[:logger] = logger

@@ -48,7 +48,11 @@ module GoodData
         def delete(path)
           fail(GoodData::CommandFailed, 'Specify the path you want to DELETE.') if path.nil?
           result = GoodData.delete path
-          result rescue puts result
+          begin
+            result
+          rescue
+            puts result
+          end
         end
       end
     end

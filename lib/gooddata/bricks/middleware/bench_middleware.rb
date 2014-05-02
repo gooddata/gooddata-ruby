@@ -5,7 +5,7 @@ require_relative 'base_middleware'
 
 module GoodData
   module Bricks
-    class BenchMiddleware < GoodData::Bricks::Middleware
+    class BenchMiddleware < Bricks::Middleware
       def call(params)
         puts 'Starting timer'
         result = nil

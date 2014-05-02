@@ -7,7 +7,7 @@ require_relative '../cli/terminal'
 require_relative '../helpers'
 
 module GoodData
-  module GoodData
+  module Command
     class Auth
       class << self
         # Get path of .gooddata config

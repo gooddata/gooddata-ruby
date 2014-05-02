@@ -149,7 +149,7 @@ module GoodData
 
       scheds = GoodData::Schedule[:all]
       scheds['schedules']['items'].each do |item|
-        if item['schedule']['params']['PROCESS_ID'] == self.obj_id
+        if item['schedule']['params']['PROCESS_ID'] == obj_id
           res << GoodData::Schedule.new(item)
         end
       end
