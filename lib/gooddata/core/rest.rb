@@ -116,6 +116,5 @@ module GoodData
       end
       polling_result
     end
-
   end
 end

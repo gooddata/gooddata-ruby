@@ -29,7 +29,7 @@ describe GoodData::Command::Process do
 
   describe "#deploy" do
     it "Throws exception if no project specified" do
-      expect { GoodData::Command::Process.deploy(deploy_dir) }.to raise_error
+      expect { GoodData::Command::Process.deploy(deploy_dir) }.to_not raise_error
     end
 
     it "Deploys graph" do

@@ -5,7 +5,7 @@ module GoodData
     class Middleware
       attr_accessor :app
 
-      include GoodData::Bricks::Utils
+      include Bricks::Utils
 
       def initialize(options = {})
         @app = options[:app]
