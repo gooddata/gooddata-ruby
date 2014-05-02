@@ -54,4 +54,15 @@ describe GoodData::Project do
     end
   end
 
+  describe '#processes' do
+    it 'Returns the processes' do
+      pending 'Investigate which credentials to use'
+
+      GoodData.project = ProjectHelper::PROJECT_ID
+
+      proj = GoodData.project
+      procs = proj.processes
+    end
+  end
+
 end

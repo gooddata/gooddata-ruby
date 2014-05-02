@@ -144,6 +144,19 @@ module GoodData
       process['executables']
     end
 
+    def schedules
+      res = []
+
+      scheds = GoodData::Schedule[:all]
+      scheds['schedules']['items'].each do |item|
+        if item['schedule']['params']['PROCESS_ID'] == self.obj_id
+          res << GoodData::Schedule.new(item)
+        end
+      end
+
+      res
+    end
+
     alias_method :raw_data, :data
 
     def execute(executable, options = {})

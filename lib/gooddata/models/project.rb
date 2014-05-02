@@ -3,6 +3,7 @@
 require 'zip'
 require 'fileutils'
 
+require_relative 'process'
 require_relative '../exceptions/no_project_error'
 
 module GoodData
@@ -310,6 +311,10 @@ module GoodData
 
     def project?
       true
+    end
+
+    def processes
+      GoodData::Process[:all]
     end
 
     def clone(options = {})

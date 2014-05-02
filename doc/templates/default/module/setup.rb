@@ -37,7 +37,7 @@ def method_listing(include_specials = true)
   return @meths if @meths
   @meths = object.meths(:inherited => false, :included => !options.embed_mixins.empty?)
   if options.embed_mixins.size > 0
-    @meths = @meths.reject {|m| options.embed_mixins_match?(m.namespace) == false }
+    @meths = @meths.reject {|m| !options.embed_mixins_match?(m.namespace) }
   end
   @meths = sort_listing(prune_method_listing(@meths))
   @meths

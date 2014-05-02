@@ -15,7 +15,8 @@ module GoodData
     end
 
     def to_s(options = {})
-      with_indices = options[:index] || false
+      with_indices = options[:index]
+
       a = to_table.to_a
       data = a.transpose
       data.unshift((1..a.length).to_a) if with_indices
