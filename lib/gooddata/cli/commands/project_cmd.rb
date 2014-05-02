@@ -186,7 +186,7 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         GoodData.connect(opts)
 
-        roles = GoodData::Command::Project.get_roles(project_id)
+        roles = GoodData::Command::Project.roles(project_id)
 
         puts roles.map { |r| [r['url'], r['role']['projectRole']['meta']['title']].join(',') }
       end

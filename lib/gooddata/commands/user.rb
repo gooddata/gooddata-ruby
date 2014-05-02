@@ -9,7 +9,7 @@ module GoodData
   module Command
     class User
       class << self
-        def get_roles(pid)
+        def roles(pid)
           roles_response = GoodData.get("/gdc/projects/#{pid}/roles")
 
           roles = {}
