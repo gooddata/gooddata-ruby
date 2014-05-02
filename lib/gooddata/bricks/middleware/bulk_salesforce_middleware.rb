@@ -6,7 +6,7 @@ require_relative 'base_middleware'
 
 module GoodData
   module Bricks
-    class BulkSalesforceMiddleware < GoodData::Bricks::Middleware
+    class BulkSalesforceMiddleware < Bricks::Middleware
       def call(params)
         username = params[:salesforce_username]
         password = params[:salesforce_password]

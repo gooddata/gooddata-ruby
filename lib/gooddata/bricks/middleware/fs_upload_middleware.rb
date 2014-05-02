@@ -8,7 +8,7 @@ require_relative 'base_middleware'
 
 module GoodData
   module Bricks
-    class FsUploadMiddleware < GoodData::Bricks::Middleware
+    class FsUploadMiddleware < Bricks::Middleware
       def initialize(options = {})
         super
         @destination = options[:destination]

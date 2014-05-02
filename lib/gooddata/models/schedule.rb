@@ -5,7 +5,6 @@ module GoodData
     attr_reader :dirty
 
     class << self
-
       def [](id)
         GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules"
       end
@@ -56,14 +55,14 @@ module GoodData
     end
 
     def delete
-      GoodData.delete self.uri
+      GoodData.delete uri
     end
 
     def execute
       data = {
         :execution => {}
       }
-      GoodData.post self.execution_url, data
+      GoodData.post execution_url, data
     end
 
     def execution_url
@@ -141,7 +140,7 @@ module GoodData
     end
 
     def hidden_params=(new_hidden_param)
-      @json['schedule']['hiddenParams'] = self.hidden_params.merge(new_hidden_param)
+      @json['schedule']['hiddenParams'] = hidden_params.merge(new_hidden_param)
       @dirty = true
     end
 
@@ -156,7 +155,7 @@ module GoodData
             'hiddenParams' => @json['schedule']['hiddenParams']
           }
         }
-        res = GoodData.put self.uri, update_json
+        res = GoodData.put uri, update_json
 
         @json = res
         @dirty = false
@@ -166,6 +165,5 @@ module GoodData
     def uri
       @json['schedule']['links']['self'] if @json && @json['schedule'] && @json['schedule']['links']
     end
-
   end
 end
