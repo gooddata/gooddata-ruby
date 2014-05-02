@@ -73,6 +73,41 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#cron' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return cron as string' do
+      res = @schedule.cron
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
+
+  describe '#cron=' do
+  before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Assigns the timezone and marks the object dirty' do
+      test_cron = '2 2 2 2 *'
+
+      @schedule.cron = test_cron
+      expect(@schedule.cron).to eq(test_cron)
+      expect(@schedule.dirty).to be_true
+    end
+  end
+
   describe '#delete' do
     it 'Should delete schedule' do
       sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
@@ -87,6 +122,71 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#executable' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return executable as string' do
+      res = @schedule.executable
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
+
+  describe '#executable=' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Assigns the timezone and marks the object dirty' do
+      test_executable = 'this/is/test.gr'
+
+      @schedule.executable = test_executable
+      expect(@schedule.executable).to eq(test_executable)
+      expect(@schedule.dirty).to be_true
+    end
+  end
+
+  describe '#execute' do
+    it 'Executes schedule on process' do
+      # Create one a schedule
+      sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+
+      execution_time = Time.new
+      exec = sched.execute
+
+      # Call execute
+      executed = false
+      start_time = Time.new
+      while (Time.new - start_time < 30)
+        # Check if the last execution time
+        sched.executions.each do |execution|
+          next if execution['execution'].nil? || execution['execution']['startTime'].nil?
+          parsed_time = Time.parse(execution['execution']['startTime'])
+          executed_schedule = exec['execution']['links']['self'] == execution['execution']['links']['self']
+          if (execution_time <= parsed_time && executed_schedule)
+            executed = true
+            break
+          end
+        end
+        break if executed
+        sleep 1
+      end
+
+      expect(executed).to be(true)
+    end
+  end
+
   describe '#execution_url' do
     before(:each) do
       @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
@@ -98,6 +198,135 @@ describe GoodData::Schedule do
 
     it 'Should return execution URL as string' do
       res = @schedule.execution_url
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
+
+  describe '#hidden_params' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution hidden_params as hash' do
+      res = @schedule.hidden_params
+      res.should_not be_nil
+      res.should be_a_kind_of(Hash)
+    end
+  end
+
+  describe '#hidden_params=' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Assigns the params and marks the object dirty' do
+      @old_params = @schedule.hidden_params
+
+      test_params = {
+        'PROCESS_ID' => '1-2-3-4'
+      }
+
+      @schedule.hidden_params = test_params
+      expect(@schedule.hidden_params).to eq(@old_params.merge(test_params))
+      expect(@schedule.dirty).to be_true
+    end
+  end
+
+  describe '#params' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution params as hash' do
+      res = @schedule.params
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(Hash)
+    end
+  end
+
+  describe '#params=' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Assigns the params and marks the object dirty' do
+      @old_params = @schedule.params
+
+      test_params = {
+        'PROCESS_ID' => '1-2-3-4'
+      }
+
+      @schedule.params = test_params
+      expect(@schedule.params).to eq(@old_params.merge(test_params))
+      expect(@schedule.dirty).to be_true
+    end
+  end
+
+  describe '#process_id' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return process id as string' do
+      res = @schedule.process_id
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(String)
+    end
+  end
+
+  describe '#process_id=' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Assigns the timezone and marks the object dirty' do
+      test_process_id = '1-2-3-4'
+
+      @schedule.process_id = test_process_id
+      expect(@schedule.process_id).to eq(test_process_id)
+      expect(@schedule.dirty).to be_true
+    end
+  end
+
+  describe '#state' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution state as string' do
+      res = @schedule.state
       res.should_not be_nil
       res.should_not be_empty
       res.should be_a_kind_of(String)
@@ -121,7 +350,7 @@ describe GoodData::Schedule do
     end
   end
 
-  describe '#state' do
+  describe '#type=' do
     before(:each) do
       @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
@@ -130,58 +359,12 @@ describe GoodData::Schedule do
       @schedule.delete
     end
 
-    it 'Should return execution state as string' do
-      res = @schedule.state
-      res.should_not be_nil
-      res.should_not be_empty
-      res.should be_a_kind_of(String)
-    end
-  end
+    it 'Assigns the timezone and marks the object dirty' do
+      test_type = 'TEST'
 
-  describe '#params' do
-    before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
-    end
-
-    after(:each) do
-      @schedule.delete
-    end
-
-    it 'Should return execution params as hash' do
-      res = @schedule.params
-      res.should_not be_nil
-      res.should_not be_empty
-      res.should be_a_kind_of(Hash)
-    end
-  end
-
-  describe '#execute' do
-    it 'Executes schedule on process' do
-      # Create one a schedule
-      sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
-
-      execution_time = Time.new
-      exec = sched.execute
-
-      # Call execute
-      executed = false
-      start_time = Time.new
-      while(Time.new - start_time < 30)
-        # Check if the last execution time
-        sched.executions.each do |execution|
-          next if execution['execution'].nil? || execution['execution']['startTime'].nil?
-          parsed_time = Time.parse(execution['execution']['startTime'])
-          executed_schedule = exec['execution']['links']['self'] == execution['execution']['links']['self']
-          if(execution_time <= parsed_time && executed_schedule)
-            executed = true
-            break
-          end
-        end
-        break if executed
-        sleep 1
-      end
-
-      expect(executed).to be(true)
+      @schedule.type = test_type
+      expect(@schedule.type).to eq(test_type)
+      expect(@schedule.dirty).to be_true
     end
   end
 
@@ -202,4 +385,21 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#timezone=' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Assigns the timezone and marks the object dirty' do
+      test_timezone = 'PST'
+
+      @schedule.timezone = test_timezone
+      expect(@schedule.timezone).to eq(test_timezone)
+      expect(@schedule.dirty).to be_true
+    end
+  end
 end

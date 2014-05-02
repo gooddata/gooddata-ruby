@@ -2,6 +2,8 @@
 
 module GoodData
   class Schedule
+    attr_reader :dirty
+
     class << self
 
       def [](id)
@@ -23,7 +25,6 @@ module GoodData
         json = {
           'schedule' => default_opts.merge(options)
         }
-        pp json
 
         tmp = json['schedule']['params']['PROCESS_ID']
         fail 'Process ID has to be provided' if tmp.nil? || tmp.empty?
@@ -69,16 +70,8 @@ module GoodData
       @json['schedule']['links']['executions']
     end
 
-    def type
-      @json['schedule']['type']
-    end
-
     def state
       @json['schedule']['state']
-    end
-
-    def params
-      @json['schedule']['params']
     end
 
     def timezone
@@ -90,9 +83,17 @@ module GoodData
       @dirty = true
     end
 
+    def type
+      @json['schedule']['type']
+    end
+
     def type=(new_type)
       @json['schedule']['type'] = new_type
       @dirty = true
+    end
+
+    def cron
+      @json['schedule']['cron']
     end
 
     def cron=(new_cron)
@@ -100,9 +101,17 @@ module GoodData
       @dirty = true
     end
 
+    def process_id
+      @json['schedule']['params']['PROCESS_ID']
+    end
+
     def process_id=(new_project_id)
       @json['schedule']['params']['PROCESS_ID'] = new_project_id
       @dirty = true
+    end
+
+    def executable
+      @json['schedule']['params']['EXECUTABLE']
     end
 
     def executable=(new_executable)
@@ -118,26 +127,34 @@ module GoodData
       end
     end
 
+    def params
+      @json['schedule']['params']
+    end
+
     def params=(new_param)
       @json['schedule']['params'].merge!(new_param)
       @dirty = true
     end
 
+    def hidden_params
+      @json['schedule']['hiddenParams'] || {}
+    end
+
     def hidden_params=(new_hidden_param)
-      @json['schedule']['hiddenParams'].merge!(new_hidden_param)
+      @json['schedule']['hiddenParams'] = self.hidden_params.merge(new_hidden_param)
       @dirty = true
     end
 
     def save
       if @dirty
         update_json = {
-            'schedule' => {
-                'type' => @json['schedule']['type'],
-                'timezone' => @json['schedule']['timezone'],
-                'cron' => @json['schedule']['cron'],
-                'params' => @json['schedule']['params'],
-                'hiddenParams'=> @json['schedule']['hiddenParams']
-            }
+          'schedule' => {
+            'type' => @json['schedule']['type'],
+            'timezone' => @json['schedule']['timezone'],
+            'cron' => @json['schedule']['cron'],
+            'params' => @json['schedule']['params'],
+            'hiddenParams' => @json['schedule']['hiddenParams']
+          }
         }
         res = GoodData.put self.uri, update_json
 
