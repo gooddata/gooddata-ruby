@@ -220,6 +220,22 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#hidden_params' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return execution hidden_params as hash' do
+      res = @schedule.hidden_params
+      res.should_not be_nil
+      res.should be_a_kind_of(Hash)
+    end
+  end
+
   describe '#hidden_params=' do
     before(:each) do
       @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
@@ -336,6 +352,10 @@ describe GoodData::Schedule do
           saved = true
         end
       end
+
+      @schedule.timezone = 'UTC'
+
+      @schedule.save
 
       expect(saved).to be(true)
 
