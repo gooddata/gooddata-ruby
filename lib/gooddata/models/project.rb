@@ -130,7 +130,6 @@ module GoodData
       nil
     end
 
-
     def initialize(json)
       @json = json
     end

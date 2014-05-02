@@ -79,7 +79,6 @@ module GoodData
       alias_method :id_to_uri, :identifier_to_uri
 
       alias_method :get_by_id, :[]
-
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
