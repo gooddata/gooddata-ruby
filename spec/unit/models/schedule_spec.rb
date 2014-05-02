@@ -99,7 +99,7 @@ describe GoodData::Schedule do
       @schedule.delete
     end
 
-    it 'Assigns the timezone and marks the object dirty' do
+    it 'Assigns the cron and marks the object dirty' do
       test_cron = '2 2 2 2 *'
 
       @schedule.cron = test_cron
@@ -148,7 +148,7 @@ describe GoodData::Schedule do
       @schedule.delete
     end
 
-    it 'Assigns the timezone and marks the object dirty' do
+    it 'Assigns the executable and marks the object dirty' do
       test_executable = 'this/is/test.gr'
 
       @schedule.executable = test_executable
@@ -163,7 +163,7 @@ describe GoodData::Schedule do
       sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
 
       execution_time = Time.new
-      exec = sched.execute
+      execution_request = sched.execute
 
       # Call execute
       executed = false
@@ -173,7 +173,7 @@ describe GoodData::Schedule do
         sched.executions.each do |execution|
           next if execution['execution'].nil? || execution['execution']['startTime'].nil?
           parsed_time = Time.parse(execution['execution']['startTime'])
-          executed_schedule = exec['execution']['links']['self'] == execution['execution']['links']['self']
+          executed_schedule = execution_request['execution']['links']['self'] == execution['execution']['links']['self']
           if (execution_time <= parsed_time && executed_schedule)
             executed = true
             break
@@ -204,7 +204,7 @@ describe GoodData::Schedule do
     end
   end
 
-  describe '#hidden_params' do
+  describe '#type' do
     before(:each) do
       @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
@@ -213,10 +213,10 @@ describe GoodData::Schedule do
       @schedule.delete
     end
 
-    it 'Should return execution hidden_params as hash' do
-      res = @schedule.hidden_params
+    it 'Should return execution type as string' do
+      res = @schedule.type
       res.should_not be_nil
-      res.should be_a_kind_of(Hash)
+      res.should be_a_kind_of(String)
     end
   end
 
@@ -229,7 +229,7 @@ describe GoodData::Schedule do
       @schedule.delete
     end
 
-    it 'Assigns the params and marks the object dirty' do
+    it 'Assigns the hidden params and marks the object dirty' do
       @old_params = @schedule.hidden_params
 
       test_params = {
@@ -307,13 +307,40 @@ describe GoodData::Schedule do
       @schedule.delete
     end
 
-    it 'Assigns the timezone and marks the object dirty' do
+    it 'Assigns the process_id and marks the object dirty' do
       test_process_id = '1-2-3-4'
 
       @schedule.process_id = test_process_id
       expect(@schedule.process_id).to eq(test_process_id)
       expect(@schedule.dirty).to be_true
     end
+  end
+
+  describe '#save' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    it 'Should save a schedule' do
+      saved = false
+      url = "/gdc/projects/#{PROJECT_ID}/schedules"
+      req = GoodData.get url
+      schedules = req['schedules']['items']
+      schedules.each do |schedule|
+        schedule_self = schedule['schedule']['links']['self']
+        if schedule_self == @schedule.uri
+          saved = true
+        end
+      end
+
+      expect(saved).to be(true)
+
+    end
+
   end
 
   describe '#state' do
@@ -359,7 +386,7 @@ describe GoodData::Schedule do
       @schedule.delete
     end
 
-    it 'Assigns the timezone and marks the object dirty' do
+    it 'Assigns the type the object dirty' do
       test_type = 'TEST'
 
       @schedule.type = test_type
