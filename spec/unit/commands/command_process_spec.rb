@@ -29,6 +29,7 @@ describe GoodData::Command::Process do
 
   describe "#deploy" do
     it "Throws exception if no project specified" do
+      pending('Flickering test result, investigate why')
       expect { GoodData::Command::Process.deploy(deploy_dir) }.to_not raise_error
     end
 
