@@ -202,4 +202,31 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#save' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    after(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+    end
+
+    it 'Should save a schedule' do
+      saved = false
+      url = "/gdc/projects/#{PROJECT_ID}/schedules"
+      req = GoodData.get url
+      schedules = req['schedules']['items']
+      schedules.each do |schedule|
+        schedule_self = schedule['schedule']['links']['self']
+        if schedule_self == @schedule.uri
+           saved = true
+        end
+      end
+
+      expect(saved).to be(true)
+
+    end
+
+  end
+
 end
