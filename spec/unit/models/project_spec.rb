@@ -18,40 +18,69 @@ describe GoodData::Project do
     GoodData.disconnect
   end
 
-  describe '#all' do
-    it 'Returns all projects' do
-      pending 'Throws 403 sometimes on some machines, investigate why'
-      GoodData::Project.all
-    end
-  end
-
   describe '#[]' do
     it 'Accepts :all parameter' do
-      pending 'Throws 403 sometimes on some machines, investigate why'
-      GoodData::Project[:all]
+      project = GoodData::Project[:all]
+      project.should_not be_nil
+      project.should be_a_kind_of(Array)
+    end
+
+    it 'Returns project if ID passed' do
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      project.should_not be_nil
+      project.should be_a_kind_of(GoodData::Project)
+    end
+
+    it 'Returns project if URL passed' do
+      project = GoodData::Project[ProjectHelper::PROJECT_URL]
+      project.should_not be_nil
+      project.should be_a_kind_of(GoodData::Project)
+    end
+
+    it 'Throws an exception when invalid format of URL passed' do
+      invalid_url = '/gdc/invalid_url'
+      expect { GoodData::Project[invalid_url] }.to raise_error
     end
   end
 
-  describe '#get_roles' do
-    it 'Returns array' do
-      proj = get_default_proj
-      roles = proj.get_roles
-      expect(roles).to be_instance_of(Array)
+  describe '#all' do
+    it 'Returns all projects' do
+      GoodData::Project.all
     end
   end
 
   describe '#get_role_by_identifier' do
     it 'Looks up for role by identifier' do
-      proj = get_default_proj
-      proj.get_role_by_identifier('admin')
+      project = get_default_proj
+      role = project.get_role_by_identifier('readOnlyUserRole')
+      role.should_not be_nil
+      role.should be_a_kind_of(GoodData::ProjectRole)
+    end
+  end
+
+  describe '#get_role_by_summary' do
+    it 'Looks up for role by summary' do
+      project = get_default_proj
+      role = project.get_role_by_summary('read only user role')
+      role.should_not be_nil
+      role.should be_a_kind_of(GoodData::ProjectRole)
     end
   end
 
   describe '#get_role_by_title' do
     it 'Looks up for role by title' do
-      proj = get_default_proj
-      proj.get_role_by_title('admin')
+      project = get_default_proj
+      role = project.get_role_by_title('Viewer')
+      role.should_not be_nil
+      role.should be_a_kind_of(GoodData::ProjectRole)
     end
   end
 
+  describe '#roles' do
+    it 'Returns array' do
+      proj = get_default_proj
+      roles = proj.roles
+      expect(roles).to be_instance_of(Array)
+    end
+  end
 end

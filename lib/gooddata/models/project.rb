@@ -4,6 +4,7 @@ require 'zip'
 require 'fileutils'
 
 require_relative '../exceptions/no_project_error'
+require_relative 'project_role'
 
 module GoodData
   class Project
@@ -11,6 +12,7 @@ module GoodData
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
     SLIS_PATH = '/ldm/singleloadinterface'
+    DEFAULT_INVITE_MESSAGE = 'Join us!'
 
     attr_accessor :connection, :json
 
@@ -95,131 +97,9 @@ module GoodData
       end
     end
 
-    def get_roles # rubocop:disable AccessorMethodName
-      url = "/gdc/projects/#{self.pid}/roles"
-
-      res = []
-
-      tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].each do |role_url|
-        res << {
-          'url' => role_url,
-          'role' => GoodData.get(role_url)
-        }
-      end
-
-      return res
-    end
-
-    def get_role_by_identifier(role_name)
-      tmp = get_roles
-      tmp.each do |role|
-        if role['role']['projectRole']['meta']['identifier'].downcase == role_name.downcase
-          return role
-        end
-      end
-      return nil
-    end
-
-    def get_role_by_title(role_name)
-      tmp = get_roles
-      tmp.each do |role|
-        if role['role']['projectRole']['meta']['title'].downcase == role_name.downcase
-          return role
-        end
-      end
-      return nil
-    end
-
-
-    def initialize(json)
-      @json = json
-    end
-
-    def invite(email, role, msg)
-      puts "Inviting #{email}, role: #{role}"
-
-      role_url = nil
-      if role.index('/gdc/') != 0
-        tmp = get_role_by_identifier(role)
-        tmp = get_role_by_title(role) if tmp.nil?
-        role_url = tmp['url'] if tmp
-      else
-        role_url = role if role_url.nil?
-      end
-
-      data = {
-        :invitations => [{
-                           :invitation => {
-                             :content => {
-                               :email => email,
-                               :role => role_url,
-                               :action => {
-                                 :setMessage => msg
-                               }
-                             }
-                           }
-                         }]
-      }
-
-      url = "/gdc/projects/#{self.pid}/invitations"
-      GoodData.post(url, data)
-    end
-
-    def save
-      response = GoodData.post PROJECTS_PATH, raw_data
-      if uri.nil?
-        response = GoodData.get response['uri']
-        @json = response
-      end
-    end
-
-    def saved?
-      !uri.nil?
-    end
-
-    def reload!
-      if saved?
-        response = GoodData.get(uri)
-        @json = response
-      end
-      self
-    end
-
-    def delete
-      fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
-      GoodData.delete(uri)
-    end
-
-    def uri
-      data['links']['self'] if data && data['links'] && data['links']['self']
-    end
-
-    def browser_uri(options = {})
-      grey = options[:grey]
-      if grey
-        GoodData.connection.url + uri
-      else
-        GoodData.connection.url + '#s=' + uri
-      end
-    end
-
-    def obj_id
-      uri.split('/').last
-    end
-
-    alias_method :pid, :obj_id
-
-    def title
-      data['meta']['title'] if data['meta']
-    end
-
-    def state
-      data['content']['state'].downcase.to_sym if data['content'] && data['content']['state']
-    end
-
-    def md
-      @md ||= Links.new GoodData.get(data['links']['metadata'])
+    def add_dashboard(options = {})
+      dash = GoodData::Dashboard.create(options)
+      dash.save
     end
 
     # Creates a data set within the project
@@ -253,65 +133,17 @@ module GoodData
       rep.save
     end
 
-    def add_dashboard(options = {})
-      dash = GoodData::Dashboard.create(options)
-      dash.save
-    end
-
     def add_user(email_address, domain)
       fail 'Not implemented'
     end
 
-    def upload(file, schema, mode = 'FULL')
-      schema.upload file, self, mode
-    end
-
-    def slis
-      link = "#{data['links']['metadata']}#{SLIS_PATH}"
-
-      # TODO: Review what to do with passed extra argument
-      Metadata.new GoodData.get(link)
-    end
-
-    def datasets
-      datasets_uri = "#{md['data']}/sets"
-      response = GoodData.get datasets_uri
-      response['dataSetsInfo']['sets'].map do |ds|
-        DataSet[ds['meta']['uri']]
+    def browser_uri(options = {})
+      grey = options[:grey]
+      if grey
+        GoodData.connection.url + uri
+      else
+        GoodData.connection.url + '#s=' + uri
       end
-    end
-
-    # Run validation on project
-    # Valid settins for validation are (default all):
-    # ldm - Checks the consistency of LDM objects.
-    # pdm Checks LDM to PDM mapping consistency, also checks PDM reference integrity.
-    # metric_filter - Checks metadata for inconsistent metric filters.
-    # invalid_objects - Checks metadata for invalid/corrupted objects.
-    # asyncTask response
-    def validate(filters = %w(ldm, pdm, metric_filter, invalid_objects))
-      response = GoodData.post "#{GoodData.project.md['validate-project']}", 'validateProject' => filters
-      polling_link = response['asyncTask']['link']['poll']
-      polling_result = GoodData.get(polling_link)
-      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_link)
-      end
-      polling_result
-    end
-
-    def data
-      raw_data['project']
-    end
-
-    def links
-      data['links']
-    end
-
-    alias_method :to_json, :json
-    alias_method :raw_data, :json
-
-    def project?
-      true
     end
 
     def clone(options = {})
@@ -358,9 +190,112 @@ module GoodData
       new_project
     end
 
+    def data
+      raw_data['project']
+    end
+
+    def datasets
+      datasets_uri = "#{md['data']}/sets"
+      response = GoodData.get datasets_uri
+      response['dataSetsInfo']['sets'].map do |ds|
+        DataSet[ds['meta']['uri']]
+      end
+    end
+
+    # Deletes project
+    def delete
+      fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
+      GoodData.delete(uri)
+    end
+
+    # Deletes dashboards for project
     def delete_dashboards
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
     end
+
+    # Gets project role by its identifier
+    #
+    # @param role_name [String] Title of role to look for
+    def get_role_by_identifier(role_name)
+      tmp = roles
+      tmp.each do |role|
+        return role if role.identifier.downcase == role_name.downcase
+      end
+      return nil
+    end
+
+    # Gets project role byt its summary
+    #
+    # @param role_summary [String] Summary of role to look for
+    def get_role_by_summary(role_summary)
+      tmp = roles
+      tmp.each do |role|
+        return role if role.summary.downcase == role_summary.downcase
+      end
+      return nil
+    end
+
+    # Gets project role by its name
+    #
+    # @param role_title [String] Title of role to look for
+    def get_role_by_title(role_title)
+      tmp = roles
+      tmp.each do |role|
+        return role if role.title.downcase == role_title.downcase
+      end
+      return nil
+    end
+
+    # Initializes object instance from raw wire JSON
+    #
+    # @param json Json used for initialization
+    def initialize(json)
+      @json = json
+    end
+
+    def invite(email, role, msg = DEFAULT_INVITE_MESSAGE)
+      puts "Inviting #{email}, role: #{role}"
+
+      role_url = nil
+      if role.index('/gdc/') != 0
+        tmp = get_role_by_identifier(role)
+        tmp = get_role_by_title(role) if tmp.nil?
+        role_url = tmp['url'] if tmp
+      else
+        role_url = role if role_url.nil?
+      end
+
+      data = {
+        :invitations => [{
+                           :invitation => {
+                             :content => {
+                               :email => email,
+                               :role => role_url,
+                               :action => {
+                                 :setMessage => msg
+                               }
+                             }
+                           }
+                         }]
+      }
+
+      url = "/gdc/projects/#{self.pid}/invitations"
+      GoodData.post(url, data)
+    end
+
+    def links
+      data['links']
+    end
+
+    def md
+      @md ||= Links.new GoodData.get(data['links']['metadata'])
+    end
+
+    def obj_id
+      uri.split('/').last
+    end
+
+    alias_method :pid, :obj_id
 
     def partial_md_export(objects, options = {})
       # TODO: refactor polling to md_polling in client
@@ -405,6 +340,89 @@ module GoodData
       end
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
     end
+
     alias_method :transfer_objects, :partial_md_export
+
+    def project?
+      true
+    end
+
+    def reload!
+      if saved?
+        response = GoodData.get(uri)
+        @json = response
+      end
+      self
+    end
+
+    def roles
+      url = "/gdc/projects/#{self.pid}/roles"
+
+      res = []
+
+      tmp = GoodData.get(url)
+      tmp['projectRoles']['roles'].each do |role_url|
+        json = GoodData.get role_url
+        res << GoodData::ProjectRole.new(json)
+      end
+
+      return res
+    end
+
+    def save
+      response = GoodData.post PROJECTS_PATH, raw_data
+      if uri.nil?
+        response = GoodData.get response['uri']
+        @json = response
+      end
+    end
+
+    def saved?
+      !uri.nil?
+    end
+
+    def slis
+      link = "#{data['links']['metadata']}#{SLIS_PATH}"
+
+      # TODO: Review what to do with passed extra argument
+      Metadata.new GoodData.get(link)
+    end
+
+    def state
+      data['content']['state'].downcase.to_sym if data['content'] && data['content']['state']
+    end
+
+    def title
+      data['meta']['title'] if data['meta']
+    end
+
+    def upload(file, schema, mode = 'FULL')
+      schema.upload file, self, mode
+    end
+
+    def uri
+      data['links']['self'] if data && data['links'] && data['links']['self']
+    end
+
+    # Run validation on project
+    # Valid settins for validation are (default all):
+    # ldm - Checks the consistency of LDM objects.
+    # pdm Checks LDM to PDM mapping consistency, also checks PDM reference integrity.
+    # metric_filter - Checks metadata for inconsistent metric filters.
+    # invalid_objects - Checks metadata for invalid/corrupted objects.
+    # asyncTask response
+    def validate(filters = %w(ldm, pdm, metric_filter, invalid_objects))
+      response = GoodData.post "#{GoodData.project.md['validate-project']}", 'validateProject' => filters
+      polling_link = response['asyncTask']['link']['poll']
+      polling_result = GoodData.get(polling_link)
+      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
+        sleep(3)
+        polling_result = GoodData.get(polling_link)
+      end
+      polling_result
+    end
+
+    alias_method :to_json, :json
+    alias_method :raw_data, :json
   end
 end
