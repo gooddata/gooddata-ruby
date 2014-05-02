@@ -32,8 +32,6 @@ module GoodData
 
         # TODO: check files_to_exclude param. Does it do anything? It should check that in case of using CLI, it makes sure the files are not deployed
         def deploy(dir, options = {})
-          options[:verbose] || false
-
           GoodData.with_project(options[:project_id]) do
             params = options[:params].nil? ? [] : [options[:params]]
             GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
