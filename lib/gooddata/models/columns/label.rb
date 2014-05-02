@@ -25,7 +25,7 @@ module GoodData
       end
 
       def identifier
-        @identifier ||= @attribute.name == name ? super : "#{self.type_prefix}.#{@schema.name}.#{@attribute.name}.#{name}"
+        @identifier ||= @attribute.name == name ? super : "#{type_prefix}.#{@schema.name}.#{@attribute.name}.#{name}"
       end
 
       def to_maql_create

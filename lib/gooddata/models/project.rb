@@ -96,7 +96,7 @@ module GoodData
     end
 
     def get_roles # rubocop:disable AccessorMethodName
-      url = "/gdc/projects/#{self.pid}/roles"
+      url = "/gdc/projects/#{pid}/roles"
 
       res = []
 
@@ -107,8 +107,7 @@ module GoodData
           'role' => GoodData.get(role_url)
         }
       end
-
-      return res
+      res
     end
 
     def get_role_by_identifier(role_name)
@@ -118,7 +117,7 @@ module GoodData
           return role
         end
       end
-      return nil
+      nil
     end
 
     def get_role_by_title(role_name)
@@ -128,7 +127,7 @@ module GoodData
           return role
         end
       end
-      return nil
+      nil
     end
 
 
@@ -162,7 +161,7 @@ module GoodData
                          }]
       }
 
-      url = "/gdc/projects/#{self.pid}/invitations"
+      url = "/gdc/projects/#{pid}/invitations"
       GoodData.post(url, data)
     end
 

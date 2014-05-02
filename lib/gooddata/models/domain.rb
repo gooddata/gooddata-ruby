@@ -37,7 +37,7 @@ module GoodData
     end
 
     def initialize(domain_name)
-      self.name = domain_name
+      @name = domain_name
     end
 
     # Add user to login
@@ -49,7 +49,7 @@ module GoodData
     # domain.add_user 'joe.doe@example', 'sup3rS3cr3tP4ssW0rtH'
     #
     def add_user(login, password)
-      GoodData::Domain.add_user(self.name, login, password)
+      GoodData::Domain.add_user(name, login, password)
     end
 
     # List users in domain
@@ -61,7 +61,7 @@ module GoodData
     # pp domain.list_users
     #
     def list_users
-      GoodData::Domain.list_users(self.name)
+      GoodData::Domain.list_users(name)
     end
 
     private
