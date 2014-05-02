@@ -6,12 +6,12 @@
       "columns": [
         {
           "type": "anchor",
-          "name": "id"
+          "name": "repo_id"
         },
         {
           "type": "label",
           "name": "name",
-          "reference": "id"
+          "reference": "repo_id"
         },
         {
           "type": "attribute",
@@ -24,12 +24,12 @@
       "columns": [
         {
           "type": "anchor",
-          "name": "id"
+          "name": "dev_id"
         },
         {
           "type": "label",
           "name": "email",
-          "reference": "id"
+          "reference": "dev_id"
         }
       ]
     },
@@ -55,7 +55,7 @@
           "type": "reference",
           "name": "repo_id",
           "dataset": "repos",
-          "reference": "dev_id"
+          "reference": "repo_id"
         }
       ]
     }

@@ -36,7 +36,7 @@ describe "Ful project implementation", :constraint => 'slow' do
       blueprint.get_dataset('commits').upload(commits_data)
 
       devs_data = [
-        ["id", "email"],
+        ["dev_id", "email"],
         [1, "tomas@gooddata.com"],
         [2, "petr@gooddata.com"],
         [3, "jirka@gooddata.com"]]
@@ -68,8 +68,7 @@ describe "Ful project implementation", :constraint => 'slow' do
       f = GoodData::Fact.find_first_by_title('Lines changed')
       metric = GoodData::Metric.xcreate(:title => "My metric", :expression => "SELECT SUM(#\"#{f.title}\")")
       metric.save
-
-      result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.email'])
+      result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
       result[1][1].should == 3
       result.include_row?(["jirka@gooddata.com", 5]).should == true
     end
@@ -151,15 +150,15 @@ describe "Ful project implementation", :constraint => 'slow' do
     GoodData.with_project(@project) do |p|
       blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
       devs_data = [
-        ["id", "email"],
+        ["dev_id", "email"],
         [4, "josh@gooddata.com"]]
       blueprint.get_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
     end
   end
 
-  it "should have more users" do
+  it "should have more users"  do
     GoodData.with_project(@project) do |p|
-      GoodData::Attribute['attr.devs.id'].create_metric.execute
+      GoodData::Attribute['attr.devs.dev_id'].create_metric.execute
     end
   end
 end
