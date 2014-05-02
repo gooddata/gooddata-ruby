@@ -177,7 +177,29 @@ You can use one of multiple supported methods for specifying projects and object
 * For API documentation, see [Metadata API](https://developer.gooddata.com/api#metadata).
 
 ###Inviting a user
-TBD
+{% highlight ruby %}
+project = GoodData::Project['project_id']
+project.invite('john@example.com', :admin, "Welcome John, enjoy this project")
+{% endhighlight %}
+
+You can invite more than one user
+{% highlight ruby %}
+project.invite(['john@example.com', 'jane@example.com'], "admin", "Welcome, enjoy this project")
+{% endhighlight %}
+
+To know what roles you have in a project. You can call
+
+{% highlight ruby %}
+project.roles
+{% endhighlight %}
+
+on the project.
+
+{% highlight ruby %}
+project.roles.map(&:title)
+{% endhighlight %}
+
+Will print the titles of the roles which you can use for the invite command.
 
 ###Project management
 You can use the following commands to manage basic aspects of your project:

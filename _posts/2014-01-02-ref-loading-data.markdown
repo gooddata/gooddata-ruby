@@ -18,10 +18,10 @@ If you are playing around with project, creating metrics trying different things
 ###Loading data from array
 
 {% highlight ruby %}
-  gooddata -p PROJECT_ID project jack_in
+gooddata -p PROJECT_ID project jack_in
 
-  dataset = blueprint.get_dataset("devs")
-  dataset.upload([["id", "email"],["1", "john.doe@example.com"]])
+dataset = blueprint.get_dataset("devs")
+dataset.upload([["id", "email"],["1", "john.doe@example.com"]])
 {% endhighlight %}
 
 You can load data from an array. The only thing you have to provide is the array of arrays of data. The first line has to contain the names of the colums. The order of colums does not matter but the names has to be in sync with the name defined in the model.
@@ -31,10 +31,10 @@ You can load data from an array. The only thing you have to provide is the array
 The array are useful for having exact per value control but sometimes you just want to load larger amount of data and array become clunky. You can of course load a file. The accepted format is currently CSV. It expects valid CSV with comma as a separator and " as a quote. The lines are separated with a newline. This currently cannot be changed.
 
 {% highlight ruby %}
-  gooddata -p PROJECT_ID project jack_in
+gooddata -p PROJECT_ID project jack_in
 
-  dataset = blueprint.get_dataset("devs")
-  dataset.upload("/path/to/file.csv")
+dataset = blueprint.get_dataset("devs")
+dataset.upload("/path/to/file.csv")
 {% endhighlight %}
 
 You can even provide a file that grabs file from the net. We will provide an automatic authentication for files on our staging area soon.
