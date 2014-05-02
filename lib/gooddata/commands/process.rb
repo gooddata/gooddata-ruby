@@ -42,7 +42,7 @@ module GoodData
         def execute_process(process_id, executable, options = {})
           GoodData.with_project(options[:project_id]) do
             process = GoodData::Process[process_id]
-            process.execute_process(executable, options)
+            process.execute(executable, options)
           end
         end
       end
