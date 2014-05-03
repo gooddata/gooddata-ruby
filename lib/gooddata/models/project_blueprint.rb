@@ -7,7 +7,11 @@ module GoodData
 
       def self.from_json(spec)
         if spec.is_a?(String)
-          ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+          if File.file?(spec)
+            ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+          else
+            ProjectBlueprint.new(MultiJson.load(spec, :symbolize_keys => true))
+          end
         else
           ProjectBlueprint.new(spec)
         end
