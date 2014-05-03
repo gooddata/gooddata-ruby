@@ -24,9 +24,16 @@ describe 'GoodData - logging' do
   end
 
   before(:each) do
+    @is_logging_on = GoodData.logging_on?
+
     # TODO: Use some kind of 'reset' instead
-    GoodData.logging_on
+    GoodData.logging_on if !@is_logging_on
   end
+
+  after(:each) do
+    GoodData.logging_off if !@is_logging_on
+  end
+
 
   describe '#logging_on' do
     it 'Enables logging' do

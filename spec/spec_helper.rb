@@ -21,6 +21,15 @@ RSpec.configure do |config|
   config.include ProjectHelper
   config.include SchemaHelper
 
+  config.before(:all) do
+    # TODO: Fully setup global environment
+    GoodData.logging_off
+  end
+
+  config.after(:all) do
+    # TODO: Fully setup global environment
+  end
+
   config.before(:suite) do
     # TODO: Setup test project
   end
