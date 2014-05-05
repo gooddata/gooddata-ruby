@@ -10,7 +10,6 @@ module GoodData
       end
 
       def create(process_id, cron, executable, options = {})
-
         default_opts = {
           :type => 'MSETL',
           :timezone => 'UTC',
