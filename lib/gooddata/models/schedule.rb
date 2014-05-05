@@ -10,16 +10,15 @@ module GoodData
       end
 
       def create(process_id, cron, executable, options = {})
-
         default_opts = {
-          :type => 'MSETL',
-          :timezone => 'UTC',
-          :cron => cron,
-          :params => {
-            :process_id => process_id,
-            :executable => executable
-          },
-          :hidden_params => {}
+            :type => 'MSETL',
+            :timezone => 'UTC',
+            :cron => cron,
+            :params => {
+                :process_id => process_id,
+                :executable => executable
+            },
+            :hidden_params => {}
         }
 
         inject_schema = {
@@ -46,7 +45,7 @@ module GoodData
         default[:params] = default_params
 
         json = {
-          'schedule' => default.merge(options)
+            'schedule' => default.merge(options)
         }
 
         tmp = json['schedule'][:params]['PROCESS_ID']
@@ -84,7 +83,7 @@ module GoodData
 
     def execute
       data = {
-        :execution => {}
+          :execution => {}
       }
       GoodData.post execution_url, data
     end
@@ -171,13 +170,13 @@ module GoodData
     def save
       if @dirty
         update_json = {
-          'schedule' => {
-            'type' => @json['schedule']['type'],
-            'timezone' => @json['schedule']['timezone'],
-            'cron' => @json['schedule']['cron'],
-            'params' => @json['schedule']['params'],
-            'hiddenParams' => @json['schedule']['hiddenParams']
-          }
+            'schedule' => {
+                'type' => @json['schedule']['type'],
+                'timezone' => @json['schedule']['timezone'],
+                'cron' => @json['schedule']['cron'],
+                'params' => @json['schedule']['params'],
+                'hiddenParams' => @json['schedule']['hiddenParams']
+            }
         }
         res = GoodData.put uri, update_json
 

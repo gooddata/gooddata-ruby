@@ -6,8 +6,8 @@ describe GoodData::Schedule do
   TEST_CRON = '0 15 27 7 *'
 
   TEST_DATA = {
-    :timezone => 'UTC',
-    :cron => '2 2 2 2 *'
+      :timezone => 'UTC',
+      :cron => '2 2 2 2 *'
   }
 
   TEST_PROCESS_ID = 'f12975d2-5958-4248-9c3d-4c8f2e1f067d'
@@ -91,7 +91,7 @@ describe GoodData::Schedule do
   end
 
   describe '#cron=' do
-  before(:each) do
+    before(:each) do
       @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
@@ -249,7 +249,7 @@ describe GoodData::Schedule do
       @old_params = @schedule.hidden_params
 
       test_params = {
-        'PROCESS_ID' => '1-2-3-4'
+          'PROCESS_ID' => '1-2-3-4'
       }
 
       @schedule.hidden_params = test_params
@@ -288,7 +288,7 @@ describe GoodData::Schedule do
       @old_params = @schedule.params
 
       test_params = {
-        'PROCESS_ID' => '1-2-3-4'
+          'PROCESS_ID' => '1-2-3-4'
       }
 
       @schedule.params = test_params
