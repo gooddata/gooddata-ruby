@@ -10,34 +10,58 @@ module GoodData
       end
 
       def create(process_id, cron, executable, options = {})
+
         default_opts = {
-          'type' => 'MSETL',
-          'timezone' => 'UTC',
-          'cron' => cron,
-          'params' => {
-            'PROCESS_ID' => process_id,
-            'EXECUTABLE' => executable
+          :type => 'MSETL',
+          :timezone => 'UTC',
+          :cron => cron,
+          :params => {
+            :process_id => process_id,
+            :executable => executable
           },
-          'hiddenParams' => {}
+          :hidden_params => {}
         }
+
+        inject_schema = {
+            :hidden_params => 'hiddenParams'
+        }
+
+        inject_params = {
+            :process_id => 'PROCESS_ID',
+            :executable => 'EXECUTABLE'
+        }
+
+        default_params = default_opts[:params].reduce({}) do |new_hash, (k, v)|
+          key = inject_params[k] || k
+          new_hash[key] = v
+          new_hash
+        end
+
+        default = default_opts.reduce({}) do |new_hash, (k, v)|
+          key = inject_schema[k] || k
+          new_hash[key] = v
+          new_hash
+        end
+
+        default[:params] = default_params
 
         json = {
-          'schedule' => default_opts.merge(options)
+          'schedule' => default.merge(options)
         }
 
-        tmp = json['schedule']['params']['PROCESS_ID']
+        tmp = json['schedule'][:params]['PROCESS_ID']
         fail 'Process ID has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['params']['EXECUTABLE']
+        tmp = json['schedule'][:params]['EXECUTABLE']
         fail 'Executable has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['cron']
+        tmp = json['schedule'][:cron]
         fail 'Cron schedule has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['timezone']
+        tmp = json['schedule'][:timezone]
         fail 'A timezone has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['type']
+        tmp = json['schedule'][:type]
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
         url = "/gdc/projects/#{GoodData.project.pid}/schedules"
