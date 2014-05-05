@@ -56,7 +56,7 @@ module GoodData
 
     # For an element id find values (titles) for all display forms. Element id can be given as both number id or URI as a string beginning with /
     # @param [Object] element_id Element identifier either Number or a uri as a String
-    # @return [Array] list of velues for certain element. Returned in the same order as is the order of labels
+    # @return [Array] list of values for certain element. Returned in the same order as is the order of labels
     def values_for(element_id)
       element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
       labels.map do |label|
@@ -64,13 +64,13 @@ module GoodData
       end
     end
 
-    # Returns all values for all labels. This is for isnpection purposes only since obviously there can be huge number of elements. 
+    # Returns all values for all labels. This is for inspection purposes only since obviously there can be huge number of elements. 
     # @param [Hash] options the options to pass to the value list
-    # @option options [NUmber] :limit limits the number of values to certain number. Default is 100
+    # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
     def values(options={})
       results = labels.map do |label|
-        label.values
+        label.values(options)
       end
       results.first.zip(*results[1..-1])
     end

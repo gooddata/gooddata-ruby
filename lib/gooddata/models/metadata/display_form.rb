@@ -21,6 +21,9 @@ module GoodData
        end
     end
 
+    # For an element id find values (titles) for this label. Element id can be given as both number id or URI as a string beginning with /
+    # @param [Object] element_id Element identifier either Number or a uri as a String
+    # @return [String] value of the element if found
     def find_element_value(element_id)
       element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
       uri = links['elements']
@@ -33,6 +36,10 @@ module GoodData
       end
     end
 
+    # Returns all values for this label. This is for inspection purposes only since obviously there can be huge number of elements. 
+    # @param [Hash] options the options to pass to the value list
+    # @option options [Number] :limit limits the number of values to certain number. Default is 100
+    # @return [Array]
     def values(options = {})
       limit = options[:limit] || 100
       results = GoodData.post("#{uri}/validElements?limit=#{limit}&offset=0&order=asc", {})
