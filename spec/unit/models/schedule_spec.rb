@@ -50,7 +50,7 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no cron is specified' do
       data = TEST_DATA.deep_dup
-      data['cron'] = nil
+      data[:cron] = nil
       expect {
         sched = GoodData::Schedule.create(TEST_PROCESS_ID, nil, @project_executable, data)
       }.to raise_error 'Cron schedule has to be provided'
@@ -58,7 +58,7 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no timezone specified' do
       data = TEST_DATA.deep_dup
-      data['timezone'] = nil
+      data[:timezone] = nil
       expect {
         sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, data)
       }.to raise_error 'A timezone has to be provided'
@@ -66,7 +66,7 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no timezone specified' do
       data = TEST_DATA.deep_dup
-      data['type'] = nil
+      data[:type] = nil
       expect {
         sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, data)
       }.to raise_error 'Schedule type has to be provided'
@@ -91,7 +91,7 @@ describe GoodData::Schedule do
   end
 
   describe '#cron=' do
-  before(:each) do
+    before(:each) do
       @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
@@ -104,7 +104,7 @@ describe GoodData::Schedule do
 
       @schedule.cron = test_cron
       expect(@schedule.cron).to eq(test_cron)
-      expect(@schedule.dirty).to be_true
+      expect(@schedule.dirty).to eq(true)
     end
   end
 
@@ -153,7 +153,7 @@ describe GoodData::Schedule do
 
       @schedule.executable = test_executable
       expect(@schedule.executable).to eq(test_executable)
-      expect(@schedule.dirty).to be_true
+      expect(@schedule.dirty).to eq(true)
     end
   end
 
@@ -249,12 +249,12 @@ describe GoodData::Schedule do
       @old_params = @schedule.hidden_params
 
       test_params = {
-        'PROCESS_ID' => '1-2-3-4'
+          'PROCESS_ID' => '1-2-3-4'
       }
 
       @schedule.hidden_params = test_params
       expect(@schedule.hidden_params).to eq(@old_params.merge(test_params))
-      expect(@schedule.dirty).to be_true
+      expect(@schedule.dirty).to eq(true)
     end
   end
 
@@ -288,12 +288,12 @@ describe GoodData::Schedule do
       @old_params = @schedule.params
 
       test_params = {
-        'PROCESS_ID' => '1-2-3-4'
+          'PROCESS_ID' => '1-2-3-4'
       }
 
       @schedule.params = test_params
       expect(@schedule.params).to eq(@old_params.merge(test_params))
-      expect(@schedule.dirty).to be_true
+      expect(@schedule.dirty).to eq(true)
     end
   end
 
@@ -328,7 +328,7 @@ describe GoodData::Schedule do
 
       @schedule.process_id = test_process_id
       expect(@schedule.process_id).to eq(test_process_id)
-      expect(@schedule.dirty).to be_true
+      expect(@schedule.dirty).to eq(true)
     end
   end
 
@@ -411,7 +411,7 @@ describe GoodData::Schedule do
 
       @schedule.type = test_type
       expect(@schedule.type).to eq(test_type)
-      expect(@schedule.dirty).to be_true
+      expect(@schedule.dirty).to eq(true)
     end
   end
 
@@ -446,7 +446,7 @@ describe GoodData::Schedule do
 
       @schedule.timezone = test_timezone
       expect(@schedule.timezone).to eq(test_timezone)
-      expect(@schedule.dirty).to be_true
+      expect(@schedule.dirty).to eq(true)
     end
   end
 end
