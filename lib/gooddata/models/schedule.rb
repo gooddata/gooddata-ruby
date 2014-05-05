@@ -24,36 +24,45 @@ module GoodData
         }
 
         inject_schema = {
-            :hidden_params => "hiddenParams",
-            :params => {
-                :process_id => 'PROCESS_ID',
-                :executable => 'EXECUTABLE'
-            }
+            :hidden_params => 'hiddenParams'
         }
 
-        default = default_opts.inject({}) do |new_hash, (k, v)|
+        inject_params = {
+            :process_id => 'PROCESS_ID',
+            :executable => 'EXECUTABLE'
+        }
+
+        default_params = default_opts[:params].reduce({}) do |new_hash, (k, v)|
+          key = inject_params[k] || k
+          new_hash[key] = v
+          new_hash
+        end
+
+        default = default_opts.reduce({}) do |new_hash, (k, v)|
           key = inject_schema[k] || k
           new_hash[key] = v
           new_hash
         end
 
+        default[:params] = default_params
+
         json = {
           'schedule' => default.merge(options)
         }
 
-        tmp = json['schedule']['params']['PROCESS_ID']
+        tmp = json['schedule'][:params]['PROCESS_ID']
         fail 'Process ID has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['params']['EXECUTABLE']
+        tmp = json['schedule'][:params]['EXECUTABLE']
         fail 'Executable has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['cron']
+        tmp = json['schedule'][:cron]
         fail 'Cron schedule has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['timezone']
+        tmp = json['schedule'][:timezone]
         fail 'A timezone has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule']['type']
+        tmp = json['schedule'][:type]
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
         url = "/gdc/projects/#{GoodData.project.pid}/schedules"
