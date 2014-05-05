@@ -6,16 +6,22 @@ categories: tutorial
 next_section: tutorial/tutorial-part-4-looking-around-project
 prev_section: tutorial/tutorial-part-2-model
 pygments: true
-perex: The logical data model (LDM) defines the facts and attributes in your project, as well as their relationships. Let’s have a look at how to create a project’s LDM using Ruby SDK. Then, we compare this method with other approaches.
+perex: Now that you have created the logical data model for your project, you can now populate it with data from the sample Ruby project.
 ---
 
-There are several ways of loading the data. We will explain them later (or you can [peek](/recipe/ref-loading-data) into reference if you are so inclined). For now we will just stick to the simplest one for the problem at hand. First in your terminal run. Remeber to be in `my_test_project` directory
+There are several ways of loading the data. For now, we will stick to the simplest approach for the problem at hand.
+
+* We will explain the other methods later. For more information, see [Data Loading Reference](/recipe/ref-loading-data).
+
+First, change to the `my_test_project` directory. Run the following command:
 
 {% highlight ruby %}
 gooddata project jack_in
 {% endhighlight %}
 
-As we discussed in [getting started](/getting-started), `jack_in` is used for getting into interactive session. Notice that we did not even have to provide project_id because we are in the project directory and it was picked up from the Goodfile. Once in the session type
+As discussed in [getting started](/getting-started), the `jack_in` command is used to start an interactive session with a project. Since you are in the project directory, a project ID is not required, as it was extracted from the `Goodfile`.
+
+When the session is initiated, enter the following to upload the three datasets from CSVs stored in the project's `data` directory:
 
 {% highlight ruby %}
 devs = blueprint.get_dataset("devs")
@@ -29,26 +35,30 @@ commits.upload("data/commits.csv")
 
 {% endhighlight %}
 
-Done. After a minute or two data should be in the project.
+Done. After a minute or two, data should be in the project.
 
 ###What is going on?
 
-To dispel the magic a little notice how we are referring to the `blueprint` variable. This is prepared for us by the jack in command who found out the model description in model.rb and built for us an interactive model. Had we written the program ourselves we would have to take of it ourselves. We can query the mode in various ways one of which is asking for specific datasets through `get_dataset` method.
+Notice the `blueprint` variable. This variable is prepared for us by the `jack_in` command, which discovered the model description in `model.rb` and built for us an interactive model.
+
+If we had not used the `jack_in` command, we would have needed to create this reference to an interactive model ourselves. Had we written the program ourselves we would have to take of it ourselves.
+
+The model can be queried in various ways, one of which is to ask for specific datasets through the `get_dataset` method:
 
 {% highlight ruby %}
 devs = blueprint.get_dataset("devs")
 {% endhighlight %}
 
-Once we have hold of the dataset. We can load the data into it. One of the ways how we can load data is by providing a path to file.
+After we have acquired the dataset, we can load the data into it. You may reference a path to file:
 
 {% highlight ruby %}
 devs.upload("data/devs.csv")
 {% endhighlight %}
 
-Now exit the interactive session by typing `exit`.
+To exit the interactive session, enter `exit`.
 
 ##What did you learn
-You have just seen how easy it is to load data into a project. We will show other ways in the future but it iwll be just a variation on what you have seen.
+You have just learned how easy it is to load data into a project. Later, we will reveal other ways, but these are just variations on what you have already learned.
 
 ##Where to go next
-Next section we will validate that the data are indeed in the project and create our first metric.
+In the next section, we validate that data is indeed in the project, and we create our first metric.

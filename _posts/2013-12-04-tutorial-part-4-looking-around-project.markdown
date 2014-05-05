@@ -6,70 +6,79 @@ categories: tutorial
 prev_section: tutorial/tutorial-part-3-loading-data
 next_section: tutorial/tutorial-part-5-computing
 pygments: true
-perex: The capabilities of SDK does not end with defining a model. Before we dive into numbers let's explore the open sandbox of project. You can look at almost any aspect of the project. How many users are there, do we have more facts or attributes, how many stars is in the model and many more.
+perex: "Before we dive into numbers, let's explore the open sandbox of your project through which you can examine almost any aspect of the project: number of users, facts, or attributes, as well as the number of stars in the model."
 ---
 
-So you have a project with data but before we start crunching numbers. Let's look around. As usual start an interactive session in your terminal.
+From the project directory, jack in to the project:
 
 {% highlight ruby %}
 gooddata project jack_in
 {% endhighlight %}
 
-You can verify that we are looking at the project.
+Verify that you are connected to the project:
 
 {% highlight ruby %}
 GoodData.project.pid
 {% endhighlight %}
 
-By running
+The following prints a URI, which will take you to the project.
+
+* On a Mac, press command and double click.
+
 
 {% highlight ruby %}
 GoodData.project.browser_uri
 {% endhighlight %}
 
-You can print a URI which will take you to the project (On mac just press command and double click)
-
 ##Model
+
 Let's have a look at the model.
 
 {% highlight ruby %}
 GoodData.project.datasets.map { |d| d.title }
 {% endhighlight %}
 
-This is what we have in the project. If you compare to what comes from blueprin
+The above shows what is currently in the project.
+
+You can compare the above to what is stored in the blueprint:
 
 {% highlight ruby %}
 blueprint.datasets.map { |d| d.title }
 {% endhighlight %}
 
-You will see that we have 3 datasets. One from the above is actually a date dimension. So we have the same number. Great. Let's dig deeper.
-
-Let's list all the attributes and facts and print their titles so we can see if it is in agreement with our model. This is what is in the project.
+The project contains 3 datasets, one of which is actually a date dimension. So, the numbers line up. Great. Let's dig deeper.
 
 ###Facts
+
+Let's list all the attributes and facts of the model and print their titles to verify if they are in agreement with our model.
+
+The following displays all facts in the project:
 
 {% highlight ruby %}
 facts = GoodData::Fact.all
 facts.map { |f| f['title'] }
 {% endhighlight %}
 
-And this is in the blueprint
+The following displays all facts in the blueprint:
+
 {% highlight ruby %}
 facts = blueprint.datasets.reduce([]) { |a, e| a + e.facts }
 facts.map { |f| f[:name] }
 {% endhighlight %}
 
-In both cases we should see on fact.
+In both cases, we should see one fact.
 
 ###Attributes
-You can do something similar for attributes.
+
+You can list all attributes from the project:
 
 {% highlight ruby %}
 attrs = GoodData::Attribute.all
 attrs.map { |f| f['title'] }
 {% endhighlight %}
 
-And this is in the blueprint
+And this command lists is all attributes from the blueprint:
+
 {% highlight ruby %}
 attrs = blueprint.datasets.reduce([]) { |a, e| a + e.attributes_and_anchors }
 attrs.map { |f| f[:name] }
@@ -77,7 +86,7 @@ attrs.map { |f| f[:name] }
 
 ###Metrics, Reports, Dashboards
 
-You can try to look for other objects but as of now there should be none of those types
+You may also look for other objects using the following commands. Right now, our example project contains none of these:
 
 {% highlight ruby %}
 GoodData::Dashboard.all
@@ -85,10 +94,10 @@ GoodData::Metric.all
 GoodData::Report.all
 {% endhighlight %}
 
-No worries, we will remedy the situation in the next part.
+We will start creating these in the next part.
 
 ##What did you learn
-You have seen that we really created the model and we can inspect it. If you like to see what else you could do. Have a look at the reference guide.
+We verified that the model has been created, and we are able to inspect it. For other options in examining a project, see the Reference Guide.
 
 ##Where to go next
-In next section we will look at how to compute some of the metrics
+In next section, we will look at how to compute some of the metrics.

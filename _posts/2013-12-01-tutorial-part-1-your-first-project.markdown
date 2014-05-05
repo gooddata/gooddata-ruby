@@ -5,25 +5,32 @@ date:   2014-01-19 13:56:00
 categories: tutorial
 next_section: tutorial/tutorial-part-2-model
 pygments: true
-perex: Spin up a project that you can use for the other tutorials. It will take only 5 minutes. Promise.
+perex: Spin up the example project to use in these tutorials. It only takes 5 minutes. Promise.
 ---
 
-Before you begin, you must install Ruby and the GoodData SDK and have appropriate access to the GoodData platform and the ability to create or modify projects. See [Getting Started](getting-started) for more details on how to get started.
+Before you begin, you must install the following:
+* Ruby
+* GoodData SDK
+* Acquire appropriate access to the GoodData platform to create or modify projects, including a project authorization token.
 
-Welcome. Let's spin up an example project, so you can explore the SDK and see it in action. The project will server as a basis for next parts in tutorial. Since we are developers we created a simple project about developers.
+For more details, see [Getting Started](getting-started).
+
+Welcome. Let's spin up an example Ruby project, which we can use to explore the SDK in the remainder of this tutorial.
 
 ###What we want to measure
-In any project, success is often determined by identifying what you are trying to measure.
+In any analytics project, success is often determined by identifying what you are trying to measure and building toward those measurements. Since we are developers, we created a simple project about developers to measure their contributions to the code base.
 
-Imagine you have a small development shop with a couple of developers. They crank out lots of code. You also have several repositories for your products. You want to measure how many lines of code each developer creates. You want to track output by time, by repository and by person. You want to see the number of lines of code each of them committed.
+Imagine you have a small development shop with a couple of developers. They crank out lots of code. You also have several repositories for your products. You want to measure how many lines of code each developer creates. You want to track output by time, by repository, and by person. You want to see the number of lines of code each of them has committed.
 
-###Model
-Here's how the model looks: simple enough to understand the main principles.
+###Project Model
+Here's how the project model looks. Simple enough:
 
 ![Model](https://dl.dropboxusercontent.com/s/1y97ziv5anmpn9s/gooddata_devs_demo_model.png?token_hash=AAENC89d8XOfCr9AnyQCrd9vwfhb-bDuYcORQ0AIRP2RQQ)
 
+For each commit, there is related reference information about the source repository, the commitment date, and the developer who made the commitment.
+
 ###Spinning it up
-Open the command line and start coding. Run the following:
+Open the command line and start coding. Execute the following to create the `my_test_project` project:
 
 {% highlight ruby %}
 gooddata scaffold project my_test_project
@@ -35,7 +42,7 @@ Go to the new project directory:
 cd my_test_project
 {% endhighlight %}
 
-If you look around a little you will see that the directory looks like this
+The directory tree looks like the following:
 
 {% highlight bash %}
 .
@@ -48,15 +55,18 @@ If you look around a little you will see that the directory looks like this
     └── model.rb
 {% endhighlight %}
 
-Do not worry too much about the structure of the files and what they mean. We will get back to them later. Now, build the project:
+For now, don't worry too much about the structure of the files and what they mean; we will get back to them later. Now, build the project:
 
 {% highlight ruby %}
 gooddata -U username -P pass -t token project build
 {% endhighlight %}
 
-The above _token_ value is an authentication token needed to create an empty project in the GoodData Platform. Don't have one? You may register to our [Developer Trial Program](https://developer.gooddata.com/trial). It is **free**, and you can play around with GoodData for 60 days. 
+The above `token` value is a GoodData project authentication token, which is required to create an empty project in the GoodData platform.
+* If you don't have a project authorization token, please register for our [Developer Trial Program](https://developer.gooddata.com/trial). It is **free**, and you can play around with GoodData for 60 days.
 
-If everything goes well with the build, the command returns a PID, also called a `project_id`. Open the `my_test_project` directory in your favorite text editor. Open the file called, `Goodfile`. It should look the following:
+If everything goes well with the build, the command returns a PID, also called a `project_id`. This value must be added to your local project directory structure.
+
+Open the `my_test_project` directory. In your favorite text editor, open the file called, `Goodfile`. It should look the following:
 
 {% highlight ruby %}
 {
@@ -65,7 +75,7 @@ If everything goes well with the build, the command returns a PID, also called a
 }
 {% endhighlight %}
 
-In the file, insert your freshly acquired pid into the empty slot after "project_id", as in the following example:
+In the file, insert your freshly acquired pid for the `"project_id"` value, as in the following example:
 
 {% highlight ruby %}
 {
@@ -74,10 +84,14 @@ In the file, insert your freshly acquired pid into the empty slot after "project
 }
 {% endhighlight %}
 
-You are done. Visit [https://secure.gooddata.com/projects.html](https://secure.gooddata.com/projects.html) to see your new project. 
+You are done!
+
+To see your new, empty project, please visit [https://secure.gooddata.com/projects.html](https://secure.gooddata.com/projects.html).
 
 ##What did you learn
-You just generated a template of your first project using SDK and spun up the project. The project still does not contain data or reports but we will get there.
+You just generated a template of your first project using the Ruby SDK and then spun up the project. The project still does not contain data or reports, but we will get there.
 
 ##Where to go next
-You're ready for the next tutorial. Onward! In next section we talk in more detail about how the the model is described using SDK and where in the directory it is stored.
+You're ready for the next tutorial. Onward!
+
+In next section, we talk in more detail about how the the model is described using the SDK and where in the directory it is stored.
