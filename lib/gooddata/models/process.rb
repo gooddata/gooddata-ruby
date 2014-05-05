@@ -159,7 +159,7 @@ module GoodData
 
     alias_method :raw_data, :data
 
-    def execute_process(executable, options = {})
+    def execute(executable, options = {})
       params = options[:params] || {}
       hidden_params = options[:hidden_params] || {}
       result = GoodData.post(executions_link,

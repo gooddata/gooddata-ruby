@@ -24,6 +24,10 @@ module GoodData
         attribute.labels << self
       end
 
+      def identifier
+        @identifier ||= @attribute.name == name ? super : "#{self.type_prefix}.#{@schema.name}.#{@attribute.name}.#{name}"
+      end
+
       def to_maql_create
         "# LABEL FROM LABEL\nALTER ATTRIBUTE {#{@attribute.identifier}} ADD LABELS {#{identifier}}" \
               + " VISUAL (TITLE #{title.inspect}) AS {#{column}};\n"
