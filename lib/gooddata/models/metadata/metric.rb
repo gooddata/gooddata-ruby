@@ -9,10 +9,13 @@ module GoodData
   class Metric < MdObject
     root_key :metric
 
+    PARSE_MAQL_OBJECT_REGEXP = /\[([^\]]+)\]/
+
     class << self
-      def [](id)
+      def [](id, options={})
         if id == :all
-          GoodData.get(GoodData.project.md['query'] + '/metrics/')['query']['entries']
+          metrics = GoodData.get(GoodData.project.md['query'] + '/metrics/')['query']['entries']
+          options[:full] ? metrics.map { |m| Metric[m['link']] } : metrics
         else
           super
         end
@@ -104,6 +107,10 @@ module GoodData
       content['expression']
     end
 
+    def expression=(value)
+      content['expression'] = value
+    end
+
     def validate
       fail 'Meric needs to have title' if title.nil?
       true
@@ -111,6 +118,45 @@ module GoodData
 
     def metric?
       true
+    end
+
+    def contain?(item)
+      uri = item.respond_to?(:uri) ? item.uri : item
+      expression[uri] != nil
+    end
+
+    def cantain_value?(label, value)
+      uri = label.find_value_uri(label, value)
+      contain?(uri)
+    end
+
+    def replace(what, for_what)
+      uri_what = what.respond_to?(:uri) ? what.uri : what
+      uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
+      self.expression = expression.gsub(uri_what, uri_for_what)
+      self
+    end
+
+    def replace_value(label, value, for_value)
+      label = label.respond_to?(:primary_label) ? label.primary_label : label
+      value_uri = label.find_value_uri(value)
+      for_value_uri = label.find_value_uri(for_value)
+      self.expression = expression.gsub(value_uri, for_value_uri)
+      self
+    end
+
+    def pretty_expression
+      temp = expression.dup
+      expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
+        uri = uri.first
+        if uri =~ /elements/
+          temp.sub!(uri, Attribute.find_element_value(uri))
+        else
+         obj = GoodData::MdObject[uri]
+          temp.sub!(uri, obj.title)
+        end
+      end
+      temp
     end
   end
 end

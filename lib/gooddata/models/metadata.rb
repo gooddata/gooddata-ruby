@@ -31,7 +31,7 @@ module GoodData
         end
       end
 
-      def [](id)
+      def [](id, options = {})
         fail "Cannot search for nil #{self.class}" unless id
         uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
@@ -45,8 +45,8 @@ module GoodData
         new(GoodData.get uri) unless uri.nil?
       end
 
-      def all
-        self[:all]
+      def all(options={})
+        self[:all, options]
       end
 
       def find_by_tag(tag)

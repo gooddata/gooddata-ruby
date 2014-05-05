@@ -16,13 +16,23 @@ module GoodData
           super
         end
       end
+
+      def find_element_value(uri)
+        matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
+        Attribute[matches[1]].primary_label.find_element_value(matches[2])
+      end
+
     end
 
     def display_forms
       content['displayForms'].map { |df| GoodData::DisplayForm[df['meta']['uri']] }
     end
-
     alias_method :labels, :display_forms
+
+    def primary_display_form
+      labels.first
+    end
+    alias_method :primary_label, :primary_display_form
 
     def attribute?
       true
@@ -39,6 +49,24 @@ module GoodData
       else
         Metric.xcreate(:expression => "SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title)
       end
+    end
+
+    def values_for(element_id)
+      element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
+      labels.map do |label|
+        label.find_element_value(element_id)
+      end
+    end
+
+    def values(options={})
+      results = labels.map do |label|
+        label.values
+      end
+      results.first.zip(*results[1..-1])
+    end
+
+    def label_by_name(name)
+      labels.find { |label| label.title.downcase =~ /#{name}/ || label.identifier.downcase =~ /#{name}/ }
     end
   end
 end
