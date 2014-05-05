@@ -120,16 +120,27 @@ module GoodData
       true
     end
 
+    # Checks that the expression contains certain metadata object. The difference between this and used_by using is in the fact that this is not a transitive closure. it searches only inside the expression
+    # @param [GoodData::MdObject] Object that is going to be looked up
+    # @return [Boolean]
     def contain?(item)
       uri = item.respond_to?(:uri) ? item.uri : item
       expression[uri] != nil
     end
 
+    # Checks that the expression contains certain element of an attribute. The value is looked up through given label. 
+    # @param [GoodData::DisplayForm] Label though which the value is looked up
+    # @param [String] Value that will be looked up through the label.
+    # @return [Boolean]
     def cantain_value?(label, value)
       uri = label.find_value_uri(label, value)
       contain?(uri)
     end
 
+    # Method used for replacing objects like Attribute, Fact or Metric.
+    # @param [GoodData::MdObject] Object that should be replaced
+    # @param [GoodData::MdObject] Object it is replaced with
+    # @return [GoodData::Metric]
     def replace(what, for_what)
       uri_what = what.respond_to?(:uri) ? what.uri : what
       uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
@@ -137,6 +148,11 @@ module GoodData
       self
     end
 
+    # Method used for replacing attribute element values. Looks up certain value of a label in the MAQL expression and exchanges it for a different value of the same label.
+    # @param [GoodData::DisplayForm] Label through which the value and for_value are resolved
+    # @param [String] value that is going to be replaced
+    # @param [String] value that is going to be the new one
+    # @return [GoodData::Metric]
     def replace_value(label, value, for_value)
       label = label.respond_to?(:primary_label) ? label.primary_label : label
       value_uri = label.find_value_uri(value)
@@ -145,6 +161,8 @@ module GoodData
       self
     end
 
+    # Looks up the readable values of the objects used inside of MAQL epxpressions. Labels and elements titles are based on the primary label.
+    # @return [String] Ther resulting MAQL like expression
     def pretty_expression
       temp = expression.dup
       expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
