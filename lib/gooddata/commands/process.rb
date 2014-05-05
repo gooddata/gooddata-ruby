@@ -32,7 +32,6 @@ module GoodData
 
         # TODO: check files_to_exclude param. Does it do anything? It should check that in case of using CLI, it makes sure the files are not deployed
         def deploy(dir, options = {})
-          verbose = options[:verbose]
 
           def deploy(dir, options = {})
             options[:verbose] || false
