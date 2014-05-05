@@ -27,6 +27,10 @@ module GoodData
       GoodData.logger = NilLogger.new
     end
 
+    def logging_on?
+      !GoodData.logger.instance_of?(NilLogger)
+    end
+
     # Returns the logger instance. The default implementation
     # does not log anything
     # For some serious logging, set the logger instance using
