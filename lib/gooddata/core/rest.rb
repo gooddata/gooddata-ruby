@@ -29,7 +29,7 @@ module GoodData
     #
     #     GoodData.post '/gdc/projects', { ... }
     #
-    def post(path, data, options = {})
+    def post(path, data = {}, options = {})
       connection.post path, data, options
     end
 
