@@ -9,9 +9,10 @@ module GoodData
     ATTRIBUTE_BASE_AGGREGATIONS = [:count]
 
     class << self
-      def [](id)
+      def [](id, options = {})
         if id == :all
-          GoodData.get(GoodData.project.md['query'] + '/attributes/')['query']['entries']
+          attrs = GoodData.get(GoodData.project.md['query'] + '/attributes/')['query']['entries']
+          options[:full] ? attrs.map { |a| Attribute[a['link']] } : attrs
         else
           super
         end
@@ -29,6 +30,8 @@ module GoodData
     end
     alias_method :labels, :display_forms
 
+    # Returns the first display form which is the primary one
+    # @return [GoodData::DisplayForm] Primary label
     def primary_display_form
       labels.first
     end
@@ -51,6 +54,9 @@ module GoodData
       end
     end
 
+    # For an element id find values (titles) for all display forms. Element id can be given as both number id or URI as a string beginning with /
+    # @param [Object] element_id Element identifier either Number or a uri as a String
+    # @return [Array] list of velues for certain element. Returned in the same order as is the order of labels
     def values_for(element_id)
       element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
       labels.map do |label|
@@ -58,6 +64,10 @@ module GoodData
       end
     end
 
+    # Returns all values for all labels. This is for isnpection purposes only since obviously there can be huge number of elements. 
+    # @param [Hash] options the options to pass to the value list
+    # @option options [NUmber] :limit limits the number of values to certain number. Default is 100
+    # @return [Array]
     def values(options={})
       results = labels.map do |label|
         label.values
