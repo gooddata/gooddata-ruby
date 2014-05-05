@@ -9,21 +9,35 @@ module GoodData
       end
 
       def create(process_id, cron, executable, options = {})
+
         default_opts = {
-          'type' => 'MSETL',
-          'timezone' => 'UTC',
-          'cron' => cron,
-          'params' => {
-            'PROCESS_ID' => process_id,
-            'EXECUTABLE' => executable
+          :type => 'MSETL',
+          :timezone => 'UTC',
+          :cron => cron,
+          :params => {
+            :process_id => process_id,
+            :executable => executable
           },
-          'hiddenParams' => {}
+          :hidden_params => {}
         }
 
-        json = {
-          'schedule' => default_opts.merge(options)
+        inject_schema = {
+            :hidden_params => "hiddenParams",
+            :params => {
+                :process_id => 'PROCESS_ID',
+                :executable => 'EXECUTABLE'
+            }
         }
-        pp json
+
+        default = default_opts.inject({}) do |new_hash, (k, v)|
+          key = inject_schema[k] || k
+          new_hash[key] = v
+          new_hash
+        end
+
+        json = {
+          'schedule' => default.merge(options)
+        }
 
         tmp = json['schedule']['params']['PROCESS_ID']
         fail 'Process ID has to be provided' if tmp.nil? || tmp.empty?
