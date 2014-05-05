@@ -15,11 +15,11 @@ describe GoodData::Model::ProjectBlueprint do
 
   it "should be able to grab attribute" do
     @repos_schema.labels.size.should == 1
-    @repos_schema.labels.first.attribute.name.should == "id"
+    @repos_schema.labels.first.attribute.name.should == "repo_id"
   end
 
   it "anchor should have labels" do
-    @repos_schema.anchor.labels.first.identifier.should == "label.repos.id"
+    @repos_schema.anchor.labels.first.identifier.should == "label.repos.repo_id"
   end
 
   it "attribute should have labels" do

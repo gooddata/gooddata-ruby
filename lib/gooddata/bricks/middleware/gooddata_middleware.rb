@@ -6,7 +6,7 @@ require_relative 'base_middleware'
 
 module GoodData
   module Bricks
-    class GoodDataMiddleware < GoodData::Bricks::Middleware
+    class GoodDataMiddleware < Bricks::Middleware
       def call(params)
         logger = params['GDC_LOGGER']
         token_name = 'GDC_SST'
