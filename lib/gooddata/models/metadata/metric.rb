@@ -12,7 +12,7 @@ module GoodData
     PARSE_MAQL_OBJECT_REGEXP = /\[([^\]]+)\]/
 
     class << self
-      def [](id, options={})
+      def [](id, options = {})
         if id == :all
           metrics = GoodData.get(GoodData.project.md['query'] + '/metrics/')['query']['entries']
           options[:full] ? metrics.map { |m| Metric[m['link']] } : metrics
@@ -128,7 +128,7 @@ module GoodData
       expression[uri] != nil
     end
 
-    # Checks that the expression contains certain element of an attribute. The value is looked up through given label. 
+    # Checks that the expression contains certain element of an attribute. The value is looked up through given label.
     # @param [GoodData::DisplayForm] label Label though which the value is looked up
     # @param [String] value Value that will be looked up through the label.
     # @return [Boolean]

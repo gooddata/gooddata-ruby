@@ -11,7 +11,7 @@ module GoodData
     # @param [String] value value of an label you are looking for
     # @return [String]
     def find_value_uri(value)
-       value = CGI::escapeHTML(value)
+       value = CGI.escapeHTML(value)
        results = GoodData.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{value}", {})
        items = results['validElements']['items']
        if items.empty?
@@ -36,7 +36,7 @@ module GoodData
       end
     end
 
-    # Returns all values for this label. This is for inspection purposes only since obviously there can be huge number of elements. 
+    # Returns all values for this label. This is for inspection purposes only since obviously there can be huge number of elements.
     # @param [Hash] options the options to pass to the value list
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]

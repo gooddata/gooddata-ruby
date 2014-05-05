@@ -22,7 +22,6 @@ module GoodData
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
         Attribute[matches[1]].primary_label.find_element_value(matches[2])
       end
-
     end
 
     def display_forms
@@ -64,11 +63,11 @@ module GoodData
       end
     end
 
-    # Returns all values for all labels. This is for inspection purposes only since obviously there can be huge number of elements. 
+    # Returns all values for all labels. This is for inspection purposes only since obviously there can be huge number of elements.
     # @param [Hash] options the options to pass to the value list
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
-    def values(options={})
+    def values(options = {})
       results = labels.map do |label|
         label.values(options)
       end
