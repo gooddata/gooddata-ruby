@@ -88,10 +88,59 @@ describe GoodData::Project do
   end
 
   describe '#roles' do
-    it 'Returns array' do
-      proj = get_default_proj
-      roles = proj.roles
+    it 'Returns array of GoodData::ProjectRole' do
+      project = get_default_proj
+      roles = project.roles
       expect(roles).to be_instance_of(Array)
+
+      roles.each do |role|
+        expect(role).to be_instance_of(GoodData::ProjectRole)
+      end
+    end
+  end
+
+  describe '#users' do
+    it 'Returns array of GoodData::Users' do
+      pending 'Investigate which credentials to use'
+
+      project = GoodData::Project['tk6192gsnav58crp6o1ahsmtuniq8khb']
+
+      invitations = project.invitations
+      invitations.should_not be_nil
+      expect(invitations).to be_instance_of(Array)
+
+      users = project.users
+      expect(users).to be_instance_of(Array)
+
+      users.each do |user|
+        expect(user).to be_instance_of(GoodData::User)
+
+        roles = user.roles
+        roles.should_not be_nil
+        expect(roles).to be_instance_of(Array)
+
+        roles.each do |role|
+          expect(role).to be_instance_of(GoodData::ProjectRole)
+        end
+
+        permissions = user.permissions
+        permissions.should_not be_nil
+        permissions.should_not be_nil
+        expect(permissions).to be_instance_of(Hash)
+
+        # invitations = user.invitations
+        # invitations.should_not be_nil
+
+        if(user.email == 'tomas.korcak@gooddata.com')
+          projects = user.projects
+          projects.should_not be_nil
+          expect(projects).to be_instance_of(Array)
+
+          projects.each do |project|
+            expect(project).to be_instance_of(GoodData::Project)
+          end
+        end
+      end
     end
   end
 end

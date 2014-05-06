@@ -16,14 +16,16 @@ describe GoodData::Domain do
   describe '#add_user' do
     it 'Should add user' do
       pending 'Gem test user needs privileges for this'
-      GoodData::Domain.add_user(TEST_DOMAIN_NAME, 'tomas', 'korcak', 'tomas.korcak@gooddata.com', 'password')
+      GoodData::Domain.add_user(TEST_DOMAIN_NAME, 'tomas.korcak@gooddata.com', 'password')
     end
   end
 
-  describe '#list_user' do
+  describe '#users' do
     it 'Should list users' do
-      pending 'Gem test user needs privileges for this'
-      GoodData::Domain.list_users(TEST_DOMAIN_NAME)
+      #pending 'Gem test user needs privileges for this'
+      GoodData.connect('tomas.korcak@gooddata.com', 'pjtrn,gd86')
+      res = GoodData::Domain.users(TEST_DOMAIN_NAME)
+      res.each
     end
   end
 end

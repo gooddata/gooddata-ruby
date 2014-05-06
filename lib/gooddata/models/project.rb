@@ -133,6 +133,11 @@ module GoodData
       rep.save
     end
 
+    def author
+      # TODO: Return object instead
+      @json['project']['meta']['author']
+    end
+
     def add_user(email_address, domain)
       fail 'Not implemented'
     end
@@ -188,6 +193,15 @@ module GoodData
         state = result['taskState']['status']
       end
       new_project
+    end
+
+    def contributor
+      # TODO: Return object instead
+      @json['project']['meta']['contributor']
+    end
+
+    def created
+      DateTime.parse(@json['meta']['created'])
     end
 
     def data
@@ -281,6 +295,17 @@ module GoodData
 
       url = "/gdc/projects/#{pid}/invitations"
       GoodData.post(url, data)
+    end
+
+    def invitations
+      res = []
+
+      tmp = GoodData.get @json['project']['links']['invitations']
+      tmp['invitations'].each do |invitation|
+        res << GoodData::Invitation.new(invitation)
+      end
+
+      res
     end
 
     def links
@@ -393,7 +418,15 @@ module GoodData
     end
 
     def title
+      data['meta']['summary'] if data['meta']
+    end
+
+    def title
       data['meta']['title'] if data['meta']
+    end
+
+    def updated
+      DateTime.parse(@json['meta']['updated'])
     end
 
     def upload(file, schema, mode = 'FULL')
@@ -402,6 +435,17 @@ module GoodData
 
     def uri
       data['links']['self'] if data && data['links'] && data['links']['self']
+    end
+
+    def users
+      res = []
+
+      tmp = GoodData.get @json['project']['links']['users']
+      tmp['users'].map do |user|
+        res << GoodData::User.new(user)
+      end
+
+      res
     end
 
     # Run validation on project
