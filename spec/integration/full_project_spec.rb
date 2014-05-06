@@ -158,7 +158,28 @@ describe "Ful project implementation", :constraint => 'slow' do
 
   it "should have more users"  do
     GoodData.with_project(@project) do |p|
-      GoodData::Attribute['attr.devs.dev_id'].create_metric.execute
+      GoodData::Attribute['attr.devs.dev_id'].create_metric.execute.should == 4
+    end
+  end
+
+  it "should tell you whether metric contains a certain attribute" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      repo_attribute = GoodData::Attribute['attr.repos.repo_id']
+      metric = attribute.create_metric(:title => "My test metric")
+      metric.save
+      metric.execute.should == 4
+
+      metric.contain?(attribute).should == true
+      metric.contain?(repo_attribute).should == false
+
+      metric.replace(attribute, repo_attribute)
+      metric.save
+      metric.execute.should_not == 4
+
+      l = attribute.primary_label
+      value = l.values.first[:value]
+      l.find_element_value(l.find_value_uri(value)).should == value
     end
   end
 end
