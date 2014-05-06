@@ -176,7 +176,6 @@ describe "Ful project implementation", :constraint => 'slow' do
       metric.replace(attribute, repo_attribute)
       metric.save
       metric.execute.should_not == 4
-      binding.pry
 
       l = attribute.primary_label
       value = l.values.first[:value]
