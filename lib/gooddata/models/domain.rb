@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative 'account_settings'
+
 module GoodData
   class Domain
     attr_reader :name
@@ -21,12 +23,12 @@ module GoodData
         GoodData.post(url, data)
       end
 
-      def list_users(domain)
+      def users(domain)
         result = []
 
         tmp = GoodData.get("/gdc/account/domains/#{domain}/users")
         tmp['accountSettings']['items'].each do |account|
-          result << account['accountSetting']
+          result << GoodData::AccountSettings.new(account)
         end
 
         result
@@ -62,8 +64,8 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.list_users
     #
-    def list_users
-      GoodData::Domain.list_users(name)
+    def users
+      GoodData::Domain.users(name)
     end
 
     private
