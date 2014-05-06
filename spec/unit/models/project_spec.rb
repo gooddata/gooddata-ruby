@@ -20,6 +20,8 @@ describe GoodData::Project do
 
   describe '#[]' do
     it 'Accepts :all parameter' do
+      pending 'Investigate which credentials use'
+      
       project = GoodData::Project[:all]
       project.should_not be_nil
       project.should be_a_kind_of(Array)
@@ -45,6 +47,8 @@ describe GoodData::Project do
 
   describe '#all' do
     it 'Returns all projects' do
+      pending 'Investigate which credentials use'
+
       GoodData::Project.all
     end
   end
