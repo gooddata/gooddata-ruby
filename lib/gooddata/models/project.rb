@@ -176,7 +176,8 @@ module GoodData
     end
 
     def saved?
-      !uri
+      res = uri.nil?
+      !res
     end
 
     def reload!
