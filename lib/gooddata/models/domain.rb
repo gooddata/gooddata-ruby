@@ -64,8 +64,8 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.list_users
     #
-    def users
-      GoodData::Domain.users(name)
+    def users(opts = {:offset => 0, :limit => 1000})
+      GoodData::Domain.users(name, opts)
     end
 
     private
