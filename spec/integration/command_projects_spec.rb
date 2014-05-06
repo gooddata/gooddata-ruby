@@ -17,7 +17,9 @@ describe GoodData::Command::Project, :constraint => 'slow' do
   it "should update the project" do
     @blueprint.merge!(@module_blueprint)
     GoodData.with_project(@project) do |p|
+      p.datasets.count.should == 4
       GoodData::Command::Project.update({:spec => @blueprint, :project => p})
+      p.datasets.count.should == 5
     end
   end
 end
