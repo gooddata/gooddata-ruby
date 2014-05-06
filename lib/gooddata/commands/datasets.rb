@@ -68,7 +68,9 @@ module GoodData
           begin
             cfg_file = args.shift
           rescue
+            raise(CommandFailed, 'Invalid arguments')
           end
+
           fail(CommandFailed, "Usage: #{$PROGRAM_NAME} <dataset config>") unless cfg_file
           config = begin
             JSON.load open(cfg_file)
