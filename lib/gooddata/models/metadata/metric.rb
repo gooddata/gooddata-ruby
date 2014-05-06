@@ -82,9 +82,17 @@ module GoodData
 
       def execute(expression, options = {})
         m = if expression.is_a?(String)
-              GoodData::Metric.create({ :title => 'Temporary metric to be deleted', :expression => expression }.merge(options))
+              tmp = {
+                :title => 'Temporary metric to be deleted',
+                :expression => expression
+              }.merge(options)
+
+              GoodData::Metric.create(tmp)
             else
-              GoodData::Metric.create({ :title => 'Temporary metric to be deleted' }.merge(expression))
+              tmp = {
+                :title => 'Temporary metric to be deleted'
+              }.merge(expression)
+              GoodData::Metric.create(tmp)
             end
         m.execute
       end
@@ -125,7 +133,7 @@ module GoodData
     # @return [Boolean]
     def contain?(item)
       uri = item.respond_to?(:uri) ? item.uri : item
-      expression[uri] != nil
+      !expression[uri]
     end
 
     # Checks that the expression contains certain element of an attribute. The value is looked up through given label.
@@ -170,7 +178,7 @@ module GoodData
         if uri =~ /elements/
           temp.sub!(uri, Attribute.find_element_value(uri))
         else
-         obj = GoodData::MdObject[uri]
+          obj = GoodData::MdObject[uri]
           temp.sub!(uri, obj.title)
         end
       end
