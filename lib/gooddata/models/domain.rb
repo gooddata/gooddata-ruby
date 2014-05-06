@@ -23,10 +23,10 @@ module GoodData
         GoodData.post(url, data)
       end
 
-      def users(domain)
+      def users(domain, opts = { :offset => 0, :limit => 1000} )
         result = []
 
-        tmp = GoodData.get("/gdc/account/domains/#{domain}/users")
+        tmp = GoodData.get("/gdc/account/domains/#{domain}/users?offset=#{opts[:offset]}&limit=#{opts[:limit]}")
         tmp['accountSettings']['items'].each do |account|
           result << GoodData::AccountSettings.new(account)
         end
