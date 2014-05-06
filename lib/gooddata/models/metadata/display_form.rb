@@ -11,14 +11,14 @@ module GoodData
     # @param [String] value value of an label you are looking for
     # @return [String]
     def find_value_uri(value)
-       value = CGI.escapeHTML(value)
-       results = GoodData.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{value}", {})
-       items = results['validElements']['items']
-       if items.empty?
-         fail "#{value} not found"
-       else
-         items.first['element']['uri']
-       end
+      value = CGI.escapeHTML(value)
+      results = GoodData.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{value}", {})
+      items = results['validElements']['items']
+      if items.empty?
+        fail "#{value} not found"
+      else
+        items.first['element']['uri']
+      end
     end
 
     # For an element id find values (titles) for this label. Element id can be given as both number id or URI as a string beginning with /
