@@ -5,8 +5,6 @@ require 'pathname'
 module GoodData
   module Command
     class Project
-      DEFAULT_INVITE_MESSAGE = 'Join us!'
-
       class << self
         # Create new project based on options supplied
         def create(options = {})
@@ -23,8 +21,8 @@ module GoodData
           GoodData::Project[id]
         end
 
-        def invite(project_id, email, role, msg = DEFAULT_INVITE_MESSAGE)
-          msg = DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
+        def invite(project_id, email, role, msg = GoodData::Project::DEFAULT_INVITE_MESSAGE)
+          msg = GoodData::Project::DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
 
           project = GoodData::Project[project_id]
           fail "Invalid project id '#{project_id}' specified" if project.nil?

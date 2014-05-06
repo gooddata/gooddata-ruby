@@ -16,14 +16,36 @@ describe GoodData::Domain do
   describe '#add_user' do
     it 'Should add user' do
       pending 'Gem test user needs privileges for this'
-      GoodData::Domain.add_user(TEST_DOMAIN_NAME, 'tomas', 'korcak', 'tomas.korcak@gooddata.com', 'password')
+      GoodData::Domain.add_user(TEST_DOMAIN_NAME, 'tomas.korcak@gooddata.com', 'password')
     end
   end
 
-  describe '#list_user' do
+  describe '#users' do
     it 'Should list users' do
       pending 'Gem test user needs privileges for this'
-      GoodData::Domain.list_users(TEST_DOMAIN_NAME)
+      users = GoodData::Domain.users(TEST_DOMAIN_NAME)
+      expect(users).to be_instance_of(Array)
+      users.each do |user|
+        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+      end
+    end
+
+    it 'Accepts pagination options - limit' do
+      pending 'Gem test user needs privileges for this'
+      users = GoodData::Domain.users(TEST_DOMAIN_NAME, {:limit =>1})
+      expect(users).to be_instance_of(Array)
+      users.each do |user|
+        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+      end
+    end
+
+    it 'Accepts pagination options - offset' do
+      pending 'Gem test user needs privileges for this'
+      users = GoodData::Domain.users(TEST_DOMAIN_NAME, {:offset => 1})
+      expect(users).to be_instance_of(Array)
+      users.each do |user|
+        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+      end
     end
   end
 end
