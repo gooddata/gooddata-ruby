@@ -104,7 +104,7 @@ module GoodData
       # * +guess+ - A hash with optional @pros and @cons keys
       #
       def store_guess(header, guess)
-        result = !guess[@pros].nil?
+        result = guess[@pros]
         [@pros, @cons].each do |hash|
           if guess[hash]
             guess[hash] = [guess[hash]] unless guess[hash].is_a? Array

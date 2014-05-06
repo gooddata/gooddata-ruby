@@ -36,7 +36,7 @@ module GoodData
         if id == :all
           Project.all
         else
-          if id.to_s !~ /^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$/
+          if id.to_s !~ %r{^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$}
             fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
           end
 
