@@ -12,9 +12,10 @@ module GoodData
     FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median]
 
     class << self
-      def [](id)
+      def [](id, options = {})
         if id == :all
-          GoodData.get(GoodData.project.md['query'] + '/facts/')['query']['entries']
+          facts = GoodData.get(GoodData.project.md['query'] + '/facts/')['query']['entries']
+          options[:full] ? facts.map { |f| Fact[f['link']] } : facts
         else
           super
         end
