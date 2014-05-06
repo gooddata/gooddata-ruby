@@ -79,6 +79,8 @@ module GoodData
         project.save
 
         # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
+        GoodData.logger.info "Waiting for project to get 'enabled', now in state #{project.state}"
+
         while project.state.to_s != 'enabled'
           if project.state.to_s == 'deleted'
             # if project is switched to deleted state, fail. This is usually problem of creating a template which is invalid.
@@ -406,7 +408,8 @@ module GoodData
     end
 
     def saved?
-      !uri
+      res = uri.nil?
+      !res
     end
 
     def slis
