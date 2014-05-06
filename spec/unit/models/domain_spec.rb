@@ -22,8 +22,13 @@ describe GoodData::Domain do
 
   describe '#users' do
     it 'Should list users' do
-      #pending 'Gem test user needs privileges for this'
-      GoodData.connect('tomas.korcak@gooddata.com', 'pjtrn,gd86')
+      pending 'Gem test user needs privileges for this'
+      res = GoodData::Domain.users(TEST_DOMAIN_NAME)
+      res.each
+    end
+
+    it 'Accepts pagination options' do
+      pending 'Gem test user needs privileges for this'
       res = GoodData::Domain.users(TEST_DOMAIN_NAME)
       res.each
     end
