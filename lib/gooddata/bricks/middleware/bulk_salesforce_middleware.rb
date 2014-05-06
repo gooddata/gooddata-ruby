@@ -16,21 +16,21 @@ module GoodData
         host = params[:salesforce_host]
 
         credentials = if username && password && token
-          {
-            :username => username,
-            :password => password,
-            :security_token => token
-          }
-        end
+                        {
+                          :username => username,
+                          :password => password,
+                          :security_token => token
+                        }
+                      end
 
         client = if credentials
-          credentials.merge!(
-            :client_id => client_id,
-            :client_secret => client_secret
-          )
-          credentials[:host] = host unless host.nil?
-          SalesforceBulk::Api.new(credentials[:username], credentials[:password] + credentials[:security_token])
-        end
+                   credentials.merge!(
+                     :client_id => client_id,
+                     :client_secret => client_secret
+                   )
+                   credentials[:host] = host unless host.nil?
+                   SalesforceBulk::Api.new(credentials[:username], credentials[:password] + credentials[:security_token])
+                 end
         @app.call(params.merge(:salesforce_bulk_client => client))
       end
     end
