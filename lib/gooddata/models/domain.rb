@@ -6,6 +6,8 @@ module GoodData
   class Domain
     attr_reader :name
 
+    @@USERS_OPTIONS = {:offset => 0, :limit => 1000}
+
     class << self
       def add_user(domain, login, password)
         data = {
@@ -23,10 +25,17 @@ module GoodData
         GoodData.post(url, data)
       end
 
-      def users(domain, opts = { :offset => 0, :limit => 1000} )
+      # Returns list of users for domain specified
+      # @param [String] domain Domain to list the users for
+      # @param [Hash] opts Options.
+      # @option opts [Number] :offset The subject
+      # @option opts [Number] :limit From address
+      def users(domain, opts = @@USERS_OPTIONS)
         result = []
 
-        tmp = GoodData.get("/gdc/account/domains/#{domain}/users?offset=#{opts[:offset]}&limit=#{opts[:limit]}")
+        options = @@USERS_OPTIONS.merge(opts)
+
+        tmp = GoodData.get("/gdc/account/domains/#{domain}/users?offset=#{options[:offset]}&limit=#{options[:limit]}")
         tmp['accountSettings']['items'].each do |account|
           result << GoodData::AccountSettings.new(account)
         end
@@ -64,7 +73,7 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.list_users
     #
-    def users(opts = {:offset => 0, :limit => 1000})
+    def users(opts = @@USERS_OPTIONS)
       GoodData::Domain.users(name, opts)
     end
 
