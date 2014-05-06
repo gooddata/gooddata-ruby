@@ -59,18 +59,18 @@ module GoodData
         auth_token = attributes[:auth_token] || GoodData.connection.auth_token
         fail 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
 
-        json = { 'project' =>
-                  {
-                    'meta' => {
-                      'title' => attributes[:title],
-                      'summary' => attributes[:summary] || 'No summary'
-                    },
-                    'content' => {
-                      'guidedNavigation' => attributes[:guided_navigation] || 1,
-                      'authorizationToken' => auth_token,
-                      'driver' => attributes[:driver] || 'Pg'
-                    }
-                  }
+        json = {
+          'project' => {
+            'meta' => {
+              'title' => attributes[:title],
+              'summary' => attributes[:summary] || 'No summary'
+            },
+            'content' => {
+              'guidedNavigation' => attributes[:guided_navigation] || 1,
+              'authorizationToken' => auth_token,
+              'driver' => attributes[:driver] || 'Pg'
+            }
+          }
         }
         json['project']['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
@@ -148,17 +148,19 @@ module GoodData
       end
 
       data = {
-        :invitations => [{
-                           :invitation => {
-                             :content => {
-                               :email => email,
-                               :role => role_url,
-                               :action => {
-                                 :setMessage => msg
-                               }
-                             }
-                           }
-                         }]
+        :invitations => [
+          {
+            :invitation => {
+              :content => {
+                :email => email,
+                :role => role_url,
+                :action => {
+                  :setMessage => msg
+                }
+              }
+            }
+          }
+        ]
       }
 
       url = "/gdc/projects/#{pid}/invitations"
@@ -397,6 +399,7 @@ module GoodData
 
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
     end
+
     alias_method :transfer_objects, :partial_md_export
   end
 end
