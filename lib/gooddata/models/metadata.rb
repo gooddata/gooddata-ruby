@@ -184,7 +184,7 @@ module GoodData
     end
 
     def saved?
-      !uri.nil?
+      !uri
     end
 
     def save
