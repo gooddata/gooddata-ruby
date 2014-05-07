@@ -49,7 +49,7 @@ module GoodData
         url = "/gdc/account/domains/#{domain}/users?login=#{login}"
         tmp = GoodData.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
-        if (items && items.length > 0)
+        if items && items.length > 0
           return GoodData::AccountSettings.new(items.first)
         end
         nil
