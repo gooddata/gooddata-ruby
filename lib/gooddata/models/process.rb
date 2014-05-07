@@ -129,6 +129,7 @@ module GoodData
     def obj_id
       uri.split('/').last
     end
+
     alias_method :process_id, :obj_id
 
     def executions_link
