@@ -61,13 +61,12 @@ describe GoodData::Command::Process do
 
   describe "#run" do
     it "Throws exception if no project specified" do
-      pending("Run was removed for now.")
-      expect { GoodData::Command::Process.run(deploy_dir) }.to raise_error
+      expect { GoodData::Command::Process.run(deploy_dir, './main.grf') }.to raise_error
     end
 
     it "Runs process" do
       pending('Project ID needed')
-      GoodData::Command::Process.run(deploy_dir)
+      GoodData::Command::Process.run(deploy_dir, './main.grf')
     end
   end
 
