@@ -133,7 +133,7 @@ module GoodData
     # @return [Boolean]
     def contain?(item)
       uri = item.respond_to?(:uri) ? item.uri : item
-      !expression[uri]
+      expression[uri] != nil
     end
 
     # Checks that the expression contains certain element of an attribute. The value is looked up through given label.
