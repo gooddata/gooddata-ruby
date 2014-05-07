@@ -100,20 +100,6 @@ module GoodData
       end
     end
 
-    def get_roles # rubocop:disable AccessorMethodName
-      url = "/gdc/projects/#{pid}/roles"
-
-      res = []
-
-      tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].each do |role_url|
-        res << {
-          'url' => role_url,
-          'role' => GoodData.get(role_url)
-        }
-      end
-      res
-    end
 
     # Creates a data set within the project
     #
@@ -146,15 +132,24 @@ module GoodData
       rep.save
     end
 
+    # Gets author of project
+    #
+    # @return [String] Project author
     def author
       # TODO: Return object instead
       @json['project']['meta']['author']
     end
 
+    # Adds user to project
+    #
+    # TODO: Discuss with @fluke777 if is not #invite sufficient
     def add_user(email_address, domain)
       fail 'Not implemented'
     end
 
+    # Returns web interface URI of project
+    #
+    # @return [String] Project URL
     def browser_uri(options = {})
       grey = options[:grey]
       if grey
@@ -164,6 +159,9 @@ module GoodData
       end
     end
 
+    # Clones project
+    #
+    # @return [GoodData::Project] Newly created project
     def clone(options = {})
       # TODO: Refactor so if export or import fails the new_project will be cleaned
       with_data = options[:data] || true
@@ -208,15 +206,23 @@ module GoodData
       new_project
     end
 
+    # Project contributor
+    #
+    # @return [String] Project contributor
+    # TODO: Return as object
     def contributor
       # TODO: Return object instead
       @json['project']['meta']['contributor']
     end
 
+    # Gets the date when created
+    #
+    # @return [DateTime] Date time when created
     def created
       DateTime.parse(@json['meta']['created'])
     end
 
+    # Gets ruby wrapped raw project JSON data
     def data
       raw_data['project']
     end
@@ -243,6 +249,7 @@ module GoodData
     # Gets project role by its identifier
     #
     # @param role_name [String] Title of role to look for
+    # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_identifier(role_name)
       tmp = roles
       tmp.each do |role|
@@ -254,6 +261,7 @@ module GoodData
     # Gets project role byt its summary
     #
     # @param role_summary [String] Summary of role to look for
+    # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_summary(role_summary)
       tmp = roles
       tmp.each do |role|
@@ -265,6 +273,7 @@ module GoodData
     # Gets project role by its name
     #
     # @param role_title [String] Title of role to look for
+    # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_title(role_title)
       tmp = roles
       tmp.each do |role|
@@ -280,6 +289,13 @@ module GoodData
       @json = json
     end
 
+    # Invites new user to project
+    #
+    # @param email [String] User to be invited
+    # @param role [String] Role URL or Role ID to be used
+    # @param msg [String] Optional invite message
+    #
+    # TODO: Return invite object
     def invite(email, role, msg = DEFAULT_INVITE_MESSAGE)
       puts "Inviting #{email}, role: #{role}"
 
@@ -312,6 +328,9 @@ module GoodData
       GoodData.post(url, data)
     end
 
+    # Returns invitations to project
+    #
+    # @return [Array<GoodData::Invitation>] List of invitations
     def invitations
       res = []
 
@@ -323,6 +342,9 @@ module GoodData
       res
     end
 
+    # Returns project related links
+    #
+    # @return [Hash] Project related links
     def links
       data['links']
     end
@@ -331,6 +353,9 @@ module GoodData
       @md ||= Links.new GoodData.get(data['links']['metadata'])
     end
 
+    # Gets raw resource ID
+    #
+    # @return [String] Raw resource ID
     def obj_id
       uri.split('/').last
     end
@@ -377,10 +402,14 @@ module GoodData
 
     alias_method :transfer_objects, :partial_md_export
 
+    # Checks if this object instance is project
+    #
+    # @return [Boolean] Return true for all instances
     def project?
       true
     end
 
+    # Forces project to reload
     def reload!
       if saved?
         response = GoodData.get(uri)
@@ -389,6 +418,9 @@ module GoodData
       self
     end
 
+    # Gets the list or project roles
+    #
+    # @returns [Array<GoodData::ProjectRole>] List of roles
     def roles
       url = "/gdc/projects/#{pid}/roles"
 
@@ -403,6 +435,7 @@ module GoodData
       res
     end
 
+    # Saves project
     def save
       response = GoodData.post PROJECTS_PATH, raw_data
       if uri.nil?
@@ -411,11 +444,17 @@ module GoodData
       end
     end
 
+    # Checks if is project saved
+    #
+    # @returns [Boolean] True if saved, false if not
     def saved?
       res = uri.nil?
       !res
     end
 
+    # Gets SLIs data
+    #
+    # @returns [GoodData::Metadata] SLI Metadata
     def slis
       link = "#{data['links']['metadata']}#{SLIS_PATH}"
 
@@ -423,22 +462,38 @@ module GoodData
       Metadata.new GoodData.get(link)
     end
 
+    # Gets project state
+    #
+    # @return [String] Project state
     def state
       data['content']['state'].downcase.to_sym if data['content'] && data['content']['state']
     end
 
-    def title
+    # Gets project summary
+    #
+    # @return [String] Project summary
+    def summary
       data['meta']['summary'] if data['meta']
     end
 
+    # Gets project title
+    #
+    # @return [String] Project title
     def title
       data['meta']['title'] if data['meta']
     end
 
+    # Gets project update date
+    #
+    # @return [DateTime] Date time of last update
     def updated
       DateTime.parse(@json['meta']['updated'])
     end
 
+    # Uploads file to project
+    #
+    # @param file File to be uploaded
+    # @param schema Schema to be used
     def upload(file, schema, mode = 'FULL')
       schema.upload file, self, mode
     end
@@ -447,6 +502,9 @@ module GoodData
       data['links']['self'] if data && data['links'] && data['links']['self']
     end
 
+    # List of users in project
+    #
+    # @returns [Array<GoodData::User>] List of users
     def users
       res = []
 
