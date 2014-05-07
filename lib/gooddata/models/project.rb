@@ -100,7 +100,6 @@ module GoodData
       end
     end
 
-
     # Creates a data set within the project
     #
     # == Usage
