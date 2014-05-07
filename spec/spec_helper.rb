@@ -20,6 +20,7 @@ RSpec.configure do |config|
   config.include ConnectionHelper
   config.include ProjectHelper
   config.include SchemaHelper
+  config.include UserHelper
 
   config.before(:all) do
     # TODO: Fully setup global environment

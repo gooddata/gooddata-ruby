@@ -3,8 +3,6 @@
 require 'gooddata/models/domain'
 
 describe GoodData::Domain do
-  TEST_DOMAIN_NAME = 'gooddata-tomas-korcak'
-
   before(:each) do
     ConnectionHelper.create_default_connection
   end
@@ -15,15 +13,13 @@ describe GoodData::Domain do
 
   describe '#add_user' do
     it 'Should add user' do
-      pending 'Gem test user needs privileges for this'
-      GoodData::Domain.add_user(TEST_DOMAIN_NAME, 'tomas.korcak@gooddata.com', 'password')
+      GoodData::Domain.add_user(ConnectionHelper::DEFAULT_DOMAIN, "gemtest#{rand(1e6)}@gooddata.com", 'password')
     end
   end
 
   describe '#users' do
     it 'Should list users' do
-      pending 'Gem test user needs privileges for this'
-      users = GoodData::Domain.users(TEST_DOMAIN_NAME)
+      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
       expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::AccountSettings)
@@ -31,8 +27,7 @@ describe GoodData::Domain do
     end
 
     it 'Accepts pagination options - limit' do
-      pending 'Gem test user needs privileges for this'
-      users = GoodData::Domain.users(TEST_DOMAIN_NAME, {:limit =>1})
+      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:limit =>1})
       expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::AccountSettings)
@@ -40,10 +35,7 @@ describe GoodData::Domain do
     end
 
     it 'Accepts pagination options - offset' do
-      # pending 'Gem test user needs privileges for this'
-      ConnectionHelper.create_private_connection
-      
-      users = GoodData::Domain.users(TEST_DOMAIN_NAME, {:offset => 1})
+      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:offset => 1})
       expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::AccountSettings)

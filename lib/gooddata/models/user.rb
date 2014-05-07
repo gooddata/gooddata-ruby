@@ -6,32 +6,51 @@ require_relative 'project_role'
 module GoodData
   class User
     attr_reader :json
+
     def initialize(json)
       @json = json
     end
 
+    # Gets author (person who created)  of this object
+    #
+    # @return [String] Author
     def author
       # TODO: Return object instead
       @json['user']['meta']['author']
     end
 
+    # Gets the contributor
+    #
+    # @return [String] Contributor
     def contributor
       # TODO: Return object instead
       @json['user']['meta']['contributor']
     end
 
+    # Gets date when created
+    #
+    # @return [DateTime] Created date
     def created
       DateTime.parse(@json['user']['meta']['created'])
     end
 
+    # Gets the email
+    #
+    # @return [String] Email address
     def email
       @json['user']['content']['email'] || ''
     end
 
+    # Gets the first name
+    #
+    # @return [String] First name
     def first_name
       @json['user']['content']['firstname'] || ''
     end
 
+    # Gets the invitations
+    #
+    # @return [Array<GoodData::Invitation>] List of invitations
     def invitations
       res = []
 
@@ -42,18 +61,30 @@ module GoodData
       res
     end
 
+    # Gets the last name
+    #
+    # @return [String] Last name
     def last_name
       @json['user']['content']['lastname'] || ''
     end
 
+    # Gets the login
+    #
+    # @return [String] Login
     def login
       @json['user']['content']['login'] || ''
     end
 
+    # Gets user raw object ID
+    #
+    # @return [String] Raw Object ID
     def obj_id
       uri.split('/').last
     end
 
+    # Gets the permissions
+    #
+    # @return [Hash] Hash with permissions
     def permissions
       res = {}
 
@@ -65,10 +96,16 @@ module GoodData
       res
     end
 
+    # Gets the phone number
+    #
+    # @return [String] Phone number
     def phone
       @json['user']['content']['phonenumber'] || ''
     end
 
+    # Gets the projects of user
+    #
+    # @return [Array<GoodData::Project>] Array of projets
     def projects
       res = []
 
@@ -82,6 +119,9 @@ module GoodData
       res
     end
 
+    # Gets the project roles of user
+    #
+    # @return [Array<GoodData::ProjectRole>] Array of project roles
     def roles
       res = []
 
@@ -94,18 +134,30 @@ module GoodData
       res
     end
 
+    # Gets the status
+    #
+    # @return [String] Status
     def status
       @json['user']['content']['status'] || ''
     end
 
+    # Gets the title
+    #
+    # @return [String] User title
     def title
       @json['user']['meta']['title'] || ''
     end
 
+    # Gets the date when updated
+    #
+    # @return [DateTime] Date of last update
     def updated
       DateTime.parse(@json['user']['meta']['updated'])
     end
 
+    # Gets the object URI
+    #
+    # @return [String] Object URI
     def uri
       @json['user']['links']['self']
     end

@@ -9,6 +9,21 @@ module GoodData
     USERS_OPTIONS = { :offset => 0, :limit => 1000 }
 
     class << self
+      # Looks for domain
+      #
+      # @param domain_name [String] Domain name
+      # @return [String] Domain object instance
+      def [](domain_name)
+        fail "Using pseudo-id 'all' is not supported by GoodData::Domain" if domain_name.to_s == 'all'
+        GoodData::Domain.new(domain_name)
+      end
+
+      # Adds user to domain
+      #
+      # @param domain [String] Domain name
+      # @param login [String] Login of user to be invited
+      # @param password [String] Default preset password
+      # @return [Object] Raw response
       def add_user(domain, login, password)
         data = {
           :accountSetting => {
@@ -23,6 +38,21 @@ module GoodData
 
         url = "/gdc/account/domains/#{domain}/users"
         GoodData.post(url, data)
+      end
+
+      # Finds user in domain by login
+      #
+      # @param domain [String] Domain name
+      # @param login [String] User login
+      # @return [GoodData::AccountSettings] User account settings
+      def find_user_by_login(domain, login)
+        url = "/gdc/account/domains/#{domain}/users?login=#{login}"
+        tmp = GoodData.get url
+        items = tmp['accountSettings']['items'] if tmp['accountSettings']
+        if (items && items.length > 0)
+          return GoodData::AccountSettings.new(items.first)
+        end
+        nil
       end
 
       # Returns list of users for domain specified
@@ -42,18 +72,17 @@ module GoodData
 
         result
       end
-
-      def [](domain_name)
-        fail "Using pseudo-id 'all' is not supported by GoodData::Domain" if domain_name.to_s == 'all'
-        GoodData::Domain.new(domain_name)
-      end
     end
 
     def initialize(domain_name)
       @name = domain_name
     end
 
-    # Add user to login
+    # Adds user to domain
+    #
+    # @param login [String] Login of user to be invited
+    # @param password [String] Default preset password
+    # @return [Object] Raw response
     #
     # Example
     #
@@ -65,13 +94,26 @@ module GoodData
       GoodData::Domain.add_user(name, login, password)
     end
 
+    # Finds user in domain by login
+    #
+    # @param login [String] User login
+    # @return [GoodData::AccountSettings] User account settings
+    def find_user_by_login(login)
+      GoodData::Domain.find_user_by_login(name, login)
+    end
+
     # List users in domain
+    #
+    # @param [Hash] opts Additional user listing options.
+    # @option opts [Number] :offset Offset to start listing from
+    # @option opts [Number] :limit Limit of users to be listed
+    # @return [Array<GoodData::AccountSettings>] List of user account settings
     #
     # Example
     #
     # GoodData.connect 'tomas.korcak@gooddata.com' 'your-password'
     # domain = GoodData::Domain['gooddata-tomas-korcak']
-    # pp domain.list_users
+    # pp domain.users
     #
     def users(opts = USERS_OPTIONS)
       GoodData::Domain.users(name, opts)
@@ -79,7 +121,9 @@ module GoodData
 
     private
 
-    # Private setter of domain name
+    # Private setter of domain name. Used by constructor not available for external users.
+    #
+    # @param domain_name [String] Domain name to be set.
     def name=(domain_name) # rubocop:disable TrivialAccessors
       @name = domain_name
     end

@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative 'project'
+
 module GoodData
   # Account settings representation with some added sugar
   class AccountSettings
@@ -28,7 +30,7 @@ module GoodData
 
     # Gets date when created
     #
-    # @return [String] Created date
+    # @return [DateTime] Created date
     def created
       DateTime.parse(@json['accountSetting']['created'])
     end
@@ -84,6 +86,20 @@ module GoodData
       @json['accountSetting']['position'] || ''
     end
 
+    # Gets the array of projects
+    #
+    # @return [Array<GoodData::Project>] Array of project where account settings belongs to
+    def projects
+      res = []
+
+      projects = GoodData.get @json['accountSetting']['links']['projects']
+      projects['projects'].each do |project|
+        res << GoodData::Project.new(project)
+      end
+
+      res
+    end
+
     # Gets the preferred timezone
     #
     # @return [String] Preferred timezone
@@ -93,7 +109,7 @@ module GoodData
 
     # Gets the date when updated
     #
-    # @return [String] Updated date
+    # @return [DateTime] Updated date
     def updated
       DateTime.parse(@json['accountSetting']['updated'])
     end
