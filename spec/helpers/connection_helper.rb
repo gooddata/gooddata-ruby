@@ -9,4 +9,10 @@ module ConnectionHelper
     GoodData::connect(username, password)
   end
 
+  def self.create_private_connection
+    username = ENV['GD_GEM_USER'] || DEFAULT_USERNAME
+    password = ENV['GD_GEM_PASSWORD'] || DEFAULT_PASSWORD
+
+    GoodData::connect(username, password)
+  end
 end

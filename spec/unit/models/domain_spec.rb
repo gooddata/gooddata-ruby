@@ -40,7 +40,9 @@ describe GoodData::Domain do
     end
 
     it 'Accepts pagination options - offset' do
-      pending 'Gem test user needs privileges for this'
+      # pending 'Gem test user needs privileges for this'
+      ConnectionHelper.create_private_connection
+      
       users = GoodData::Domain.users(TEST_DOMAIN_NAME, {:offset => 1})
       expect(users).to be_instance_of(Array)
       users.each do |user|

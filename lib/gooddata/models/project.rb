@@ -3,6 +3,7 @@
 require 'zip'
 require 'fileutils'
 
+require_relative 'process'
 require_relative '../exceptions/no_project_error'
 require_relative 'project_role'
 
@@ -73,14 +74,13 @@ module GoodData
                 'driver' => attributes[:driver] || 'Pg'
               }
             }
-        }
+          }
+
         json['project']['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
         project.save
 
         # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
-        GoodData.logger.info "Waiting for project to get 'enabled', now in state #{project.state}"
-
         while project.state.to_s != 'enabled'
           if project.state.to_s == 'deleted'
             # if project is switched to deleted state, fail. This is usually problem of creating a template which is invalid.
@@ -100,9 +100,19 @@ module GoodData
       end
     end
 
-    def add_dashboard(options = {})
-      dash = GoodData::Dashboard.create(options)
-      dash.save
+    def get_roles # rubocop:disable AccessorMethodName
+      url = "/gdc/projects/#{pid}/roles"
+
+      res = []
+
+      tmp = GoodData.get(url)
+      tmp['projectRoles']['roles'].each do |role_url|
+        res << {
+          'url' => role_url,
+          'role' => GoodData.get(role_url)
+        }
+      end
+      res
     end
 
     # Creates a data set within the project
@@ -345,12 +355,9 @@ module GoodData
       result = GoodData.post("#{GoodData.project.md['maintenance']}/partialmdexport", export_payload)
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
-      polling_result = GoodData.get(polling_url)
 
-      while polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_url)
-      end
+      polling_result = GoodData.wait_for_polling_result(polling_url)
+
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
 
       import_payload = {
@@ -363,11 +370,8 @@ module GoodData
 
       result = GoodData.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
       polling_url = result['uri']
-      polling_result = GoodData.get(polling_url)
-      while polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_url)
-      end
+      polling_result = GoodData.wait_for_polling_result(polling_url)
+
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
     end
 
