@@ -9,7 +9,7 @@ UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script
 
 // Set colors
 UserVoice.push(['set', {
-  accent_color: '#da1f1f',
+  accent_color: '#333333',
   trigger_color: 'white',
   trigger_background_color: 'rgba(46, 49, 51, 0.6)'
 }]);
