@@ -44,6 +44,17 @@ module GoodData
             process.execute_process(executable, options)
           end
         end
+
+        def run(dir, executable, options = {})
+          verbose = options[:v]
+          dir = Pathname(dir)
+          name = options[:name] || "Temporary deploy[#{dir}][#{options[:project_name]}]"
+
+          GoodData::Process.with_deploy(dir, options.merge(:name => name)) do |process|
+            puts HighLine.color('Executing', HighLine::BOLD) if verbose
+            process.execute(executable, options)
+          end
+        end
       end
     end
   end
