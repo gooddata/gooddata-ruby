@@ -58,13 +58,14 @@ module GoodData
           response = GoodData.get(link)
           ldm_links = GoodData.get project.md[LDM_CTG]
           ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
-          chunks = response['projectModelDiff']['updateScripts'].select { |script| script['updateScript']['preserveData'] == true && script['updateScript']['cascadeDrops'] == false }.map { |x| x['updateScript']['maqlDdlChunks'] }.flatten
-          chunks.each do |chunk|
+          chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
+          chunks['updateScript']['maqlDdlChunks'].each do |chunk|
             response = GoodData.post ldm_uri, 'manage' => { 'maql' => chunk }
             polling_url = response['entries'].first['link']
 
             polling_result = GoodData.get(polling_url)
             while polling_result['wTaskStatus']['status'] == 'RUNNING'
+              sleep(3)
               polling_result = GoodData.get(polling_url)
             end
             fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
@@ -115,6 +116,20 @@ module GoodData
           spec.each do |assert|
             result = GoodData::ReportDefinition.execute(assert[:report])
             fail "Test did not pass. Got #{result.table.inspect}, expected #{assert[:result].inspect}" if result.table != assert[:result]
+          end
+        end
+
+        def pick_correct_chunks(chunks)
+          # first is cascadeDrops, second is preserveData
+          rules = [
+            [false, true],
+            [false, false],
+            [true, true],
+            [true, false]
+          ]
+          stuff = chunks.select { |chunk| chunk['updateScript']['maqlDdlChunks'] }
+          rules.reduce(nil) do |a, e|
+            a || stuff.find { |chunk| e[0] == chunk['updateScript']['cascadeDrops'] && e[1] == chunk['updateScript']['preserveData'] }
           end
         end
       end
