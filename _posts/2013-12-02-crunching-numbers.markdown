@@ -1,10 +1,8 @@
 ---
-layout: post
+layout: reference
 title:  "Crunching numbers"
 date:   2014-01-19 13:56:00
-categories: recipe
-next_section: recipe/test-driven-development
-prev_section: recipe/model
+categories: reference
 pygments: true
 perex: The most important goal for any project is to get some numbers out of it. Let’s do it, using Ruby.
 ---

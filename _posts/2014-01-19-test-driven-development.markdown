@@ -3,8 +3,6 @@ layout: post
 title:  "Test-driven development"
 date:   2014-01-19 13:56:00
 categories: recipe
-next_section: recipe/bricks
-prev_section: recipe/crunching-numbers
 pygments: true
 perex: Let's have a look how you can enhance project development to achieve test-driven development of your reports and projects. 
 ---

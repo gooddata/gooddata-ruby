@@ -1,8 +1,8 @@
 ---
-layout: post
+layout: reference
 title:  "Working with processes"
 date:   2014-01-19 13:56:00
-categories: draft
+categories: reference
 pygments: true
 perex: Use the Ruby SDK to interact with ETL processes that you have uploaded to the GoodData platform.
 ---
@@ -40,9 +40,6 @@ Use the following command to deploy a specified process to the target project. T
   gooddata -p PROJECT_ID process deploy --dir DIR_WHERE_YOUR_PROCESS_LIVES --name PROCESS_NAME
 {% endhighlight %}
 
-###Creating a schedule
-TBD
-
 ###Executing process
 There are two ways how to achieve this. Either execute a process directly. Provide it all it needs and just fire it off or prepare a schedule. There are couple of things to conside
 * when executing a schedule you do not have to provide the parameters. this happens only once during the schedule creation as opposed to execution of the process where you have to provide parameters every single time.
@@ -53,9 +50,6 @@ There are two ways how to achieve this. Either execute a process directly. Provi
 {% highlight ruby %}
   gooddata -l -p PROJECT_ID process execute --process_id PROCESS_ID --executable NAME_OF_THE_EXECUTABLE
 {% endhighlight %}
-
-####Executing schedule
-TBD
 
 Note: NAME_OF_THE_EXECUTABLE is a name of the executed graph or a script. Best way how to know what to put here is to inspect the deployed process with the command described above in *Get process details*. It will list the usable executables. Make sure you use it verbatim and you should be safe.
 
@@ -111,5 +105,13 @@ Sometimes it is useful to redeploy an existing process. You can do it like this
   process.execute_process(graph_to_execute, :params => {"param1" => "value1", "param2" => "value2"}, :hidden_params => {"param1" => "value1"})
 {% endhighlight %}
 
+###Creating a schedule
+{% highlight ruby %}
+schedule = GoodData::Schedule.create(PROCESS_ID, '0 15 27 7 *', 'main.grf', :hidden_params => {:param1 => 'val1'})
+{% endhighlight %}
+
+
 ###Execute a schedule
-TBD
+{% highlight ruby %}
+schedule.execute
+{% endhighlight %}

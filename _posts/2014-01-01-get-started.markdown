@@ -10,18 +10,9 @@ You just installed the Ruby GEM and want to start playing around, right? Follow 
 
 ##Disclaimer
 
-This SDK is intended for developers. Programming experience is required. Some operations that can be executed using the SDK can be destructive to your projects and data. For more information, please contact GoodData Customer Support.
+Though we did everything in our power to make it simple. This SDK is still intended for developers. Programming experience is required. Some operations that can be executed using the SDK can be destructive to your projects and data. For more information, please contact GoodData Customer Support or let the authors know. Any feedback is appreciated.
 
-##Table of Contents
-
-- [Prerequisities](#prerequisites)
-- [Install](#install)
-- [First steps](#first)
-- [Retrieving Objects](#retrieve)
-- [Metrics (not only) Creation](#metrics)
-- [Report Handling](#reports)
-- [Dashboard Operations](#dashboards)
-- [Direct Post Requests](#direct)
+Also take note that we still have not reach version 1.0.0 which means the API could and will change. We try to be as gentle as possible but sometimes if we want to make progress we have to break things.
 
 ##Prerequisites
 
@@ -51,94 +42,111 @@ bundle install
 
 ##First steps{#first}
 
-There are several ways how to work with GoodData SDK. Let's look at all the major ones one by one.
+There are several methods by which you can work with the GoodData Ruby SDK. Let's look at the major ones.
 
 ###irb
-If you are familiar with Ruby at least a little bit you must have seen `irb`. This is an interactive console that comes with your ruby installation. You can start using gooddata sdk inside your irb like this. First you have to star irb so in your terminal run
+`irb` is an interactive console that is provided with your Ruby installation. You may  use gooddata sdk inside your irb. Below are some of the basic steps. 
+
+First, launch irb. In your terminal, execute the following:
 
 {% highlight ruby %}
   irb
 {% endhighlight %}
 
-This will respond with something similar to `2.1-head :001 >`. This means you are inside of ruby interactive environment.
+You should receive a message similar to the following, which indicates that you are inside the interactive Ruby environment:
 
-Now you can try actually playing with gooddata. Type
+`2.1-head :001 >`
+
+Let's start playing with gooddata. Enter the following:
 
 {% highlight ruby %}
   > GoodData
 {% endhighlight %}
 
-It should return `NameError: uninitialized constant GoodData`. This is trying to say that it does not know anything about a gooddata SDK. So let's tell it to require it
+You should receive the following:
+
+`NameError: uninitialized constant GoodData`
+
+This error message indicates that irb does not know about the gooddata SDK. So, let's tell irb to require the SDK:
 
 {% highlight ruby %}
   > require 'gooddata'
   => true
 {% endhighlight %}
 
-Ok. Now repeat the previous experiment.
+Ok. Now, repeat the previous command:
 
 {% highlight ruby %}
   > GoodData
   => GoodData
 {% endhighlight %}
 
-Great. Now it knows about SDK. Let's try to log in with your credentials. I will start omitting the `>` sign inthe irb session for clarity.
+The response indicates that irb knows about SDK. 
+
+Let's try to log in to the GoodData platform with your credentials through the SDK. 
+* For clarity, the `>` sign is omitted in the irb session from now on.
 
 {% highlight ruby %}
   GoodData.connect("john@example.com", "password")
 {% endhighlight %}
 
-If you typed it correctly you should be logged in. Now you can perform some tasks that are not requiring to be inside a particular projects. For example listing all projects.
+You should be logged in. Now, you can perform tasks that do not require you to be inside of a specific project. For example, use the following to list all of your projects:
 
 {% highlight ruby %}
   GoodData::Project.all
 {% endhighlight %}
 
-If you want to list for example the reports in a project you first have to tell the sdk which project you will work on. One of the ways to do this is
+To work with a project, you must define the project for the SDK. For example, suppose you wish to list the reports in a project. You must tell the SDK the project to review: 
 
 {% highlight ruby %}
   GoodData.project = 'YOUR_PROJECT_ID'
 {% endhighlight %}
 
-Now you can list for example reports
+To list the reports in this project:
 
 {% highlight ruby %}
   GoodData::Report.all
 {% endhighlight %}
 
-Ok. Now exit from the irb typing `exit`.
+Ok. To exit irb, enter:
+ `exit`
 
 ###gooddata console
-This was one and the most cumbersome way to start working with GoodData SDK using irb. Ther is a slightly better way. Gooddata SDK comes with a `gooddata` command line interface. You can try typing
+Working with GoodData SDK using irb can be cumbersome. To make things a bit easier, Gooddata SDK includes a `gooddata` command line interface. 
+
+To start the console:
 
 {% highlight ruby %}
   gooddata console
 {% endhighlight %}
 
-It probably looks similar as you have started the irb. In the terminal you should see something like
+In the terminal, you should see something like the following:
 
 {% highlight ruby %}
   sdk_live_sesion:
 {% endhighlight %}
 
-The only difference is that it already required gooddata for you so you can start logging in and all that stuff we have already seen (exit again by typing `exit`).
+Since the console requires the SDK, you do not need to require it. So, you can log in and begin working with your projects:
+* To exit, enter: `exit`
 
 ###jack_in
-There is even better way. You can try
+For even better results, you can try using the following:
 {% highlight ruby %}
   gooddata -U john@example.com -P password -p PROJECT_ID project jack_in
 {% endhighlight %}
 
-This will spin up a live session for you like `gooddata console` but on top of it it will log you in and set you up in a project. You can readily start typing commands like
+In a single command, the above launches the command line interface, logs you into the platform, and identifies the project to which to connect. At this point, you may begin entering commands:
 
 {% highlight ruby %}
   GoodData::Report.all
 {% endhighlight %}
 
-By using `gooddata auth store` you can even save your username and password locally so you do not have to type it every single time. If you do not specify it explicitly the stored default will be used. This is a recommended and fastest approach to start trying things out.
+**Tip:** Use `gooddata auth store` to save your username and password locally, so you do not have to type it every single time. If you do not specify this command explicitly, the stored default is used. 
 
 ###Program
-If you want to create a program that would run and not do things interactively you have to write the whole program. There are no shortcuts here and it is very similar to the first irb example. The simplest program that does something useful might look like this
+To create a program that runs without user input, you must write the whole program. There are no shortcuts. 
+
+A simple program that does something useful is the following:
 
 {% highlight ruby %}
   require 'gooddata'
@@ -150,246 +158,11 @@ If you want to create a program that would run and not do things interactively y
   pp GoodData::Report[:all]
 {% endhighlight %}
 
-put this into a file `my_first.rb` and run it using `ruby my_first.rb`
+Save this into a file called `my_first.rb`. Run it using the following command: 
+`ruby my_first.rb`
 
-In the next sections I will assume that you are using whatever method suits your needs and will omit it for brevity.
+##What did you learn
+You should be able to install the ruby gem and understand various way how to interact with the API through Ruby SDK. Either via its command line interface, its programming interface or an interactive console.
 
-##Logging in{#login}
-
-You can connect as a user easily.
-
-{% highlight ruby %}
-GoodData.connect("john@example.com", "password")
-{% endhighlight %}
-
-This will assume our default servers and the webdav server used for uploading files will be determined automatically. If you need to explicitly provide such information you can also use another form.
-
-{% highlight ruby %}
-GoodData.connect( :login => 'svarovsky@gooddata.com',
-                  :password => 'pass',
-                  :server => "https://na1.secure.gooddata.com",
-                  :webdav_server => "https://na1-di.gooddata.com")
-{% endhighlight %}
-
-Picking project to work with. There are several ways how to do it.
-
-{% highlight ruby %}
-GoodData.connect( :login => 'svarovsky@gooddata.com',
-                  :password => 'pass',
-                  :project => 'project_pid')
-
-GoodData.project = 'project_pid'
-
-GoodData.use 'project_pid'
-{% endhighlight %}
-
-##Working with a project{#project}
-
-This will let you work with the project in a block. The project has the value you picked only inside the block afterwards it will reset the project value to whatever it was before.
-
-{% highlight ruby %}
-GoodData.with_project('project_pid') do |project|
-  puts project.uri
-end
-{% endhighlight %}
-
-you can create a project.
-
-{% highlight ruby %}
-GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
-{% endhighlight %}
-
-You can clone a project. Currently only through a command method on project is coming.
-
-{% highlight ruby %}
-GoodData::Command::Projects.clone(project_id, :title => "Title of the cloned project", :with_data => true, :with_users => true)
-{% endhighlight %}
-
-You can delete a project.
-
-{% highlight ruby %}
-GoodData::Project['project_pid'].delete
-{% endhighlight %}
-
-You can delete all projects given a specific title. You have to be admin in the project and of course be careful this is a dangerous command
-
-{% highlight ruby %}
-# CAREFUL
-GoodData::Project.all.find_all {|p| p.title =~ /to_be_deleted/i}.each {|p| p.delete}
-{% endhighlight %}
-
-##Retrieving objects{#retrieve}
-
-There are several wrappers for different types of objects. There are some common things you can do with them.
-
-You can retrieve all objects of that type.
-
-{% highlight ruby %}
-reports = GoodData::Report[:all]
-{% endhighlight %}
-
-You can retrieve specific one
-
-{% highlight ruby %}
-report = GoodData::Report["/gdc/md/pid/12"]
-report = GoodData::Report[12]
-{% endhighlight %}
-
-You can retrieve reports based on tags
-
-{% highlight ruby %}
-reports = GoodData::Report.find_by_tag("some_tag")
-{% endhighlight %}
-
-You can retrieve an object based on a title
-
-{% highlight ruby %}
-report = GoodData::Report.find_first_by_title('My first report')
-{% endhighlight %}
-
-You can set some basic things like summary and title
-
-{% highlight ruby %}
-report.title = "New title"
-report.summary = "This is some fancy description"
-{% endhighlight %}
-
-You can also save the object back to the server
-
-{% highlight ruby %}
-report.save
-{% endhighlight %}
-
-And then you can delete it
-
-{% highlight ruby %}
-report.delete
-{% endhighlight %}
-
-Since metadata about project is one big tree you can also ask which object are used by or using other objects. For example what reports are on a dashboard
-
-{% highlight ruby %}
-report.get_used_by
-report.get_using
-{% endhighlight %}
-
-What we just showed you can be done with all Metadata objects. These include Report, Dashboard, Metric, Attribute, Fact
-
-##Metrics{#metrics}
-
-Probably the most useful and complex obect is a metric. For its definition we are using language called MAQL. There is one big drawback to current MAQL definition and that is how it reffers to another object. If you imagine a simple metric definition like 'sum of all amounts' it could be described like this "SELECT SUM(Amount)". The problem is that the proper maql definition is as follows 
-
-{% highlight ruby %}
-SELECT SUM([/gdc/md/project_id/obj/123])
-{% endhighlight %}
-
-As you can see the reference to Amount fact is done via an URI. This has a big advantage of being unambiguous but it has a big drawback that it cannot be written by hand and also it is not transferable between projects without some translation.
-
-Here we introduce eXtended MAQL which tries to mitigate some of the drawbacks. The implementation currently relies on titles of objects and this detail might change. In XMAQL there are currenlty 4 additions
-
-1. Fact is referenced like #"Amount"
-2. Attribute like @"User Name"
-3. Metric like ?"My metric"
-4. Not implemented yet - attribute value like $"United States"
-
-The aforementioned metric could be then expressed like this 'SELECT SUM(#"Amount")'. This allows to be explicit in what type you are reffering to since MAQL is fairly complex and allows you to write them by hand. Also transfering metrics nbetween objects is more transpoarent.
-
-###Metrics creation
-
-{% highlight ruby %}
-m = Metric.create(:title => "My metric", :expression => 'SELECT SUM([/gdc/md/1231231/obj/12])')
-m.save
-{% endhighlight %}
-
-If you want to use eXtended notation use xcreate or pass :extended => true option to the create method
-
-{% highlight ruby %}
-m = GoodData::Metric.create(:title => "My metric", :expression => 'SELECT SUM(#"Amount")', :extended => true)
-m = GoodData::Metric.xcreate(:title => "My metric", :expression => 'SELECT SUM(#"Amount")')
-{% endhighlight %}
-
-You can directly execute it which will return a number
-
-{% highlight ruby %}
-m.execute
-{% endhighlight %}
-
-Note on executing metrics. Since GoodData currently cannot execute metric which is not saved there is some behavior that might surprise you when executing unsaved metrics on the fly. If you execute a metric or use a metric in a report it takes all unsaved metrics and saves them. After execution it takes those that it had to save and deletes them so they are not visible and cluttering the system. If you are creating a metric to be really saved do save it immediately. This will hopefully change as we will allow execution of metrics that are inlined in execution description.
-
-##Reports{#reports}
-
-You can execute report
-
-{% highlight ruby %}
-report = report = GoodData::Report["/gdc/md/pid/12"]
-result = report.execute
-{% endhighlight %}
-
-with result you can print it (needs more work, it roughly works but attribute reports only do not work)
-
-{% highlight ruby %}
-result.print
-{% endhighlight %}
-
-You can export it to a file. This needs some work so it warns you if it does not make sense to export you report in given format I think that our platfrom does not support all combinations. Currently there is :pdf, :png and :csv supported
-
-{% highlight ruby %}
-File.open('dash.pdf', 'w') do |f|
-  f.write(report.export(:pdf))
-end
-{% endhighlight %}
-
-You can also create a report on the fly.
-
-{% highlight ruby %}
-metric = GoodData::Metric.xcreate(:title => "My Metric", :expression => 'SELECT SUM(#"amount")')
-metric.save
-
-report = GoodData::Report.create(:title => "My report",:left => 'user', :top => metric)
-report.save
-{% endhighlight %}
-
-There are some rules that need explanation. The report is structured a little different than in UI. You specify left and top. It can either be an attribute or a metric. There can be multiple metrics but all of those need to be either in top or left section. The objects can be specified in several ways. You can provide Attribute but remember that eventually GoodData needs Label information (on API you can hit name display form). If you provide attribute it will resolve to its first Label. If an attribute has more than one it will take the first.
-
-1. MD object. Metric, Attribute and Label
-2. hash. If you do not have the object handy you can pass a hash structure like this
-      {% highlight ruby %}{:type => :attribute, :title => 'some title'}{% endhighlight %} 
-It will perform the lookup for you. This currently works for :attribute and :metric. If you want to perform the lookup through identifier you can do it as well. Since id is unique 
-	  {% highlight ruby %}{:identifier => 'some id'}{% endhighlight %}
-3. String. If you put there a string it is assumed it is a name of an attribute so 'some title' is equivalent with typing
-      {% highlight ruby %}{:type => :attribute, :title => 'some title'}{% endhighlight %}
-
-TODO - Describe filtering
-
-##Dashboards{#dashboards}
-
-You can export whole dashboards
-
-{% highlight ruby %}
-dash = GoodData::Dashboard[33807]
-File.open('dash.pdf', 'w') do |f|
-  f.write(dash.export(:pdf))
-end
-{% endhighlight %}
-
-or just a specific tab
-
-{% highlight ruby %}
-dash = GoodData::Dashboard[33807]
-File.open('dash.pdf', 'w') do |f|
-  f.write(dash.export(:pdf, :tab => dash.tabs_ids.last))
-end
-{% endhighlight %}
-
-##Directly accessing API{#direct}
-
-This is the most crude method and while you can do anything with it is also most cumbersome. It is needed sometimes though so we are mentioning it here. Gem will make sure that it does the plumbing like keeping you logged in etc and you can just use the HTTP methods you are used to. Anything that you see in the Web client can be achieved through APIs and these methods.
-
-{% highlight ruby %}
-GoodData.get("uri")
-GoodData.post("uri", {:name => "John Doe"})
-GoodData.put("uri", {:name => "John Doe"})
-GoodData.delete("uri")
-{% endhighlight %}
-
-Nothing surprising
+##Where to go next
+In the next section we will spin up a project so you have a foundation for playing around.
