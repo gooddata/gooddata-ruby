@@ -69,6 +69,10 @@ module GoodData
         data
       end
 
+      def to_blueprint
+        GoodData::Model::DatasetBlueprint.new(to_hash)
+      end
+
       def to_schema
         Schema.new(to_hash)
       end

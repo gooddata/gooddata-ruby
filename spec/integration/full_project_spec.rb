@@ -33,14 +33,14 @@ describe "Ful project implementation", :constraint => 'slow' do
         [1,"01/01/2014",1,1],
         [3,"01/02/2014",2,2],
         [5,"05/02/2014",3,1]]
-      blueprint.get_dataset('commits').upload(commits_data)
+      blueprint.find_dataset('commits').upload(commits_data)
 
       devs_data = [
         ["dev_id", "email"],
         [1, "tomas@gooddata.com"],
         [2, "petr@gooddata.com"],
         [3, "jirka@gooddata.com"]]
-      blueprint.get_dataset('devs').upload(devs_data)
+      blueprint.find_dataset('devs').upload(devs_data)
     end
   end
 
@@ -152,7 +152,7 @@ describe "Ful project implementation", :constraint => 'slow' do
       devs_data = [
         ["dev_id", "email"],
         [4, "josh@gooddata.com"]]
-      blueprint.get_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
+      blueprint.find_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
     end
   end
 

@@ -21,7 +21,7 @@ module GoodData
       end
 
       def datasets
-        data[:datasets].map { |d| SchemaBlueprint.new(d) }
+        data[:datasets].map { |d| DatasetBlueprint.new(d) }
       end
 
       def add_dataset(a_dataset, index = nil)
@@ -33,8 +33,8 @@ module GoodData
       end
 
       def remove_dataset(dataset_name)
-        x = data[:datasets].find { |d| d[:name] == dataset_name }
-        index = data[:datasets].index(x)
+        dataset = dataset_name.is_a?(String) ? find_dataset(dataset_name) : dataset_name
+        index = data[:datasets].index(dataset)
         data[:datasets].delete_at(index)
       end
 
@@ -42,16 +42,22 @@ module GoodData
         data[:date_dimensions]
       end
 
-      def get_dataset(name)
+      def dataset?(name)
+        found = data[:datasets].find { |d| d[:name] == name }
+        found != nil
+      end
+
+      def find_dataset(name)
         ds = data[:datasets].find { |d| d[:name] == name }
-        SchemaBlueprint.new(ds) unless ds.nil?
+        fail "Dataset #{name} could not be found" if ds.nil?
+        DatasetBlueprint.new(ds)
       end
 
       def initialize(init_data)
         @data = init_data
       end
 
-      def model_validate
+      def validate_references
         if datasets.count == 1
           []
         else
@@ -65,20 +71,48 @@ module GoodData
         end
       end
 
+      def validate_labels_references
+        datasets.reduce([]) { |a, e| a.concat(e.validate_label_references) }
+      end
+
+      def validate_model
+        refs_errors = validate_references
+        labels_errors = validate_labels_references
+        refs_errors.concat(labels_errors)
+      end
+
       def model_valid?
-        errors = model_validate
+        refs_errors = validate_references
+        labels_errors = validate_labels_references
+        errors = refs_errors.concat(labels_errors)
         errors.empty? ? true : false
       end
 
       def referenced_by(dataset)
-        dataset = get_dataset(dataset) if dataset.is_a?(String)
+        dataset = find_dataset(dataset) if dataset.is_a?(String)
         dataset.references.map do |ds|
-          get_dataset(ds[:dataset])
+          find_dataset(ds[:dataset])
         end
       end
 
+      def attributes
+        datasets.reduce([]) { |a, e| a.concat(e.attributes) }
+      end
+
+      def attributes_and_anchors
+        datasets.reduce([]) { |a, e| a.concat(e.attributes_and_anchors) }
+      end
+
+      def labels
+        datasets.reduce([]) { |a, e| a.concat(e.labels) }
+      end
+
+      def facts
+        datasets.reduce([]) { |a, e| a.concat(e.facts) }
+      end
+
       def can_break(dataset)
-        dataset = get_dataset(dataset) if dataset.is_a?(String)
+        dataset = find_dataset(dataset) if dataset.is_a?(String)
         referenced_by(dataset).reduce([]) do |a, e|
           e.attributes_and_anchors.each do |attr|
             a.push([e, attr])
@@ -91,7 +125,7 @@ module GoodData
         referenced = datasets.map { |d| referenced_by(d) }
         referenced.flatten!
         res = datasets.map(&:to_hash) - referenced.map(&:to_hash)
-        res.map { |d| SchemaBlueprint.new(d) }
+        res.map { |d| DatasetBlueprint.new(d) }
       end
 
       def suggest_reports(options = {})
@@ -129,20 +163,25 @@ module GoodData
       end
 
       def merge!(a_blueprint)
+        temp_blueprint = merge(a_blueprint)
+        @data = temp_blueprint.data
+        self
+      end
+
+      def merge(a_blueprint)
         temp_blueprint = dup
         a_blueprint.datasets.each do |dataset|
-          local_dataset = temp_blueprint.get_dataset(dataset.name)
-          if local_dataset.nil?
-            temp_blueprint.add_dataset(dataset.dup)
-          else
+          if temp_blueprint.dataset?(dataset.name)
+            local_dataset = temp_blueprint.find_dataset(dataset.name)
             index = temp_blueprint.datasets.index(local_dataset)
             local_dataset.merge!(dataset)
             temp_blueprint.remove_dataset(local_dataset.name)
             temp_blueprint.add_dataset(local_dataset, index)
+          else
+            temp_blueprint.add_dataset(dataset.dup)
           end
         end
-        @data = temp_blueprint.data
-        self
+        temp_blueprint
       end
 
       def dup
