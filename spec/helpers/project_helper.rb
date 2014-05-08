@@ -7,6 +7,15 @@ require 'multi_json'
 require 'gooddata/models/models'
 
 module ProjectHelper
-  PROJECT_ID = 'la84vcyhrq8jwbu4wpipw66q2sqeb923'
-  PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
+  def self.load_project_name
+    json_path = File.join(File.dirname(__FILE__), '..', 'data', 'test_project_model_spec.json')
+    json = MultiJson.load(File.read(json_path, :symbolize_keys => true))
+    json['title']
+  end
+
+  PROJECT_ID = nil
+  PROJECT_URL = nil
+
+  # Load from JSON
+  TEST_PROJECT_NAME = load_project_name
 end

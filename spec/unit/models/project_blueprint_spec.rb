@@ -16,7 +16,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it "should return the title" do
-    @blueprint.title.should == "RubyGem Dev Week test"
+    @blueprint.title.should == ProjectHelper::TEST_PROJECT_NAME
   end
 
   it 'valid blueprint should be marked as valid' do

@@ -14,6 +14,18 @@ Dir.glob(base + 'helpers/*_helper.rb').each do |file|
   require file
 end
 
+def delete_old_projects
+  projects = GoodData::Project.all
+  projects.each do |project|
+    # TODO: Delete only projects which were updated more than hour ago
+    if project.title.include? ProjectHelper::TEST_PROJECT_NAME
+      puts "Deleting #{project.title}"
+      project.delete
+    end
+  end
+end
+
+
 RSpec.configure do |config|
   config.include BlueprintHelper
   config.include CliHelper
@@ -24,6 +36,11 @@ RSpec.configure do |config|
   config.before(:all) do
     # TODO: Fully setup global environment
     GoodData.logging_off
+
+    # Delete old stuff
+    ConnectionHelper.create_default_connection
+    delete_old_projects
+    GoodData.disconnect
   end
 
   config.after(:all) do
