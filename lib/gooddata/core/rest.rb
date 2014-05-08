@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require_relative 'connection'
+require_relative '../extensions/hash'
 
 module GoodData
   class << self
@@ -108,9 +109,9 @@ module GoodData
       end
     end
 
-    def wait_for_polling_result(polling_url)
+    def wait_for_polling_result(polling_url, done_matcher = {'wTaskStatus' => { 'status' => 'RUNNING'}})
       polling_result = GoodData.get(polling_url)
-      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
+      while polling_result.deep_include?(done_matcher) == false
         sleep(3)
         polling_result = GoodData.get(polling_url)
       end
