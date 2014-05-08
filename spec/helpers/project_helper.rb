@@ -26,7 +26,7 @@ module ProjectHelper
     project = GoodData::Project.new(json)
     project.save
 
-    GoodData.wait_for_polling_result(project.uri, { 'project' => { 'content' => { 'state' => 'ENABLED'}}})
+    GoodData.wait_for_polling_result(project.uri, GoodData::PollingResult::PROJECT_ENABLED)
 
     roles = project.roles
 

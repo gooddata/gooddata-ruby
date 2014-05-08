@@ -25,7 +25,6 @@ def delete_old_projects
   end
 end
 
-
 RSpec.configure do |config|
   config.include BlueprintHelper
   config.include CliHelper
@@ -40,6 +39,8 @@ RSpec.configure do |config|
     # Delete old stuff
     ConnectionHelper.create_default_connection
     delete_old_projects
+
+    project = ProjectHelper.create_test_project
     GoodData.disconnect
   end
 
