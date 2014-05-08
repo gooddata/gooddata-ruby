@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require_relative 'connection'
+require_relative 'polling'
 
 module GoodData
   class << self
@@ -93,28 +94,6 @@ module GoodData
     def download_from_user_webdav(file, where, options = {})
       url = get_user_webdav_path(file, options)
       connection.download(file, where, options.merge(:staging_url => url))
-    end
-
-    def poll(result, key, options = {})
-      sleep_interval = options[:sleep_interval] || 10
-      link = result[key]['links']['poll']
-      response = GoodData.get(link, :process => false)
-      while response.code != 204
-        sleep sleep_interval
-        GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
-          sleep sleep_interval
-          response = GoodData.get(link, :process => false)
-        end
-      end
-    end
-
-    def wait_for_polling_result(polling_url)
-      polling_result = GoodData.get(polling_url)
-      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_url)
-      end
-      polling_result
     end
   end
 end
