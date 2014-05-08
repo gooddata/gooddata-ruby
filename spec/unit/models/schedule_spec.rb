@@ -1,8 +1,6 @@
 require 'gooddata/models/schedule'
 
 describe GoodData::Schedule do
-  PROJECT_ID = 'tk6192gsnav58crp6o1ahsmtuniq8khb'
-
   TEST_CRON = '0 15 27 7 *'
 
   TEST_DATA = {
@@ -15,7 +13,7 @@ describe GoodData::Schedule do
   before(:each) do
     ConnectionHelper.create_default_connection
 
-    GoodData.project = PROJECT_ID
+    GoodData.project = ProjectHelper::PROJECT_ID
 
     @project = GoodData.project
     @project_executable = "#{@project.title}/graph/graph.grf"
@@ -343,7 +341,7 @@ describe GoodData::Schedule do
 
     it 'Should save a schedule' do
       saved = false
-      url = "/gdc/projects/#{PROJECT_ID}/schedules"
+      url = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules"
       req = GoodData.get url
       schedules = req['schedules']['items']
       schedules.each do |schedule|

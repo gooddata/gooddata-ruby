@@ -7,7 +7,7 @@ module GoodData
     attr_reader :data
 
     class << self
-      def [](id)
+      def [](id, options = {})
         if id == :all
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes"
           data = GoodData.get(uri)
@@ -34,8 +34,7 @@ module GoodData
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
             ensure
-              self_link = res && res['process']['links']['self']
-              GoodData.delete(self_link)
+              res.delete if res
             end
           else
             GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))

@@ -48,7 +48,7 @@ module GoodData
       table.transpose
     end
 
-    def [](index)
+    def [](index, options = {})
       to_table[index]
     end
 

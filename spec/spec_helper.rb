@@ -23,6 +23,12 @@ RSpec.configure do |config|
 
   config.before(:all) do
     # TODO: Fully setup global environment
+    GoodData.connect 'svarovsky+gem_tester@gooddata.com', 'jindrisska'
+
+    GoodData.project = ProjectHelper::PROJECT_ID
+
+    GoodData::Report.all
+
     GoodData.logging_off
   end
 

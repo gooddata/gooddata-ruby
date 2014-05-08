@@ -156,7 +156,7 @@ module GoodData
     end
 
     def project
-      @project ||= Project[uri.gsub(/\/obj\/\d+$/, '')]
+      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, '')]
     end
 
     def usedby(key = nil)
@@ -184,7 +184,8 @@ module GoodData
     end
 
     def saved?
-      !uri.nil?
+      res = uri.nil?
+      !res
     end
 
     def save

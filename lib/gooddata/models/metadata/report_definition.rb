@@ -11,7 +11,7 @@ module GoodData
     root_key :reportDefinition
 
     class << self
-      def [](id)
+      def [](id, options = {})
         if id == :all
           uri = GoodData.project.md['query'] + '/reportdefinition/'
           result = GoodData.get(uri)

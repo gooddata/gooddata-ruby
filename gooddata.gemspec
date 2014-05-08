@@ -33,11 +33,11 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake-notes", "~> 0.2.0"
   s.add_development_dependency "redcarpet", "~> 3.1.1" if RUBY_PLATFORM != 'java'
   s.add_development_dependency "rspec", "~> 2.14.1"
-  s.add_development_dependency "rubocop", "~> 0.20.0"
+  s.add_development_dependency "rubocop", "~> 0.20.1"
   s.add_development_dependency "simplecov", "~> 0.8.2"
   s.add_development_dependency "yard", "~> 0.8.7.3"
   s.add_development_dependency "yard-rspec", "~> 0.1"
-  s.add_development_dependency "ZenTest", "~> 4.9.5"
+  s.add_development_dependency "ZenTest", "~> 4.10.0"
   s.add_development_dependency "coveralls", "~> 0.7.0"
 
   s.add_dependency "activesupport", "~> 4.1.0"
@@ -48,7 +48,7 @@ Gem::Specification.new do |s|
   s.add_dependency "highline", "~> 1.6.21"
   s.add_dependency "i18n", "~> 0.6.9"
   s.add_dependency "json_pure", "~> 1.8.1"
-  s.add_dependency "multi_json", "~> 1.9.0"
+  s.add_dependency "multi_json", "~> 1.10.0"
   s.add_dependency "parseconfig", "~> 1.0.4"
   s.add_dependency "pry", "~> 0.9.12.6"
   s.add_dependency "restforce", "~> 1.4.3"

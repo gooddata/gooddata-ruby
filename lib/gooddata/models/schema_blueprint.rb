@@ -4,7 +4,7 @@ require_relative 'schema_builder'
 
 module GoodData
   module Model
-    class SchemaBlueprint
+    class DatasetBlueprint
       attr_accessor :data
 
       def change(&block)
@@ -67,6 +67,10 @@ module GoodData
         find_column_by_type(:fact)
       end
 
+      def labels
+        find_column_by_type(:label)
+      end
+
       def attributes_and_anchors
         anchor? ? attributes + [anchor] : attributes
       end
@@ -117,7 +121,7 @@ module GoodData
 
       def dup
         deep_copy = Marshal.load(Marshal.dump(data))
-        SchemaBlueprint.new(deep_copy)
+        DatasetBlueprint.new(deep_copy)
       end
 
       def to_wire_model
@@ -141,6 +145,12 @@ module GoodData
           "attr.#{name}.#{column[:name]}"
         when :fact
           "fact.#{name}.#{column[:name]}"
+        end
+      end
+
+      def validate_label_references
+        labels.select do |label|
+          find_column_by_name(label[:reference]).empty?
         end
       end
     end

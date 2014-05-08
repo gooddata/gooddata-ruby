@@ -8,9 +8,10 @@ module GoodData
     root_key :report
 
     class << self
-      def [](id)
+      def [](id, options = {})
         if id == :all
-          uri = GoodData.project.md['query'] + '/reports/'
+            fail 'You have to specify a project ID' if GoodData.project.nil?
+            uri = GoodData.project.md['query'] + '/reports/'
           GoodData.get(uri)['query']['entries']
         else
           super

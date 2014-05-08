@@ -18,7 +18,7 @@ module GoodData
 
     alias_method :to_json, :json
 
-    def [](key)
+    def [](key, options = {})
       @json['accountSetting'][key]
     end
 

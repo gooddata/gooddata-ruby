@@ -137,7 +137,7 @@ GoodData::CLI.module_eval do
         pid = global_options[:project_id]
         fail 'Project ID has to be provided' if pid.nil? || pid.empty?
 
-        user_list = GoodData::Command::Project.list_users(pid)
+        user_list = GoodData::Command::Project.users(pid)
         puts user_list.map { |u| [u[:last_name], u[:first_name], u[:login], u[:uri]].join(',') }
       end
     end

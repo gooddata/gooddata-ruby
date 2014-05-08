@@ -3,7 +3,7 @@
 require 'gooddata/cli/cli'
 
 describe GoodData::CLI do
-  describe 'r' do
+  describe 'role' do
     it 'Complains when no parameters specified' do
       args = %w(role)
 
@@ -22,7 +22,7 @@ describe GoodData::CLI do
       it 'List roles when passing project ID' do
         args = [
           '-p',
-          'la84vcyhrq8jwbu4wpipw66q2sqeb923',
+          ProjectHelper::PROJECT_ID,
           'role',
           'list',
         ]

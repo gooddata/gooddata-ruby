@@ -15,7 +15,7 @@ module GoodData
         end
 
         def list_users(domain)
-          GoodData::Domain.list_users(domain)
+          GoodData::Domain.users(domain)
         end
       end
     end

@@ -110,6 +110,10 @@ module GoodData
         end
       end
 
+      def to_blueprint
+        GoodData::Model::ProjectBlueprint.new(to_hash)
+      end
+
       def to_hash
         {
           :title => @title,
@@ -124,7 +128,7 @@ module GoodData
         }
       end
 
-      def get_dataset(name)
+      def find_dataset(name)
         datasets.find { |d| d.name == name }
       end
     end
