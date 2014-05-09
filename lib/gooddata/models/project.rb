@@ -451,6 +451,18 @@ module GoodData
       !res
     end
 
+    # Gets project schedules
+    #
+    # @return [Array<GoodData::Schedule>] List of schedules
+    def schedules
+      res = []
+      tmp = GoodData.get @json['project']['links']['schedules']
+      tmp['schedules']['items'].each do |schedule|
+        res << GoodData::Schedule.new(schedule)
+      end
+      res
+    end
+
     # Gets SLIs data
     #
     # @returns [GoodData::Metadata] SLI Metadata
