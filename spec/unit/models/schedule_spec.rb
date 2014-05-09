@@ -157,6 +157,8 @@ describe GoodData::Schedule do
 
   describe '#execute' do
     it 'Executes schedule on process' do
+      pending 'Setup environment for this test'
+      
       # Create one a schedule
       sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
 

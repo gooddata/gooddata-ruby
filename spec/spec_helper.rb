@@ -24,6 +24,20 @@ RSpec.configure do |config|
   config.before(:all) do
     # TODO: Fully setup global environment
     GoodData.logging_off
+
+    ConnectionHelper.create_default_connection
+
+    GoodData.project = ProjectHelper::PROJECT_ID
+
+    project = GoodData.project
+    roles = project.roles
+    role = roles.first
+    users = role.users
+    author = role.author
+    contributor = role.contributor
+    uri = role.uri
+
+    res = false
   end
 
   config.after(:all) do
