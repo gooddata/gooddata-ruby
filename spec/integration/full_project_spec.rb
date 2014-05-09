@@ -71,6 +71,11 @@ describe "Ful project implementation", :constraint => 'slow' do
       result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
       result[1][1].should == 3
       result.include_row?(["jirka@gooddata.com", 5]).should == true
+
+      result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email']).execute
+      result2[1][1].should == 3
+      result2.include_row?(["jirka@gooddata.com", 5]).should == true
+      result2.should == result
     end
   end
 
