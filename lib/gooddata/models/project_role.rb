@@ -33,11 +33,11 @@ module GoodData
       GoodData::AccountSettings.new(tmp)
     end
 
-    # Gets Date time when created
+    # Gets DateTime time when created
     #
-    # @returns [string] Date time of creation
+    # @returns [DateTime] Date time of creation
     def created
-      Time.parse(@json['projectRole']['meta']['created'])
+      DateTime.parse(@json['projectRole']['meta']['created'])
     end
 
     # Gets Project Role Permissions
@@ -61,11 +61,11 @@ module GoodData
       @json['projectRole']['meta']['summary']
     end
 
-    # Gets Date time when updated
+    # Gets DateTime time when updated
     #
-    # @returns [Time] Date time of last update
+    # @returns [DateTime] Date time of last update
     def updated
-      Time.parse(@json['projectRole']['meta']['updated'])
+      DateTime.parse(@json['projectRole']['meta']['updated'])
     end
 
     # Gets Users with this Role
