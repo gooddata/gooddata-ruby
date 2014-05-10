@@ -199,7 +199,20 @@ describe "Ful project implementation", :constraint => 'slow' do
     end
   end
 
-  it "should be abel to lookup the attributes by regexp and return a collectio" do
+  it "should be able to replace the values in a metric" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      label = attribute.primary_label
+      value = label.values.first
+      different_value = label.values[1]
+      fact = GoodData::Fact['fact.commits.lines_changed']
+      metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
+      metric.replace_value(label, value[:value], different_value[:value])
+      metric.contain_value?(label, value[:value]).should == false
+    end
+  end
+
+  it "should be able to lookup the attributes by regexp and return a collectio" do
     GoodData.with_project(@project) do |p|
       attrs = GoodData::Attribute.find_by_title(/Date/i)
       attrs.count.should == 1
