@@ -140,8 +140,8 @@ module GoodData
     # @param [GoodData::DisplayForm] label Label though which the value is looked up
     # @param [String] value Value that will be looked up through the label.
     # @return [Boolean]
-    def cantain_value?(label, value)
-      uri = label.find_value_uri(label, value)
+    def contain_value?(label, value)
+      uri = label.find_value_uri(value)
       contain?(uri)
     end
 
