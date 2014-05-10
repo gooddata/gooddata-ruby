@@ -128,9 +128,7 @@ module GoodData
         # Update project
         def update(options = {})
           project = options[:project]
-          project_id = project && project.pid
-          fail 'You have to provide "project_id". You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key "project_id". If you just started a project you have to create it first. One way might be through "gooddata project build"' if project_id.nil? || project_id.empty?
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :project => project_id)
+          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :project => project)
         end
 
         # Build project

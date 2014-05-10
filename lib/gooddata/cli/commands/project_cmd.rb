@@ -171,9 +171,10 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         GoodData.connect(opts)
         spec, project_id = GoodData::Command::Project.get_spec_and_project_id('.')
-        project = GoodData::Command::Project.update(opts.merge(:spec => spec, :project_id => global_options[:project_id] || project_id))
+        project_id = global_options[:project_id] || project_id
+        fail 'You have to provide "project_id". You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key "project_id". If you just started a project you have to create it first. One way might be through "gooddata project build"' if project_id.nil? || project_id.empty?
+        project = GoodData::Command::Project.update(opts.merge(:spec => spec, :project_id => project_id))
         puts "Migration was done. Project PID is #{project.pid}, URI is #{project.uri}."
-
       end
     end
 
