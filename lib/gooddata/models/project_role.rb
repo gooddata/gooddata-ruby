@@ -86,7 +86,7 @@ module GoodData
     #
     # @returns [string] URI of this project role
     def uri
-      @json['projectRole']['links']['roleUsers'].split('/').join('/')
+      @json['projectRole']['links']['roleUsers'].split('/')[0...-1].join('/')
     end
   end
 end
