@@ -187,4 +187,22 @@ describe "Ful project implementation", :constraint => 'slow' do
       l.find_element_value(l.find_value_uri(value)).should == value
     end
   end
+
+  it "should be able to tell you if a value is contained in a metric" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      label = attribute.primary_label
+      value = label.values.first
+      fact = GoodData::Fact['fact.commits.lines_changed']
+      metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
+      metric.contain_value?(label, value[:value]).should == true
+    end
+  end
+
+  it "should be abel to lookup the attributes by regexp and return a collectio" do
+    GoodData.with_project(@project) do |p|
+      attrs = GoodData::Attribute.find_by_title(/Date/i)
+      attrs.count.should == 1
+    end
+  end
 end
