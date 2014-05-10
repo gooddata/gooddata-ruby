@@ -161,11 +161,20 @@ module GoodData
     # @param [String] value value that is going to be replaced
     # @param [String] for_value value that is going to be the new one
     # @return [GoodData::Metric]
-    def replace_value(label, value, for_value)
+    def replace_value(label, value, for_label, for_value=nil)
       label = label.respond_to?(:primary_label) ? label.primary_label : label
-      value_uri = label.find_value_uri(value)
-      for_value_uri = label.find_value_uri(for_value)
-      self.expression = expression.gsub(value_uri, for_value_uri)
+      if for_value
+        for_label = for_label.respond_to?(:primary_label) ? for_label.primary_label : for_label
+        value_uri = label.find_value_uri(value)
+        for_value_uri = for_label.find_value_uri(for_value)
+        self.expression = expression.gsub(value_uri, for_value_uri)
+        self.expression = expression.gsub(label.attribute.uri, for_label.attribute.uri)
+      else
+        for_value = for_label
+        value_uri = label.find_value_uri(value)
+        for_value_uri = label.find_value_uri(for_value)
+        self.expression = expression.gsub(value_uri, for_value_uri)
+      end
       self
     end
 
