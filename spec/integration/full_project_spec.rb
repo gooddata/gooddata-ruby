@@ -209,6 +209,7 @@ describe "Ful project implementation", :constraint => 'slow' do
       metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
       metric.replace_value(label, value[:value], different_value[:value])
       metric.contain_value?(label, value[:value]).should == false
+      metric.pretty_expression.should == "SELECT SUM([Lines changed]) WHERE [Dev] = [josh@gooddata.com]"
     end
   end
 
