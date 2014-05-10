@@ -1,0 +1,90 @@
+# encoding: UTF-8
+
+require 'gooddata/models/project'
+require 'gooddata/models/project_role'
+
+describe GoodData::ProjectRole do
+  before(:all) do
+    ConnectionHelper.create_default_connection
+    @project = ProjectHelper.get_default_project
+    @roles = @project.roles
+    @role = @roles.first
+  end
+
+  after(:all) do
+    GoodData.disconnect
+  end
+
+  describe '#author' do
+    it 'Returns author as GoodData::AccountSettings' do
+      res = @role.author
+      expect(res).to be_an_instance_of(GoodData::AccountSettings)
+    end
+  end
+
+  describe '#contributor' do
+    it 'Returns contributor as GoodData::AccountSettings' do
+      res = @role.contributor
+      expect(res).to be_an_instance_of(GoodData::AccountSettings)
+    end
+  end
+
+  describe '#created' do
+    it 'Returns created date as DateTime' do
+      res = @role.created
+      expect(res).to be_an_instance_of(DateTime)
+    end
+  end
+
+  describe '#identifier' do
+    it 'Returns identifier as String' do
+      res = @role.identifier
+      expect(res).to be_an_instance_of(String)
+    end
+  end
+
+  describe '#permissions' do
+    it 'Returns summary as Hash' do
+      res = @role.permissions
+      expect(res).to be_an_instance_of(Hash)
+    end
+  end
+
+  describe '#summary' do
+    it 'Returns summary as String' do
+      res = @role.summary
+      expect(res).to be_an_instance_of(String)
+    end
+  end
+
+  describe '#title' do
+    it 'Returns title as String' do
+      res = @role.title
+      expect(res).to be_an_instance_of(String)
+    end
+  end
+
+  describe '#updated' do
+    it 'Returns updated date as DateTime' do
+      res = @role.updated
+      expect(res).to be_an_instance_of(DateTime)
+    end
+  end
+
+  describe '#uri' do
+    it 'Returns URI as String' do
+      res = @role.uri
+      expect(res).to be_an_instance_of(String)
+    end
+  end
+
+  describe '#users' do
+    it 'Returns users as Array<GoodData::AccountSettings>' do
+      res = @role.users
+      expect(res).to be_an_instance_of(Array)
+      res.each do |user|
+        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+      end
+    end
+  end
+end

@@ -5,7 +5,7 @@ module GoodData
     attr_reader :dirty
 
     class << self
-      def [](id)
+      def [](id, options = {})
         GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules"
       end
 

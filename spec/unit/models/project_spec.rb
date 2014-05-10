@@ -3,13 +3,6 @@
 require 'gooddata'
 
 describe GoodData::Project do
-  DEFAULT_PID = 'la84vcyhrq8jwbu4wpipw66q2sqeb923'
-
-  def get_default_proj
-    GoodData::Project[DEFAULT_PID]
-  end
-
-
   before(:each) do
     ConnectionHelper::create_default_connection
   end
@@ -28,13 +21,13 @@ describe GoodData::Project do
     end
 
     it 'Returns project if ID passed' do
-      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      project = ProjectHelper.get_default_project
       project.should_not be_nil
       project.should be_a_kind_of(GoodData::Project)
     end
 
     it 'Returns project if URL passed' do
-      project = GoodData::Project[ProjectHelper::PROJECT_URL]
+      project = ProjectHelper.get_default_project
       project.should_not be_nil
       project.should be_a_kind_of(GoodData::Project)
     end
@@ -55,7 +48,7 @@ describe GoodData::Project do
 
   describe '#get_role_by_identifier' do
     it 'Looks up for role by identifier' do
-      project = get_default_proj
+      project = ProjectHelper.get_default_project
       role = project.get_role_by_identifier('readOnlyUserRole')
       role.should_not be_nil
       role.should be_a_kind_of(GoodData::ProjectRole)
@@ -64,7 +57,7 @@ describe GoodData::Project do
 
   describe '#get_role_by_summary' do
     it 'Looks up for role by summary' do
-      project = get_default_proj
+      project = ProjectHelper.get_default_project
       role = project.get_role_by_summary('read only user role')
       role.should_not be_nil
       role.should be_a_kind_of(GoodData::ProjectRole)
@@ -73,7 +66,7 @@ describe GoodData::Project do
 
   describe '#get_role_by_title' do
     it 'Looks up for role by title' do
-      project = get_default_proj
+      project = ProjectHelper.get_default_project
       role = project.get_role_by_title('Viewer')
       role.should_not be_nil
       role.should be_a_kind_of(GoodData::ProjectRole)
@@ -93,7 +86,7 @@ describe GoodData::Project do
 
   describe '#roles' do
     it 'Returns array of GoodData::ProjectRole' do
-      project = get_default_proj
+      project = ProjectHelper.get_default_project
       roles = project.roles
       expect(roles).to be_instance_of(Array)
 
@@ -107,7 +100,7 @@ describe GoodData::Project do
     it 'Returns array of GoodData::Users' do
       pending 'Investigate which credentials to use'
 
-      project = GoodData::Project['tk6192gsnav58crp6o1ahsmtuniq8khb']
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
       invitations = project.invitations
       invitations.should_not be_nil

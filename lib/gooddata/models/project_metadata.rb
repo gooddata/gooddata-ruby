@@ -7,7 +7,7 @@ module GoodData
         ProjectMetadata[:all].keys
       end
 
-      def [](key)
+      def [](key, options = {})
         if key == :all
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/metadata"
           res = GoodData.get(uri)

@@ -13,7 +13,7 @@ module GoodData
       #
       # @param domain_name [String] Domain name
       # @return [String] Domain object instance
-      def [](domain_name)
+      def [](domain_name, options = {})
         fail "Using pseudo-id 'all' is not supported by GoodData::Domain" if domain_name.to_s == 'all'
         GoodData::Domain.new(domain_name)
       end

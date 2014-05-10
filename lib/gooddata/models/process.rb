@@ -7,7 +7,7 @@ module GoodData
     attr_reader :data
 
     class << self
-      def [](id)
+      def [](id, options = {})
         if id == :all
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes"
           data = GoodData.get(uri)

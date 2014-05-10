@@ -12,7 +12,7 @@ module GoodData
     root_key :projectDashboard
 
     class << self
-      def [](id)
+      def [](id, options = {})
         if id == :all
           GoodData.get(GoodData.project.md['query'] + '/projectdashboards/')['query']['entries']
         else

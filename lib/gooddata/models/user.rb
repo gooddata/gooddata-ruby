@@ -31,7 +31,7 @@ module GoodData
     #
     # @return [DateTime] Created date
     def created
-      DateTime.parse(@json['user']['meta']['created'])
+      Time.parse(@json['user']['meta']['created'])
     end
 
     # Gets the email

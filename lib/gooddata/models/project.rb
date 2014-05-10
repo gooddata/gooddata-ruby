@@ -33,7 +33,7 @@ module GoodData
       #  - /gdc/projects/<id>
       #  - <id>
       #
-      def [](id)
+      def [](id, options = {})
         return id if id.respond_to?(:project?) && id.project?
         if id == :all
           Project.all
@@ -449,6 +449,18 @@ module GoodData
     def saved?
       res = uri.nil?
       !res
+    end
+
+    # Gets project schedules
+    #
+    # @return [Array<GoodData::Schedule>] List of schedules
+    def schedules
+      res = []
+      tmp = GoodData.get @json['project']['links']['schedules']
+      tmp['schedules']['items'].each do |schedule|
+        res << GoodData::Schedule.new(schedule)
+      end
+      res
     end
 
     # Gets SLIs data
