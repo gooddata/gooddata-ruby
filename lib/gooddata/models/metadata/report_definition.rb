@@ -207,7 +207,7 @@ module GoodData
                else
                  ReportDefinition.execute_inline(self)
                end
-      ReportDefinition::data_result(result)
+      ReportDefinition.data_result(result)
     end
   end
 end

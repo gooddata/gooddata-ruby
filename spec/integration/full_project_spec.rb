@@ -187,4 +187,10 @@ describe "Ful project implementation", :constraint => 'slow' do
       l.find_element_value(l.find_value_uri(value)).should == value
     end
   end
+  it "should be abel to lookup the attributes by regexp and return a collectio" do
+    GoodData.with_project(@project) do |p|
+      attrs = GoodData::Attribute.find_by_title(/Date/i)
+      attrs.count.should == 1
+    end
+  end
 end

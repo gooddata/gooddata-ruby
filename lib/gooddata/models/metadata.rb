@@ -69,6 +69,21 @@ module GoodData
         self[item['link']] unless item.nil?
       end
 
+      # Finds a specific type of the object by title. Returns all matches. Returns full object.
+      #
+      # @param title [String] title that has to match exactly
+      # @param title [Regexp] regular expression that has to match
+      # @return [Array] Array of MdObject
+      def find_by_title(title)
+        all = self[:all]
+        items = if title.is_a?(Regexp)
+                  all.select { |r| r['title'] =~ title }
+                else
+                  all.select { |r| r['title'] == title }
+                end
+        items.map { |item| self[item['link']] unless item.nil? }
+      end
+
       # TODO: Add test
       def identifier_to_uri(*ids)
         fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
