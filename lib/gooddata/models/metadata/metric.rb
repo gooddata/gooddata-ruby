@@ -161,7 +161,7 @@ module GoodData
     # @param [String] value value that is going to be replaced
     # @param [String] for_value value that is going to be the new one
     # @return [GoodData::Metric]
-    def replace_value(label, value, for_label, for_value=nil)
+    def replace_value(label, value, for_label, for_value = nil)
       label = label.respond_to?(:primary_label) ? label.primary_label : label
       if for_value
         for_label = for_label.respond_to?(:primary_label) ? for_label.primary_label : for_label
