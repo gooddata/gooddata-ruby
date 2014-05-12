@@ -4,11 +4,14 @@ describe GoodData::Schedule do
   TEST_CRON = '0 15 27 7 *'
 
   TEST_DATA = {
-      :timezone => 'UTC',
-      :cron => '2 2 2 2 *'
+    :timezone => 'UTC',
+    :cron => '2 2 2 2 *'
   }
 
   TEST_PROCESS_ID = 'f12975d2-5958-4248-9c3d-4c8f2e1f067d'
+
+  SCHEDULE_ID = '53642303e4b0ae3190e464a8'
+  SCHEDULE_URL = '/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/schedules/53642303e4b0ae3190e464a8'
 
   before(:each) do
     ConnectionHelper.create_default_connection
@@ -21,6 +24,40 @@ describe GoodData::Schedule do
 
   after(:each) do
     GoodData.disconnect
+  end
+
+  describe '#[]' do
+    it 'Returns all schedules when :all passed' do
+      res = GoodData::Schedule[:all]
+      res.should_not be_nil
+      res.should be_a_kind_of(Array)
+      res.each do |schedule|
+        schedule.should be_a_kind_of(GoodData::Schedule)
+      end
+    end
+
+    it 'Returns specific schedule when schedule ID passed' do
+      res = GoodData::Schedule[SCHEDULE_ID]
+      res.should_not be_nil
+      res.should be_a_kind_of(GoodData::Schedule)
+    end
+
+    it 'Returns specific schedule when schedule URL passed' do
+      res = GoodData::Schedule[SCHEDULE_URL]
+      res.should_not be_nil
+      res.should be_a_kind_of(GoodData::Schedule)
+    end
+  end
+
+  describe '#all' do
+    it 'Returns all schedules' do
+      res = GoodData::Schedule.all
+      res.should_not be_nil
+      res.should be_a_kind_of(Array)
+      res.each do |schedule|
+        schedule.should be_a_kind_of(GoodData::Schedule)
+      end
+    end
   end
 
   describe '#create' do
@@ -108,6 +145,8 @@ describe GoodData::Schedule do
 
   describe '#delete' do
     it 'Should delete schedule' do
+      pending 'Setup test environment first'
+
       sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
       proc = GoodData::Process[TEST_PROCESS_ID]
 
@@ -158,7 +197,7 @@ describe GoodData::Schedule do
   describe '#execute' do
     it 'Executes schedule on process' do
       pending 'Setup environment for this test'
-      
+
       # Create one a schedule
       sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
 
@@ -249,7 +288,7 @@ describe GoodData::Schedule do
       @old_params = @schedule.hidden_params
 
       test_params = {
-          'PROCESS_ID' => '1-2-3-4'
+        'PROCESS_ID' => '1-2-3-4'
       }
 
       @schedule.hidden_params = test_params
@@ -288,7 +327,7 @@ describe GoodData::Schedule do
       @old_params = @schedule.params
 
       test_params = {
-          'PROCESS_ID' => '1-2-3-4'
+        'PROCESS_ID' => '1-2-3-4'
       }
 
       @schedule.params = test_params
