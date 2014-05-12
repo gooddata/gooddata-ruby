@@ -26,12 +26,8 @@ module GoodData
       # Returns list of all schedules for active project
       # @return [Array<GoodData::Schedule>] List of schedules
       def all
-        res = []
         tmp = GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules"
-        tmp['schedules']['items'].each do |schedule|
-          res << GoodData::Schedule.new(schedule)
-        end
-        res
+        tmp['schedules']['items'].map { |schedule| GoodData::Schedule.new(schedule) }
       end
 
       # Creates new schedules from parameters passed
