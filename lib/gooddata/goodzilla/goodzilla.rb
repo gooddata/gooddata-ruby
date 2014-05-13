@@ -6,7 +6,7 @@ module GoodData
     # @param a_maql_string Input MAQL string
     # @return [Array<String>] List of IDS
     def self.get_ids(a_maql_string)
-      a_maql_string.scan(/!\[([^\"]+)\]/).flatten
+      a_maql_string.scan(/!\[([^\"\]]+)\]/).flatten.uniq
     end
 
     # Get Facts from MAQL string
