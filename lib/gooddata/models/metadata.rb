@@ -73,7 +73,7 @@ module GoodData
       #
       # @param title [String] title that has to match exactly
       # @param title [Regexp] regular expression that has to match
-      # @return [Array] Array of MdObject
+      # @return [Array<GoodData::MdObject>] Array of MdObject
       def find_by_title(title)
         all = self[:all]
         items = if title.is_a?(Regexp)

@@ -141,6 +141,10 @@ module GoodData
         GoodData.post(uri, data)
       end
 
+      # TODO: refactor the method. It should be instance method
+      # Method used for getting a data_result from a wire representation of
+      # @param result [Hash, Object] Wire data from JSON
+      # @return [GoodData::ReportDataResult]
       def data_result(result)
         data_result_uri = result['execResult']['dataResult']
         result = GoodData.get data_result_uri
