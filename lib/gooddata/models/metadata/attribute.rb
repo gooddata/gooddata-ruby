@@ -20,7 +20,7 @@ module GoodData
 
       def find_element_value(uri)
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
-        Attribute[matches[1]].primary_label.find_element_value(matches[2])
+        Attribute[matches[1]].primary_label.find_element_value(matches[2].to_i)
       end
     end
 

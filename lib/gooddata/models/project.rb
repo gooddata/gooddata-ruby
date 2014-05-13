@@ -247,7 +247,7 @@ module GoodData
 
     # Gets project role by its identifier
     #
-    # @param role_name [String] Title of role to look for
+    # @param [String] role_name Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_identifier(role_name)
       tmp = roles
@@ -259,7 +259,7 @@ module GoodData
 
     # Gets project role byt its summary
     #
-    # @param role_summary [String] Summary of role to look for
+    # @param [String] role_summary Summary of role to look for
     # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_summary(role_summary)
       tmp = roles
@@ -271,7 +271,7 @@ module GoodData
 
     # Gets project role by its name
     #
-    # @param role_title [String] Title of role to look for
+    # @param [String] role_title Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_title(role_title)
       tmp = roles
