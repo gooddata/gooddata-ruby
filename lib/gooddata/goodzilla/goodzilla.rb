@@ -6,7 +6,7 @@ module GoodData
     # @param a_maql_string Input MAQL string
     # @return [Array<String>] List of IDS
     def self.get_ids(a_maql_string)
-      a_maql_string.scan(/!\[([^\"]+)\]/).flatten
+      a_maql_string.scan(/!\[([^\"\]]+)\]/).flatten.uniq
     end
 
     # Get Facts from MAQL string
@@ -67,7 +67,7 @@ module GoodData
       metric = interpolated[:facts].reduce(metric) { |a, e| a.sub("#\"#{e[0]}\"", "[#{e[1]}]") }
       metric = interpolated[:attributes].reduce(metric) { |a, e| a.sub("@\"#{e[0]}\"", "[#{e[1]}]") }
       metric = interpolated[:metrics].reduce(metric) { |a, e| a.sub("?\"#{e[0]}\"", "[#{e[1]}]") }
-      metric = interpolated_ids.reduce(metric) { |a, e| a.sub("![#{e[0]}]", "[#{e[1]}]") }
+      metric = interpolated_ids.reduce(metric) { |a, e| a.gsub("![#{e[0]}]", "[#{e[1]}]") }
       metric
     end
   end
