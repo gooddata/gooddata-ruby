@@ -56,4 +56,19 @@ describe GoodData::SmallGoodZilla do
     interpolated.should == "SELECT SUM([a]) WHERE [d]=[x] AND [snap]=1"
   end
 
+  it "should be able to parse several ids correctly." do
+    metric = "SELECT SUM(
+        CASE
+          WHEN ![attr.customer_profiles.profile_id] = [/gdc/md/pxa3aic06undadkc5s7t5lxpne11vgyt/obj/257/elements?id=65] THEN ![fact.perfomance_by_campaign_id.general_score_1]
+          WHEN ![attr.customer_profiles.profile_id] = [/gdc/md/pxa3aic06undadkc5s7t5lxpne11vgyt/obj/257/elements?id=50] THEN ![fact.perfomance_by_campaign_id.general_score_5]
+          WHEN ![attr.customer_profiles.profile_id] = [/gdc/md/pxa3aic06undadkc5s7t5lxpne11vgyt/obj/257/elements?id=20]  THEN ![fact.perfomance_by_campaign_id.general_score_12]
+        END)"
+    GoodData::SmallGoodZilla.get_ids(metric).should == [
+      "attr.customer_profiles.profile_id",
+      "fact.perfomance_by_campaign_id.general_score_1",
+      "fact.perfomance_by_campaign_id.general_score_5",
+      "fact.perfomance_by_campaign_id.general_score_12"
+    ]
+  end
+
 end
