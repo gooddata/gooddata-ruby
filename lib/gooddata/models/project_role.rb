@@ -10,14 +10,14 @@ module GoodData
 
     # Gets Project Role Identifier
     #
-    # @returns [string] Project Role
+    # @return [string] Project Role
     def identifier
       @json['projectRole']['meta']['identifier']
     end
 
     # Gets Project Role Author
     #
-    # @returns [GoodData::AccountSettings] Project Role author
+    # @return [GoodData::AccountSettings] Project Role author
     def author
       url = @json['projectRole']['meta']['author']
       tmp = GoodData.get url
@@ -26,7 +26,7 @@ module GoodData
 
     # Gets Project Role Contributor
     #
-    # @returns [GoodData::AccountSettings] Project Role Contributor
+    # @return [GoodData::AccountSettings] Project Role Contributor
     def contributor
       url = @json['projectRole']['meta']['contributor']
       tmp = GoodData.get url
@@ -35,42 +35,42 @@ module GoodData
 
     # Gets DateTime time when created
     #
-    # @returns [DateTime] Date time of creation
+    # @return [DateTime] Date time of creation
     def created
       DateTime.parse(@json['projectRole']['meta']['created'])
     end
 
     # Gets Project Role Permissions
     #
-    # @returns [string] Project Role
+    # @return [string] Project Role
     def permissions
       @json['projectRole']['permissions']
     end
 
     # Gets Project Role Title
     #
-    # @returns [string] Project Role Title
+    # @return [string] Project Role Title
     def title
       @json['projectRole']['meta']['title']
     end
 
     # Gets Project Role Summary
     #
-    # @returns [string] Project Role Summary
+    # @return [string] Project Role Summary
     def summary
       @json['projectRole']['meta']['summary']
     end
 
     # Gets DateTime time when updated
     #
-    # @returns [DateTime] Date time of last update
+    # @return [DateTime] Date time of last update
     def updated
       DateTime.parse(@json['projectRole']['meta']['updated'])
     end
 
     # Gets Users with this Role
     #
-    # @returns [Array<GoodData::AccountSettings>] List of users
+    # @return [Array<GoodData::AccountSettings>] List of users
     def users
       res = []
       url = @json['projectRole']['links']['roleUsers']
@@ -84,7 +84,7 @@ module GoodData
 
     # Gets Raw object URI
     #
-    # @returns [string] URI of this project role
+    # @return [string] URI of this project role
     def uri
       @json['projectRole']['links']['roleUsers'].split('/')[0...-1].join('/')
     end
