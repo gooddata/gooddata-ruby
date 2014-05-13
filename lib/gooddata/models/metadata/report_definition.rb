@@ -121,7 +121,7 @@ module GoodData
         begin
           unsaved_metrics.each { |m| m.save }
           rd = GoodData::ReportDefinition.create(options)
-          get_data_result(execute_inline(rd))
+          data_result(execute_inline(rd))
         ensure
           unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
@@ -141,7 +141,11 @@ module GoodData
         GoodData.post(uri, data)
       end
 
-      def get_data_result(result)
+      # TODO: refactor the method. It should be instance method
+      # Method used for getting a data_result from a wire representation of
+      # @param result [Hash, Object] Wire data from JSON
+      # @return [GoodData::ReportDataResult]
+      def data_result(result)
         data_result_uri = result['execResult']['dataResult']
         result = GoodData.get data_result_uri
 
@@ -207,8 +211,7 @@ module GoodData
                else
                  ReportDefinition.execute_inline(self)
                end
-
-      get_data_result(result)
+      ReportDefinition.data_result(result)
     end
   end
 end

@@ -71,6 +71,11 @@ describe "Ful project implementation", :constraint => 'slow' do
       result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
       result[1][1].should == 3
       result.include_row?(["jirka@gooddata.com", 5]).should == true
+
+      result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email']).execute
+      result2[1][1].should == 3
+      result2.include_row?(["jirka@gooddata.com", 5]).should == true
+      result2.should == result
     end
   end
 
@@ -180,6 +185,38 @@ describe "Ful project implementation", :constraint => 'slow' do
       l = attribute.primary_label
       value = l.values.first[:value]
       l.find_element_value(l.find_value_uri(value)).should == value
+    end
+  end
+
+  it "should be able to tell you if a value is contained in a metric" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      label = attribute.primary_label
+      value = label.values.first
+      fact = GoodData::Fact['fact.commits.lines_changed']
+      metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
+      metric.contain_value?(label, value[:value]).should == true
+    end
+  end
+
+  it "should be able to replace the values in a metric" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      label = attribute.primary_label
+      value = label.values.first
+      different_value = label.values[1]
+      fact = GoodData::Fact['fact.commits.lines_changed']
+      metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
+      metric.replace_value(label, value[:value], different_value[:value])
+      metric.contain_value?(label, value[:value]).should == false
+      metric.pretty_expression.should == "SELECT SUM([Lines changed]) WHERE [Dev] = [josh@gooddata.com]"
+    end
+  end
+
+  it "should be able to lookup the attributes by regexp and return a collectio" do
+    GoodData.with_project(@project) do |p|
+      attrs = GoodData::Attribute.find_by_title(/Date/i)
+      attrs.count.should == 1
     end
   end
 end

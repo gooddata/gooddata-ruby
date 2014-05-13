@@ -247,7 +247,7 @@ module GoodData
 
     # Gets project role by its identifier
     #
-    # @param role_name [String] Title of role to look for
+    # @param [String] role_name Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_identifier(role_name)
       tmp = roles
@@ -259,7 +259,7 @@ module GoodData
 
     # Gets project role byt its summary
     #
-    # @param role_summary [String] Summary of role to look for
+    # @param [String] role_summary Summary of role to look for
     # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_summary(role_summary)
       tmp = roles
@@ -271,7 +271,7 @@ module GoodData
 
     # Gets project role by its name
     #
-    # @param role_title [String] Title of role to look for
+    # @param [String] role_title Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_title(role_title)
       tmp = roles
@@ -419,7 +419,7 @@ module GoodData
 
     # Gets the list or project roles
     #
-    # @returns [Array<GoodData::ProjectRole>] List of roles
+    # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
       url = "/gdc/projects/#{pid}/roles"
 
@@ -445,7 +445,7 @@ module GoodData
 
     # Checks if is project saved
     #
-    # @returns [Boolean] True if saved, false if not
+    # @return [Boolean] True if saved, false if not
     def saved?
       res = uri.nil?
       !res
@@ -465,7 +465,7 @@ module GoodData
 
     # Gets SLIs data
     #
-    # @returns [GoodData::Metadata] SLI Metadata
+    # @return [GoodData::Metadata] SLI Metadata
     def slis
       link = "#{data['links']['metadata']}#{SLIS_PATH}"
 
@@ -515,7 +515,7 @@ module GoodData
 
     # List of users in project
     #
-    # @returns [Array<GoodData::User>] List of users
+    # @return [Array<GoodData::User>] List of users
     def users
       res = []
 
