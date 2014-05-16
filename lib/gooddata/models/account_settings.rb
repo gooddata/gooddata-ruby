@@ -28,6 +28,18 @@ module GoodData
       }
     }
 
+    ASSIGNABLE_MEMBERS = [
+      :company,
+      :country,
+      :email,
+      :login,
+      :first_name,
+      :last_name,
+      :phone,
+      :position,
+      :timezone
+    ]
+
     class << self
       def diff(user1, user2)
       end
@@ -36,15 +48,9 @@ module GoodData
         json = EMPTY_OBJECT.dup
         res = GoodData::AccountSettings.new(json)
 
-        res.company = attributes[:company] if attributes[:company]
-        res.country = attributes[:country] if attributes[:country]
-        res.email = attributes[:email] if attributes[:email]
-        res.login = attributes[:login] if attributes[:login]
-        res.first_name = attributes[:first_name] if attributes[:first_name]
-        res.last_name = attributes[:last_name] if attributes[:last_name]
-        res.phone = attributes[:phone] if attributes[:phone]
-        res.position = attributes[:position] if attributes[:position]
-        res.timezone = attributes[:timezone] if attributes[:timezone]
+        attributes.each do |k, v|
+          res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
+        end
 
         res.save!
         res
