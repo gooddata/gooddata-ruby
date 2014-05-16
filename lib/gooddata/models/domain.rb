@@ -34,10 +34,9 @@ module GoodData
           :email => opts[:login]
         }
 
-
         # Optional authentication modes
         tmp = opts[:authentication_modes]
-        if !tmp.nil?
+        if tmp
           if tmp.kind_of? Array
             data[:authenticationModes] = tmp
           elsif tmp.kind_of? String
@@ -48,31 +47,31 @@ module GoodData
         # Optional company
         tmp = opts[:company_name]
         tmp = opts[:company] if tmp.nil? || tmp.empty?
-        data[:companyName] = tmp if !tmp.nil? && !tmp.empty?
+        data[:companyName] = tmp if tmp && !tmp.empty?
 
         # Optional country
         tmp = opts[:country]
-        data[:country] = tmp if !tmp.nil? && !tmp.empty?
+        data[:country] = tmp if tmp && !tmp.empty?
 
         # Optional phone number
         tmp = opts[:phone]
         tmp = opts[:phone_number] if tmp.nil? || tmp.empty?
-        data[:phoneNumber] = tmp if !tmp.nil? && !tmp.empty?
+        data[:phoneNumber] = tmp if tmp && !tmp.empty?
 
         # Optional position
         tmp = opts[:position]
-        data[:position] = tmp if !tmp.nil? && !tmp.empty?
+        data[:position] = tmp if tmp && !tmp.empty?
 
         # Optional sso provider
         tmp = opts[:sso_provider]
-        data['ssoProvider'] = tmp if !tmp.nil? && !tmp.empty?
+        data['ssoProvider'] = tmp if tmp && !tmp.empty?
 
         # Optional timezone
         tmp = opts[:timezone]
-        data[:timezone] = tmp if !tmp.nil? && !tmp.empty?
+        data[:timezone] = tmp if tmp && !tmp.empty?
 
         url = "/gdc/account/domains/#{opts[:domain]}/users"
-        GoodData.post(url, { :accountSetting => data })
+        GoodData.post(url, :accountSetting => data)
       end
 
       # Finds user in domain by login
