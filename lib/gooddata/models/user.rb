@@ -161,5 +161,24 @@ module GoodData
     def uri
       @json['user']['links']['self']
     end
+    
+    # Disables an user in the provided project
+    #
+    # @return result from post execution
+    def disable(project)
+    
+      disablemessage = { "user" => {
+           "content" => {
+                "status" => "DISABLED",
+                "userRoles" => @json['user']['content']['userRoles']
+                      },
+           "links"  => {
+                 "self" => self.uri
+                      }
+          }
+      }
+      
+      result = GoodData.post("/gdc/projects/#{project.obj_id}/users", disablemessage)
+    end
   end
 end
