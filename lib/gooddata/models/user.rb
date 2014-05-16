@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'multi_json'
+
 require_relative 'project'
 require_relative 'project_role'
 
@@ -15,16 +17,18 @@ module GoodData
     #
     # @return [String] Author
     def author
-      # TODO: Return object instead
-      @json['user']['meta']['author']
+      url = @json['user']['meta']['author']
+      data = GoodData.get url
+      GoodData::User.new(data)
     end
 
     # Gets the contributor
     #
     # @return [String] Contributor
     def contributor
-      # TODO: Return object instead
-      @json['user']['meta']['contributor']
+      url = @json['user']['meta']['contributor']
+      data = GoodData.get url
+      GoodData::User.new(data)
     end
 
     # Gets date when created
@@ -41,11 +45,25 @@ module GoodData
       @json['user']['content']['email'] || ''
     end
 
+    # Sets the email
+    #
+    # @param new_email [String] New email to be assigned
+    def email=(new_email)
+      @json['user']['content']['email'] = new_email
+    end
+
     # Gets the first name
     #
     # @return [String] First name
     def first_name
       @json['user']['content']['firstname'] || ''
+    end
+
+    # Sets the first name
+    #
+    # @param new_first_name [String] New first name to be assigned
+    def first_name=(new_first_name)
+      @json['user']['content']['firstname'] = new_first_name
     end
 
     # Gets the invitations
@@ -56,6 +74,7 @@ module GoodData
 
       tmp = GoodData.get @json['user']['links']['invitations']
       tmp['invitations'].each do |invitation|
+        # TODO: Something is missing here
       end
 
       res
@@ -68,11 +87,25 @@ module GoodData
       @json['user']['content']['lastname'] || ''
     end
 
+    # Sets the last name
+    #
+    # @param new_last_name [String] New last name to be assigned
+    def last_name=(new_last_name)
+      @json['user']['content']['lastname'] = new_last_name
+    end
+
     # Gets the login
     #
     # @return [String] Login
     def login
       @json['user']['content']['login'] || ''
+    end
+
+    # Sets the last name
+    #
+    # @param new_login [String] New login to be assigned
+    def login=(new_login)
+      @json['user']['content']['login'] = new_login
     end
 
     # Gets user raw object ID
@@ -101,6 +134,13 @@ module GoodData
     # @return [String] Phone number
     def phone
       @json['user']['content']['phonenumber'] || ''
+    end
+
+    # Sets the phone number
+    #
+    # @param new_phone_number [String] New phone number to be assigned
+    def phone=(new_phone_number)
+      @json['user']['content']['phonenumber'] = new_phone_number
     end
 
     # Gets the projects of user
@@ -141,11 +181,25 @@ module GoodData
       @json['user']['content']['status'] || ''
     end
 
+    # Sets the status
+    #
+    # @param new_status [String] New phone number to be assigned
+    def status=(new_status)
+      @json['user']['content']['status'] = new_status
+    end
+
     # Gets the title
     #
     # @return [String] User title
     def title
       @json['user']['meta']['title'] || ''
+    end
+
+    # Sets the title
+    #
+    # @param new_title [String] New title to be assigned
+    def title=(new_title)
+      @json['user']['content']['title'] = new_title
     end
 
     # Gets the date when updated
