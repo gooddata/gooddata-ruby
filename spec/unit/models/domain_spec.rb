@@ -13,7 +13,7 @@ describe GoodData::Domain do
 
   describe '#add_user' do
     it 'Should add user' do
-      GoodData::Domain.add_user(ConnectionHelper::DEFAULT_DOMAIN, "gemtest#{rand(1e6)}@gooddata.com", 'password')
+      GoodData::Domain.add_user(:domain => ConnectionHelper::DEFAULT_DOMAIN, :login => "gemtest#{rand(1e6)}@gooddata.com", :password => 'password')
     end
   end
 
