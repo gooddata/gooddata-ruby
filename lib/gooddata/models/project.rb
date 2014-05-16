@@ -218,7 +218,7 @@ module GoodData
     #
     # @return [DateTime] Date time when created
     def created
-      DateTime.parse(@json['meta']['created'])
+      DateTime.parse(@json['project']['meta']['created'])
     end
 
     # Gets ruby wrapped raw project JSON data
@@ -498,7 +498,7 @@ module GoodData
     #
     # @return [DateTime] Date time of last update
     def updated
-      DateTime.parse(@json['meta']['updated'])
+      DateTime.parse(@json['project']['meta']['updated'])
     end
 
     # Uploads file to project
