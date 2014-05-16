@@ -120,8 +120,8 @@ module GoodData
     #
     # @return [String] Returns data
     def export(format)
-      result = GoodData.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
-      result1 = GoodData.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
+      result = client.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
+      result1 = client.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
       GoodData.poll_on_code(result1['uri'], process: false)
     end
 

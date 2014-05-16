@@ -29,6 +29,7 @@ module GoodData
         base.send :include, GoodData::Mixin::NotMetric
         base.send :include, GoodData::Mixin::NotLabel
         base.send :include, GoodData::Mixin::MdRelations
+        base.send :include, GoodData::Mixin::Author
 
         base.extend GoodData::Mixin::MdObjId
         base.extend GoodData::Mixin::MdObjectQuery

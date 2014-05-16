@@ -55,14 +55,28 @@ module GoodData
     # @return [Array]
     def values(options = {})
       limit = options[:limit] || 100
-      results = client.post("#{uri}/validElements?limit=#{limit}&offset=0&order=asc", {})
-      results['validElements']['items'].map do |el|
-        v = el['element']
-        {
-          :value => v['title'],
-          :uri => v['uri']
-        }
+      offset = 0
+      vals = []
+      loop do
+        results = GoodData.post("#{uri}/validElements?limit=#{limit}&offset=#{offset}&order=asc", {})
+        x = results['validElements']['items'].map do |el|
+          v = el['element']
+          {
+            :value => v['title'],
+            :uri => v['uri']
+          }
+        end
+        vals.concat(x)
+        break if vals.length < offset
+        offset += limit
       end
+      vals
+    end
+
+    def values_count(options = {})
+      limit = options[:limit] || 100
+      results = client.post("#{uri}/validElements?limit=#{limit}&offset=0&order=asc", {})
+      results['validElements']['paging']['total'].to_i
     end
 
     # Gives an attribute of current label

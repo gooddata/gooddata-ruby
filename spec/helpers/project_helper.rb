@@ -29,4 +29,19 @@ module ProjectHelper
       end
     end
   end
+
+  def self.create_random_user(client)
+    num = rand(1e6)
+    login = "gemtest#{num}@gooddata.com"
+
+    GoodData::Membership.create({
+      email: login,
+      login: login,
+      first_name: 'the',
+      last_name: num.to_s,
+      role: 'editor',
+      password: CryptoHelper.generate_password,
+      domain: ConnectionHelper::DEFAULT_DOMAIN
+    }, client: client)
+  end
 end

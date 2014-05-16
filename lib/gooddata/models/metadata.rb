@@ -42,7 +42,6 @@ module GoodData
       if saved? # rubocop:disable Style/GuardClause
         client.delete(uri)
         meta.delete('uri')
-        # ["uri"] = nil
       end
     end
 

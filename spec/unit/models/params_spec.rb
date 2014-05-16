@@ -29,7 +29,7 @@ describe 'GoodData::Schedule::Params' do
       }
 
       res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
-      expect(res).to be_true
+      expect(res).to be_truthy
       res.delete
     end
 
@@ -42,7 +42,7 @@ describe 'GoodData::Schedule::Params' do
       }
 
       res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
-      expect(res).to be_true
+      expect(res).to be_truthy
       res.delete
     end
 
@@ -53,7 +53,7 @@ describe 'GoodData::Schedule::Params' do
       }
 
       res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
-      expect(res).to be_true
+      expect(res).to be_truthy
       res.delete
     end
   end
@@ -65,7 +65,7 @@ describe 'GoodData::Schedule::Params' do
       }
 
       res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
-      expect(res).to be_true
+      expect(res).to be_truthy
       res.delete
     end
 
@@ -78,7 +78,7 @@ describe 'GoodData::Schedule::Params' do
       }
 
       res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
-      expect(res).to be_true
+      expect(res).to be_truthy
       res.delete
     end
 
@@ -89,7 +89,7 @@ describe 'GoodData::Schedule::Params' do
       }
 
       res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
-      expect(res).to be_true
+      expect(res).to be_truthy
       res.delete
     end
   end
