@@ -7,6 +7,13 @@ module GoodData
   class AccountSettings
     attr_reader :json
 
+    class << self
+      def current
+        json = GoodData.get GoodData.connection.user['profile']
+        GoodData::AccountSettings.new(json)
+      end
+    end
+
     # Creates new instance
     #
     # @return [AccountSettings] New AccountSettings instance
