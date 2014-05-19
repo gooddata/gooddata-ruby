@@ -24,6 +24,39 @@ RSpec.configure do |config|
   config.before(:all) do
     # TODO: Fully setup global environment
     GoodData.logging_off
+
+    pp GoodData.version
+
+    GoodData.connect ENV['GD_GEM_USER'], ENV['GD_GEM_PASSWORD']
+
+    domain = GoodData::Domain['gooddata-tomas-korcak']
+    users = domain.users
+
+    user = users[0]
+    user.first_name = 'Tom'
+    user.save!
+
+    # domain = GoodData::Domain['gooddata-tomas-korcak']
+    # domain.add_user(:login => 'korczis87@gmail.com', :password => 'ThisIsTheAir', :company => 'picoparnik', :authentication_modes => ['PASSWORD'])
+
+    data = {
+      :first_name => 'tomas'
+    }
+    user1 = GoodData::AccountSettings.create data
+    user1.first_name = 'tomas'
+    user1.last_name = 'korcak'
+    user1.email = 'oh.my.tomas@gmail.com'
+
+    data = {
+      :first_name => 'tomas'
+    }
+    user2 = GoodData::AccountSettings.create data
+
+    # d = GoodData::User.diff(user1, user2)
+
+    projects = GoodData::Project.all
+    project = projects[0]
+    tmp = project.created
   end
 
   config.after(:all) do

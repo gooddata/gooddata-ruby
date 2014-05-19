@@ -41,9 +41,6 @@ module GoodData
     ]
 
     class << self
-      def diff(user1, user2)
-      end
-
       def create(attributes)
         json = EMPTY_OBJECT.dup
         res = GoodData::AccountSettings.new(json)
@@ -54,6 +51,11 @@ module GoodData
 
         res.save!
         res
+      end
+
+      def current
+        json = GoodData.get GoodData.connection.user['profile']
+        GoodData::AccountSettings.new(json)
       end
     end
 

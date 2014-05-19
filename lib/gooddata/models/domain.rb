@@ -24,20 +24,54 @@ module GoodData
       # @param login [String] Login of user to be invited
       # @param password [String] Default preset password
       # @return [Object] Raw response
-      def add_user(domain, login, password)
+      def add_user(opts)
         data = {
-          :accountSetting => {
-            :login => login,
-            :firstName => 'FirstName',
-            :lastName => 'LastName',
-            :password => password,
-            :verifyPassword => password,
-            :email => login
-          }
+          :login => opts[:login],
+          :firstName => opts[:first_name] || 'FirstName',
+          :lastName => opts[:last_name] || 'LastName',
+          :password => opts[:password],
+          :verifyPassword => opts[:password],
+          :email => opts[:login]
         }
 
-        url = "/gdc/account/domains/#{domain}/users"
-        GoodData.post(url, data)
+        # Optional authentication modes
+        tmp = opts[:authentication_modes]
+        if tmp
+          if tmp.kind_of? Array
+            data[:authenticationModes] = tmp
+          elsif tmp.kind_of? String
+            data[:authenticationModes] = [tmp]
+          end
+        end
+
+        # Optional company
+        tmp = opts[:company_name]
+        tmp = opts[:company] if tmp.nil? || tmp.empty?
+        data[:companyName] = tmp if tmp && !tmp.empty?
+
+        # Optional country
+        tmp = opts[:country]
+        data[:country] = tmp if tmp && !tmp.empty?
+
+        # Optional phone number
+        tmp = opts[:phone]
+        tmp = opts[:phone_number] if tmp.nil? || tmp.empty?
+        data[:phoneNumber] = tmp if tmp && !tmp.empty?
+
+        # Optional position
+        tmp = opts[:position]
+        data[:position] = tmp if tmp && !tmp.empty?
+
+        # Optional sso provider
+        tmp = opts[:sso_provider]
+        data['ssoProvider'] = tmp if tmp && !tmp.empty?
+
+        # Optional timezone
+        tmp = opts[:timezone]
+        data[:timezone] = tmp if tmp && !tmp.empty?
+
+        url = "/gdc/account/domains/#{opts[:domain]}/users"
+        GoodData.post(url, :accountSetting => data)
       end
 
       # Finds user in domain by login
@@ -90,8 +124,9 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # domain.add_user 'joe.doe@example', 'sup3rS3cr3tP4ssW0rtH'
     #
-    def add_user(login, password)
-      GoodData::Domain.add_user(name, login, password)
+    def add_user(opts)
+      opts[:domain] = name
+      GoodData::Domain.add_user(opts)
     end
 
     # Finds user in domain by login
