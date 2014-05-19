@@ -48,7 +48,7 @@ module GoodData
       # @return [GoodData::Profile] Modified object
       def apply(obj, changes)
         changes.each do |param, val|
-          next if !ASSIGNABLE_MEMBERS.include? param
+          next unless ASSIGNABLE_MEMBERS.include? param
           obj.send("#{param}=", val)
         end
         obj
@@ -105,22 +105,22 @@ module GoodData
     #
     # @param right [GoodData::Profile] Project to compare with
     # @return [Boolean] True if same else false
-    def ==(right)
+    def ==(other)
+      res = true
       ASSIGNABLE_MEMBERS.each do |k|
-        l_val = self.send("#{k}")
-        r_val = right.send("#{k}")
-        return false if l_val != r_val
+        l_val = send("#{k}")
+        r_val = other.send("#{k}")
+        res = false if l_val != r_val
       end
-
-      return true
+      res
     end
 
     # Checks objects for non-equality
     #
     # @param right [GoodData::Profile] Project to compare with
     # @return [Boolean] True if different else false
-    def !=(right)
-      !(self == right)
+    def !=(other)
+      !(self == other)
     end
 
     # Apply changes to object.

@@ -19,6 +19,36 @@ module GoodData
       :title
     ]
 
+    class << self
+      # Apply changes to object.
+      #
+      # @param obj [GoodData::User] Object to be modified
+      # @param changes [Hash] Hash with modifications
+      # @return [GoodData::User] Modified object
+      def apply(obj, changes)
+        changes.each do |param, val|
+          next unless ASSIGNABLE_MEMBERS.include? param
+          obj.send("#{param}=", val)
+        end
+        obj
+      end
+
+      # Gets hash representing diff of users
+      #
+      # @param user1 [GoodData::User] Original user
+      # @param user2 [GoodData::User] User to compare with
+      # @return [Hash] Hash representing diff
+      def diff(user1, user2)
+        res = {}
+        ASSIGNABLE_MEMBERS.each do |k|
+          l_value = user1.send("#{k}")
+          r_value = user2.send("#{k}")
+          res[k] = r_value if l_value != r_value
+        end
+        res
+      end
+    end
+
     def initialize(json)
       @json = json
     end
@@ -27,22 +57,30 @@ module GoodData
     #
     # @param right [GoodData::User] Project to compare with
     # @return [Boolean] True if same else false
-    def ==(right)
+    def ==(other)
+      res = true
       ASSIGNABLE_MEMBERS.each do |k|
-        l_val = self.send("#{k}")
-        r_val = right.send("#{k}")
-        return false if l_val != r_val
+        l_val = send("#{k}")
+        r_val = other.send("#{k}")
+        res = false if l_val != r_val
       end
-
-      return true
+      res
     end
 
     # Checks objects for non-equality
     #
     # @param right [GoodData::User] Project to compare with
     # @return [Boolean] True if different else false
-    def !=(right)
-      !(self == right)
+    def !=(other)
+      !(self == other)
+    end
+
+    # Apply changes to object.
+    #
+    # @param changes [Hash] Hash with modifications
+    # @return [GoodData::User] Modified object
+    def apply(changes)
+      GoodData::User.apply(self, changes)
     end
 
     # Gets author (person who created)  of this object
@@ -68,6 +106,14 @@ module GoodData
     # @return [DateTime] Created date
     def created
       Time.parse(@json['user']['meta']['created'])
+    end
+
+    # Gets hash representing diff of users
+    #
+    # @param user [GoodData::User] Another profile to compare with
+    # @return [Hash] Hash representing diff
+    def diff(user)
+      GoodData::User.diff(self, user)
     end
 
     # Gets the email

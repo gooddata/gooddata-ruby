@@ -7,7 +7,6 @@ require_relative '../models/profile'
 
 module GoodData
   class << self
-
     # Attempts to log in
     #
     # @return [Boolean] True if logged in else false
