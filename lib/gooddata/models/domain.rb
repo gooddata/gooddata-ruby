@@ -71,7 +71,10 @@ module GoodData
         data[:timezone] = tmp if tmp && !tmp.empty?
 
         url = "/gdc/account/domains/#{opts[:domain]}/users"
-        GoodData.post(url, :accountSetting => data)
+        response = GoodData.post(url, :accountSetting => data)
+
+        raw = GoodData.get response['uri']
+        GoodData::Profile.new(raw)
       end
 
       # Finds user in domain by login
