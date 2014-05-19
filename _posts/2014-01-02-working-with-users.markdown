@@ -7,22 +7,25 @@ pygments: true
 perex: "Invite users from and into project."
 ---
 
-##Wor
+Users are integral part of any project. Who else would look at your beautiful data. Let's investigate ways how users can be invited so they can participate in the project.
 
+###Working with project users
+
+####Listing
 You can get users in particular project like this
 
 {% highlight ruby %}
 project.users
 {% endhighlight %}
 
-These are not really user objects but they are very similar. So thanks to duc typing you can treet them very similarly.
+These are not really user objects but they are very similar. So thanks to duck typing you can treat them very similarly.
 
 {% highlight ruby %}
 project_user = project.users.first
 project_user.first_name
 {% endhighlight %}
 
-###Getting roles in project
+####Getting roles in project
 
 You can also look at what roles are available in particular project
 
@@ -36,14 +39,20 @@ on the project. This
 project.roles.map(&:title)
 {% endhighlight %}
 
-###Enablind/disabling
+####Setting roles
+You can set user a specific role.
 
-You can also call project specific methods
 {% highlight ruby %}
 project_user.role
 project_user.role = admin_role
 {% endhighlight %}
 
+
+####Enablind/disabling
+
+`Coming in 6.2`
+
+There is not a way how you can remove the user form the project completely but you can disable and enable them. 
 You can also disable them
 
 {% highlight ruby %}
@@ -53,7 +62,7 @@ project_user.disable
 and later enable if you wish
 
 {% highlight ruby %}
-project_user.disable
+project_user.enable
 {% endhighlight %}
 
 Thanks to power of ruby you can do mass purges of users. For example disablng all editors in 4 lines of code
@@ -61,7 +70,9 @@ Thanks to power of ruby you can do mass purges of users. For example disablng al
 {% highlight ruby %}
 GoodData.with_project(pid) do |p|
   editor_role = p.roles.find {|role| role.title == "Editor"}
-  p.users.select { |project_user| project_user.role == editor_role}.each { |editor| editor.disable }
+  p.users.select do |project_user|
+    project_user.role == editor_role
+  end.each { |editor| editor.disable }
 end
 {% endhighlight %}
 
@@ -91,5 +102,19 @@ end
 This will only work if you are an administrator of a domain, which the user is in. Let's have a look how to add a user to a domain.
 
 {% highlight ruby %}
-GoodData::Domain['my_domain_name']
+domain = GoodData::Domain['my_domain_name']
+damain.add_user('joe@example.com', 'jindrisska')
+{% endhighlight %}
+
+Of course there are couple of things to make the work with domains easier
+
+{% highlight ruby %}
+domain.users
+{% endhighlight %}
+
+Both of these can be called statically
+
+{% highlight ruby %}
+GoodData::Domain.add_user('joe@example.com', 'jindrisska')
+GoodData::Domain.users
 {% endhighlight %}
