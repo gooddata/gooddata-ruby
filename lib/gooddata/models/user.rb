@@ -9,8 +9,40 @@ module GoodData
   class User
     attr_reader :json
 
+    ASSIGNABLE_MEMBERS = [
+      :email,
+      :first_name,
+      :last_name,
+      :login,
+      :phone,
+      :status,
+      :title
+    ]
+
     def initialize(json)
       @json = json
+    end
+
+    # Checks objects for equality
+    #
+    # @param right [GoodData::User] Project to compare with
+    # @return [Boolean] True if same else false
+    def ==(right)
+      ASSIGNABLE_MEMBERS.each do |k|
+        l_val = self.send("#{k}")
+        r_val = right.send("#{k}")
+        return false if l_val != r_val
+      end
+
+      return true
+    end
+
+    # Checks objects for non-equality
+    #
+    # @param right [GoodData::User] Project to compare with
+    # @return [Boolean] True if different else false
+    def !=(right)
+      !(self == right)
     end
 
     # Gets author (person who created)  of this object

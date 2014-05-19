@@ -67,6 +67,28 @@ module GoodData
       @dirty = false
     end
 
+    # Checks objects for equality
+    #
+    # @param right [GoodData::Profile] Project to compare with
+    # @return [Boolean] True if same else false
+    def ==(right)
+      ASSIGNABLE_MEMBERS.each do |k|
+        l_val = self.send("#{k}")
+        r_val = right.send("#{k}")
+        return false if l_val != r_val
+      end
+
+      return true
+    end
+
+    # Checks objects for non-equality
+    #
+    # @param right [GoodData::Profile] Project to compare with
+    # @return [Boolean] True if different else false
+    def !=(right)
+      !(self == right)
+    end
+
     # Gets the company name
     #
     # @return [String] Company name
