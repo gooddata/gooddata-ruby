@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'account_settings'
+require_relative 'profile'
 
 module GoodData
   class ProjectRole
@@ -17,20 +17,20 @@ module GoodData
 
     # Gets Project Role Author
     #
-    # @return [GoodData::AccountSettings] Project Role author
+    # @return [GoodData::Profile] Project Role author
     def author
       url = @json['projectRole']['meta']['author']
       tmp = GoodData.get url
-      GoodData::AccountSettings.new(tmp)
+      GoodData::Profile.new(tmp)
     end
 
     # Gets Project Role Contributor
     #
-    # @return [GoodData::AccountSettings] Project Role Contributor
+    # @return [GoodData::Profile] Project Role Contributor
     def contributor
       url = @json['projectRole']['meta']['contributor']
       tmp = GoodData.get url
-      GoodData::AccountSettings.new(tmp)
+      GoodData::Profile.new(tmp)
     end
 
     # Gets DateTime time when created
@@ -70,14 +70,14 @@ module GoodData
 
     # Gets Users with this Role
     #
-    # @return [Array<GoodData::AccountSettings>] List of users
+    # @return [Array<GoodData::Profile>] List of users
     def users
       res = []
       url = @json['projectRole']['links']['roleUsers']
       tmp = GoodData.get url
       tmp['associatedUsers']['users'].each do |user_url|
         user = GoodData.get user_url
-        res << GoodData::AccountSettings.new(user)
+        res << GoodData::Profile.new(user)
       end
       res
     end

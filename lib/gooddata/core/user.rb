@@ -3,7 +3,7 @@
 require_relative 'connection'
 require_relative 'threaded'
 
-require_relative '../models/account_settings'
+require_relative '../models/profile'
 
 module GoodData
   class << self
@@ -13,13 +13,10 @@ module GoodData
       connection.logged_in?
     end
 
-    # Returns the currently logged in user Profile.
-    def profile
-      threaded[:profile] ||= Profile.load
+    def user
+      GoodData::Profile.current
     end
 
-    def user
-      GoodData::AccountSettings.current
-    end
+    alias_method :profile, :user
   end
 end
