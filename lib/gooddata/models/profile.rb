@@ -41,6 +41,23 @@ module GoodData
     ]
 
     class << self
+      # Apply changes to object.
+      #
+      # @param obj [GoodData::Profile] Object to be modified
+      # @param changes [Hash] Hash with modifications
+      # @return [GoodData::Profile] Modified object
+      def apply(obj, changes)
+        changes.each do |param, val|
+          next if !ASSIGNABLE_MEMBERS.include? param
+          obj.send("#{param}=", val)
+        end
+        obj
+      end
+
+      # Creates new instance from hash with attributes
+      #
+      # @param attributes [Hash] Hash with initial attributes
+      # @return [GoodData::Profile] New profile instance
       def create(attributes)
         json = EMPTY_OBJECT.dup
         res = GoodData::Profile.new(json)
@@ -53,9 +70,26 @@ module GoodData
         res
       end
 
+      # Gets user currently logged in
+      # @return [GoodData::Profile] User currently logged-in
       def current
         json = GoodData.get GoodData.connection.user['profile']
         GoodData::Profile.new(json)
+      end
+
+      # Gets hash representing diff of profiles
+      #
+      # @param user1 [GoodData::Profile] Original user
+      # @param user2 [GoodData::Profile] User to compare with
+      # @return [Hash] Hash representing diff
+      def diff(user1, user2)
+        res = {}
+        ASSIGNABLE_MEMBERS.each do |k|
+          l_value = user1.send("#{k}")
+          r_value = user2.send("#{k}")
+          res[k] = r_value if l_value != r_value
+        end
+        res
       end
     end
 
@@ -87,6 +121,14 @@ module GoodData
     # @return [Boolean] True if different else false
     def !=(right)
       !(self == right)
+    end
+
+    # Apply changes to object.
+    #
+    # @param changes [Hash] Hash with modifications
+    # @return [GoodData::Profile] Modified object
+    def apply(changes)
+      GoodData::Profile.apply(self, changes)
     end
 
     # Gets the company name
@@ -129,6 +171,14 @@ module GoodData
     # Deletes this account settings
     def delete
       GoodData.delete uri
+    end
+
+    # Gets hash representing diff of profiles
+    #
+    # @param user [GoodData::Profile] Another profile to compare with
+    # @return [Hash] Hash representing diff
+    def diff(user)
+      GoodData::Profile.diff(self, user)
     end
 
     # Gets the email
