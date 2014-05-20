@@ -5,22 +5,35 @@ require_relative 'object_factory'
 
 module GoodData
   module Rest
-    # User interface to GoodData platform
-    #
     # User's interface to GoodData Platform.
     #
     # MUST provide way to use - DELETE, GET, POST, PUT
     # SHOULD provide way to use - HEAD, Bulk GET ...
     # SHOULD wrap some existing library/gem - RestClient, Typhoeus
     class Client
+      #################################
+      # Constants
+      #################################
+      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::DummyConnection
+
+      #################################
+      # Class variables
+      #################################
+      @@instance = nil
+
+      #################################
+      # Getters/Setters
+      #################################
+
       # Decide if we need provide direct access to connection
       attr_reader :connection
 
       # TODO: Decide if we need provide direct access to factory
       attr_reader :factory
 
-      @@instance = nil
-
+      #################################
+      # Class methods
+      #################################
       class << self
         # Globally available way to connect (and create client and set global instance)
         #
@@ -42,6 +55,7 @@ module GoodData
 
           # HACK: This line assigns class instance if not done yet
           @@instance = res if res.nil?
+          res
         end
       end
 
@@ -51,12 +65,21 @@ module GoodData
       # @option opts [String] :password Password used for authentication
       def initialize(opts)
         # TODO: Decide if we want to pass the options directly or not
-        username = opts[:username]
-        password = opts[:password]
+        # username = opts[:username]
+        # password = opts[:password]
 
         # TODO: See previous TODO
-        @connection = Connections::DummyConnection.new(opts)
-        @factory = ObjectFactory.new
+        # Create connection
+        @connection = DEFAULT_CONNECTION_IMPLEMENTATION.new(opts)
+
+        # Create factory bound to previously created connection
+        @factory = ObjectFactory.new(@connection)
+      end
+
+      # Gets resource by name
+      def resource(res_name)
+        puts "Getting resource '#{res_name}'"
+        nil
       end
     end
   end
