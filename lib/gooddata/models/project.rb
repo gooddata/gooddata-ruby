@@ -7,8 +7,10 @@ require_relative 'process'
 require_relative '../exceptions/no_project_error'
 require_relative 'project_role'
 
+require_relative '../rest/object'
+
 module GoodData
-  class Project
+  class Project < GoodData::Rest::Object
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
