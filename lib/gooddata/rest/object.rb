@@ -8,8 +8,10 @@ module GoodData
     # MUST provide way to work with remote REST-like API in unified manner.
     # MUST NOT create new connections.
     class Object
-      def initialize(factory, opts = {})
-        @factory = factory
+      attr_accessor :client
+
+      def initialize(opts = {})
+        @client = nil
       end
     end
   end

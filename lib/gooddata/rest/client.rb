@@ -14,7 +14,7 @@ module GoodData
       #################################
       # Constants
       #################################
-      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::DummyConnection
+      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::RestClientConnection # Connections::DummyConnection
 
       #################################
       # Class variables
@@ -50,12 +50,20 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password)
+        def connect(username, password, opts = {})
           res = Client.new(:username => username, :password => password)
 
           # HACK: This line assigns class instance if not done yet
           @@instance = res if res.nil?
           res
+        end
+
+        def client
+          @@instance
+        end
+
+        def connection
+          return @@instance
         end
       end
 
@@ -67,23 +75,71 @@ module GoodData
       # @option opts [GoodData::Rest::Connection] :connection Existing GoodData::Rest::Connection
       def initialize(opts)
         # TODO: Decide if we want to pass the options directly or not
-        # username = opts[:username]
-        # password = opts[:password]
-
         @connection_factory = opts[:connection_factory] || DEFAULT_CONNECTION_IMPLEMENTATION
 
         # TODO: See previous TODO
         # Create connection
         @connection = opts[:connection] || @connection_factory.new(opts)
 
+        username = opts[:username]
+        password = opts[:password]
+        @connection.connect(username, password)
+
         # Create factory bound to previously created connection
-        @factory = ObjectFactory.new(@connection)
+        @factory = ObjectFactory.new(self)
+      end
+
+      #######################
+      # Factory stuff
+      ######################
+      def create(klass, opts = {})
+        @factory.create(klass, opts)
+      end
+
+      def find(klass, opts = {})
+        @factory.find(klass, opts)
       end
 
       # Gets resource by name
       def resource(res_name)
         puts "Getting resource '#{res_name}'"
         nil
+      end
+
+      def user
+        pp @connection
+        create(GoodData::Profile, @connection.user)
+      end
+
+      #######################
+      # Rest
+      #######################
+      # HTTP DELETE
+      #
+      # @param uri [String] Target URI
+      def delete(uri, opts = {})
+        @connection.delete uri, opts
+      end
+
+      # HTTP GET
+      #
+      # @param uri [String] Target URI
+      def get(uri, opts = {})
+        @connection.get uri, opts
+      end
+
+      # HTTP PUT
+      #
+      # @param uri [String] Target URI
+      def put(uri, data, opts = {})
+        @connection.put uri, data, opts
+      end
+
+      # HTTP POST
+      #
+      # @param uri [String] Target URI
+      def post(uri, data, opts = {})
+        @connection.post uri, data, opts
       end
     end
   end

@@ -11,7 +11,13 @@ module GoodData
       def main(argv = ARGV)
         # Connect using username and password
         client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD)
-        pp client
+        # pp client
+
+        projects = client.find(GoodData::Project)
+        pp projects
+
+        ## project = client.create(GoodData::Project, @json)
+        ## pp project
 
         # List projects
         # projects = client.all(GoodData::Project)

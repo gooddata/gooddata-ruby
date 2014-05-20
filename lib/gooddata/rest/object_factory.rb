@@ -9,6 +9,11 @@ module GoodData
     # MUST be Responsible for creating new Rest::Object instances using proper Rest::Connection
     # SHOULD be used for throttling, statistics, custom 'allocation strategies' ...
     class ObjectFactory
+      attr_accessor :client
+      attr_accessor :connection
+      attr_accessor :objects
+      attr_accessor :resources
+
       #################################
       # Class methods
       #################################
@@ -32,11 +37,13 @@ module GoodData
       #
       # @param connection [GoodData::Rest::Connection] Connection used by factory
       # @return [GoodData::Rest::ObjectFactory] Factory instance
-      def initialize(connection)
-        fail ArgumentError 'Invalid connection passed' if connection.nil?
+      def initialize(client)
+        fail ArgumentError 'Invalid connection passed' if client.nil?
+
+        @client = client
 
         # Set connection used by factory
-        @connection = connection
+        @connection = @client.connection
 
         # Initialize internal factory map of GoodData::Rest::Object instances
         @objects = ObjectFactory.objects
@@ -47,12 +54,12 @@ module GoodData
 
       def create(type, opts = {})
         res = type.new(opts)
-        # TODO: Uncomment this when implemented
-        # res.factory = self
+        res.client = client
         res
       end
 
       def find(type, opts = {})
+        type.send('find', opts, @client)
       end
     end
   end

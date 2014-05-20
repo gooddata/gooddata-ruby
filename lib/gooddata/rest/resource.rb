@@ -9,7 +9,7 @@ module GoodData
     # IS responsible for wrapping full CRUD interface
     class Resource < Object
       # Default constructor passing all arguments to parent
-      def initialize
+      def initialize(opts = {})
         super
       end
     end

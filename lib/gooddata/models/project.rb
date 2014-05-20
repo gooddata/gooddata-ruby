@@ -100,6 +100,13 @@ module GoodData
         sleep 3
         project
       end
+
+      def find(opts = {}, client = GoodData::Rest::Client.client)
+        user = client.user
+        user.projects['projects'].map do |project|
+          client.create(GoodData::Project, project)
+        end
+      end
     end
 
     # Creates a data set within the project
@@ -287,6 +294,7 @@ module GoodData
     #
     # @param json Json used for initialization
     def initialize(json)
+      super
       @json = json
     end
 
@@ -521,9 +529,9 @@ module GoodData
     def users
       res = []
 
-      tmp = GoodData.get @json['project']['links']['users']
-      tmp['users'].map do |user|
-        res << GoodData::User.new(user)
+      tmp = factory.connection.get @json['project']['links']['users']
+      tmp.map do |user|
+        factory.create(GoodData::Project, user)
       end
 
       res
