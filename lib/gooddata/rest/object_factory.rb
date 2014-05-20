@@ -16,14 +16,14 @@ module GoodData
         # Gets list of all GoodData::Rest::Object subclasses
         #
         # @return [Array<GoodData::Rest::Object>] Subclasses of GoodData::Rest::Object
-        def rest_objects
+        def objects
           ObjectSpace.each_object(Class).select { |klass| klass < GoodData::Rest::Object }
         end
 
         # Gets list of all GoodData::Rest::Resource subclasses
         #
         # @return [Array<GoodData::Rest::Resource>] Subclasses of GoodData::Rest::Resource
-        def rest_resources
+        def resources
           ObjectSpace.each_object(Class).select { |klass| klass < GoodData::Rest::Resource }
         end
       end
@@ -39,10 +39,10 @@ module GoodData
         @connection = connection
 
         # Initialize internal factory map of GoodData::Rest::Object instances
-        @objects = ObjectFactory.rest_objects
+        @objects = ObjectFactory.objects
 
         # Initialize internal factory map of GoodData::Rest::Resource instances
-        @resources = ObjectFactory.rest_resources
+        @resources = ObjectFactory.resources
       end
 
       def create(type, opts = {})
