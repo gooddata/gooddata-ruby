@@ -1,7 +1,9 @@
 # encoding: UTF-8
 
+require_relative '../rest/object'
+
 module GoodData
-  class Profile
+  class Profile < GoodData::Rest::Object
     private_class_method :new
     attr_reader :user, :json
 

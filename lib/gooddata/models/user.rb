@@ -1,10 +1,12 @@
 # encoding: UTF-8
 
+require_relative '../rest/object'
+
 require_relative 'project'
 require_relative 'project_role'
 
 module GoodData
-  class User
+  class User < GoodData::Rest::Object
     attr_reader :json
 
     def initialize(json)
