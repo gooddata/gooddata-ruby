@@ -16,8 +16,15 @@ module GoodData
         projects = client.find(GoodData::Project)
         pp projects
 
-        ## project = client.create(GoodData::Project, @json)
-        ## pp project
+        project = projects[3]
+        pp project
+
+        # List invitations
+        invitations = project.invitations
+        invitations.each do |invitation|
+          pp [invitation.author.email, invitation.email, invitation.project.title].join(', ')
+        end
+
 
         # List projects
         # projects = client.all(GoodData::Project)

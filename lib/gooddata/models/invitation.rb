@@ -1,19 +1,21 @@
 # encoding: UTF-8
 
+require_relative '../rest/rest'
+
 module GoodData
-  class Invitation
+  class Invitation < GoodData::Rest::Object
     def initialize(json)
       @json = json
     end
 
     def author
-      # TODO: Return object instead
-      @json['invitation']['meta']['author']
+      data = client.get @json['invitation']['meta']['author']
+      client.create GoodData::AccountSettings, data
     end
 
     def contributor
-      # TODO: Return object instead
-      @json['invitation']['meta']['contributor']
+      data = client.get @json['invitation']['meta']['contributor']
+      client.create GoodData::AccountSettings, data
     end
 
     def created
@@ -37,13 +39,15 @@ module GoodData
     end
 
     def profile
-      # TODO: Return object instead
-      @json['invitation']['links']['profile']
+      data = client.get @json['invitation']['links']['profile']
+      puts "PROFILE:"
+      pp data
+      client.create GoodData::AccountSettings, data
     end
 
     def project
-      # TODO: Return object instead
-      @json['invitation']['links']['project']
+      data = client.get @json['invitation']['links']['project']
+      client.create GoodData::Project, data
     end
 
     def project_name

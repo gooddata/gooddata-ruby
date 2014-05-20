@@ -341,14 +341,10 @@ module GoodData
     #
     # @return [Array<GoodData::Invitation>] List of invitations
     def invitations
-      res = []
-
-      tmp = GoodData.get @json['project']['links']['invitations']
-      tmp['invitations'].each do |invitation|
-        res << GoodData::Invitation.new(invitation)
+      invitations = client.get @json['project']['links']['invitations']
+      invitations['invitations'].map do |invitation|
+        client.create GoodData::Invitation, invitation
       end
-
-      res
     end
 
     # Returns project related links
