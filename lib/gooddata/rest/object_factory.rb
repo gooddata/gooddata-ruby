@@ -46,7 +46,13 @@ module GoodData
       end
 
       def create(type, opts = {})
-        type.new(opts)
+        res = type.new(opts)
+        # TODO: Uncomment this when implemented
+        # res.factory = self
+        res
+      end
+
+      def find(type, opts = {})
       end
     end
   end

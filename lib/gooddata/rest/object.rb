@@ -8,8 +8,8 @@ module GoodData
     # MUST provide way to work with remote REST-like API in unified manner.
     # MUST NOT create new connections.
     class Object
-      def initialize
-        super
+      def initialize(factory, opts = {})
+        @factory = factory
       end
     end
   end

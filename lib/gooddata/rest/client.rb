@@ -63,14 +63,18 @@ module GoodData
       # @param opts [Hash] Client options
       # @option opts [String] :username Username used for authentication
       # @option opts [String] :password Password used for authentication
+      # @option opts :connection_factory Object able to create new instances of GoodData::Rest::Connection
+      # @option opts [GoodData::Rest::Connection] :connection Existing GoodData::Rest::Connection
       def initialize(opts)
         # TODO: Decide if we want to pass the options directly or not
         # username = opts[:username]
         # password = opts[:password]
 
+        @connection_factory = opts[:connection_factory] || DEFAULT_CONNECTION_IMPLEMENTATION
+
         # TODO: See previous TODO
         # Create connection
-        @connection = DEFAULT_CONNECTION_IMPLEMENTATION.new(opts)
+        @connection = opts[:connection] || @connection_factory.new(opts)
 
         # Create factory bound to previously created connection
         @factory = ObjectFactory.new(@connection)

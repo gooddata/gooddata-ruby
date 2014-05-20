@@ -11,21 +11,23 @@ module GoodData
       def main(argv = ARGV)
         # Connect using username and password
         client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD)
-
-        # Show the connection result
         pp client
 
         # List projects
         # projects = client.all(GoodData::Project)
-        #
-        # Show projects listing result
         # pp projects
 
-        # Find by resource class
-        # find_result = client.find(GoodData::Project, 'id')
+        # Find all projects
+        # projects = client.find(GoodData::Project)
+        # pp projects
 
-        # Find resource by arguments
-        # find_result = client.find_by(GoodData::Project, {:title => 'GoodSales'})
+        # Find all projects by ID
+        # projects = client.find(GoodData::Project, {:id => '123'})
+        # pp projects
+
+        # Find all projects by title
+        # projects = client.find(GoodData::Project, {:title => 'GoodSales'})
+        # pp projects
       end
     end
   end
