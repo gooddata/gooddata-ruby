@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+require 'pmap'
 require 'zip'
 require 'fileutils'
 
@@ -342,7 +343,7 @@ module GoodData
     # @return [Array<GoodData::Invitation>] List of invitations
     def invitations
       invitations = client.get @json['project']['links']['invitations']
-      invitations['invitations'].map do |invitation|
+      invitations['invitations'].pmap do |invitation|
         client.create GoodData::Invitation, invitation
       end
     end

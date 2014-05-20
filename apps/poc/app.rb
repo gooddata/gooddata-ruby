@@ -11,6 +11,7 @@ module GoodData
       def main(argv = ARGV)
         # Connect using username and password
         client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD)
+        # client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD, :connection_factory => GoodData::Rest::Connections::TyphoeusConnection)
         # pp client
 
         projects = client.find(GoodData::Project)

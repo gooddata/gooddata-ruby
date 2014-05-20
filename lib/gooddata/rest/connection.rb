@@ -6,6 +6,15 @@ module GoodData
   module Rest
     # Wrapper of low-level HTTP/REST client/library
     class Connection
+      DEFAULT_URL = 'https://secure.gooddata.com'
+      LOGIN_PATH = '/gdc/account/login'
+      TOKEN_PATH = '/gdc/account/token'
+      DEFAULT_HEADERS = {
+        :content_type => :json,
+        :accept => [:json, :zip],
+        :user_agent => GoodData.gem_version_string
+      }
+
       attr_reader :user
 
       def initialize(opts)

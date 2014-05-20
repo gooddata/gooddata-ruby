@@ -51,7 +51,12 @@ module GoodData
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
         def connect(username, password, opts = {})
-          res = Client.new(:username => username, :password => password)
+          new_opts = opts.dup
+          new_opts[:username] = username
+          new_opts[:password] = password
+
+          # new_opts = new_opts.merge(Hash.new({}))
+          res = Client.new(new_opts)
 
           # HACK: This line assigns class instance if not done yet
           @@instance = res if res.nil?

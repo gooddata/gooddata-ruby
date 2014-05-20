@@ -10,15 +10,6 @@ module GoodData
     module Connections
       # Implementation of GoodData::Rest::Connection using https://rubygems.org/gems/rest-client
       class RestClientConnection < GoodData::Rest::Connection
-        DEFAULT_URL = 'https://secure.gooddata.com'
-        LOGIN_PATH = '/gdc/account/login'
-        TOKEN_PATH = '/gdc/account/token'
-        DEFAULT_HEADERS = {
-          :content_type => :json,
-          :accept => [:json, :zip],
-          :user_agent => GoodData.gem_version_string
-        }
-
         def initialize(opts = {})
           super
 
