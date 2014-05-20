@@ -3,8 +3,10 @@
 require_relative '../core/connection'
 require_relative '../core/project'
 
+require_relative '../rest/object'
+
 module GoodData
-  class MdObject
+  class MdObject < GoodData::Rest::Object
     MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
