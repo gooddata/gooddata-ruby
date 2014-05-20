@@ -7,7 +7,7 @@ module GoodData
   # Base class for Ruby SDK CLI Apps
   class App
     def main
-      raise GoodData::NotImplementedError 'Application must implement #main'
+      fail GoodData::NotImplementedError 'Application must implement #main'
     end
   end
 end

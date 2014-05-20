@@ -16,14 +16,14 @@ module GoodData
         # Gets list of all GoodData::Rest::Object subclasses
         #
         # @return [Array<GoodData::Rest::Object>] Subclasses of GoodData::Rest::Object
-        def get_rest_objects
+        def rest_objects
           ObjectSpace.each_object(Class).select { |klass| klass < GoodData::Rest::Object }
         end
 
         # Gets list of all GoodData::Rest::Resource subclasses
         #
         # @return [Array<GoodData::Rest::Resource>] Subclasses of GoodData::Rest::Resource
-        def get_rest_resources
+        def rest_resources
           ObjectSpace.each_object(Class).select { |klass| klass < GoodData::Rest::Resource }
         end
       end
@@ -33,19 +33,20 @@ module GoodData
       # @param connection [GoodData::Rest::Connection] Connection used by factory
       # @return [GoodData::Rest::ObjectFactory] Factory instance
       def initialize(connection)
-        raise ArgumentError if connection.nil?
+        fail ArgumentError 'Invalid connection passed' if connection.nil?
 
         # Set connection used by factory
         @connection = connection
 
         # Initialize internal factory map of GoodData::Rest::Object instances
-        @objects = ObjectFactory.get_rest_objects
+        @objects = ObjectFactory.rest_objects
 
         # Initialize internal factory map of GoodData::Rest::Resource instances
-        @resources = ObjectFactory.get_rest_resources
+        @resources = ObjectFactory.rest_resources
       end
 
-      def create(type)
+      def create(type, opts = {})
+        type.new(opts)
       end
     end
   end

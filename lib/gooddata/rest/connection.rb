@@ -13,28 +13,28 @@ module GoodData
       #
       # @param uri [String] Target URI
       def delete(uri)
-        raise NotImplementedError "DELETE #{uri}"
+        fail NotImplementedError "DELETE #{uri}"
       end
 
       # HTTP GET
       #
       # @param uri [String] Target URI
       def get(uri)
-        raise NotImplementedError "GET #{uri}"
+        fail NotImplementedError "GET #{uri}"
       end
 
       # HTTP PUT
       #
       # @param uri [String] Target URI
       def put(uri)
-        raise NotImplementedError "PUT #{uri}"
+        fail NotImplementedError "PUT #{uri}"
       end
 
       # HTTP POST
       #
       # @param uri [String] Target URI
       def post(uri)
-        raise NotImplementedError "POST #{uri}"
+        fail NotImplementedError "POST #{uri}"
       end
     end
   end
