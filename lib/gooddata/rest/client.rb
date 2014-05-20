@@ -55,7 +55,7 @@ module GoodData
         password = opts[:password]
 
         # TODO: See previous TODO
-        @connection = Connection.new(opts)
+        @connection = Connections::DummyConnection.new(opts)
         @factory = ObjectFactory.new
       end
     end
