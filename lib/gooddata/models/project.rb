@@ -430,14 +430,11 @@ module GoodData
     def roles
       url = "/gdc/projects/#{pid}/roles"
 
-      res = []
-
       tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].each do |role_url|
-        json = GoodData.get role_url
-        res << GoodData::ProjectRole.new(json)
+      res = tmp['projectRoles']['roles'].pmap do |role_url|
+        json = client.get role_url
+        client.create(GoodData::ProjectRole, json)
       end
-
       res
     end
 

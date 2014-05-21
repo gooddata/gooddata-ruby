@@ -58,18 +58,16 @@ module GoodData
           # new_opts = new_opts.merge(Hash.new({}))
           res = Client.new(new_opts)
 
-          # HACK: This line assigns class instance if not done yet
+          # HACK: This line assigns class instance # if not done yet
           @@instance = res # if res.nil?
           res
         end
 
-        def client
+        def connection
           @@instance
         end
 
-        def connection
-          return @@instance
-        end
+        alias_method :client, :connection
       end
 
       # Constructor of client

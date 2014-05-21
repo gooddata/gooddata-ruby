@@ -29,6 +29,9 @@ module GoodData
         project = projects[3]
         pp project
 
+        roles = project.roles
+        pp roles
+
         # List invitations
         invitations = project.invitations
         invitations.each do |invitation|

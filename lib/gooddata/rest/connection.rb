@@ -1,6 +1,8 @@
 # encoding: utf-8
 
+require_relative '../version'
 require_relative '../exceptions/exceptions'
+
 
 module GoodData
   module Rest
