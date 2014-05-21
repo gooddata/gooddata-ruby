@@ -9,16 +9,36 @@ module GoodData
       DEFAULT_URL = 'https://secure.gooddata.com'
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
+
       DEFAULT_HEADERS = {
         :content_type => :json,
         :accept => [:json, :zip],
         :user_agent => GoodData.gem_version_string
       }
 
+      DEFAULT_LOGIN_PAYLOAD = {
+        :headers => DEFAULT_HEADERS
+      }
+
+      class << self
+        def construct_login_payload(username, password)
+          res = {
+            'postUserLogin' => {
+              'login' => username,
+              'password' => password,
+              'remember' => 1
+            }
+          }
+          res
+        end
+      end
+
+      attr_reader :cookies
       attr_reader :user
 
       def initialize(opts)
         @user = nil
+        @cookies = {:cookies => {}}
       end
 
       # Connect using username and password
@@ -27,6 +47,14 @@ module GoodData
 
       # Disconnect
       def disconnect
+      end
+
+      def refresh_token(options = {})
+        begin
+          get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
+        rescue Exception => e
+          puts e.message
+        end
       end
 
       # HTTP DELETE
@@ -55,6 +83,12 @@ module GoodData
       # @param uri [String] Target URI
       def post(uri, data, options = {})
         fail NotImplementedError "POST #{uri}"
+      end
+
+      private
+
+      def merge_cookies!(cookies)
+        @cookies[:cookies].merge! cookies
       end
     end
   end

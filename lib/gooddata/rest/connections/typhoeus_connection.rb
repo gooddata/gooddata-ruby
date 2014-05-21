@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'typhoeus'
+
 require_relative '../connection'
 
 module GoodData

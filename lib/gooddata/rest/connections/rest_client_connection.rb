@@ -23,24 +23,9 @@ module GoodData
 
         # Connect using username and password
         def connect(username, password, options = {})
-          credentials = {
-            'postUserLogin' => {
-              'login' => username,
-              'password' => password,
-              'remember' => 1
-            }
-          }
+          credentials = Connection.construct_login_payload(username, password)
 
-          data = {
-            :timeout => options[:timeout],
-            :headers => {
-              :content_type => :json,
-              :accept => [:json, :zip],
-              :user_agent => GoodData.gem_version_string
-            }
-          }
-
-          @server = RestClient::Resource.new DEFAULT_URL, data
+          @server = RestClient::Resource.new DEFAULT_URL, DEFAULT_LOGIN_PAYLOAD
 
           res = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
@@ -49,20 +34,8 @@ module GoodData
           refresh_token :dont_reauth => true
         end
 
-        def cookies
-          @cookies ||= {:cookies => {}}
-        end
-
         # Disconnect
         def disconnect
-        end
-
-        def refresh_token(options = {})
-          begin
-            get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
-          rescue Exception => e
-            puts e.message
-          end
         end
 
         # HTTP DELETE
@@ -101,10 +74,6 @@ module GoodData
 
         private
 
-        def merge_cookies!(cookies)
-          @cookies[:cookies].merge! cookies
-        end
-
         def process_response(options = {}, &block)
           begin
             response = block.call
@@ -113,6 +82,7 @@ module GoodData
             refresh_token
             response = block.call
           end
+
           merge_cookies! response.cookies
           content_type = response.headers[:content_type]
           return response if options[:process] == false
@@ -137,7 +107,6 @@ module GoodData
           GoodData.logger.debug "Response: #{e.response}"
           raise $ERROR_INFO
         end
-
       end
     end
   end
