@@ -9,13 +9,22 @@ module GoodData
       DEFAULT_PASSWORD = 'jindrisska'
 
       def main(argv = ARGV)
+        opts = {
+          :connection_factory => GoodData::Rest::Connections::RestClientConnection
+        }
+
+        if(argv[0] == '-t')
+          opts = {
+            :connection_factory => GoodData::Rest::Connections::TyphoeusConnection
+          }
+        end
+
         # Connect using username and password
-        client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD)
-        # client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD, :connection_factory => GoodData::Rest::Connections::TyphoeusConnection)
+        client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD, opts)
         # pp client
 
         projects = client.find(GoodData::Project)
-        pp projects
+        # pp projects
 
         project = projects[3]
         pp project
