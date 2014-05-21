@@ -19,24 +19,34 @@ module GoodData
           }
         end
 
+        c = GoodData.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD)
+
+        # pp GoodData.profile
+
         # Connect using username and password
-        client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD, opts)
+        # client = GoodData::Rest::Client.connect(DEFAULT_USERNAME, DEFAULT_PASSWORD, opts)
         # pp client
 
-        projects = client.find(GoodData::Project)
+        projects = GoodData::Project[:all] # client.get(GoodData::Project)
         pp projects
 
         project = projects[3]
         pp project
 
-        roles = project.roles
-        pp roles
 
-        # List invitations
-        invitations = project.invitations
-        invitations.each do |invitation|
-          pp [invitation.author.email, invitation.email, invitation.project.title].join(', ')
-        end
+        GoodData.project = project
+
+        metrics = GoodData::Metric.all(:full => true)
+        pp metrics
+
+        # roles = project.roles
+        # pp roles
+        #
+        # # List invitations
+        # invitations = project.invitations
+        # invitations.each do |invitation|
+        #   pp [invitation.author.email, invitation.email, invitation.project.title].join(', ')
+        # end
 
         # List projects
         # projects = client.all(GoodData::Project)

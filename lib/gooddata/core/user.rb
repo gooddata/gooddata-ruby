@@ -14,11 +14,9 @@ module GoodData
 
     # Returns the currently logged in user Profile.
     def profile
-      threaded[:profile] ||= Profile.load
-    end
-
-    def user
       GoodData::AccountSettings.current
     end
+
+    alias_method :user, :profile
   end
 end

@@ -10,8 +10,7 @@ module GoodData
 
     class << self
       def current
-        json = GoodData.get GoodData.connection.user['profile']
-        GoodData::AccountSettings.new(json)
+        GoodData.connection.user
       end
     end
 

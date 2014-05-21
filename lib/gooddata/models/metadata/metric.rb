@@ -15,7 +15,7 @@ module GoodData
       def [](id, options = {})
         if id == :all
           metrics = GoodData.get(GoodData.project.md['query'] + '/metrics/')['query']['entries']
-          options[:full] ? metrics.map { |m| Metric[m['link']] } : metrics
+          options[:full] ? metrics.pmap { |m| Metric[m['link']] } : metrics
         else
           super
         end

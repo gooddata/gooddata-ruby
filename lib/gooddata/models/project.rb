@@ -24,9 +24,14 @@ module GoodData
       # Returns an array of all projects accessible by
       # current user
       def all
-        json = GoodData.get GoodData.profile.projects
-        json['projects'].map do |project|
-          Project.new project
+        # json = GoodData.get GoodData.profile.projects
+        # puts 'ALL PROJECTS'
+        # pp json
+        # json['projects'].map do |project|
+        #   Project.new project
+        # end
+        GoodData.profile.projects['projects'].pmap do |project|
+          GoodData.user.client.create(GoodData::Project, project)
         end
       end
 
