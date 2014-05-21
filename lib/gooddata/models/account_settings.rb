@@ -1,10 +1,11 @@
 # encoding: UTF-8
 
 require_relative 'project'
+require_relative '../rest/rest'
 
 module GoodData
   # Account settings representation with some added sugar
-  class AccountSettings
+  class AccountSettings < GoodData::Rest::Object
     attr_reader :json
 
     class << self

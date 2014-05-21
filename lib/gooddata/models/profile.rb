@@ -1,8 +1,9 @@
 # encoding: UTF-8
 
+require_relative '../rest/object'
+
 module GoodData
-  class Profile
-    private_class_method :new
+  class Profile < GoodData::Rest::Object
     attr_reader :user, :json
 
     class << self
@@ -22,11 +23,15 @@ module GoodData
       @json['accountSetting'][key]
     end
 
-    private
-
-    def initialize
-      @json = GoodData.get GoodData.connection.user['profile']
+    def initialize(opts = {})
+      @json = opts
       @user = @json['accountSetting']['firstName'] + ' ' + @json['accountSetting']['lastName']
     end
+
+    def projects(opts = {})
+      res = client.get @json['accountSetting']['links']['projects']
+      pp res
+    end
+
   end
 end
