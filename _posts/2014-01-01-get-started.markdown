@@ -25,7 +25,7 @@ Also take note that we still have not reach version 1.0.0 which means the API co
 If you are using gems just
 
 {% highlight ruby %}
-gem install gooddata --version 0.6.0.pre11
+gem install gooddata
 {% endhighlight %}
 
 If you are using bundler. Add
