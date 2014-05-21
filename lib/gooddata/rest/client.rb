@@ -14,7 +14,7 @@ module GoodData
       #################################
       # Constants
       #################################
-      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::RestClientConnection # Connections::DummyConnection
+      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::TyphoeusConnection # Connections::RestClientConnection # Connections::DummyConnection
 
       #################################
       # Class variables
