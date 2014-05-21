@@ -16,16 +16,16 @@ describe GoodData::ProjectRole do
   end
 
   describe '#author' do
-    it 'Returns author as GoodData::AccountSettings' do
+    it 'Returns author as GoodData::Profile' do
       res = @role.author
-      expect(res).to be_an_instance_of(GoodData::AccountSettings)
+      expect(res).to be_an_instance_of(GoodData::Profile)
     end
   end
 
   describe '#contributor' do
-    it 'Returns contributor as GoodData::AccountSettings' do
+    it 'Returns contributor as GoodData::Profile' do
       res = @role.contributor
-      expect(res).to be_an_instance_of(GoodData::AccountSettings)
+      expect(res).to be_an_instance_of(GoodData::Profile)
     end
   end
 
@@ -79,11 +79,11 @@ describe GoodData::ProjectRole do
   end
 
   describe '#users' do
-    it 'Returns users as Array<GoodData::AccountSettings>' do
+    it 'Returns users as Array<GoodData::Profile>' do
       res = @role.users
       expect(res).to be_an_instance_of(Array)
       res.each do |user|
-        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+        expect(user).to be_an_instance_of(GoodData::Profile)
       end
     end
   end

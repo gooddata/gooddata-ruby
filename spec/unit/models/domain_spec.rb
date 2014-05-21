@@ -22,7 +22,7 @@ describe GoodData::Domain do
       users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
       expect(users).to be_instance_of(Array)
       users.each do |user|
-        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+        expect(user).to be_an_instance_of(GoodData::Profile)
       end
     end
 
@@ -30,7 +30,7 @@ describe GoodData::Domain do
       users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:limit =>1})
       expect(users).to be_instance_of(Array)
       users.each do |user|
-        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+        expect(user).to be_an_instance_of(GoodData::Profile)
       end
     end
 
@@ -38,7 +38,7 @@ describe GoodData::Domain do
       users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:offset => 1})
       expect(users).to be_instance_of(Array)
       users.each do |user|
-        expect(user).to be_an_instance_of(GoodData::AccountSettings)
+        expect(user).to be_an_instance_of(GoodData::Profile)
       end
     end
   end
