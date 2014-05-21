@@ -24,7 +24,6 @@ module GoodData
     end
 
     def initialize(opts = {})
-      # @json = GoodData.get GoodData.connection.user['profile']
       @json = opts
       @user = @json['accountSetting']['firstName'] + ' ' + @json['accountSetting']['lastName']
     end

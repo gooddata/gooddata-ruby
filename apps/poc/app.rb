@@ -24,7 +24,7 @@ module GoodData
         # pp client
 
         projects = client.find(GoodData::Project)
-        # pp projects
+        pp projects
 
         project = projects[3]
         pp project
@@ -34,7 +34,6 @@ module GoodData
         invitations.each do |invitation|
           pp [invitation.author.email, invitation.email, invitation.project.title].join(', ')
         end
-
 
         # List projects
         # projects = client.all(GoodData::Project)

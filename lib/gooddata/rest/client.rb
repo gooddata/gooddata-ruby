@@ -59,7 +59,7 @@ module GoodData
           res = Client.new(new_opts)
 
           # HACK: This line assigns class instance if not done yet
-          @@instance = res if res.nil?
+          @@instance = res # if res.nil?
           res
         end
 
@@ -88,7 +88,12 @@ module GoodData
 
         username = opts[:username]
         password = opts[:password]
+
+        GoodData.logger.info 'GoodData::Rest::Client#initialize - Connecting ...'
+
         @connection.connect(username, password)
+
+        GoodData.logger.info 'GoodData::Rest::Client#initialize - Connected ...'
 
         # Create factory bound to previously created connection
         @factory = ObjectFactory.new(self)
@@ -112,7 +117,6 @@ module GoodData
       end
 
       def user
-        pp @connection
         create(GoodData::Profile, @connection.user)
       end
 

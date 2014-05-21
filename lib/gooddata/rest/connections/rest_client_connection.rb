@@ -29,9 +29,8 @@ module GoodData
 
           res = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
-          @user = get(res['profile'])
-
-          refresh_token :dont_reauth => true
+          # @user = get(res['profile'])
+          # refresh_token :dont_reauth => true
         end
 
         # Disconnect
