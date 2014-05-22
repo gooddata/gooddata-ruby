@@ -1,14 +1,21 @@
 require 'gooddata'
 
-describe "Ful project implementation", :constraint => 'slow' do
+describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
+    @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
     ConnectionHelper::create_default_connection
     @project = GoodData::Model::ProjectCreator.migrate({:spec => @spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
   end
 
   after(:all) do
     @project.delete unless @project.nil?
+  end
+
+  it "should not build an invalid model" do
+    expect {
+      GoodData::Model::ProjectCreator.migrate({:spec => @invalid_spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
+    }.to raise_error(ValidationError)
   end
 
   it "should contain datasets" do

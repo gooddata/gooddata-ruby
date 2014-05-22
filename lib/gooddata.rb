@@ -19,3 +19,6 @@ require_relative 'gooddata/connection'
 require_relative 'gooddata/extract'
 require_relative 'gooddata/helpers'
 require_relative 'gooddata/version'
+
+# Extensions
+require_relative 'gooddata/extensions/extensions'

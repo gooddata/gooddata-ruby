@@ -1,5 +1,4 @@
 # encoding: UTF-8
-
 require 'gooddata'
 
 describe GoodData::Model::ProjectBlueprint do
@@ -20,19 +19,34 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'valid blueprint should be marked as valid' do
-    @blueprint.model_valid?.should == true
+    @blueprint.valid?.should == true
   end
 
   it 'valid blueprint should give you empty array of errors' do
-    expect(@blueprint.validate_model).to be_empty
+    expect(@blueprint.validate).to be_empty
+  end
+
+  it 'model should be invalid if it contains more than one anchor' do
+    builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id")
+        d.add_anchor("repo_id2")
+        d.add_attribute("name")
+      end
+    end
+    bp = GoodData::Model::ProjectBlueprint.from_json(builder.to_hash)
+    bp.valid?.should == false
+    errors = bp.validate
+    errors.first.should == {:anchor => 2}
+    errors.count.should == 1
   end
 
   it 'invalid blueprint should be marked as invalid' do
-    @invalid_blueprint.model_valid?.should == false
+    @invalid_blueprint.valid?.should == false
   end
   
   it 'invalid blueprint should give you list of violating references' do
-    errors = @invalid_blueprint.validate_model
+    errors = @invalid_blueprint.validate
     errors.size.should == 1
     errors.first.should == {
         type: 'reference',
@@ -108,8 +122,8 @@ describe GoodData::Model::ProjectBlueprint do
       end
     end
     bp = GoodData::Model::ProjectBlueprint.from_json(builder.to_hash)
-    bp.model_valid?.should == false
-    errors = bp.validate_model
+    bp.valid?.should == false
+    errors = bp.validate
     errors.count.should == 1
   end
 

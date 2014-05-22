@@ -91,7 +91,7 @@ module GoodData
       def merge_dataset_columns(a_schema_blueprint, b_schema_blueprint)
         a_schema_blueprint = a_schema_blueprint.to_hash
         b_schema_blueprint = b_schema_blueprint.to_hash
-        d = Marshal.load(Marshal.dump(a_schema_blueprint))
+        d = a_schema_blueprint.deep_dup
         d[:columns] = d[:columns] + b_schema_blueprint[:columns]
         d[:columns].uniq!
         columns_that_failed_to_merge = d[:columns].group_by { |x| x[:name] }.map { |k, v| [k, v.count] }.select { |x| x[1] > 1 }

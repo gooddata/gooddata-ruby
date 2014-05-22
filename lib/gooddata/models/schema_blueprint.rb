@@ -120,8 +120,7 @@ module GoodData
       end
 
       def dup
-        deep_copy = Marshal.load(Marshal.dump(data))
-        DatasetBlueprint.new(deep_copy)
+        DatasetBlueprint.new(data.deep_dup)
       end
 
       def to_wire_model
@@ -148,6 +147,24 @@ module GoodData
         end
       end
 
+      # Validate the blueprint return array of errors that are found.
+      #
+      # @return [Array] array of errors
+      def validate
+        more_than_one_anchor = find_column_by_type(:anchor, :all).count > 1 ? [{ :anchor => 2 }] : []
+        validate_label_references.concat(more_than_one_anchor)
+      end
+
+      # Validate the blueprint and return true if model is valid. False otherwise.
+      #
+      # @return [Boolean] is model valid?
+      def valid?
+        validate.empty?
+      end
+
+      # Validate the that any labels are pointing to the existing attribute. If not returns the list of errors. Currently just violating labels.
+      #
+      # @return [Array] array of errors
       def validate_label_references
         labels.select do |label|
           find_column_by_name(label[:reference]).empty?
