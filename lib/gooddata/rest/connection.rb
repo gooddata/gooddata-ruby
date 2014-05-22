@@ -50,18 +50,19 @@ module GoodData
         # Reset old cookies first
         credentials = Connection.construct_login_payload(username, password)
 
-        res = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
+        @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
-        @user = get(res['profile'])
+        @user = get(@auth['profile'])
         refresh_token :dont_reauth => true
       end
 
       # Disconnect
       def disconnect
         # TODO: Wrap somehow
-        url = @user['accountSetting']['links']['self']
+        url = @auth['state']
         res = delete url
 
+        @auth = nil
         @server = nil
         @user = nil
 
