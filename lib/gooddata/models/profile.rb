@@ -241,6 +241,14 @@ module GoodData
       @json['accountSetting']['login'] = val
     end
 
+    # Get full name
+    #
+    # @return [String] Full name
+    def name
+      "#{first_name} #{last_name}"
+    end
+
+
     # Gets the resource identifier
     #
     # @return [String] Resource identifier
