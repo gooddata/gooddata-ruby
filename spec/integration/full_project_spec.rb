@@ -86,8 +86,58 @@ describe "Full project implementation", :constraint => 'slow' do
     end
   end
 
+  it "should throw an exception if trying to access object without explicitely specifying a project" do
+    expect do
+      GoodData::Metric[:all]
+    end.to raise_exception(GoodData::NoProjectError)
+  end
+
+  it "should be possible to get all metrics" do
+    GoodData.with_project(@project) do |p|
+      metrics1 = GoodData::Metric[:all]
+      metrics2 = GoodData::Metric.all
+      metrics1.should == metrics2
+    end
+  end
+
+  it "should be possible to get all metrics with full objects" do
+    GoodData.with_project(@project) do |p|
+      metrics1 = GoodData::Metric[:all, :full => true]
+      metrics2 = GoodData::Metric.all :full => true
+      metrics1.should == metrics2
+    end
+  end
+
+  it "should be able to get a metric by identifier" do
+    GoodData.with_project(@project) do |p|
+      metrics = GoodData::Metric.all :full => true
+      metric = GoodData::Metric[metrics.first.identifier]
+      metric.identifier == metrics.first.identifier
+      metrics.first == metric
+    end
+  end
+
+  it "should be able to get a metric by uri" do
+    GoodData.with_project(@project) do |p|
+      metrics = GoodData::Metric.all :full => true
+      metric = GoodData::Metric[metrics.first.uri]
+      metric.uri == metrics.first.uri
+      metrics.first == metric
+    end
+  end
+
+  it "should be able to get a metric by object id" do
+    GoodData.with_project(@project) do |p|
+      metrics = GoodData::Metric.all :full => true
+      metric = GoodData::Metric[metrics.first.obj_id]
+      metric.obj_id == metrics.first.obj_id
+      metrics.first == metric
+    end
+  end
+
   it "should exercise the object relations and getting them in various ways" do
     GoodData.with_project(@project) do |p|
+
       # Find a metric by name
       metric = GoodData::Metric.find_first_by_title('My metric')
 

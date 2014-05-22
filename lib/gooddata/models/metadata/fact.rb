@@ -12,13 +12,13 @@ module GoodData
     FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median]
 
     class << self
-      def [](id, options = {})
-        if id == :all
-          facts = GoodData.get(GoodData.project.md['query'] + '/facts/')['query']['entries']
-          options[:full] ? facts.map { |f| Fact[f['link']] } : facts
-        else
-          super
-        end
+      # Method intended to get all objects of that type in a specified project
+      #
+      # @param options [Hash] the options hash
+      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
+      def all(options = {})
+        query('facts', Fact, options)
       end
     end
 
