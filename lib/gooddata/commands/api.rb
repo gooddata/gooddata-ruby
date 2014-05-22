@@ -22,15 +22,6 @@ module GoodData
 
         alias_method :index, :info
 
-        # Test of login
-        def test
-          if GoodData.test_login
-            puts "Succesfully logged in as #{GoodData.profile.user}"
-          else
-            puts 'Unable to log in to GoodData server!'
-          end
-        end
-
         # Get resource
         # @param path Resource path
         def get(path)

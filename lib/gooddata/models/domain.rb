@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative 'account_settings'
+require_relative 'profile'
 
 require_relative '../rest/object'
 
@@ -73,21 +73,22 @@ module GoodData
         data[:timezone] = tmp if tmp && !tmp.empty?
 
         url = "/gdc/account/domains/#{opts[:domain]}/users"
-        GoodData.post(url, :accountSetting => data)
+        response = GoodData.post(url, :accountSetting => data)
+
+        raw = GoodData.get response['uri']
+        GoodData::Profile.new(raw)
       end
 
       # Finds user in domain by login
       #
       # @param domain [String] Domain name
       # @param login [String] User login
-      # @return [GoodData::AccountSettings] User account settings
+      # @return [GoodData::Profile] User profile
       def find_user_by_login(domain, login)
         url = "/gdc/account/domains/#{domain}/users?login=#{login}"
         tmp = GoodData.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
-        if items && items.length > 0
-          return GoodData::AccountSettings.new(items.first)
-        end
+        return GoodData::Profile.new(items.first) if items && items.length > 0
         nil
       end
 
@@ -103,7 +104,7 @@ module GoodData
 
         tmp = GoodData.get("/gdc/account/domains/#{domain}/users?offset=#{options[:offset]}&limit=#{options[:limit]}")
         tmp['accountSettings']['items'].each do |account|
-          result << GoodData::AccountSettings.new(account)
+          result << GoodData::Profile.new(account)
         end
 
         result
@@ -134,7 +135,7 @@ module GoodData
     # Finds user in domain by login
     #
     # @param login [String] User login
-    # @return [GoodData::AccountSettings] User account settings
+    # @return [GoodData::Profile] User account settings
     def find_user_by_login(login)
       GoodData::Domain.find_user_by_login(name, login)
     end
@@ -144,7 +145,7 @@ module GoodData
     # @param [Hash] opts Additional user listing options.
     # @option opts [Number] :offset Offset to start listing from
     # @option opts [Number] :limit Limit of users to be listed
-    # @return [Array<GoodData::AccountSettings>] List of user account settings
+    # @return [Array<GoodData::Profile>] List of user account settings
     #
     # Example
     #
