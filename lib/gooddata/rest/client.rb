@@ -63,6 +63,13 @@ module GoodData
           res
         end
 
+        def disconnect
+          if @@instance
+            @@instance.disconnect
+            @@instance = nil
+          end
+        end
+
         def connection
           @@instance
         end
@@ -78,23 +85,30 @@ module GoodData
       # @option opts [GoodData::Rest::Connection] :connection Existing GoodData::Rest::Connection
       def initialize(opts)
         # TODO: Decide if we want to pass the options directly or not
-        @connection_factory = opts[:connection_factory] || DEFAULT_CONNECTION_IMPLEMENTATION
+        @opts = opts
+
+        @connection_factory = @opts[:connection_factory] || DEFAULT_CONNECTION_IMPLEMENTATION
 
         # TODO: See previous TODO
         # Create connection
         @connection = opts[:connection] || @connection_factory.new(opts)
 
-        username = opts[:username]
-        password = opts[:password]
-
-        GoodData.logger.info 'GoodData::Rest::Client#initialize - Connecting ...'
-
-        @connection.connect(username, password)
-
-        GoodData.logger.info 'GoodData::Rest::Client#initialize - Connected ...'
+        # Connect
+        connect
 
         # Create factory bound to previously created connection
         @factory = ObjectFactory.new(self)
+      end
+
+      def connect
+        username = @opts[:username]
+        password = @opts[:password]
+
+        @connection.connect(username, password)
+      end
+
+      def disconnect
+        @connection.disconnect
       end
 
       #######################

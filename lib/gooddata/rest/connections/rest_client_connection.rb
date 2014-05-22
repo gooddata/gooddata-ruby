@@ -23,25 +23,16 @@ module GoodData
 
         # Connect using username and password
         def connect(username, password, options = {})
-          credentials = Connection.construct_login_payload(username, password)
-
           @server = RestClient::Resource.new DEFAULT_URL, DEFAULT_LOGIN_PAYLOAD
 
-          res = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
-
-          @user = get(res['profile'])
-          refresh_token :dont_reauth => true
-        end
-
-        # Disconnect
-        def disconnect
+          super
         end
 
         # HTTP DELETE
         #
         # @param uri [String] Target URI
         def delete(uri, options = {})
-          b = proc { @server[path].delete cookies }
+          b = proc { @server[uri].delete cookies }
           process_response(options, &b)
         end
 
@@ -58,7 +49,7 @@ module GoodData
         # @param uri [String] Target URI
         def put(uri, data, options = {})
           payload = data.is_a?(Hash) ? data.to_json : data
-          b = proc { @server[path].put payload, cookies }
+          b = proc { @server[uri].put payload, cookies }
           process_response(options, &b)
         end
 

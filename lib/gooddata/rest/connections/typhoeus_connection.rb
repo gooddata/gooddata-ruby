@@ -52,23 +52,6 @@ module GoodData
           @headers.merge! headers
         end
 
-        # Connect using username and password
-        def connect(username, password, options = {})
-          GoodData.logger.info 'GoodData::Rest::Clients::TyphoeusConnection#connect.'
-
-          credentials = Connection.construct_login_payload(username, password)
-
-          res = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
-          refresh_token :dont_reauth => true
-
-          @user = get(res['profile'])
-
-        end
-
-        # Disconnect
-        def disconnect
-        end
-
         # HTTP DELETE
         #
         # @param uri [String] Target URI

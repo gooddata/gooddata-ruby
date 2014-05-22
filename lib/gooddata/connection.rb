@@ -12,7 +12,6 @@ module GoodData
     #
     # @see GoodData.connect
     def connection
-      # threaded[:connection] || fail('Please authenticate with GoodData.connect first')
       Rest::Client.connection || fail('Please authenticate with GoodData.connect first')
     end
 
@@ -28,12 +27,7 @@ module GoodData
 
     # Disconnect (logout) if logged in
     def disconnect
-      GoodData.logger.debug 'GoodData#disconnect'
-
-      if threaded[:connection]
-        threaded[:connection].disconnect
-        threaded[:connection] = nil
-      end
+      Rest::Client.disconnect
     end
 
     # Hepler for starting with SST easier

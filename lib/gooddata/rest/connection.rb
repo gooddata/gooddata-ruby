@@ -40,15 +40,32 @@ module GoodData
 
       def initialize(opts)
         @user = nil
-        @cookies = {:cookies => {}}
+
+        # Initialize cookies
+        reset_cookies!
       end
 
       # Connect using username and password
-      def connect(username, password)
+      def connect(username, password, options = {})
+        # Reset old cookies first
+        credentials = Connection.construct_login_payload(username, password)
+
+        res = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
+
+        @user = get(res['profile'])
+        refresh_token :dont_reauth => true
       end
 
       # Disconnect
       def disconnect
+        # TODO: Wrap somehow
+        url = @user['accountSetting']['links']['self']
+        res = delete url
+
+        @server = nil
+        @user = nil
+
+        reset_cookies!
       end
 
       def refresh_token(options = {})
@@ -91,6 +108,10 @@ module GoodData
 
       def merge_cookies!(cookies)
         @cookies[:cookies].merge! cookies
+      end
+
+      def reset_cookies!
+        @cookies = {:cookies => {}}
       end
     end
   end
