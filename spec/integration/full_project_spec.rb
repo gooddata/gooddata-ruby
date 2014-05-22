@@ -213,10 +213,21 @@ describe "Ful project implementation", :constraint => 'slow' do
     end
   end
 
-  it "should be able to lookup the attributes by regexp and return a collectio" do
+  it "should be able to lookup the attributes by regexp and return a collection" do
     GoodData.with_project(@project) do |p|
       attrs = GoodData::Attribute.find_by_title(/Date/i)
       attrs.count.should == 1
     end
   end
+
+  it "should be able to save_as a metric" do
+    GoodData.with_project(@project) do |p|
+      m = GoodData::Metric.find_first_by_title("My test metric")
+      cloned = m.save_as
+      m_cloned = GoodData::Metric.find_first_by_title("Clone of My test metric")
+      m_cloned.should == cloned
+      m_cloned.execute.should == cloned.execute
+    end
+  end
+
 end
