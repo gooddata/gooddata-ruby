@@ -3,7 +3,7 @@
 require_relative 'connection'
 require_relative 'threaded'
 
-require_relative '../models/profile'
+require_relative '../models/account_settings'
 
 module GoodData
   class << self

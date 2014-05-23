@@ -1,6 +1,7 @@
 require 'gooddata/models/schedule'
 
-describe GoodData::Schedule do
+describe GoodData::Schedule, :broken => true do
+
   TEST_CRON = '0 15 27 7 *'
 
   TEST_DATA = {
@@ -11,7 +12,7 @@ describe GoodData::Schedule do
   TEST_PROCESS_ID = 'f12975d2-5958-4248-9c3d-4c8f2e1f067d'
 
   SCHEDULE_ID = '53642303e4b0ae3190e464a8'
-  SCHEDULE_URL = '/gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/schedules/53642303e4b0ae3190e464a8'
+  SCHEDULE_URL = '/gdc/projects/wgqhml3se0035s8n5byqdq0j0ob5jam4/schedules/53642303e4b0ae3190e464a8'
 
   before(:each) do
     ConnectionHelper.create_default_connection

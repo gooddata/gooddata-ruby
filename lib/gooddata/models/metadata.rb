@@ -105,7 +105,7 @@ module GoodData
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
-    metadata_property_writer :tags, :summary, :title
+    metadata_property_writer :tags, :summary, :title, :identifier
 
     def root_key
       raw_data.keys.first
@@ -237,6 +237,19 @@ module GoodData
         end
       end
       self
+    end
+
+    # Saves an object with a different name
+    #
+    # @param new_title [String] New title. If not provided one is provided
+    # @return [GoodData::MdObject] MdObject that has been saved as
+    def save_as(new_title = "Clone of #{title}")
+      dupped = Marshal.load(Marshal.dump(raw_data))
+      dupped[root_key]['meta'].delete('uri')
+      dupped[root_key]['meta'].delete('identifier')
+      dupped[root_key]['meta']['title'] = new_title
+      x = self.class.new(dupped)
+      x.save
     end
 
     def ==(other)
