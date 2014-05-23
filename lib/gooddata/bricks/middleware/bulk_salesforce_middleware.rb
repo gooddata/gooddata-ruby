@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require 'salesforce_bulk_api'
+require 'salesforce_bulk_query'
 
 require_relative 'base_middleware'
 
@@ -42,15 +42,15 @@ module GoodData::Bricks
       end
 
       if client_params
-        Restforce.log = true if params["salesforce_client_logger"]
 
         client_params[:api_version] = version
-        SalesforceBulkApi::Api.class_eval("@@SALESFORCE_API_VERSION='#{version}'")
 
         client = params["salesforce_client"] || Restforce.new(client_params)
         client.authenticate!
 
-        salesforce = SalesforceBulkApi::Api.new(client)
+        salesforce = SalesforceBulkQuery::Api.new(client, :logger => params["GDC_LOGGER"])
+        # SalesforceBulkQuery adds its own Restforce logging so turn it off
+        Restforce.log = false if params["GDC_LOGGER"]
       end
 
       @app.call(params.merge("salesforce_bulk_client" => salesforce))
