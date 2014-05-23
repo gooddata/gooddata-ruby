@@ -53,7 +53,7 @@ module GoodData
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
           response = GoodData.get PROJECT_PATH % id
-          Project.new response
+          Project.new(response)
         end
       end
 
@@ -435,7 +435,9 @@ module GoodData
     def roles
       url = "/gdc/projects/#{pid}/roles"
 
-      tmp = GoodData.get(url)
+      client = GoodData.client
+
+      tmp = client.get(url)
       res = tmp['projectRoles']['roles'].pmap do |role_url|
         json = client.get role_url
         client.create(GoodData::ProjectRole, json)

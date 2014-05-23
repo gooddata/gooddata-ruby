@@ -15,6 +15,8 @@ module GoodData
       Rest::Client.connection || fail('Please authenticate with GoodData.connect first')
     end
 
+    alias_method :client, :connection
+
     # Connect to the GoodData API
     #
     # @param options
