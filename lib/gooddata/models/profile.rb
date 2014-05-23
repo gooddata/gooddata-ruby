@@ -248,7 +248,6 @@ module GoodData
       "#{first_name} #{last_name}"
     end
 
-
     # Gets the resource identifier
     #
     # @return [String] Resource identifier
