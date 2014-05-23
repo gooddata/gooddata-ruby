@@ -21,6 +21,8 @@ RSpec.configure do |config|
   config.include ProjectHelper
   config.include SchemaHelper
 
+  config.filter_run_excluding :broken => true
+
   config.before(:all) do
     # TODO: Fully setup global environment
     GoodData.logging_off
