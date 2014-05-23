@@ -103,7 +103,7 @@ module GoodData
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
-    metadata_property_writer :tags, :summary, :title
+    metadata_property_writer :tags, :summary, :title, :identifier
 
     def root_key
       raw_data.keys.first
