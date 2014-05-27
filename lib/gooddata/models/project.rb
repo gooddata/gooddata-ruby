@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+require 'pmap'
 require 'zip'
 require 'fileutils'
 
@@ -7,8 +8,10 @@ require_relative 'process'
 require_relative '../exceptions/no_project_error'
 require_relative 'project_role'
 
+require_relative '../rest/resource'
+
 module GoodData
-  class Project
+  class Project < GoodData::Rest::Resource
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
@@ -21,9 +24,14 @@ module GoodData
       # Returns an array of all projects accessible by
       # current user
       def all
-        json = GoodData.get GoodData.profile.projects
-        json['projects'].map do |project|
-          Project.new project
+        # json = GoodData.get GoodData.profile.projects
+        # puts 'ALL PROJECTS'
+        # pp json
+        # json['projects'].map do |project|
+        #   Project.new project
+        # end
+        GoodData.profile.projects['projects'].pmap do |project|
+          GoodData.user.client.create(GoodData::Project, project)
         end
       end
 
@@ -45,7 +53,7 @@ module GoodData
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
           response = GoodData.get PROJECT_PATH % id
-          Project.new response
+          Project.new(response)
         end
       end
 
@@ -97,6 +105,13 @@ module GoodData
         end
         sleep 3
         project
+      end
+
+      def find(opts = {}, client = GoodData::Rest::Client.client)
+        user = client.user
+        user.projects['projects'].map do |project|
+          client.create(GoodData::Project, project)
+        end
       end
     end
 
@@ -285,6 +300,7 @@ module GoodData
     #
     # @param json Json used for initialization
     def initialize(json)
+      super
       @json = json
     end
 
@@ -331,14 +347,10 @@ module GoodData
     #
     # @return [Array<GoodData::Invitation>] List of invitations
     def invitations
-      res = []
-
-      tmp = GoodData.get @json['project']['links']['invitations']
-      tmp['invitations'].each do |invitation|
-        res << GoodData::Invitation.new(invitation)
+      invitations = client.get @json['project']['links']['invitations']
+      invitations['invitations'].pmap do |invitation|
+        client.create GoodData::Invitation, invitation
       end
-
-      res
     end
 
     # Returns project related links
@@ -423,14 +435,13 @@ module GoodData
     def roles
       url = "/gdc/projects/#{pid}/roles"
 
-      res = []
+      client = GoodData.client
 
-      tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].each do |role_url|
-        json = GoodData.get role_url
-        res << GoodData::ProjectRole.new(json)
+      tmp = client.get(url)
+      res = tmp['projectRoles']['roles'].pmap do |role_url|
+        json = client.get role_url
+        client.create(GoodData::ProjectRole, json)
       end
-
       res
     end
 
@@ -519,9 +530,9 @@ module GoodData
     def users
       res = []
 
-      tmp = GoodData.get @json['project']['links']['users']
-      tmp['users'].map do |user|
-        res << GoodData::User.new(user)
+      tmp = factory.connection.get @json['project']['links']['users']
+      tmp.map do |user|
+        factory.create(GoodData::Project, user)
       end
 
       res
