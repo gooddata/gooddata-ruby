@@ -286,9 +286,12 @@ module GoodData
     def projects
       res = []
 
-      projects = GoodData.get @json['accountSetting']['links']['projects']
+      # TODO: Strip this out after transition
+      client = GoodData.client
+
+      projects = client.get @json['accountSetting']['links']['projects']
       projects['projects'].each do |project|
-        res << GoodData::Project.new(project)
+        res << client.create(GoodData::Project, project)
       end
 
       res
@@ -343,11 +346,5 @@ module GoodData
       @json = json
       @user = @json['accountSetting']['firstName'] + ' ' + @json['accountSetting']['lastName']
     end
-
-    def projects(opts = {})
-      res = client.get @json['accountSetting']['links']['projects']
-
-    end
-
   end
 end
