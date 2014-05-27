@@ -52,8 +52,13 @@ module GoodData
         # @return [GoodData::Rest::Client] Client
         def connect(username, password, opts = {})
           new_opts = opts.dup
-          new_opts[:username] = username
-          new_opts[:password] = password
+          if username.is_a? Hash
+            new_opts[:username] = username[:login]
+            new_opts[:password] = username[:password]
+          else
+            new_opts[:username] = username
+            new_opts[:password] = password
+          end
 
           # new_opts = new_opts.merge(Hash.new({}))
           res = Client.new(new_opts)
