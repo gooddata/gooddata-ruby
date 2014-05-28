@@ -1,7 +1,7 @@
 ---
 layout: tutorial
-title:  "Part VII - Creating User Filters"
-date:   2014-05-27 12:30:00
+title:  "Part VII - Creating user filters"
+date:   2014-01-19 13:56:30
 categories: tutorial
 pygments: true
 prev_section: tutorial/tutorial-part-6-updating-column
@@ -21,10 +21,10 @@ In terms of the demo project, each developer wants to only see their commits. Fo
 If we open up the file *_data/commits.csv_*, you will notice that the developer id and the repo id are assigned to two columns. 
 
 ##### commits.csv
-lines_changed,committed_on,dev_id,repo_id
-1,01/01/2014,1,1
-3,01/02/2014,2,2
-5,05/02/2014,3,1
+    lines_changed,committed_on,dev_id,repo_id
+    1,01/01/2014,1,1
+    3,01/02/2014,2,2
+    5,05/02/2014,3,1
 
 Looking at the *_repo_id_* we can infer that the final did git in easy row  has a username in the second to east row. At this point we can begining setting up the CSV using the email of the user and the attribute value of the filtered attribute. This is simply outlined in CSV, in this case we are assuming the username is the email but you are welcome to use an unique attribute describing the user. 
 
