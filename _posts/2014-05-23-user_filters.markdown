@@ -17,17 +17,15 @@ Provide a picture
 # Filter generation
 # Filter resolution and application
 
-The first one is here to help you generate the filters to a format that the second layer can understand. This layer is optional and can be superseded by your hands or you can use one of the provided generators or roll out your own. The second turns the filters into a format that the API can understand and resolves what needs to be updated in the project. There are 2 flavors of this layer. One sets up Variables the other one Mandatory User filters. You can read about the differences here. There are not so many differences on the interface layer and since mandatory filters are much mode widely applied we will not point the differences between those 2 too much.
+There are two steps to applying the format. The first step is to determine which format you are importing data in; *_Column_* or *_Row_*. The secont step is to 
 
-## Generators
-There are 2 main ideas of generators.
-* Generator should try not to force the user to change the data that comes out of the system. Generator should be able to work with it with as little changes as possible. We tried to include generators for typical situations
-* Separation of platform specific data and customer data. This means that we do not expect a URI of label to be part of the data because it is unlikely to come from the customer and it would violate the first principle.
+### Support Formats
 
-Ok let's delve to generators. There are 2 flavors
+The SDK supports two types of CSV, *_Column_* and *_Row_*.
 
-### Column wise generator
-Imagine that you have a file like this. CSV which has headers. Each line has the same number of columns.
+#### Column Format
+
+In the Column format, permissions are broken out into columns. This format is often seen when the user is filtered only on one value of the attribute. Imagine that you have a file like this where each employee's department is defined. This CSV demonstrates the Columns format which department each user can view and each line has the same number of columns.
 
 	user,name,department
 	paul@example.com,paul,engineering
@@ -35,13 +33,13 @@ Imagine that you have a file like this. CSV which has headers. Each line has the
 	caitlin@example.com,caitlin,marketing
 	caitlin@example.com,caitlin,engineering
 
-You want to set these values
+You would like to filter each of these users based on their deparment.
 
 	paul@example.com -> engineering
 	kara@example.com -> engineering
 	caitlin@example.com -> engineering, marketing
 
-You can easily achieve this like this
+This can be easily done in this way.
 
 	filters = GoodData::UserFilterBuilder::get_filters(csv, {
 	    :login => {:column => ‘user’}
@@ -50,7 +48,7 @@ You can easily achieve this like this
 	    ]
 	  })
 
-Notice that caitlin has 2 values. Notice that in the file she actually has 2 lines. The generator collects the values for you. Login column specification can be omitted if it is the first column. If the file does not have headers. You can specify it
+It's import notice that caitlin has 2 values. Notice that in the file she actually has 2 lines. The generator collects the values for you. Login column specification can be omitted if it is the first column. If the file does not have headers, you can specify it like this:
 
 	filters = GoodData::UserFilterBuilder::get_filters(csv, {
 	    :headers => false,
@@ -60,17 +58,17 @@ Notice that caitlin has 2 values. Notice that in the file she actually has 2 lin
 	    ]
 	  })
 
-The columns are specified by the position not name. Otherwise everything else holds up. 
+The columns are specified by the position not name.
 
-### Row wise generator
+#### Row Format
 
-Imagine you have a file like this. Note that each line has different number of values so it does not make sense to have headers.
+In addition to supporting the column based privelges, you may also have data that looks like this.
 
 	paul@example.com,engineering
 	kara@example.com,engineering
 	caitlin@example.com,marketing,engineering
 
-The desired values for the filter are exactly the same as in previous case.
+Where the user is participating in multiple deparments, or you are filtering users on multiple values. The desired values for the filter are exactly the same as in previous case.
 
 	paul@example.com -> engineering
 	kara@example.com -> engineering
@@ -86,11 +84,9 @@ You can achieve this with the following code.
 
 The row base mode is activated when you have only one label (which should naturally be the case) and that one does not have specified the column. Login has to be the first thing in the file.
 
-## Direct input of filters
+## Additional Filters
 
-You can ommit the generator and write the filters directly. There are 2 flavors.
-
-### Simple
+### Creating Simple Filters
 Idea of simple filters is that they are easy enough to remember and are ideal for interactive usage. They cannot cover the whole breath (OVER TO filters etc) but they are for just setting up values and easy enough to remember. It is just an array. The first value is login, the second is the label, the rest is the values. Simple program might look like this.
 
 	attribute = GoodData::Attribute.find_first_by_title('Department')
@@ -98,15 +94,20 @@ Idea of simple filters is that they are easy enough to remember and are ideal fo
 	filters = [["john.doe@gooddata.com", label, "Sales", "Marketing"]]
 	GoodData::UserFilterBuilder.execute_mufs(filters)
 
+## Direct input of filters
+
+You can ommit the generator and write the filters directly. There are 2 flavors.
+
+## Additional Options
+
 ### Normal or just filter
 
-Add specification
-
-#### Labels specification
+### Labels specification
 Currently you can only specify the label by URI but we want to provide several ways. ADD
 identifier
 object id
 object
+Add specification
 
 ## Filter resolution and application
 
