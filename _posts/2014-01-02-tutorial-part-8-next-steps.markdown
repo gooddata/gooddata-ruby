@@ -1,9 +1,9 @@
 ---
 layout: tutorial
 title:  "The end - Next steps"
-date:   2014-01-19 13:56:00
+date:   2014-01-19 13:57:30
 categories: tutorial
-prev_section: tutorial/tutorial-part-6-updating-column
+prev_section: tutorial/tutorial-part-7-user-filters
 pygments: true
 perex: End of your path
 ---
