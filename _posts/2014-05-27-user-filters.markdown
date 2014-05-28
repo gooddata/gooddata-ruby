@@ -143,27 +143,27 @@ Now that you have everything set up, let’s take a look at some code samples to
       GoodData.logging_on
 
       var = VARIABLE_URI
-      # csv = IO.read(‘data/employees.csv’) 
+      # csv = IO.read(‘data/employees.csv’)
       csv = "login,department\paul@company.com,sales\n"
 
       filters = GoodData::UserFilterBuilder::get_filters(csv, {
         :type => :filter,
         :labels => [
-           {:label => {:uri => "ATTRIBUTE_LABEL_URI"}, :column => 'department'}
+           {:label => {:uri => "ATTRIBUTE_LABEL_URI"}, :column => 'COLUMN'}
         ]
       })
       GoodData::UserFilterBuilder.execute_variables(filters, var)
     end
 
-Let’s break this script down, the first thing to notice is we have commented out the *_employees.csv_* file and replaced it with one line. The next thing is the variable URI from requirement one above is listed as **var**. 
+Let’s break this script down, the first thing to notice is we have commented out the *_employees.csv_* file and replaced it with one line. The next thing is the variable URI from requirement one above is listed as **var**.
 
 Finally, let’s take is **:uri** is defined as the label uri of the attribute we are filtering. In order to insure the data remains organized in a human readable form each of your attributes have a label they are associated with.
 
-For a filter to be applied, we add it specifically to the attribute’s label, not the uri of the attribute. Extracting the label URI is no problem using the “jack_in” feature of the SDK. 
+For a filter to be applied, we add it specifically to the attribute’s label, not the uri of the attribute. Extracting the label URI is no problem using the “jack_in” SDK feature.
 
     gooddata -U username -P password -p product_id project jack_in
 
-Then, go ahead and list the number of attributes with this command. 
+Then, go ahead and list the number of attributes with this command.
 
     GoodData::Attribute.all
 
@@ -171,7 +171,7 @@ From the list of attributes select the one you are interested filters and get th
 
     GoodData::Attribute['attr.employees.department'].labels[0]
 
-Now select the value in the uri field which is the label uri from above. Generally it is the first label, but if this is not the label you are interested in, you can browse all of the labels by just removing the “[0]”.
+Next select the value in the uri field which is the label uri from above. Generally it is the first label, but if this is not the label you are interested in, you can browse all of the labels by just removing the “[0]”.
 
 	GoodData::Attribute['attr.employees.department'].labels
 
@@ -216,7 +216,7 @@ Once you have the Attribute Label URI and the CSV file containing the user login
       filters = GoodData::UserFilterBuilder::get_filters(csv, {
         :type => :filter,
         :labels => [
-           {:label => {:uri => "ATTRIBUTE_LABEL_URI"}, :column => 'department'}
+           {:label => {:uri => "ATTRIBUTE_LABEL_URI"}, :column => 'COLUMN'}
         ]
       })
 
