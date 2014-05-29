@@ -2,8 +2,10 @@
 
 require_relative 'profile'
 
+require_relative '../rest/rest'
+
 module GoodData
-  class ProjectRole
+  class ProjectRole < GoodData::Rest::Object
     def initialize(json)
       @json = json
     end

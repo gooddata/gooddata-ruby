@@ -2,8 +2,10 @@
 
 require_relative 'profile'
 
+require_relative '../rest/object'
+
 module GoodData
-  class Domain
+  class Domain < GoodData::Rest::Object
     attr_reader :name
 
     USERS_OPTIONS = { :offset => 0, :limit => 1000 }
