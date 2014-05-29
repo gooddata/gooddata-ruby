@@ -69,9 +69,9 @@ module GoodData
       end
 
       def refresh_token(options = {})
-        begin
+        begin # rubocop:disable RedundantBegin
           get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
-        rescue Exception => e
+        rescue Exception => e # rubocop:disable RescueException
           puts e.message
         end
       end

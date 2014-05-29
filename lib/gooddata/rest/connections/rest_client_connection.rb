@@ -76,23 +76,24 @@ module GoodData
             GoodData.logger.debug "#{method}: #{url}"
             begin
               # first check if it does exits
-              RestClient::Request.execute({
-                                            :method => method,
-                                            :url => url,
-                                            # :timeout => @options[:timeout],
-                                            :headers => @headers
-                                          }.merge(cookies)
-              )
+              raw = {
+                :method => method,
+                :url => url,
+                # :timeout => @options[:timeout],
+                :headers => @headers
+              }.merge(cookies)
+              RestClient::Request.execute(raw)
             rescue RestClient::Exception => e
               if e.http_code == 404
                 method = :mkcol
                 GoodData.logger.debug "#{method}: #{url}"
-                RestClient::Request.execute({
-                                              :method => method,
-                                              :url => url,
-                                              # :timeout => @options[:timeout],
-                                              :headers => @headers
-                                            }.merge(cookies))
+                raw = {
+                  :method => method,
+                  :url => url,
+                  # :timeout => @options[:timeout],
+                  :headers => @headers
+                }.merge(cookies)
+                RestClient::Request.execute(raw)
               end
             end
           end
@@ -102,18 +103,19 @@ module GoodData
 
           # Upload the file
           # puts "uploading the file #{URI.join(url, filename).to_s}"
-          RestClient::Request.execute({
-                                          :method => :put,
-                                          :url => URI.join(url, filename).to_s,
-                                          # :timeout => @options[:timeout],
-                                          :headers => {
-                                            :user_agent => GoodData.gem_version_string
-                                          },
-                                          :payload => payload,
-                                          :raw_response => true,
-                                          # :user => @username,
-                                          # :password => @password
-                                        }.merge(cookies))
+          raw = {
+            :method => :put,
+            :url => URI.join(url, filename).to_s,
+            # :timeout => @options[:timeout],
+            :headers => {
+              :user_agent => GoodData.gem_version_string
+            },
+            :payload => payload,
+            :raw_response => true,
+            # :user => @username,
+            # :password => @password
+          }.merge(cookies)
+          RestClient::Request.execute(raw)
           true
         end
 

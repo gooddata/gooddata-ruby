@@ -19,7 +19,7 @@ module GoodData
       #################################
       # Class variables
       #################################
-      @@instance = nil
+      @@instance = nil # rubocop:disable ClassVars
 
       #################################
       # Getters/Setters
@@ -64,19 +64,19 @@ module GoodData
           res = Client.new(new_opts)
 
           # HACK: This line assigns class instance # if not done yet
-          @@instance = res # if res.nil?
+          @@instance = res # rubocop:disable ClassVars
           res
         end
 
         def disconnect
-          if @@instance
-            @@instance.disconnect
-            @@instance = nil
+          if @@instance # rubocop:disable ClassVars
+            @@instance.disconnect # rubocop:disable ClassVars
+            @@instance = nil # rubocop:disable ClassVars
           end
         end
 
         def connection
-          @@instance
+          @@instance # rubocop:disable ClassVars
         end
 
         alias_method :client, :connection
