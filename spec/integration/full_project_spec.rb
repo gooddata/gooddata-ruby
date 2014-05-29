@@ -1,6 +1,6 @@
 require 'gooddata'
 
-describe "Ful project implementation", :constraint => 'slow' do
+describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     ConnectionHelper::create_default_connection

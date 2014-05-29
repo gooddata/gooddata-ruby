@@ -168,6 +168,7 @@ module GoodData
         @connection.post uri, data, opts
       end
 
+      # Retry blok if exception thrown
       def retryable(options = {}, &block)
         opts = {:tries => 1, :on => Exception}.merge(options)
 
@@ -180,6 +181,11 @@ module GoodData
         end
 
         yield
+      end
+
+      # Uploads file
+      def upload(file, options = {})
+        @connection.upload file, options
       end
     end
   end

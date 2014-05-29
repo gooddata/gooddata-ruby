@@ -62,6 +62,61 @@ module GoodData
           process_response(options, &b)
         end
 
+        # Uploads a file to GoodData server
+        # /uploads/ resources are special in that they use a different
+        # host and a basic authentication.
+        def upload(file, options = {})
+          dir = options[:directory] || ''
+          staging_uri = options[:staging_url].to_s
+          url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
+
+          # Make a directory, if needed
+          unless dir.empty?
+            method = :get
+            GoodData.logger.debug "#{method}: #{url}"
+            begin
+              # first check if it does exits
+              RestClient::Request.execute({
+                                            :method => method,
+                                            :url => url,
+                                            # :timeout => @options[:timeout],
+                                            :headers => @headers
+                                          }.merge(cookies)
+              )
+            rescue RestClient::Exception => e
+              if e.http_code == 404
+                method = :mkcol
+                GoodData.logger.debug "#{method}: #{url}"
+                RestClient::Request.execute({
+                                              :method => method,
+                                              :url => url,
+                                              # :timeout => @options[:timeout],
+                                              :headers => @headers
+                                            }.merge(cookies))
+              end
+            end
+          end
+
+          payload = options[:stream] ? 'file' : File.read(file)
+          filename = options[:filename] || options[:stream] ? 'randome-filename.txt' : File.basename(file)
+
+          # Upload the file
+          # puts "uploading the file #{URI.join(url, filename).to_s}"
+          RestClient::Request.execute({
+                                          :method => :put,
+                                          :url => URI.join(url, filename).to_s,
+                                          # :timeout => @options[:timeout],
+                                          :headers => {
+                                            :user_agent => GoodData.gem_version_string
+                                          },
+                                          :payload => payload,
+                                          :raw_response => true,
+                                          # :user => @username,
+                                          # :password => @password
+                                        }.merge(cookies))
+          true
+        end
+
         private
 
         def process_response(options = {}, &block)
