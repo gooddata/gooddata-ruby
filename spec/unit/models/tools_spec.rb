@@ -16,7 +16,7 @@ describe GoodData::Model do
   SCHEMA = GoodData::Model::Schema.new :name => 'test', :title => 'test', :columns => COLUMNS unless const_defined?(:SCHEMA)
 
   before(:all) do
-    GoodData::connect
+    GoodData::connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
   end
 
   after(:all) do
