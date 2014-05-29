@@ -59,7 +59,7 @@ module GoodData
       def disconnect
         # TODO: Wrap somehow
         url = @auth['state']
-        res = delete url
+        delete url
 
         @auth = nil
         @server = nil

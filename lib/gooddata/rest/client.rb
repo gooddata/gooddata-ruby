@@ -170,7 +170,7 @@ module GoodData
 
       # Retry blok if exception thrown
       def retryable(options = {}, &block)
-        opts = {:tries => 1, :on => Exception}.merge(options)
+        opts = { :tries => 1, :on => Exception }.merge(options)
 
         retry_exception, retries = opts[:on], opts[:tries]
 

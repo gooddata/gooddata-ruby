@@ -11,7 +11,7 @@ module GoodData
       class CookieJar < Hash
         class << self
           def stringify(hash)
-            hash.map { |key, value| "#{key}=#{value}" }.join("; ")
+            hash.map { |key, value| "#{key}=#{value}" }.join('; ')
           end
         end
 
@@ -145,7 +145,7 @@ module GoodData
             response = block.call
           end
 
-          set_cookie = response.headers["Set-Cookie"]
+          set_cookie = response.headers['Set-Cookie']
           cookies = CookieJar.new.parse(set_cookie)
           merge_cookies! cookies
 =begin
@@ -174,8 +174,8 @@ module GoodData
           begin
             return MultiJson.load(res)
           rescue MultiJson::ParseError => e
-            # puts e.to_s # => "{invalid json}"
-            # puts e.cause # => JSON::ParserError: 795: unexpected token at '{invalid json}'
+            puts e.to_s # => "{invalid json}"
+            puts e.cause # => JSON::ParserError: 795: unexpected token at '{invalid json}'
           end
 
           # pp res
