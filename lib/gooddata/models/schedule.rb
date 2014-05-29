@@ -48,6 +48,8 @@ module GoodData
           },
           :hidden_params => {}
         }
+        
+        default_opts.merge!({:reschedule => options[:reschedule]}) if !options[:reschedule].nil?
 
         inject_schema = {
           :hidden_params => 'hiddenParams'
@@ -174,7 +176,7 @@ module GoodData
     def cron
       @json['schedule']['cron']
     end
-
+    
     # Assigns execution cron settings
     #
     # @param new_cron [String] Cron settings to be set
@@ -182,6 +184,22 @@ module GoodData
       @json['schedule']['cron'] = new_cron
       @dirty = true
     end
+    
+    # Returns reschedule settings
+    #
+    # @return [Integer] Reschedule settings
+    def reschedule
+      @json['schedule']['reschedule']
+    end
+
+    # Assigns execution reschedule settings
+    #
+    # @param new_reschedule [Integer] Reschedule settings to be set
+    def reschedule=(new_reschedule)
+      @json['schedule']['reschedule'] = new_reschedule
+      @dirty = true
+    end
+  
 
     # Returns execution process ID
     #
@@ -265,6 +283,7 @@ module GoodData
             'hiddenParams' => @json['schedule']['hiddenParams']
           }
         }
+        update_json['schedule'].merge!({'reschedule' => @json['schedule']['reschedule']}) if !@json['schedule']['reschedule'].nil?
         res = GoodData.put uri, update_json
 
         @json = res
