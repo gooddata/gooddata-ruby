@@ -40,8 +40,6 @@ module GoodData
 
     def profile
       data = client.get @json['invitation']['links']['profile']
-      puts "PROFILE:"
-      pp data
       client.create GoodData::AccountSettings, data
     end
 

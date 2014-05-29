@@ -61,7 +61,7 @@ module GoodData
             req = Typhoeus::Request.new(
               url,
               method: :delete,
-              headers: @headers.merge({'Cookie' => CookieJar.stringify(cookies[:cookies])})
+              headers: @headers.merge('Cookie' => CookieJar.stringify(cookies[:cookies]))
             )
 
             # pp req
@@ -80,7 +80,7 @@ module GoodData
             req = Typhoeus::Request.new(
               url,
               method: :get,
-              headers: @headers.merge({'Cookie' => CookieJar.stringify(cookies[:cookies])})
+              headers: @headers.merge('Cookie' => CookieJar.stringify(cookies[:cookies]))
             )
 
             # pp req
@@ -100,7 +100,7 @@ module GoodData
             req = Typhoeus::Request.new(
               url,
               method: :put,
-              headers: @headers.merge({Cookie: CookieJar.stringify(cookies[:cookies])}),
+              headers: @headers.merge(Cookie: CookieJar.stringify(cookies[:cookies])),
               body: payload
             )
 
@@ -123,7 +123,7 @@ module GoodData
             req = Typhoeus::Request.new(
               url,
               method: :post,
-              headers: @headers.merge({Cookie: CookieJar.stringify(cookies[:cookies])}),
+              headers: @headers.merge(Cookie: CookieJar.stringify(cookies[:cookies])),
               body: payload
             )
 

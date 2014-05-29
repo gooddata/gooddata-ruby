@@ -3,7 +3,6 @@
 require_relative '../version'
 require_relative '../exceptions/exceptions'
 
-
 module GoodData
   module Rest
     # Wrapper of low-level HTTP/REST client/library
@@ -112,7 +111,7 @@ module GoodData
       end
 
       def reset_cookies!
-        @cookies = {:cookies => {}}
+        @cookies = { :cookies => {} }
       end
     end
   end
