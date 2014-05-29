@@ -83,7 +83,7 @@ Once you have the Attribute Label URI and the CSV file containing the user login
       filters = GoodData::UserFilterBuilder::get_filters(csv, {
         :type => :filter,
         :labels => [
-           {:label => {:uri => "ATTRIBUTE_LABEL_URI"}, :column => 'COLUMN'}
+           {:label => "ATTRIBUTE_IDENTIFIER"}, :column => 'COLUMN'}
         ]
       })
 
@@ -92,13 +92,37 @@ Once you have the Attribute Label URI and the CSV file containing the user login
 
 Let's break this script down. First notice that we have commented out the reader for the file in place of an example so you can see the format.
 
-From above, replace ATTRIBUTE_LABEL_URI with the label URI you added in step one and that is it. 
+From above, replace ATTRIBUTE_LABEL with the label identifier you added in step one. In addition to using the identifier, you could also use the object id, or the identifier in it's place. 
 
-To confirm a Mandatory User Filter was assigned, go to your web dashboard at https://secure.gooddata.com 
+Take the case of this Attribute:
+
+   {"link"=>"/gdc/md/tk0wjpqnx3l1kscdrorzzkizgh7wd2kh/obj/398",
+     "locked"=>0,
+     "author"=>"/gdc/account/profile/876ec68f5630b38de65852ed5d6236ff",
+     "tags"=>"date year",
+     "created"=>"2013-05-21 18:43:30",
+     "identifier"=>"orderdate.year",
+     "deprecated"=>"0",
+     "summary"=>"Year",
+     "title"=>"Year (OrderDate)",
+     "category"=>"attribute",
+     "updated"=>"2013-05-21 18:43:32",
+     "unlisted"=>0,
+     "contributor"=>"/gdc/account/profile/876ec68f5630b38de65852ed5d6236ff"},
+
+Using..
+
+    orderdate.year
+    /gdc/md/tk0wjpqnx3l1kscdrorzzkizgh7wd2kh/obj/398
+    398
+
+All of these are acceptable ways to idenfity the Attribute for use in the filter.
+
+To confirm a Mandatory User Filter was assigned, go to your web dashboard at https://secure.gooddata.com.
 
 ## Advanced Options
 ### Variable Filters
-Before using the brick you will need to choose the attributes you would like to add variable filters to, then based on those create the variable filters using the project’s web interface at https://secure.gooddata.com. 
+Before using the brick you will need to choose the attributes you would like to add variable filters to, then based on those create the variable filters using the project’s web interface at https://secure.gooddata.com.
 
 1. Go to your project’s interface at https://secure.gooddata.com and click on *_Manage_*.
 2. Select *_Variables_* from the left hand side navigation bar.
