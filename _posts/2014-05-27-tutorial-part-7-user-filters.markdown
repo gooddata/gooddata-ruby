@@ -10,7 +10,9 @@ perex: Here we will build project end-to-end with the SDK ultimately applying Ma
 
 Mandatory User Filters allow you to restrict user access to data in your project or ensure that only relevant data is presented. As you are the only user in this demo project, for this tutorial you will learn how to assign a Mandatory User Filter to yourself but the process doing so you will clearly see how to apply filters to others.
 
-Let's say that you are the owner of a specific repository so we will be filtering away the other repositories so you cannot see them.
+### Getting Started
+
+Let's say that you are the owner of a specific repository so we will add a filter to your account which hides the other repositories from your report. Don't worry it is easy to remove them!
 
 If we look into the data at *data/repos.csv*, you will notice that each repo (gooddata-gem, gooddata-platform) has a unique id.
 
