@@ -38,6 +38,13 @@ module GoodData
         data[:datasets].delete_at(index)
       end
 
+      # Is this a project blueprint?
+      #
+      # @return [Boolean] if it is
+      def project_blueprint?
+        true
+      end
+
       def date_dimensions
         data[:date_dimensions]
       end
@@ -53,10 +60,22 @@ module GoodData
         DatasetBlueprint.new(ds)
       end
 
+      # Constructor
+      #
+      # @param init_data [ProjectBlueprint | Hash] Blueprint or a blueprint definition. If passed a hash it is used as data for new instance. If there is a ProjectBlueprint passed it is duplicated and a new instance is created.
+      # @return [ProjectBlueprint] A new project blueprint instance
       def initialize(init_data)
-        @data = init_data
+        some_data = if init_data.respond_to?(:project_blueprint?) && init_data.project_blueprint?
+                      init_data.to_hash
+                    else
+                      init_data
+                    end
+        @data = some_data.deep_dup
       end
 
+      # Validate the blueprint in particular if all references reference existing datasets and valid fields inside them.
+      #
+      # @return [Array] array of errors
       def validate_references
         if datasets.count == 1
           []
@@ -71,21 +90,20 @@ module GoodData
         end
       end
 
-      def validate_labels_references
-        datasets.reduce([]) { |a, e| a.concat(e.validate_label_references) }
-      end
-
-      def validate_model
+      # Validate the blueprint and all its datasets return array of errors that are found.
+      #
+      # @return [Array] array of errors
+      def validate
         refs_errors = validate_references
-        labels_errors = validate_labels_references
+        labels_errors = datasets.reduce([]) { |a, e| a.concat(e.validate) }
         refs_errors.concat(labels_errors)
       end
 
-      def model_valid?
-        refs_errors = validate_references
-        labels_errors = validate_labels_references
-        errors = refs_errors.concat(labels_errors)
-        errors.empty? ? true : false
+      # Validate the blueprint and all its datasets and return true if model is valid. False otherwise.
+      #
+      # @return [Boolean] is model valid?
+      def valid?
+        validate.empty?
       end
 
       def referenced_by(dataset)
@@ -185,8 +203,7 @@ module GoodData
       end
 
       def dup
-        deep_copy = Marshal.load(Marshal.dump(data))
-        ProjectBlueprint.new(deep_copy)
+        ProjectBlueprint.new(data.deep_dup)
       end
 
       def title

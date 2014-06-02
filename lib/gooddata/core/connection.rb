@@ -377,7 +377,7 @@ module GoodData
     def scrub_params(params, keys)
       keys = keys.reduce([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
 
-      new_params = Marshal.load(Marshal.dump(params))
+      new_params = params.deep_dup
       GoodData::Helpers.hash_dfs(new_params) do |k, key|
         keys.each do |key_to_scrub|
           k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.key?(key_to_scrub) && k[key_to_scrub]
