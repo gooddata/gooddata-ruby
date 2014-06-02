@@ -14,7 +14,7 @@ module GoodData
           bp = ProjectBlueprint.new(spec)
           spec = bp.to_hash
 
-          fail ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
+          fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
 
           token = options[:token]
           project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)

@@ -15,7 +15,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should not build an invalid model" do
     expect {
       GoodData::Model::ProjectCreator.migrate({:spec => @invalid_spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
-    }.to raise_error(ValidationError)
+    }.to raise_error(GoodData::ValidationError)
   end
 
   it "should contain datasets" do
