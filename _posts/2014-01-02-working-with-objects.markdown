@@ -71,7 +71,7 @@ Each object has an internal identifier, which is a string value unique inside th
 You can look the object up by providing an identifier.
 
 {% highlight ruby %}
-report = GoodData::Attribute["attr.payments.id"]
+report = GoodData::Attribute["attr.devs.dev_id"]
 {% endhighlight %}
 
 The identifier can be acquired using the following:
@@ -85,7 +85,7 @@ report.identifier
 You can also provide full URI. This identifier is unique for the object within the entire hosting datacenter.
 
 {% highlight ruby %}
-report = GoodData::Report["/gdc/md/pid/12"]
+report = GoodData::Report["/gdc/md/{PID}/obj/12"]
 {% endhighlight %}
 
 The URI for a selected object can be accessed using the URI method:
@@ -111,7 +111,7 @@ The above performs N+1 requests on the API, which may result in slow performance
 In some cases, you may have the object identifier and need to acquire the datacenter-unique URI. If you know the object type, you can execute a query similar to the following, which is looking for an attribute object identifier:
 
 {% highlight ruby %}
-attribute = GoodData::Attribute["attr.payments.id"]
+attribute = GoodData::Attribute["attr.devs.dev_id"]
 attribute.uri
 {% endhighlight %}
 

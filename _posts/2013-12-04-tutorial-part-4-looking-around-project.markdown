@@ -12,7 +12,7 @@ perex: "Before we dive into numbers, let's explore the open sandbox of your proj
 From the project directory, jack in to the project:
 
 {% highlight ruby %}
-gooddata project jack_in
+gooddata -U username -P pass project jack_in
 {% endhighlight %}
 
 Verify that you are connected to the project:
