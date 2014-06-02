@@ -27,7 +27,7 @@ module GoodData
       def run
         downloaded_data = download
         downloaded_data = pre_process(downloaded_data)
-        downloaded_data = post_process(downloaded_data)
+        post_process(downloaded_data)
       end
     end
   end
