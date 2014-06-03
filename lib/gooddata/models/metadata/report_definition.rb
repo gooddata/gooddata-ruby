@@ -71,7 +71,7 @@ module GoodData
             when 'attribute'
               GoodData::Attribute.new(x.raw_data).display_forms.first
             when 'attributeDisplayForm'
-              GoodData::DisplayForm.new(x.raw_data)
+              GoodData::Label.new(x.raw_data)
             when 'metric'
               GoodData::Metric.new(x.raw_data)
             end
@@ -90,7 +90,7 @@ module GoodData
             when 'attribute'
               GoodData::Attribute.get_by_id(item[:id]).display_forms.first
             when 'label'
-              GoodData::DisplayForm.get_by_id(item[:id])
+              GoodData::Label.get_by_id(item[:id])
           end
           elsif item.is_a?(Hash) && (item.keys.include?(:identifier))
             case item[:type].to_s
@@ -100,7 +100,7 @@ module GoodData
               result = GoodData::Attribute.get_by_id(item[:identifier])
               result.display_forms.first
             when 'label'
-              GoodData::DisplayForm.get_by_id(item[:identifier])
+              GoodData::Label.get_by_id(item[:identifier])
             end
           else
             item

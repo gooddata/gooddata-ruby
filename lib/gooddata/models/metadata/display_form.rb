@@ -4,14 +4,14 @@ require_relative '../metadata'
 require_relative 'metadata'
 
 module GoodData
-  class DisplayForm < GoodData::MdObject
+  class Label < GoodData::MdObject
     root_key :attributeDisplayForm
 
     # Finds an attribute element URI for given value. This URI can be used by find_element_value to find the original value again
     # @param [String] value value of an label you are looking for
     # @return [String]
     def find_value_uri(value)
-      value = CGI.escapeHTML(value)
+      value = CGI.escape(value)
       results = GoodData.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{value}", {})
       items = results['validElements']['items']
       if items.empty?
@@ -57,5 +57,20 @@ module GoodData
     def attribute
       GoodData::Attribute[content['formOf']]
     end
+
+    # Returns true if the object is an attribute false otherwise
+    # @return [Boolean]
+    def label?
+      true
+    end
+    alias_method :display_form?, :label?
+
+    # Gives an attribute url of current label. Useful for mass actions when it does not introduce HTTP call.
+    # @return [GoodData::Attibute]
+    def attribute_uri
+      content['formOf']
+    end
   end
 end
+
+GoodData::DisplayForm = GoodData::Label

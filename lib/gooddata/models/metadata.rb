@@ -99,8 +99,13 @@ module GoodData
         if response['identifiers'].empty?
           nil
         else
-          ids = response['identifiers'].map { |x| x['uri'] }
-          ids.count == 1 ? ids.first : ids
+          identifiers = response['identifiers']
+          ids_lookup = identifiers.reduce({}) do |a, e|
+            a[e['identifier']] = e['uri']
+            a
+          end
+          uris = ids.map { |x| ids_lookup[x] }
+          uris.count == 1 ? uris.first : uris
         end
       end
 
@@ -288,18 +293,30 @@ module GoodData
       false
     end
 
-    # TODO: generate fill for other subtypes
+    # Returns true if the object is a fact false otherwise
+    # @return [Boolean]
     def fact?
       false
     end
 
+    # Returns true if the object is an attribute false otherwise
+    # @return [Boolean]
     def attribute?
       false
     end
 
+    # Returns true if the object is a metric false otherwise
+    # @return [Boolean]
     def metric?
       false
     end
+
+    # Returns true if the object is a label false otherwise
+    # @return [Boolean]
+    def label?
+      false
+    end
+    alias_method :display_form?, :label?
 
     private
 
