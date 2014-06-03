@@ -75,7 +75,7 @@ module GoodData
                 'driver' => attributes[:driver] || 'Pg'
               }
             }
-          }
+        }
 
         json['project']['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
@@ -248,34 +248,10 @@ module GoodData
 
     # Exports project users to file
     def export_users(path)
-      tmp = users
-      CSV.open(path, 'w') do |csv|
-        csv << %w(email login first_name last_name status)
-        tmp.each do |user|
-          csv << [user.email, user.login, user.first_name, user.last_name, user.status]
-        end
+      header = %w(email login first_name last_name status)
+      GoodData::Helpers.csv_write(:path => path, :header => header, :data => users) do |user|
+        [user.email, user.login, user.first_name, user.last_name, user.status]
       end
-    end
-
-    # Exports project users to file
-    def sync_users(path)
-      res = []
-      CSV.foreach(path) do |row|
-        json = {
-          'user' => {
-            'content' => {
-              'email' => row[0],
-              'login' => row[1],
-              'firstname' => row[2],
-              'lastname' => row[3]
-            }
-          }
-        }
-        user = GoodData::User.new(json)
-        res << user
-      end
-
-      res
     end
 
     # Gets project role by its identifier
@@ -312,6 +288,71 @@ module GoodData
         return role if role.title.downcase == role_title.downcase
       end
       nil
+    end
+
+    # Exports project users to file
+    def import_users(path, opts = { :header => true }, &block)
+      opts[:path] = path
+
+      new_users = GoodData::Helpers.csv_read(opts) do |row|
+        json = {}
+        if block_given?
+          json = yield row
+        else
+          json = {
+            'user' => {
+              'content' => {
+                'email' => row[0],
+                'login' => row[1],
+                'firstname' => row[2],
+                'lastname' => row[3]
+              },
+              'meta' => {}
+            }
+          }
+        end
+
+        GoodData::User.new(json)
+      end
+
+      current_users = users
+      diff = GoodData::User.diff_list(current_users, new_users)
+
+      domains = {}
+
+      diff[:added].each do |user|
+        # TODO: Add user here
+        domain_name = user.json['user']['content']['domain']
+        domains[domain_name] = GoodData::Domain[domain_name] unless domains[domain_name]
+        domain = domains[domain_name]
+
+        domain_users = domain.users
+        user_index = domain_users.index { |u| u.email == user.email }
+
+        if user_index.nil?
+          password = user.json['user']['content']['password']
+
+          # TODO: Create user here
+          user_data = {
+            :login => user.login,
+            :firstName => user.first_name,
+            :lastName => user.last_name,
+            :password => password,
+            :verifyPassword => password,
+            :email => user.login
+          }
+
+          domain.add_user(user_data)
+          domain_users = domain.users
+          # user_index = domain_users.index { |u| u.email == user.email }
+        end
+
+        # TODO: Setup role here
+      end
+
+      diff[:removed].each do |user|
+        user.disable(self)
+      end
     end
 
     # Initializes object instance from raw wire JSON

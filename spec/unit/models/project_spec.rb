@@ -3,6 +3,9 @@
 require 'gooddata'
 
 describe GoodData::Project do
+  CSV_PATH_EXPORT = 'users-out.txt'
+  CSV_PATH_IMPORT = File.join(File.dirname(__FILE__), '..', '..', 'data', 'users.csv')
+
   before(:each) do
     ConnectionHelper::create_default_connection
   end
@@ -138,6 +141,41 @@ describe GoodData::Project do
           end
         end
       end
+    end
+  end
+
+  describe '#export_users' do
+    it 'Exports users to file specified' do
+
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+
+      project.export_users(CSV_PATH)
+    end
+  end
+
+  describe '#import_users' do
+    it 'Import users from CSV' do
+
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+
+      project.import_users(CSV_PATH_IMPORT) do |row|
+        {
+          'user' => {
+            'content' => {
+              'email' => row[2],
+              'login' => row[2],
+              'firstname' => row[0],
+              'lastname' => row[1],
+
+              # Following lines are ugly hack
+              'password' => row[3],
+              'domain' => row[9]
+            },
+            'meta' => {}
+          }
+        }
+      end
+
     end
   end
 end
