@@ -4,7 +4,7 @@ require 'csv'
 
 require_relative 'version'
 require_relative 'connection'
-require_relative 'helpers'
+require_relative 'helpers/helpers'
 
 FasterCSV = CSV
 

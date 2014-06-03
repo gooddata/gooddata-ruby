@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+require 'csv'
 require 'zip'
 require 'fileutils'
 
@@ -243,6 +244,38 @@ module GoodData
     # Deletes dashboards for project
     def delete_dashboards
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
+    end
+
+    # Exports project users to file
+    def export_users(path)
+      tmp = users
+      CSV.open(path, 'w') do |csv|
+        csv << ['email', 'login', 'first_name', 'last_name', 'status']
+        tmp.each do |user|
+          csv << [user.email, user.login, user.first_name, user.last_name, user.status]
+        end
+      end
+    end
+
+    # Exports project users to file
+    def sync_users(path)
+      res = []
+      CSV.foreach(path) do |row|
+        json = {
+          'user' => {
+            'content' => {
+              'email' => row[0],
+              'login' => row[1],
+              'firstname' => row[2],
+              'lastname' => row[3]
+            }
+          }
+        }
+        user = GoodData::User.new(json)
+        res << user
+      end
+
+      res
     end
 
     # Gets project role by its identifier

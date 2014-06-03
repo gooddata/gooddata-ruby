@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative '../../helpers'
+require_relative '../../helpers/helpers'
 
 require_relative '../attributes/anchor'
 require_relative '../columns/columns'
