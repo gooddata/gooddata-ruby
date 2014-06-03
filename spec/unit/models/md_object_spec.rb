@@ -44,4 +44,12 @@ describe GoodData::Model::MdObject do
       result.should == be_an_instance_of(String)
     end
   end
+
+  describe '#all' do
+    it 'Throws an error. This is implemented on subclasses' do
+      expect do
+        GoodData::MdObject.all
+      end.to raise_exception(NotImplementedError)
+    end
+  end
 end
