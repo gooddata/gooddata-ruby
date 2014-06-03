@@ -250,7 +250,7 @@ module GoodData
     def export_users(path)
       tmp = users
       CSV.open(path, 'w') do |csv|
-        csv << ['email', 'login', 'first_name', 'last_name', 'status']
+        csv << %w(email login first_name last_name status)
         tmp.each do |user|
           csv << [user.email, user.login, user.first_name, user.last_name, user.status]
         end
