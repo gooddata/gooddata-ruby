@@ -18,28 +18,41 @@ module GoodData
         query('attributes', Attribute, options)
       end
 
+      # Finds the value of an atribute and gives you the textual form for the label that is acquired by calling primary_label method
+      #
+      # @param uri [String] Uri of the element. in the form of /gdc/md/PID/obj/OBJ_ID/elements?id=21
+      # @return [String] Textual representation of a particular attribute element
       def find_element_value(uri)
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
-        Attribute[matches[1]].primary_label.find_element_value(matches[2].to_i)
+        Attribute[matches[1]].primary_label.find_element_value(uri)
       end
     end
 
+    # Returns the labels of an attribute
+    # @return [Array<GoodData::Label>]
     def display_forms
-      content['displayForms'].map { |df| GoodData::DisplayForm[df['meta']['uri']] }
+      content['displayForms'].map { |df| GoodData::Label[df['meta']['uri']] }
     end
     alias_method :labels, :display_forms
 
     # Returns the first display form which is the primary one
-    # @return [GoodData::DisplayForm] Primary label
+    # @return [GoodData::Label] Primary label
     def primary_display_form
       labels.first
     end
     alias_method :primary_label, :primary_display_form
 
+    # Returns true if the object is an attribute false otherwise
+    # @return [Boolean]
     def attribute?
       true
     end
 
+    # Creates the basic count metric with the attribute used. If you need to compute the attribute on a different dataset you can specify that in params. The metric created is not saved.
+    # @param [Hash] options the options to pass to the value list
+    # @option options [Symbol] :type type of aggregation function.
+    # @option options [Symbol] :attribute Use this attribute if you need to express different dataset for performing the computation on. It basically serves for creating metrics like SELECT COUNT(User, Opportunity).
+    # @return [GoodData::Metric]
     def create_metric(options = {})
       an_attribute = options[:attribute]
       a_type = options[:type] || :count
@@ -57,7 +70,7 @@ module GoodData
     # @param [Object] element_id Element identifier either Number or a uri as a String
     # @return [Array] list of values for certain element. Returned in the same order as is the order of labels
     def values_for(element_id)
-      element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
+      # element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
       labels.map do |label|
         label.find_element_value(element_id)
       end
@@ -74,6 +87,9 @@ module GoodData
       results.first.zip(*results[1..-1])
     end
 
+    # Allows to search in attribute labels by name. It uses the string as a basis for regexp and tries to match either a title or an identifier. Returns first match.
+    # @param name [String] name used as a basis for regular expression
+    # @return [GoodData::Label]
     def label_by_name(name)
       labels.find { |label| label.title.downcase =~ /#{name}/ || label.identifier.downcase =~ /#{name}/ }
     end
