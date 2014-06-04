@@ -135,7 +135,7 @@ module GoodData
             :max => delta,
             :total => 0,
             :avg => 0,
-            :calls => 0,
+            :calls => 0
           }
         end
 
