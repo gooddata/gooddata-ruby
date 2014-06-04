@@ -35,10 +35,13 @@ module GoodData
       end
 
       attr_reader :cookies
+      attr_reader :stats
       attr_reader :user
 
       def initialize(opts)
         @user = nil
+
+        @stats = {}
 
         # Initialize cookies
         reset_cookies!
@@ -110,8 +113,39 @@ module GoodData
         @cookies[:cookies].merge! cookies
       end
 
+      def profile(title, &block)
+        t1 = Time.now
+        res = block.call
+        t2 = Time.now
+        delta = t2 - t1
+
+        update_stats title, delta
+        res
+      end
+
       def reset_cookies!
         @cookies = { :cookies => {} }
+      end
+
+      def update_stats(title, delta)
+        stat = stats[title]
+        if stat.nil?
+          stat = {
+            :min => delta,
+            :max => delta,
+            :total => 0,
+            :avg => 0,
+            :calls => 0,
+          }
+        end
+
+        stat[:min] = delta if delta < stat[:min]
+        stat[:max] = delta if delta > stat[:max]
+        stat[:total] += delta
+        stat[:calls] += 1
+        stat[:avg] = stat[:total] / stat[:calls]
+
+        stats[title] = stat
       end
     end
   end
