@@ -70,10 +70,16 @@ module GoodData
         tmp = opts[:timezone]
         data[:timezone] = tmp if tmp && !tmp.empty?
 
+        # TODO: It will be nice if the API will return us user just newly created
         url = "/gdc/account/domains/#{opts[:domain]}/users"
         response = GoodData.post(url, :accountSetting => data)
 
         raw = GoodData.get response['uri']
+
+        # TODO: Remove this hack when /gdc/
+        raw['accountSetting']['links'] = {} unless raw['accountSetting']['links']
+        raw['accountSetting']['links']['self'] = response['uri'] unless raw['accountSetting']['links']['self']
+
         GoodData::Profile.new(raw)
       end
 

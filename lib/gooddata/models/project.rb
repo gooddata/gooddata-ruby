@@ -270,10 +270,9 @@ module GoodData
     #
     # @param [String] role_name Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
-    def get_role_by_identifier(role_name)
-      tmp = roles
+    def get_role_by_identifier(role_name, role_list = roles)
       role_name = role_name.downcase.gsub(/role$/, '')
-      tmp.each do |role|
+      role_list.each do |role|
         tmp_role_name = role.identifier.downcase.gsub(/role$/, '')
         return role if tmp_role_name == role_name
       end
@@ -284,9 +283,8 @@ module GoodData
     #
     # @param [String] role_summary Summary of role to look for
     # @return [GoodData::ProjectRole] Project role if found
-    def get_role_by_summary(role_summary)
-      tmp = roles
-      tmp.each do |role|
+    def get_role_by_summary(role_summary, role_list = roles)
+      role_list.each do |role|
         return role if role.summary.downcase == role_summary.downcase
       end
       nil
@@ -296,9 +294,8 @@ module GoodData
     #
     # @param [String] role_title Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
-    def get_role_by_title(role_title)
-      tmp = roles
-      tmp.each do |role|
+    def get_role_by_title(role_title, role_list = roles)
+      role_list.each do |role|
         return role if role.title.downcase == role_title.downcase
       end
       nil
@@ -308,6 +305,16 @@ module GoodData
     def import_users(path, opts = { :header => true }, &block)
       opts[:path] = path
 
+      ##########################
+      # Caching/Cached objects
+      ##########################
+      domains = {}
+      current_users = users
+      role_list = roles
+
+      ##########################
+      # Load users from CSV
+      ##########################
       new_users = GoodData::Helpers.csv_read(opts) do |row|
         json = {}
         if block_given?
@@ -329,25 +336,40 @@ module GoodData
         GoodData::User.new(json)
       end
 
-      current_users = users
+      ##########################
+      # Diff users
+      ##########################
       diff = GoodData::User.diff_list(current_users, new_users)
 
-      domains = {}
-
-      user_profile = nil
-      diff[:added].each do |user|
+      ##########################
+      # Create new users
+      ##########################
+      diff[:added].map do |user|
         # TODO: Add user here
         domain_name = user.json['user']['content']['domain']
-        domains[domain_name] = GoodData::Domain[domain_name] unless domains[domain_name]
+
+        # Lookup for domain in cache
         domain = domains[domain_name]
 
-        domain_users = domain.users
-        user_index = domain_users.index { |u| u.email == user.email }
+        # Get domain info from REST, add to cache
+        if domain.nil?
+          domain = {
+            :domain => GoodData::Domain[domain_name],
+            :users => GoodData::Domain[domain_name].users
+          }
 
-        if user_index.nil?
+          domain[:users_map] = Hash[domain[:users].collect { |u| [u.email, u] }]
+          domains[domain_name] = domain
+        end
+
+        # Check if user exists in domain
+        domain_user = domain[:users_map][user.email]
+
+        # Create domain user if needed
+        unless domain_user
           password = user.json['user']['content']['password']
 
-          # TODO: Create user here
+          # Fill necessary user data
           user_data = {
             :login => user.login,
             :firstName => user.first_name,
@@ -356,22 +378,26 @@ module GoodData
             :verifyPassword => password,
             :email => user.login
           }
-          domain.add_user(user_data)
-          domain_users = domain.users
-          user_index = domain_users.index { |u| u.email == user.email }
+
+          # Add created user to cache
+          domain_user = domain[:domain].add_user(user_data)
+          domain[:users] << domain_user
+          domain[:users_map][user.email] = domain_user
         end
 
-        user_profile = domain_users[user_index]
-
-        # TODO: Setup role here
+        # Lookup for role
         role_name = user.json['user']['content']['role'] || 'readOnlyUser'
-        role = get_role_by_identifier(role_name)
+        role = get_role_by_identifier(role_name, role_list)
         next if role.nil?
 
-        add_user(user_profile, [role.uri])
+        # Assign user project role
+        add_user(domain_user, [role.uri])
       end
 
-      diff[:removed].each do |user|
+      ##########################
+      # Remove old users
+      ##########################
+      diff[:removed].map do |user|
         user.disable(self)
       end
     end
