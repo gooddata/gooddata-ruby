@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require 'terminal-table'
-
 require_relative 'connections/connections'
 require_relative 'object_factory'
 
@@ -68,14 +66,7 @@ module GoodData
           unless @@instance # rubocop:disable ClassVars
             at_exit do
               if @@instance && @@instance.connection
-                stats = @@instance.connection.stats
-                sorted = stats.sort_by { |k, v| v[:avg] }
-                table = Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
-                  sorted.each do |l|
-                    t.add_row [l[0], l[1][:avg], l[1][:min], l[1][:max], l[1][:total], l[1][:calls]]
-                  end
-                end
-                puts table
+                puts @@instance.connection.stats_table
               end
             end
           end
