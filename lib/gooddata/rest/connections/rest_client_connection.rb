@@ -32,16 +32,20 @@ module GoodData
         #
         # @param uri [String] Target URI
         def delete(uri, options = {})
-          b = proc { @server[uri].delete cookies }
-          process_response(options, &b)
+          profile "DELETE #{uri}" do
+            b = proc { @server[uri].delete cookies }
+            process_response(options, &b)
+          end
         end
 
         # HTTP GET
         #
         # @param uri [String] Target URI
         def get(uri, options = {})
-          b = proc { @server[uri].get cookies }
-          process_response(options, &b)
+          profile "GET #{uri}" do
+            b = proc { @server[uri].get cookies }
+            process_response(options, &b)
+          end
         end
 
         # HTTP PUT
@@ -49,17 +53,22 @@ module GoodData
         # @param uri [String] Target URI
         def put(uri, data, options = {})
           payload = data.is_a?(Hash) ? data.to_json : data
-          b = proc { @server[uri].put payload, cookies }
-          process_response(options, &b)
+
+          profile "PUT #{uri}" do
+            b = proc { @server[uri].put payload, cookies }
+            process_response(options, &b)
+          end
         end
 
         # HTTP POST
         #
         # @param uri [String] Target URI
         def post(uri, data, options = {})
-          payload = data.is_a?(Hash) ? data.to_json : data
-          b = proc { @server[uri].post payload, cookies }
-          process_response(options, &b)
+          profile "POST #{uri}" do
+            payload = data.is_a?(Hash) ? data.to_json : data
+            b = proc { @server[uri].post payload, cookies }
+            process_response(options, &b)
+          end
         end
 
         # Uploads a file to GoodData server
