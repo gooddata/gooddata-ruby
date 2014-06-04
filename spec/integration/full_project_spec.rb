@@ -140,6 +140,8 @@ describe "Full project implementation", :constraint => 'slow' do
 
       # Find a metric by name
       metric = GoodData::Metric.find_first_by_title('My metric')
+      the_same_metric = GoodData::Metric[metric]
+      metric.should == metric
 
       # grab fact in several different ways
       fact1 = GoodData::Fact.find_first_by_title('Lines changed')
