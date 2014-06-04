@@ -348,7 +348,7 @@ module GoodData
         # TODO: Add user here
         domain_name = user.json['user']['content']['domain']
 
-        # Lookup for domain in cache
+        # Lookup for domain in cache'
         domain = domains[domain_name]
 
         # Get domain info from REST, add to cache
@@ -358,7 +358,7 @@ module GoodData
             :users => GoodData::Domain[domain_name].users
           }
 
-          domain[:users_map] = Hash[domain[:users].collect { |u| [u.email, u] }]
+          domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
           domains[domain_name] = domain
         end
 
