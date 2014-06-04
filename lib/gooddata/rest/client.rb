@@ -67,7 +67,7 @@ module GoodData
 
           unless @@instance # rubocop:disable ClassVars
             at_exit {
-              if @@instance.connection
+              if @@instance && @@instance.connection
                 stats = @@instance.connection.stats
                 sorted = stats.sort_by { |k, v| v[:avg] }
                 table = Terminal::Table.new :headings => ['title', 'avg', 'min', 'max', 'total', 'calls'] do |t|
