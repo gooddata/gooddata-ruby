@@ -112,7 +112,7 @@ module GoodData
                  builder = block.call(Model::SchemaBuilder.new(schema_def))
                  builder.to_schema
                else
-                 sch = { :title => schema_def, :columns => columns } if columns
+                 sch = {:title => schema_def, :columns => columns} if columns
                  sch = Model::Schema.new schema_def if schema_def.is_a? Hash
                  sch = schema_def if schema_def.is_a?(Model::Schema)
                  fail(ArgumentError, 'Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
@@ -143,8 +143,21 @@ module GoodData
     # Adds user to project
     #
     # TODO: Discuss with @fluke777 if is not #invite sufficient
-    def add_user(email_address, domain)
-      fail 'Not implemented'
+    def add_user(user, roles)
+      url = "#{uri}/users"
+      payload = {
+        'user' => {
+          'content' => {
+            'status' => 'ENABLED',
+            'userRoles' => roles
+          },
+          'links' => {
+            'self' => user.uri
+          }
+        }
+      }
+      res = GoodData.post url, payload
+      a = 3
     end
 
     # Returns web interface URI of project
@@ -260,8 +273,10 @@ module GoodData
     # @return [GoodData::ProjectRole] Project role if found
     def get_role_by_identifier(role_name)
       tmp = roles
+      role_name = role_name.downcase.gsub(/role$/, '')
       tmp.each do |role|
-        return role if role.identifier.downcase == role_name.downcase
+        tmp_role_name = role.identifier.downcase.gsub(/role$/, '')
+        return role if tmp_role_name == role_name
       end
       nil
     end
@@ -291,7 +306,7 @@ module GoodData
     end
 
     # Exports project users to file
-    def import_users(path, opts = { :header => true }, &block)
+    def import_users(path, opts = {:header => true}, &block)
       opts[:path] = path
 
       new_users = GoodData::Helpers.csv_read(opts) do |row|
@@ -320,6 +335,7 @@ module GoodData
 
       domains = {}
 
+      user_profile = nil
       diff[:added].each do |user|
         # TODO: Add user here
         domain_name = user.json['user']['content']['domain']
@@ -341,13 +357,17 @@ module GoodData
             :verifyPassword => password,
             :email => user.login
           }
-
-          domain.add_user(user_data)
-          # domain_users = domain.users
-          # user_index = domain_users.index { |u| u.email == user.email }
+          user_profile = domain.add_user(user_data)
+        else
+          user_profile = domain_users[user_index]
         end
 
         # TODO: Setup role here
+        role_name = user.json['user']['content']['role'] || 'readOnlyUser'
+        role = get_role_by_identifier(role_name)
+        next if role.nil?
+
+        add_user(user_profile, [role.uri])
       end
 
       diff[:removed].each do |user|

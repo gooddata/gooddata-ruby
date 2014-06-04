@@ -168,6 +168,7 @@ describe GoodData::Project do
               'lastname' => row[1],
 
               # Following lines are ugly hack
+              'role' => row[6],
               'password' => row[3],
               'domain' => row[9]
             },
