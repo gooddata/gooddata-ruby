@@ -112,7 +112,7 @@ module GoodData
                  builder = block.call(Model::SchemaBuilder.new(schema_def))
                  builder.to_schema
                else
-                 sch = {:title => schema_def, :columns => columns} if columns
+                 sch = { :title => schema_def, :columns => columns } if columns
                  sch = Model::Schema.new schema_def if schema_def.is_a? Hash
                  sch = schema_def if schema_def.is_a?(Model::Schema)
                  fail(ArgumentError, 'Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
@@ -156,8 +156,7 @@ module GoodData
           }
         }
       }
-      res = GoodData.post url, payload
-      a = 3
+      GoodData.post url, payload
     end
 
     # Returns web interface URI of project
@@ -306,7 +305,7 @@ module GoodData
     end
 
     # Exports project users to file
-    def import_users(path, opts = {:header => true}, &block)
+    def import_users(path, opts = { :header => true }, &block)
       opts[:path] = path
 
       new_users = GoodData::Helpers.csv_read(opts) do |row|
@@ -357,10 +356,12 @@ module GoodData
             :verifyPassword => password,
             :email => user.login
           }
-          user_profile = domain.add_user(user_data)
-        else
-          user_profile = domain_users[user_index]
+          domain.add_user(user_data)
+          domain_users = domain.users
+          user_index = domain_users.index { |u| u.email == user.email }
         end
+
+        user_profile = domain_users[user_index]
 
         # TODO: Setup role here
         role_name = user.json['user']['content']['role'] || 'readOnlyUser'
