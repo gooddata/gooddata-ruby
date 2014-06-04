@@ -149,7 +149,7 @@ describe GoodData::Project do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      project.export_users(CSV_PATH)
+      project.export_users(CSV_PATH_EXPORT)
     end
   end
 
