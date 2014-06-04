@@ -11,14 +11,13 @@ module GoodData
     root_key :reportDefinition
 
     class << self
-      def [](id, options = {})
-        if id == :all
-          uri = GoodData.project.md['query'] + '/reportdefinition/'
-          result = GoodData.get(uri)
-          result['query']['entries']
-        else
-          super
-        end
+      # Method intended to get all objects of that type in a specified project
+      #
+      # @param options [Hash] the options hash
+      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
+      def all(options = {})
+        query('reportdefinition', ReportDefinition, options)
       end
 
       def create_metrics_part(left, top)
@@ -72,7 +71,7 @@ module GoodData
             when 'attribute'
               GoodData::Attribute.new(x.raw_data).display_forms.first
             when 'attributeDisplayForm'
-              GoodData::DisplayForm.new(x.raw_data)
+              GoodData::Label.new(x.raw_data)
             when 'metric'
               GoodData::Metric.new(x.raw_data)
             end
@@ -91,7 +90,7 @@ module GoodData
             when 'attribute'
               GoodData::Attribute.get_by_id(item[:id]).display_forms.first
             when 'label'
-              GoodData::DisplayForm.get_by_id(item[:id])
+              GoodData::Label.get_by_id(item[:id])
           end
           elsif item.is_a?(Hash) && (item.keys.include?(:identifier))
             case item[:type].to_s
@@ -101,7 +100,7 @@ module GoodData
               result = GoodData::Attribute.get_by_id(item[:identifier])
               result.display_forms.first
             when 'label'
-              GoodData::DisplayForm.get_by_id(item[:identifier])
+              GoodData::Label.get_by_id(item[:identifier])
             end
           else
             item

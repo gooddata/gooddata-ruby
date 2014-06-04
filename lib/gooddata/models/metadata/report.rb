@@ -8,14 +8,13 @@ module GoodData
     root_key :report
 
     class << self
-      def [](id, options = {})
-        if id == :all
-          fail 'You have to specify a project ID' if GoodData.project.nil?
-          uri = GoodData.project.md['query'] + '/reports/'
-          GoodData.get(uri)['query']['entries']
-        else
-          super
-        end
+      # Method intended to get all objects of that type in a specified project
+      #
+      # @param options [Hash] the options hash
+      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
+      def all(options = {})
+        query('reports', Report, options)
       end
 
       def create(options = {})

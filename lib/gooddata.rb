@@ -6,7 +6,6 @@ end
 
 # Modules
 require_relative 'gooddata/bricks/bricks'
-require_relative 'gooddata/cli/cli'
 require_relative 'gooddata/commands/commands'
 require_relative 'gooddata/core/core'
 require_relative 'gooddata/data/data'
@@ -21,3 +20,6 @@ require_relative 'gooddata/connection'
 require_relative 'gooddata/extract'
 require_relative 'gooddata/helpers' # TODO: Merge with 'gooddata/helper folder'
 require_relative 'gooddata/version'
+
+# Extensions
+require_relative 'gooddata/extensions/extensions'
