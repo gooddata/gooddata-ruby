@@ -40,7 +40,9 @@ module GoodData
       # @return [MdObject] if id is a String or number single object is returned
       # @return [Array] if :all was provided as an id, list of objects should be returned. Note that this is implemented only in the subclasses. MdObject does not support this since API has no means to return list of all types of objects
       def [](id, options = {})
-        fail "Cannot search for nil #{self.class}" unless id
+        fail "You have to provide an \"id\" to be searched for." unless id
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
+        return all(options) if id == :all
         uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
               elsif id !~ /\//
@@ -53,8 +55,13 @@ module GoodData
         new(GoodData.get uri) unless uri.nil?
       end
 
+      # Method intended to get all objects of that type in a specified project
+      #
+      # @param options [Hash] the options hash
+      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = {})
-        self[:all, options]
+        fail NotImplementedError, 'Method should be implemented in subclass. Currently there is no way hoe to get all metadata objects on API.'
       end
 
       def find_by_tag(tag)
@@ -94,14 +101,38 @@ module GoodData
         if response['identifiers'].empty?
           nil
         else
-          ids = response['identifiers'].map { |x| x['uri'] }
-          ids.count == 1 ? ids.first : ids
+          identifiers = response['identifiers']
+          ids_lookup = identifiers.reduce({}) do |a, e|
+            a[e['identifier']] = e['uri']
+            a
+          end
+          uris = ids.map { |x| ids_lookup[x] }
+          uris.count == 1 ? uris.first : uris
         end
       end
 
       alias_method :id_to_uri, :identifier_to_uri
 
       alias_method :get_by_id, :[]
+
+      private
+
+      # Method intended to be called by individual classes in their all
+      # implementations. It abstracts the way interacting with query resources.
+      # It either returns the array of hashes from query. If asked it also
+      # goes and brings the full objects. Due to performance reasons
+      # :full => false is the default. This will most likely change
+      #
+      # @param query_obj_type [String] string used in URI to distinguish different query resources for different objects
+      # @param klass [Class] A class used for instantiating the returned data
+      # @param options [Hash] the options hash
+      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
+      def query(query_obj_type, klass, options = {})
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
+        query_result = GoodData.get(GoodData.project.md['query'] + "/#{query_obj_type}/")['query']['entries']
+        options[:full] ? query_result.map { |item| klass[item['link']] } : query_result
+      end
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
@@ -264,18 +295,30 @@ module GoodData
       false
     end
 
-    # TODO: generate fill for other subtypes
+    # Returns true if the object is a fact false otherwise
+    # @return [Boolean]
     def fact?
       false
     end
 
+    # Returns true if the object is an attribute false otherwise
+    # @return [Boolean]
     def attribute?
       false
     end
 
+    # Returns true if the object is a metric false otherwise
+    # @return [Boolean]
     def metric?
       false
     end
+
+    # Returns true if the object is a label false otherwise
+    # @return [Boolean]
+    def label?
+      false
+    end
+    alias_method :display_form?, :label?
 
     private
 

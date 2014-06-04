@@ -12,13 +12,13 @@ module GoodData
     PARSE_MAQL_OBJECT_REGEXP = /\[([^\]]+)\]/
 
     class << self
-      def [](id, options = {})
-        if id == :all
-          metrics = GoodData.get(GoodData.project.md['query'] + '/metrics/')['query']['entries']
-          options[:full] ? metrics.pmap { |m| Metric[m['link']] } : metrics
-        else
-          super
-        end
+      # Method intended to get all objects of that type in a specified project
+      #
+      # @param options [Hash] the options hash
+      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
+      def all(options = {})
+        query('metrics', Metric, options)
       end
 
       def xcreate(options)
@@ -137,7 +137,7 @@ module GoodData
     end
 
     # Checks that the expression contains certain element of an attribute. The value is looked up through given label.
-    # @param [GoodData::DisplayForm] label Label though which the value is looked up
+    # @param [GoodData::Label] label Label though which the value is looked up
     # @param [String] value Value that will be looked up through the label.
     # @return [Boolean]
     def contain_value?(label, value)
@@ -157,7 +157,7 @@ module GoodData
     end
 
     # Method used for replacing attribute element values. Looks up certain value of a label in the MAQL expression and exchanges it for a different value of the same label.
-    # @param [GoodData::DisplayForm] label Label through which the value and for_value are resolved
+    # @param [GoodData::Label] label Label through which the value and for_value are resolved
     # @param [String] value value that is going to be replaced
     # @param [String] for_value value that is going to be the new one
     # @return [GoodData::Metric]

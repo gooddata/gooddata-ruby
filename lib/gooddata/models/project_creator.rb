@@ -11,7 +11,10 @@ module GoodData
       class << self
         def migrate(options = {})
           spec = options[:spec] || fail('You need to provide spec for migration')
-          spec = spec.to_hash
+          bp = ProjectBlueprint.new(spec)
+          spec = bp.to_hash
+
+          fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
 
           token = options[:token]
           project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
