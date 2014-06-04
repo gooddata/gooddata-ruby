@@ -343,7 +343,7 @@ module GoodData
           }
 
           domain.add_user(user_data)
-          domain_users = domain.users
+          # domain_users = domain.users
           # user_index = domain_users.index { |u| u.email == user.email }
         end
 
