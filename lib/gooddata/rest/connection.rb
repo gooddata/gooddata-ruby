@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'terminal-table'
+
 require_relative '../version'
 require_relative '../exceptions/exceptions'
 
@@ -105,6 +107,15 @@ module GoodData
       # @param uri [String] Target URI
       def post(uri, data, options = {})
         fail NotImplementedError "POST #{uri}"
+      end
+
+      def stats_table
+        sorted = stats.sort_by { |k, v| v[:avg] }
+        Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
+          sorted.each do |l|
+            t.add_row [l[0], l[1][:avg], l[1][:min], l[1][:max], l[1][:total], l[1][:calls]]
+          end
+        end
       end
 
       private
