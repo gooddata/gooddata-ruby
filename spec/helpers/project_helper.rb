@@ -7,7 +7,7 @@ require 'multi_json'
 require 'gooddata/models/models'
 
 module ProjectHelper
-  PROJECT_ID = 'arymtbw8l4kipkmvfhjcncr49uoaxnaw'
+  PROJECT_ID = 'y4k4shccnvkvpgeefp2l2vr92mc7g2j4'
   PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
 
   def self.get_default_project
