@@ -144,21 +144,21 @@ describe GoodData::Project do
     end
   end
 
-  describe '#export_users' do
+  describe '#users_export' do
     it 'Exports users to file specified' do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      project.export_users(CSV_PATH_EXPORT)
+      project.users_export(CSV_PATH_EXPORT)
     end
   end
 
-  describe '#import_users' do
+  describe '#users_import' do
     it 'Import users from CSV' do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      project.import_users(CSV_PATH_IMPORT) do |row|
+      project.users_import(CSV_PATH_IMPORT) do |row|
         {
           'user' => {
             'content' => {
