@@ -167,10 +167,13 @@ module GoodData
       ]
 
       def update_stats(title, delta)
+        orig_title = title
+
         placeholders = true
+
         if placeholders
           PH_MAP.each do |pm|
-            title.gsub!(pm[1], pm[0])
+            break if title.gsub!(pm[1], pm[0])
           end
         end
 
@@ -181,7 +184,8 @@ module GoodData
             :max => delta,
             :total => 0,
             :avg => 0,
-            :calls => 0
+            :calls => 0,
+            :entries => []
           }
         end
 
@@ -190,6 +194,8 @@ module GoodData
         stat[:total] += delta
         stat[:calls] += 1
         stat[:avg] = stat[:total] / stat[:calls]
+
+        stat[:entries] << orig_title if placeholders
 
         stats[title] = stat
       end
