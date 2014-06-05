@@ -22,10 +22,16 @@ module GoodData
       end
     end
 
+    # Returns true if the object is a fact false otherwise
+    # @return [Boolean]
     def fact?
       true
     end
 
+    # Creates the basic count metric with the fact used. The metric created is not saved.
+    # @param [Hash] options the options to pass to the value list
+    # @option options [Symbol] :type type of aggregation function. Default is :sum
+    # @return [GoodData::Metric]
     def create_metric(options = {})
       a_type = options[:type] || :sum
       fail "Suggested aggreagtion function (#{a_type}) does not exist for base metric created out of fact. You can use only one of #{FACT_BASE_AGGREGATIONS.map { |x| ":" + x.to_s }.join(',')}" unless FACT_BASE_AGGREGATIONS.include?(a_type)
