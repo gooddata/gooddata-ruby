@@ -6,7 +6,7 @@ describe GoodData::Command::User do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::User instance" do

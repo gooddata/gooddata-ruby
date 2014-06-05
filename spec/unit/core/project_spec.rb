@@ -11,7 +11,7 @@ describe 'GoodData - project' do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#project=' do

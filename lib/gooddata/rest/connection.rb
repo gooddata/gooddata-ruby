@@ -109,11 +109,19 @@ module GoodData
         fail NotImplementedError "POST #{uri}"
       end
 
-      def stats_table
-        sorted = stats.sort_by { |k, v| v[:avg] }
+      def stats_table(values = stats)
+        sorted = values.sort_by { |k, v| v[:avg] }
         Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
           sorted.each do |l|
-            t.add_row [l[0], l[1][:avg], l[1][:min], l[1][:max], l[1][:total], l[1][:calls]]
+            row = [
+              l[0],
+              sprintf('%.3f', l[1][:avg]),
+              sprintf('%.3f', l[1][:min]),
+              sprintf('%.3f', l[1][:max]),
+              sprintf('%.3f', l[1][:total]),
+              l[1][:calls]
+            ]
+            t.add_row row
           end
         end
       end
@@ -138,7 +146,32 @@ module GoodData
         @cookies = { :cookies => {} }
       end
 
+      PH_MAP = [
+        ['/gdc/projects/{id}/roles/{id}', %r{/gdc/projects/[\w]+/roles/[\d]+}],
+        ['/gdc/projects/{id}/model/diff/{id}', %r{/gdc/projects/[\w]+/model/diff/[\w]+}],
+        ['/gdc/projects/{id}/', %r{/gdc/projects/[\w]+/}],
+        ['/gdc/projects/{id}', %r{/gdc/projects/[\w]+}],
+        ['/gdc/md/{id}/using2/{id}/{id}', %r{/gdc/md/[\w]+/using2/[\d]+/[\d]+}],
+        ['/gdc/md/{id}/usedby2/{id}/{id}', %r{/gdc/md/[\w]+/usedby2/[\d]+/[\d]+}],
+        ['/gdc/md/{id}/tasks/{id}/status', %r{/gdc/md/[\w]+/tasks/[\w]+/status}],
+        ['/gdc/md/{id}/obj/{id}', %r{/gdc/md/[\w]+/obj/[\d]+}],
+        ['/gdc/md/{id}/etl/task/{id}', %r{/gdc/md/[\w]+/etl/task/[\d]+}],
+        ['/gdc/md/{id}/dataResult/{id}', %r{/gdc/md/[\w]+/dataResult/[\d]+}],
+        ['/gdc/md/{id}', %r{/gdc/md/[\w]+}],
+        ['/gdc/app/projects/{id}/execute', %r{/gdc/app/projects/[\w]+/execute}],
+        ['/gdc/account/profile/{id}', %r{/gdc/account/profile/[\w]+}],
+        ['/gdc/account/login/{id}', %r{/gdc/account/login/[\w]+}],
+        ['/gdc/account/domains/{id}', %r{/gdc/account/domains/[\w\d-]+}]
+      ] # /gdc/md/{id}/using2/214/214
+
       def update_stats(title, delta)
+        placeholders = true
+        if placeholders
+          PH_MAP.each do |pm|
+            title.gsub!(pm[1], pm[0])
+          end
+        end
+
         stat = stats[title]
         if stat.nil?
           stat = {

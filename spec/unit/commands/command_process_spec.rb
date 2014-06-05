@@ -8,7 +8,7 @@ describe GoodData::Command::Process do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Process instance" do

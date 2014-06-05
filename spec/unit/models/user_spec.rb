@@ -10,6 +10,6 @@ describe GoodData::User do
   end
 
   after(:all) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 end

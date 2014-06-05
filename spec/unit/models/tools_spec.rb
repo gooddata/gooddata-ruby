@@ -20,7 +20,7 @@ describe GoodData::Model do
   end
 
   after(:all) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it 'generate identifiers starting with letters and without ugly characters' do
