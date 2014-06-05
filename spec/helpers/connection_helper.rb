@@ -16,8 +16,9 @@ module ConnectionHelper
   end
 
   def self.disconnect
-    puts GoodData.connection.connection.stats_table
+    conn = GoodData.connection.connection
     GoodData.disconnect
+    puts conn.stats_table
   end
 
   # Creates connection using environment varibles GD_GEM_USER and GD_GEM_PASSWORD

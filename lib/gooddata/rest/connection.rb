@@ -109,11 +109,19 @@ module GoodData
         fail NotImplementedError "POST #{uri}"
       end
 
-      def stats_table
-        sorted = stats.sort_by { |k, v| v[:avg] }
+      def stats_table(values = stats)
+        sorted = values.sort_by { |k, v| v[:avg] }
         Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
           sorted.each do |l|
-            t.add_row [l[0], l[1][:avg], l[1][:min], l[1][:max], l[1][:total], l[1][:calls]]
+            row = [
+              l[0],
+              sprintf('%.3f', l[1][:avg]),
+              sprintf('%.3f', l[1][:min]),
+              sprintf('%.3f', l[1][:max]),
+              sprintf('%.3f', l[1][:total]),
+              l[1][:calls]
+            ]
+            t.add_row row
           end
         end
       end

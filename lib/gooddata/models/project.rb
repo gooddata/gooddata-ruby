@@ -296,8 +296,6 @@ module GoodData
       nil
     end
 
-<<<<<<< HEAD
-=======
     # Exports project users to file
     def import_users(path, opts = { :header => true }, &block)
       opts[:path] = path
@@ -399,7 +397,6 @@ module GoodData
       # end
     end
 
->>>>>>> 8fb2209... Using ConnectionHelper.disconnect
     # Initializes object instance from raw wire JSON
     #
     # @param json Json used for initialization
