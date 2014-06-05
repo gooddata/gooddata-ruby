@@ -405,7 +405,7 @@ module GoodData
         old_user_roles = old_user.roles.map { |r| r.identifier.downcase }.sort
 
         new_user = new_users_map[old_user.email]
-        new_user_roles = new_user.json['user']['content']['role'].split(' ').map{ |r| r.downcase }.sort
+        new_user_roles = new_user.json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
 
         added = new_user_roles - old_user_roles
         removed = old_user_roles - new_user_roles
