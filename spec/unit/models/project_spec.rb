@@ -8,7 +8,7 @@ describe GoodData::Project do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#[]' do

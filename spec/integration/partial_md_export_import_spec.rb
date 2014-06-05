@@ -2,8 +2,9 @@ require 'gooddata'
 
 describe "Spin a project", :constraint => 'slow' do
   before(:all) do
+    ConnectionHelper.create_default_connection
+
     spec = MultiJson.load(File.read("./spec/data/test_project_model_spec.json"), :symbolize_keys => true)
-    ConnectionHelper::create_default_connection
 
     @source_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
     @target_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
@@ -12,6 +13,8 @@ describe "Spin a project", :constraint => 'slow' do
   after(:all) do
     @source_project.delete unless @source_project.nil?
     @target_project.delete unless @target_project.nil?
+
+    ConnectionHelper.disconnect
   end
 
   it "should transfer a metric" do

@@ -8,7 +8,7 @@ describe GoodData::Domain do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#add_user' do

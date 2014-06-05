@@ -16,7 +16,7 @@ describe GoodData::Profile do
   end
 
   after(:all) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#==' do

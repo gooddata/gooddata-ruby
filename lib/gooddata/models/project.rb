@@ -53,7 +53,7 @@ module GoodData
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
           response = GoodData.get PROJECT_PATH % id
-          Project.new(response)
+          GoodData.connection.factory.create(Project, response)
         end
       end
 
@@ -296,6 +296,110 @@ module GoodData
       nil
     end
 
+<<<<<<< HEAD
+=======
+    # Exports project users to file
+    def import_users(path, opts = { :header => true }, &block)
+      opts[:path] = path
+
+      ##########################
+      # Caching/Cached objects
+      ##########################
+      domains = {}
+      current_users = users
+      role_list = roles
+
+      ##########################
+      # Load users from CSV
+      ##########################
+      new_users = GoodData::Helpers.csv_read(opts) do |row|
+        json = {}
+        if block_given?
+          json = yield row
+        else
+          json = {
+            'user' => {
+              'content' => {
+                'email' => row[0],
+                'login' => row[1],
+                'firstname' => row[2],
+                'lastname' => row[3]
+              },
+              'meta' => {}
+            }
+          }
+        end
+
+        GoodData::User.new(json)
+      end
+
+      ##########################
+      # Diff users
+      ##########################
+      diff = GoodData::User.diff_list(current_users, new_users)
+
+      ##########################
+      # Create new users
+      ##########################
+      diff[:added].map do |user|
+        # TODO: Add user here
+        domain_name = user.json['user']['content']['domain']
+
+        # Lookup for domain in cache'
+        domain = domains[domain_name]
+
+        # Get domain info from REST, add to cache
+        if domain.nil?
+          domain = {
+            :domain => GoodData::Domain[domain_name],
+            :users => GoodData::Domain[domain_name].users
+          }
+
+          domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
+          domains[domain_name] = domain
+        end
+
+        # Check if user exists in domain
+        domain_user = domain[:users_map][user.email]
+
+        # Create domain user if needed
+        unless domain_user
+          password = user.json['user']['content']['password']
+
+          # Fill necessary user data
+          user_data = {
+            :login => user.login,
+            :firstName => user.first_name,
+            :lastName => user.last_name,
+            :password => password,
+            :verifyPassword => password,
+            :email => user.login
+          }
+
+          # Add created user to cache
+          domain_user = domain[:domain].add_user(user_data)
+          domain[:users] << domain_user
+          domain[:users_map][user.email] = domain_user
+        end
+
+        # Lookup for role
+        role_name = user.json['user']['content']['role'] || 'readOnlyUser'
+        role = get_role_by_identifier(role_name, role_list)
+        next if role.nil?
+
+        # Assign user project role
+        add_user(domain_user, [role.uri])
+      end
+
+      ##########################
+      # Remove old users
+      ##########################
+      # diff[:removed].map do |user|
+      #   user.disable(self)
+      # end
+    end
+
+>>>>>>> 8fb2209... Using ConnectionHelper.disconnect
     # Initializes object instance from raw wire JSON
     #
     # @param json Json used for initialization
@@ -530,9 +634,9 @@ module GoodData
     def users
       res = []
 
-      tmp = factory.connection.get @json['project']['links']['users']
+      tmp = client.factory.connection.get @json['project']['links']['users']
       tmp.map do |user|
-        factory.create(GoodData::Project, user)
+        client.factory.create(GoodData::Project, user)
       end
 
       res

@@ -15,6 +15,11 @@ module ConnectionHelper
     GoodData::connect(username, password)
   end
 
+  def self.disconnect
+    puts GoodData.connection.connection.stats_table
+    GoodData.disconnect
+  end
+
   # Creates connection using environment varibles GD_GEM_USER and GD_GEM_PASSWORD
   def self.create_private_connection
     username = ENV['GD_GEM_USER'] || DEFAULT_USERNAME

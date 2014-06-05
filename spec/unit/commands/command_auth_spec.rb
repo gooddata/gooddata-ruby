@@ -38,7 +38,7 @@ describe GoodData::Command::Auth do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Auth instance" do
