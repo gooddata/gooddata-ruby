@@ -76,7 +76,7 @@ module GoodData
 
         raw = GoodData.get response['uri']
 
-        # TODO: Remove this hack when /gdc/
+        # TODO: Remove this hack when POST /gdc/account/domains/{domain-name}/users returns full profile
         raw['accountSetting']['links'] = {} unless raw['accountSetting']['links']
         raw['accountSetting']['links']['self'] = response['uri'] unless raw['accountSetting']['links']['self']
 

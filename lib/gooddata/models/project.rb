@@ -141,8 +141,6 @@ module GoodData
     end
 
     # Adds user to project
-    #
-    # TODO: Discuss with @fluke777 if is not #invite sufficient
     def add_user(user, roles)
       url = "#{uri}/users"
       payload = {
@@ -157,6 +155,10 @@ module GoodData
         }
       }
       GoodData.post url, payload
+    end
+
+    # Remove user from project
+    def remove_user(user, roles)
     end
 
     # Returns web interface URI of project
@@ -335,6 +337,7 @@ module GoodData
 
         GoodData::User.new(json)
       end
+      new_users_map = Hash[new_users.map { |u| [u.email, u] }]
 
       ##########################
       # Diff users
@@ -392,6 +395,30 @@ module GoodData
 
         # Assign user project role
         add_user(domain_user, [role.uri])
+      end
+
+      ##########################
+      # Modify existing users
+      ##########################
+      zipped = diff[:changed].map { |d| d[:user] }.zip(diff[:same]).flatten.compact
+      zipped.map do |old_user|
+        old_user_roles = old_user.roles.map { |r| r.identifier.downcase }.sort
+
+        new_user = new_users_map[old_user.email]
+        new_user_roles = new_user.json['user']['content']['role'].split(' ').map{ |r| r.downcase }.sort
+
+        added = new_user_roles - old_user_roles
+        removed = old_user_roles - new_user_roles
+
+        removed.each do |role_name|
+          role = get_role_by_identifier(role_name, role_list)
+          remove_user(old_user, [role.uri])
+        end
+
+        added.each do |role_name|
+          role = get_role_by_identifier(role_name, role_list)
+          add_user(old_user, [role.uri])
+        end
       end
 
       ##########################

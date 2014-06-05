@@ -54,7 +54,8 @@ module GoodData
         res = {
           :added => [],
           :removed => [],
-          :changed => []
+          :changed => [],
+          :same => []
         }
 
         list2.each do |user_new|
@@ -70,6 +71,8 @@ module GoodData
               :user => user_existing,
               :diff => diff
             }
+          else
+            res[:same] << user_existing
           end
         end
 
