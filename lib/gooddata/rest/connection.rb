@@ -154,6 +154,8 @@ module GoodData
         ['/gdc/md/{id}/using2/{id}/{id}', %r{/gdc/md/[\w]+/using2/[\d]+/[\d]+}],
         ['/gdc/md/{id}/usedby2/{id}/{id}', %r{/gdc/md/[\w]+/usedby2/[\d]+/[\d]+}],
         ['/gdc/md/{id}/tasks/{id}/status', %r{/gdc/md/[\w]+/tasks/[\w]+/status}],
+        ['/gdc/md/{id}/obj/{id}/validElements', %r{/gdc/md/[\w]+/obj/[\d]+/validElements(/)?(\?.*)?}],
+        ['/gdc/md/{id}/obj/{id}/elements', %r{/gdc/md/[\w]+/obj/[\d]+/elements(/)?(\?.*)?}],
         ['/gdc/md/{id}/obj/{id}', %r{/gdc/md/[\w]+/obj/[\d]+}],
         ['/gdc/md/{id}/etl/task/{id}', %r{/gdc/md/[\w]+/etl/task/[\d]+}],
         ['/gdc/md/{id}/dataResult/{id}', %r{/gdc/md/[\w]+/dataResult/[\d]+}],
@@ -162,7 +164,7 @@ module GoodData
         ['/gdc/account/profile/{id}', %r{/gdc/account/profile/[\w]+}],
         ['/gdc/account/login/{id}', %r{/gdc/account/login/[\w]+}],
         ['/gdc/account/domains/{id}', %r{/gdc/account/domains/[\w\d-]+}]
-      ] # /gdc/md/{id}/using2/214/214
+      ]
 
       def update_stats(title, delta)
         placeholders = true
