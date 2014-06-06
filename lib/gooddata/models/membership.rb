@@ -280,7 +280,7 @@ module GoodData
 
     # Gets project id
     def project_id
-      @json['user']['links']['roles'].split('/')[2]
+      @json['user']['links']['roles'].split('/')[3]
     end
 
     # Gets project url
