@@ -267,6 +267,11 @@ module GoodData
       GoodData::Profile.new(raw)
     end
 
+    # Gets URL of profile membership
+    def profile_url
+      GoodData.get @json['user']['links']['self']
+    end
+
     # Gets project which this membership relates to
     def project
       raw = GoodData.get project_url
