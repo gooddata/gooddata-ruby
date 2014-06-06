@@ -6,7 +6,7 @@ require_relative 'project'
 require_relative 'project_role'
 
 module GoodData
-  class User
+  class Membership
     attr_reader :json
 
     ASSIGNABLE_MEMBERS = [
@@ -129,7 +129,7 @@ module GoodData
     def author
       url = @json['user']['meta']['author']
       data = GoodData.get url
-      GoodData::User.new(data)
+      GoodData::Membership.new(data)
     end
 
     # Gets the contributor
@@ -138,7 +138,7 @@ module GoodData
     def contributor
       url = @json['user']['meta']['contributor']
       data = GoodData.get url
-      GoodData::User.new(data)
+      GoodData::Membership.new(data)
     end
 
     # Gets date when created

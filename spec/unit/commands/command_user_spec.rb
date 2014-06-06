@@ -9,7 +9,7 @@ describe GoodData::Command::User do
     GoodData.disconnect
   end
 
-  it "Is Possible to create GoodData::Command::User instance" do
+  it "Is Possible to create GoodData::Command::Membership instance" do
     cmd = GoodData::Command::User.new()
     cmd.should be_a(GoodData::Command::User)
   end

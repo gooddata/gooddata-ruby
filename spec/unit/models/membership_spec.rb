@@ -1,15 +1,15 @@
 # encoding: UTF-8
 
 require 'gooddata/models/domain'
-require 'gooddata/models/user'
+require 'gooddata/models/membership'
 require 'gooddata/models/project_role'
 
-describe GoodData::User do
+describe GoodData::Membership do
   before(:all) do
     ConnectionHelper.create_default_connection
 
     @users = [
-      GoodData::User.new(
+      GoodData::Membership.new(
         {
           'user' => {
             'content' => {
@@ -22,7 +22,7 @@ describe GoodData::User do
         }
       ),
 
-      GoodData::User.new(
+      GoodData::Membership.new(
         {
           'user' => {
             'content' => {
@@ -35,7 +35,7 @@ describe GoodData::User do
         }
       ),
 
-      GoodData::User.new(
+      GoodData::Membership.new(
         {
           'user' => {
             'content' => {
@@ -48,7 +48,7 @@ describe GoodData::User do
         }
       ),
 
-      GoodData::User.new(
+      GoodData::Membership.new(
         {
           'user' => {
             'content' => {
@@ -77,7 +77,7 @@ describe GoodData::User do
         @users[0]
       ]
 
-      diff = GoodData::User.diff_list(l1, l2)
+      diff = GoodData::Membership.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(0)
@@ -90,7 +90,7 @@ describe GoodData::User do
         @users[0]
       ]
 
-      diff = GoodData::User.diff_list(l1, l2)
+      diff = GoodData::Membership.diff_list(l1, l2)
       diff[:added].length.should eql(1)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(0)
@@ -102,11 +102,11 @@ describe GoodData::User do
       ]
 
       l2 = [
-        GoodData::User.new(@users[0].json.deep_dup)
+        GoodData::Membership.new(@users[0].json.deep_dup)
       ]
       l2[0].first_name = 'Peter'
 
-      diff = GoodData::User.diff_list(l1, l2)
+      diff = GoodData::Membership.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(1)
       diff[:removed].length.should eql(0)
@@ -119,7 +119,7 @@ describe GoodData::User do
 
       l2 = []
 
-      diff = GoodData::User.diff_list(l1, l2)
+      diff = GoodData::Membership.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(1)

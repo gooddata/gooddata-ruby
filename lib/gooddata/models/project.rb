@@ -552,11 +552,13 @@ module GoodData
 
       tmp = GoodData.get @json['project']['links']['users']
       tmp['users'].map do |user|
-        res << GoodData::User.new(user)
+        res << GoodData::Membership.new(user)
       end
 
       res
     end
+
+    alias_method :members, :users
 
     def users_create(list, role_list = roles)
       domains = {}
@@ -652,12 +654,12 @@ module GoodData
           json = user_csv_import(row)
         end
 
-        GoodData::User.new(json)
+        GoodData::Membership.new(json)
       end
       new_users_map = Hash[new_users.map { |u| [u.email, u] }]
 
       # Diff users
-      diff = GoodData::User.diff_list(users, new_users)
+      diff = GoodData::Membership.diff_list(users, new_users)
 
       # Create new users
       role_list = roles

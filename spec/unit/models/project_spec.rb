@@ -113,7 +113,7 @@ describe GoodData::Project do
       expect(users).to be_instance_of(Array)
 
       users.each do |user|
-        expect(user).to be_instance_of(GoodData::User)
+        expect(user).to be_instance_of(GoodData::Membership)
 
         roles = user.roles
         roles.should_not be_nil
