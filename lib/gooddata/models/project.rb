@@ -333,7 +333,7 @@ module GoodData
       if role.index('/gdc/') != 0
         tmp = get_role_by_identifier(role)
         tmp = get_role_by_title(role) if tmp.nil?
-        role_url = tmp['url'] if tmp
+        role_url = tmp.uri if tmp
       else
         role_url = role if role_url.nil?
       end
