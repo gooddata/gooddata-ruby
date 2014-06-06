@@ -261,6 +261,28 @@ module GoodData
       @json['user']['content']['phonenumber'] = new_phone_number
     end
 
+    # Gets profile of this membership
+    def profile
+      raw = GoodData.get @json['user']['links']['self']
+      GoodData::Profile.new(raw)
+    end
+
+    # Gets project which this membership relates to
+    def project
+      raw = GoodData.get project_url
+      GoodData::Project.new(raw)
+    end
+
+    # Gets project id
+    def project_id
+      @json['user']['links']['roles'].split('/')[2]
+    end
+
+    # Gets project url
+    def project_url
+      @json['user']['links']['roles'].split('/')[0..3].join('/')
+    end
+
     # Gets the projects of user
     #
     # @return [Array<GoodData::Project>] Array of projets
@@ -334,14 +356,27 @@ module GoodData
       @json['user']['links']['self']
     end
 
-    # Disables an user in the provided project
+    # Enables membership
     #
     # @return result from post execution
-    def disable(project)
+    def enable
+      set_state('enabled')
+    end
+
+    # Disables membership
+    #
+    # @return result from post execution
+    def disable
+      set_state('disabled')
+    end
+
+    private
+
+    def set_state(state)
       payload = {
         'user' => {
           'content' => {
-            'status' => 'DISABLED',
+            'status' => state.to_s.upcase,
             'userRoles' => @json['user']['content']['userRoles']
           },
           'links' => {
@@ -350,7 +385,8 @@ module GoodData
         }
       }
 
-      @json = GoodData.post("/gdc/projects/#{project.obj_id}/users", payload)
+      @json = GoodData.post("/gdc/projects/#{project_id}/users", payload)
     end
+
   end
 end
