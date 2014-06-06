@@ -3,9 +3,6 @@
 require 'gooddata'
 
 describe GoodData::Project do
-  CSV_PATH_EXPORT = 'users-out.txt'
-  CSV_PATH_IMPORT = File.join(File.dirname(__FILE__), '..', '..', 'data', 'users.csv')
-
   before(:each) do
     ConnectionHelper::create_default_connection
   end
@@ -149,7 +146,7 @@ describe GoodData::Project do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      project.users_export(CSV_PATH_EXPORT)
+      project.users_export(CsvHelper::CSV_PATH_EXPORT)
     end
   end
 
@@ -158,7 +155,7 @@ describe GoodData::Project do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      project.users_import(CSV_PATH_IMPORT) do |row|
+      project.users_import(CsvHelper::CSV_PATH_IMPORT) do |row|
         {
           'user' => {
             'content' => {

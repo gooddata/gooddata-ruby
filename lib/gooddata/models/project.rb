@@ -625,7 +625,7 @@ module GoodData
     # @param path Path to file to export data to
     def users_export(path)
       header = %w(email login first_name last_name status)
-      GoodData::Helpers.csv_write(:path => path, :header => header, :data => users) do |user|
+      GoodData::Helpers::Csv.write(:path => path, :header => header, :data => users) do |user|
         [user.email, user.login, user.first_name, user.last_name, user.status]
       end
     end
@@ -646,7 +646,7 @@ module GoodData
       opts[:path] = path
 
       # Load users from CSV
-      new_users = GoodData::Helpers.csv_read(opts) do |row|
+      new_users = GoodData::Helpers::Csv.read(opts) do |row|
         json = {}
         if block_given?
           json = yield row
