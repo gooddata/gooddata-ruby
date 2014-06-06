@@ -693,7 +693,7 @@ module GoodData
     # @param list List of users to be disabled
     def users_remove(list)
       list.map do |user|
-        user.disable(self)
+        user.disable
       end
     end
 

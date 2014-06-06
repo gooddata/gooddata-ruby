@@ -67,6 +67,18 @@ describe GoodData::Membership do
     GoodData.disconnect
   end
 
+  describe 'ah' do
+    it 'surprises!' do
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      members = project.members
+      members.each do |member|
+        profile = member.profile
+        project = member.project
+        puts "#{profile.email} => #{project.title}"
+      end
+    end
+  end
+
   describe '#diff_list' do
     it 'Returns empty diff for same arrays' do
       l1 = [
