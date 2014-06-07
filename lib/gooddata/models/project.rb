@@ -383,6 +383,29 @@ module GoodData
       @md ||= Links.new GoodData.get(data['links']['metadata'])
     end
 
+    # Gets membership for profile specified
+    #
+    # @param [GoodData::Profile] profile - Profile to be checked
+    # @param [Array<GoodData::Membership>] list Optional list of members to check against
+    # @return [GoodData::Membership] Membership if found
+    def member(profile, list = members)
+      if profile.is_a? String
+        return list.find do |m|
+          m.profile_url == profile || m.email == profile
+        end
+      end
+      list.find { |m| m.email == profile.email }
+    end
+
+    # Checks if the profile is member of project
+    #
+    # @param [GoodData::Profile] profile - Profile to be checked
+    # @param [Array<GoodData::Membership>] list Optional list of members to check against
+    # @return [Boolean] true if is member else false
+    def member?(profile, list = members)
+      !member(profile, list).nil?
+    end
+
     # Gets raw resource ID
     #
     # @return [String] Raw resource ID

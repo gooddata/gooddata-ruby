@@ -269,7 +269,7 @@ module GoodData
 
     # Gets URL of profile membership
     def profile_url
-      GoodData.get @json['user']['links']['self']
+      @json['user']['links']['self']
     end
 
     # Gets project which this membership relates to
@@ -302,6 +302,11 @@ module GoodData
       end
 
       res
+    end
+
+    # Gets first role
+    def role
+      roles.first
     end
 
     # Gets the project roles of user
@@ -365,23 +370,24 @@ module GoodData
     #
     # @return result from post execution
     def enable
-      set_state('enabled')
+      self.status = 'enabled'
     end
 
     # Disables membership
     #
     # @return result from post execution
     def disable
-      set_state('disabled')
+      self.status = 'disabled'
     end
 
     private
 
-    def set_state(state)
+    # Sets status to 'ENABLED' or 'DISABLED'
+    def status=(new_status)
       payload = {
         'user' => {
           'content' => {
-            'status' => state.to_s.upcase,
+            'status' => new_status.to_s.upcase,
             'userRoles' => @json['user']['content']['userRoles']
           },
           'links' => {
@@ -392,6 +398,5 @@ module GoodData
 
       @json = GoodData.post("/gdc/projects/#{project_id}/users", payload)
     end
-
   end
 end
