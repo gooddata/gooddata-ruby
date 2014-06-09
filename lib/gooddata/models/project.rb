@@ -645,22 +645,7 @@ module GoodData
     #
     # @param path CSV file to be loaded
     # @param opts Optional additional options
-    def users_import(path, opts = { :header => true }, &block)
-      opts[:path] = path
-
-      # Load users from CSV
-      new_users = GoodData::Helpers::Csv.read(opts) do |row|
-        json = {}
-        if block_given?
-          json = yield row
-        else
-          json = user_csv_import(row)
-        end
-
-        GoodData::Membership.new(json)
-      end
-      new_users_map = Hash[new_users.map { |u| [u.email, u] }]
-
+    def users_import(new_users)
       # Diff users
       diff = GoodData::Membership.diff_list(users, new_users)
 
@@ -679,6 +664,8 @@ module GoodData
       # Join list of changed users with 'same' users
       list = list.zip(diff[:same]).flatten.compact
 
+      new_users_map = Hash[new_users.map { |u| [u.email, u] }]
+
       # Create list with user, desired_roles hashes
       list = list.map do |user|
         {
@@ -692,6 +679,26 @@ module GoodData
 
       # Remove old users
       users_remove(diff[:removed])
+    end
+
+    # Syncs users from CSV
+    #
+    def users_sync(path, opts = {:header => true}, &block)
+      opts[:path] = path
+
+      # Load users from CSV
+      new_users = GoodData::Helpers::Csv.read(opts) do |row|
+        json = {}
+        if block_given?
+          json = yield row
+        else
+          json = user_csv_import(row)
+        end
+
+        GoodData::Membership.new(json)
+      end
+
+      users_import(new_users)
     end
 
     # Disable users

@@ -223,7 +223,7 @@ describe GoodData::Project do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      project.users_import(CsvHelper::CSV_PATH_IMPORT) do |row|
+      project.users_sync(CsvHelper::CSV_PATH_IMPORT) do |row|
         {
           'user' => {
             'content' => {
