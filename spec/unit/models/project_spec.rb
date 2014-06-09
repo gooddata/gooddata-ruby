@@ -209,22 +209,13 @@ describe GoodData::Project do
     end
   end
 
-  describe '#users_export' do
-    it 'Exports users to file specified' do
-
-      project = GoodData::Project[ProjectHelper::PROJECT_ID]
-
-      project.users_export(CsvHelper::CSV_PATH_EXPORT)
-    end
-  end
-
-  describe '#users_import' do
+  describe '#users_sync' do
     it 'Import users from CSV' do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      project.users_sync(CsvHelper::CSV_PATH_IMPORT) do |row|
-        {
+      new_users = GoodData::Helpers::Csv.read(:path => CsvHelper::CSV_PATH_IMPORT, :header => true) do |row|
+        json = {
           'user' => {
             'content' => {
               'email' => row[2],
@@ -240,8 +231,11 @@ describe GoodData::Project do
             'meta' => {}
           }
         }
+
+        GoodData::Membership.new(json)
       end
 
+      project.users_import(new_users)
     end
   end
 end

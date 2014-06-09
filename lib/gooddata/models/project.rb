@@ -616,23 +616,6 @@ module GoodData
       end
     end
 
-    # Exports project users to file
-    #
-    # # Features
-    # - Export basic user info - email, login, first_name, last_name
-    # - Export role settings
-    #
-    # # CSV Format
-    # TODO: Describe CSV format here
-    #
-    # @param path Path to file to export data to
-    def users_export(path)
-      header = %w(email login first_name last_name status)
-      GoodData::Helpers::Csv.write(:path => path, :header => header, :data => users) do |user|
-        [user.email, user.login, user.first_name, user.last_name, user.status]
-      end
-    end
-
     # Imports users from CSV
     #
     # # Features
@@ -679,26 +662,6 @@ module GoodData
 
       # Remove old users
       users_remove(diff[:removed])
-    end
-
-    # Syncs users from CSV
-    #
-    def users_sync(path, opts = { :header => true }, &block)
-      opts[:path] = path
-
-      # Load users from CSV
-      new_users = GoodData::Helpers::Csv.read(opts) do |row|
-        json = {}
-        if block_given?
-          json = yield row
-        else
-          json = user_csv_import(row)
-        end
-
-        GoodData::Membership.new(json)
-      end
-
-      users_import(new_users)
     end
 
     # Disable users
