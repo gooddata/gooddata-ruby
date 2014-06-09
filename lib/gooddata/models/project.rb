@@ -606,26 +606,6 @@ module GoodData
         # Check if user exists in domain
         domain_user = domain[:users_map][user.email]
 
-        # Create domain user if needed
-        unless domain_user
-          password = user.json['user']['content']['password']
-
-          # Fill necessary user data
-          user_data = {
-            :login => user.login,
-            :firstName => user.first_name,
-            :lastName => user.last_name,
-            :password => password,
-            :verifyPassword => password,
-            :email => user.login
-          }
-
-          # Add created user to cache
-          domain_user = domain[:domain].add_user(user_data)
-          domain[:users] << domain_user
-          domain[:users_map][user.email] = domain_user
-        end
-
         # Lookup for role
         role_name = user.json['user']['content']['role'] || 'readOnlyUser'
         role = get_role_by_identifier(role_name, role_list)
@@ -683,6 +663,9 @@ module GoodData
 
       # Diff users
       diff = GoodData::Membership.diff_list(users, new_users)
+
+      # Create domain users
+      GoodData::Domain.users_create(diff[:added])
 
       # Create new users
       role_list = roles

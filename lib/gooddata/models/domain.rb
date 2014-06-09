@@ -113,6 +113,55 @@ module GoodData
 
         result
       end
+
+      # Create users specified in list
+      def users_create(list, default_domain_name = nil)
+        res = []
+        domains = {}
+        list.map do |user|
+          # TODO: Add user here
+          domain_name = user.json['user']['content']['domain'] || default_domain_name
+
+          # Lookup for domain in cache'
+          domain = domains[domain_name]
+
+          # Get domain info from REST, add to cache
+          if domain.nil?
+            domain = {
+              :domain => GoodData::Domain[domain_name],
+              :users => GoodData::Domain[domain_name].users
+            }
+
+            domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
+            domains[domain_name] = domain
+          end
+
+          # Check if user exists in domain
+          domain_user = domain[:users_map][user.email]
+
+          # Create domain user if needed
+          unless domain_user
+            password = user.json['user']['content']['password']
+
+            # Fill necessary user data
+            user_data = {
+              :login => user.login,
+              :firstName => user.first_name,
+              :lastName => user.last_name,
+              :password => password,
+              :verifyPassword => password,
+              :email => user.login
+            }
+
+            # Add created user to cache
+            domain_user = domain[:domain].add_user(user_data)
+            domain[:users] << domain_user
+            domain[:users_map][user.email] = domain_user
+            res << domain_user
+          end
+        end
+        res
+      end
     end
 
     def initialize(domain_name)
@@ -159,6 +208,10 @@ module GoodData
     #
     def users(opts = USERS_OPTIONS)
       GoodData::Domain.users(name, opts)
+    end
+
+    def users_create(list)
+      GoodData::Domain.users_create(name, list)
     end
 
     private
