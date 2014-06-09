@@ -54,7 +54,7 @@ GoodData::CLI.module_eval do
     c.command :create do |create|
       create.action do |global_options, options, args|
         opts = options.merge(global_options)
-        
+
         title = args[0] || ask('Project name')
         summary = args[1] || ask('Project summary') { |q| q.default = '' }
         template = args[2] || ask('Project template')
