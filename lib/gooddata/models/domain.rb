@@ -115,6 +115,9 @@ module GoodData
       end
 
       # Create users specified in list
+      # @param [Array<GoodData::Membership>] list List of users
+      # @param [String] default_domain_name Default domain name used when no specified in user
+      # @return [Array<GoodData::User>] List of users created
       def users_create(list, default_domain_name = nil)
         res = []
         domains = {}
