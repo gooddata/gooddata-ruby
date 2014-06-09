@@ -683,7 +683,7 @@ module GoodData
 
     # Syncs users from CSV
     #
-    def users_sync(path, opts = {:header => true}, &block)
+    def users_sync(path, opts = { :header => true }, &block)
       opts[:path] = path
 
       # Load users from CSV
