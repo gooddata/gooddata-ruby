@@ -53,10 +53,12 @@ GoodData::CLI.module_eval do
     c.desc 'Create a gooddata project'
     c.command :create do |create|
       create.action do |global_options, options, args|
-        title = ask 'Project name'
-        summary = ask('Project summary') { |q| q.default = '' }
-        template = ask('Project template')
-        token = ask('token')
+        opts = options.merge(global_options)
+
+        title = args[0] || ask('Project name')
+        summary = args[1] || ask('Project summary') { |q| q.default = '' }
+        template = args[2] || ask('Project template')
+        token = opts[:token] || ask('token')
 
         opts = options.merge(global_options)
         GoodData.connect(opts)
