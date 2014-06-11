@@ -73,6 +73,74 @@ describe GoodData::Project do
     end
   end
 
+  describe "#member" do
+    it 'Returns GoodData::Membership when looking for existing user using email' do
+      project = ProjectHelper.get_default_project
+      res = project.member('svarovsky+gem_tester@gooddata.com')
+      expect(res).to be_instance_of(GoodData::Membership)
+    end
+
+    it 'Returns GoodData::Membership when looking for existing user using URL' do
+      project = ProjectHelper.get_default_project
+      res = project.member(ConnectionHelper::DEFAULT_USER_URL)
+      expect(res).to be_instance_of(GoodData::Membership)
+    end
+
+    it 'Returns GoodData::Membership when looking for existing user using GoodData::Profile' do
+      project = ProjectHelper.get_default_project
+      user = project.members.first
+      res = project.member(user)
+      expect(res).to be_instance_of(GoodData::Membership)
+    end
+
+    it 'Returns null for non-existing user' do
+      project = ProjectHelper.get_default_project
+      res = project.member('jan.kokotko@gooddata.com')
+      res.should be_nil
+    end
+  end
+
+  describe "#member?" do
+    it 'Returns true when looking for existing user using email' do
+      project = ProjectHelper.get_default_project
+      res = project.member?('svarovsky+gem_tester@gooddata.com')
+      res.should be_true
+    end
+
+    it 'Returns true when looking for existing user using URL' do
+      project = ProjectHelper.get_default_project
+      res = project.member?(ConnectionHelper::DEFAULT_USER_URL)
+      res.should be_true
+    end
+
+    it 'Returns true when looking for existing user using GoodData::Profile' do
+      project = ProjectHelper.get_default_project
+      user = project.members.first
+      res = project.member?(user)
+      res.should be_true
+    end
+
+    it 'Returns false for non-existing user' do
+      project = ProjectHelper.get_default_project
+      res = project.member?('jan.kokotko@gooddata.com')
+      res.should be_false
+    end
+
+    it 'Returns true for existing user when using optional list' do
+      project = ProjectHelper.get_default_project
+      list = project.members
+      res = project.member?('svarovsky+gem_tester@gooddata.com', list)
+      res.should be_true
+    end
+
+    it 'Returns false for non-existing user when using optional list' do
+      project = ProjectHelper.get_default_project
+      list = []
+      res = project.member?('svarovsky+gem_tester@gooddata.com', list)
+      res.should be_false
+    end
+  end
+
   describe '#processes' do
     it 'Returns the processes' do
       pending 'Investigate which credentials to use'
@@ -110,7 +178,7 @@ describe GoodData::Project do
       expect(users).to be_instance_of(Array)
 
       users.each do |user|
-        expect(user).to be_instance_of(GoodData::User)
+        expect(user).to be_instance_of(GoodData::Membership)
 
         roles = user.roles
         roles.should_not be_nil
@@ -138,6 +206,36 @@ describe GoodData::Project do
           end
         end
       end
+    end
+  end
+
+  describe '#users_sync' do
+    it 'Import users from CSV' do
+
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+
+      new_users = GoodData::Helpers::Csv.read(:path => CsvHelper::CSV_PATH_IMPORT, :header => true) do |row|
+        json = {
+          'user' => {
+            'content' => {
+              'email' => row[2],
+              'login' => row[2],
+              'firstname' => row[0],
+              'lastname' => row[1],
+
+              # Following lines are ugly hack
+              'role' => row[6],
+              'password' => row[3],
+              'domain' => row[9]
+            },
+            'meta' => {}
+          }
+        }
+
+        GoodData::Membership.new(json)
+      end
+
+      project.users_import(new_users)
     end
   end
 end
