@@ -9,6 +9,7 @@ The best documentation for the GoodData API can be found using these resources:
  * http://docs.gooddata.apiary.io/
  * http://developer.gooddata.com/api
  * https://secure.gooddata.com/gdc
+ * http://rubydoc.info/gems/gooddata/frames
 
 ## Status
 
