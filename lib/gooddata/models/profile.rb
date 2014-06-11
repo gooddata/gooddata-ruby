@@ -91,6 +91,43 @@ module GoodData
         end
         res
       end
+
+      def diff_list(list1, list2)
+        tmp = Hash[list1.map { |v| [v.email, v] }]
+
+        res = {
+          :added => [],
+          :removed => [],
+          :changed => []
+        }
+
+        list2.each do |user_new|
+          user_existing = tmp[user_new.email]
+          if user_existing.nil?
+            res[:added] << user_new
+            next
+          end
+
+          if user_existing != user_new
+            diff = self.diff(user_existing, user_new)
+            res[:changed] << {
+              :user => user_existing,
+              :diff => diff
+            }
+          end
+        end
+
+        tmp = Hash[list2.map { |v| [v.email, v] }]
+        list1.each do |user_existing|
+          user_new = tmp[user_existing.email]
+          if user_new.nil?
+            res[:removed] << user_existing
+            next
+          end
+        end
+
+        res
+      end
     end
 
     # Creates new instance

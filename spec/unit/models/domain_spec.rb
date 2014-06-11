@@ -42,4 +42,35 @@ describe GoodData::Domain do
       end
     end
   end
+
+  describe '#users_create' do
+    it 'Creates new users from list' do
+      list = []
+      (0...10).each do |i|
+        num = rand(1e6)
+        login = "gemtest#{num}@gooddata.com"
+
+        json = {
+          'user' => {
+            'content' => {
+              'email' => login,
+              'login' => login,
+              'firstname' => 'the',
+              'lastname' => num.to_s,
+
+              # Following lines are ugly hack
+              'role' => 'admin',
+              'password' => 'password',
+              'domain' => ConnectionHelper::DEFAULT_DOMAIN
+            },
+            'meta' => {}
+          }
+        }
+        user = GoodData::Membership.new(json)
+        list << user
+      end
+
+      GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
+    end
+  end
 end

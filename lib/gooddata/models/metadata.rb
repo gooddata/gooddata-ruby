@@ -43,6 +43,7 @@ module GoodData
         fail "You have to provide an \"id\" to be searched for." unless id
         fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
         return all(options) if id == :all
+        return id if id.is_a?(MdObject)
         uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
               elsif id !~ /\//
@@ -284,7 +285,7 @@ module GoodData
     end
 
     def ==(other)
-      other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
+      other.respond_to?(:uri) && other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
     end
 
     def validate

@@ -7,7 +7,11 @@ module GoodData
 
       def self.from_json(spec)
         if spec.is_a?(String)
-          ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+          if File.file?(spec)
+            ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+          else
+            ProjectBlueprint.new(MultiJson.load(spec, :symbolize_keys => true))
+          end
         else
           ProjectBlueprint.new(spec)
         end
@@ -21,7 +25,8 @@ module GoodData
       end
 
       def datasets
-        data[:datasets].map { |d| DatasetBlueprint.new(d) }
+        sets = data[:datasets] || []
+        sets.map { |d| DatasetBlueprint.new(d) }
       end
 
       def add_dataset(a_dataset, index = nil)
@@ -67,6 +72,8 @@ module GoodData
       def initialize(init_data)
         some_data = if init_data.respond_to?(:project_blueprint?) && init_data.project_blueprint?
                       init_data.to_hash
+                    elsif init_data.respond_to?(:to_blueprint)
+                      init_data.to_blueprint.to_hash
                     else
                       init_data
                     end
