@@ -25,7 +25,8 @@ module GoodData
       end
 
       def datasets
-        data[:datasets].map { |d| DatasetBlueprint.new(d) }
+        sets = data[:datasets] || []
+        sets.map { |d| DatasetBlueprint.new(d) }
       end
 
       def add_dataset(a_dataset, index = nil)
@@ -71,6 +72,8 @@ module GoodData
       def initialize(init_data)
         some_data = if init_data.respond_to?(:project_blueprint?) && init_data.project_blueprint?
                       init_data.to_hash
+                    elsif init_data.respond_to?(:to_blueprint)
+                      init_data.to_blueprint.to_hash
                     else
                       init_data
                     end
