@@ -9,6 +9,49 @@ describe GoodData::Profile do
   before(:all) do
     ConnectionHelper.create_default_connection
     @user = GoodData::Domain.find_user_by_login(ConnectionHelper::DEFAULT_DOMAIN, ConnectionHelper::DEFAULT_USERNAME)
+
+    @users = [
+      GoodData::Profile.new(
+        {
+          'accountSetting' => {
+            'email' => 'petr.cvengros@gooddata.com',
+            'firstName' => 'Petr',
+            'lastName' => 'Cvengros'
+          }
+        }
+      ),
+
+      GoodData::Profile.new(
+        {
+          'accountSetting' => {
+            'email' => 'tomas.korcak@gooddata.com',
+            'firstName' => 'Tomas',
+            'lastName' => 'Korcak'
+          }
+        }
+      ),
+
+      GoodData::Profile.new(
+        {
+          'accountSetting' => {
+            'email' => 'patrick.mcconlogue@gooddata.com',
+            'firstName' => 'Patrick',
+            'lastName' => 'McConlogue'
+
+          }
+        }
+      ),
+
+      GoodData::Profile.new(
+        {
+          'accountSetting' => {
+            'email' => 'tomas.svarovsky@gooddata.com',
+            'firstName' => 'Tomas',
+            'lastName' => 'Svarovsky'
+          }
+        }
+      ),
+    ]
   end
 
   after(:all) do
@@ -94,6 +137,65 @@ describe GoodData::Profile do
       res = user1.diff(user2)
       expect(res).to be_instance_of(Hash)
       res.length.should_not eql(0)
+    end
+  end
+
+  describe '#diff_list' do
+    it 'Returns empty diff for same arrays' do
+      l1 = [
+        @users[0]
+      ]
+
+      l2 = [
+        @users[0]
+      ]
+
+      diff = GoodData::Profile.diff_list(l1, l2)
+      diff[:added].length.should eql(0)
+      diff[:changed].length.should eql(0)
+      diff[:removed].length.should eql(0)
+    end
+
+    it 'Recognizes added element' do
+      l1 = []
+
+      l2 = [
+        @users[0]
+      ]
+
+      diff = GoodData::Profile.diff_list(l1, l2)
+      diff[:added].length.should eql(1)
+      diff[:changed].length.should eql(0)
+      diff[:removed].length.should eql(0)
+    end
+
+    it 'Recognizes changed element' do
+      l1 = [
+        @users[0]
+      ]
+
+      l2 = [
+        GoodData::Profile.new(@users[0].json.deep_dup)
+      ]
+      l2[0].first_name = 'Peter'
+
+      diff = GoodData::Profile.diff_list(l1, l2)
+      diff[:added].length.should eql(0)
+      diff[:changed].length.should eql(1)
+      diff[:removed].length.should eql(0)
+    end
+
+    it 'Recognizes removed element' do
+      l1 = [
+        @users[0]
+      ]
+
+      l2 = []
+
+      diff = GoodData::Profile.diff_list(l1, l2)
+      diff[:added].length.should eql(0)
+      diff[:changed].length.should eql(0)
+      diff[:removed].length.should eql(1)
     end
   end
 

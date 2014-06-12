@@ -34,7 +34,7 @@ describe GoodData::Model::ProjectBlueprint do
         d.add_attribute("name")
       end
     end
-    bp = GoodData::Model::ProjectBlueprint.from_json(builder.to_hash)
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
     bp.valid?.should == false
     errors = bp.validate
     errors.first.should == {:anchor => 2}
@@ -59,6 +59,19 @@ describe GoodData::Model::ProjectBlueprint do
   it 'references return empty array if there is no reference' do
     refs = @blueprint.find_dataset('devs').references
     expect(refs).to be_empty
+  end
+
+  it "should be possible to create from ProjectBlueprint from ProjectBuilder in several ways" do
+    builder = GoodData::Model::SchemaBuilder.new("stuff") do |d|
+      d.add_attribute("id", :title => "My Id")
+      d.add_fact("amount", :title => "Amount")
+    end
+
+    bp1 = GoodData::Model::ProjectBlueprint.new(builder)
+    bp1.valid?.should == true
+
+    bp2 = builder.to_blueprint
+    bp2.valid?.should == true
   end
 
   it 'should be able to get dataset by name' do
@@ -121,7 +134,7 @@ describe GoodData::Model::ProjectBlueprint do
         d.add_label("name", :reference => "invalid_ref")
       end
     end
-    bp = GoodData::Model::ProjectBlueprint.from_json(builder.to_hash)
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
     bp.valid?.should == false
     errors = bp.validate
     errors.count.should == 1
