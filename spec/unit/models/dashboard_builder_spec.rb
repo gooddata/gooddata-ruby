@@ -3,6 +3,9 @@
 require 'gooddata'
 
 describe GoodData::Model::DashboardBuilder do
+  DASHBOARD_TITLE = 'Test Dashboard'
+  TAB_TITLE = 'Test Title'
+
   before(:each) do
     ConnectionHelper::create_default_connection
   end
@@ -11,10 +14,41 @@ describe GoodData::Model::DashboardBuilder do
     GoodData.disconnect
   end
 
+  # Creates new dashboard
+  def dashboard_create(title = DASHBOARD_TITLE)
+    GoodData::Model::DashboardBuilder.new(title)
+  end
+
+  def dashboard_add_tab(dashboard)
+    dashboard.add_tab TAB_TITLE do |tb|
+    end
+  end
+
+  describe '#add_tab' do
+    it 'Adds new tab and marks dirty' do
+      db = dashboard_create
+      dashboard_add_tab(db)
+
+      db.dirty.should be_true
+    end
+  end
+
   describe '#initialize' do
     it 'Works' do
-      db = GoodData::Model::DashboardBuilder.new("test_title")
+      db = dashboard_create
       db.should_not be_nil
+    end
+  end
+
+  describe '#save!' do
+    it 'Saves object if dirty' do
+      db = dashboard_create
+      dashboard_add_tab(db)
+
+      db.dirty.should be_true
+
+      db.save!
+      db.dirty.should be_false
     end
   end
 end

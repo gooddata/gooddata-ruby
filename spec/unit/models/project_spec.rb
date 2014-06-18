@@ -3,6 +3,9 @@
 require 'gooddata'
 
 describe GoodData::Project do
+  DEFAULT_DASHBOARD_TITLE = 'Default dashboard'
+  DEFAULT_REPORT_TITLE = 'Lines Changed [sum] Report'
+
   before(:each) do
     ConnectionHelper::create_default_connection
   end
@@ -43,6 +46,25 @@ describe GoodData::Project do
       pending 'Investigate which credentials use'
 
       GoodData::Project.all
+    end
+  end
+
+  describe '#dashboard' do
+    it 'Get dashboard by title' do
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      dashboard = project.dashboard(DEFAULT_DASHBOARD_TITLE)
+      expect(dashboard).to_not be_nil
+      expect(dashboard).to be_an_instance_of(GoodData::Dashboard)
+    end
+  end
+
+  describe '#dashboards' do
+    it 'Returns all dashboards' do
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      dashboards = project.dashboards
+      dashboards.each do |dashboard|
+        expect(dashboard).to be_an_instance_of(GoodData::Dashboard)
+      end
     end
   end
 
@@ -149,6 +171,26 @@ describe GoodData::Project do
 
       proj = GoodData.project
       procs = proj.processes
+    end
+  end
+
+  describe '#report' do
+    it 'Returns report by name' do
+      project = ProjectHelper.get_default_project
+      report = project.report(DEFAULT_REPORT_TITLE)
+      expect(report).to be_instance_of(GoodData::Report)
+    end
+  end
+
+  describe '#reports' do
+    it 'Returns array of GoodData::Report' do
+      project = ProjectHelper.get_default_project
+      reports = project.reports
+      expect(reports).to be_instance_of(Array)
+
+      reports.each do |report|
+        expect(report).to be_instance_of(GoodData::Report)
+      end
     end
   end
 
