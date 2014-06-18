@@ -8,6 +8,10 @@ module GoodData
     root_key :report
 
     class << self
+      def resource_name
+        'report'
+      end
+
       # Method intended to get all objects of that type in a specified project
       #
       # @param options [Hash] the options hash
@@ -45,6 +49,14 @@ module GoodData
 
     def results
       content['results']
+    end
+
+    # Gets definition by url, by default returns latest definition
+    #
+    # @return [GoodData::MdObject] Definition
+    def definition(definition_url = latest_report_definition_uri)
+      project_url = uri.split('/')[0...-2].join('/')
+      GoodData::MdObject[definition_url, {:project => GoodData::Project[project_url], :class => GoodData::ReportDefinition}]
     end
 
     def definitions

@@ -12,6 +12,10 @@ module GoodData
     root_key :projectDashboard
 
     class << self
+      def resource_name
+        'projectDashboard'
+      end
+
       # Method intended to get all objects of that type in a specified project
       #
       # @param options [Hash] the options hash
