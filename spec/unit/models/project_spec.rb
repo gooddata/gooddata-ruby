@@ -13,11 +13,9 @@ describe GoodData::Project do
 
   describe '#[]' do
     it 'Accepts :all parameter' do
-      pending 'Investigate which credentials use'
-      
-      project = GoodData::Project[:all]
-      project.should_not be_nil
-      project.should be_a_kind_of(Array)
+      projects = GoodData::Project[:all]
+      projects.should_not be_nil
+      projects.should be_a_kind_of(Array)
     end
 
     it 'Returns project if ID passed' do
@@ -40,9 +38,9 @@ describe GoodData::Project do
 
   describe '#all' do
     it 'Returns all projects' do
-      pending 'Investigate which credentials use'
-
-      GoodData::Project.all
+      projects = GoodData::Project.all
+      projects.should_not be_nil
+      projects.should be_a_kind_of(Array)
     end
   end
 
@@ -143,12 +141,11 @@ describe GoodData::Project do
 
   describe '#processes' do
     it 'Returns the processes' do
-      pending 'Investigate which credentials to use'
 
       GoodData.project = ProjectHelper::PROJECT_ID
-
       proj = GoodData.project
-      procs = proj.processes
+      processes = proj.processes
+      expect(processes).to be_a_kind_of(Array)
     end
   end
 
@@ -166,7 +163,6 @@ describe GoodData::Project do
 
   describe '#users' do
     it 'Returns array of GoodData::Users' do
-      pending 'Investigate which credentials to use'
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 

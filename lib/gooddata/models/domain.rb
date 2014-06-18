@@ -25,12 +25,13 @@ module GoodData
       # @param password [String] Default preset password
       # @return [Object] Raw response
       def add_user(opts)
+        generated_pass = rand(10E10).to_s
         data = {
           :login => opts[:login],
           :firstName => opts[:first_name] || 'FirstName',
           :lastName => opts[:last_name] || 'LastName',
-          :password => opts[:password],
-          :verifyPassword => opts[:password],
+          :password => opts[:password] || generated_pass,
+          :verifyPassword => opts[:password] || generated_pass,
           :email => opts[:login]
         }
 
@@ -105,10 +106,15 @@ module GoodData
         result = []
 
         options = USERS_OPTIONS.merge(opts)
-
-        tmp = GoodData.get("/gdc/account/domains/#{domain}/users?offset=#{options[:offset]}&limit=#{options[:limit]}")
-        tmp['accountSettings']['items'].each do |account|
-          result << GoodData::Profile.new(account)
+        offset = 0 || options[:offset]
+        uri = "/gdc/account/domains/#{domain}/users?offset=#{offset}&limit=#{options[:limit]}"
+        loop do
+          break unless uri
+          tmp = GoodData.get(uri)
+          tmp['accountSettings']['items'].each do |account|
+            result << GoodData::Profile.new(account)
+          end
+          uri = tmp['accountSettings']['paging']['next']
         end
 
         result
@@ -118,7 +124,8 @@ module GoodData
       # @param [Array<GoodData::Membership>] list List of users
       # @param [String] default_domain_name Default domain name used when no specified in user
       # @return [Array<GoodData::User>] List of users created
-      def users_create(list, default_domain_name = nil)
+      def users_create(list, default_domain = nil)
+        default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
         res = []
         domains = {}
         list.map do |user|
@@ -214,7 +221,7 @@ module GoodData
     end
 
     def users_create(list)
-      GoodData::Domain.users_create(name, list)
+      GoodData::Domain.users_create(list, name)
     end
 
     private

@@ -22,10 +22,7 @@ module GoodData
       # Returns an array of all projects accessible by
       # current user
       def all
-        json = GoodData.get GoodData.profile.projects
-        json['projects'].map do |project|
-          Project.new project
-        end
+        GoodData.profile.projects
       end
 
       # Returns a Project object identified by given string
@@ -266,6 +263,13 @@ module GoodData
       end
     end
 
+    # Gets processes for the project
+    #
+    # @return [Array<GoodData::Process>] Processes for the current project
+    def processes
+      GoodData::Process.all
+    end
+
     # Deletes project
     def delete
       fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
@@ -391,10 +395,10 @@ module GoodData
     def member(profile, list = members)
       if profile.is_a? String
         return list.find do |m|
-          m.profile_url == profile || m.email == profile
+          m.uri == profile || m.login == profile
         end
       end
-      list.find { |m| m.email == profile.email }
+      list.find { |m| m.login == profile.login }
     end
 
     # Checks if the profile is member of project
@@ -628,12 +632,12 @@ module GoodData
     #
     # @param path CSV file to be loaded
     # @param opts Optional additional options
-    def users_import(new_users)
+    def users_import(new_users, domain = nil)
       # Diff users
       diff = GoodData::Membership.diff_list(users, new_users)
 
       # Create domain users
-      GoodData::Domain.users_create(diff[:added])
+      GoodData::Domain.users_create(diff[:added], domain)
 
       # Create new users
       role_list = roles
