@@ -24,7 +24,9 @@ module GoodData
       threaded[:connection] = if options.is_a? Hash
                                 fail 'You have to provide login and password' if (options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?)
                                 Connection.new(options[:login], options[:password], options)
+                                conn = Connection.new(options[:login], options[:password], options)
                                 GoodData.project = options[:project] if options[:project]
+                                conn
                               elsif options.is_a?(String) && second_options.is_a?(String)
                                 fail 'You have to provide login and password' if (options.nil? || options.empty?) && (second_options.nil? || second_options.empty?)
                                 Connection.new(options, second_options, third_options)

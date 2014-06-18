@@ -632,12 +632,12 @@ module GoodData
     #
     # @param path CSV file to be loaded
     # @param opts Optional additional options
-    def users_import(new_users)
+    def users_import(new_users, domain = nil)
       # Diff users
       diff = GoodData::Membership.diff_list(users, new_users)
 
       # Create domain users
-      GoodData::Domain.users_create(diff[:added])
+      GoodData::Domain.users_create(diff[:added], domain)
 
       # Create new users
       role_list = roles
