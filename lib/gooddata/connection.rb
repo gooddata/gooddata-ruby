@@ -21,16 +21,19 @@ module GoodData
     #
     def connect(options = nil, second_options = nil, third_options = {})
       GoodData.logger.debug 'GoodData#connect'
-
-      if options.is_a? Hash
-        fail 'You have to provide login and password' if (options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?)
-        threaded[:connection] = Connection.new(options[:login], options[:password], options)
-        GoodData.project = options[:project] if options[:project]
-      elsif options.is_a?(String) && second_options.is_a?(String)
-        fail 'You have to provide login and password' if (options.nil? || options.empty?) && (second_options.nil? || second_options.empty?)
-        threaded[:connection] = Connection.new(options, second_options, third_options)
-      end
-
+      threaded[:connection] = if options.is_a? Hash
+                                fail 'You have to provide login and password' if (options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?)
+                                Connection.new(options[:login], options[:password], options)
+                                conn = Connection.new(options[:login], options[:password], options)
+                                GoodData.project = options[:project] if options[:project]
+                                conn
+                              elsif options.is_a?(String) && second_options.is_a?(String)
+                                fail 'You have to provide login and password' if (options.nil? || options.empty?) && (second_options.nil? || second_options.empty?)
+                                Connection.new(options, second_options, third_options)
+                              elsif options.nil? && second_options.nil?
+                                p = GoodData::Command::Auth.read_credentials
+                                Connection.new(p[:login] || p[:username], p[:password], p)
+                              end
       threaded[:connection]
     end
 
