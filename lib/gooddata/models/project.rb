@@ -173,6 +173,7 @@ module GoodData
 
     # Remove user from project
     def remove_user(user, roles)
+      user.disable
     end
 
     # Returns web interface URI of project
@@ -248,6 +249,28 @@ module GoodData
     # @return [DateTime] Date time when created
     def created
       DateTime.parse(@json['project']['meta']['created'])
+    end
+
+    # Gets dashboard by title, link, id
+    #
+    # @param [String] name Name, ID or URL of dashboard
+    # @return [GoodData::Dashboard] Dashboard instance if found
+    def dashboard(name)
+      dbs = dashboards
+      dbs.each do |db|
+        return db if db.title == name || db.uri == name
+      end
+      nil
+    end
+
+    # Gets project dashboards
+    def dashboards
+      url = "/gdc/md/#{obj_id}/query/projectdashboards"
+      raw = GoodData.get url
+      raw['query']['entries'].map do |entry|
+        raw_dashboard = GoodData.get(entry['link'])
+        Dashboard.new(raw_dashboard)
+      end
     end
 
     # Gets ruby wrapped raw project JSON data
@@ -473,6 +496,28 @@ module GoodData
         @json = response
       end
       self
+    end
+
+    # Gets dashboard by title, link, id
+    #
+    # @param [String] name Name, ID or URL of dashboard
+    # @return [GoodData::Dashboard] Dashboard instance if found
+    def report(name)
+      reps = reports
+      reps.each do |report|
+        return report if report.title == name || report.uri == name
+      end
+      nil
+    end
+
+    # Gets the project reports
+    def reports
+      url = "/gdc/md/#{obj_id}/query/reports"
+      res = GoodData.get url
+      res['query']['entries'].map do |entry|
+        raw_report = GoodData.get(entry['link'])
+        Report.new(raw_report)
+      end
     end
 
     # Gets the list or project roles

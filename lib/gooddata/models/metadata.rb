@@ -38,12 +38,15 @@ module GoodData
       # @return [MdObject] if id is a String or number single object is returned
       # @return [Array] if :all was provided as an id, list of objects should be returned. Note that this is implemented only in the subclasses. MdObject does not support this since API has no means to return list of all types of objects
       def [](id, options = {})
+        project = options[:project] || GoodData.project
+        klass = options[:class] || self
+
         fail "You have to provide an \"id\" to be searched for." unless id
-        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
-        return all(options) if id == :all
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless project
+        return klass.all(options) if id == :all
         return id if id.is_a?(MdObject)
         uri = if id.is_a?(Integer) || id =~ /^\d+$/
-                "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
+                "#{project.md[MD_OBJ_CTG]}/#{id}"
               elsif id !~ /\//
                 identifier_to_uri id
               elsif id =~ /^\//
@@ -51,7 +54,7 @@ module GoodData
               else
                 fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
               end
-        new(GoodData.get uri) unless uri.nil?
+        klass.new(GoodData.get uri) unless uri.nil?
       end
 
       # Method intended to get all objects of that type in a specified project
@@ -128,14 +131,33 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def query(query_obj_type, klass, options = {})
-        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
-        query_result = GoodData.get(GoodData.project.md['query'] + "/#{query_obj_type}/")['query']['entries']
+        project = GoodData.project || options[:project]
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless project
+        query_result = GoodData.get(project.md['query'] + "/#{query_obj_type}/")['query']['entries']
         options[:full] ? query_result.map { |item| klass[item['link']] } : query_result
       end
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
     metadata_property_writer :tags, :summary, :title, :identifier
+
+    # Gets autor of this object
+    #
+    # @return [GoodData::Profile] Author
+    def author
+      url = json[root_key]['meta']['author']
+      raw = GoodData.get url
+      GoodData::Profile.new(raw)
+    end
+
+    # Gets contributor of this object
+    #
+    # @return [GoodData::Profile] Contributor
+    def contributor
+      url = json[root_key]['meta']['contributor']
+      raw = GoodData.get url
+      GoodData::Profile.new(raw)
+    end
 
     def root_key
       raw_data.keys.first
