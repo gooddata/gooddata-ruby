@@ -8,6 +8,10 @@ module GoodData
     root_key :report
 
     class << self
+      def resource_name
+        'report'
+      end
+
       # Method intended to get all objects of that type in a specified project
       #
       # @param options [Hash] the options hash

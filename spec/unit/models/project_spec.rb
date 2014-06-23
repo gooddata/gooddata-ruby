@@ -4,7 +4,7 @@ require 'gooddata'
 
 describe GoodData::Project do
   DEFAULT_DASHBOARD_TITLE = 'Default dashboard'
-  DEFAULT_REPORT_TITLE = 'Lines Changed'
+  DEFAULT_REPORT_TITLE = 'Lines Changed [sum] Report'
 
   before(:each) do
     ConnectionHelper::create_default_connection
