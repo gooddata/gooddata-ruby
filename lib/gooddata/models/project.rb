@@ -126,7 +126,7 @@ module GoodData
                  builder = block.call(Model::SchemaBuilder.new(schema_def))
                  builder.to_schema
                else
-                 sch = { :title => schema_def, :columns => columns } if columns
+                 sch = {:title => schema_def, :columns => columns} if columns
                  sch = Model::Schema.new schema_def if schema_def.is_a? Hash
                  sch = schema_def if schema_def.is_a?(Model::Schema)
                  fail(ArgumentError, 'Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
@@ -152,23 +152,6 @@ module GoodData
     def author
       # TODO: Return object instead
       @json['project']['meta']['author']
-    end
-
-    # Adds user to project
-    def set_user_roles(user, roles)
-      url = "#{uri}/users"
-      payload = {
-        'user' => {
-          'content' => {
-            'status' => 'ENABLED',
-            'userRoles' => roles
-          },
-          'links' => {
-            'self' => user.uri
-          }
-        }
-      }
-      GoodData.post url, payload
     end
 
     # Returns web interface URI of project
@@ -509,9 +492,6 @@ module GoodData
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
       url = "/gdc/projects/#{pid}/roles"
-
-      res = []
-
       tmp = GoodData.get(url)
       tmp['projectRoles']['roles'].map do |role_url|
         json = GoodData.get role_url
@@ -709,34 +689,45 @@ module GoodData
     # @param user User to be updated
     # @param desired_roles Roles to be assigned to user
     # @param role_list Optional cached list of roles used for lookups
-    def user_update(user, desired_roles, role_list = roles)
+    def set_user_roles(user, desired_roles, role_list = roles)
       if user.is_a? String
         user = get_user(user)
-        raise ArgumentError, "Invalid user '#{user}' specified" if user.nil?
+        fail ArgumentError, "Invalid user '#{user}' specified" if user.nil?
       end
 
-      if !desired_roles.is_a? Array
-        desired_roles = [desired_roles]
-      end
+      desired_roles = [desired_roles] unless desired_roles.is_a? Array
 
       roles = desired_roles.map do |role_name|
         role = get_role(role_name, role_list)
-        raise ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
+        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
         role.uri
       end
 
-      set_user_roles(user, roles)
+      url = "#{uri}/users"
+      payload = {
+        'user' => {
+          'content' => {
+            'status' => 'ENABLED',
+            'userRoles' => roles
+          },
+          'links' => {
+            'self' => user.uri
+          }
+        }
+      }
+
+      GoodData.post url, payload
     end
 
     # Update list of users
     #
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
-    def users_update(list, role_list = roles)
+    def set_users_roles(list, role_list = roles)
       list.map do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:roles]
-        user_update(user, roles, role_list)
+        set_user_roles(user, roles, role_list)
       end
     end
 
