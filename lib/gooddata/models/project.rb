@@ -248,7 +248,7 @@ module GoodData
     #
     # @return [DateTime] Date time when created
     def created
-      DateTime.parse(@json['project']['meta']['created'])
+      Time.parse(@json['project']['meta']['created'])
     end
 
     # Gets dashboard by title, link, id
@@ -406,6 +406,7 @@ module GoodData
       data['links']
     end
 
+    # Gets metadata
     def md
       @md ||= Links.new GoodData.get(data['links']['metadata'])
     end
@@ -431,6 +432,18 @@ module GoodData
     # @return [Boolean] true if is member else false
     def member?(profile, list = members)
       !member(profile, list).nil?
+    end
+
+    # Gets all metric for project
+    def metrics
+      GoodData::Metric[:all, :project => self, :full => true]
+    end
+
+    # Gets metric by identifier, link or title
+    def metric(id)
+      ms = GoodData::Metric[:all, :project => self, :full => false]
+      m = ms.find { |m| m['title'] == id || m['link'] == id || m['identifier'] == id}
+      GoodData::Metric[m['link'], :project => self]
     end
 
     # Gets raw resource ID
@@ -601,7 +614,7 @@ module GoodData
     #
     # @return [DateTime] Date time of last update
     def updated
-      DateTime.parse(@json['project']['meta']['updated'])
+      Time.parse(@json['project']['meta']['updated'])
     end
 
     # Uploads file to project

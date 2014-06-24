@@ -2,9 +2,10 @@
 
 require 'gooddata'
 
-describe GoodData::Dashboard, :dashboard => true do
+describe GoodData::ReportDefinition, :report => true do
   before(:each) do
     ConnectionHelper::create_default_connection
+    @definition = ReportDefinitionHelper.default_definition
   end
 
   after(:each) do
@@ -13,46 +14,36 @@ describe GoodData::Dashboard, :dashboard => true do
 
   describe '#author' do
     it 'Returns author as GoodData::Profile' do
-      dashboard = DashboardHelper.default_dashboard
-
-      res = dashboard.author
+      res = @definition.author
       expect(res).to be_instance_of(GoodData::Profile)
     end
   end
 
   describe '#contributor' do
     it 'Returns contributor as GoodData::Profile' do
-      dashboard = DashboardHelper.default_dashboard
-
-      res = dashboard.contributor
+      res = @definition.contributor
       expect(res).to be_instance_of(GoodData::Profile)
     end
   end
 
   describe '#created' do
-    it 'Returns date when created as Time' do
-      dashboard = DashboardHelper.default_dashboard
-
-      res = dashboard.created
-      expect(res).to be_instance_of(Time)
+    it 'Returns created date as DateTime' do
+      res = @definition.created
+      expect(res).to be_an_instance_of(Time)
     end
   end
 
   describe '#title' do
     it 'Returns title as String' do
-      dashboard = DashboardHelper.default_dashboard
-
-      res = dashboard.title
+      res = @definition.title
       expect(res).to be_instance_of(String)
     end
   end
 
   describe '#updated' do
-    it 'Returns date when updated as Time' do
-      dashboard = DashboardHelper.default_dashboard
-
-      res = dashboard.updated
-      expect(res).to be_instance_of(Time)
+    it 'Returns updated date as DateTime' do
+      res = @definition.updated
+      expect(res).to be_an_instance_of(Time)
     end
   end
 end

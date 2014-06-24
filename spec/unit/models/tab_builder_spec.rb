@@ -3,7 +3,7 @@
 require 'gooddata'
 
 describe GoodData::Model::TabBuilder do
-  TAB_TITLE = 'Test Tab Title'
+  TAB_TITLE ||= 'Test Tab Title'
 
   before(:each) do
     ConnectionHelper::create_default_connection

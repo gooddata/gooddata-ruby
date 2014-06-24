@@ -20,8 +20,10 @@ RSpec.configure do |config|
   config.include ConnectionHelper
   config.include CsvHelper
   config.include DashboardHelper
+  config.include MetricHelper
   config.include ProjectHelper
   config.include ReportHelper
+  config.include ReportDefinitionHelper
   config.include SchemaHelper
 
   config.filter_run_excluding :broken => true

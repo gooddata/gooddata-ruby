@@ -28,7 +28,7 @@ describe 'GoodData - project' do
     end
 
     it 'Assigns project directly' do
-      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      GoodData.project = ProjectHelper.get_default_project
     end
   end
 
@@ -44,7 +44,7 @@ describe 'GoodData - project' do
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID] do
+      GoodData.with_project ProjectHelper.get_default_project do
       end
     end
   end

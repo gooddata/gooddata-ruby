@@ -131,10 +131,10 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def query(query_obj_type, klass, options = {})
-        project = GoodData.project || options[:project]
+        project = options[:project] || GoodData.project
         fail(NoProjectError, 'Connect to a project before searching for an object') unless project
         query_result = GoodData.get(project.md['query'] + "/#{query_obj_type}/")['query']['entries']
-        options[:full] ? query_result.map { |item| klass[item['link']] } : query_result
+        options[:full] ? query_result.map { |item| klass[item['link'], :project => project] } : query_result
       end
     end
 
@@ -159,14 +159,17 @@ module GoodData
       GoodData::Profile.new(raw)
     end
 
+    # Gets name of root element wrapping all the json, ie. 'report', 'user', etc
     def root_key
       raw_data.keys.first
     end
 
+    # Initializes metadata from raw JSON
     def initialize(data)
       @json = data.to_hash
     end
 
+    # Deletes the MD resource
     def delete
       if saved?
         GoodData.delete(uri)
@@ -175,6 +178,7 @@ module GoodData
       end
     end
 
+    # Forces fetch of resource from remote endpoint
     def reload!
       @json = GoodData.get(uri) if saved?
       self
@@ -182,26 +186,32 @@ module GoodData
 
     alias_method :refresh, :reload!
 
+    # Gets ID of MD object
     def obj_id
       uri.split('/').last
     end
 
+    # Returns links related to this MD object
     def links
       data['links']
     end
 
+    # Returns URI openable in browser
     def browser_uri
       GoodData.connection.url + meta['uri']
     end
 
+    # Returns timestamp of last update as Time object
     def updated
       Time.parse(meta['updated'])
     end
 
+    # Returns timestamp of creating as Time object
     def created
       Time.parse(meta['created'])
     end
 
+    # Sets the deprecated flag
     def deprecated=(flag)
       if flag == '1' || flag == 1
         meta['deprecated'] = '1'
@@ -212,28 +222,34 @@ module GoodData
       end
     end
 
+    # Gets raw data wrapped in root_key
     def data
       raw_data[root_key]
     end
 
+    # Gets metadata section
     def meta
       data && data['meta']
     end
 
+    # Gets content section
     def content
       data && data['content']
     end
 
+    # Gets project from URI
     def project
       @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, '')]
     end
 
+    # Returns which objects uses this MD resource
     def usedby(key = nil)
       dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
     end
 
     alias_method :used_by, :usedby
 
+    # Returns which objects this MD resource uses
     def using(key = nil)
       dependency("#{GoodData.project.md['using2']}/#{obj_id}", key)
     end
@@ -244,20 +260,24 @@ module GoodData
 
     alias_method :used_by?, :usedby?
 
+    # Checks if obj is using this MD resource
     def using?(obj)
       dependency?(:using, obj)
     end
 
+    # Converts this object
     def to_json
       @json.to_json
     end
 
+    # Checks if is this MD object saved
     def saved?
       res = uri.nil?
       !res
     end
 
-    def save
+    # Saves this MD object
+    def save(project = GoodData.project)
       fail('Validation failed') unless validate
 
       if saved?
@@ -269,8 +289,8 @@ module GoodData
         if explicit_identifier && MdObject[explicit_identifier]
           fail "Identifier '#{explicit_identifier}' already in use"
         end
-        result = GoodData.post(GoodData.project.md['obj'], to_json)
-        saved_object = self.class[result['uri']]
+        result = GoodData.post(project.md['obj'], to_json)
+        saved_object = self.class[result['uri'], :project => project]
         # TODO: add test for explicitly provided identifier
         @json = saved_object.raw_data
         if explicit_identifier
@@ -304,14 +324,17 @@ module GoodData
       x.save
     end
 
+    # Compares if two MD objects are same
     def ==(other)
       other.respond_to?(:uri) && other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
     end
 
+    # Validates MD object
     def validate
       true
     end
 
+    # Checks if is the project exportable
     def exportable?
       false
     end
@@ -354,6 +377,7 @@ module GoodData
       end
     end
 
+    # Checks for dependency
     def dependency?(type, uri)
       objs = case type
              when :usedby
