@@ -321,11 +321,11 @@ module GoodData
 
       role_name.downcase!
       role_list.each do |role|
-        return role if role.summary.downcase == role_name ||
-          role.title.downcase == role_name ||
+        return role if role.uri == role_name ||
           role.identifier.downcase == role_name ||
           role.identifier.downcase.gsub(/role$/, '') == role_name ||
-          role.uri == role_name
+          role.title.downcase == role_name ||
+          role.summary.downcase == role_name
       end
       nil
     end
