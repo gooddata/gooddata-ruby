@@ -275,5 +275,32 @@ describe GoodData::Project do
 
       project.set_users_roles(list)
     end
+
+    it 'Properly updates user roles when user specified by email and :roles specified as array of string with role names' do
+      project = ProjectHelper.get_default_project
+
+      users_roles = [
+        {
+          :user => ConnectionHelper::DEFAULT_USERNAME,
+          :roles => ['admin']
+        }
+      ]
+
+      project.set_users_roles(users_roles)
+    end
+
+    it 'Properly updates user roles when user specified by email and :roles specified as string with role name' do
+      project = ProjectHelper.get_default_project
+
+      users_roles = [
+        {
+          :user => ConnectionHelper::DEFAULT_USERNAME,
+          :roles => 'admin'
+        }
+      ]
+
+      project.set_users_roles(users_roles)
+    end
+
   end
 end

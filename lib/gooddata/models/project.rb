@@ -726,7 +726,7 @@ module GoodData
     def set_users_roles(list, role_list = roles)
       list.map do |user_hash|
         user = user_hash[:user]
-        roles = user_hash[:roles]
+        roles = user_hash[:role] || user_hash[:roles]
         set_user_roles(user, roles, role_list)
       end
     end
