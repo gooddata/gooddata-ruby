@@ -669,7 +669,7 @@ module GoodData
       end
 
       # Update existing users
-      users_update(list, role_list)
+      set_users_roles(list, role_list)
 
       # Remove old users
       users_remove(diff[:removed])
