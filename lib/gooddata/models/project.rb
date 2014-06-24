@@ -691,12 +691,12 @@ module GoodData
 
         removed.each do |role_name|
           role = get_role_by_identifier(role_name, role_list)
-          remove_user(old_user, [role.uri])
+          remove_user(user, [role.uri])
         end
 
         added.each do |role_name|
           role = get_role_by_identifier(role_name, role_list)
-          add_user(old_user, [role.uri])
+          add_user(user, [role.uri])
         end
       end
     end
