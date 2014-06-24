@@ -126,7 +126,7 @@ module GoodData
                  builder = block.call(Model::SchemaBuilder.new(schema_def))
                  builder.to_schema
                else
-                 sch = {:title => schema_def, :columns => columns} if columns
+                 sch = { :title => schema_def, :columns => columns } if columns
                  sch = Model::Schema.new schema_def if schema_def.is_a? Hash
                  sch = schema_def if schema_def.is_a?(Model::Schema)
                  fail(ArgumentError, 'Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
