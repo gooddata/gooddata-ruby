@@ -154,27 +154,6 @@ module GoodData
       @json['project']['meta']['author']
     end
 
-    # Adds user to project
-    def add_user(user, roles)
-      url = "#{uri}/users"
-      payload = {
-        'user' => {
-          'content' => {
-            'status' => 'ENABLED',
-            'userRoles' => roles
-          },
-          'links' => {
-            'self' => user.uri
-          }
-        }
-      }
-      GoodData.post url, payload
-    end
-
-    # Remove user from project
-    def remove_user(user, roles)
-    end
-
     # Returns web interface URI of project
     #
     # @return [String] Project URL
@@ -316,6 +295,40 @@ module GoodData
       nil
     end
 
+    # Gets project role
+    #
+    # @param [String] role_title Title of role to look for
+    # @return [GoodData::ProjectRole] Project role if found
+    def get_role(role_name, role_list = roles)
+      return role_name if role_name.is_a? GoodData::ProjectRole
+
+      role_name.downcase!
+      role_list.each do |role|
+        return role if role.uri == role_name ||
+          role.identifier.downcase == role_name ||
+          role.identifier.downcase.gsub(/role$/, '') == role_name ||
+          role.title.downcase == role_name ||
+          role.summary.downcase == role_name
+      end
+      nil
+    end
+
+    # Gets user by its email, full_name, login or uri
+    #
+    # @param [String] name Name to look for
+    # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
+    # @return [GoodDta::Membership] User
+    def get_user(name, user_list = users)
+      name.downcase!
+      user_list.each do |user|
+        return user if user.email.downcase == name ||
+          user.full_name.downcase == name ||
+          user.login.downcase == name ||
+          user.uri.downcase == name
+      end
+      nil
+    end
+
     # Initializes object instance from raw wire JSON
     #
     # @param json Json used for initialization
@@ -335,8 +348,7 @@ module GoodData
 
       role_url = nil
       if role.index('/gdc/') != 0
-        tmp = get_role_by_identifier(role)
-        tmp = get_role_by_title(role) if tmp.nil?
+        tmp = get_role(role)
         role_url = tmp.uri if tmp
       else
         role_url = role if role_url.nil?
@@ -480,16 +492,11 @@ module GoodData
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
       url = "/gdc/projects/#{pid}/roles"
-
-      res = []
-
       tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].each do |role_url|
+      tmp['projectRoles']['roles'].map do |role_url|
         json = GoodData.get role_url
-        res << GoodData::ProjectRole.new(json)
+        GoodData::ProjectRole.new(json)
       end
-
-      res
     end
 
     # Saves project
@@ -612,7 +619,7 @@ module GoodData
 
         # Lookup for role
         role_name = user.json['user']['content']['role'] || 'readOnlyUser'
-        role = get_role_by_identifier(role_name, role_list)
+        role = get_role(role_name, role_list)
         next if role.nil?
 
         # Assign user project role
@@ -662,7 +669,7 @@ module GoodData
       end
 
       # Update existing users
-      users_update(list, role_list)
+      set_users_roles(list, role_list)
 
       # Remove old users
       users_remove(diff[:removed])
@@ -677,27 +684,50 @@ module GoodData
       end
     end
 
+    # Update user
+    #
+    # @param user User to be updated
+    # @param desired_roles Roles to be assigned to user
+    # @param role_list Optional cached list of roles used for lookups
+    def set_user_roles(user, desired_roles, role_list = roles)
+      if user.is_a? String
+        user = get_user(user)
+        fail ArgumentError, "Invalid user '#{user}' specified" if user.nil?
+      end
+
+      desired_roles = [desired_roles] unless desired_roles.is_a? Array
+
+      roles = desired_roles.map do |role_name|
+        role = get_role(role_name, role_list)
+        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
+        role.uri
+      end
+
+      url = "#{uri}/users"
+      payload = {
+        'user' => {
+          'content' => {
+            'status' => 'ENABLED',
+            'userRoles' => roles
+          },
+          'links' => {
+            'self' => user.uri
+          }
+        }
+      }
+
+      GoodData.post url, payload
+    end
+
     # Update list of users
     #
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
-    def users_update(list, role_list = roles)
+    def set_users_roles(list, role_list = roles)
       list.map do |user_hash|
         user = user_hash[:user]
-        user_roles = user.roles.map { |r| r.identifier.downcase }.sort
-
-        added = user_hash[:roles] - user_roles
-        removed = user_roles - user_hash[:roles]
-
-        removed.each do |role_name|
-          role = get_role_by_identifier(role_name, role_list)
-          remove_user(old_user, [role.uri])
-        end
-
-        added.each do |role_name|
-          role = get_role_by_identifier(role_name, role_list)
-          add_user(old_user, [role.uri])
-        end
+        roles = user_hash[:role] || user_hash[:roles]
+        set_user_roles(user, roles, role_list)
       end
     end
 
