@@ -17,11 +17,14 @@ describe GoodData::ReportBuilder, :report => true do
       project = ProjectHelper.get_default_project
       metric = MetricHelper.default_metric
 
-      definition = GoodData::ReportDefinitionBuilder.create(metric, :title => 'Test Report Definition')
-      definition.save(project)
+      GoodData::ReportDefinitionBuilder.chart_types.each do |chart_type|
+        title = "Report #{metric.title} - #{chart_type}"
+        definition = GoodData::ReportDefinitionBuilder.create(metric, :title => title, :type => chart_type)
+        definition.save(project)
 
-      report = GoodData::ReportBuilder.create(definition)
-      report.save(project)
+        report = GoodData::ReportBuilder.create(definition)
+        report.save(project)
+      end
     end
   end
 end

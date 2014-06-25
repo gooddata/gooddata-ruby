@@ -16,8 +16,12 @@ describe GoodData::ReportDefinitionBuilder, :report => true do
     it 'Builds GoodData::Report definition' do
       project = ProjectHelper.get_default_project
       metric = MetricHelper.default_metric
-      definition = GoodData::ReportDefinitionBuilder.create(metric, :title => 'Test Report Definition', :width => 320, :height => 240, )
-      definition.save(project)
+
+      GoodData::ReportDefinitionBuilder.chart_types.each do |chart_type|
+        title = "Report #{metric.title} - #{chart_type}"
+        definition = GoodData::ReportDefinitionBuilder.create(metric, :title => title, :type => chart_type)
+        definition.save(project)
+      end
     end
   end
 end

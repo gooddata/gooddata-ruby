@@ -13,7 +13,7 @@ module GoodData
     class << self
       def create(definition, opts = {})
         args = {
-          :title => opts[:title] || "Default Report Title #{Time.new.strftime('%Y%m%d%H%M%S')}",
+          :title => opts[:title] || definition.title || "Default Report Title #{Time.new.strftime('%Y%m%d%H%M%S')}",
           :summary => opts[:summary] || '',
           :definition => definition
         }
