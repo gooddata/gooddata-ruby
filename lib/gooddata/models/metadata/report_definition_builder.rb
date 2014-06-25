@@ -12,6 +12,10 @@ require_relative '../../helpers/helpers'
 module GoodData
   # Report Definition builder
   class ReportDefinitionBuilder
+    DEFAULT_OPTS = {
+      :type => 'headline'
+    }
+
     class << self
       def construct_path(rel_path)
         File.join(File.dirname(__FILE__), '..', '..', '..', 'templates', 'report_definition', rel_path)
@@ -22,14 +26,17 @@ module GoodData
         MultiJson.load(raw_json)
       end
 
-      def create(metric, opts = {})
+      def create(metric, opts = {:type => 'headline'})
+        opts = DEFAULT_OPTS.merge(opts)
+
         args = {
           :metric => metric,
           :title => opts[:title] || "Default Report Definition Title #{Time.new.strftime('%Y%m%d%H%M%S')}" ,
           :summary => opts[:summary] || ''
         }
 
-        definition_json = template_as_json('report_definition.pie.json.erb', args)
+        definition_json = template_as_json('report_definition.json.erb', args)
+        definition_json['reportDefinition']['content']['chart'] = template_as_json("chart/#{opts[:type]}.json.erb", args)
         definition_json['reportDefinition']['meta'] = template_as_json('report_definition_meta.json.erb', args)
 
         GoodData::ReportDefinition.new(definition_json)

@@ -366,7 +366,7 @@ module GoodData
       name.downcase!
       user_list.each do |user|
         return user if user.email.downcase == name ||
-          user.full_name.downcase == name ||
+          # user.full_name.downcase == name ||
           user.login.downcase == name ||
           user.uri.downcase == name
       end
