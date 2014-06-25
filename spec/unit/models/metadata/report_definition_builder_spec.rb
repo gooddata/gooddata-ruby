@@ -16,7 +16,7 @@ describe GoodData::ReportDefinitionBuilder, :report => true do
     it 'Builds GoodData::Report definition' do
       project = ProjectHelper.get_default_project
       metric = MetricHelper.default_metric
-      definition = GoodData::ReportDefinitionBuilder.create(metric, :title => 'Test Report Definition')
+      definition = GoodData::ReportDefinitionBuilder.create(metric, :title => 'Test Report Definition', :width => 320, :height => 240, )
       definition.save(project)
     end
   end

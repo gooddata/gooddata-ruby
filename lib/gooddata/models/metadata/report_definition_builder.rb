@@ -26,7 +26,7 @@ module GoodData
         MultiJson.load(raw_json)
       end
 
-      def create(metric, opts = {:type => 'headline'})
+      def create(metric, opts = DEFAULT_OPTS)
         opts = DEFAULT_OPTS.merge(opts)
 
         args = {

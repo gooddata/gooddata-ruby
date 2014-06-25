@@ -475,8 +475,8 @@ module GoodData
     # Gets metric by identifier, link or title
     def metric(id)
       ms = GoodData::Metric[:all, :project => self, :full => false]
-      m = ms.find { |m| m['title'] == id || m['link'] == id || m['identifier'] == id}
-      GoodData::Metric[m['link'], :project => self]
+      met = ms.find { |m| m['title'] == id || m['link'] == id || m['identifier'] == id }
+      GoodData::Metric[met['link'], :project => self]
     end
 
     # Gets raw resource ID

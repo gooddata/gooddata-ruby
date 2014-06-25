@@ -57,7 +57,7 @@ module GoodData
     # @return [GoodData::MdObject] Definition
     def definition(definition_url = latest_report_definition_uri)
       project_url = uri.split('/')[0...-2].join('/')
-      GoodData::MdObject[definition_url, {:project => GoodData::Project[project_url], :class => GoodData::ReportDefinition}]
+      GoodData::MdObject[definition_url, { :project => GoodData::Project[project_url], :class => GoodData::ReportDefinition }]
     end
 
     # Gets definitions
