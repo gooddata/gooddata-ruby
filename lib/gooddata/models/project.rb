@@ -619,12 +619,12 @@ module GoodData
 
         # Check if user exists in domain
         domain_user = domain[:users_map][user.email]
-        raise ArgumentError, "Trying to add user '#{user.login}' which is not valid user in domain '#{domain_name}'" if domain_user.nil?
+        fail ArgumentError, "Trying to add user '#{user.login}' which is not valid user in domain '#{domain_name}'" if domain_user.nil?
 
         # Lookup for role
         role_name = user.json['user']['content']['role'] || 'readOnlyUser'
         role = get_role(role_name, role_list)
-        raise ArgumentError, "Invalid role name specified '#{role_name}' for user '#{user.email}'" if role.nil?
+        fail ArgumentError, "Invalid role name specified '#{role_name}' for user '#{user.email}'" if role.nil?
 
         # Assign user project role
         set_user_roles(domain_user, [role.uri], role_list)

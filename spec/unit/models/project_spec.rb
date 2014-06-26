@@ -26,7 +26,9 @@ describe GoodData::Project do
             'password' => row[3],
             'domain' => row[9],
 
-            ''
+            # And following lines are even much more ugly hack
+            # 'sso_provider' => '',
+            # 'authentication_modes' => ['sso', 'password']
           },
           'meta' => {}
         }
