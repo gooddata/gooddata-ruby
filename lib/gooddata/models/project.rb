@@ -594,9 +594,6 @@ module GoodData
 
     alias_method :members, :users
 
-    def user_create(user)
-    end
-
     def users_create(list, role_list = roles)
       domains = {}
       list.map do |user|
