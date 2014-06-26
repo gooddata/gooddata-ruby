@@ -24,7 +24,9 @@ describe GoodData::Project do
             # Following lines are ugly hack
             'role' => row[6],
             'password' => row[3],
-            'domain' => row[9]
+            'domain' => row[9],
+
+            ''
           },
           'meta' => {}
         }
@@ -228,7 +230,45 @@ describe GoodData::Project do
     end
   end
 
-  describe '#users_sync' do
+  describe '#users_create' do
+    it 'Creates new users' do
+      project = ProjectHelper.get_default_project
+
+      users = (0...10).map do |i|
+        num = rand(1e6)
+        login = "gemtest#{num}@gooddata.com"
+
+        json = {
+          'user' => {
+            'content' => {
+              'email' => login,
+              'login' => login,
+              'firstname' => 'the',
+              'lastname' => num.to_s,
+
+              # Following lines are ugly hack
+              'role' => 'admin',
+              'password' => 'password',
+              'domain' => ConnectionHelper::DEFAULT_DOMAIN,
+
+              # And following lines are even much more ugly hack
+              # 'sso_provider' => '',
+              # 'authentication_modes' => ['sso', 'password']
+            },
+            'meta' => {}
+          }
+        }
+
+        GoodData::Membership.new(json)
+      end
+
+      GoodData::Domain.users_create(users)
+
+      project.users_create(users)
+    end
+  end
+
+  describe '#users_import' do
     it 'Import users from CSV' do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]

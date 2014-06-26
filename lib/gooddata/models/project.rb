@@ -594,6 +594,9 @@ module GoodData
 
     alias_method :members, :users
 
+    def user_create(user)
+    end
+
     def users_create(list, role_list = roles)
       domains = {}
       list.map do |user|
@@ -616,14 +619,15 @@ module GoodData
 
         # Check if user exists in domain
         domain_user = domain[:users_map][user.email]
+        raise ArgumentError, "Trying to add user '#{user.login}' which is not valid user in domain '#{domain_name}'" if domain_user.nil?
 
         # Lookup for role
         role_name = user.json['user']['content']['role'] || 'readOnlyUser'
         role = get_role(role_name, role_list)
-        next if role.nil?
+        raise ArgumentError, "Invalid role name specified '#{role_name}' for user '#{user.email}'" if role.nil?
 
         # Assign user project role
-        add_user(domain_user, [role.uri])
+        set_user_roles(domain_user, [role.uri], role_list)
       end
     end
 
@@ -718,6 +722,8 @@ module GoodData
 
       GoodData.post url, payload
     end
+
+    alias_method :add_user, :set_user_roles
 
     # Update list of users
     #
