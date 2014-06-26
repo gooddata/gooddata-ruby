@@ -11,6 +11,29 @@ describe GoodData::Project do
     GoodData.disconnect
   end
 
+  def load_users_from_csv
+    GoodData::Helpers::Csv.read(:path => CsvHelper::CSV_PATH_IMPORT, :header => true) do |row|
+      json = {
+        'user' => {
+          'content' => {
+            'email' => row[2],
+            'login' => row[2],
+            'firstname' => row[0],
+            'lastname' => row[1],
+
+            # Following lines are ugly hack
+            'role' => row[6],
+            'password' => row[3],
+            'domain' => row[9]
+          },
+          'meta' => {}
+        }
+      }
+
+      GoodData::Membership.new(json)
+    end
+  end
+
   describe '#[]' do
     it 'Accepts :all parameter' do
       projects = GoodData::Project[:all]
@@ -210,28 +233,74 @@ describe GoodData::Project do
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-      new_users = GoodData::Helpers::Csv.read(:path => CsvHelper::CSV_PATH_IMPORT, :header => true) do |row|
-        json = {
-          'user' => {
-            'content' => {
-              'email' => row[2],
-              'login' => row[2],
-              'firstname' => row[0],
-              'lastname' => row[1],
-
-              # Following lines are ugly hack
-              'role' => row[6],
-              'password' => row[3],
-              'domain' => row[9]
-            },
-            'meta' => {}
-          }
-        }
-
-        GoodData::Membership.new(json)
-      end
+      new_users = load_users_from_csv
 
       project.users_import(new_users)
     end
+  end
+
+  describe '#set_user_roles' do
+    it 'Properly updates user roles as needed' do
+      project = ProjectHelper.get_default_project
+
+      project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin')
+    end
+  end
+
+  describe '#set_users_roles' do
+    it 'Properly updates user roles as needed for bunch of users' do
+      project = ProjectHelper.get_default_project
+
+      new_users = load_users_from_csv
+      old_users = project.users
+      diff = GoodData::Membership.diff_list(old_users, new_users)
+
+      # Get changed users objects from hash
+      list = diff[:changed].map do |user|
+        user[:user]
+      end
+
+      # Join list of changed users with 'same' users
+      list = list.zip(diff[:same]).flatten.compact
+
+      new_users_map = Hash[new_users.map { |u| [u.email, u] }]
+
+      # Create list with user, desired_roles hashes
+      list = list.map do |user|
+        {
+          :user => user,
+          :roles => new_users_map[user.email].json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
+        }
+      end
+
+      project.set_users_roles(list)
+    end
+
+    it 'Properly updates user roles when user specified by email and :roles specified as array of string with role names' do
+      project = ProjectHelper.get_default_project
+
+      users_roles = [
+        {
+          :user => ConnectionHelper::DEFAULT_USERNAME,
+          :roles => ['admin']
+        }
+      ]
+
+      project.set_users_roles(users_roles)
+    end
+
+    it 'Properly updates user roles when user specified by email and :roles specified as string with role name' do
+      project = ProjectHelper.get_default_project
+
+      users_roles = [
+        {
+          :user => ConnectionHelper::DEFAULT_USERNAME,
+          :roles => 'admin'
+        }
+      ]
+
+      project.set_users_roles(users_roles)
+    end
+
   end
 end
