@@ -318,77 +318,75 @@ describe GoodData::Project do
   end
 
   describe '#users_import' do
-    describe '#users_import' do
-      it 'Import users from CSV' do
-        project = GoodData::Project[ProjectHelper::PROJECT_ID]
+    it 'Import users from CSV' do
+      project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
-        list = load_users_from_csv
-        project.users_import(list)
+      list = load_users_from_csv
+      project.users_import(list)
+    end
+  end
+
+  describe '#set_user_roles' do
+    it 'Properly updates user roles as needed' do
+      project = ProjectHelper.get_default_project
+
+      project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin')
+    end
+  end
+
+  describe '#set_users_roles' do
+    it 'Properly updates user roles as needed for bunch of users' do
+      project = ProjectHelper.get_default_project
+
+      list = load_users_from_csv
+
+      domain_users = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
+      expect(domain_users.length).to equal(list.length)
+
+      domain_users.each_with_index do |user, index|
+        list[index] = {
+          :user => user,
+          :roles => list[index].json['user']['content']['role']
+        }
+      end
+
+      res = project.set_users_roles(list)
+      expect(res.length).to equal(list.length)
+      res.each do |update_result|
+        expect(update_result[:result]['projectUsersUpdateResult']['successful'][0]).to include(update_result[:user].uri)
+      end
+
+      domain_users.each do |user|
+        user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
       end
     end
 
-    describe '#set_user_roles' do
-      it 'Properly updates user roles as needed' do
-        project = ProjectHelper.get_default_project
+    it 'Properly updates user roles when user specified by email and :roles specified as array of string with role names' do
+      project = ProjectHelper.get_default_project
 
-        project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin')
-      end
+      list = [
+        {
+          :user => ConnectionHelper::DEFAULT_USERNAME,
+          :roles => ['admin']
+        }
+      ]
+
+      res = project.set_users_roles(list)
+      expect(res.length).to equal(list.length)
     end
 
-    describe '#set_users_roles' do
-      it 'Properly updates user roles as needed for bunch of users' do
-        project = ProjectHelper.get_default_project
+    it 'Properly updates user roles when user specified by email and :roles specified as string with role name' do
+      project = ProjectHelper.get_default_project
 
-        list = load_users_from_csv
+      list = [
+        {
+          :user => ConnectionHelper::DEFAULT_USERNAME,
+          :roles => 'admin'
+        }
+      ]
 
-        domain_users = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
-        expect(domain_users.length).to equal(list.length)
-
-        domain_users.each_with_index do |user, index|
-          list[index] = {
-            :user => user,
-            :roles => list[index].json['user']['content']['role']
-          }
-        end
-
-        res = project.set_users_roles(list)
-        expect(res.length).to equal(list.length)
-        res.each do |update_result|
-          expect(update_result[:result]['projectUsersUpdateResult']['successful'][0]).to include(update_result[:user].uri)
-        end
-
-        domain_users.each do |user|
-          user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
-        end
-      end
-
-      it 'Properly updates user roles when user specified by email and :roles specified as array of string with role names' do
-        project = ProjectHelper.get_default_project
-
-        list = [
-          {
-            :user => ConnectionHelper::DEFAULT_USERNAME,
-            :roles => ['admin']
-          }
-        ]
-
-        res = project.set_users_roles(list)
-        expect(res.length).to equal(list.length)
-      end
-
-      it 'Properly updates user roles when user specified by email and :roles specified as string with role name' do
-        project = ProjectHelper.get_default_project
-
-        list = [
-          {
-            :user => ConnectionHelper::DEFAULT_USERNAME,
-            :roles => 'admin'
-          }
-        ]
-
-        res = project.set_users_roles(list)
-        expect(res.length).to equal(list.length)
-      end
+      res = project.set_users_roles(list)
+      expect(res.length).to equal(list.length)
     end
   end
 end
