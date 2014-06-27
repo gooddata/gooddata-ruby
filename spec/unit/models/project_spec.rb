@@ -299,55 +299,61 @@ describe GoodData::Project do
     it 'Properly updates user roles as needed for bunch of users' do
       project = ProjectHelper.get_default_project
 
-      new_users = load_users_from_csv
-      old_users = project.users
-      diff = GoodData::Membership.diff_list(old_users, new_users)
-
-      # Get changed users objects from hash
-      list = diff[:changed].map do |user|
-        user[:user]
-      end
-
-      # Join list of changed users with 'same' users
-      list = list.zip(diff[:same]).flatten.compact
-
-      new_users_map = Hash[new_users.map { |u| [u.email, u] }]
+      list = load_users_from_csv
 
       # Create list with user, desired_roles hashes
       list = list.map do |user|
         {
           :user => user,
-          :roles => new_users_map[user.email].json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
+          :roles => user.json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
         }
       end
 
-      project.set_users_roles(list)
+      # Get changed users objects from hash
+      just_users = list.map { |u| u[:user] }
+
+      domain_users = GoodData::Domain.users_create(just_users, ConnectionHelper::DEFAULT_DOMAIN)
+      expect(domain_users.length).to equal(just_users.length)
+
+      domain_users.each_with_index { |user, index | list[index][:user] = user }
+
+      res = project.set_users_roles(list)
+      expect(res.length).to equal(list.length)
+      res.each do |update_result|
+        expect(update_result[:result]['projectUsersUpdateResult']['successful'][0]).to include(update_result[:user].uri)
+      end
+
+      domain_users.each do |user|
+         user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
+      end
     end
 
     it 'Properly updates user roles when user specified by email and :roles specified as array of string with role names' do
       project = ProjectHelper.get_default_project
 
-      users_roles = [
+      list = [
         {
           :user => ConnectionHelper::DEFAULT_USERNAME,
           :roles => ['admin']
         }
       ]
 
-      project.set_users_roles(users_roles)
+      res = project.set_users_roles(list)
+      expect(res.length).to equal(list.length)
     end
 
     it 'Properly updates user roles when user specified by email and :roles specified as string with role name' do
       project = ProjectHelper.get_default_project
 
-      users_roles = [
+      list = [
         {
           :user => ConnectionHelper::DEFAULT_USERNAME,
           :roles => 'admin'
         }
       ]
 
-      project.set_users_roles(users_roles)
+      res = project.set_users_roles(list)
+      expect(res.length).to equal(list.length)
     end
 
   end

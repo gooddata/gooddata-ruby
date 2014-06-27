@@ -173,8 +173,8 @@ module GoodData
             domain_user = domain[:domain].add_user(user_data)
             domain[:users] << domain_user
             domain[:users_map][user.email] = domain_user
-            domain_user
           end
+          domain_user
         end
       end
     end
