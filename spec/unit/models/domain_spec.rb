@@ -13,7 +13,9 @@ describe GoodData::Domain do
 
   describe '#add_user' do
     it 'Should add user' do
-      GoodData::Domain.add_user(:domain => ConnectionHelper::DEFAULT_DOMAIN, :login => "gemtest#{rand(1e6)}@gooddata.com", :password => 'password')
+      user = GoodData::Domain.add_user(:domain => ConnectionHelper::DEFAULT_DOMAIN, :login => "gemtest#{rand(1e6)}@gooddata.com", :password => 'password')
+      expect(user).to be_an_instance_of(GoodData::Profile)
+      user.delete
     end
   end
 
@@ -74,7 +76,13 @@ describe GoodData::Domain do
         list << user
       end
 
-      GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
+      res = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
+
+      expect(res).to be_an_instance_of(Array)
+      res.each do |r|
+        expect(r).to be_an_instance_of(GoodData::Profile)
+        r.delete
+      end
     end
   end
 end
