@@ -319,12 +319,12 @@ module GoodData
     # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
+      return name if name.instance_of?(GoodData::Membership)
       name.downcase!
       user_list.each do |user|
-        return user if user.email.downcase == name ||
-          user.full_name.downcase == name ||
+        return user if user.uri.downcase == name ||
           user.login.downcase == name ||
-          user.uri.downcase == name
+          user.email.downcase == name
       end
       nil
     end
