@@ -340,13 +340,14 @@ describe GoodData::Project do
 
       list = load_users_from_csv
 
+      # Create domain users
       domain_users = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
       expect(domain_users.length).to equal(list.length)
-
+      # Create list with user, desired_roles hashes
       domain_users.each_with_index do |user, index|
         list[index] = {
           :user => user,
-          :roles => list[index].json['user']['content']['role']
+          :roles => list[index].json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
         }
       end
 
