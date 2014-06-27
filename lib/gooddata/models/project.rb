@@ -321,10 +321,10 @@ module GoodData
     def get_user(name, user_list = users)
       name.downcase!
       user_list.each do |user|
-        return user if user.email.downcase == name ||
-          user.full_name.downcase == name ||
+        return user if user.uri.downcase == name ||
           user.login.downcase == name ||
-          user.uri.downcase == name
+          user.email.downcase == name ||
+          user.name.downcase == name
       end
       nil
     end
