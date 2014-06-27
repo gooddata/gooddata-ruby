@@ -61,7 +61,11 @@ describe GoodData::Domain do
               # Following lines are ugly hack
               'role' => 'admin',
               'password' => 'password',
-              'domain' => ConnectionHelper::DEFAULT_DOMAIN
+              'domain' => ConnectionHelper::DEFAULT_DOMAIN,
+
+              # And following lines are even much more ugly hack
+              # 'sso_provider' => '',
+              # 'authentication_modes' => ['sso', 'password']
             },
             'meta' => {}
           }

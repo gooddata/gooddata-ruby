@@ -163,6 +163,12 @@ module GoodData
               :email => user.login
             }
 
+            tmp = user.json['user']['content']['sso_provider']
+            user_data[:sso_provider] = tmp if tmp && !tmp.empty?
+
+            tmp = user.json['user']['content']['authentication_modes']
+            user_data[:authentication_modes] = tmp && !tmp.empty?
+
             # Add created user to cache
             domain_user = domain[:domain].add_user(user_data)
             domain[:users] << domain_user
