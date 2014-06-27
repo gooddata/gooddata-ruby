@@ -695,14 +695,15 @@ module GoodData
 
         # Check if user exists in domain
         domain_user = domain[:users_map][user.email]
+        fail ArgumentError, "Trying to add user '#{user.login}' which is not valid user in domain '#{domain_name}'" if domain_user.nil?
 
         # Lookup for role
         role_name = user.json['user']['content']['role'] || 'readOnlyUser'
         role = get_role(role_name, role_list)
-        next if role.nil?
+        fail ArgumentError, "Invalid role name specified '#{role_name}' for user '#{user.email}'" if role.nil?
 
         # Assign user project role
-        add_user(domain_user, [role.uri])
+        set_user_roles(domain_user, [role.uri], role_list)
       end
     end
 
@@ -798,6 +799,8 @@ module GoodData
       GoodData.post url, payload
     end
 
+    alias_method :add_user, :set_user_roles
+
     # Update list of users
     #
     # @param list List of users to be updated
@@ -806,7 +809,10 @@ module GoodData
       list.map do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:role] || user_hash[:roles]
-        set_user_roles(user, roles, role_list)
+        {
+          :user => user,
+          :result => set_user_roles(user, roles, role_list)
+        }
       end
     end
 
