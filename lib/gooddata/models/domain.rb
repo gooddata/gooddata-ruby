@@ -102,6 +102,7 @@ module GoodData
       # @param [Hash] opts Options.
       # @option opts [Number] :offset The subject
       # @option opts [Number] :limit From address
+      # TODO: Review opts[:limit] functionality
       def users(domain, opts = USERS_OPTIONS)
         result = []
 
@@ -126,7 +127,6 @@ module GoodData
       # @return [Array<GoodData::User>] List of users created
       def users_create(list, default_domain = nil)
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
-        res = []
         domains = {}
         list.map do |user|
           # TODO: Add user here
@@ -173,10 +173,9 @@ module GoodData
             domain_user = domain[:domain].add_user(user_data)
             domain[:users] << domain_user
             domain[:users_map][user.email] = domain_user
-            res << domain_user
+            domain_user
           end
         end
-        res
       end
     end
 

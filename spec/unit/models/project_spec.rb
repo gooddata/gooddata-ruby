@@ -264,9 +264,15 @@ describe GoodData::Project do
         GoodData::Membership.new(json)
       end
 
-      GoodData::Domain.users_create(users)
+      res = GoodData::Domain.users_create(users)
 
       project.users_create(users)
+
+      expect(res).to be_an_instance_of(Array)
+      res.each do |r|
+        expect(r).to be_an_instance_of(GoodData::Profile)
+        r.delete
+      end
     end
   end
 

@@ -25,6 +25,12 @@ RSpec.configure do |config|
   config.filter_run_excluding :broken => true
 
   config.before(:all) do
+    ConnectionHelper.create_default_connection
+    users = GoodData::Domain.users_map(ConnectionHelper::DEFAULT_DOMAIN)
+    users.each do |user|
+      user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
+    end
+
     # TODO: Fully setup global environment
     GoodData.logging_off
   end
