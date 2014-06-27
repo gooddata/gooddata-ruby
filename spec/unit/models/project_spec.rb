@@ -301,21 +301,17 @@ describe GoodData::Project do
 
       list = load_users_from_csv
 
+      # Create domain users
+      domain_users = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
+      expect(domain_users.length).to equal(list.length)
+
       # Create list with user, desired_roles hashes
-      list = list.map do |user|
-        {
+      domain_users.each_with_index do |user, index|
+        list[index] = {
           :user => user,
-          :roles => user.json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
+          :roles => list[index].json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
         }
       end
-
-      # Get changed users objects from hash
-      just_users = list.map { |u| u[:user] }
-
-      domain_users = GoodData::Domain.users_create(just_users, ConnectionHelper::DEFAULT_DOMAIN)
-      expect(domain_users.length).to equal(just_users.length)
-
-      domain_users.each_with_index { |user, index | list[index][:user] = user }
 
       res = project.set_users_roles(list)
       expect(res.length).to equal(list.length)
