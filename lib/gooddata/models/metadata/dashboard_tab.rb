@@ -19,7 +19,6 @@ module GoodData
         @json = json
         @dashboard = dashboard
       end
-
     end
   end
 end
