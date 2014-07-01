@@ -103,6 +103,21 @@ module GoodData
       x
     end
 
+    # Gets dashboard tab by its name
+    # @param name Dashboard tab name
+    # @return GoodData::Dashboard::Tab Dashboard tab instance
+    def tab(name)
+      return name if name.kind_of?(GoodData::Dashboard::Tab)
+      fail ArgumentError, 'Invalid type of argument name, should be String or GoodData::Dashboard::Tab' unless name.kind_of?(String)
+
+      tabs.each do |tab|
+        return tab if tab.title == name
+      end
+      nil
+    end
+
+    # Gets all dashboard tabs
+    # @return [Array<GoodData::Dashboard::Tab>] Array of tabs belonging to dashboard
     def tabs
       content['tabs'].map do |tab|
         GoodData::Dashboard::Tab.new(tab, self)

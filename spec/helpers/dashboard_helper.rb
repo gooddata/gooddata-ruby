@@ -6,6 +6,9 @@ require 'gooddata/models/models'
 require_relative 'project_helper'
 
 module DashboardHelper
+  DEFAULT_DASHBOARD_TAB_NAME = 'First Tab'
+  DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'b4deec096506'
+
   class << self
     # Gets the dashboard which can be used in tests
     def default_dashboard
