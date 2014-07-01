@@ -154,28 +154,6 @@ module GoodData
       @json['project']['meta']['author']
     end
 
-    # Adds user to project
-    def add_user(user, roles)
-      url = "#{uri}/users"
-      payload = {
-        'user' => {
-          'content' => {
-            'status' => 'ENABLED',
-            'userRoles' => roles
-          },
-          'links' => {
-            'self' => user.uri
-          }
-        }
-      }
-      GoodData.post url, payload
-    end
-
-    # Remove user from project
-    def remove_user(user, roles)
-      user.disable
-    end
-
     # Returns web interface URI of project
     #
     # @return [String] Project URL
@@ -363,12 +341,14 @@ module GoodData
     # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
+      return name if name.instance_of?(GoodData::Membership)
+      fail ArgumentError, 'Invalid argument type of name - should be string or GoodData::Membership' if !name.kind_of?(String)
+
       name.downcase!
       user_list.each do |user|
-        return user if user.email.downcase == name ||
-          # user.full_name.downcase == name ||
+        return user if user.uri.downcase == name ||
           user.login.downcase == name ||
-          user.uri.downcase == name
+          user.email.downcase == name
       end
       nil
     end
