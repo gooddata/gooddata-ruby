@@ -8,6 +8,7 @@ describe GoodData::Model::DashboardBuilder do
 
   before(:each) do
     ConnectionHelper::create_default_connection
+    @project = ProjectHelper.get_default_project
   end
 
   after(:each) do
@@ -30,6 +31,15 @@ describe GoodData::Model::DashboardBuilder do
       dashboard_add_tab(db)
 
       db.dirty.should be_true
+    end
+  end
+
+  describe '#create' do
+    it 'Creates new dashboard' do
+      dash = GoodData::Model::DashboardBuilder.create(DASHBOARD_TITLE)
+      dash.save(@project)
+
+      dash.delete
     end
   end
 

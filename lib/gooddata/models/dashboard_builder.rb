@@ -1,8 +1,39 @@
 # encoding: UTF-8
 
+require 'erubis'
+require 'multi_json'
+
 module GoodData
   module Model
     class DashboardBuilder
+      DEFAULT_OPTS = {}
+
+      TEMPLATES_DIR = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'dashboard')
+
+      class << self
+        def construct_path(rel_path)
+          File.join(TEMPLATES_DIR, rel_path)
+        end
+
+        def create(title, opts = DEFAULT_OPTS)
+          opts = DEFAULT_OPTS.merge(opts)
+
+          args = {
+            :title => title || opts[:title] || "Default Dashboard #{Time.new.strftime('%Y%m%d%H%M%S')}",
+            :summary => opts[:summary] || ''
+          }
+
+          dashoboard_json = template_as_json('dashboard.json.erb', args)
+
+          GoodData::Dashboard.new(dashoboard_json)
+        end
+
+        def template_as_json(path, data)
+          raw_json = GoodData::Helpers::Erb.template(construct_path(path), data)
+          MultiJson.load(raw_json)
+        end
+      end
+
       # Initialize new dashboard
       def initialize(title)
         @title = title

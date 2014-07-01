@@ -319,7 +319,7 @@ describe GoodData::Project do
 
   describe '#users_import' do
     it 'Import users from CSV' do
-      project = GoodData::Project[ProjectHelper::PROJECT_ID]
+        project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
       list = load_users_from_csv
       project.users_import(list)

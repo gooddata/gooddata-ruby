@@ -38,6 +38,18 @@ describe GoodData::Dashboard, :dashboard => true do
     end
   end
 
+  describe '#tabs' do
+    it 'Returns tabs as array of GoodData::DashboardTab' do
+      dashboard = DashboardHelper.default_dashboard
+
+      tabs = dashboard.tabs
+      expect(tabs).to be_an_instance_of(Array)
+      tabs.each do |tab|
+        expect(tab).to be_an_instance_of(GoodData::Dashboard::Tab)
+      end
+    end
+  end
+
   describe '#title' do
     it 'Returns title as String' do
       dashboard = DashboardHelper.default_dashboard

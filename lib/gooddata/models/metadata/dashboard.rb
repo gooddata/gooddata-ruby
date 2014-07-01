@@ -25,6 +25,7 @@ module GoodData
         query('projectdashboards', Dashboard, options)
       end
 
+      # TODO: Merge with GoodData::DashboardBuilder
       def create_report_tab(tab)
         title = tab[:title]
         {
@@ -33,6 +34,7 @@ module GoodData
         }
       end
 
+      # TODO: Merge with GoodData::DashboardBuilder
       def create_report_tab_item(options = {})
         title = options[:title]
 
@@ -63,6 +65,7 @@ module GoodData
         }
       end
 
+      # TODO: Obsolete by GoodData::DashboardBuilder
       def create(options = {})
         stuff = {
           'projectDashboard' => {
@@ -101,7 +104,9 @@ module GoodData
     end
 
     def tabs
-      content['tabs']
+      content['tabs'].map do |tab|
+        GoodData::Dashboard::Tab.new(tab, self)
+      end
     end
 
     def tabs_ids
