@@ -1,5 +1,5 @@
 ---
-layout: reference
+layout: guides
 title:  "Generating Multiple Metrics/Reports"
 date:   2014-06-13 10:00:00
 categories: guide

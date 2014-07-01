@@ -1,5 +1,5 @@
 ---
-layout: reference
+layout: guides
 title:  "Tagging Multiple Metrics"
 date:   2014-06-10 10:56:00
 categories: guide
