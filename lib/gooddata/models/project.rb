@@ -342,7 +342,7 @@ module GoodData
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
       return name if name.instance_of?(GoodData::Membership)
-      fail ArgumentError, 'Invalid argument type of name - should be string or GoodData::Membership' if !name.kind_of?(String)
+      fail ArgumentError, 'Invalid argument type of name - should be string or GoodData::Membership' unless name.kind_of?(String)
 
       name.downcase!
       user_list.each do |user|
