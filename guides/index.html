@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Reference giudes | GoodData Ruby SDK
+title: Tutorials | GoodData Ruby SDK
 ---
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
@@ -28,7 +28,7 @@ title: Reference giudes | GoodData Ruby SDK
           <li class="active">
             <a href="{{ site.url }}/guides">Guides</a>
           </li>
-          <li class="active">
+          <li class="">
             <a href="{{ site.url }}/refs">Reference</a>
           </li>
           <li class="">
@@ -46,7 +46,7 @@ title: Reference giudes | GoodData Ruby SDK
 <div class="container-narrow">
   <ul class="posts">
     {% for post in site.posts reversed %}
-      {% if post.categories contains 'reference' %}
+      {% if post.categories contains 'guide' %}
         <div>
           <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
           <div>{{ post.perex }}</div>
