@@ -7,7 +7,7 @@ require_relative 'metadata'
 require 'multi_json'
 
 module GoodData
-  class Dashboard
+  class Dashboard < GoodData::MdObject
     # Dashboard tab representation
     class Tab
       attr_reader :dashboard
