@@ -39,6 +39,16 @@ describe GoodData::Dashboard::Tab do
     end
   end
 
+  describe '#reports' do
+    it 'Returns array of reports' do
+      res = @tab.reports
+      expect(res).to be_an_instance_of(Array)
+      res.each do |r|
+        expect(r).to be_an_instance_of(GoodData::Report)
+      end
+    end
+  end
+
   describe '#title' do
     it 'Returns dashboard tab identifier as String' do
       res = @tab.title

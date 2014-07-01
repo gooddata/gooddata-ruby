@@ -28,10 +28,20 @@ module GoodData
       end
 
       # Returns dashboard tab items
+      # @return [Array<GoodData::ReportItem>] List of report items
       def items
         json['items'].map do |item|
           GoodData::ReportItem.new(item)
         end
+      end
+
+      # Get reports on dashboard tab
+      # @return [Array<GoodData::Report>] Reports
+      def reports
+        res = items.map do |item|
+          item.report
+        end
+        res.compact
       end
 
       # Gets Dashboard tab title
