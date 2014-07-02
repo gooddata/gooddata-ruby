@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'pathname'
+require 'aws'
 
 module GoodData
   module Bricks
@@ -21,8 +22,9 @@ module GoodData
 
       def backup(meta)
         @logger.info 'would send a backup list of files to backup' if @logger
-        files = meta.reduce([]) do |a, e|
-          a << e[:filename]
+
+        files = meta['objects'].map { |k, o| o }.reduce([]) do |a, e|
+          a + e['filenames']
         end
 
         bucket_name = @params['s3_backup_bucket_name']
@@ -36,8 +38,11 @@ module GoodData
         bucket = s3.buckets.create(bucket_name) unless bucket.exists?
 
         files.each do |file|
-          obj = bucket.objects[file]
-          obj.write(Pathname.new(file))
+          file_path =  Pathname.new(file)
+          target_path = Pathname.new(@params['s3_backup_path'] || '') + file_path.basename
+          obj = bucket.objects[target_path]
+          obj.write(file_path)
+          @logger.info "Backed up file #{file_path} to s3 #{target_path}" if @logger
         end
 
         meta
