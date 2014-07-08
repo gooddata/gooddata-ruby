@@ -160,7 +160,7 @@ module GoodData
 
     # Gets name of root element wrapping all the json, ie. 'report', 'user', etc
     def root_key
-      raw_data.keys.first
+      json.keys.first
     end
 
     # Initializes metadata from raw JSON
@@ -223,7 +223,7 @@ module GoodData
 
     # Gets raw data wrapped in root_key
     def data
-      raw_data[root_key]
+      json[root_key]
     end
 
     # Gets metadata section
@@ -291,7 +291,7 @@ module GoodData
         result = GoodData.post(project.md['obj'], to_json)
         saved_object = self.class[result['uri'], :project => project]
         # TODO: add test for explicitly provided identifier
-        @json = saved_object.raw_data
+        @json = saved_object.json
         if explicit_identifier
           # Object creation API discards the identifier. If an identifier
           # was explicitely provided in the origina object, we need to set
@@ -315,7 +315,7 @@ module GoodData
     # @param new_title [String] New title. If not provided one is provided
     # @return [GoodData::MdObject] MdObject that has been saved as
     def save_as(new_title = "Clone of #{title}")
-      dupped = Marshal.load(Marshal.dump(raw_data))
+      dupped = Marshal.load(Marshal.dump(json))
       dupped[root_key]['meta'].delete('uri')
       dupped[root_key]['meta'].delete('identifier')
       dupped[root_key]['meta']['title'] = new_title

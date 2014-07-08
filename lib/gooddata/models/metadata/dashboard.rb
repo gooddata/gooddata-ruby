@@ -39,6 +39,7 @@ module GoodData
         title = options[:title]
 
         report = GoodData::Report.find_first_by_title(title)
+
         {
           :reportItem => {
             :obj => report.uri,
@@ -124,6 +125,8 @@ module GoodData
       end
     end
 
+    # Gets IDs of all dashboard tabs
+    # @return [Array<String>] List if dashboard tab identifiers
     def tabs_ids
       tabs.map { |t| t['identifier'] }
     end
