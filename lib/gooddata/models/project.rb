@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+require 'csv'
 require 'zip'
 require 'fileutils'
 
@@ -21,10 +22,7 @@ module GoodData
       # Returns an array of all projects accessible by
       # current user
       def all
-        json = GoodData.get GoodData.profile.projects
-        json['projects'].map do |project|
-          Project.new project
-        end
+        GoodData.profile.projects
       end
 
       # Returns a Project object identified by given string
@@ -74,7 +72,7 @@ module GoodData
                 'driver' => attributes[:driver] || 'Pg'
               }
             }
-          }
+        }
 
         json['project']['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
@@ -97,6 +95,23 @@ module GoodData
         end
         sleep 3
         project
+      end
+
+      # Takes one CSV line and creates hash from data extracted
+      #
+      # @param row CSV row
+      def user_csv_import(row)
+        {
+          'user' => {
+            'content' => {
+              'email' => row[0],
+              'login' => row[1],
+              'firstname' => row[2],
+              'lastname' => row[3]
+            },
+            'meta' => {}
+          }
+        }
       end
     end
 
@@ -137,13 +152,6 @@ module GoodData
     def author
       # TODO: Return object instead
       @json['project']['meta']['author']
-    end
-
-    # Adds user to project
-    #
-    # TODO: Discuss with @fluke777 if is not #invite sufficient
-    def add_user(email_address, domain)
-      fail 'Not implemented'
     end
 
     # Returns web interface URI of project
@@ -234,6 +242,13 @@ module GoodData
       end
     end
 
+    # Gets processes for the project
+    #
+    # @return [Array<GoodData::Process>] Processes for the current project
+    def processes
+      GoodData::Process.all
+    end
+
     # Deletes project
     def delete
       fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
@@ -249,10 +264,11 @@ module GoodData
     #
     # @param [String] role_name Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
-    def get_role_by_identifier(role_name)
-      tmp = roles
-      tmp.each do |role|
-        return role if role.identifier.downcase == role_name.downcase
+    def get_role_by_identifier(role_name, role_list = roles)
+      role_name = role_name.downcase.gsub(/role$/, '')
+      role_list.each do |role|
+        tmp_role_name = role.identifier.downcase.gsub(/role$/, '')
+        return role if tmp_role_name == role_name
       end
       nil
     end
@@ -261,9 +277,8 @@ module GoodData
     #
     # @param [String] role_summary Summary of role to look for
     # @return [GoodData::ProjectRole] Project role if found
-    def get_role_by_summary(role_summary)
-      tmp = roles
-      tmp.each do |role|
+    def get_role_by_summary(role_summary, role_list = roles)
+      role_list.each do |role|
         return role if role.summary.downcase == role_summary.downcase
       end
       nil
@@ -273,10 +288,43 @@ module GoodData
     #
     # @param [String] role_title Title of role to look for
     # @return [GoodData::ProjectRole] Project role if found
-    def get_role_by_title(role_title)
-      tmp = roles
-      tmp.each do |role|
+    def get_role_by_title(role_title, role_list = roles)
+      role_list.each do |role|
         return role if role.title.downcase == role_title.downcase
+      end
+      nil
+    end
+
+    # Gets project role
+    #
+    # @param [String] role_title Title of role to look for
+    # @return [GoodData::ProjectRole] Project role if found
+    def get_role(role_name, role_list = roles)
+      return role_name if role_name.is_a? GoodData::ProjectRole
+
+      role_name.downcase!
+      role_list.each do |role|
+        return role if role.uri == role_name ||
+          role.identifier.downcase == role_name ||
+          role.identifier.downcase.gsub(/role$/, '') == role_name ||
+          role.title.downcase == role_name ||
+          role.summary.downcase == role_name
+      end
+      nil
+    end
+
+    # Gets user by its email, full_name, login or uri
+    #
+    # @param [String] name Name to look for
+    # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
+    # @return [GoodDta::Membership] User
+    def get_user(name, user_list = users)
+      return name if name.instance_of?(GoodData::Membership)
+      name.downcase!
+      user_list.each do |user|
+        return user if user.uri.downcase == name ||
+          user.login.downcase == name ||
+          user.email.downcase == name
       end
       nil
     end
@@ -300,9 +348,8 @@ module GoodData
 
       role_url = nil
       if role.index('/gdc/') != 0
-        tmp = get_role_by_identifier(role)
-        tmp = get_role_by_title(role) if tmp.nil?
-        role_url = tmp['url'] if tmp
+        tmp = get_role(role)
+        role_url = tmp.uri if tmp
       else
         role_url = role if role_url.nil?
       end
@@ -350,6 +397,29 @@ module GoodData
 
     def md
       @md ||= Links.new GoodData.get(data['links']['metadata'])
+    end
+
+    # Gets membership for profile specified
+    #
+    # @param [GoodData::Profile] profile - Profile to be checked
+    # @param [Array<GoodData::Membership>] list Optional list of members to check against
+    # @return [GoodData::Membership] Membership if found
+    def member(profile, list = members)
+      if profile.is_a? String
+        return list.find do |m|
+          m.uri == profile || m.login == profile
+        end
+      end
+      list.find { |m| m.login == profile.login }
+    end
+
+    # Checks if the profile is member of project
+    #
+    # @param [GoodData::Profile] profile - Profile to be checked
+    # @param [Array<GoodData::Membership>] list Optional list of members to check against
+    # @return [Boolean] true if is member else false
+    def member?(profile, list = members)
+      !member(profile, list).nil?
     end
 
     # Gets raw resource ID
@@ -422,16 +492,11 @@ module GoodData
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
       url = "/gdc/projects/#{pid}/roles"
-
-      res = []
-
       tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].each do |role_url|
+      tmp['projectRoles']['roles'].map do |role_url|
         json = GoodData.get role_url
-        res << GoodData::ProjectRole.new(json)
+        GoodData::ProjectRole.new(json)
       end
-
-      res
     end
 
     # Saves project
@@ -521,10 +586,155 @@ module GoodData
 
       tmp = GoodData.get @json['project']['links']['users']
       tmp['users'].map do |user|
-        res << GoodData::User.new(user)
+        res << GoodData::Membership.new(user)
       end
 
       res
+    end
+
+    alias_method :members, :users
+
+    def users_create(list, role_list = roles)
+      domains = {}
+      list.map do |user|
+        # TODO: Add user here
+        domain_name = user.json['user']['content']['domain']
+
+        # Lookup for domain in cache'
+        domain = domains[domain_name]
+
+        # Get domain info from REST, add to cache
+        if domain.nil?
+          domain = {
+            :domain => GoodData::Domain[domain_name],
+            :users => GoodData::Domain[domain_name].users
+          }
+
+          domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
+          domains[domain_name] = domain
+        end
+
+        # Check if user exists in domain
+        domain_user = domain[:users_map][user.email]
+        fail ArgumentError, "Trying to add user '#{user.login}' which is not valid user in domain '#{domain_name}'" if domain_user.nil?
+
+        # Lookup for role
+        role_name = user.json['user']['content']['role'] || 'readOnlyUser'
+        role = get_role(role_name, role_list)
+        fail ArgumentError, "Invalid role name specified '#{role_name}' for user '#{user.email}'" if role.nil?
+
+        # Assign user project role
+        set_user_roles(domain_user, [role.uri], role_list)
+      end
+    end
+
+    # Imports users from CSV
+    #
+    # # Features
+    # - Create new users
+    # - Delete old users
+    # - Update existing users
+    #
+    # CSV Format
+    # TODO: Describe CSV Format here
+    #
+    # @param path CSV file to be loaded
+    # @param opts Optional additional options
+    def users_import(new_users, domain = nil)
+      # Diff users
+      diff = GoodData::Membership.diff_list(users, new_users)
+
+      # Create domain users
+      GoodData::Domain.users_create(diff[:added], domain)
+
+      # Create new users
+      role_list = roles
+      users_create(diff[:added], role_list)
+
+      # Get changed users objects from hash
+      list = diff[:changed].map do |user|
+        user[:user]
+      end
+
+      # Join list of changed users with 'same' users
+      list = list.zip(diff[:same]).flatten.compact
+
+      new_users_map = Hash[new_users.map { |u| [u.email, u] }]
+
+      # Create list with user, desired_roles hashes
+      list = list.map do |user|
+        {
+          :user => user,
+          :roles => new_users_map[user.email].json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
+        }
+      end
+
+      # Update existing users
+      set_users_roles(list, role_list)
+
+      # Remove old users
+      users_remove(diff[:removed])
+    end
+
+    # Disable users
+    #
+    # @param list List of users to be disabled
+    def users_remove(list)
+      list.map do |user|
+        user.disable
+      end
+    end
+
+    # Update user
+    #
+    # @param user User to be updated
+    # @param desired_roles Roles to be assigned to user
+    # @param role_list Optional cached list of roles used for lookups
+    def set_user_roles(user, desired_roles, role_list = roles)
+      if user.is_a? String
+        user = get_user(user)
+        fail ArgumentError, "Invalid user '#{user}' specified" if user.nil?
+      end
+
+      desired_roles = [desired_roles] unless desired_roles.is_a? Array
+
+      roles = desired_roles.map do |role_name|
+        role = get_role(role_name, role_list)
+        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
+        role.uri
+      end
+
+      url = "#{uri}/users"
+      payload = {
+        'user' => {
+          'content' => {
+            'status' => 'ENABLED',
+            'userRoles' => roles
+          },
+          'links' => {
+            'self' => user.uri
+          }
+        }
+      }
+
+      GoodData.post url, payload
+    end
+
+    alias_method :add_user, :set_user_roles
+
+    # Update list of users
+    #
+    # @param list List of users to be updated
+    # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
+    def set_users_roles(list, role_list = roles)
+      list.map do |user_hash|
+        user = user_hash[:user]
+        roles = user_hash[:role] || user_hash[:roles]
+        {
+          :user => user,
+          :result => set_user_roles(user, roles, role_list)
+        }
+      end
     end
 
     # Run validation on project

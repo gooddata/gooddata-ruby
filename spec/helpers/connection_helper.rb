@@ -6,6 +6,7 @@ module ConnectionHelper
   DEFAULT_USERNAME = "svarovsky+gem_tester@gooddata.com"
   DEFAULT_PASSWORD = "jindrisska"
   DEFAULT_DOMAIN = 'gooddata-tomas-svarovsky'
+  DEFAULT_USER_URL = '/gdc/account/profile/3cea1102d5584813506352a2a2a00d95'
 
   # Creates connection using default credentials or supplied one
   #

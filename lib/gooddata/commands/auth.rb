@@ -4,7 +4,7 @@ require 'highline/import'
 require 'multi_json'
 
 require_relative '../cli/terminal'
-require_relative '../helpers'
+require_relative '../helpers/helpers'
 
 module GoodData
   module Command

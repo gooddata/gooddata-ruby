@@ -18,12 +18,21 @@ RSpec.configure do |config|
   config.include BlueprintHelper
   config.include CliHelper
   config.include ConnectionHelper
+  config.include CsvHelper
   config.include ProjectHelper
   config.include SchemaHelper
 
   config.filter_run_excluding :broken => true
 
   config.before(:all) do
+    # TODO: Move this to some method.
+    # TODO Make more intelligent so two test suites can run at the same time.
+    # ConnectionHelper.create_default_connection
+    # users = GoodData::Domain.users_map(ConnectionHelper::DEFAULT_DOMAIN)
+    # users.each do |user|
+    #   user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
+    # end
+
     # TODO: Fully setup global environment
     GoodData.logging_off
   end

@@ -140,6 +140,8 @@ describe "Full project implementation", :constraint => 'slow' do
 
       # Find a metric by name
       metric = GoodData::Metric.find_first_by_title('My metric')
+      the_same_metric = GoodData::Metric[metric]
+      metric.should == metric
 
       # grab fact in several different ways
       fact1 = GoodData::Fact.find_first_by_title('Lines changed')
@@ -205,6 +207,11 @@ describe "Full project implementation", :constraint => 'slow' do
 
       res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true)
       res.should == 9
+
+      fact = GoodData::Fact.find_first_by_title('Lines changed')
+      fact.fact?.should == true
+      res = fact.create_metric(:type => :sum).execute
+      res.should == 9
     end
   end
 
@@ -220,7 +227,9 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should have more users"  do
     GoodData.with_project(@project) do |p|
-      GoodData::Attribute['attr.devs.dev_id'].create_metric.execute.should == 4
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      attribute.attribute?.should == true
+      attribute.create_metric.execute.should == 4
     end
   end
 
@@ -242,6 +251,14 @@ describe "Full project implementation", :constraint => 'slow' do
       l = attribute.primary_label
       value = l.values.first[:value]
       l.find_element_value(l.find_value_uri(value)).should == value
+    end
+  end
+
+  it "Should be able to compute count o different datasets" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      dataset_attribute = GoodData::Attribute['attr.commits.id']
+      attribute.create_metric(:attribute => dataset_attribute).execute.should == 3
     end
   end
 
@@ -277,6 +294,55 @@ describe "Full project implementation", :constraint => 'slow' do
     end
   end
 
+  it "should be able to give you values of the label as an array of hashes" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      label = attribute.primary_label
+      label.values.map {|v| v[:value]}.should == [
+        'jirka@gooddata.com',
+        'josh@gooddata.com',
+        'petr@gooddata.com',
+        'tomas@gooddata.com'
+      ]
+    end
+  end
+
+  it "should be able to give you values for" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      attribute.values_for(2).should == ["tomas@gooddata.com", "1"]
+    end
+  end
+
+  it "should be able to find specific element and give you the primary label value" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2").should == 'tomas@gooddata.com'
+    end
+  end
+
+  it "should be able to give you label by name" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      label = attribute.label_by_name('email')
+      label.label?.should == true
+      label.title.should == 'Email'
+      label.identifier.should == "label.devs.dev_id.email"
+      label.attribute_uri.should == attribute.uri
+      label.attribute.should == attribute
+    end
+  end
+
+  it "should be able to return values of the attribute for inspection" do
+    GoodData.with_project(@project) do |p|
+      attribute = GoodData::Attribute['attr.devs.dev_id']
+      vals = attribute.values
+      vals.count.should == 4
+      vals.first.count.should == 2
+      vals.first.first[:value].should == "jirka@gooddata.com"
+    end
+  end
+
   it "should be able to save_as a metric" do
     GoodData.with_project(@project) do |p|
       m = GoodData::Metric.find_first_by_title("My test metric")
@@ -286,5 +352,4 @@ describe "Full project implementation", :constraint => 'slow' do
       m_cloned.execute.should == cloned.execute
     end
   end
-
 end

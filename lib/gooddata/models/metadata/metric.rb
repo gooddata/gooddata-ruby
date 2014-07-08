@@ -137,7 +137,7 @@ module GoodData
     end
 
     # Checks that the expression contains certain element of an attribute. The value is looked up through given label.
-    # @param [GoodData::DisplayForm] label Label though which the value is looked up
+    # @param [GoodData::Label] label Label though which the value is looked up
     # @param [String] value Value that will be looked up through the label.
     # @return [Boolean]
     def contain_value?(label, value)
@@ -157,7 +157,7 @@ module GoodData
     end
 
     # Method used for replacing attribute element values. Looks up certain value of a label in the MAQL expression and exchanges it for a different value of the same label.
-    # @param [GoodData::DisplayForm] label Label through which the value and for_value are resolved
+    # @param [GoodData::Label] label Label through which the value and for_value are resolved
     # @param [String] value value that is going to be replaced
     # @param [String] for_value value that is going to be the new one
     # @return [GoodData::Metric]

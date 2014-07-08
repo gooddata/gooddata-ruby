@@ -25,12 +25,13 @@ module GoodData
       # @param password [String] Default preset password
       # @return [Object] Raw response
       def add_user(opts)
+        generated_pass = rand(10E10).to_s
         data = {
           :login => opts[:login],
           :firstName => opts[:first_name] || 'FirstName',
           :lastName => opts[:last_name] || 'LastName',
-          :password => opts[:password],
-          :verifyPassword => opts[:password],
+          :password => opts[:password] || generated_pass,
+          :verifyPassword => opts[:password] || generated_pass,
           :email => opts[:login]
         }
 
@@ -70,10 +71,16 @@ module GoodData
         tmp = opts[:timezone]
         data[:timezone] = tmp if tmp && !tmp.empty?
 
+        # TODO: It will be nice if the API will return us user just newly created
         url = "/gdc/account/domains/#{opts[:domain]}/users"
         response = GoodData.post(url, :accountSetting => data)
 
         raw = GoodData.get response['uri']
+
+        # TODO: Remove this hack when POST /gdc/account/domains/{domain-name}/users returns full profile
+        raw['accountSetting']['links'] = {} unless raw['accountSetting']['links']
+        raw['accountSetting']['links']['self'] = response['uri'] unless raw['accountSetting']['links']['self']
+
         GoodData::Profile.new(raw)
       end
 
@@ -95,17 +102,80 @@ module GoodData
       # @param [Hash] opts Options.
       # @option opts [Number] :offset The subject
       # @option opts [Number] :limit From address
+      # TODO: Review opts[:limit] functionality
       def users(domain, opts = USERS_OPTIONS)
         result = []
 
         options = USERS_OPTIONS.merge(opts)
-
-        tmp = GoodData.get("/gdc/account/domains/#{domain}/users?offset=#{options[:offset]}&limit=#{options[:limit]}")
-        tmp['accountSettings']['items'].each do |account|
-          result << GoodData::Profile.new(account)
+        offset = 0 || options[:offset]
+        uri = "/gdc/account/domains/#{domain}/users?offset=#{offset}&limit=#{options[:limit]}"
+        loop do
+          break unless uri
+          tmp = GoodData.get(uri)
+          tmp['accountSettings']['items'].each do |account|
+            result << GoodData::Profile.new(account)
+          end
+          uri = tmp['accountSettings']['paging']['next']
         end
 
         result
+      end
+
+      # Create users specified in list
+      # @param [Array<GoodData::Membership>] list List of users
+      # @param [String] default_domain_name Default domain name used when no specified in user
+      # @return [Array<GoodData::User>] List of users created
+      def users_create(list, default_domain = nil)
+        default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
+        domains = {}
+        list.map do |user|
+          # TODO: Add user here
+          domain_name = user.json['user']['content']['domain'] || default_domain_name
+
+          # Lookup for domain in cache'
+          domain = domains[domain_name]
+
+          # Get domain info from REST, add to cache
+          if domain.nil?
+            domain = {
+              :domain => GoodData::Domain[domain_name],
+              :users => GoodData::Domain[domain_name].users
+            }
+
+            domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
+            domains[domain_name] = domain
+          end
+
+          # Check if user exists in domain
+          domain_user = domain[:users_map][user.email]
+
+          # Create domain user if needed
+          unless domain_user
+            password = user.json['user']['content']['password']
+
+            # Fill necessary user data
+            user_data = {
+              :login => user.login,
+              :firstName => user.first_name,
+              :lastName => user.last_name,
+              :password => password,
+              :verifyPassword => password,
+              :email => user.login
+            }
+
+            tmp = user.json['user']['content']['sso_provider']
+            user_data[:sso_provider] = tmp if tmp && !tmp.empty?
+
+            tmp = user.json['user']['content']['authentication_modes']
+            user_data[:authentication_modes] = tmp && !tmp.empty?
+
+            # Add created user to cache
+            domain_user = domain[:domain].add_user(user_data)
+            domain[:users] << domain_user
+            domain[:users_map][user.email] = domain_user
+          end
+          domain_user
+        end
       end
     end
 
@@ -153,6 +223,10 @@ module GoodData
     #
     def users(opts = USERS_OPTIONS)
       GoodData::Domain.users(name, opts)
+    end
+
+    def users_create(list)
+      GoodData::Domain.users_create(list, name)
     end
 
     private

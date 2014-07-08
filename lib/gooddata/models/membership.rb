@@ -6,7 +6,7 @@ require_relative 'project'
 require_relative 'project_role'
 
 module GoodData
-  class User
+  class Membership
     attr_reader :json
 
     ASSIGNABLE_MEMBERS = [
@@ -45,6 +45,46 @@ module GoodData
           r_value = user2.send("#{k}")
           res[k] = r_value if l_value != r_value
         end
+        res
+      end
+
+      def diff_list(list1, list2)
+        tmp = Hash[list1.map { |v| [v.email, v] }]
+
+        res = {
+          :added => [],
+          :removed => [],
+          :changed => [],
+          :same => []
+        }
+
+        list2.each do |user_new|
+          user_existing = tmp[user_new.email]
+          if user_existing.nil?
+            res[:added] << user_new
+            next
+          end
+
+          if user_existing != user_new
+            diff = self.diff(user_existing, user_new)
+            res[:changed] << {
+              :user => user_existing,
+              :diff => diff
+            }
+          else
+            res[:same] << user_existing
+          end
+        end
+
+        tmp = Hash[list2.map { |v| [v.email, v] }]
+        list1.each do |user_existing|
+          user_new = tmp[user_existing.email]
+          if user_new.nil?
+            res[:removed] << user_existing
+            next
+          end
+        end
+
         res
       end
     end
@@ -89,7 +129,7 @@ module GoodData
     def author
       url = @json['user']['meta']['author']
       data = GoodData.get url
-      GoodData::User.new(data)
+      GoodData::Membership.new(data)
     end
 
     # Gets the contributor
@@ -98,7 +138,7 @@ module GoodData
     def contributor
       url = @json['user']['meta']['contributor']
       data = GoodData.get url
-      GoodData::User.new(data)
+      GoodData::Membership.new(data)
     end
 
     # Gets date when created
@@ -221,6 +261,33 @@ module GoodData
       @json['user']['content']['phonenumber'] = new_phone_number
     end
 
+    # Gets profile of this membership
+    def profile
+      raw = GoodData.get @json['user']['links']['self']
+      GoodData::Profile.new(raw)
+    end
+
+    # Gets URL of profile membership
+    def profile_url
+      @json['user']['links']['self']
+    end
+
+    # Gets project which this membership relates to
+    def project
+      raw = GoodData.get project_url
+      GoodData::Project.new(raw)
+    end
+
+    # Gets project id
+    def project_id
+      @json['user']['links']['roles'].split('/')[3]
+    end
+
+    # Gets project url
+    def project_url
+      @json['user']['links']['roles'].split('/')[0..3].join('/')
+    end
+
     # Gets the projects of user
     #
     # @return [Array<GoodData::Project>] Array of projets
@@ -235,6 +302,11 @@ module GoodData
       end
 
       res
+    end
+
+    # Gets first role
+    def role
+      roles.first
     end
 
     # Gets the project roles of user
@@ -294,14 +366,28 @@ module GoodData
       @json['user']['links']['self']
     end
 
-    # Disables an user in the provided project
+    # Enables membership
     #
     # @return result from post execution
-    def disable(project)
+    def enable
+      self.status = 'enabled'
+    end
+
+    # Disables membership
+    #
+    # @return result from post execution
+    def disable
+      self.status = 'disabled'
+    end
+
+    private
+
+    # Sets status to 'ENABLED' or 'DISABLED'
+    def status=(new_status)
       payload = {
         'user' => {
           'content' => {
-            'status' => 'DISABLED',
+            'status' => new_status.to_s.upcase,
             'userRoles' => @json['user']['content']['userRoles']
           },
           'links' => {
@@ -310,7 +396,7 @@ module GoodData
         }
       }
 
-      @json = GoodData.post("/gdc/projects/#{project.obj_id}/users", payload)
+      @json = GoodData.post("/gdc/projects/#{project_id}/users", payload)
     end
   end
 end
