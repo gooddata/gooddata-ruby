@@ -9,6 +9,13 @@ describe GoodData::Schedule, :broken => true do
     :cron => '2 2 2 2 *'
   }
 
+  TEST_DATA_WITH_OPTIONAL_PARAM = {
+      :timezone => 'UTC',
+      :cron => '2 2 2 2 *',
+      :reschedule => 15
+  }
+
+
   TEST_PROCESS_ID = 'f12975d2-5958-4248-9c3d-4c8f2e1f067d'
 
   SCHEDULE_ID = '53642303e4b0ae3190e464a8'
@@ -66,6 +73,16 @@ describe GoodData::Schedule, :broken => true do
       sched = nil
       expect {
         sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      }.not_to raise_error
+
+      sched.should_not be_nil
+      sched.delete
+    end
+
+    it 'Creates new schedule if mandatory params passed and optional params are present' do
+      sched = nil
+      expect {
+        sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
       }.not_to raise_error
 
       sched.should_not be_nil
@@ -489,4 +506,45 @@ describe GoodData::Schedule, :broken => true do
       expect(@schedule.dirty).to eq(true)
     end
   end
+
+  describe '#reschedule' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Should return reschedule as integer' do
+      res = @schedule.reschedule
+      res.should_not be_nil
+      res.should_not be_empty
+      res.should be_a_kind_of(Integer)
+    end
+
+
+
+  end
+
+  describe '#reschedule=' do
+    before(:each) do
+      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Assigns the reschedule and marks the object dirty' do
+      test_reschedule = 45
+
+      @schedule.reschedule = test_reschedule
+      expect(@schedule.reschedule).to eq(test_reschedule)
+      expect(@schedule.dirty).to eq(true)
+    end
+  end
+
+
+
 end
