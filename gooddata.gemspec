@@ -57,4 +57,5 @@ Gem::Specification.new do |s|
   s.add_dependency "terminal-table", "~> 1.4.5"
   s.add_dependency 'typhoeus', '~> 0.6.8'
   s.add_dependency "salesforce_bulk_query", "~> 0.0"
+  s.add_dependency "aws-sdk", "~> 1.45"
 end
