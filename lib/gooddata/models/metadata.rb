@@ -285,7 +285,7 @@ module GoodData
     end
 
     def ==(other)
-      other.respond_to?(:uri) && other.uri == uri && othe r.respond_to?(:to_hash) && other.to_hash == to_hash
+      other.respond_to?(:uri) && other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
     end
 
     def validate
