@@ -26,6 +26,13 @@ describe GoodData::Report, :report => true do
     end
   end
 
+  describe '#create' do
+    it 'Creates new report with top and bottom stuff' do
+      opts = {}
+      GoodData::Report.create(opts)
+    end
+  end
+
   describe '#definition' do
     it 'Returns report definition as GoodData::ReportDefinition' do
       res = @report.definition

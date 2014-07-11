@@ -42,6 +42,7 @@ module GoodData
             }
           }
         }
+
         # TODO: write test for report definitions with explicit identifiers
         report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
         Report.new report
