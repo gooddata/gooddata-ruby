@@ -15,10 +15,13 @@ module GoodData
         end
 
         def get(options = {})
-          id = options[:process_id]
-          fail 'Unspecified process id' if id.nil?
+          pid = options[:project_id]
+          fail ArgumentError, "None or invalid project_id specified" if pid.nil? || pid.empty?
 
-          GoodData.with_project(options[:project_id]) do
+          id = options[:process_id]
+          fail ArgumentError, 'None or invalid process_id' if id.nil? || id.empty?
+
+          GoodData.with_project(pid) do
             GoodData::Process[id]
           end
         end
@@ -50,7 +53,7 @@ module GoodData
           dir = Pathname(dir)
           name = options[:name] || "Temporary deploy[#{dir}][#{options[:project_name]}]"
 
-          GoodData::Process.with_deploy(dir, options.merge(:name => name)) do |process|
+          GoodData::Process.with_deploy(dir, options.merge(:name => name, :project_id => ProjectHelper::PROJECT_ID)) do |process|
             puts HighLine.color('Executing', HighLine::BOLD) if verbose
             process.execute(executable, options)
           end
