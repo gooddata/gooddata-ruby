@@ -16,7 +16,7 @@ module GoodData
 
         def get(options = {})
           pid = options[:project_id]
-          fail ArgumentError, "None or invalid project_id specified" if pid.nil? || pid.empty?
+          fail ArgumentError, 'None or invalid project_id specified' if pid.nil? || pid.empty?
 
           id = options[:process_id]
           fail ArgumentError, 'None or invalid process_id' if id.nil? || id.empty?

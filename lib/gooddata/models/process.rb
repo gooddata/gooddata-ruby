@@ -70,7 +70,7 @@ module GoodData
 
         type = options[:type] || 'GRAPH'
         deploy_name = options[:name]
-        fail ArgumentError, "options[:deploy_name] can not be nil or empty!" if deploy_name.nil? || deploy_name.empty?
+        fail ArgumentError, 'options[:deploy_name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
 
         verbose = options[:verbose] || false
         puts HighLine.color("Deploying #{dir}", HighLine::BOLD) if verbose
