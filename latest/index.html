@@ -4,9 +4,9 @@ title: Latest
 ---
 
 <div class="latest-sdk" style="width:700px;">
-{% for post in site.posts reversed limit:4 %}
+{% for post in site.posts limit:4 %}
       {% if post.categories contains 'guide' %}
-          <div style="width: 340px; float: left; margin-right: 5px;">
+          <div style="width: 340px; height: 100px; float: left; margin-right: 5px;">
           <a href="{{ site.url }}{{ post.url }}" target="_blank">{{ post.title }}</a>
           <p>{{ post.perex }}</p>
           <br />
