@@ -46,8 +46,10 @@ module GoodData
         return id if id.is_a?(MdObject)
         uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{project.md[MD_OBJ_CTG]}/#{id}"
+              elsif id.is_a?(Hash) && id['link']
+                id['link']
               elsif id !~ /\//
-                identifier_to_uri id
+                identifier_to_uri(id, options)
               elsif id =~ /^\//
                 id
               else
@@ -63,6 +65,29 @@ module GoodData
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = {})
         fail NotImplementedError, 'Method should be implemented in subclass. Currently there is no way hoe to get all metadata objects on API.'
+      end
+
+      def dependency(uri, key = nil)
+        result = GoodData.get("#{uri}/#{obj_id(uri)}")['entries']
+        if key.nil?
+          result
+        elsif key.respond_to?(:category)
+          result.select { |item| item['category'] == key.category }
+        else
+          result.select { |item| item['category'] == key }
+        end
+      end
+
+      # Checks for dependency
+      def dependency?(type, uri)
+        objs = case type
+                 when :usedby
+                   usedby(uri)
+                 when :using
+                   using(uri)
+               end
+        uri = uri.respond_to?(:uri) ? uri.uri : uri
+        objs.any? { |obj| obj['link'] == uri }
       end
 
       def find_by_tag(tag)
@@ -95,9 +120,16 @@ module GoodData
       end
 
       # TODO: Add test
-      def identifier_to_uri(*ids)
-        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
-        uri = GoodData.project.md[IDENTIFIERS_CFG]
+      def identifier_to_uri(ids, options = {})
+        project = options[:project] || GoodData.project
+
+        unless ids.kind_of?(Array)
+          ids = [ids]
+        end
+
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless project
+        uri = project.md[IDENTIFIERS_CFG]
+
         response = GoodData.post uri, 'identifierToUri' => ids
         if response['identifiers'].empty?
           nil
@@ -115,6 +147,33 @@ module GoodData
       alias_method :id_to_uri, :identifier_to_uri
 
       alias_method :get_by_id, :[]
+
+      def obj_id(uri)
+        uri.split('/').last
+      end
+
+      # Returns which objects uses this MD resource
+      def usedby(uri, key = nil, project = GoodData.project)
+        dependency("#{project.md['usedby2']}/#{obj_id(uri)}", key)
+      end
+
+      alias_method :used_by, :usedby
+
+      # Returns which objects this MD resource uses
+      def using(uri, key = nil)
+        dependency("#{GoodData.project.md['using2']}/#{obj_id(uri)}", key)
+      end
+
+      def usedby?(obj)
+        dependency?(:usedby, obj)
+      end
+
+      alias_method :used_by?, :usedby?
+
+      # Checks if obj is using this MD resource
+      def using?(obj)
+        dependency?(:using, obj)
+      end
 
       private
 
@@ -241,29 +300,6 @@ module GoodData
       @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, '')]
     end
 
-    # Returns which objects uses this MD resource
-    def usedby(key = nil)
-      dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
-    end
-
-    alias_method :used_by, :usedby
-
-    # Returns which objects this MD resource uses
-    def using(key = nil)
-      dependency("#{GoodData.project.md['using2']}/#{obj_id}", key)
-    end
-
-    def usedby?(obj)
-      dependency?(:usedby, obj)
-    end
-
-    alias_method :used_by?, :usedby?
-
-    # Checks if obj is using this MD resource
-    def using?(obj)
-      dependency?(:using, obj)
-    end
-
     # Converts this object
     def to_json
       @json.to_json
@@ -361,31 +397,40 @@ module GoodData
     def label?
       false
     end
+
     alias_method :display_form?, :label?
 
-    private
 
     def dependency(uri, key = nil)
-      result = GoodData.get("#{uri}/#{obj_id}")['entries']
-      if key.nil?
-        result
-      elsif key.respond_to?(:category)
-        result.select { |item| item['category'] == key.category }
-      else
-        result.select { |item| item['category'] == key }
-      end
+      GoodData::MdObject.dependency(obj_id, key)
     end
 
     # Checks for dependency
     def dependency?(type, uri)
-      objs = case type
-             when :usedby
-               usedby
-             when :using
-               using
-             end
-      uri = uri.respond_to?(:uri) ? uri.uri : uri
-      objs.any? { |obj| obj['link'] == uri }
+      GoodData::MdObject.dependency?(type, uri)
+    end
+
+    # Returns which objects uses this MD resource
+    def usedby(key = nil, project = GoodData.project)
+      dependency("#{project.md['usedby2']}/#{obj_id}", key)
+    end
+
+    alias_method :used_by, :usedby
+
+    # Returns which objects this MD resource uses
+    def using(key = nil)
+      dependency("#{GoodData.project.md['using2']}/#{obj_id}", key)
+    end
+
+    def usedby?(obj)
+      GoodData::MdObject.used_by?(obj)
+    end
+
+    alias_method :used_by?, :usedby?
+
+    # Checks if obj is using this MD resource
+    def using?(obj)
+      GoodData::MdObject.dependency?(:using, obj)
     end
   end
 end

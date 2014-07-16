@@ -282,6 +282,28 @@ module GoodData
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
     end
 
+    def delete_reports()
+      reps = reports(:full => false)
+
+      # dashes = dashboards
+
+      reps.each do |report|
+        uri = report['link']
+        puts "Deleting report #{uri}"
+        ub = GoodData::MdObject.usedby(uri, nil, self)
+
+        ub.map do |ref|
+          db = GoodData::Dashboard[ref, {:project => self}]
+
+          # TODO: Implement GoodData::Dashboard#remove_report
+          # db.remove_report(report)
+        end
+
+        # Finally delete the report itself
+        # report.delete
+      end
+    end
+
     # Gets project role by its identifier
     #
     # @param [String] role_name Title of role to look for
@@ -537,12 +559,17 @@ module GoodData
     end
 
     # Gets the project reports
-    def reports
+    def reports(opts = { :full => true } )
       url = "/gdc/md/#{obj_id}/query/reports"
       res = GoodData.get url
+
       res['query']['entries'].map do |entry|
-        raw_report = GoodData.get(entry['link'])
-        Report.new(raw_report)
+        if opts[:full]
+          raw_report = GoodData.get(entry['link'])
+          Report.new(raw_report)
+        else
+          entry
+        end
       end
     end
 
@@ -797,7 +824,7 @@ module GoodData
     end
 
     # Run validation on project
-    # Valid settins for validation are (default all):
+    # Valid settings for validation are (default all):
     # ldm - Checks the consistency of LDM objects.
     # pdm Checks LDM to PDM mapping consistency, also checks PDM reference integrity.
     # metric_filter - Checks metadata for inconsistent metric filters.

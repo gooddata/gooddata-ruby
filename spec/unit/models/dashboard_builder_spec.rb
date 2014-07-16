@@ -21,7 +21,7 @@ describe GoodData::Model::DashboardBuilder do
   end
 
   def dashboard_add_tab(dashboard)
-    dashboard.add_tab TAB_TITLE do |tb|
+    dashboard.add_tab TAB_TITLE do |tab|
     end
   end
 
