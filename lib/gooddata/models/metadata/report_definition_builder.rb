@@ -69,31 +69,6 @@ module GoodData
         definition_json['reportDefinition']['content']['chart'] = template_as_json(construct_rel_chart_path(opts[:type]), args)
         definition_json['reportDefinition']['content']['grid'] = template_as_json('report_definition_grid.json.erb', args)
         definition_json['reportDefinition']['meta'] = template_as_json('report_definition_meta.json.erb', args)
-=begin
-        {
-          'reportDefinition' => {
-            'content' => {
-              'grid' => {
-                'sort' => {
-                  'columns' => [],
-                  'rows' => []
-                },
-                'columnWidths' => [],
-                'columns' => ReportDefinition.create_part(top),
-                'metrics' => ReportDefinition.create_metrics_part(left, top),
-                'rows' => ReportDefinition.create_part(left)
-              },
-              'format' => 'grid',
-              'filters' => []
-            },
-            'meta' => {
-              'tags' => '',
-              'summary' => '',
-              'title' => 'Untitled report definition'
-            }
-          }
-        }
-=end
 
         GoodData::ReportDefinition.new(definition_json)
       end

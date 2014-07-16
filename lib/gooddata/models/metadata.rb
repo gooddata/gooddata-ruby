@@ -81,10 +81,10 @@ module GoodData
       # Checks for dependency
       def dependency?(type, uri)
         objs = case type
-                 when :usedby
-                   usedby(uri)
-                 when :using
-                   using(uri)
+               when :usedby
+                 usedby(uri)
+               when :using
+                 using(uri)
                end
         uri = uri.respond_to?(:uri) ? uri.uri : uri
         objs.any? { |obj| obj['link'] == uri }
@@ -123,9 +123,7 @@ module GoodData
       def identifier_to_uri(ids, options = {})
         project = options[:project] || GoodData.project
 
-        unless ids.kind_of?(Array)
-          ids = [ids]
-        end
+        ids = [ids] unless ids.kind_of?(Array)
 
         fail(NoProjectError, 'Connect to a project before searching for an object') unless project
         uri = project.md[IDENTIFIERS_CFG]
@@ -399,7 +397,6 @@ module GoodData
     end
 
     alias_method :display_form?, :label?
-
 
     def dependency(uri, key = nil)
       GoodData::MdObject.dependency(obj_id, key)

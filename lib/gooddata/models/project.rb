@@ -282,7 +282,7 @@ module GoodData
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
     end
 
-    def delete_reports()
+    def delete_reports
       reps = reports(:full => false)
 
       # dashes = dashboards
@@ -290,14 +290,14 @@ module GoodData
       reps.each do |report|
         uri = report['link']
         puts "Deleting report #{uri}"
-        ub = GoodData::MdObject.usedby(uri, nil, self)
+        # ub = GoodData::MdObject.usedby(uri, nil, self)
 
-        ub.map do |ref|
-          db = GoodData::Dashboard[ref, {:project => self}]
+        # ub.map do |ref|
+          # GoodData::Dashboard[ref, {:project => self}]
 
           # TODO: Implement GoodData::Dashboard#remove_report
           # db.remove_report(report)
-        end
+        # end
 
         # Finally delete the report itself
         # report.delete
@@ -559,7 +559,7 @@ module GoodData
     end
 
     # Gets the project reports
-    def reports(opts = { :full => true } )
+    def reports(opts = { :full => true })
       url = "/gdc/md/#{obj_id}/query/reports"
       res = GoodData.get url
 
