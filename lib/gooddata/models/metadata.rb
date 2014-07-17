@@ -310,7 +310,7 @@ module GoodData
     end
 
     # Saves this MD object
-    def save(project = GoodData.project)
+    def save(project = self.project || GoodData.project)
       fail('Validation failed') unless validate
 
       if saved?

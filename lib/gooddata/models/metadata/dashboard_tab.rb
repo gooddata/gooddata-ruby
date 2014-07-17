@@ -35,6 +35,10 @@ module GoodData
         end
       end
 
+      def items=(new_items)
+        json['items'] = new_items
+      end
+
       # Get reports on dashboard tab
       # @return [Array<GoodData::Report>] Reports
       def reports

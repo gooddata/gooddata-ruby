@@ -27,11 +27,16 @@ module GoodData
     # Returns associated report
     # @return GoodData::Report
     def report
-      return nil if json[root_key].nil?
-      url = json[root_key]['obj']
+      url = uri
+      return nil if url.nil?
 
       raw_json = GoodData.get url
       GoodData::Report.new(raw_json)
+    end
+
+    def uri
+      return nil if json[root_key].nil?
+      json[root_key]['obj']
     end
   end
 end

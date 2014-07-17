@@ -104,6 +104,18 @@ module GoodData
       x
     end
 
+    def remove_report(report)
+      tabs.each do |tab|
+        new_items = tab.items.select do |x|
+          x.uri != report['link']
+        end
+
+        tab.items = new_items.map { |x| x.json }
+      end
+
+      save
+    end
+
     # Gets dashboard tab by its name
     # @param name Dashboard tab name
     # @return GoodData::Dashboard::Tab Dashboard tab instance

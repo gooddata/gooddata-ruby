@@ -290,17 +290,17 @@ module GoodData
       reps.each do |report|
         uri = report['link']
         puts "Deleting report #{uri}"
-        # ub = GoodData::MdObject.usedby(uri, nil, self)
+        ub = GoodData::MdObject.usedby(uri, nil, self)
 
-        # ub.map do |ref|
-          # GoodData::Dashboard[ref, {:project => self}]
+        ub.map do |ref|
+          db = GoodData::Dashboard[ref, { :project => self }]
 
           # TODO: Implement GoodData::Dashboard#remove_report
-          # db.remove_report(report)
-        # end
+          db.remove_report(report)
+        end
 
         # Finally delete the report itself
-        # report.delete
+        GoodData.delete uri
       end
     end
 

@@ -5,7 +5,6 @@ require 'gooddata'
 describe GoodData::ReportBuilder, :report => true do
   before(:each) do
     ConnectionHelper::create_default_connection
-    @definition = ReportDefinitionHelper.default_definition
   end
 
   after(:each) do
@@ -13,6 +12,16 @@ describe GoodData::ReportBuilder, :report => true do
   end
 
   describe '#create' do
+    before do
+      @reports = []
+    end
+
+    after do
+      until @reports.empty?
+        report = @reports.shift
+        report.delete
+      end
+    end
     it 'Builds GoodData::Report' do
       project = ProjectHelper.get_default_project
       metric = MetricHelper.default_metric
@@ -24,7 +33,10 @@ describe GoodData::ReportBuilder, :report => true do
 
         report = GoodData::ReportBuilder.create(definition)
         report.save(project)
+
+        @reports << report
       end
+
     end
   end
 end

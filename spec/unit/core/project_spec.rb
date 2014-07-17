@@ -5,7 +5,7 @@ require 'gooddata/core/connection'
 require 'gooddata/core/project'
 require 'gooddata/models/project'
 
-describe 'GoodData - project' do
+describe 'GoodData.project' do
   before(:each) do
     ConnectionHelper.create_default_connection
   end
