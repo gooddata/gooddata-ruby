@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GoodData Ruby SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<link href="https://developer.gooddata.com/favicon.ico" rel="shortcut icon">
+    <!-- Le styles -->
+    <link href="http://localhost:4000/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/syntax.css" rel="stylesheet">
+    <link href="http://localhost:4000/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="http://localhost:4000/css/style.css" rel="stylesheet">
+	
+<style>
+body {
+    padding-top: 20px;
+    padding-bottom: 40px;
+	background: url(http://sdk.gooddata.com/gooddata-ruby/images/background.png) fixed left top no-repeat;
+	background-size: 111px 245px;
+	
+  }
+
+a.topics {margin-top: 7px; font-size: 16px;}
+
+  /* Custom container */
+  .container-narrow {
+    margin: 45px auto;
+    max-width: 700px;
+  }
+  .container-narrow > hr {
+    margin: 45px 0;
+  }
+
+  /* Main marketing message and sign up button */
+  .jumbotron {
+    padding: 60px 0;
+    text-align: center;
+  }
+  .jumbotron h1 {
+    font-size: 48px;
+    line-height: 1;
+  }
+  .jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+  }
+
+  /* Supporting marketing content */
+  .marketing {
+    margin: 60px 0;
+  }
+  .marketing p + h4 {
+    margin-top: 28px;
+  }
+  
+  img.centered {
+    margin: 30px auto;
+    display: block;
+/*        border: 1px solid red;*/
+  }
+
+
+</style>
+
+</head>
+
+  <body>
+
+    <div >
+
+      <div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div style="margin-left: 100px;">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="http://localhost:4000">
+      <img src="http://localhost:4000/images/header-logo.png" alt="GoodData Labs" width="24" height="24">
+      GoodData<span style="color: #dc2020;">Ruby
+</a>      <div class="nav-collapse collapse container">
+        <ul class="nav">
+          <li class="">
+            <a href="http://localhost:4000/">Home</a>
+          </li>
+          <li class="active">
+            <a href="http://localhost:4000/getting-started">Get Started</a>
+          </li>
+    <li class="">
+            <a href="http://localhost:4000/tutorials">Tutorials</a>
+          </li>
+          <li class="">
+            <a href="http://localhost:4000/refs">Guides</a>
+          </li>
+    <li class="">
+            <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
+          </li>
+      <li class="">
+          </li>
+         </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-narrow">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 id="prerequisites">Prerequisites</h2>
+
+<ol>
+<li>Acquired a GoodData platform <a href="https://secure.gooddata.com/account.html?#/registration/projectTemplate/urn%3Agooddata%3AOnboarding" target="_blank">account</a>.</li>
+
+<li>Set up your Ruby environment. Supported versions of Ruby are 1.9, 2.0 and higher. JRuby 1.7 (JRuby 1.8 is not supported).</li>
+
+<li>If you are creating new projects or have Administrator access to any project that you wish to modify, you will need a <a href="https://developer.gooddata.com/trial/" target="_blank">project token</a>.</li>
+</ol>
+
+<h2 id="install">Install</h2>
+
+<p>If you are using gems just</p>
+<div class='highlight'><pre><code class='ruby'><span class='n'>gem</span> <span class='n'>install</span> <span class='n'>gooddata</span>
+</code></pre></div>
+<p>If you are using bundler. Add</p>
+<div class='highlight'><pre><code class='ruby'><span class='n'>gem</span> <span class='s2'>&quot;gooddata&quot;</span>
+</code></pre></div>
+<p>into Gemfile and run</p>
+<div class='highlight'><pre><code class='ruby'><span class='n'>bundle</span> <span class='n'>install</span>
+</code></pre></div>
+<h2 id="first">First steps</h2>
+
+<p>There are several methods by which you can work with the GoodData Ruby SDK. Let’s look at the major ones.</p>
+
+<h3 id="irb">irb</h3>
+
+<p><code>irb</code> is an interactive console that is provided with your Ruby installation. You may use gooddata sdk inside your irb. Below are some of the basic steps.</p>
+
+<p>First, launch irb. In your terminal, execute the following:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='n'>irb</span>
+</code></pre></div>
+<p>You should receive a message similar to the following, which indicates that you are inside the interactive Ruby environment:</p>
+
+<p><code>2.1-head :001 &gt;</code></p>
+
+<p>Let’s start playing with gooddata. Enter the following:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='o'>&gt;</span> <span class='no'>GoodData</span>
+</code></pre></div>
+<p>You should receive the following:</p>
+
+<p><code>NameError: uninitialized constant GoodData</code></p>
+
+<p>This error message indicates that irb does not know about the gooddata SDK. So, let’s tell irb to require the SDK:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='o'>&gt;</span> <span class='nb'>require</span> <span class='s1'>&#39;gooddata&#39;</span>
+  <span class='o'>=&gt;</span> <span class='kp'>true</span>
+</code></pre></div>
+<p>Ok. Now, repeat the previous command:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='o'>&gt;</span> <span class='no'>GoodData</span>
+  <span class='o'>=&gt;</span> <span class='no'>GoodData</span>
+</code></pre></div>
+<p>The response indicates that irb knows about SDK.</p>
+
+<p>Let’s try to log in to the GoodData platform with your credentials through the SDK. * For clarity, the <code>&gt;</code> sign is omitted in the irb session from now on.</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='no'>GoodData</span><span class='o'>.</span><span class='n'>connect</span><span class='p'>(</span><span class='s2'>&quot;john@example.com&quot;</span><span class='p'>,</span> <span class='s2'>&quot;password&quot;</span><span class='p'>)</span>
+</code></pre></div>
+<p>You should be logged in. Now, you can perform tasks that do not require you to be inside of a specific project. For example, use the following to list all of your projects:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='no'>GoodData</span><span class='o'>::</span><span class='no'>Project</span><span class='o'>.</span><span class='n'>all</span>
+</code></pre></div>
+<p>To work with a project, you must define the project for the SDK. For example, suppose you wish to list the reports in a project. You must tell the SDK the project to review:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='no'>GoodData</span><span class='o'>.</span><span class='n'>project</span> <span class='o'>=</span> <span class='s1'>&#39;YOUR_PROJECT_ID&#39;</span>
+</code></pre></div>
+<p>To list the reports in this project:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='no'>GoodData</span><span class='o'>::</span><span class='no'>Report</span><span class='o'>.</span><span class='n'>all</span>
+</code></pre></div>
+<p>Ok. To exit irb, enter: <code>exit</code></p>
+
+<h3 id="gooddata_console">gooddata console</h3>
+
+<p>Working with GoodData SDK using irb can be cumbersome. To make things a bit easier, Gooddata SDK includes a <code>gooddata</code> command line interface.</p>
+
+<p>To start the console:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='n'>gooddata</span> <span class='n'>console</span>
+</code></pre></div>
+<p>In the terminal, you should see something like the following:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='n'>sdk_live_sesion</span><span class='p'>:</span>
+</code></pre></div>
+<p>Since the console requires the SDK, you do not need to require it. So, you can log in and begin working with your projects: * To exit, enter: <code>exit</code></p>
+
+<h3 id="jack_in">jack_in</h3>
+
+<p>For even better results, you can try using the following:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='n'>gooddata</span> <span class='o'>-</span><span class='n'>U</span> <span class='n'>john</span><span class='vi'>@example</span><span class='o'>.</span><span class='n'>com</span> <span class='o'>-</span><span class='n'>P</span> <span class='n'>password</span> <span class='o'>-</span><span class='nb'>p</span> <span class='no'>PROJECT_ID</span> <span class='n'>project</span> <span class='n'>jack_in</span>
+</code></pre></div>
+<p>In a single command, the above launches the command line interface, logs you into the platform, and identifies the project to which to connect. At this point, you may begin entering commands:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='no'>GoodData</span><span class='o'>::</span><span class='no'>Report</span><span class='o'>.</span><span class='n'>all</span>
+</code></pre></div>
+<p><strong>Tip:</strong> Use <code>gooddata auth store</code> to save your username and password locally, so you do not have to type it every single time. If you do not specify this command explicitly, the stored default is used.</p>
+
+<h3 id="program">Program</h3>
+
+<p>To create a program that runs without user input, you must write the whole program. There are no shortcuts.</p>
+
+<p>A simple program that does something useful is the following:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='nb'>require</span> <span class='s1'>&#39;gooddata&#39;</span>
+  <span class='nb'>require</span> <span class='s1'>&#39;pp&#39;</span>
+
+  <span class='no'>GoodData</span><span class='o'>.</span><span class='n'>connect</span><span class='p'>(</span><span class='s1'>&#39;username&#39;</span><span class='p'>,</span> <span class='s1'>&#39;password&#39;</span><span class='p'>)</span>
+  <span class='no'>GoodData</span><span class='o'>.</span><span class='n'>use</span> <span class='s1'>&#39;my_project_id&#39;</span>
+
+  <span class='n'>pp</span> <span class='no'>GoodData</span><span class='o'>::</span><span class='no'>Report</span><span class='o'>[</span><span class='ss'>:all</span><span class='o'>]</span>
+</code></pre></div>
+<p>Save this into a file called <code>my_first.rb</code>. Run it using the following command: <code>ruby my_first.rb</code></p>
+
+<h2 id="what_did_you_learn">What did you learn</h2>
+
+<p>You should be able to install the ruby gem and understand various way how to interact with the API through Ruby SDK. Either via its command line interface, its programming interface or an interactive console.</p>
+
+<h2 id="where_to_go_next">Where to go next</h2>
+
+<p>In the next section we will spin up a project so you have a foundation for playing around.</p>
+          
+
+
+
+
+
+
+
+<div class="section-nav">
+  <div class="left align-right">
+    
+      <span class="prev disabled">Back</span>
+    
+  </div>
+  <div class="right align-left">
+    
+      <a href="http://localhost:4000/tutorials/" class="next">
+        Next
+      </a>
+    
+  </div>
+  <div class="clear"></div>
+</div>
+
+
+</div>
+
+	  
+
+      <hr>
+
+<div class="footer" style="text-align: center; font-size: 80%;">
+<p>&copy; GoodData 2014</p>
+<p>Pictograms used on this page are from <a href="http://www.defaulticon.com/">http://www.defaulticon.com/</a> created by <a href="http://www.interactivemania.com/">http://www.interactivemania.com/</a></p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://developer.gooddata.com/themes/site_themes/developer2012/js/jquery.js?v=1"></script>
+    <script src="http://localhost:4000/js/bootstrap.min.js"></script>
+
+    <!-- USER VOICE SDK -->
+    <script src="http://localhost:4000/js/uservoicesdk.js"></script>
+   
+  </body>
+   <script type="text/javascript">
+
+                     var _gaq = _gaq || [];
+                     _gaq.push(['_setAccount', 'UA-3766725-7']);
+                     _gaq.push(['_trackPageview']);
+
+                    (function() {
+                      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                       })();
+
+    </script>
+</html>
