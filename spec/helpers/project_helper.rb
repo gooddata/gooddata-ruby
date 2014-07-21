@@ -22,7 +22,7 @@ module ProjectHelper
 
       while !projects.empty?
         project = projects.shift
-        should_delete =  project.author == user.uri
+        should_delete =  project.author == user.uri && project.obj_id != 'hj7lx11gtcdh8z0q3zgpofz3qcnzkt7h'
         project.delete if should_delete
       end
 
