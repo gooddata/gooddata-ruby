@@ -7,7 +7,7 @@ require 'multi_json'
 require 'gooddata/models/models'
 
 module ProjectHelper
-  PROJECT_ID = 'hj7lx11gtcdh8z0q3zgpofz3qcnzkt7h'
+  PROJECT_ID = 'we1vvh4il93r0927r809i3agif50d7iz'
   PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
 
   class << self
