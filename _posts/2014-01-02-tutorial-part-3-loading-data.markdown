@@ -27,10 +27,10 @@ When the session is initiated, enter the following to upload the three datasets 
 devs = blueprint.find_dataset("devs")
 devs.upload("data/devs.csv")
 
-repos = blueprint.get_dataset("repos")
+repos = blueprint.find_dataset("repos")
 repos.upload("data/repos.csv")
 
-commits = blueprint.get_dataset("commits")
+commits = blueprint.find_dataset("commits")
 commits.upload("data/commits.csv")
 
 {% endhighlight %}
@@ -43,7 +43,7 @@ Notice the `blueprint` variable. This variable is prepared for us by the `jack_i
 
 If we had not used the `jack_in` command, we would have needed to create this reference to an interactive model ourselves. Had we written the program ourselves we would have to take of it ourselves.
 
-The model can be queried in various ways, one of which is to ask for specific datasets through the `get_dataset` method:
+The model can be queried in various ways, one of which is to ask for specific datasets through the `find_dataset` method:
 
 {% highlight ruby %}
 devs = blueprint.find_dataset("devs")
