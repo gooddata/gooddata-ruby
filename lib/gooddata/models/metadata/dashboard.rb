@@ -34,12 +34,13 @@ module GoodData
         }
       end
 
+      alias_method :add_tab, :create_report_tab
+
       # TODO: Merge with GoodData::DashboardBuilder
       def create_report_tab_item(options = {})
         title = options[:title]
 
         report = GoodData::Report.find_first_by_title(title)
-
         {
           :reportItem => {
             :obj => report.uri,

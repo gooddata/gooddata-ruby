@@ -36,7 +36,6 @@ describe GoodData::ReportBuilder, :report => true do
 
         @reports << report
       end
-
     end
   end
 end

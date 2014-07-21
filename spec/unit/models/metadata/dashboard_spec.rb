@@ -35,6 +35,12 @@ describe GoodData::Dashboard, :dashboard => true do
 
   describe '#tab' do
     it 'Returns tab by name as GoodData::Dashboard::Tab' do
+      tab = {
+        :title => DashboardHelper::DEFAULT_DASHBOARD_TAB_NAME
+      }
+      @dashboard.add_tab(tab)
+      @dashboard.save
+
       tab = @dashboard.tab(DashboardHelper::DEFAULT_DASHBOARD_TAB_NAME)
       expect(tab).to be_an_instance_of(GoodData::Dashboard::Tab)
       expect(tab.dashboard).to equal(@dashboard)

@@ -15,17 +15,20 @@ module GoodData
           File.join(TEMPLATES_DIR, rel_path)
         end
 
-        def create(title, opts = DEFAULT_OPTS)
+        def create(title, opts = DEFAULT_OPTS, &block)
           opts = DEFAULT_OPTS.merge(opts)
 
           args = {
             :title => title || opts[:title] || "Default Dashboard #{Time.new.strftime('%Y%m%d%H%M%S')}",
-            :summary => opts[:summary] || ''
+            :summary => opts[:summary] || '',
+            :tabs => opts[:tabs] || []
           }
 
           dashoboard_json = template_as_json('dashboard.json.erb', args)
 
-          GoodData::Dashboard.new(dashoboard_json)
+          res = GoodData::Dashboard.new(dashoboard_json)
+          yield res if block_given?
+          res
         end
 
         def template_as_json(path, data)
@@ -48,7 +51,7 @@ module GoodData
         tb = TabBuilder.new(tab)
 
         # Call block if given
-        block.call(tb) if block_given?
+        yield tb if block_given?
 
         # Add to array of tabs and mark dirty
         @tabs << tb

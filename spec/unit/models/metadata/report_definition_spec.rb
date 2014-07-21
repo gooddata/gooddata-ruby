@@ -3,6 +3,18 @@
 require 'gooddata'
 
 describe GoodData::ReportDefinition, :report => true do
+  before(:all) do
+    ConnectionHelper.create_default_connection
+    ReportHelper.create_default_reports
+    GoodData.disconnect
+  end
+
+  after(:all) do
+    ConnectionHelper.create_default_connection
+    ReportHelper.delete_all_reports
+    GoodData.disconnect
+  end
+
   before(:each) do
     ConnectionHelper::create_default_connection
     @definition = ReportDefinitionHelper.default_definition

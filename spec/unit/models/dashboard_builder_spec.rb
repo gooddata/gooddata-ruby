@@ -36,10 +36,26 @@ describe GoodData::Model::DashboardBuilder do
 
   describe '#create' do
     it 'Creates new dashboard' do
-      dash = GoodData::Model::DashboardBuilder.create(DASHBOARD_TITLE)
-      dash.save(@project)
+      options = {
+        :title => DASHBOARD_TITLE,
+        :tabs => [
+          # First tab
+          {
+            :title => 'First tab'
+          },
 
-      dash.delete
+          # Second tab
+          {
+            :title => 'Second tab'
+          }
+        ]
+      }
+
+      GoodData::Model::DashboardBuilder.create(DASHBOARD_TITLE, options) do |dashboard|
+        dashboard.save(@project)
+        @dashboard = dashboard
+      end
+     @dashboard.delete
     end
   end
 

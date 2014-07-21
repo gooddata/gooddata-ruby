@@ -16,6 +16,8 @@ describe GoodData::ReportItem, :report => true do
 
   describe '#report' do
     it 'Returns report as GoodData::Report' do
+      pending 'Create dashboard first'
+
       res = @item.report
       expect(res).to be_an_instance_of(GoodData::Report)
     end
