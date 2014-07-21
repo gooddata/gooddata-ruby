@@ -3,6 +3,12 @@
 require 'gooddata'
 
 describe GoodData::Dashboard, :dashboard => true do
+  before(:all) do
+    ConnectionHelper::create_default_connection
+    @dashboard = DashboardHelper.create_default_dashboard
+    GoodData.disconnect
+  end
+
   before(:each) do
     ConnectionHelper::create_default_connection
     @dashboard = DashboardHelper.default_dashboard
@@ -36,10 +42,13 @@ describe GoodData::Dashboard, :dashboard => true do
   describe '#tab' do
     it 'Returns tab by name as GoodData::Dashboard::Tab' do
       tab = {
-        :title => DashboardHelper::DEFAULT_DASHBOARD_TAB_NAME
+        :title => DashboardHelper::DEFAULT_DASHBOARD_TAB_NAME,
+        :items => [
+        ]
       }
+
       @dashboard.add_tab(tab)
-      @dashboard.save
+      res = @dashboard.save
 
       tab = @dashboard.tab(DashboardHelper::DEFAULT_DASHBOARD_TAB_NAME)
       expect(tab).to be_an_instance_of(GoodData::Dashboard::Tab)

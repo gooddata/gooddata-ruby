@@ -22,9 +22,9 @@ module GoodData
       # Initializes new instance of Dashboard::Tab
       # @params json Raw json to create dashboard from
       # @params dashboard Dashboard this tab belongs to
-      def initialize(json, dashboard)
-        @json = json
+      def initialize(dashboard, json)
         @dashboard = dashboard
+        @json = json
       end
 
       # Returns dashboard tab items
@@ -52,6 +52,13 @@ module GoodData
       # @return [String] Dashboard tab title
       def title
         json['title']
+      end
+
+      def to_hash
+        res = json.deep_dup
+
+        # TODO: Convert internal stuff to plain hashes as well
+        res
       end
     end
   end

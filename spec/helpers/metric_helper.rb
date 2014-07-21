@@ -10,7 +10,12 @@ module MetricHelper
   DEFAULT_METRIC_IDENTIFIER ||= 'afvbct52bgd2'
   DEFAULT_METRIC_URI ||= '/gdc/md/ghbpozicaidf1b9s0ohsa6msu7792c1k/obj/252'
 
-  def self.default_metric
-    ProjectHelper.get_default_project.metrics.first
+  class << self
+    def create_default_metric
+    end
+
+    def default_metric
+      ProjectHelper.default_project.metrics.first
+    end
   end
 end

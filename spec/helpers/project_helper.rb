@@ -11,7 +11,7 @@ module ProjectHelper
   PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
 
   class << self
-    def get_default_project
+    def default_project
       GoodData::Project[PROJECT_ID]
     end
 
@@ -19,13 +19,11 @@ module ProjectHelper
       projects = GoodData::Project[:all]
 
       user = GoodData.user
-
       while !projects.empty?
         project = projects.shift
-        should_delete =  project.author == user.uri && project.obj_id != 'hj7lx11gtcdh8z0q3zgpofz3qcnzkt7h'
+        should_delete =  project.author == user.uri && project.obj_id != PROJECT_ID
         project.delete if should_delete
       end
-
     end
   end
 end

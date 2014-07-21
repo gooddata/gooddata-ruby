@@ -8,7 +8,7 @@ describe GoodData::Project do
 
   before(:each) do
     ConnectionHelper::create_default_connection
-    @project = ProjectHelper.get_default_project
+    @project = ProjectHelper.default_project
   end
 
   after(:each) do
@@ -275,7 +275,7 @@ describe GoodData::Project do
 
   describe '#users_create' do
     it 'Creates new users' do
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.default_project
 
       users = (0...10).map do |i|
         num = rand(1e6)
@@ -328,7 +328,7 @@ describe GoodData::Project do
 
   describe '#set_user_roles' do
     it 'Properly updates user roles as needed' do
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.default_project
 
       project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin')
     end
@@ -336,7 +336,7 @@ describe GoodData::Project do
 
   describe '#set_users_roles' do
     it 'Properly updates user roles as needed for bunch of users' do
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.default_project
 
       list = load_users_from_csv
 
@@ -363,7 +363,7 @@ describe GoodData::Project do
     end
 
     it 'Properly updates user roles when user specified by email and :roles specified as array of string with role names' do
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.default_project
 
       list = [
         {
@@ -377,7 +377,7 @@ describe GoodData::Project do
     end
 
     it 'Properly updates user roles when user specified by email and :roles specified as string with role name' do
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.default_project
 
       list = [
         {

@@ -6,7 +6,7 @@ require 'gooddata/models/project_role'
 describe GoodData::ProjectRole do
   before(:all) do
     ConnectionHelper.create_default_connection
-    @project = ProjectHelper.get_default_project
+    @project = ProjectHelper.default_project
     @roles = @project.roles
     @role = @roles.first
   end

@@ -86,6 +86,11 @@ module GoodData
       end
     end
 
+    def add_tab(tab)
+      json = GoodData::Model::TabBuilder.create(self, tab).to_hash
+      content['tabs'] << json
+    end
+
     def exportable?
       true
     end
@@ -134,7 +139,7 @@ module GoodData
     # @return [Array<GoodData::Dashboard::Tab>] Array of tabs belonging to dashboard
     def tabs
       content['tabs'].map do |tab|
-        GoodData::Dashboard::Tab.new(tab, self)
+        GoodData::Dashboard::Tab.new(self, tab)
       end
     end
 

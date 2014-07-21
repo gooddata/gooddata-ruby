@@ -10,12 +10,12 @@ module ReportHelper
     @@REPORTS = []
 
     def default_report
-      ProjectHelper.get_default_project.reports.first
+      ProjectHelper.default_project.reports.first
     end
 
     # TODO: This function is responsible for creating new report which will be used for tests
     def create_default_reports
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.default_project
       metric = MetricHelper.default_metric
 
       GoodData::ReportDefinitionBuilder.chart_types.each do |chart_type|
@@ -37,7 +37,7 @@ module ReportHelper
       end
     end
 
-    def delete_all_reports(project = ProjectHelper.get_default_project)
+    def delete_all_reports(project = ProjectHelper.default_project)
       project.delete_reports
     end
 

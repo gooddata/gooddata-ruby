@@ -28,7 +28,7 @@ describe 'GoodData.project' do
     end
 
     it 'Assigns project directly' do
-      GoodData.project = ProjectHelper.get_default_project
+      GoodData.project = ProjectHelper.default_project
     end
   end
 
@@ -44,7 +44,7 @@ describe 'GoodData.project' do
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project ProjectHelper.get_default_project do
+      GoodData.with_project ProjectHelper.default_project do
       end
     end
   end

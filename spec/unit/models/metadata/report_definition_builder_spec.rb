@@ -24,7 +24,7 @@ describe GoodData::ReportDefinitionBuilder, :report => true do
     end
 
     it 'Builds GoodData::Report definition' do
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.default_project
       metric = MetricHelper.default_metric
 
       GoodData::ReportDefinitionBuilder.chart_types.each do |chart_type|

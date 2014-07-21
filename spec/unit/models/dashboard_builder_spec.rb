@@ -3,12 +3,9 @@
 require 'gooddata'
 
 describe GoodData::Model::DashboardBuilder do
-  DASHBOARD_TITLE = 'Test Dashboard'
-  TAB_TITLE = 'Test Title'
-
   before(:each) do
     ConnectionHelper::create_default_connection
-    @project = ProjectHelper.get_default_project
+    @project = ProjectHelper.default_project
   end
 
   after(:each) do
@@ -16,12 +13,12 @@ describe GoodData::Model::DashboardBuilder do
   end
 
   # Creates new dashboard
-  def dashboard_create(title = DASHBOARD_TITLE)
+  def dashboard_create(title = DashboardHelper::DASHBOARD_TITLE)
     GoodData::Model::DashboardBuilder.new(title)
   end
 
   def dashboard_add_tab(dashboard)
-    dashboard.add_tab TAB_TITLE do |tab|
+    dashboard.add_tab DashboardHelper::TAB_TITLE do |tab|
     end
   end
 
@@ -36,22 +33,7 @@ describe GoodData::Model::DashboardBuilder do
 
   describe '#create' do
     it 'Creates new dashboard' do
-      options = {
-        :title => DASHBOARD_TITLE,
-        :tabs => [
-          # First tab
-          {
-            :title => 'First tab'
-          },
-
-          # Second tab
-          {
-            :title => 'Second tab'
-          }
-        ]
-      }
-
-      GoodData::Model::DashboardBuilder.create(DASHBOARD_TITLE, options) do |dashboard|
+      GoodData::Model::DashboardBuilder.create(DashboardHelper::DASHBOARD_TITLE, options) do |dashboard|
         dashboard.save(@project)
         @dashboard = dashboard
       end
