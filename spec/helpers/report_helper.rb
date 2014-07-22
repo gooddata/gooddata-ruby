@@ -39,7 +39,7 @@ module ReportHelper
       end
     end
 
-    def delete_all_reports(project = ProjectHelper.default_project)
+    def remove_reports(project = ProjectHelper.default_project)
       project.delete_reports
     end
 

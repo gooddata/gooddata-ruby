@@ -24,6 +24,7 @@ RSpec.configure do |config|
   config.include ProjectHelper
   config.include ReportHelper
   config.include ReportDefinitionHelper
+  config.include UserHelper
   config.include SchemaHelper
 
   config.filter_run_excluding :broken => true
@@ -34,14 +35,13 @@ RSpec.configure do |config|
 
     ConnectionHelper.create_default_connection
 
-    ProjectHelper.delete_all_projects
+    # UserHelper.remove_users
 
-    # users = GoodData::Domain.users_map(ConnectionHelper::DEFAULT_DOMAIN)
-    # users.each do |user|
-    #   user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
-    # end
+    # DashboardHelper.remove_dashboards
 
-    # ReportHelper.delete_all_reports
+    # ProjectHelper.remove_projects
+
+    # ReportHelper.remove_reports
 
     # TODO: Fully setup global environment
     GoodData.logging_off

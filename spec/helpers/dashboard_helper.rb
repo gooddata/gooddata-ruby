@@ -70,5 +70,12 @@ module DashboardHelper
       dashboard.delete
     end
 
+    def remove_dashboards(project = ProjectHelper.default_project)
+      dashboards = project.dashboards
+      dashboards.each do |dashboard|
+        puts "Deleting dashboard #{dashboard.title} - #{dashboard.uri}"
+        dashboard.delete
+      end
+    end
   end
 end

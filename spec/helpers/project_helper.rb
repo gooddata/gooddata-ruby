@@ -15,7 +15,7 @@ module ProjectHelper
       GoodData::Project[PROJECT_ID]
     end
 
-    def delete_all_projects
+    def remove_projects
       projects = GoodData::Project[:all]
 
       user = GoodData.user
