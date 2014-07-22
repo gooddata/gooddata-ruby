@@ -36,13 +36,28 @@ describe GoodData::Model::DashboardBuilder do
       options = {
         :title => "#{DashboardHelper::DASHBOARD_TITLE} #{Time.new.strftime('%Y%m%d%H%M%S')}",
         :tabs => [
+          # First tab
           {
             :title => "First Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
-            :items => []
+            :items => [
+              # First row
+              [],
+
+              # Second row
+              []
+            ]
           },
+
+          # Second tab
           {
             :title => "Second Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
-            :items => []
+            :items => [
+              # First row
+              [],
+
+              # Second row
+              []
+            ]
           }
         ]
       }
