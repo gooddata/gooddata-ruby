@@ -282,6 +282,8 @@ describe "Full project implementation", :constraint => 'slow' do
       l = attribute.primary_label
       value = l.values.first[:value]
       l.find_element_value(l.find_value_uri(value)).should == value
+      expect(l.value?(value)).should == true
+      expect(l.value?("DEFINITELY NON EXISTENT VALUE HOPEFULLY")).should == false
     end
   end
 
