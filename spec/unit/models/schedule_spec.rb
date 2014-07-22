@@ -31,7 +31,7 @@ describe GoodData::Schedule, :broken => true do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#[]' do

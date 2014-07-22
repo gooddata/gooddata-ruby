@@ -70,9 +70,12 @@ module GoodData
 
         type = options[:type] || 'GRAPH'
         deploy_name = options[:name]
+        fail ArgumentError, 'options[:deploy_name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
+
         verbose = options[:verbose] || false
         puts HighLine.color("Deploying #{dir}", HighLine::BOLD) if verbose
         deployed_path = Process.upload_package(dir, files_to_exclude)
+
         data = {
           :process => {
             :name => deploy_name,
@@ -80,11 +83,13 @@ module GoodData
             :type => type
           }
         }
+
         res = if process_id.nil?
                 GoodData.post("/gdc/projects/#{GoodData.project.pid}/dataload/processes", data)
               else
                 GoodData.put("/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{process_id}", data)
               end
+
         process = Process.new(res)
         puts HighLine.color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
         process

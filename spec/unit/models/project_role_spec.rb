@@ -12,7 +12,7 @@ describe GoodData::ProjectRole do
   end
 
   after(:all) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#author' do

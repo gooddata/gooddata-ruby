@@ -25,7 +25,7 @@ module GoodData
         # Test of login
         def test
           if GoodData.test_login
-            puts "Succesfully logged in as #{GoodData.profile.email}"
+            puts "Succesfully logged in as #{GoodData.profile.user}"
           else
             puts 'Unable to log in to GoodData server!'
           end

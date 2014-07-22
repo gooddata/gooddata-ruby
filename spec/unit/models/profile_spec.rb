@@ -54,21 +54,25 @@ describe GoodData::Profile do
     ]
   end
 
+  def deep_dup(obj)
+    Marshal.load(Marshal.dump(obj))
+  end
+
   after(:all) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#==' do
     it 'Returns true for same objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(GoodData.user)
+      user2 = deep_dup(GoodData.user)
       res = user1 == user2
       res.should be_true
     end
 
     it 'Returns false for different objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(GoodData.user)
+      user2 = deep_dup(GoodData.user)
 
       # Do some little modification
       user2.first_name = 'kokos'
@@ -80,15 +84,15 @@ describe GoodData::Profile do
 
   describe '#!=' do
     it 'Returns false for same objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(GoodData.user)
+      user2 = deep_dup(GoodData.user)
       res = user1 != user2
       res.should be_false
     end
 
     it 'Returns true for different objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(GoodData.user)
+      user2 = deep_dup(GoodData.user)
 
       # Do some little modification
       user2.first_name = 'kokos'
@@ -100,8 +104,8 @@ describe GoodData::Profile do
 
   describe '#apply' do
     it 'When diff of two objects applied to first result should be same as second object' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(GoodData.user)
+      user2 = deep_dup(GoodData.user)
 
       # Do some little modification
       user2.first_name = 'kokos'
@@ -120,16 +124,16 @@ describe GoodData::Profile do
 
   describe '#diff' do
     it 'Returns empty hash for same objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(GoodData.user)
+      user2 = deep_dup(GoodData.user)
       res = user1.diff(user2)
       expect(res).to be_instance_of(Hash)
       res.length.should eql(0)
     end
 
     it 'Returns non empty hash for different objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(GoodData.user)
+      user2 = deep_dup(GoodData.user)
 
       # Do some little modification
       user2.first_name = 'kokos'
