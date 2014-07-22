@@ -9,9 +9,6 @@ module DashboardHelper
   DASHBOARD_TITLE = 'Test Dashboard'
   TAB_TITLE = 'Test Title'
 
-  DEFAULT_DASHBOARD_TAB_NAME = 'First Tab'
-  DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'ajIVX3NWeNUk'
-
   DEFAULT_OPTIONS = {
     :title => DashboardHelper::DASHBOARD_TITLE,
     :tabs => []
@@ -45,6 +42,11 @@ module DashboardHelper
       }
     ]
   }
+
+  DEFAULT_DASHBOARD_TAB_NAME = DASHBOARD_DEFINITION[:tabs].first[:title]
+
+  # TODO: Set this when dashboard is created
+  DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'ajIVX3NWeNUk'
 
   class << self
     def create_default_dashboard(project = ProjectHelper.default_project, options = DEFAULT_OPTIONS)
