@@ -25,8 +25,9 @@ module GoodData
       def create(options = {})
         title = options[:title]
         summary = options[:summary] || ''
+        project = GoodData.project || options[:project]
         rd = options[:rd] || ReportDefinition.create(:top => options[:top], :left => options[:left])
-        rd.save
+        rd.save(project)
 
         report = {
           'report' => {

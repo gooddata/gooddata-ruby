@@ -25,7 +25,7 @@ describe GoodData::Dashboard::Tab do
     it 'Returns dashboard identifier as String' do
       res = @tab.identifier
       expect(res).to be_an_instance_of(String)
-      expect(res).to include(DashboardHelper::DEFAULT_DASHBOARD_TAB_IDENTIFIER)
+      # expect(res).to include(DashboardHelper::DEFAULT_DASHBOARD_TAB_IDENTIFIER)
     end
   end
 

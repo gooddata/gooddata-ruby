@@ -10,7 +10,7 @@ module DashboardHelper
   TAB_TITLE = 'Test Title'
 
   DEFAULT_DASHBOARD_TAB_NAME = 'First Tab'
-  DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'ahzRtBoohI7e'
+  DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'ajIVX3NWeNUk'
 
   DEFAULT_OPTIONS = {
     :title => DashboardHelper::DASHBOARD_TITLE,
@@ -47,8 +47,8 @@ module DashboardHelper
   }
 
   class << self
-    def create_default_dashboard(project = ProjectHelper.default_project, title = DASHBOARD_TITLE, options = DEFAULT_OPTIONS)
-      return GoodData::Model::DashboardBuilder.create(DASHBOARD_DEFINITION) do |dashboard|
+    def create_default_dashboard(project = ProjectHelper.default_project, options = DEFAULT_OPTIONS)
+      return GoodData::Model::DashboardBuilder.create(DASHBOARD_DEFINITION.merge(options)) do |dashboard|
         dashboard.save(project)
       end
     end
@@ -62,5 +62,11 @@ module DashboardHelper
     def default_dashboard_tab(project = ProjectHelper.default_project, dashboard_title = DASHBOARD_TITLE, tab_name = TAB_TITLE)
       default_dashboard(project, dashboard_title).tab(tab_name)
     end
+
+    def remove_default_dashboard
+      dashboard = default_dashboard
+      dashboard.delete
+    end
+
   end
 end

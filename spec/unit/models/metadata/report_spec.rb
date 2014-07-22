@@ -40,7 +40,9 @@ describe GoodData::Report, :report => true do
 
   describe '#create' do
     it 'Creates new report with top and bottom stuff' do
-      opts = {}
+      opts = {
+        :project => ProjectHelper.default_project
+      }
       GoodData::Report.create(opts)
     end
   end

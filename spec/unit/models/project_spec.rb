@@ -6,6 +6,18 @@ describe GoodData::Project do
   DEFAULT_DASHBOARD_TITLE = 'Default dashboard'
   DEFAULT_REPORT_TITLE = 'Lines Changed [sum] Report'
 
+  before(:all) do
+    ConnectionHelper::create_default_connection
+    DashboardHelper.create_default_dashboard
+    GoodData.disconnect
+  end
+
+  after(:all) do
+    ConnectionHelper::create_default_connection
+    DashboardHelper.create_default_dashboard
+    GoodData.disconnect
+  end
+
   before(:each) do
     ConnectionHelper::create_default_connection
     @project = ProjectHelper.default_project
