@@ -10,7 +10,7 @@ module DashboardHelper
   TAB_TITLE = 'Test Title'
 
   DEFAULT_DASHBOARD_TAB_NAME = 'First Tab'
-  DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'aaOQ0StaaI7o'
+  DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'ahzRtBoohI7e'
 
   DEFAULT_OPTIONS = {
     :title => DashboardHelper::DASHBOARD_TITLE,
