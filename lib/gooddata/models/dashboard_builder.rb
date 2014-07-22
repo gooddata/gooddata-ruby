@@ -6,7 +6,11 @@ require 'multi_json'
 module GoodData
   module Model
     class DashboardBuilder
-      DEFAULT_OPTS = {}
+      DEFAULT_OPTS = {
+        :title => "Dashboard #{Time.new.strftime('%Y%m%d%H%M%S')}",
+        :summary => '',
+        :tabs => []
+      }
 
       TEMPLATES_DIR = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'dashboard')
 
@@ -15,18 +19,16 @@ module GoodData
           File.join(TEMPLATES_DIR, rel_path)
         end
 
-        def create(title, opts = DEFAULT_OPTS, &block)
+        def create(opts = DEFAULT_OPTS, &block)
           opts = DEFAULT_OPTS.merge(opts)
 
-          args = {
-            :title => title || opts[:title] || "Default Dashboard #{Time.new.strftime('%Y%m%d%H%M%S')}",
-            :summary => opts[:summary] || '',
-            :tabs => opts[:tabs] || []
-          }
-
-          dashoboard_json = template_as_json('dashboard.json.erb', args)
+          dashoboard_json = template_as_json('dashboard.json.erb', opts)
 
           res = GoodData::Dashboard.new(dashoboard_json)
+          opts[:tabs].each do |tab|
+            res.add_tab(tab)
+          end
+
           yield res if block_given?
           res
         end

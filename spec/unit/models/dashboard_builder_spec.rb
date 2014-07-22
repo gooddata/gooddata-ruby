@@ -33,10 +33,25 @@ describe GoodData::Model::DashboardBuilder do
 
   describe '#create' do
     it 'Creates new dashboard' do
-      GoodData::Model::DashboardBuilder.create(DashboardHelper::DASHBOARD_TITLE, options) do |dashboard|
+      options = {
+        :title => "#{DashboardHelper::DASHBOARD_TITLE} #{Time.new.strftime('%Y%m%d%H%M%S')}",
+        :tabs => [
+          {
+            :title => "First Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+            :items => []
+          },
+          {
+            :title => "Second Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+            :items => []
+          }
+        ]
+      }
+
+      GoodData::Model::DashboardBuilder.create(options) do |dashboard|
         dashboard.save(@project)
         @dashboard = dashboard
       end
+
      @dashboard.delete
     end
   end

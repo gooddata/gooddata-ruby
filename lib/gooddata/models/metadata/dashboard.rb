@@ -122,6 +122,12 @@ module GoodData
       save
     end
 
+    def remove_tab(tab_name)
+      content['tabs'] = content['tabs'].select do |tab|
+        tab.title != tab_name
+      end
+    end
+
     # Gets dashboard tab by its name
     # @param name Dashboard tab name
     # @return GoodData::Dashboard::Tab Dashboard tab instance

@@ -14,22 +14,28 @@ module DashboardHelper
 
   DEFAULT_OPTIONS = {
     :title => DashboardHelper::DASHBOARD_TITLE,
-    :tabs => [
-      # First tab
-      {
-        :title => 'First tab'
-      },
-
-      # Second tab
-      {
-        :title => 'Second tab'
-      }
-    ]
+    :tabs => []
   }
+
+  @@DASHBOARD = nil
 
   class << self
     def create_default_dashboard(project = ProjectHelper.default_project, title = DASHBOARD_TITLE, options = DEFAULT_OPTIONS)
-      return GoodData::Model::DashboardBuilder.create(title, options) do |dashboard|
+      options = {
+        :title => DASHBOARD_TITLE,
+        :tabs => [
+          {
+            :title => "First Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+            :items => []
+          },
+          {
+            :title => "Second Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+            :items => []
+          }
+        ]
+      }
+
+      return GoodData::Model::DashboardBuilder.create(options) do |dashboard|
         dashboard.save(project)
       end
     end
