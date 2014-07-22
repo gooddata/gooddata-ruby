@@ -3,8 +3,6 @@
 require 'gooddata'
 
 describe GoodData::Project do
-  DEFAULT_REPORT_TITLE = 'Lines Changed [sum] Report'
-
   before(:all) do
     ConnectionHelper::create_default_connection
     DashboardHelper.create_default_dashboard
@@ -219,7 +217,7 @@ describe GoodData::Project do
 
   describe '#report', :report => true do
     it 'Returns report by name' do
-      report = @project.report(DEFAULT_REPORT_TITLE)
+      report = @project.report(ReportHelper::DEFAULT_REPORT_TITLE)
       expect(report).to be_instance_of(GoodData::Report)
     end
   end

@@ -7,7 +7,7 @@ require_relative 'project_helper'
 
 module MetricHelper
   DEFAULT_METRIC_NAME ||= 'Lines changed [Sum]'
-  DEFAULT_METRIC_IDENTIFIER ||= 'afvbct52bgd2'
+  DEFAULT_METRIC_IDENTIFIER ||= '"buRRk4Y4by0w"'
   DEFAULT_METRIC_URI ||= "/gdc/md/#{ProjectHelper::PROJECT_ID}/obj/241"
 
   class << self
