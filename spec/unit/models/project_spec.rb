@@ -3,7 +3,6 @@
 require 'gooddata'
 
 describe GoodData::Project do
-  DEFAULT_DASHBOARD_TITLE = 'Default dashboard'
   DEFAULT_REPORT_TITLE = 'Lines Changed [sum] Report'
 
   before(:all) do
@@ -87,7 +86,7 @@ describe GoodData::Project do
 
   describe '#dashboard', :dashboard => true do
     it 'Get dashboard by title' do
-      dashboard = @project.dashboard(DEFAULT_DASHBOARD_TITLE)
+      dashboard = @project.dashboard(DashboardHelper::DASHBOARD_TITLE)
       expect(dashboard).to_not be_nil
       expect(dashboard).to be_an_instance_of(GoodData::Dashboard)
     end

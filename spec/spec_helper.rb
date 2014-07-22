@@ -41,7 +41,7 @@ RSpec.configure do |config|
     #   user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
     # end
 
-    ReportHelper.delete_all_reports
+    # ReportHelper.delete_all_reports
 
     # TODO: Fully setup global environment
     GoodData.logging_off
