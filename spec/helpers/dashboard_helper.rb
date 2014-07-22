@@ -17,25 +17,38 @@ module DashboardHelper
     :tabs => []
   }
 
-  @@DASHBOARD = nil
+  DASHBOARD_DEFINITION = {
+    :title => "#{DashboardHelper::DASHBOARD_TITLE} #{Time.new.strftime('%Y%m%d%H%M%S')}",
+    :tabs => [
+      # First tab
+      {
+        :title => "First Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+        :items => [
+          # First row
+          [],
+
+          # Second row
+          []
+        ]
+      },
+
+      # Second tab
+      {
+        :title => "Second Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+        :items => [
+          # First row
+          [],
+
+          # Second row
+          []
+        ]
+      }
+    ]
+  }
 
   class << self
     def create_default_dashboard(project = ProjectHelper.default_project, title = DASHBOARD_TITLE, options = DEFAULT_OPTIONS)
-      options = {
-        :title => DASHBOARD_TITLE,
-        :tabs => [
-          {
-            :title => "First Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
-            :items => []
-          },
-          {
-            :title => "Second Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
-            :items => []
-          }
-        ]
-      }
-
-      return GoodData::Model::DashboardBuilder.create(options) do |dashboard|
+      return GoodData::Model::DashboardBuilder.create(DASHBOARD_DEFINITION) do |dashboard|
         dashboard.save(project)
       end
     end
