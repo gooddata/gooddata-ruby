@@ -23,6 +23,7 @@ The following project objects are currently supported in the Ruby SDK:
 - Fact (`GoodData::Fact`)
 - Attribute (`GoodData::Attribute`)
 - Project Dashboard (`GoodData::Dashboard`)
+- Label (GoodData::Label)
 - User Filter (N/A)
 
 These objects are served over the same APIs. Below, you can review the available manipulations for these objects.
@@ -67,11 +68,10 @@ report.obj_id
 Each object has an internal identifier, which is a string value unique inside the project project. These alphanumeric values can contain also dots. For example, the ID attribute in the Payments dataset may be referenced using the following: `attr.payments.id`.
 **NOTE:** These ID are initially assigned based on text values. However, if the display name values change, the internal IDs do not change. You should acquire these internal identifiers via query methods.
 
-
 You can look the object up by providing an identifier.
 
 {% highlight ruby %}
-report = GoodData::Attribute["attr.devs.dev_id"]
+attribute = GoodData::Attribute["attr.devs.dev_id"]
 {% endhighlight %}
 
 The identifier can be acquired using the following:
