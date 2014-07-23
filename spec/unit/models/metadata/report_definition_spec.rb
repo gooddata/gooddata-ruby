@@ -11,7 +11,8 @@ describe GoodData::ReportDefinition, :report => true do
 
   after(:all) do
     ConnectionHelper.create_default_connection
-    ReportHelper.remove_reports
+    # TODO: Remove only reports created in before(:all)
+    # ReportHelper.remove_reports
     GoodData.disconnect
   end
 
