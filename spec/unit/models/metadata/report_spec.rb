@@ -6,12 +6,14 @@ describe GoodData::Report, :report => true do
   before(:all) do
     ConnectionHelper::create_default_connection
     ReportHelper.create_default_reports
+    DashboardHelper.create_default_dashboard
     GoodData.disconnect
   end
 
   after(:all) do
     ConnectionHelper::create_default_connection
     ReportHelper.remove_default_reports
+    DashboardHelper.remove_default_dashboard
     GoodData.disconnect
   end
 
