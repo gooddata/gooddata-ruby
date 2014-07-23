@@ -6,7 +6,7 @@ require 'gooddata/models/models'
 require_relative 'project_helper'
 
 module ReportHelper
-  DEFAULT_REPORT_TITLE = 'Lines Changed [sum] Report'
+  DEFAULT_REPORT_TITLE = 'Report Lines changed [Sum] - table'
 
   class << self
     @@REPORTS = []
