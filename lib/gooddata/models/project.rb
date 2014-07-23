@@ -564,6 +564,8 @@ module GoodData
       res = GoodData.get url
 
       res['query']['entries'].map do |entry|
+        next if entry.nil? || entry['link'].nil? || entry['link'].empty?
+
         if opts[:full]
           raw_report = GoodData.get(entry['link'])
           Report.new(raw_report)
