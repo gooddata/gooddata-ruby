@@ -3,6 +3,18 @@
 require 'gooddata'
 
 describe GoodData::ReportItem, :report => true do
+  before(:all) do
+    ConnectionHelper::create_default_connection
+    DashboardHelper.create_default_dashboard
+    GoodData.disconnect
+  end
+
+  after(:all) do
+    ConnectionHelper::create_default_connection
+    DashboardHelper.remove_default_dashboard
+    GoodData.disconnect
+  end
+
   before(:each) do
     ConnectionHelper::create_default_connection
     @dashboard = DashboardHelper.default_dashboard
