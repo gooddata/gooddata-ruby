@@ -3,23 +3,24 @@
 # Local requires
 require 'gooddata/models/models'
 
+require_relative 'date_time_helper'
 require_relative 'project_helper'
 
 module DashboardHelper
-  DASHBOARD_TITLE = 'Test Dashboard'
-  TAB_TITLE = 'Test Title'
+  DASHBOARD_TITLE = "Test Dashboard #{DateTimeHelper::TIMESTAMP}"
+  TAB_TITLE = 'Test Tab'
 
   DEFAULT_OPTIONS = {
-    :title => DashboardHelper::DASHBOARD_TITLE,
+    :title => DASHBOARD_TITLE,
     :tabs => []
   }
 
   DASHBOARD_DEFINITION = {
-    :title => "#{DashboardHelper::DASHBOARD_TITLE} #{Time.new.strftime('%Y%m%d%H%M%S')}",
+    :title => DEFAULT_OPTIONS[:title],
     :tabs => [
       # First tab
       {
-        :title => "First Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+        :title => "First #{TAB_TITLE} #{DateTimeHelper::TIMESTAMP}",
         :items => [
           # First row
           [],
@@ -31,7 +32,7 @@ module DashboardHelper
 
       # Second tab
       {
-        :title => "Second Tab #{Time.new.strftime('%Y%m%d%H%M%S')}",
+        :title => "Second #{TAB_TITLE} #{DateTimeHelper::TIMESTAMP}",
         :items => [
           # First row
           [],
@@ -49,8 +50,8 @@ module DashboardHelper
   DEFAULT_DASHBOARD_TAB_IDENTIFIER = 'ajIVX3NWeNUk'
 
   class << self
-    def create_default_dashboard(project = ProjectHelper.default_project, options = DEFAULT_OPTIONS)
-      return GoodData::Model::DashboardBuilder.create(DASHBOARD_DEFINITION.merge(options)) do |dashboard|
+    def create_default_dashboard(project = ProjectHelper.default_project, options = DASHBOARD_DEFINITION)
+      return GoodData::Model::DashboardBuilder.create(DEFAULT_OPTIONS.merge(options)) do |dashboard|
         dashboard.save(project)
       end
     end
