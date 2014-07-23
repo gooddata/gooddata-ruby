@@ -217,7 +217,8 @@ describe GoodData::Project do
 
   describe '#report', :report => true do
     it 'Returns report by name' do
-      report = @project.report(ReportHelper::DEFAULT_REPORT_TITLE)
+      default_report = ReportHelper.default_report
+      report = @project.report(default_report.title)
       expect(report).to be_instance_of(GoodData::Report)
     end
   end

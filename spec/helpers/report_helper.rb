@@ -4,9 +4,11 @@
 require 'gooddata/models/models'
 
 require_relative 'project_helper'
+require_relative 'date_time_helper'
 
 module ReportHelper
-  DEFAULT_REPORT_TITLE = 'Report Lines changed [Sum] - table'
+  DEFAULT_REPORT_TITLE_PREFIX = "Report #{DateTimeHelper::TIMESTAMP}"
+  DEFAULT_REPORT_TITLE = "#{DEFAULT_REPORT_TITLE_PREFIX} Lines changed [Sum] - table"
 
   class << self
     @@REPORTS = []
@@ -21,7 +23,7 @@ module ReportHelper
       metric = MetricHelper.default_metric
 
       GoodData::ReportDefinitionBuilder.chart_types.each do |chart_type|
-        title = "Report #{metric.title} - #{chart_type}"
+        title = "#{DEFAULT_REPORT_TITLE_PREFIX} #{metric.title} - #{chart_type}"
         definition = GoodData::ReportDefinitionBuilder.create(metric, :title => title, :type => chart_type)
         definition.save(project)
 
