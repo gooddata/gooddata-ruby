@@ -73,20 +73,6 @@ module GoodData
       @url = options[:server] || DEFAULT_URL
       @auth_token = options[:gdc_temporary_token]
       @options = options
-
-      @headers = options[:headers] || {}
-
-      default_headers = {
-        :content_type => :json,
-        :accept => [:json, :zip],
-        :user_agent => GoodData.gem_version_string
-      }
-      default_headers.merge! @headers
-
-      @server = RestClient::Resource.new @url,
-                                         :timeout => @options[:timeout],
-                                         :headers => default_headers
-
       @server = create_server_connection(@url, @options)
     end
 
@@ -297,13 +283,18 @@ module GoodData
     private
 
     def create_server_connection(url, options)
+      @headers = options[:headers] || {}
+
+      default_headers = {
+          :content_type => :json,
+          :accept => [:json, :zip],
+          :user_agent => GoodData.gem_version_string
+      }
+      default_headers.merge! @headers
+
       RestClient::Resource.new url,
                                :timeout => options[:timeout],
-                               :headers => {
-                                 :content_type => :json,
-                                 :accept => [:json, :zip],
-                                 :user_agent => GoodData.gem_version_string
-                               }
+                               :headers => default_headers
     end
 
     def ensure_connection
