@@ -34,11 +34,11 @@ describe GoodData::Model::DashboardBuilder do
   describe '#create' do
     it 'Creates new dashboard' do
       GoodData::Model::DashboardBuilder.create(DashboardHelper::DASHBOARD_DEFINITION) do |dashboard|
-        dashboard.save(@project)
+        # dashboard.save(@project)
         @dashboard = dashboard
       end
 
-     @dashboard.delete
+     # @dashboard.delete
     end
   end
 

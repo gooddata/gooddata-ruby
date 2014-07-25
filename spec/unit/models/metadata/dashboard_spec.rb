@@ -3,8 +3,6 @@
 require 'gooddata'
 
 describe GoodData::Dashboard, :dashboard => true do
-  pending ("Broken bone ...")
-
   before(:all) do
     ConnectionHelper::create_default_connection
     @dashboard = DashboardHelper.create_default_dashboard
