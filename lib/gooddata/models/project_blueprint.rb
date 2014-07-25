@@ -5,6 +5,11 @@ module GoodData
     class ProjectBlueprint
       attr_accessor :data
 
+      # Instantiates a project blueprint either from a file or from a string containing
+      # json. Also eats Hash for convenience.
+      #
+      # @param spec [String | Hash] value of an label you are looking for
+      # @return [GoodData::Model::ProjectBlueprint]
       def self.from_json(spec)
         if spec.is_a?(String)
           if File.file?(spec)
@@ -17,6 +22,131 @@ module GoodData
         end
       end
 
+      # Removes dataset from blueprint. Dataset can be given as either a name
+      # or a DatasetBlueprint or a Hash representation.
+      #
+      # @param project [Hash] Project blueprint
+      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @return [Hash] project with removed dataset
+      def self.remove_dataset(project, dataset_name)
+        dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
+        index = project[:datasets].index(dataset)
+        dupped_project = project.deep_dup
+        dupped_project[:datasets].delete_at(index)
+        dupped_project
+      end
+
+      # Removes dataset from blueprint. Dataset can be given as either a name
+      # or a DatasetBlueprint or a Hash representation. This version mutates
+      # the dataset in place
+      #
+      # @param project [Hash] Project blueprint
+      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @return [Hash] project with removed dataset
+      def self.remove_dataset!(project, dataset_name)
+        dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
+        index = project[:datasets].index(dataset)
+        project[:datasets].delete_at(index)
+        project
+      end
+
+      # Returns datasets of blueprint. Those can be optionally including
+      # date dimensions
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @param options [Hash] options
+      # @return [Array<Hash>]
+      def self.datasets(project, options = {})
+        include_date_dimensions = options[:include_date_dimensions] || options[:dd]
+        ds = (project.to_hash[:datasets] || [])
+        if include_date_dimensions
+          ds + date_dimensions(project)
+        else
+          ds
+        end
+      end
+
+      # Returns true if a dataset contains a particular dataset false otherwise
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @return [Boolean]
+      def self.dataset?(project, name)
+        find_dataset(project, name)
+        true
+      rescue
+        false
+      end
+
+      # Returns dataset specified. It can check even for a date dimension
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @param options [Hash] options
+      # @return [GoodData::Model::DatasetBlueprint]
+      def self.find_dataset(project, name, options = {})
+        include_date_dimensions = options[:include_date_dimensions] || options[:dd]
+        return name.to_hash if DatasetBlueprint.dataset_blueprint?(name)
+        all_datasets = if include_date_dimensions
+                         datasets(project) + date_dimensions(project)
+                       else
+                         datasets(project)
+                       end
+        ds = all_datasets.find { |d| d[:name] == name }
+        fail "Dataset #{name} could not be found" if ds.nil?
+        ds
+      end
+
+      # Returns list of date dimensions
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @return [Array<Hash>]
+      def self.date_dimensions(project)
+        project.to_hash[:date_dimensions] || []
+      end
+
+      # Returns true if a date dimension of a given name exists in a bleuprint
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @param name [string] Date dimension
+      # @return [Boolean]
+      def self.date_dimension?(project, name)
+        find_date_dimension(project, name)
+        true
+      rescue
+        false
+      end
+
+      # Finds a date dimension of a given name in a bleuprint. If a dataset is
+      # not found it throws an exeception
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @param name [string] Date dimension
+      # @return [Hash]
+      def self.find_date_dimension(project, name)
+        ds = date_dimensions(project).find { |d| d[:name] == name }
+        fail "Date dimension #{name} could not be found" if ds.nil?
+        ds
+      end
+
+      # Returns fields from all datasets
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @return [Array<Hash>]
+      def self.fields(project)
+        datasets(project).mapcat(&:fields)
+      end
+
+      # Returns a dataset of a given name. If a dataset is not found it throws an exeception
+      #
+      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @param project [String] Dataset title
+      # @return [Array<Hash>]
+      def find_dataset_by_title(project, title)
+        ds = datasets(project).find { |d| Model.title(d) == title }
+        fail "Dataset #{title} could not be found" if ds.nil?
+      end
+
       def change(&block)
         builder = ProjectBuilder.create_from_data(self)
         block.call(builder)
@@ -24,9 +154,13 @@ module GoodData
         self
       end
 
-      def datasets
-        sets = data[:datasets] || []
-        sets.map { |d| DatasetBlueprint.new(d) }
+      # Returns datasets of blueprint. Those can be optionally including
+      # date dimensions
+      #
+      # @param options [Hash] options
+      # @return [Array<GoodData::Model::DatasetBlueprint>]
+      def datasets(options = {})
+        ProjectBlueprint.datasets(to_hash, options).map { |d| DatasetBlueprint.new(d) }
       end
 
       def add_dataset(a_dataset, index = nil)
@@ -37,10 +171,22 @@ module GoodData
         end
       end
 
+      # Removes dataset from blueprint. Dataset can be given as either a name
+      # or a DatasetBlueprint or a Hash representation.
+      #
+      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @return [Hash] project with removed dataset
       def remove_dataset(dataset_name)
-        dataset = dataset_name.is_a?(String) ? find_dataset(dataset_name) : dataset_name
-        index = data[:datasets].index(dataset)
-        data[:datasets].delete_at(index)
+        ProjectBlueprint.remove_dataset(to_hash, dataset_name)
+      end
+
+      # Removes dataset from blueprint. Dataset can be given as either a name
+      # or a DatasetBlueprint or a Hash representation.
+      #
+      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @return [Hash] project with removed dataset
+      def remove_dataset!(dataset_name)
+        ProjectBlueprint.remove_dataset!(to_hash, dataset_name)
       end
 
       # Is this a project blueprint?
@@ -50,18 +196,36 @@ module GoodData
         true
       end
 
+      # Returns list of date dimensions
+      #
+      # @return [Array<Hash>]
       def date_dimensions
-        data[:date_dimensions]
+        ProjectBlueprint.date_dimensions(to_hash)
       end
 
+      # Returns true if a dataset contains a particular dataset false otherwise
+      #
+      # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @return [Boolean]
       def dataset?(name)
-        found = data[:datasets].find { |d| d[:name] == name }
-        found != nil
+        ProjectBlueprint.dataset?(to_hash, name)
       end
 
-      def find_dataset(name)
-        ds = data[:datasets].find { |d| d[:name] == name }
-        fail "Dataset #{name} could not be found" if ds.nil?
+      # Returns dataset specified. It can check even for a date dimension
+      #
+      # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @param options [Hash] options
+      # @return [GoodData::Model::DatasetBlueprint]
+      def find_dataset(name, options = {})
+        DatasetBlueprint.new(ProjectBlueprint.find_dataset(to_hash, name, options))
+      end
+
+      # Returns a dataset of a given name. If a dataset is not found it throws an exeception
+      #
+      # @param project [String] Dataset title
+      # @return [Array<Hash>]
+      def find_dataset_by_title(title)
+        ds = ProjectBlueprint.find_dataset_by_title(to_hash, title)
         DatasetBlueprint.new(ds)
       end
 
@@ -87,7 +251,7 @@ module GoodData
         if datasets.count == 1
           []
         else
-          x = datasets.reduce([]) { |a, e| e.anchor? ? a << [e.name, e.anchor[:name]] : a }
+          x = datasets.reduce([]) { |a, e| e.anchor? ? a << [e.name, e.anchor[:name]] : a } + date_dimensions.map { |y| [y[:name], nil] }
           refs = datasets.reduce([]) do |a, e|
             a.concat(e.references)
           end
@@ -113,29 +277,59 @@ module GoodData
         validate.empty?
       end
 
+      # Returns list of datasets which are referenced by given dataset. This can be
+      # optionally switched to return even date dimensions
+      #
+      # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
+      # @return [Array<Hash>]
       def referenced_by(dataset)
-        dataset = find_dataset(dataset) if dataset.is_a?(String)
-        dataset.references.map do |ds|
-          find_dataset(ds[:dataset])
+        find_dataset(dataset).references.map do |ref|
+          find_dataset(ref[:dataset], include_date_dimensions: true)
         end
       end
 
+      # Returns list of attributes from all the datasets in a blueprint
+      #
+      # @return [Array<Hash>]
       def attributes
         datasets.reduce([]) { |a, e| a.concat(e.attributes) }
       end
 
+      # Returns list of attributes and anchors from all the datasets in a blueprint
+      #
+      # @return [Array<Hash>]
       def attributes_and_anchors
-        datasets.reduce([]) { |a, e| a.concat(e.attributes_and_anchors) }
+        datasets.mapcat(&:attributes_and_anchors)
       end
 
+      # Returns list of labels from all the datasets in a blueprint
+      #
+      # @return [Array<Hash>]
       def labels
-        datasets.reduce([]) { |a, e| a.concat(e.labels) }
+        datasets.mapcat(&:labels)
       end
 
+      # Returns list of facts from all the datasets in a blueprint
+      #
+      # @return [Array<Hash>]
       def facts
-        datasets.reduce([]) { |a, e| a.concat(e.facts) }
+        datasets.mapcat(&:facts)
       end
 
+      # Returns list of fields from all the datasets in a blueprint
+      #
+      # @return [Array<Hash>]
+      def fields
+        ProjectBlueprint.fields(to_hash)
+      end
+
+      # Returns list of attributes that can break facts in a given dataset.
+      # This basically means that it is giving you all attributes from the
+      # datasets that are references by given dataset. Currently does not
+      # work transitively
+      #
+      # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
+      # @return [Array<Hash>]
       def can_break(dataset)
         dataset = find_dataset(dataset) if dataset.is_a?(String)
         referenced_by(dataset).reduce([]) do |a, e|
@@ -146,13 +340,50 @@ module GoodData
         end
       end
 
+      # Experimental but a basis for automatic check of health of a project
+      #
+      # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
+      # @return [Array<Hash>]
+      def lint
+        has_anchors = find_star_centers.select(&:anchor?)
+        unless has_anchors.empty?
+          puts 'Hey man You have couple of datasets that have no connected datasets to them but still have anchors. This might stress SLI. Watch out.'
+          puts has_anchors.map(&:title)
+        end
+
+        date_facts = datasets.mapcat { |d| d.date_facts }
+        unless date_facts.empty?
+          puts 'You have some date facts in your projects. These were deprecated and it may cause problems'
+          pp date_facts
+        end
+
+        unique_titles = fields.map { |f| Model.title(f) }.uniq
+        if unique_titles.count != fields.count
+          puts 'Man there are some fields with duplicate titles. Nobody can read that stuff.'
+        end
+
+        unless datasets.select(&:wide?.empty?)
+          puts 'Man some of your datasets are too wide'
+        end
+      end
+
+      # Return list of datasets that are centers of the stars in datamart.
+      # This means these datasets are not referenced by anybody else
+      # In a good blueprint design these should be fact tables
+      #
+      # @return [Array<Hash>]
       def find_star_centers
-        referenced = datasets.map { |d| referenced_by(d) }
+        referenced = datasets.mapcat { |d| referenced_by(d) }
         referenced.flatten!
         res = datasets.map(&:to_hash) - referenced.map(&:to_hash)
         res.map { |d| DatasetBlueprint.new(d) }
       end
 
+      # Returns some reports that might get you started. They are just simple
+      # reports. Currently it is implemented by getting facts from star centers
+      # and randomly picking attributes form referenced datasets.
+      #
+      # @return [Array<Hash>]
       def suggest_reports(options = {})
         strategy = options[:strategy] || :stupid
         case strategy
@@ -181,18 +412,32 @@ module GoodData
         end
       end
 
+      # Returns some metrics that might get you started. They are just simple
+      # reports. Currently it is implemented by getting facts from star centers
+      # and randomly picking attributes form referenced datasets.
+      #
+      # @return [Array<Hash>]
       def suggest_metrics
         stars = find_star_centers
         metrics = stars.map { |s| s.suggest_metrics }
         stars.zip(metrics)
       end
 
+      # Merging two blueprints. The self blueprint is changed in place
+      #
+      # @param a_blueprint [GoodData::Model::DatasetBlueprint] Dataset blueprint to be merged
+      # @return [GoodData::Model::ProjectBlueprint]
       def merge!(a_blueprint)
         temp_blueprint = merge(a_blueprint)
         @data = temp_blueprint.data
         self
       end
 
+      # Merging two blueprints. A new blueprint is created. The self one
+      # is nto mutated
+      #
+      # @param a_blueprint [GoodData::Model::DatasetBlueprint] Dataset blueprint to be merged
+      # @return [GoodData::Model::ProjectBlueprint]
       def merge(a_blueprint)
         temp_blueprint = dup
         a_blueprint.datasets.each do |dataset|
@@ -209,34 +454,51 @@ module GoodData
         temp_blueprint
       end
 
+      # Duplicated blueprint
+      #
+      # @param a_blueprint [GoodData::Model::DatasetBlueprint] Dataset blueprint to be merged
+      # @return [GoodData::Model::DatasetBlueprint]
       def dup
         ProjectBlueprint.new(data.deep_dup)
       end
 
+      # Returns title of a dataset. If not present it is generated from the name
+      #
+      # @return [String] a title
       def title
-        data[:title]
+        Model.title(to_hash)
       end
 
-      def to_wire_model
-        {
-          'diffRequest' => {
-            'targetModel' => {
-              'projectModel' => {
-                'datasets' => datasets.map { |d| d.to_wire_model },
-                'dateDimensions' => date_dimensions.map do |d|
-                  {
-                    'dateDimension' => {
-                      'name' => d[:name],
-                      'title' => d[:title] || d[:name].humanize
-                    }
-                  }
-                end
-              }
-            }
-          }
-        }
+      # Returns Wire representation. This is used by our API to generate and
+      # change projects
+      #
+      # @return [Hash] a title
+      def to_wire
+        ToWire.to_wire(data)
       end
 
+      # Returns SLI manifest representation. This is used by our API to allow
+      # loading data
+      #
+      # @return [Array<Hash>] a title
+      def to_manifest
+        ToManifest.to_manifest(to_hash)
+      end
+
+      # Returns SLI manifest for one dataset. This is used by our API to allow
+      # loading data. The method is on project blueprint because you need
+      # acces to whole project to be able to generate references
+      #
+      # @param dataset [GoodData::Model::DatasetBlueprint | Hash | String] Dataset
+      # @param mode [String] Method of loading. FULL or INCREMENTAL
+      # @return [Array<Hash>] a title
+      def dataset_to_manifest(dataset, mode = 'FULL')
+        ToManifest.dataset_to_manifest(self, dataset, mode)
+      end
+
+      # Returns hash representation of blueprint
+      #
+      # @return [Hash] a title
       def to_hash
         @data
       end

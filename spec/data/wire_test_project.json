@@ -1,0 +1,143 @@
+{
+  "diffRequest": {
+    "targetModel": {
+      "projectModel": {
+        "datasets": [
+          {
+            "dataset": {
+              "identifier": "dataset.repos",
+              "title": "Repos",
+              "anchor": {
+                "attribute": {
+                  "identifier": "attr.repos.repo_id",
+                  "title": "Repo",
+                  "labels": [
+                    {
+                      "label": {
+                        "identifier": "label.repos.repo_id",
+                        "title": "Repo",
+                        "type": null,
+                        "dataType": null
+                      }
+                    },
+                    {
+                      "label": {
+                        "identifier": "label.repos.repo_id.name",
+                        "title": "Name",
+                        "type": null,
+                        "dataType": null
+                      }
+                    }
+                  ],
+                  "defaultLabel": "label.repos.repo_id"
+                }
+              },
+              "attributes": [
+                {
+                  "attribute": {
+                    "identifier": "attr.repos.department",
+                    "title": "Department",
+                    "labels": [
+                      {
+                        "label": {
+                          "identifier": "label.repos.department",
+                          "title": "Department",
+                          "type": null,
+                          "dataType": null
+                        }
+                      }
+                    ],
+                    "defaultLabel": "label.repos.department"
+                  }
+                }
+              ],
+              "facts": [
+
+              ],
+              "references": [
+
+              ]
+            }
+          },
+          {
+            "dataset": {
+              "identifier": "dataset.devs",
+              "title": "Devs",
+              "anchor": {
+                "attribute": {
+                  "identifier": "attr.devs.dev_id",
+                  "title": "Dev",
+                  "labels": [
+                    {
+                      "label": {
+                        "identifier": "label.devs.dev_id",
+                        "title": "Dev",
+                        "type": null,
+                        "dataType": null
+                      }
+                    },
+                    {
+                      "label": {
+                        "identifier": "label.devs.dev_id.email",
+                        "title": "Email",
+                        "type": null,
+                        "dataType": null
+                      }
+                    }
+                  ],
+                  "defaultLabel": "label.devs.dev_id.email"
+                }
+              },
+              "attributes": [
+
+              ],
+              "facts": [
+
+              ],
+              "references": [
+
+              ]
+            }
+          },
+          {
+            "dataset": {
+              "identifier": "dataset.commits",
+              "title": "Commits",
+              "anchor": {
+                "attribute": {
+                  "identifier": "attr.commits.factsof",
+                  "title": "Records of Commits"
+                }
+              },
+              "attributes": [
+
+              ],
+              "facts": [
+                {
+                  "fact": {
+                    "identifier": "fact.commits.lines_changed",
+                    "title": "Lines Changed",
+                    "dataType": "INT"
+                  }
+                }
+              ],
+              "references": [
+                "committed_on",
+                "dataset.devs",
+                "dataset.repos"
+              ]
+            }
+          }
+        ],
+        "dateDimensions": [
+          {
+            "dateDimension": {
+              "name": "committed_on",
+              "title": "Committed On"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

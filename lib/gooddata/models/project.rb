@@ -115,26 +115,6 @@ module GoodData
       end
     end
 
-    # Creates a data set within the project
-    #
-    # == Usage
-    # p.add_dataset 'Test', [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
-    # p.add_dataset 'title' => 'Test', 'columns' => [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
-    #
-    def add_dataset(schema_def, columns = nil, &block)
-      schema = if block
-                 builder = block.call(Model::SchemaBuilder.new(schema_def))
-                 builder.to_schema
-               else
-                 sch = { :title => schema_def, :columns => columns } if columns
-                 sch = Model::Schema.new schema_def if schema_def.is_a? Hash
-                 sch = schema_def if schema_def.is_a?(Model::Schema)
-                 fail(ArgumentError, 'Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
-                 sch
-               end
-      Model.add_schema(schema, self)
-    end
-
     def add_metric(options = {})
       options[:expression] || fail('Metric has to have its expression defined')
       m1 = GoodData::Metric.create(options)
@@ -152,6 +132,15 @@ module GoodData
     def author
       # TODO: Return object instead
       @json['project']['meta']['author']
+    end
+
+    # Gets project blueprint from the server
+    #
+    # @return [GoodData::ProjectRole] Project role if found
+    def blueprint
+      result = GoodData.get("/gdc/projects/#{pid}/model/view")
+      model = GoodData.poll_on_root(result, 'asyncTask') { |r| r['asyncTask']['link']['poll'] }
+      GoodData::Model::FromWire.from_wire(model)
     end
 
     # Returns web interface URI of project
@@ -234,7 +223,11 @@ module GoodData
       raw_data['project']
     end
 
+    # Gets datasets of a blueprint
+    #
+    # @return [Array<GoodData::Model::DatasetBlueprint] Datasets from a generated blueprint
     def datasets
+      blueprint.datasets
       datasets_uri = "#{md['data']}/sets"
       response = GoodData.get datasets_uri
       response['dataSetsInfo']['sets'].map do |ds|
@@ -570,8 +563,8 @@ module GoodData
     #
     # @param file File to be uploaded
     # @param schema Schema to be used
-    def upload(file, schema, mode = 'FULL')
-      schema.upload file, self, mode
+    def upload(file, dataset_blueprint, mode = 'FULL')
+      dataset_blueprint.upload file, self, mode
     end
 
     def uri

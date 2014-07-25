@@ -9,9 +9,9 @@ describe GoodData::Model::SchemaBuilder do
     # pending("Using of humanize")
 
     builder = GoodData::Model::SchemaBuilder.new("a_title")
-    schema = builder.to_schema
-    schema.title.should == "A title"
-    schema.name.should == "a_title"
+    blueprint = builder.to_blueprint
+    blueprint.title.should == "A Title"
+    blueprint.name.should == "a_title"
   end
 
   it "should create a schema with some columns" do
@@ -19,9 +19,8 @@ describe GoodData::Model::SchemaBuilder do
     builder.add_attribute("id", :title => "My Id")
     builder.add_fact("amount", :title => "Amount")
 
-    schema = builder.to_schema
-    schema.attributes.count == 1
-    schema.attributes.first.title.should == "My Id"
+    blueprint = builder.to_blueprint
+    blueprint.attributes.count == 1
   end
 
 end
