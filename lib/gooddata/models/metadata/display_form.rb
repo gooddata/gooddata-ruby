@@ -28,7 +28,7 @@ module GoodData
     # @param [Object] element_id Element identifier either Number or a uri as a String
     # @return [String] value of the element if found
     def find_element_value(element_id)
-      element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
+      element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d+)/)[1] : element_id
       uri = links['elements']
       result = GoodData.get(uri + "/?id=#{element_id}")
       items = result['attributeElements']['elements']

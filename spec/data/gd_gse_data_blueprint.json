@@ -1,0 +1,1370 @@
+{
+  "datasets": [{
+    "type": "dataset",
+    "title": "stage_history",
+    "name": "stage_history",
+    "columns": [{
+      "type": "attribute",
+      "name": "currentstatus",
+      "title": "Current Stage",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "fact",
+      "name": "stage_velocity",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "stage_duration",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "date_fact",
+      "name": "opp_created_date",
+      "title": "Opp. Created (Date) for Stage History",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "opp_close_date",
+      "title": "Opp. Close (Date) for Stage History",
+      "gd_data_type": "INT"
+    }, {
+      "type": "reference",
+      "name": "account",
+      "dataset": "account"
+    }, {
+      "type": "reference",
+      "name": "product",
+      "dataset": "product"
+    }, {
+      "type": "reference",
+      "name": "stage",
+      "dataset": "stage"
+    }, {
+      "type": "reference",
+      "name": "opp_owner",
+      "dataset": "opp_owner"
+    }, {
+      "type": "reference",
+      "name": "opportunity",
+      "dataset": "opportunity"
+    }, {
+      "type": "reference",
+      "name": "bookingtype",
+      "dataset": "bookingtype"
+    }, {
+      "type": "date",
+      "name": "oppclose",
+      "dataset": "oppclose"
+    }, {
+      "type": "date",
+      "name": "oppcreated",
+      "dataset": "oppcreated"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "opp_snapshot",
+    "name": "opp_snapshot",
+    "columns": [{
+      "type": "attribute",
+      "name": "accountstagesnapshot",
+      "title": "Account Stage (Snapshot)",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "fact",
+      "name": "amount",
+      "title": "Amount Snapshot",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "probability",
+      "title": "Probability Snapshot",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "date_fact",
+      "name": "created_date",
+      "title": "Opp. Created (Date) Snapshot",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "close_date",
+      "title": "Opp. Close (Date) Snapshot",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "snapshot_date",
+      "title": "Opp. Snapshot (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "fact",
+      "name": "mrr",
+      "title": "Straight Line MRR (Snapshot)",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "distributedmrr",
+      "title": "Ending MRR (Snapshot)",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "date_fact",
+      "name": "effectivecontractstart",
+      "title": "Opp. Contract Start (Date) Snapshot",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "effectivecontractend",
+      "title": "Opp. Contract End (Date) Snapshot",
+      "gd_data_type": "INT"
+    }, {
+      "type": "reference",
+      "name": "sdrowner",
+      "dataset": "sdrowner"
+    }, {
+      "type": "reference",
+      "name": "leadsourceoriginal",
+      "dataset": "leadsourceoriginal"
+    }, {
+      "type": "reference",
+      "name": "account",
+      "dataset": "account"
+    }, {
+      "type": "reference",
+      "name": "amounttype",
+      "dataset": "amounttype"
+    }, {
+      "type": "reference",
+      "name": "product",
+      "dataset": "product"
+    }, {
+      "type": "reference",
+      "name": "sourcingorigin",
+      "dataset": "sourcingorigin"
+    }, {
+      "type": "reference",
+      "name": "leadsource",
+      "dataset": "leadsource"
+    }, {
+      "type": "reference",
+      "name": "productline",
+      "dataset": "productline"
+    }, {
+      "type": "reference",
+      "name": "stage",
+      "dataset": "stage"
+    }, {
+      "type": "reference",
+      "name": "opp_owner",
+      "dataset": "opp_owner"
+    }, {
+      "type": "reference",
+      "name": "opportunity",
+      "dataset": "opportunity"
+    }, {
+      "type": "reference",
+      "name": "bookingtype",
+      "dataset": "bookingtype"
+    }, {
+      "type": "reference",
+      "name": "forecast",
+      "dataset": "forecast"
+    }, {
+      "type": "date",
+      "name": "leadcreate",
+      "dataset": "leadcreate"
+    }, {
+      "type": "date",
+      "name": "snapshot",
+      "dataset": "snapshot"
+    }, {
+      "type": "date",
+      "name": "oppclose",
+      "dataset": "oppclose"
+    }, {
+      "type": "date",
+      "name": "oppcreated",
+      "dataset": "oppcreated"
+    }, {
+      "type": "date",
+      "name": "stage1plus",
+      "dataset": "stage1plus"
+    }, {
+      "type": "date",
+      "name": "mqldate",
+      "dataset": "mqldate"
+    }, {
+      "type": "date",
+      "name": "effectivecontractstart",
+      "dataset": "effectivecontractstart"
+    }, {
+      "type": "date",
+      "name": "effectivecontractend",
+      "dataset": "effectivecontractend"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Opp_changes",
+    "name": "opp_changes",
+    "columns": [{
+      "type": "attribute",
+      "name": "interval_changes",
+      "title": "Interval_Changes",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "previous_stage",
+      "title": "Previous_Stage",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "fact",
+      "name": "amount_changed",
+      "title": "amount_changed_expected",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "amount_changed_current_q",
+      "title": "amount_changed_current_q_expected",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "previous_amount",
+      "title": "previous_amount",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "new_amount",
+      "title": "new_amount",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "amount_changed_potential",
+      "title": "amount_changed_potential",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "amount_changed_current_q_potential",
+      "title": "amount_changed_current_q_potential",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "reference",
+      "name": "account",
+      "dataset": "account"
+    }, {
+      "type": "reference",
+      "name": "amounttype",
+      "dataset": "amounttype"
+    }, {
+      "type": "reference",
+      "name": "product",
+      "dataset": "product"
+    }, {
+      "type": "reference",
+      "name": "productline",
+      "dataset": "productline"
+    }, {
+      "type": "reference",
+      "name": "stage",
+      "dataset": "stage"
+    }, {
+      "type": "reference",
+      "name": "opp_owner",
+      "dataset": "opp_owner"
+    }, {
+      "type": "reference",
+      "name": "opportunity",
+      "dataset": "opportunity"
+    }, {
+      "type": "reference",
+      "name": "bookingtype",
+      "dataset": "bookingtype"
+    }, {
+      "type": "date",
+      "name": "oppclose",
+      "dataset": "oppclose"
+    }, {
+      "type": "date",
+      "name": "previous_close_date",
+      "dataset": "previous_close_date"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Opportunity Benchmark",
+    "name": "opportunityanalysis",
+    "columns": [{
+      "type": "anchor",
+      "name": "techoppanalysis",
+      "title": "Tech Opp. Analysis",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "month",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "month",
+      "name": "monthsortingnew",
+      "title": "MonthSortingNew",
+      "gd_data_type": "INT",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "cohorttype",
+      "title": "Cohort Type",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "fact",
+      "name": "buckets_to_display",
+      "title": "buckets_to_display",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "month_fact",
+      "title": "month_fact",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "reference",
+      "name": "opp_records",
+      "dataset": "opp_records"
+    }, {
+      "type": "reference",
+      "name": "consolidatedmarketingstatus",
+      "dataset": "consolidatedmarketingstatus"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "quota",
+    "name": "goals",
+    "columns": [{
+      "type": "attribute",
+      "name": "quotatype",
+      "title": "Quota Type",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "fact",
+      "name": "amount",
+      "title": "quota amount",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "date_fact",
+      "name": "mqldate",
+      "title": "MQL Date (Quota)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "stage1plus",
+      "title": "SAO Date (Quota)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "oppcreated",
+      "title": "Opp. Create (Quota)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "oppclose",
+      "title": "Opp. Close (Quota)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "reference",
+      "name": "sdrowner",
+      "dataset": "sdrowner"
+    }, {
+      "type": "reference",
+      "name": "amounttype",
+      "dataset": "amounttype"
+    }, {
+      "type": "reference",
+      "name": "product",
+      "dataset": "product"
+    }, {
+      "type": "reference",
+      "name": "sourcingorigin",
+      "dataset": "sourcingorigin"
+    }, {
+      "type": "reference",
+      "name": "activity_owner",
+      "dataset": "activity_owner"
+    }, {
+      "type": "reference",
+      "name": "opp_owner",
+      "dataset": "opp_owner"
+    }, {
+      "type": "reference",
+      "name": "bookingtype",
+      "dataset": "bookingtype"
+    }, {
+      "type": "date",
+      "name": "activity",
+      "dataset": "activity"
+    }, {
+      "type": "date",
+      "name": "oppclose",
+      "dataset": "oppclose"
+    }, {
+      "type": "date",
+      "name": "oppcreated",
+      "dataset": "oppcreated"
+    }, {
+      "type": "date",
+      "name": "stage1plus",
+      "dataset": "stage1plus"
+    }, {
+      "type": "date",
+      "name": "mqldate",
+      "dataset": "mqldate"
+    }, {
+      "type": "date",
+      "name": "s2o",
+      "dataset": "s2o"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "timeline",
+    "name": "timeline",
+    "columns": [{
+      "type": "date_fact",
+      "name": "timeline",
+      "title": "Timeline (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date",
+      "name": "timeline",
+      "dataset": "timeline"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "activity_monitoring",
+    "name": "activity_monitoring",
+    "columns": [{
+      "type": "date_fact",
+      "name": "opp_created_date",
+      "title": "Opp. Created (Date) for Activity",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "opp_close_date",
+      "title": "Opp. Close (Date) for Activity",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "activity_date",
+      "title": "Activity (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "reference",
+      "name": "account",
+      "dataset": "account"
+    }, {
+      "type": "reference",
+      "name": "product",
+      "dataset": "product"
+    }, {
+      "type": "reference",
+      "name": "activity_owner",
+      "dataset": "activity_owner"
+    }, {
+      "type": "reference",
+      "name": "stage",
+      "dataset": "stage"
+    }, {
+      "type": "reference",
+      "name": "opp_owner",
+      "dataset": "opp_owner"
+    }, {
+      "type": "reference",
+      "name": "activity",
+      "dataset": "activity"
+    }, {
+      "type": "reference",
+      "name": "opportunity",
+      "dataset": "opportunity"
+    }, {
+      "type": "reference",
+      "name": "bookingtype",
+      "dataset": "bookingtype"
+    }, {
+      "type": "date",
+      "name": "activity",
+      "dataset": "activity"
+    }, {
+      "type": "date",
+      "name": "oppclose",
+      "dataset": "oppclose"
+    }, {
+      "type": "date",
+      "name": "oppcreated",
+      "dataset": "oppcreated"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "opp_records",
+    "name": "opp_records",
+    "columns": [{
+      "type": "anchor",
+      "name": "factsof",
+      "title": "Records of opp_records",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "factsof",
+      "name": "opp_records_conctn_point",
+      "title": "opp_records_conctn_point",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "fact",
+      "name": "amount",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "probability",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "date_fact",
+      "name": "created_date",
+      "title": "Opp. Created (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "close_date",
+      "title": "Opp. Close (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "stage1plus",
+      "title": "SAO (date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "leadcreate",
+      "title": "Lead Created (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "mqldate",
+      "title": "MQL (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "firstcontactdate",
+      "title": "Contact (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "laststage0plus",
+      "title": "Last Stage 0 Plus",
+      "gd_data_type": "INT"
+    }, {
+      "type": "fact",
+      "name": "mrr",
+      "title": "Straight Line MRR",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "distributed_mrr",
+      "title": "Ending MRR",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "freemonths",
+      "title": "Free Months",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "date_fact",
+      "name": "effectivecontractstart",
+      "title": "Contract Start (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "effectivecontractend",
+      "title": "Contract End (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "fact",
+      "name": "upsellcmrr",
+      "title": "Upsell CMRR",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "downsellcmrr",
+      "title": "Downsell CMRR",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "upliftcmrr",
+      "title": "Uplift CMRR",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "fact",
+      "name": "churncmrr",
+      "title": "Churn CMRR",
+      "gd_data_type": "DECIMAL(12,2)"
+    }, {
+      "type": "date_fact",
+      "name": "firstmeeting",
+      "title": "First Meeting (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "date_fact",
+      "name": "s2o",
+      "title": "S2O (Date)",
+      "gd_data_type": "INT"
+    }, {
+      "type": "reference",
+      "name": "sdrowner",
+      "dataset": "sdrowner"
+    }, {
+      "type": "reference",
+      "name": "leadsourceoriginal",
+      "dataset": "leadsourceoriginal"
+    }, {
+      "type": "reference",
+      "name": "account",
+      "dataset": "account"
+    }, {
+      "type": "reference",
+      "name": "amounttype",
+      "dataset": "amounttype"
+    }, {
+      "type": "reference",
+      "name": "product",
+      "dataset": "product"
+    }, {
+      "type": "reference",
+      "name": "renewalstatus",
+      "dataset": "renewalstatus"
+    }, {
+      "type": "reference",
+      "name": "sourcingorigin",
+      "dataset": "sourcingorigin"
+    }, {
+      "type": "reference",
+      "name": "sdrperformancestatus",
+      "dataset": "sdrperformancestatus"
+    }, {
+      "type": "reference",
+      "name": "leadsource",
+      "dataset": "leadsource"
+    }, {
+      "type": "reference",
+      "name": "winlossreason",
+      "dataset": "winlossreason"
+    }, {
+      "type": "reference",
+      "name": "productline",
+      "dataset": "productline"
+    }, {
+      "type": "reference",
+      "name": "leadchannel",
+      "dataset": "leadchannel"
+    }, {
+      "type": "reference",
+      "name": "stage",
+      "dataset": "stage"
+    }, {
+      "type": "reference",
+      "name": "opp_owner",
+      "dataset": "opp_owner"
+    }, {
+      "type": "reference",
+      "name": "opportunity",
+      "dataset": "opportunity"
+    }, {
+      "type": "reference",
+      "name": "bookingtype",
+      "dataset": "bookingtype"
+    }, {
+      "type": "reference",
+      "name": "forecast",
+      "dataset": "forecast"
+    }, {
+      "type": "date",
+      "name": "leadcreate",
+      "dataset": "leadcreate"
+    }, {
+      "type": "date",
+      "name": "oppclose",
+      "dataset": "oppclose"
+    }, {
+      "type": "date",
+      "name": "oppcreated",
+      "dataset": "oppcreated"
+    }, {
+      "type": "date",
+      "name": "stage1plus",
+      "dataset": "stage1plus"
+    }, {
+      "type": "date",
+      "name": "firstcontactdate",
+      "dataset": "firstcontactdate"
+    }, {
+      "type": "date",
+      "name": "mqldate",
+      "dataset": "mqldate"
+    }, {
+      "type": "date",
+      "name": "s2o",
+      "dataset": "s2o"
+    }, {
+      "type": "date",
+      "name": "firstmeeting",
+      "dataset": "firstmeeting"
+    }, {
+      "type": "date",
+      "name": "effectivecontractstart",
+      "dataset": "effectivecontractstart"
+    }, {
+      "type": "date",
+      "name": "laststage0plus",
+      "dataset": "laststage0plus"
+    }, {
+      "type": "date",
+      "name": "effectivecontractend",
+      "dataset": "effectivecontractend"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "SDR Owner",
+    "name": "sdrowner",
+    "columns": [{
+      "type": "anchor",
+      "name": "sdrowner",
+      "title": "SDR Owner",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "sdrowner",
+      "name": "sdrownername",
+      "title": "SDR Owner Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "sdrteam",
+      "title": "SDR Team",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Lead Source Original",
+    "name": "leadsourceoriginal",
+    "columns": [{
+      "type": "anchor",
+      "name": "leadsourceoriginal",
+      "title": "Lead Source Original",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "leadcategory",
+      "title": "Lead Source Original Category",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "account",
+    "name": "account",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Account",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "name",
+      "title": "Account Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "url",
+      "title": "Account Url",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.link"
+    }, {
+      "type": "attribute",
+      "name": "region",
+      "title": "Account Region",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "accountstage",
+      "title": "Account Stage",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "accountownername",
+      "title": "Account Owner Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "accountindustry",
+      "title": "Account Industry",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "accountemployeecount",
+      "title": "Account Employee Count",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "accountemployeecount",
+      "name": "employeecountsort",
+      "title": "Employee Count Sort",
+      "gd_data_type": "INT",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "accountannualrevenue",
+      "title": "Account Annual Revenue",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Revenue Type",
+    "name": "amounttype",
+    "columns": [{
+      "type": "anchor",
+      "name": "amounttype",
+      "title": "Revenue Type",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "product",
+    "name": "product",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Product",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "name",
+      "title": "Product Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "product_type",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Renewal Status",
+    "name": "renewalstatus",
+    "columns": [{
+      "type": "anchor",
+      "name": "renewalstatus",
+      "title": "Renewal Status",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Sourcing Type",
+    "name": "sourcingorigin",
+    "columns": [{
+      "type": "anchor",
+      "name": "techsourcingtype",
+      "title": "_Tech Sourcing Type",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "sourcingtype",
+      "title": "Sourcing Type",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "sourcingtypechannel",
+      "title": "Sourcing Type Channel",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "sourcingtypeteam",
+      "title": "Sourcing Type Team",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "sourcingtypeteam",
+      "name": "sourcingtypeteamname",
+      "title": "Sourcing Type Team Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "SDR Performance Status",
+    "name": "sdrperformancestatus",
+    "columns": [{
+      "type": "anchor",
+      "name": "sdrperformancestatus",
+      "title": "SDR Performance Status",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Consolidated Marketing Status",
+    "name": "consolidatedmarketingstatus",
+    "columns": [{
+      "type": "anchor",
+      "name": "consolidatedmarketingstatus",
+      "title": "_TECH Consolidated Marketing Status (Conctn_Point)",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "consolidatedmarketingstatus",
+      "name": "mktgstatussorting",
+      "title": "_Mktg Status Sorting",
+      "gd_data_type": "INT",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "detailedmarketingstatuslvl1",
+      "title": "Detailed Marketing Status (Lvl1)",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "detailedmarketingstatuslvl1",
+      "name": "ordersort1",
+      "title": "_Order Sort",
+      "gd_data_type": "INT",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "consolidatedmarketingstatus1",
+      "title": "Consolidated Marketing Status",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "consolidatedmarketingstatus1",
+      "name": "ordersort2",
+      "title": "Order Sort 2",
+      "gd_data_type": "INT",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "consolidatedsqltos2o",
+      "title": "Consolidated Status SQL to S2O",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "consolidatedsqltos2o",
+      "name": "ordersortsqltos2o",
+      "title": "Order Sort SQL to S2O",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "activity_owner",
+    "name": "activity_owner",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Act. Owner",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "name",
+      "title": "Act. Owner Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "url",
+      "title": "Act. Owner Url",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.link"
+    }, {
+      "type": "attribute",
+      "name": "region",
+      "title": "Act. Owner Region",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "department",
+      "title": "Act. Owner Department",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "is_sdr",
+      "title": "is_sdr",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Lead Source",
+    "name": "leadsource",
+    "columns": [{
+      "type": "anchor",
+      "name": "leadsource",
+      "title": "Lead Source",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Win/Loss Reason",
+    "name": "winlossreason",
+    "columns": [{
+      "type": "anchor",
+      "name": "winlossreason",
+      "title": "_Tech Win/Loss Reason",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "winlossreason1",
+      "title": "Win/Loss Reason",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "secondarywinlossreason",
+      "title": "Secondary Win/Loss Reason",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Product Line",
+    "name": "productline",
+    "columns": [{
+      "type": "anchor",
+      "name": "productline",
+      "title": "_Product Line (ID)",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "productline1",
+      "title": "Product Line",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "prod",
+      "title": "Primary PL Solution",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "productorspecificsolution",
+      "title": "Product or Specific Solution",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Lead Channel",
+    "name": "leadchannel",
+    "columns": [{
+      "type": "anchor",
+      "name": "leadchannel",
+      "title": "Lead Channel",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "stage",
+    "name": "stage",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Stage",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "name",
+      "title": "Stage Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "order",
+      "gd_data_type": "INT",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "is_won",
+      "title": "Is Won?",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "status",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "is_active",
+      "title": "Is Active?",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "is_closed",
+      "title": "Is Closed?",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "issao",
+      "title": "Is SAO?",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "amconsolidatedstage",
+      "title": "AM Consolidated Stage",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "amconsolidatedstage",
+      "name": "amstageorder",
+      "title": "_AM Stage Order",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "opp_owner",
+    "name": "opp_owner",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Opp. Owner",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "name",
+      "title": "Opp. Owner Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "oppownerpicture",
+      "title": "Opp. Owner Picture",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "url",
+      "title": "Opp. Owner Url",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.link"
+    }, {
+      "type": "attribute",
+      "name": "region",
+      "title": "Opp. Owner Region",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "department",
+      "title": "Opp. Owner Department",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "date",
+      "name": "oppownerstart",
+      "dataset": "oppownerstart"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "activity",
+    "name": "activity",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Activity",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "subject",
+      "title": "Activity Subject",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "url",
+      "title": "url",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.link"
+    }, {
+      "type": "attribute",
+      "name": "status",
+      "title": "Activity Status",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "attribute",
+      "name": "type",
+      "title": "Activity Type",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "opportunity",
+    "name": "opportunity",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Opportunity",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "name",
+      "title": "Opp. Name",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "url",
+      "title": "Opp. Url",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.link"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "Booking Type",
+    "name": "bookingtype",
+    "columns": [{
+      "type": "anchor",
+      "name": "booking_type_id",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "booking_type_id",
+      "name": "booking_type_nm",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }, {
+    "type": "dataset",
+    "title": "forecast",
+    "name": "forecast",
+    "columns": [{
+      "type": "anchor",
+      "name": "id",
+      "title": "Forecast Category",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }, {
+      "type": "label",
+      "reference": "id",
+      "name": "forecastcategoryordered",
+      "title": "Forecast Category Ordered",
+      "gd_data_type": "VARCHAR(128)",
+      "gd_type": "GDC.text"
+    }]
+  }],
+  "date_dimensions": [{
+    "type": "date_dimension",
+    "name": "activity"
+  }, {
+    "type": "date_dimension",
+    "name": "leadcreate"
+  }, {
+    "type": "date_dimension",
+    "name": "snapshot"
+  }, {
+    "type": "date_dimension",
+    "name": "oppownerstart"
+  }, {
+    "type": "date_dimension",
+    "name": "oppclose"
+  }, {
+    "type": "date_dimension",
+    "name": "oppcreated"
+  }, {
+    "type": "date_dimension",
+    "name": "stage1plus",
+    "title": "SAO"
+  }, {
+    "type": "date_dimension",
+    "name": "firstcontactdate"
+  }, {
+    "type": "date_dimension",
+    "name": "previous_close_date"
+  }, {
+    "type": "date_dimension",
+    "name": "mqldate",
+    "title": "MQL"
+  }, {
+    "type": "date_dimension",
+    "name": "s2o",
+    "title": "S2O"
+  }, {
+    "type": "date_dimension",
+    "name": "firstmeeting"
+  }, {
+    "type": "date_dimension",
+    "name": "effectivecontractstart"
+  }, {
+    "type": "date_dimension",
+    "name": "laststage0plus",
+    "title": "Last Stage0Plus"
+  }, {
+    "type": "date_dimension",
+    "name": "effectivecontractend"
+  }, {
+    "type": "date_dimension",
+    "name": "timeline"
+  }]
+}

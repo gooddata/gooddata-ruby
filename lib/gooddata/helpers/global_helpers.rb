@@ -60,6 +60,26 @@ module GoodData
       def humanize(str)
         ActiveSupport::Inflector.humanize(str)
       end
+
+      def underline(x)
+        '=' * x.size
+      end
+
+      # Recurscively changes the string keys of a hash to symbols.
+      #
+      # @param h [Hash] Data structure to change
+      # @return [Hash] Hash with symbolized keys
+      def symbolize_keys_deep!(h)
+        if Hash == h
+          Hash[
+            h.map do |k, v|
+              [k.respond_to?(:to_sym) ? k.to_sym : k, symbolize_keys_deep!(v)]
+            end
+          ]
+        else
+          h
+        end
+      end
     end
   end
 end

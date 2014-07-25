@@ -148,11 +148,11 @@ module GoodData
         data_result_uri = result['execResult']['dataResult']
         result = GoodData.get data_result_uri
 
-        while result['taskState'] && result['taskState']['status'] == 'WAIT'
+        while result && result['taskState'] && result['taskState']['status'] == 'WAIT'
           sleep 10
           result = GoodData.get data_result_uri
         end
-
+        return nil unless result
         ReportDataResult.new(GoodData.get data_result_uri)
       end
 
