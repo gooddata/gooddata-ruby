@@ -80,6 +80,8 @@ describe GoodData::ProjectRole do
 
   describe '#users' do
     it 'Returns users as Array<GoodData::Profile>' do
+      pending("This is very slow as it is listing all users including 'deleted' ones")
+
       res = @role.users
       expect(res).to be_an_instance_of(Array)
       res.each do |user|

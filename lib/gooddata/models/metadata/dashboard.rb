@@ -91,6 +91,10 @@ module GoodData
       content['tabs'] << json
     end
 
+    def delete
+      super
+    end
+
     def exportable?
       true
     end

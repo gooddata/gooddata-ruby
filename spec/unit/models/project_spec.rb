@@ -348,6 +348,8 @@ describe GoodData::Project do
 
   describe '#set_users_roles' do
     it 'Properly updates user roles as needed for bunch of users' do
+      pending("Disabled as it is very slow")
+
       project = ProjectHelper.default_project
 
       list = load_users_from_csv

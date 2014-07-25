@@ -9,7 +9,7 @@ module UserHelper
 
   class << self
     def remove_users
-      users = GoodData::Domain.users_map(ConnectionHelper::DEFAULT_DOMAIN)
+      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
       users.each do |user|
         user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
       end
