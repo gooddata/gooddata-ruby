@@ -12,16 +12,6 @@ describe GoodData::ReportBuilder, :report => true do
   end
 
   describe '#create' do
-    before do
-      @reports = []
-    end
-
-    after do
-      until @reports.empty?
-        report = @reports.shift
-        report.delete
-      end
-    end
     it 'Builds GoodData::Report' do
       project = ProjectHelper.default_project
       metric = MetricHelper.default_metric
@@ -32,9 +22,7 @@ describe GoodData::ReportBuilder, :report => true do
         definition.save(project)
 
         report = GoodData::ReportBuilder.create(definition)
-        report.save(project)
-
-        @reports << report
+        expect(report).to be_an_instance_of(GoodData::Report)
       end
     end
   end
