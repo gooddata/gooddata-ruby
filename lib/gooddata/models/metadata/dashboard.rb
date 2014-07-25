@@ -12,6 +12,10 @@ module GoodData
     root_key :projectDashboard
 
     class << self
+      def resource_name
+        'projectDashboard'
+      end
+
       # Method intended to get all objects of that type in a specified project
       #
       # @param options [Hash] the options hash
@@ -21,6 +25,7 @@ module GoodData
         query('projectdashboards', Dashboard, options)
       end
 
+      # TODO: Merge with GoodData::DashboardBuilder
       def create_report_tab(tab)
         title = tab[:title]
         {
@@ -29,6 +34,9 @@ module GoodData
         }
       end
 
+      alias_method :add_tab, :create_report_tab
+
+      # TODO: Merge with GoodData::DashboardBuilder
       def create_report_tab_item(options = {})
         title = options[:title]
 
@@ -59,6 +67,7 @@ module GoodData
         }
       end
 
+      # TODO: Obsolete by GoodData::DashboardBuilder
       def create(options = {})
         stuff = {
           'projectDashboard' => {
@@ -75,6 +84,15 @@ module GoodData
         }
         Dashboard.new(stuff)
       end
+    end
+
+    def add_tab(tab)
+      json = GoodData::Model::TabBuilder.create(self, tab).to_hash
+      content['tabs'] << json
+    end
+
+    def delete
+      super
     end
 
     def exportable?
@@ -96,10 +114,47 @@ module GoodData
       x
     end
 
-    def tabs
-      content['tabs']
+    def remove_report(report)
+      tabs.each do |tab|
+        new_items = tab.items.select do |x|
+          x.uri != report['link']
+        end
+
+        tab.items = new_items.map { |x| x.json }
+      end
+
+      save
     end
 
+    def remove_tab(tab_name)
+      content['tabs'] = content['tabs'].select do |tab|
+        tab.title != tab_name
+      end
+    end
+
+    # Gets dashboard tab by its name
+    # @param name Dashboard tab name
+    # @return GoodData::Dashboard::Tab Dashboard tab instance
+    def tab(name)
+      return name if name.kind_of?(GoodData::Dashboard::Tab)
+      fail ArgumentError, 'Invalid type of argument name, should be String or GoodData::Dashboard::Tab' unless name.kind_of?(String)
+
+      tabs.each do |tab|
+        return tab if tab.title == name
+      end
+      nil
+    end
+
+    # Gets all dashboard tabs
+    # @return [Array<GoodData::Dashboard::Tab>] Array of tabs belonging to dashboard
+    def tabs
+      content['tabs'].map do |tab|
+        GoodData::Dashboard::Tab.new(self, tab)
+      end
+    end
+
+    # Gets IDs of all dashboard tabs
+    # @return [Array<String>] List if dashboard tab identifiers
     def tabs_ids
       tabs.map { |t| t['identifier'] }
     end
