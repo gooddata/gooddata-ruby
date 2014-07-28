@@ -42,41 +42,54 @@ module GoodData
         end
       end
 
-      def upload_package(dir, files_to_exclude)
-        Tempfile.open('deploy-graph-archive') do |temp|
-          Zip::OutputStream.open(temp.path) do |zio|
-            FileUtils.cd(dir) do
+      def upload_package(path, files_to_exclude)
+        if !path.directory?
+          GoodData.upload_to_user_webdav(path)
+          path
+        else
+          Tempfile.open('deploy-graph-archive') do |temp|
+            Zip::OutputStream.open(temp.path) do |zio|
+              FileUtils.cd(path) do
 
-              files_to_pack = Dir.glob('./**/*').reject { |f| files_to_exclude.include?(Pathname(dir) + f) }
-              files_to_pack.each do |item|
-                # puts "including #{item}" if verbose
-                unless File.directory?(item)
-                  zio.put_next_entry(item)
-                  zio.print IO.read(item)
+                files_to_pack = Dir.glob('./**/*').reject { |f| files_to_exclude.include?(Pathname(path) + f) }
+                files_to_pack.each do |item|
+                  # puts "including #{item}" if verbose
+                  unless File.directory?(item)
+                    zio.put_next_entry(item)
+                    zio.print IO.read(item)
+                  end
                 end
               end
             end
+            GoodData.upload_to_user_webdav(temp.path)
+            temp.path
           end
-          GoodData.upload_to_user_webdav(temp.path)
-          temp
         end
       end
 
-      def deploy(dir, options = {})
-        dir = Pathname(dir) || fail('Directory is not specified')
-        fail "\"#{dir}\" is not a directory" unless dir.directory?
-        files_to_exclude = options[:files_to_exclude].map { |p| Pathname(p) }
+      # Deploy a new process or redeploy existing one.
+      #
+      # @param path [String] Path to ZIP archive or to a directory containing files that should be ZIPed
+      # @option options [String] :files_to_exclude
+      # @option options [String] :process_id ('nobody') From address
+      # @option options [String] :type ('GRAPH') Type of process - GRAPH or RUBY
+      # @option options [String] :name Readable name of the process
+      # @option options [String] :process_id ID of a process to be redeployed (do not set if you want to create a new process)
+      # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
+      def deploy(path, options = {})
+        path = Pathname(path) || fail('Path is not specified')
+        files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |p| Pathname(p) }
         process_id = options[:process_id]
 
         type = options[:type] || 'GRAPH'
         deploy_name = options[:name]
         verbose = options[:verbose] || false
-        puts HighLine.color("Deploying #{dir}", HighLine::BOLD) if verbose
-        deployed_path = Process.upload_package(dir, files_to_exclude)
+        puts HighLine.color("Deploying #{path}", HighLine::BOLD) if verbose
+        deployed_path = Process.upload_package(path, files_to_exclude)
         data = {
           :process => {
             :name => deploy_name,
-            :path => "/uploads/#{File.basename(deployed_path.path)}",
+            :path => "/uploads/#{File.basename(deployed_path)}",
             :type => type
           }
         }
@@ -86,7 +99,7 @@ module GoodData
                 GoodData.put("/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{process_id}", data)
               end
         process = Process.new(res)
-        puts HighLine.color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
+        puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
       end
     end
@@ -99,10 +112,16 @@ module GoodData
       GoodData.delete(uri)
     end
 
-    def deploy(dir, options = {})
-      process = Process.upload(dir, options.merge(:process_id => process_id))
-      puts HighLine.color("Deploy DONE #{dir}", HighLine::GREEN) if verbose
-      process
+    # Redeploy existing process.
+    #
+    # @param path [String] Path to ZIP archive or to a directory containing files that should be ZIPed
+    # @option options [String] :files_to_exclude
+    # @option options [String] :process_id ('nobody') From address
+    # @option options [String] :type ('GRAPH') Type of process - GRAPH or RUBY
+    # @option options [String] :name Readable name of the process
+    # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
+    def deploy(path, options = {})
+      Process.deploy(path, options.merge(:process_id => process_id))
     end
 
     def process
