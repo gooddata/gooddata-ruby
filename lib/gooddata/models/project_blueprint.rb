@@ -134,7 +134,7 @@ module GoodData
       # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
       # @return [Array<Hash>]
       def self.fields(project)
-        datasets(project).mapcat(&:fields)
+        datasets(project).mapcat { |d| DatasetBlueprint.fields(d) }
       end
 
       # Returns a dataset of a given name. If a dataset is not found it throws an exeception
@@ -345,10 +345,15 @@ module GoodData
       # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
       # @return [Array<Hash>]
       def lint
-        has_anchors = find_star_centers.select(&:anchor?)
-        unless has_anchors.empty?
-          puts 'Hey man You have couple of datasets that have no connected datasets to them but still have anchors. This might stress SLI. Watch out.'
-          puts has_anchors.map(&:title)
+        errors = []
+        find_star_centers.each do |dataset|
+          if dataset.anchor?
+            errors << {
+              type: :anchor_on_fact_dataset,
+              dataset_name: dataset.name,
+              anchor_name: dataset.anchor.name
+            }
+          end
         end
 
         date_facts = datasets.mapcat { |d| d.date_facts }
@@ -362,7 +367,7 @@ module GoodData
           puts 'Man there are some fields with duplicate titles. Nobody can read that stuff.'
         end
 
-        unless datasets.select(&:wide?.empty?)
+        if datasets.any?(&:wide?)
           puts 'Man some of your datasets are too wide'
         end
       end

@@ -126,6 +126,10 @@ module GoodData
       rep.save
     end
 
+    def am_i_admin?
+      has_role?(GoodData.user, 'admin')
+    end
+
     # Gets author of project
     #
     # @return [String] Project author
@@ -253,6 +257,21 @@ module GoodData
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
     end
 
+    def execute_dml(dml)
+      uri = "/gdc/md/#{pid}/dml/manage"
+      result = GoodData.post(uri, {
+        manage: {
+          maql: dml
+        }
+      })
+      polling_uri = result['uri']
+      result = GoodData.get(polling_uri)
+      while result['taskState'] && result['taskState']['status'] == 'WAIT'
+        sleep 10
+        result = GoodData.get polling_uri
+      end
+    end
+
     # Gets project role by its identifier
     #
     # @param [String] role_name Title of role to look for
@@ -313,6 +332,7 @@ module GoodData
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
       return name if name.instance_of?(GoodData::Membership)
+      return member(name) if name.instance_of?(GoodData::Profile)
       name.downcase!
       user_list.each do |user|
         return user if user.uri.downcase == name ||
@@ -320,6 +340,14 @@ module GoodData
           user.email.downcase == name
       end
       nil
+    end
+
+    def has_role?(user, role_name)
+      member = get_user(user)
+      role = get_role(role_name)
+      member.roles.include?(role)
+    rescue
+      false
     end
 
     # Initializes object instance from raw wire JSON
@@ -469,6 +497,21 @@ module GoodData
     # @return [Boolean] Return true for all instances
     def project?
       true
+    end
+
+    def project_info
+      results = blueprint.datasets.map do |ds|
+        begin
+          [ds, ds.count]
+        rescue
+          nil
+        end
+      end
+      results.each do |x|
+        ds, res = x
+        ds && puts("#{ds && ds.title}, #{res}")
+      end
+      results
     end
 
     # Forces project to reload

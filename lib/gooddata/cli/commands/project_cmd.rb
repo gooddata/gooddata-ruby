@@ -24,13 +24,8 @@ GoodData::CLI.module_eval do
           GoodData.connect(opts)
 
           begin
-            GoodData.with_project(project_id) do |project|
-              puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-              binding.pry(:quiet => true,
-                          :prompt => [proc do |target_self, nest_level, pry|
-                            'project_live_sesion: '
-                          end])
-            end
+            require 'gooddata'
+            GoodData::Command::Project.jack_in(project_id)
           rescue GoodData::ProjectNotFound
             puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
           end

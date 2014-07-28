@@ -193,6 +193,19 @@ module GoodData
       def columns
         DatasetBlueprint.columns(to_hash)
       end
+      alias_method :fields, :columns
+
+      def count
+        attr = GoodData::Attribute[GoodData::Model.identifier_for(to_hash, anchor)]
+        attr.create_metric.execute
+      end
+
+      # Returns date facts of a dataset
+      #
+      # @return [Array<Hash>] returns the attribute or an empty array
+      def date_facts
+        DatasetBlueprint.date_facts(to_hash)
+      end
 
       # Duplicates the DatasetBlueprint. It is done as a deep duplicate
       #
@@ -339,7 +352,7 @@ module GoodData
       #
       # @return [Boolean] matching fields
       def wide?
-        fields.count > 30
+        fields.count > 32
       end
 
       # Compares two blueprints. This is done by comapring the hash represenatation.

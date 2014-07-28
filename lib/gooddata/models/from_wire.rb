@@ -124,11 +124,19 @@ module GoodData
       def self.parse_references(stuff)
         references = stuff['dataset']['references'] || []
         references.map do |ref|
-          {
-            :type => :reference,
-            :name => ref.gsub('dataset.', ''),
-            :dataset => ref.gsub('dataset.', '')
-          }
+          if ref =~ /^dataset\./
+            {
+              :type => :reference,
+              :name => ref.gsub('dataset.', ''),
+              :dataset => ref.gsub('dataset.', '')
+            }
+          else
+            {
+              :type => :date,
+              :name => ref.gsub('dataset.', ''),
+              :dataset => ref.gsub('dataset.', '')
+            }
+          end
         end
       end
     end
