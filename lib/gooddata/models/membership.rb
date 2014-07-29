@@ -356,7 +356,7 @@ module GoodData
     #
     # @return [DateTime] Date of last update
     def updated
-      DateTime.parse(@json['user']['meta']['updated'])
+      Time.parse(@json['user']['meta']['updated'])
     end
 
     # Gets the object URI
