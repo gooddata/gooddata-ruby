@@ -19,7 +19,11 @@ describe GoodData::Report, :report => true do
 
   before(:each) do
     ConnectionHelper::create_default_connection
-    @report = ReportHelper.default_report
+    begin
+      @report = ReportHelper.default_report
+    rescue RestClient::ResourceNotFound => e
+      @strange = true
+    end
   end
 
   after(:each) do
