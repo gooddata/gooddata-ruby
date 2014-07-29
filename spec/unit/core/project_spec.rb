@@ -5,7 +5,7 @@ require 'gooddata/core/connection'
 require 'gooddata/core/project'
 require 'gooddata/models/project'
 
-describe 'GoodData - project' do
+describe 'GoodData.project' do
   before(:each) do
     ConnectionHelper.create_default_connection
   end
@@ -28,7 +28,7 @@ describe 'GoodData - project' do
     end
 
     it 'Assigns project directly' do
-      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      GoodData.project = ProjectHelper.default_project
     end
   end
 
@@ -44,7 +44,7 @@ describe 'GoodData - project' do
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID] do
+      GoodData.with_project ProjectHelper.default_project do
       end
     end
   end
