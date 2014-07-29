@@ -8,6 +8,10 @@ module GoodData
     root_key :report
 
     class << self
+      def resource_name
+        'report'
+      end
+
       # Method intended to get all objects of that type in a specified project
       #
       # @param options [Hash] the options hash
@@ -17,11 +21,13 @@ module GoodData
         query('reports', Report, options)
       end
 
+      # Create new report
       def create(options = {})
         title = options[:title]
         summary = options[:summary] || ''
+        project = GoodData.project || options[:project]
         rd = options[:rd] || ReportDefinition.create(:top => options[:top], :left => options[:left])
-        rd.save
+        rd.save(project)
 
         report = {
           'report' => {
@@ -37,6 +43,7 @@ module GoodData
             }
           }
         }
+
         # TODO: write test for report definitions with explicit identifiers
         report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
         Report.new report
@@ -47,18 +54,39 @@ module GoodData
       content['results']
     end
 
+    # Gets definition by url, by default returns latest definition
+    #
+    # @return [GoodData::MdObject] Definition
+    def definition(definition_url = latest_report_definition_uri)
+      project_url = uri.split('/')[0...-2].join('/')
+      GoodData::MdObject[definition_url, { :project => GoodData::Project[project_url], :class => GoodData::ReportDefinition }]
+    end
+
+    # Gets definitions
     def definitions
+      uris = definitions_uris
+      uris.map do |uri|
+        raw = GoodData.get uri
+        GoodData::ReportDefinition.new(raw)
+      end
+    end
+
+    # Gets definitions URIs
+    def definitions_uris
       content['definitions']
     end
 
-    def latest_report_definition_uri
-      definitions.last
-    end
-
+    # Gets latest report definition
     def latest_report_definition
-      GoodData::MdObject[latest_report_definition_uri]
+      GoodData::ReportDefinition[latest_report_definition_uri, :project => project]
     end
 
+    # Gets uri of latest report definition
+    def latest_report_definition_uri
+      content['definitions'].last
+    end
+
+    # Removes all definitions EXCEPT the latest one
     def remove_definition(definition)
       def_uri = is_a?(GoodData::ReportDefinition) ? definition.uri : definition
       content['definitions'] = definitions.reject { |x| x == def_uri }
@@ -67,17 +95,18 @@ module GoodData
 
     # TODO: Cover with test. You would probably need something that will be able to create a report easily from a definition
     def remove_definition_but_latest
-      to_remove = definitions - [latest_report_definition_uri]
+      to_remove = definitions_uris - [latest_report_definition_uri]
       to_remove.each do |uri|
         remove_definition(uri)
       end
       self
     end
 
+    # Removes all report definitions except last one
     def purge_report_of_unused_definitions!
-      full_list = definitions
+      full_list = definitions_uris
       remove_definition_but_latest
-      purged_list = definitions
+      purged_list = definitions_uris
       to_remove = full_list - purged_list
       save
       to_remove.each { |uri| GoodData.delete(uri) }

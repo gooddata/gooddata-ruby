@@ -37,7 +37,7 @@ module GoodData
     #
     # @return [DateTime] Date time of creation
     def created
-      DateTime.parse(@json['projectRole']['meta']['created'])
+      Time.parse(@json['projectRole']['meta']['created'])
     end
 
     # Gets Project Role Permissions
@@ -65,7 +65,7 @@ module GoodData
     #
     # @return [DateTime] Date time of last update
     def updated
-      DateTime.parse(@json['projectRole']['meta']['updated'])
+      Time.parse(@json['projectRole']['meta']['updated'])
     end
 
     # Gets Users with this Role

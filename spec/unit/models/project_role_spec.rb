@@ -6,7 +6,7 @@ require 'gooddata/models/project_role'
 describe GoodData::ProjectRole do
   before(:all) do
     ConnectionHelper.create_default_connection
-    @project = ProjectHelper.get_default_project
+    @project = ProjectHelper.default_project
     @roles = @project.roles
     @role = @roles.first
   end
@@ -32,7 +32,7 @@ describe GoodData::ProjectRole do
   describe '#created' do
     it 'Returns created date as DateTime' do
       res = @role.created
-      expect(res).to be_an_instance_of(DateTime)
+      expect(res).to be_an_instance_of(Time)
     end
   end
 
@@ -67,7 +67,7 @@ describe GoodData::ProjectRole do
   describe '#updated' do
     it 'Returns updated date as DateTime' do
       res = @role.updated
-      expect(res).to be_an_instance_of(DateTime)
+      expect(res).to be_an_instance_of(Time)
     end
   end
 
@@ -80,6 +80,8 @@ describe GoodData::ProjectRole do
 
   describe '#users' do
     it 'Returns users as Array<GoodData::Profile>' do
+      pending("This is very slow as it is listing all users including 'deleted' ones")
+
       res = @role.users
       expect(res).to be_an_instance_of(Array)
       res.each do |user|
