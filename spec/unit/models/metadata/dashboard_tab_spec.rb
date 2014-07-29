@@ -5,6 +5,7 @@ require 'gooddata'
 describe GoodData::Dashboard::Tab do
   before(:all) do
     ConnectionHelper::create_default_connection
+    ReportHelper.create_default_reports
     DashboardHelper.create_default_dashboard
     GoodData.disconnect
   end
@@ -12,6 +13,7 @@ describe GoodData::Dashboard::Tab do
   after(:all) do
     ConnectionHelper::create_default_connection
     DashboardHelper.remove_default_dashboard
+    ReportHelper.remove_default_reports
     GoodData.disconnect
   end
 
