@@ -231,6 +231,8 @@ module GoodData
         GoodData.delete(uri)
         meta.delete('uri')
         # ["uri"] = nil
+      else
+        puts "Not saved, not deleting!"
       end
     end
 

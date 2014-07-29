@@ -12,8 +12,8 @@ describe GoodData::Report, :report => true do
 
   after(:all) do
     ConnectionHelper::create_default_connection
-    ReportHelper.remove_default_reports
     DashboardHelper.remove_default_dashboard
+    ReportHelper.remove_default_reports
     GoodData.disconnect
   end
 

@@ -20,6 +20,10 @@ describe GoodData::Dashboard::Tab do
   before(:each) do
     ConnectionHelper::create_default_connection
     @dashboard = DashboardHelper.default_dashboard
+    if @dashboard.nil?
+      break_here = true
+    end
+
     @tab = @dashboard.tabs.first
   end
 

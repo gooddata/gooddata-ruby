@@ -50,10 +50,6 @@ module GoodData
       end
     end
 
-    def delete
-      super
-    end
-
     def results
       content['results']
     end
