@@ -37,7 +37,11 @@ module ReportHelper
     def remove_default_reports
       until @@REPORTS.empty?
         report = @@REPORTS.shift
-        report.delete
+        begin
+          report.delete
+        rescue Exception => e
+          puts e
+        end
       end
     end
 
