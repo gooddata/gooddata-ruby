@@ -2,6 +2,7 @@
 
 require_relative '../core/connection'
 require_relative '../core/project'
+require_relative '../mixins/root_key_mixin'
 
 module GoodData
   class MdObject
@@ -15,9 +16,7 @@ module GoodData
     alias_method :data, :json
 
     class << self
-      def root_key(a_key)
-        define_method :root_key, proc { a_key.to_s }
-      end
+      include GoodData::Mixin::RootKeyMixin
 
       def metadata_property_reader(*props)
         props.each do |prop|
