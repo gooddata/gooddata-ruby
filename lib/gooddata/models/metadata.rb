@@ -3,94 +3,76 @@
 require_relative '../core/connection'
 require_relative '../core/project'
 
+require_relative '../mixins/content_getter'
+require_relative '../mixins/data_getter'
+require_relative '../mixins/links'
+require_relative '../mixins/md_finders'
+require_relative '../mixins/md_json'
+require_relative '../mixins/md_object_indexer'
+require_relative '../mixins/md_object_query'
+require_relative '../mixins/md_relations'
+require_relative '../mixins/meta_getter'
+require_relative '../mixins/meta_property_reader'
+require_relative '../mixins/meta_property_writer'
+require_relative '../mixins/not_attribute'
+require_relative '../mixins/not_exportable'
+require_relative '../mixins/not_fact'
+require_relative '../mixins/not_metric'
+require_relative '../mixins/not_label'
+require_relative '../mixins/obj_id'
+require_relative '../mixins/root_key_getter'
+require_relative '../mixins/root_key_setter'
+require_relative '../mixins/timestamps'
+
 module GoodData
   class MdObject
-    MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
     attr_reader :json
 
     alias_method :raw_data, :json
     alias_method :to_hash, :json
-    alias_method :data, :json
+
+    include GoodData::Mixin::RootKeyGetter
+
+    include GoodData::Mixin::MdJson
+
+    include GoodData::Mixin::DataGetter
+
+    include GoodData::Mixin::MetaGetter
+
+    include GoodData::Mixin::ContentGetter
+
+    include GoodData::Mixin::Timestamps
+
+    include GoodData::Mixin::Links
+
+    include GoodData::Mixin::ObjId
+
+    include GoodData::Mixin::NotAttribute
+
+    include GoodData::Mixin::NotExportable
+
+    include GoodData::Mixin::NotFact
+
+    include GoodData::Mixin::NotMetric
+
+    include GoodData::Mixin::NotLabel
+
+    include GoodData::Mixin::MdRelations
 
     class << self
-      def root_key(a_key)
-        define_method :root_key, proc { a_key.to_s }
-      end
+      include GoodData::Mixin::RootKeySetter
 
-      def metadata_property_reader(*props)
-        props.each do |prop|
-          define_method prop, proc { meta[prop.to_s] }
-        end
-      end
+      include GoodData::Mixin::MetaPropertyReader
 
-      def metadata_property_writer(*props)
-        props.each do |prop|
-          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
-        end
-      end
+      include GoodData::Mixin::MetaPropertyWriter
 
-      # Returns either list of objects or a specific object. This method is reimplemented in subclasses to leverage specific implementation for specific type of objects. Options is used in subclasses specifically to provide shorthand for getting a full objects after getting a list of hashes from query resource
-      # @param [Object] id id can be either a number a String (as a URI). Subclasses should also be abel to deal with getting the instance of MdObject already and a :all symbol
-      # @param [Hash] options the options hash
-      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
-      # @return [MdObject] if id is a String or number single object is returned
-      # @return [Array] if :all was provided as an id, list of objects should be returned. Note that this is implemented only in the subclasses. MdObject does not support this since API has no means to return list of all types of objects
-      def [](id, options = {})
-        fail "You have to provide an \"id\" to be searched for." unless id
-        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
-        return all(options) if id == :all
-        return id if id.is_a?(MdObject)
-        uri = if id.is_a?(Integer) || id =~ /^\d+$/
-                "#{GoodData.project.md[MD_OBJ_CTG]}/#{id}"
-              elsif id !~ /\//
-                identifier_to_uri id
-              elsif id =~ /^\//
-                id
-              else
-                fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
-              end
-        new(GoodData.get uri) unless uri.nil?
-      end
+      include GoodData::Mixin::MdObjectQuery
 
-      # Method intended to get all objects of that type in a specified project
-      #
-      # @param options [Hash] the options hash
-      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
-      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
-        fail NotImplementedError, 'Method should be implemented in subclass. Currently there is no way hoe to get all metadata objects on API.'
-      end
+      include GoodData::Mixin::MdObjectIndexer
 
-      def find_by_tag(tag)
-        self[:all].select { |r| r['tags'].split(',').include?(tag) }
-      end
-
-      def find_first_by_title(title)
-        all = self[:all]
-        item = if title.is_a?(Regexp)
-                 all.find { |r| r['title'] =~ title }
-               else
-                 all.find { |r| r['title'] == title }
-               end
-        self[item['link']] unless item.nil?
-      end
-
-      # Finds a specific type of the object by title. Returns all matches. Returns full object.
-      #
-      # @param title [String] title that has to match exactly
-      # @param title [Regexp] regular expression that has to match
-      # @return [Array<GoodData::MdObject>] Array of MdObject
-      def find_by_title(title)
-        all = self[:all]
-        items = if title.is_a?(Regexp)
-                  all.select { |r| r['title'] =~ title }
-                else
-                  all.select { |r| r['title'] == title }
-                end
-        items.map { |item| self[item['link']] unless item.nil? }
-      end
+      include GoodData::Mixin::MdFinders
 
       # TODO: Add test
       def identifier_to_uri(*ids)
@@ -113,33 +95,10 @@ module GoodData
       alias_method :id_to_uri, :identifier_to_uri
 
       alias_method :get_by_id, :[]
-
-      private
-
-      # Method intended to be called by individual classes in their all
-      # implementations. It abstracts the way interacting with query resources.
-      # It either returns the array of hashes from query. If asked it also
-      # goes and brings the full objects. Due to performance reasons
-      # :full => false is the default. This will most likely change
-      #
-      # @param query_obj_type [String] string used in URI to distinguish different query resources for different objects
-      # @param klass [Class] A class used for instantiating the returned data
-      # @param options [Hash] the options hash
-      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
-      # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def query(query_obj_type, klass, options = {})
-        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
-        query_result = GoodData.get(GoodData.project.md['query'] + "/#{query_obj_type}/")['query']['entries']
-        options[:full] ? query_result.map { |item| klass[item['link']] } : query_result
-      end
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
     metadata_property_writer :tags, :summary, :title, :identifier
-
-    def root_key
-      raw_data.keys.first
-    end
 
     def initialize(data)
       @json = data.to_hash
@@ -160,24 +119,8 @@ module GoodData
 
     alias_method :refresh, :reload!
 
-    def obj_id
-      uri.split('/').last
-    end
-
-    def links
-      data['links']
-    end
-
     def browser_uri
       GoodData.connection.url + meta['uri']
-    end
-
-    def updated
-      Time.parse(meta['updated'])
-    end
-
-    def created
-      Time.parse(meta['created'])
     end
 
     def deprecated=(flag)
@@ -190,44 +133,8 @@ module GoodData
       end
     end
 
-    def data
-      raw_data[root_key]
-    end
-
-    def meta
-      data && data['meta']
-    end
-
-    def content
-      data && data['content']
-    end
-
     def project
       @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, '')]
-    end
-
-    def usedby(key = nil)
-      dependency("#{GoodData.project.md['usedby2']}/#{obj_id}", key)
-    end
-
-    alias_method :used_by, :usedby
-
-    def using(key = nil)
-      dependency("#{GoodData.project.md['using2']}/#{obj_id}", key)
-    end
-
-    def usedby?(obj)
-      dependency?(:usedby, obj)
-    end
-
-    alias_method :used_by?, :usedby?
-
-    def using?(obj)
-      dependency?(:using, obj)
-    end
-
-    def to_json
-      @json.to_json
     end
 
     def saved?
@@ -250,6 +157,7 @@ module GoodData
         result = GoodData.post(GoodData.project.md['obj'], to_json)
         saved_object = self.class[result['uri']]
         # TODO: add test for explicitly provided identifier
+
         @json = saved_object.raw_data
         if explicit_identifier
           # Object creation API discards the identifier. If an identifier
@@ -290,57 +198,6 @@ module GoodData
       true
     end
 
-    def exportable?
-      false
-    end
-
-    # Returns true if the object is a fact false otherwise
-    # @return [Boolean]
-    def fact?
-      false
-    end
-
-    # Returns true if the object is an attribute false otherwise
-    # @return [Boolean]
-    def attribute?
-      false
-    end
-
-    # Returns true if the object is a metric false otherwise
-    # @return [Boolean]
-    def metric?
-      false
-    end
-
-    # Returns true if the object is a label false otherwise
-    # @return [Boolean]
-    def label?
-      false
-    end
     alias_method :display_form?, :label?
-
-    private
-
-    def dependency(uri, key = nil)
-      result = GoodData.get("#{uri}/#{obj_id}")['entries']
-      if key.nil?
-        result
-      elsif key.respond_to?(:category)
-        result.select { |item| item['category'] == key.category }
-      else
-        result.select { |item| item['category'] == key }
-      end
-    end
-
-    def dependency?(type, uri)
-      objs = case type
-             when :usedby
-               usedby
-             when :using
-               using
-             end
-      uri = uri.respond_to?(:uri) ? uri.uri : uri
-      objs.any? { |obj| obj['link'] == uri }
-    end
   end
 end
