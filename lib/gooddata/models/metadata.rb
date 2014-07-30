@@ -2,7 +2,17 @@
 
 require_relative '../core/connection'
 require_relative '../core/project'
-require_relative '../mixins/root_key_mixin'
+
+require_relative '../mixins/content_getter_mixin'
+require_relative '../mixins/data_getter_mixin'
+require_relative '../mixins/links_mixin'
+require_relative '../mixins/meta_getter_mixin'
+require_relative '../mixins/meta_property_reader_mixin'
+require_relative '../mixins/meta_property_writer_mixin'
+require_relative '../mixins/obj_id_mixin'
+require_relative '../mixins/root_key_getter_mixin'
+require_relative '../mixins/root_key_setter_mixin'
+require_relative '../mixins/timestamps_mixin'
 
 module GoodData
   class MdObject
@@ -13,22 +23,27 @@ module GoodData
 
     alias_method :raw_data, :json
     alias_method :to_hash, :json
-    alias_method :data, :json
+
+    include GoodData::Mixin::RootKeyGetterMixin
+
+    include GoodData::Mixin::DataGetterMixin
+
+    include GoodData::Mixin::MetaGetterMixin
+
+    include GoodData::Mixin::ContentGetterMixin
+
+    include GoodData::Mixin::TimestampsMixin
+
+    include GoodData::Mixin::LinksMixin
+
+    include GoodData::Mixin::ObjIdMixin
 
     class << self
-      include GoodData::Mixin::RootKeyMixin
+      include GoodData::Mixin::RootKeySetterMixin
 
-      def metadata_property_reader(*props)
-        props.each do |prop|
-          define_method prop, proc { meta[prop.to_s] }
-        end
-      end
+      include GoodData::Mixin::MetaPropertyReaderMixin
 
-      def metadata_property_writer(*props)
-        props.each do |prop|
-          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
-        end
-      end
+      include GoodData::Mixin::MetaPropertyWriterMixin
 
       # Returns either list of objects or a specific object. This method is reimplemented in subclasses to leverage specific implementation for specific type of objects. Options is used in subclasses specifically to provide shorthand for getting a full objects after getting a list of hashes from query resource
       # @param [Object] id id can be either a number a String (as a URI). Subclasses should also be abel to deal with getting the instance of MdObject already and a :all symbol
@@ -136,10 +151,6 @@ module GoodData
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
     metadata_property_writer :tags, :summary, :title, :identifier
 
-    def root_key
-      raw_data.keys.first
-    end
-
     def initialize(data)
       @json = data.to_hash
     end
@@ -159,24 +170,8 @@ module GoodData
 
     alias_method :refresh, :reload!
 
-    def obj_id
-      uri.split('/').last
-    end
-
-    def links
-      data['links']
-    end
-
     def browser_uri
       GoodData.connection.url + meta['uri']
-    end
-
-    def updated
-      Time.parse(meta['updated'])
-    end
-
-    def created
-      Time.parse(meta['created'])
     end
 
     def deprecated=(flag)
@@ -187,18 +182,6 @@ module GoodData
       else
         fail 'You have to provide flag as either 1 or "1" or 0 or "0"'
       end
-    end
-
-    def data
-      raw_data[root_key]
-    end
-
-    def meta
-      data && data['meta']
-    end
-
-    def content
-      data && data['content']
     end
 
     def project
@@ -316,6 +299,7 @@ module GoodData
     def label?
       false
     end
+
     alias_method :display_form?, :label?
 
     private
