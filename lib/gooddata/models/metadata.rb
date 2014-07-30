@@ -45,7 +45,7 @@ module GoodData
 
     include GoodData::Mixin::NotAttribute
 
-    include GoodData:Mixin::NotExportable
+    include GoodData::Mixin::NotExportable
 
     include GoodData::Mixin::NotFact
 
