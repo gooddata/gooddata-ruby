@@ -2,7 +2,8 @@
 
 require 'gooddata'
 
-RAW_DATA = {'metric'=>
+RAW_DATA = {
+  'metric'=>
   {'content'=>
     {'format'=>'#,##0',
      'expression'=> 'SELECT SUM([/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/700])'},
@@ -17,7 +18,8 @@ RAW_DATA = {'metric'=>
      'title'=>'sum of Lines changed',
      'category'=>'metric',
      'updated'=>'2014-05-05 20:00:42',
-     'contributor'=>'/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248'}}}
+     'contributor'=>'/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248'}}
+}
 
 
 describe GoodData::MdObject do
