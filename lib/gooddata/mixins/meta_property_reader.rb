@@ -2,7 +2,7 @@
 
 module GoodData
   module Mixin
-    module MetaPropertyReaderMixin
+    module MetaPropertyReader
       def metadata_property_reader(*props)
         props.each do |prop|
           define_method prop, proc { meta[prop.to_s] }

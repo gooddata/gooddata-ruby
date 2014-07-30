@@ -3,16 +3,20 @@
 require_relative '../core/connection'
 require_relative '../core/project'
 
-require_relative '../mixins/content_getter_mixin'
-require_relative '../mixins/data_getter_mixin'
-require_relative '../mixins/links_mixin'
-require_relative '../mixins/meta_getter_mixin'
-require_relative '../mixins/meta_property_reader_mixin'
-require_relative '../mixins/meta_property_writer_mixin'
-require_relative '../mixins/obj_id_mixin'
-require_relative '../mixins/root_key_getter_mixin'
-require_relative '../mixins/root_key_setter_mixin'
-require_relative '../mixins/timestamps_mixin'
+require_relative '../mixins/content_getter'
+require_relative '../mixins/data_getter'
+require_relative '../mixins/links'
+require_relative '../mixins/meta_getter'
+require_relative '../mixins/meta_property_reader'
+require_relative '../mixins/meta_property_writer'
+require_relative '../mixins/not_attribute'
+require_relative '../mixins/not_fact'
+require_relative '../mixins/not_metric'
+require_relative '../mixins/not_label'
+require_relative '../mixins/obj_id'
+require_relative '../mixins/root_key_getter'
+require_relative '../mixins/root_key_setter'
+require_relative '../mixins/timestamps'
 
 module GoodData
   class MdObject
@@ -24,26 +28,34 @@ module GoodData
     alias_method :raw_data, :json
     alias_method :to_hash, :json
 
-    include GoodData::Mixin::RootKeyGetterMixin
+    include GoodData::Mixin::RootKeyGetter
 
-    include GoodData::Mixin::DataGetterMixin
+    include GoodData::Mixin::DataGetter
 
-    include GoodData::Mixin::MetaGetterMixin
+    include GoodData::Mixin::MetaGetter
 
-    include GoodData::Mixin::ContentGetterMixin
+    include GoodData::Mixin::ContentGetter
 
-    include GoodData::Mixin::TimestampsMixin
+    include GoodData::Mixin::Timestamps
 
-    include GoodData::Mixin::LinksMixin
+    include GoodData::Mixin::Links
 
-    include GoodData::Mixin::ObjIdMixin
+    include GoodData::Mixin::ObjId
+
+    include GoodData::Mixin::NotAttribute
+
+    include GoodData::Mixin::NotFact
+
+    include GoodData::Mixin::NotMetric
+
+    include GoodData::Mixin::NotLabel
 
     class << self
-      include GoodData::Mixin::RootKeySetterMixin
+      include GoodData::Mixin::RootKeySetter
 
-      include GoodData::Mixin::MetaPropertyReaderMixin
+      include GoodData::Mixin::MetaPropertyReader
 
-      include GoodData::Mixin::MetaPropertyWriterMixin
+      include GoodData::Mixin::MetaPropertyWriter
 
       # Returns either list of objects or a specific object. This method is reimplemented in subclasses to leverage specific implementation for specific type of objects. Options is used in subclasses specifically to provide shorthand for getting a full objects after getting a list of hashes from query resource
       # @param [Object] id id can be either a number a String (as a URI). Subclasses should also be abel to deal with getting the instance of MdObject already and a :all symbol
@@ -273,30 +285,6 @@ module GoodData
     end
 
     def exportable?
-      false
-    end
-
-    # Returns true if the object is a fact false otherwise
-    # @return [Boolean]
-    def fact?
-      false
-    end
-
-    # Returns true if the object is an attribute false otherwise
-    # @return [Boolean]
-    def attribute?
-      false
-    end
-
-    # Returns true if the object is a metric false otherwise
-    # @return [Boolean]
-    def metric?
-      false
-    end
-
-    # Returns true if the object is a label false otherwise
-    # @return [Boolean]
-    def label?
       false
     end
 

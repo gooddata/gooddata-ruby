@@ -2,9 +2,9 @@
 
 module GoodData
   module Mixin
-    module RootKeyGetterMixin
-      def root_key
-        raw_data.keys.first
+    module ObjId
+      def obj_id
+        uri.split('/').last
       end
     end
   end

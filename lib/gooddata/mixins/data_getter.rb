@@ -2,9 +2,9 @@
 
 module GoodData
   module Mixin
-    module LinksMixin
-      def links
-        data['links']
+    module DataGetter
+      def data
+        json[root_key]
       end
     end
   end

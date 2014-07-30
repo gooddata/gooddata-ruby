@@ -2,9 +2,9 @@
 
 module GoodData
   module Mixin
-    module ObjIdMixin
-      def obj_id
-        uri.split('/').last
+    module MetaGetter
+      def meta
+        data && data['meta']
       end
     end
   end

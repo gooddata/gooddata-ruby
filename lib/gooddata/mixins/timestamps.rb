@@ -2,7 +2,7 @@
 
 module GoodData
   module Mixin
-    module TimestampsMixin
+    module Timestamps
       def updated
         Time.parse(meta['updated'])
       end

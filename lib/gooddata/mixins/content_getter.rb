@@ -2,7 +2,7 @@
 
 module GoodData
   module Mixin
-    module ContentGetterMixin
+    module ContentGetter
       def content
         data && data['content']
       end

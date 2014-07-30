@@ -2,7 +2,7 @@
 
 module GoodData
   module Mixin
-    module RootKeySetterMixin
+    module RootKeySetter
       def root_key(a_key)
         define_method :root_key, proc { a_key.to_s }
       end

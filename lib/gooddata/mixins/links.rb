@@ -2,9 +2,9 @@
 
 module GoodData
   module Mixin
-    module MetaGetterMixin
-      def meta
-        data && data['meta']
+    module Links
+      def links
+        data['links']
       end
     end
   end

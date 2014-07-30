@@ -2,9 +2,9 @@
 
 module GoodData
   module Mixin
-    module DataGetterMixin
-      def data
-        json[root_key]
+    module RootKeyGetter
+      def root_key
+        raw_data.keys.first
       end
     end
   end
