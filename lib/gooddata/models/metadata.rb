@@ -10,6 +10,7 @@ require_relative '../mixins/meta_getter'
 require_relative '../mixins/meta_property_reader'
 require_relative '../mixins/meta_property_writer'
 require_relative '../mixins/not_attribute'
+require_relative '../mixins/not_exportable'
 require_relative '../mixins/not_fact'
 require_relative '../mixins/not_metric'
 require_relative '../mixins/not_label'
@@ -43,6 +44,8 @@ module GoodData
     include GoodData::Mixin::ObjId
 
     include GoodData::Mixin::NotAttribute
+
+    include GoodData:Mixin::NotExportable
 
     include GoodData::Mixin::NotFact
 
@@ -282,10 +285,6 @@ module GoodData
 
     def validate
       true
-    end
-
-    def exportable?
-      false
     end
 
     alias_method :display_form?, :label?
