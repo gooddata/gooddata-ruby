@@ -4,7 +4,7 @@ module GoodData
   module Mixin
     module MdRelations
       def dependency(uri, key = nil)
-        GoodData::MdObject.dependency(obj_id, key)
+        GoodData::MdObject.dependency(uri, key)
       end
 
       # Checks for dependency

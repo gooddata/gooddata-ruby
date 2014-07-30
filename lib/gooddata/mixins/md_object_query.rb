@@ -30,7 +30,7 @@ module GoodData
       end
 
       def dependency(uri, key = nil)
-        result = GoodData.get("#{uri}/#{obj_id(uri)}")['entries']
+        result = GoodData.get(uri)['entries']
         if key.nil?
           result
         elsif key.respond_to?(:category)

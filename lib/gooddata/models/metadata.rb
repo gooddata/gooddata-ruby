@@ -8,6 +8,7 @@ require_relative '../mixins/data_getter'
 require_relative '../mixins/links'
 require_relative '../mixins/md_finders'
 require_relative '../mixins/md_json'
+require_relative '../mixins/md_object_id'
 require_relative '../mixins/md_object_indexer'
 require_relative '../mixins/md_object_query'
 require_relative '../mixins/md_relations'
@@ -41,13 +42,13 @@ module GoodData
 
     include GoodData::Mixin::MetaGetter
 
+    include GoodData::Mixin::ObjId
+
     include GoodData::Mixin::ContentGetter
 
     include GoodData::Mixin::Timestamps
 
     include GoodData::Mixin::Links
-
-    include GoodData::Mixin::ObjId
 
     include GoodData::Mixin::NotAttribute
 
@@ -67,6 +68,8 @@ module GoodData
       include GoodData::Mixin::MetaPropertyReader
 
       include GoodData::Mixin::MetaPropertyWriter
+
+      include GoodData::Mixin::MdObjId
 
       include GoodData::Mixin::MdObjectQuery
 
