@@ -23,10 +23,20 @@ module DashboardHelper
         :title => "First #{TAB_TITLE} #{DateTimeHelper::TIMESTAMP}",
         :items => [
           # First row
-          [],
+          [
+
+          ],
 
           # Second row
-          []
+          [
+            # First item in row
+            {
+              :type => :table,
+              :metric => '/url/of/some/metric',
+              :top => 'some-x',
+              :left => 'some-y'
+            }
+          ]
         ]
       },
 
