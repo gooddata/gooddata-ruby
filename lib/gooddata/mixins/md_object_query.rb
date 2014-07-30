@@ -43,10 +43,10 @@ module GoodData
       # Checks for dependency
       def dependency?(type, uri)
         objs = case type
-                 when :usedby
-                   usedby(uri)
-                 when :using
-                   using(uri)
+               when :usedby
+                 usedby(uri)
+               when :using
+                 using(uri)
                end
         uri = uri.respond_to?(:uri) ? uri.uri : uri
         objs.any? { |obj| obj['link'] == uri }
