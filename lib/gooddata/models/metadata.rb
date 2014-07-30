@@ -297,7 +297,7 @@ module GoodData
 
     # Gets project from URI
     def project
-      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, '')]
+      @project ||= uri.nil? ? nil : Project[uri.gsub(%r{\/obj\/\d+$}, '')]
     end
 
     # Converts this object
