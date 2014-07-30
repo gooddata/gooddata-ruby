@@ -226,7 +226,29 @@ module GoodData
     #
     # @return [DateTime] Date time when created
     def created
-      DateTime.parse(@json['project']['meta']['created'])
+      Time.parse(@json['project']['meta']['created'])
+    end
+
+    # Gets dashboard by title, link, id
+    #
+    # @param [String] name Name, ID or URL of dashboard
+    # @return [GoodData::Dashboard] Dashboard instance if found
+    def dashboard(name)
+      dbs = dashboards
+      dbs.each do |db|
+        return db if db.title == name || db.uri == name
+      end
+      nil
+    end
+
+    # Gets project dashboards
+    def dashboards
+      url = "/gdc/md/#{obj_id}/query/projectdashboards"
+      raw = GoodData.get url
+      raw['query']['entries'].map do |entry|
+        raw_dashboard = GoodData.get(entry['link'])
+        Dashboard.new(raw_dashboard)
+      end
     end
 
     # Gets ruby wrapped raw project JSON data
@@ -258,6 +280,28 @@ module GoodData
     # Deletes dashboards for project
     def delete_dashboards
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
+    end
+
+    def delete_reports
+      reps = reports(:full => false)
+
+      # dashes = dashboards
+
+      reps.each do |report|
+        uri = report['link']
+        puts "Deleting report #{uri}"
+        ub = GoodData::MdObject.usedby(uri, nil, self)
+
+        ub.map do |ref|
+          db = GoodData::Dashboard[ref, { :project => self }]
+
+          # TODO: Implement GoodData::Dashboard#remove_report
+          db.remove_report(report)
+        end
+
+        # Finally delete the report itself
+        GoodData.delete uri
+      end
     end
 
     # Gets project role by its identifier
@@ -320,6 +364,8 @@ module GoodData
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
       return name if name.instance_of?(GoodData::Membership)
+      fail ArgumentError, 'Invalid argument type of name - should be string or GoodData::Membership' unless name.kind_of?(String)
+
       name.downcase!
       user_list.each do |user|
         return user if user.uri.downcase == name ||
@@ -395,6 +441,7 @@ module GoodData
       data['links']
     end
 
+    # Gets metadata
     def md
       @md ||= Links.new GoodData.get(data['links']['metadata'])
     end
@@ -420,6 +467,18 @@ module GoodData
     # @return [Boolean] true if is member else false
     def member?(profile, list = members)
       !member(profile, list).nil?
+    end
+
+    # Gets all metric for project
+    def metrics
+      GoodData::Metric[:all, :project => self, :full => true]
+    end
+
+    # Gets metric by identifier, link or title
+    def metric(id)
+      ms = GoodData::Metric[:all, :project => self, :full => false]
+      met = ms.find { |m| m['title'] == id || m['link'] == id || m['identifier'] == id }
+      met.nil? ? nil : GoodData::Metric[met['link'], :project => self]
     end
 
     # Gets raw resource ID
@@ -485,6 +544,35 @@ module GoodData
         @json = response
       end
       self
+    end
+
+    # Gets dashboard by title, link, id
+    #
+    # @param [String] name Name, ID or URL of dashboard
+    # @return [GoodData::Dashboard] Dashboard instance if found
+    def report(name)
+      reps = reports
+      reps.each do |report|
+        return report if report.title == name || report.uri == name
+      end
+      nil
+    end
+
+    # Gets the project reports
+    def reports(opts = { :full => true })
+      url = "/gdc/md/#{obj_id}/query/reports"
+      res = GoodData.get url
+
+      res['query']['entries'].map do |entry|
+        next if entry.nil? || entry['link'].nil? || entry['link'].empty?
+
+        if opts[:full]
+          raw_report = GoodData.get(entry['link'])
+          Report.new(raw_report)
+        else
+          entry
+        end
+      end
     end
 
     # Gets the list or project roles
@@ -563,7 +651,7 @@ module GoodData
     #
     # @return [DateTime] Date time of last update
     def updated
-      DateTime.parse(@json['project']['meta']['updated'])
+      Time.parse(@json['project']['meta']['updated'])
     end
 
     # Uploads file to project
@@ -738,7 +826,7 @@ module GoodData
     end
 
     # Run validation on project
-    # Valid settins for validation are (default all):
+    # Valid settings for validation are (default all):
     # ldm - Checks the consistency of LDM objects.
     # pdm Checks LDM to PDM mapping consistency, also checks PDM reference integrity.
     # metric_filter - Checks metadata for inconsistent metric filters.
