@@ -35,6 +35,9 @@ module ReportHelper
     end
 
     def remove_default_reports
+      # TODO: Enable this
+      return
+
       until @@REPORTS.empty?
         report = @@REPORTS.shift
         begin
