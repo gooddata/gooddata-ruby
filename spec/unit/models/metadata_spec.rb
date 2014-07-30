@@ -29,7 +29,6 @@ describe GoodData::MdObject do
 
   describe '#identifier=' do
     it 'Allows setting a new identifier' do
-      t = @instance.title
       identifier = @instance.identifier
       @instance.identifier = 'new_id'
       new_identifier = @instance.identifier
