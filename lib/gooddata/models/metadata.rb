@@ -230,9 +230,7 @@ module GoodData
       if saved?
         GoodData.delete(uri)
         meta.delete('uri')
-        # ["uri"] = nil
-      else
-        puts "Not saved, not deleting!"
+        # ["uri"] = nil # TODO: Should this be here or not?
       end
     end
 
