@@ -8,15 +8,10 @@ module GoodData
   class ProjectRole
     attr_accessor :json
 
-    include GoodData::Mixin::MetaGetter
-    include GoodData::Mixin::DataGetter
+    include GoodData::Mixin::RestGetters
 
     class << self
-      include GoodData::Mixin::RootKeySetter
-      include GoodData::Mixin::DataPropertyReader
-      include GoodData::Mixin::DataPropertyWriter
-      include GoodData::Mixin::MetaPropertyReader
-      include GoodData::Mixin::MetaPropertyWriter
+      include GoodData::Mixin::RestResource
     end
 
     ProjectRole.root_key :projectRole
@@ -39,7 +34,7 @@ module GoodData
     # @return [Array<GoodData::Profile>] List of users
     def users
       res = []
-      url = @json['projectRole']['links']['roleUsers']
+      url = data['links']['roleUsers']
       tmp = GoodData.get url
       tmp['associatedUsers']['users'].each do |user_url|
         user = GoodData.get user_url
