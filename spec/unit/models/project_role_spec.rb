@@ -79,6 +79,8 @@ describe GoodData::ProjectRole do
   end
 
   describe '#users' do
+    pending "Too slow for CI"
+    
     it 'Returns users as Array<GoodData::Profile>' do
       res = @role.users
       expect(res).to be_an_instance_of(Array)
