@@ -25,7 +25,7 @@ RSpec.configure do |config|
   config.include ReportHelper
   config.include ReportDefinitionHelper
   config.include UserHelper
-  config.include SchemaHelper
+  # config.include SchemaHelper
 
   config.filter_run_excluding :broken => true
 

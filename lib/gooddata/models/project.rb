@@ -115,26 +115,6 @@ module GoodData
       end
     end
 
-    # Creates a data set within the project
-    #
-    # == Usage
-    # p.add_dataset 'Test', [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
-    # p.add_dataset 'title' => 'Test', 'columns' => [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
-    #
-    def add_dataset(schema_def, columns = nil, &block)
-      schema = if block
-                 builder = block.call(Model::SchemaBuilder.new(schema_def))
-                 builder.to_schema
-               else
-                 sch = { :title => schema_def, :columns => columns } if columns
-                 sch = Model::Schema.new schema_def if schema_def.is_a? Hash
-                 sch = schema_def if schema_def.is_a?(Model::Schema)
-                 fail(ArgumentError, 'Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
-                 sch
-               end
-      Model.add_schema(schema, self)
-    end
-
     def add_metric(options = {})
       options[:expression] || fail('Metric has to have its expression defined')
       m1 = GoodData::Metric.create(options)
@@ -146,12 +126,25 @@ module GoodData
       rep.save
     end
 
+    def am_i_admin?
+      has_role?(GoodData.user, 'admin')
+    end
+
     # Gets author of project
     #
     # @return [String] Project author
     def author
       # TODO: Return object instead
       @json['project']['meta']['author']
+    end
+
+    # Gets project blueprint from the server
+    #
+    # @return [GoodData::ProjectRole] Project role if found
+    def blueprint
+      result = GoodData.get("/gdc/projects/#{pid}/model/view")
+      model = GoodData.poll_on_root(result, 'asyncTask') { |r| r['asyncTask']['link']['poll'] }
+      GoodData::Model::FromWire.from_wire(model)
     end
 
     # Returns web interface URI of project
@@ -256,7 +249,11 @@ module GoodData
       raw_data['project']
     end
 
+    # Gets datasets of a blueprint
+    #
+    # @return [Array<GoodData::Model::DatasetBlueprint] Datasets from a generated blueprint
     def datasets
+      blueprint.datasets
       datasets_uri = "#{md['data']}/sets"
       response = GoodData.get datasets_uri
       response['dataSetsInfo']['sets'].map do |ds|
@@ -280,6 +277,21 @@ module GoodData
     # Deletes dashboards for project
     def delete_dashboards
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
+    end
+
+    def execute_dml(dml)
+      uri = "/gdc/md/#{pid}/dml/manage"
+      result = GoodData.post(uri, {
+        manage: {
+          maql: dml
+        }
+      })
+      polling_uri = result['uri']
+      result = GoodData.get(polling_uri)
+      while result['taskState'] && result['taskState']['status'] == 'WAIT'
+        sleep 10
+        result = GoodData.get polling_uri
+      end
     end
 
     def delete_reports
@@ -364,8 +376,7 @@ module GoodData
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
       return name if name.instance_of?(GoodData::Membership)
-      fail ArgumentError, 'Invalid argument type of name - should be string or GoodData::Membership' unless name.kind_of?(String)
-
+      return member(name) if name.instance_of?(GoodData::Profile)
       name.downcase!
       user_list.each do |user|
         return user if user.uri.downcase == name ||
@@ -373,6 +384,14 @@ module GoodData
           user.email.downcase == name
       end
       nil
+    end
+
+    def has_role?(user, role_name)
+      member = get_user(user)
+      role = get_role(role_name)
+      member.roles.include?(role)
+    rescue
+      false
     end
 
     # Initializes object instance from raw wire JSON
@@ -537,6 +556,21 @@ module GoodData
       true
     end
 
+    def project_info
+      results = blueprint.datasets.map do |ds|
+        begin
+          [ds, ds.count]
+        rescue
+          nil
+        end
+      end
+      results.each do |x|
+        ds, res = x
+        ds && puts("#{ds && ds.title}, #{res}")
+      end
+      results
+    end
+
     # Forces project to reload
     def reload!
       if saved?
@@ -658,8 +692,8 @@ module GoodData
     #
     # @param file File to be uploaded
     # @param schema Schema to be used
-    def upload(file, schema, mode = 'FULL')
-      schema.upload file, self, mode
+    def upload(file, dataset_blueprint, mode = 'FULL')
+      dataset_blueprint.upload file, self, mode
     end
 
     def uri

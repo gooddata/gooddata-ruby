@@ -3,16 +3,10 @@
 require_relative '../core/connection'
 require_relative '../core/rest'
 
-require_relative 'attributes/attributes'
-require_relative 'columns/columns'
-require_relative 'facts/facts'
-require_relative 'folders/folders'
 require_relative 'metadata/metadata'
-require_relative 'references/references'
 
 require_relative 'links'
 require_relative 'module_constants'
-require_relative 'metadata/schema'
 
 require 'fileutils'
 require 'multi_json'
@@ -25,27 +19,66 @@ require 'zip'
 #
 module GoodData
   module Model
-    class << self
-      # def add_dataset(name, columns, project = nil)
-      #   Schema.new('columns' => columns, 'name' => name)
-      #   add_schema(schema, project)
-      # end
+    GD_TYPES = %w(GDC.link GDC.text GDC.geo GDC.time)
+    GD_DATA_TYPES = %w(INT VARCHAR DECIMAL)
 
-      # def add_schema(schema, project = nil)
-      #   unless schema.respond_to?(:to_maql_create) || schema.is_a?(String)
-      #     fail(ArgumentError, "Schema object or schema file path expected, got '#{schema}'")
-      #   end
-      #   schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
-      #   project = GoodData.project unless project
-      #   ldm_links = GoodData.get project.md[LDM_CTG]
-      #   ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
-      #   GoodData.post ldm_uri, 'manage' => { 'maql' => schema.to_maql_create }
-      # end
+    DEFAULT_FACT_DATATYPE = 'INT'
+
+    class << self
+      def title(item)
+        item[:title] || item[:name].titleize
+      end
+
+      def identifier_for(dataset, column = nil, column2 = nil)
+        return "dataset.#{dataset[:name]}" if column.nil?
+
+        column = DatasetBlueprint.find_column_by_name(dataset, column) if column.is_a?(String)
+        case column[:type].to_sym
+        when :anchor_no_label
+          "attr.#{dataset[:name]}.factsof"
+        when :attribute
+          "attr.#{dataset[:name]}.#{column[:name]}"
+        when :anchor
+          "attr.#{dataset[:name]}.#{column[:name]}"
+        when :date_fact
+          "dt.#{dataset[:name]}.#{column[:name]}"
+        when :fact
+          "fact.#{dataset[:name]}.#{column[:name]}"
+        when :primary_label
+          "label.#{dataset[:name]}.#{column[:name]}"
+        when :label
+          "label.#{dataset[:name]}.#{column2[:name]}.#{column[:name]}"
+        when :date_ref
+          "#{dataset[:name]}.date.mdyy"
+        when :dataset
+          "dataset.#{dataset[:name]}"
+        else
+          fail "Unknown type #{column[:type].to_sym}"
+        end
+      end
+
+      def check_gd_datatype(value)
+        GD_TYPES.any? { |v| v == value }
+      end
 
       # Load given file into a data set described by the given schema
-      def upload_data(path, manifest, options = {})
+      def upload_data(path, project_blueprint, dataset, options = {})
+        # path = if path =~ URI.regexp
+        #   Tempfile.open('remote_file') do |temp|
+        #     temp << open(path).read
+        #     temp.flush
+        #     # GoodData::Model.upload_data(path, to_manifest(mode))
+        #   end
+        #
+        # else
+        #   # GoodData::Model.upload_data(path, to_manifest(mode))
+        #   # upload_data(path, mode)
+        # end
+
+        mode = options[:mode] || 'FULL'
+        manifest = GoodData::Model::ToManifest.dataset_to_manifest(project_blueprint, dataset, mode)
         project = options[:project] || GoodData.project
-        # mode = options[:mode] || "FULL"
+
         path = path.path if path.respond_to? :path
         inline_data = path.is_a?(String) ? false : true
 
