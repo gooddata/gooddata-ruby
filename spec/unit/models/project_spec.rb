@@ -23,7 +23,7 @@ describe GoodData::Project do
 
             # Following lines are ugly hack
             'role' => row[6],
-            'password' => row[3],
+            'password' => CryptoHelper.generate_password,
             'domain' => row[9],
 
             # And following lines are even much more ugly hack

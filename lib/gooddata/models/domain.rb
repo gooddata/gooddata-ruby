@@ -73,7 +73,12 @@ module GoodData
 
         # TODO: It will be nice if the API will return us user just newly created
         url = "/gdc/account/domains/#{opts[:domain]}/users"
-        response = GoodData.post(url, :accountSetting => data)
+
+        begin
+          response = GoodData.post(url, :accountSetting => data)
+        rescue Exception => e
+          puts e.inspect
+        end
 
         raw = GoodData.get response['uri']
 
