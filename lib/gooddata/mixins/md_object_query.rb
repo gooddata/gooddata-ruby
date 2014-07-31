@@ -41,15 +41,20 @@ module GoodData
       end
 
       # Checks for dependency
-      def dependency?(type, uri)
+      def dependency?(type, uri, target_uri)
+
+        uri = uri.respond_to?(:uri) ? uri.uri : uri
         objs = case type
                when :usedby
                  usedby(uri)
                when :using
                  using(uri)
                end
-        uri = uri.respond_to?(:uri) ? uri.uri : uri
-        objs.any? { |obj| obj['link'] == uri }
+
+        target_uri = target_uri.respond_to?(:uri) ? target_uri.uri : target_uri
+        objs.any? do |obj|
+          obj['link'] == target_uri
+        end
       end
 
       # Returns which objects uses this MD resource
@@ -64,15 +69,15 @@ module GoodData
         dependency("#{GoodData.project.md['using2']}/#{obj_id(uri)}", key)
       end
 
-      def usedby?(obj)
-        dependency?(:usedby, obj)
+      def usedby?(uri, target_uri)
+        dependency?(:usedby, uri, target_uri)
       end
 
       alias_method :used_by?, :usedby?
 
       # Checks if obj is using this MD resource
-      def using?(obj)
-        dependency?(:using, obj)
+      def using?(uri, target_uri)
+        dependency?(:using, uri, target_uri)
       end
     end
   end

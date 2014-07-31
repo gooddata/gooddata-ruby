@@ -8,8 +8,8 @@ module GoodData
       end
 
       # Checks for dependency
-      def dependency?(type, uri)
-        GoodData::MdObject.dependency?(type, uri)
+      def dependency?(type, obj)
+        GoodData::MdObject.dependency?(type, self, obj)
       end
 
       # Returns which objects uses this MD resource
@@ -25,14 +25,14 @@ module GoodData
       end
 
       def usedby?(obj)
-        GoodData::MdObject.used_by?(obj)
+        GoodData::MdObject.used_by?(self, obj)
       end
 
       alias_method :used_by?, :usedby?
 
       # Checks if obj is using this MD resource
       def using?(obj)
-        GoodData::MdObject.dependency?(:using, obj)
+        dependency?(:using, obj)
       end
     end
   end
