@@ -73,6 +73,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should compute a report" do
     GoodData.with_project(@project) do |p|
       f = GoodData::Fact.find_first_by_title('Lines changed')
+      # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
       metric = GoodData::Metric.xcreate(:title => "My metric", :expression => "SELECT SUM(#\"#{f.title}\")")
       metric.save
       result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
@@ -166,11 +167,17 @@ describe "Full project implementation", :constraint => 'slow' do
       fact1.used_by
       fact1.used_by('metric').count.should == 1
 
-      metric.using?(fact1).should == true
-      fact1.using?(metric).should == false
+      res = metric.using?(fact1)
+      expect(res).to be(true)
 
-      metric.used_by?(fact1).should == false
-      fact1.used_by?(metric).should == true
+      res = fact1.using?(metric)
+      expect(res).to be(false)
+
+      res = metric.used_by?(fact1)
+      expect(res).to be(false)
+
+      res = fact1.used_by?(metric)
+      expect(res).to be(true)
     end
   end
 

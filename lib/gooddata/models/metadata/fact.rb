@@ -2,11 +2,15 @@
 
 require_relative '../metadata'
 require_relative '../../core/rest'
+require_relative '../../mixins/is_fact'
+
 require_relative 'metadata'
 
 module GoodData
   class Fact < GoodData::MdObject
     root_key :fact
+
+    include GoodData::Mixin::IsFact
 
     # TODO: verify that we have all (which we do not right now)
     FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median]
@@ -20,12 +24,6 @@ module GoodData
       def all(options = {})
         query('facts', Fact, options)
       end
-    end
-
-    # Returns true if the object is a fact false otherwise
-    # @return [Boolean]
-    def fact?
-      true
     end
 
     # Creates the basic count metric with the fact used. The metric created is not saved.

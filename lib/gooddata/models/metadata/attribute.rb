@@ -2,9 +2,13 @@
 
 require_relative 'metadata'
 
+require_relative '../../mixins/is_attribute'
+
 module GoodData
   class Attribute < MdObject
     root_key :attribute
+
+    include GoodData::Mixin::IsAttribute
 
     ATTRIBUTE_BASE_AGGREGATIONS = [:count]
 
@@ -41,12 +45,6 @@ module GoodData
       labels.first
     end
     alias_method :primary_label, :primary_display_form
-
-    # Returns true if the object is an attribute false otherwise
-    # @return [Boolean]
-    def attribute?
-      true
-    end
 
     # Creates the basic count metric with the attribute used. If you need to compute the attribute on a different dataset you can specify that in params. The metric created is not saved.
     # @param [Hash] options the options to pass to the value list

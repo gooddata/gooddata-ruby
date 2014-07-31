@@ -125,7 +125,7 @@ module GoodData
     end
 
     def process
-      raw_data['process']
+      json['process']
     end
 
     def name
