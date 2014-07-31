@@ -4,7 +4,7 @@ module GoodData
   module Mixin
     module MdIdToUri
       IDENTIFIERS_CFG = 'instance-identifiers'
-      
+
       # TODO: Add test
       def identifier_to_uri(*ids)
         fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
