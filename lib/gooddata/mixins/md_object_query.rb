@@ -42,7 +42,6 @@ module GoodData
 
       # Checks for dependency
       def dependency?(type, uri, target_uri)
-
         uri = uri.respond_to?(:uri) ? uri.uri : uri
         objs = case type
                when :usedby
