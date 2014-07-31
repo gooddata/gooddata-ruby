@@ -1,11 +1,14 @@
 # encoding: UTF-8
 
 require_relative '../metadata'
+require_relative '../../mixins/is_label'
 require_relative 'metadata'
 
 module GoodData
   class Label < GoodData::MdObject
     root_key :attributeDisplayForm
+
+    include GoodData::Mixin::IsLabel
 
     # Finds an attribute element URI for given value. This URI can be used by find_element_value to find the original value again
     # @param [String] value value of an label you are looking for
@@ -57,13 +60,6 @@ module GoodData
     def attribute
       GoodData::Attribute[content['formOf']]
     end
-
-    # Returns true if the object is an attribute false otherwise
-    # @return [Boolean]
-    def label?
-      true
-    end
-    alias_method :display_form?, :label?
 
     # Gives an attribute url of current label. Useful for mass actions when it does not introduce HTTP call.
     # @return [GoodData::Attibute]
