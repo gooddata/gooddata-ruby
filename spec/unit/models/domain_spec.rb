@@ -13,7 +13,7 @@ describe GoodData::Domain do
 
   describe '#add_user' do
     it 'Should add user' do
-      user = GoodData::Domain.add_user(:domain => ConnectionHelper::DEFAULT_DOMAIN, :login => "gemtest#{rand(1e6)}@gooddata.com", :password => 'password')
+      user = GoodData::Domain.add_user(:domain => ConnectionHelper::DEFAULT_DOMAIN, :login => "gemtest#{rand(1e6)}@gooddata.com", :password => CryptoHelper.generate_password)
       expect(user).to be_an_instance_of(GoodData::Profile)
       user.delete
     end
@@ -62,7 +62,7 @@ describe GoodData::Domain do
 
               # Following lines are ugly hack
               'role' => 'admin',
-              'password' => 'password',
+              'password' => CryptoHelper.generate_password,
               'domain' => ConnectionHelper::DEFAULT_DOMAIN,
 
               # And following lines are even much more ugly hack
