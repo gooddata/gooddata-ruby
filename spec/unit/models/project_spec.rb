@@ -314,7 +314,12 @@ describe GoodData::Project do
         }
       end
 
-      res = project.set_users_roles(list)
+      begin
+        res = project.set_users_roles(list)
+      rescue Exception => e
+        puts e.inspect
+      end
+
       expect(res.length).to equal(list.length)
       res.each do |update_result|
         expect(update_result[:result]['projectUsersUpdateResult']['successful'][0]).to include(update_result[:user].uri)
