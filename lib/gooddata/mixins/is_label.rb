@@ -2,11 +2,11 @@
 
 module GoodData
   module Mixin
-    module NotLabel
-      # Returns true if the object is a fact label otherwise
+    module IsLabel
+      # Returns true if the object is a label false otherwise
       # @return [Boolean]
       def label?
-        false
+        true
       end
 
       alias_method :display_form?, :label?

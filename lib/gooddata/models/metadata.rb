@@ -7,6 +7,7 @@ require_relative '../mixins/content_getter'
 require_relative '../mixins/data_getter'
 require_relative '../mixins/links'
 require_relative '../mixins/md_finders'
+require_relative '../mixins/md_id_to_uri'
 require_relative '../mixins/md_json'
 require_relative '../mixins/md_object_id'
 require_relative '../mixins/md_object_indexer'
@@ -77,27 +78,7 @@ module GoodData
 
       include GoodData::Mixin::MdFinders
 
-      # TODO: Add test
-      def identifier_to_uri(*ids)
-        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
-        uri = GoodData.project.md[IDENTIFIERS_CFG]
-        response = GoodData.post uri, 'identifierToUri' => ids
-        if response['identifiers'].empty?
-          nil
-        else
-          identifiers = response['identifiers']
-          ids_lookup = identifiers.reduce({}) do |a, e|
-            a[e['identifier']] = e['uri']
-            a
-          end
-          uris = ids.map { |x| ids_lookup[x] }
-          uris.count == 1 ? uris.first : uris
-        end
-      end
-
-      alias_method :id_to_uri, :identifier_to_uri
-
-      alias_method :get_by_id, :[]
+      include GoodData::Mixin::MdIdToUri
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
@@ -161,7 +142,7 @@ module GoodData
         saved_object = self.class[result['uri']]
         # TODO: add test for explicitly provided identifier
 
-        @json = saved_object.raw_data
+        @json = saved_object.json
         if explicit_identifier
           # Object creation API discards the identifier. If an identifier
           # was explicitely provided in the origina object, we need to set
@@ -185,7 +166,7 @@ module GoodData
     # @param new_title [String] New title. If not provided one is provided
     # @return [GoodData::MdObject] MdObject that has been saved as
     def save_as(new_title = "Clone of #{title}")
-      dupped = Marshal.load(Marshal.dump(raw_data))
+      dupped = Marshal.load(Marshal.dump(json))
       dupped[root_key]['meta'].delete('uri')
       dupped[root_key]['meta'].delete('identifier')
       dupped[root_key]['meta']['title'] = new_title
@@ -200,7 +181,5 @@ module GoodData
     def validate
       true
     end
-
-    alias_method :display_form?, :label?
   end
 end

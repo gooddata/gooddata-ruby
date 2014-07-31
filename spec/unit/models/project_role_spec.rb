@@ -30,9 +30,9 @@ describe GoodData::ProjectRole do
   end
 
   describe '#created' do
-    it 'Returns created date as DateTime' do
+    it 'Returns created date as Time' do
       res = @role.created
-      expect(res).to be_an_instance_of(DateTime)
+      expect(res).to be_an_instance_of(Time)
     end
   end
 
@@ -65,9 +65,9 @@ describe GoodData::ProjectRole do
   end
 
   describe '#updated' do
-    it 'Returns updated date as DateTime' do
+    it 'Returns updated date as Time' do
       res = @role.updated
-      expect(res).to be_an_instance_of(DateTime)
+      expect(res).to be_an_instance_of(Time)
     end
   end
 

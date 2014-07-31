@@ -351,6 +351,23 @@ describe GoodData::Project do
       res = project.set_users_roles(list)
       expect(res.length).to equal(list.length)
     end
+  end
 
+  describe '#summary' do
+    it 'Properly gets title of project' do
+      project = ProjectHelper.get_default_project
+
+      res = project.summary
+      expect(res).to include(ProjectHelper::PROJECT_SUMMARY)
+    end
+  end
+
+  describe '#title' do
+    it 'Properly gets title of project' do
+      project = ProjectHelper.get_default_project
+
+      res = project.title
+      expect(res).to include(ProjectHelper::PROJECT_TITLE)
+    end
   end
 end

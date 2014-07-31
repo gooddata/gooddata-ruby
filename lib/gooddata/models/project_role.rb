@@ -2,71 +2,37 @@
 
 require_relative 'profile'
 
+require_relative '../mixins/mixins'
+
 module GoodData
   class ProjectRole
+    attr_accessor :json
+
+    include GoodData::Mixin::MetaGetter
+    include GoodData::Mixin::DataGetter
+
+    class << self
+      include GoodData::Mixin::RootKeySetter
+      include GoodData::Mixin::DataPropertyReader
+      include GoodData::Mixin::DataPropertyWriter
+      include GoodData::Mixin::MetaPropertyReader
+      include GoodData::Mixin::MetaPropertyWriter
+    end
+
+    ProjectRole.root_key :projectRole
+
+    include GoodData::Mixin::RootKeyGetter
+    include GoodData::Mixin::Author
+    include GoodData::Mixin::Contributor
+    include GoodData::Mixin::Timestamps
+
     def initialize(json)
       @json = json
     end
 
-    # Gets Project Role Identifier
-    #
-    # @return [string] Project Role
-    def identifier
-      @json['projectRole']['meta']['identifier']
-    end
+    ProjectRole.data_property_reader :permissions
 
-    # Gets Project Role Author
-    #
-    # @return [GoodData::Profile] Project Role author
-    def author
-      url = @json['projectRole']['meta']['author']
-      tmp = GoodData.get url
-      GoodData::Profile.new(tmp)
-    end
-
-    # Gets Project Role Contributor
-    #
-    # @return [GoodData::Profile] Project Role Contributor
-    def contributor
-      url = @json['projectRole']['meta']['contributor']
-      tmp = GoodData.get url
-      GoodData::Profile.new(tmp)
-    end
-
-    # Gets DateTime time when created
-    #
-    # @return [DateTime] Date time of creation
-    def created
-      DateTime.parse(@json['projectRole']['meta']['created'])
-    end
-
-    # Gets Project Role Permissions
-    #
-    # @return [string] Project Role
-    def permissions
-      @json['projectRole']['permissions']
-    end
-
-    # Gets Project Role Title
-    #
-    # @return [string] Project Role Title
-    def title
-      @json['projectRole']['meta']['title']
-    end
-
-    # Gets Project Role Summary
-    #
-    # @return [string] Project Role Summary
-    def summary
-      @json['projectRole']['meta']['summary']
-    end
-
-    # Gets DateTime time when updated
-    #
-    # @return [DateTime] Date time of last update
-    def updated
-      DateTime.parse(@json['projectRole']['meta']['updated'])
-    end
+    ProjectRole.metadata_property_reader :identifier, :title, :summary
 
     # Gets Users with this Role
     #

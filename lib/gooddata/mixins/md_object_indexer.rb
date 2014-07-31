@@ -29,6 +29,8 @@ module GoodData
               end
         new(GoodData.get uri) unless uri.nil?
       end
+
+      alias_method :get_by_id, :[]
     end
   end
 end
