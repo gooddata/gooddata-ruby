@@ -67,5 +67,12 @@ module GoodData
       connection.status = :logged_in
       connection
     end
+
+    def with_connection(options = nil, second_options = nil, third_options = {}, &bl)
+      connection = connect(options, second_options, third_options)
+      bl.call(connection)
+    ensure
+      disconnect
+    end
   end
 end
