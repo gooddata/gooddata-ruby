@@ -10,7 +10,7 @@ module GoodData
   class Fact < GoodData::MdObject
     root_key :fact
 
-    include GoodData::Mixin::IsAttribute
+    include GoodData::Mixin::IsFact
 
     # TODO: verify that we have all (which we do not right now)
     FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median]

@@ -2,7 +2,7 @@
 
 module GoodData
   module Mixin
-    module IsAttribute
+    module IsFact
       # Returns true if the object is a fact false otherwise
       # @return [Boolean]
       def fact?
