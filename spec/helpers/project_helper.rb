@@ -9,6 +9,8 @@ require 'gooddata/models/models'
 module ProjectHelper
   PROJECT_ID = 'we1vvh4il93r0927r809i3agif50d7iz'
   PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
+  PROJECT_TITLE = 'GoodTravis'
+  PROJECT_SUMMARY = 'No summary'
 
   def self.get_default_project
     GoodData::Project[PROJECT_ID]
