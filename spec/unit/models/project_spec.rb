@@ -190,6 +190,7 @@ describe GoodData::Project do
 
   describe '#users' do
     it 'Returns array of GoodData::Users' do
+      pending 'Disable as it is TOOOO SLOOOW'
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
@@ -250,7 +251,7 @@ describe GoodData::Project do
 
               # Following lines are ugly hack
               'role' => 'admin',
-              'password' => 'password',
+              'password' => CryptoHelper.generate_password,
               'domain' => ConnectionHelper::DEFAULT_DOMAIN,
 
               # And following lines are even much more ugly hack
