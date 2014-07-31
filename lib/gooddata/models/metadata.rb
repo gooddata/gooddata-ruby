@@ -3,28 +3,7 @@
 require_relative '../core/connection'
 require_relative '../core/project'
 
-require_relative '../mixins/content_getter'
-require_relative '../mixins/data_getter'
-require_relative '../mixins/links'
-require_relative '../mixins/md_finders'
-require_relative '../mixins/md_id_to_uri'
-require_relative '../mixins/md_json'
-require_relative '../mixins/md_object_id'
-require_relative '../mixins/md_object_indexer'
-require_relative '../mixins/md_object_query'
-require_relative '../mixins/md_relations'
-require_relative '../mixins/meta_getter'
-require_relative '../mixins/meta_property_reader'
-require_relative '../mixins/meta_property_writer'
-require_relative '../mixins/not_attribute'
-require_relative '../mixins/not_exportable'
-require_relative '../mixins/not_fact'
-require_relative '../mixins/not_metric'
-require_relative '../mixins/not_label'
-require_relative '../mixins/obj_id'
-require_relative '../mixins/root_key_getter'
-require_relative '../mixins/root_key_setter'
-require_relative '../mixins/timestamps'
+require_relative '../mixins/mixins'
 
 module GoodData
   class MdObject
@@ -36,48 +15,28 @@ module GoodData
     alias_method :to_hash, :json
 
     include GoodData::Mixin::RootKeyGetter
-
     include GoodData::Mixin::MdJson
-
     include GoodData::Mixin::DataGetter
-
     include GoodData::Mixin::MetaGetter
-
     include GoodData::Mixin::ObjId
-
     include GoodData::Mixin::ContentGetter
-
     include GoodData::Mixin::Timestamps
-
     include GoodData::Mixin::Links
-
     include GoodData::Mixin::NotAttribute
-
     include GoodData::Mixin::NotExportable
-
     include GoodData::Mixin::NotFact
-
     include GoodData::Mixin::NotMetric
-
     include GoodData::Mixin::NotLabel
-
     include GoodData::Mixin::MdRelations
 
     class << self
       include GoodData::Mixin::RootKeySetter
-
       include GoodData::Mixin::MetaPropertyReader
-
       include GoodData::Mixin::MetaPropertyWriter
-
       include GoodData::Mixin::MdObjId
-
       include GoodData::Mixin::MdObjectQuery
-
       include GoodData::Mixin::MdObjectIndexer
-
       include GoodData::Mixin::MdFinders
-
       include GoodData::Mixin::MdIdToUri
     end
 
