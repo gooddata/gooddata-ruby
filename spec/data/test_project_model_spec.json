@@ -2,6 +2,7 @@
   "title": "RubyGem Dev Week test",
   "datasets": [
     {
+      "type": "dataset",
       "name": "repos",
       "columns": [
         {
@@ -20,6 +21,7 @@
       ]
     },
     {
+      "type": "dataset",
       "name": "devs",
       "columns": [
         {
@@ -29,11 +31,13 @@
         {
           "type": "label",
           "name": "email",
-          "reference": "dev_id"
+          "reference": "dev_id",
+          "default_label" : true
         }
       ]
     },
     {
+      "type": "dataset",
       "name": "commits",
       "columns": [
         {
@@ -62,9 +66,8 @@
   ],
   "date_dimensions": [
     {
-      "urn": null,
-      "name": "committed_on",
-      "title": null
+      "type": "date_dimension",
+      "name": "committed_on"
     }
   ]
 }

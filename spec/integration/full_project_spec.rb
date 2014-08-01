@@ -24,13 +24,34 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should contain datasets" do
     GoodData.with_project(@project) do |p|
-      p.datasets.count.should == 4
+      p.blueprint.tap do |bp|
+        expect(bp.datasets.count).to eq 3
+        expect(bp.datasets(:include_date_dimensions => true).count).to eq 4
+      end
+    end
+  end
+
+  it "should be able to rename a project" do
+    GoodData.with_project(@project) do |p|
+      former_title = p.title
+      a_title = (0...8).map { (65 + rand(26)).chr }.join
+      p.title = a_title
+      p.save
+      expect(p.title).to eq a_title
+      p.title = former_title
+      p.save
+    end
+  end
+
+  it "should be able to validate a project" do
+    GoodData.with_project(@project) do |p|
+      p.validate
     end
   end
 
   it "should compute an empty metric" do
     GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines changed')
+      f = GoodData::Fact.find_first_by_title('Lines Changed')
       metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")")
       metric.execute.should be_nil
     end
@@ -44,20 +65,22 @@ describe "Full project implementation", :constraint => 'slow' do
         [1,"01/01/2014",1,1],
         [3,"01/02/2014",2,2],
         [5,"05/02/2014",3,1]]
-      blueprint.find_dataset('commits').upload(commits_data)
+      GoodData::Model.upload_data(commits_data, blueprint, 'commits')
+      # blueprint.find_dataset('commits').upload(commits_data)
 
       devs_data = [
         ["dev_id", "email"],
         [1, "tomas@gooddata.com"],
         [2, "petr@gooddata.com"],
         [3, "jirka@gooddata.com"]]
-      blueprint.find_dataset('devs').upload(devs_data)
+      GoodData::Model.upload_data(devs_data, blueprint, 'devs')
+      # blueprint.find_dataset('devs').upload(devs_data)
     end
   end
 
   it "should compute a metric" do
     GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines changed')
+      f = GoodData::Fact.find_first_by_title('Lines Changed')
       metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")")
       metric.execute.should == 9
     end
@@ -65,7 +88,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should execute an anonymous metric twice and not fail" do
     GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines changed')
+      f = GoodData::Fact.find_first_by_title('Lines Changed')
       metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")")
       metric.execute.should == 9
       # Since GD platform cannot execute inline specified metric the metric has to be saved
@@ -76,7 +99,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should compute a report" do
     GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines changed')
+      f = GoodData::Fact.find_first_by_title('Lines Changed')
       # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
       metric = GoodData::Metric.xcreate(:title => "My metric", :expression => "SELECT SUM(#\"#{f.title}\")")
       metric.save
@@ -149,7 +172,7 @@ describe "Full project implementation", :constraint => 'slow' do
       metric.should == metric
 
       # grab fact in several different ways
-      fact1 = GoodData::Fact.find_first_by_title('Lines changed')
+      fact1 = GoodData::Fact.find_first_by_title('Lines Changed')
       fact2 = GoodData::Fact[fact1.identifier]
       fact3 = GoodData::Fact[fact2.obj_id]
       fact4 = GoodData::Fact[fact3.uri]
@@ -187,7 +210,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should try setting and getting by tags" do
     GoodData.with_project(@project) do |p|
-      fact = GoodData::Fact.find_first_by_title('Lines changed')
+      fact = GoodData::Fact.find_first_by_title('Lines Changed')
       fact.tags.should be_empty
 
       fact.tags = "tag1,tag2,tag3"
@@ -219,7 +242,7 @@ describe "Full project implementation", :constraint => 'slow' do
       res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true)
       res.should == 9
 
-      fact = GoodData::Fact.find_first_by_title('Lines changed')
+      fact = GoodData::Fact.find_first_by_title('Lines Changed')
       fact.fact?.should == true
       res = fact.create_metric(:type => :sum).execute
       res.should == 9
@@ -232,7 +255,8 @@ describe "Full project implementation", :constraint => 'slow' do
       devs_data = [
         ["dev_id", "email"],
         [4, "josh@gooddata.com"]]
-      blueprint.find_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
+      GoodData::Model.upload_data(devs_data, blueprint, 'devs', mode: 'INCREMENTAL' )
+      # blueprint.find_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
     end
   end
 
@@ -265,10 +289,10 @@ describe "Full project implementation", :constraint => 'slow' do
     end
   end
 
-  it "Should be able to compute count o different datasets" do
+  it "should be able to compute count of different datasets" do
     GoodData.with_project(@project) do |p|
       attribute = GoodData::Attribute['attr.devs.dev_id']
-      dataset_attribute = GoodData::Attribute['attr.commits.id']
+      dataset_attribute = GoodData::Attribute['attr.commits.factsof']
       attribute.create_metric(:attribute => dataset_attribute).execute.should == 3
     end
   end
@@ -294,7 +318,7 @@ describe "Full project implementation", :constraint => 'slow' do
       metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
       metric.replace_value(label, value[:value], different_value[:value])
       metric.contain_value?(label, value[:value]).should == false
-      metric.pretty_expression.should == "SELECT SUM([Lines changed]) WHERE [Dev] = [josh@gooddata.com]"
+      metric.pretty_expression.should == "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
     end
   end
 

@@ -1,0 +1,1424 @@
+[{
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.stage_history.currentstatus"],
+      "mode": "FULL",
+      "columnName": "currentstatus"
+    }, {
+      "populates": ["fact.stage_history.stage_velocity"],
+      "mode": "FULL",
+      "columnName": "stage_velocity"
+    }, {
+      "populates": ["fact.stage_history.stage_duration"],
+      "mode": "FULL",
+      "columnName": "stage_duration"
+    }, {
+      "populates": ["label.account.id"],
+      "mode": "FULL",
+      "columnName": "account",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.product.id"],
+      "mode": "FULL",
+      "columnName": "product",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.stage.id"],
+      "mode": "FULL",
+      "columnName": "stage",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opp_owner.id"],
+      "mode": "FULL",
+      "columnName": "opp_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opportunity.id"],
+      "mode": "FULL",
+      "columnName": "opportunity",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.bookingtype.booking_type_id"],
+      "mode": "FULL",
+      "columnName": "bookingtype",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppclose.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppclose",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppcreated.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppcreated",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.stage_history",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.opp_snapshot.accountstagesnapshot"],
+      "mode": "FULL",
+      "columnName": "accountstagesnapshot"
+    }, {
+      "populates": ["fact.opp_snapshot.amount"],
+      "mode": "FULL",
+      "columnName": "amount"
+    }, {
+      "populates": ["fact.opp_snapshot.probability"],
+      "mode": "FULL",
+      "columnName": "probability"
+    }, {
+      "populates": ["fact.opp_snapshot.mrr"],
+      "mode": "FULL",
+      "columnName": "mrr"
+    }, {
+      "populates": ["fact.opp_snapshot.distributedmrr"],
+      "mode": "FULL",
+      "columnName": "distributedmrr"
+    }, {
+      "populates": ["label.sdrowner.sdrowner"],
+      "mode": "FULL",
+      "columnName": "sdrowner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.leadsourceoriginal.leadsourceoriginal"],
+      "mode": "FULL",
+      "columnName": "leadsourceoriginal",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.account.id"],
+      "mode": "FULL",
+      "columnName": "account",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.amounttype.amounttype"],
+      "mode": "FULL",
+      "columnName": "amounttype",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.product.id"],
+      "mode": "FULL",
+      "columnName": "product",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.sourcingorigin.techsourcingtype"],
+      "mode": "FULL",
+      "columnName": "sourcingorigin",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.leadsource.leadsource"],
+      "mode": "FULL",
+      "columnName": "leadsource",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.productline.productline"],
+      "mode": "FULL",
+      "columnName": "productline",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.stage.id"],
+      "mode": "FULL",
+      "columnName": "stage",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opp_owner.id"],
+      "mode": "FULL",
+      "columnName": "opp_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opportunity.id"],
+      "mode": "FULL",
+      "columnName": "opportunity",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.bookingtype.booking_type_id"],
+      "mode": "FULL",
+      "columnName": "bookingtype",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.forecast.id"],
+      "mode": "FULL",
+      "columnName": "forecast",
+      "referenceKey": 1
+    }, {
+      "populates": ["leadcreate.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "leadcreate",
+      "referenceKey": 1
+    }, {
+      "populates": ["snapshot.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "snapshot",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppclose.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppclose",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppcreated.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppcreated",
+      "referenceKey": 1
+    }, {
+      "populates": ["stage1plus.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "stage1plus",
+      "referenceKey": 1
+    }, {
+      "populates": ["mqldate.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "mqldate",
+      "referenceKey": 1
+    }, {
+      "populates": ["effectivecontractstart.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "effectivecontractstart",
+      "referenceKey": 1
+    }, {
+      "populates": ["effectivecontractend.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "effectivecontractend",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.opp_snapshot",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.opp_changes.interval_changes"],
+      "mode": "FULL",
+      "columnName": "interval_changes"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.opp_changes.previous_stage"],
+      "mode": "FULL",
+      "columnName": "previous_stage"
+    }, {
+      "populates": ["fact.opp_changes.amount_changed"],
+      "mode": "FULL",
+      "columnName": "amount_changed"
+    }, {
+      "populates": ["fact.opp_changes.amount_changed_current_q"],
+      "mode": "FULL",
+      "columnName": "amount_changed_current_q"
+    }, {
+      "populates": ["fact.opp_changes.previous_amount"],
+      "mode": "FULL",
+      "columnName": "previous_amount"
+    }, {
+      "populates": ["fact.opp_changes.new_amount"],
+      "mode": "FULL",
+      "columnName": "new_amount"
+    }, {
+      "populates": ["fact.opp_changes.amount_changed_potential"],
+      "mode": "FULL",
+      "columnName": "amount_changed_potential"
+    }, {
+      "populates": ["fact.opp_changes.amount_changed_current_q_potential"],
+      "mode": "FULL",
+      "columnName": "amount_changed_current_q_potential"
+    }, {
+      "populates": ["label.account.id"],
+      "mode": "FULL",
+      "columnName": "account",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.amounttype.amounttype"],
+      "mode": "FULL",
+      "columnName": "amounttype",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.product.id"],
+      "mode": "FULL",
+      "columnName": "product",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.productline.productline"],
+      "mode": "FULL",
+      "columnName": "productline",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.stage.id"],
+      "mode": "FULL",
+      "columnName": "stage",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opp_owner.id"],
+      "mode": "FULL",
+      "columnName": "opp_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opportunity.id"],
+      "mode": "FULL",
+      "columnName": "opportunity",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.bookingtype.booking_type_id"],
+      "mode": "FULL",
+      "columnName": "bookingtype",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppclose.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppclose",
+      "referenceKey": 1
+    }, {
+      "populates": ["previous_close_date.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "previous_close_date",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.opp_changes",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.opportunityanalysis.techoppanalysis"],
+      "mode": "FULL",
+      "columnName": "techoppanalysis"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.opportunityanalysis.month"],
+      "mode": "FULL",
+      "columnName": "month"
+    }, {
+      "populates": ["label.opportunityanalysis.month.monthsortingnew"],
+      "mode": "FULL",
+      "columnName": "monthsortingnew"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.opportunityanalysis.cohorttype"],
+      "mode": "FULL",
+      "columnName": "cohorttype"
+    }, {
+      "populates": ["fact.opportunityanalysis.buckets_to_display"],
+      "mode": "FULL",
+      "columnName": "buckets_to_display"
+    }, {
+      "populates": ["fact.opportunityanalysis.month_fact"],
+      "mode": "FULL",
+      "columnName": "month_fact"
+    }, {
+      "populates": ["label.opp_records.factsof"],
+      "mode": "FULL",
+      "columnName": "opp_records",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.consolidatedmarketingstatus.consolidatedmarketingstatus"],
+      "mode": "FULL",
+      "columnName": "consolidatedmarketingstatus",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.opportunityanalysis",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.goals.quotatype"],
+      "mode": "FULL",
+      "columnName": "quotatype"
+    }, {
+      "populates": ["fact.goals.amount"],
+      "mode": "FULL",
+      "columnName": "amount"
+    }, {
+      "populates": ["label.sdrowner.sdrowner"],
+      "mode": "FULL",
+      "columnName": "sdrowner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.amounttype.amounttype"],
+      "mode": "FULL",
+      "columnName": "amounttype",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.product.id"],
+      "mode": "FULL",
+      "columnName": "product",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.sourcingorigin.techsourcingtype"],
+      "mode": "FULL",
+      "columnName": "sourcingorigin",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.activity_owner.id"],
+      "mode": "FULL",
+      "columnName": "activity_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opp_owner.id"],
+      "mode": "FULL",
+      "columnName": "opp_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.bookingtype.booking_type_id"],
+      "mode": "FULL",
+      "columnName": "bookingtype",
+      "referenceKey": 1
+    }, {
+      "populates": ["activity.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "activity",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppclose.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppclose",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppcreated.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppcreated",
+      "referenceKey": 1
+    }, {
+      "populates": ["stage1plus.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "stage1plus",
+      "referenceKey": 1
+    }, {
+      "populates": ["mqldate.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "mqldate",
+      "referenceKey": 1
+    }, {
+      "populates": ["s2o.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "s2o",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.goals",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "populates": ["timeline.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "timeline",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.timeline",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "populates": ["label.account.id"],
+      "mode": "FULL",
+      "columnName": "account",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.product.id"],
+      "mode": "FULL",
+      "columnName": "product",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.activity_owner.id"],
+      "mode": "FULL",
+      "columnName": "activity_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.stage.id"],
+      "mode": "FULL",
+      "columnName": "stage",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opp_owner.id"],
+      "mode": "FULL",
+      "columnName": "opp_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.activity.id"],
+      "mode": "FULL",
+      "columnName": "activity",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opportunity.id"],
+      "mode": "FULL",
+      "columnName": "opportunity",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.bookingtype.booking_type_id"],
+      "mode": "FULL",
+      "columnName": "bookingtype",
+      "referenceKey": 1
+    }, {
+      "populates": ["activity.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "activity",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppclose.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppclose",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppcreated.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppcreated",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.activity_monitoring",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.opp_records.factsof"],
+      "mode": "FULL",
+      "columnName": "factsof"
+    }, {
+      "populates": ["label.opp_records.factsof.opp_records_conctn_point"],
+      "mode": "FULL",
+      "columnName": "opp_records_conctn_point"
+    }, {
+      "populates": ["fact.opp_records.amount"],
+      "mode": "FULL",
+      "columnName": "amount"
+    }, {
+      "populates": ["fact.opp_records.probability"],
+      "mode": "FULL",
+      "columnName": "probability"
+    }, {
+      "populates": ["fact.opp_records.mrr"],
+      "mode": "FULL",
+      "columnName": "mrr"
+    }, {
+      "populates": ["fact.opp_records.distributed_mrr"],
+      "mode": "FULL",
+      "columnName": "distributed_mrr"
+    }, {
+      "populates": ["fact.opp_records.freemonths"],
+      "mode": "FULL",
+      "columnName": "freemonths"
+    }, {
+      "populates": ["fact.opp_records.upsellcmrr"],
+      "mode": "FULL",
+      "columnName": "upsellcmrr"
+    }, {
+      "populates": ["fact.opp_records.downsellcmrr"],
+      "mode": "FULL",
+      "columnName": "downsellcmrr"
+    }, {
+      "populates": ["fact.opp_records.upliftcmrr"],
+      "mode": "FULL",
+      "columnName": "upliftcmrr"
+    }, {
+      "populates": ["fact.opp_records.churncmrr"],
+      "mode": "FULL",
+      "columnName": "churncmrr"
+    }, {
+      "populates": ["label.sdrowner.sdrowner"],
+      "mode": "FULL",
+      "columnName": "sdrowner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.leadsourceoriginal.leadsourceoriginal"],
+      "mode": "FULL",
+      "columnName": "leadsourceoriginal",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.account.id"],
+      "mode": "FULL",
+      "columnName": "account",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.amounttype.amounttype"],
+      "mode": "FULL",
+      "columnName": "amounttype",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.product.id"],
+      "mode": "FULL",
+      "columnName": "product",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.renewalstatus.renewalstatus"],
+      "mode": "FULL",
+      "columnName": "renewalstatus",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.sourcingorigin.techsourcingtype"],
+      "mode": "FULL",
+      "columnName": "sourcingorigin",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.sdrperformancestatus.sdrperformancestatus"],
+      "mode": "FULL",
+      "columnName": "sdrperformancestatus",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.leadsource.leadsource"],
+      "mode": "FULL",
+      "columnName": "leadsource",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.winlossreason.winlossreason"],
+      "mode": "FULL",
+      "columnName": "winlossreason",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.productline.productline"],
+      "mode": "FULL",
+      "columnName": "productline",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.leadchannel.leadchannel"],
+      "mode": "FULL",
+      "columnName": "leadchannel",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.stage.id"],
+      "mode": "FULL",
+      "columnName": "stage",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opp_owner.id"],
+      "mode": "FULL",
+      "columnName": "opp_owner",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.opportunity.id"],
+      "mode": "FULL",
+      "columnName": "opportunity",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.bookingtype.booking_type_id"],
+      "mode": "FULL",
+      "columnName": "bookingtype",
+      "referenceKey": 1
+    }, {
+      "populates": ["label.forecast.id"],
+      "mode": "FULL",
+      "columnName": "forecast",
+      "referenceKey": 1
+    }, {
+      "populates": ["leadcreate.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "leadcreate",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppclose.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppclose",
+      "referenceKey": 1
+    }, {
+      "populates": ["oppcreated.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppcreated",
+      "referenceKey": 1
+    }, {
+      "populates": ["stage1plus.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "stage1plus",
+      "referenceKey": 1
+    }, {
+      "populates": ["firstcontactdate.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "firstcontactdate",
+      "referenceKey": 1
+    }, {
+      "populates": ["mqldate.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "mqldate",
+      "referenceKey": 1
+    }, {
+      "populates": ["s2o.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "s2o",
+      "referenceKey": 1
+    }, {
+      "populates": ["firstmeeting.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "firstmeeting",
+      "referenceKey": 1
+    }, {
+      "populates": ["effectivecontractstart.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "effectivecontractstart",
+      "referenceKey": 1
+    }, {
+      "populates": ["laststage0plus.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "laststage0plus",
+      "referenceKey": 1
+    }, {
+      "populates": ["effectivecontractend.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "effectivecontractend",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.opp_records",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.sdrowner.sdrowner"],
+      "mode": "FULL",
+      "columnName": "sdrowner"
+    }, {
+      "populates": ["label.sdrowner.sdrowner.sdrownername"],
+      "mode": "FULL",
+      "columnName": "sdrownername"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.sdrowner.sdrteam"],
+      "mode": "FULL",
+      "columnName": "sdrteam"
+    }],
+    "dataSet": "dataset.sdrowner",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.leadsourceoriginal.leadsourceoriginal"],
+      "mode": "FULL",
+      "columnName": "leadsourceoriginal"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.leadsourceoriginal.leadcategory"],
+      "mode": "FULL",
+      "columnName": "leadcategory"
+    }],
+    "dataSet": "dataset.leadsourceoriginal",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.account.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.account.id.name"],
+      "mode": "FULL",
+      "columnName": "name"
+    }, {
+      "populates": ["label.account.id.url"],
+      "mode": "FULL",
+      "columnName": "url"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.account.region"],
+      "mode": "FULL",
+      "columnName": "region"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.account.accountstage"],
+      "mode": "FULL",
+      "columnName": "accountstage"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.account.accountownername"],
+      "mode": "FULL",
+      "columnName": "accountownername"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.account.accountindustry"],
+      "mode": "FULL",
+      "columnName": "accountindustry"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.account.accountemployeecount"],
+      "mode": "FULL",
+      "columnName": "accountemployeecount"
+    }, {
+      "populates": ["label.account.accountemployeecount.employeecountsort"],
+      "mode": "FULL",
+      "columnName": "employeecountsort"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.account.accountannualrevenue"],
+      "mode": "FULL",
+      "columnName": "accountannualrevenue"
+    }],
+    "dataSet": "dataset.account",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.amounttype.amounttype"],
+      "mode": "FULL",
+      "columnName": "amounttype"
+    }],
+    "dataSet": "dataset.amounttype",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.product.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.product.id.name"],
+      "mode": "FULL",
+      "columnName": "name"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.product.product_type"],
+      "mode": "FULL",
+      "columnName": "product_type"
+    }],
+    "dataSet": "dataset.product",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.renewalstatus.renewalstatus"],
+      "mode": "FULL",
+      "columnName": "renewalstatus"
+    }],
+    "dataSet": "dataset.renewalstatus",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.sourcingorigin.techsourcingtype"],
+      "mode": "FULL",
+      "columnName": "techsourcingtype"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.sourcingorigin.sourcingtype"],
+      "mode": "FULL",
+      "columnName": "sourcingtype"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.sourcingorigin.sourcingtypechannel"],
+      "mode": "FULL",
+      "columnName": "sourcingtypechannel"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.sourcingorigin.sourcingtypeteam"],
+      "mode": "FULL",
+      "columnName": "sourcingtypeteam"
+    }, {
+      "populates": ["label.sourcingorigin.sourcingtypeteam.sourcingtypeteamname"],
+      "mode": "FULL",
+      "columnName": "sourcingtypeteamname"
+    }],
+    "dataSet": "dataset.sourcingorigin",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.sdrperformancestatus.sdrperformancestatus"],
+      "mode": "FULL",
+      "columnName": "sdrperformancestatus"
+    }],
+    "dataSet": "dataset.sdrperformancestatus",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.consolidatedmarketingstatus.consolidatedmarketingstatus"],
+      "mode": "FULL",
+      "columnName": "consolidatedmarketingstatus"
+    }, {
+      "populates": ["label.consolidatedmarketingstatus.consolidatedmarketingstatus.mktgstatussorting"],
+      "mode": "FULL",
+      "columnName": "mktgstatussorting"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.consolidatedmarketingstatus.detailedmarketingstatuslvl1"],
+      "mode": "FULL",
+      "columnName": "detailedmarketingstatuslvl1"
+    }, {
+      "populates": ["label.consolidatedmarketingstatus.detailedmarketingstatuslvl1.ordersort1"],
+      "mode": "FULL",
+      "columnName": "ordersort1"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.consolidatedmarketingstatus.consolidatedmarketingstatus1"],
+      "mode": "FULL",
+      "columnName": "consolidatedmarketingstatus1"
+    }, {
+      "populates": ["label.consolidatedmarketingstatus.consolidatedmarketingstatus1.ordersort2"],
+      "mode": "FULL",
+      "columnName": "ordersort2"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.consolidatedmarketingstatus.consolidatedsqltos2o"],
+      "mode": "FULL",
+      "columnName": "consolidatedsqltos2o"
+    }, {
+      "populates": ["label.consolidatedmarketingstatus.consolidatedsqltos2o.ordersortsqltos2o"],
+      "mode": "FULL",
+      "columnName": "ordersortsqltos2o"
+    }],
+    "dataSet": "dataset.consolidatedmarketingstatus",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.activity_owner.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.activity_owner.id.name"],
+      "mode": "FULL",
+      "columnName": "name"
+    }, {
+      "populates": ["label.activity_owner.id.url"],
+      "mode": "FULL",
+      "columnName": "url"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.activity_owner.region"],
+      "mode": "FULL",
+      "columnName": "region"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.activity_owner.department"],
+      "mode": "FULL",
+      "columnName": "department"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.activity_owner.is_sdr"],
+      "mode": "FULL",
+      "columnName": "is_sdr"
+    }],
+    "dataSet": "dataset.activity_owner",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.leadsource.leadsource"],
+      "mode": "FULL",
+      "columnName": "leadsource"
+    }],
+    "dataSet": "dataset.leadsource",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.winlossreason.winlossreason"],
+      "mode": "FULL",
+      "columnName": "winlossreason"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.winlossreason.winlossreason1"],
+      "mode": "FULL",
+      "columnName": "winlossreason1"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.winlossreason.secondarywinlossreason"],
+      "mode": "FULL",
+      "columnName": "secondarywinlossreason"
+    }],
+    "dataSet": "dataset.winlossreason",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.productline.productline"],
+      "mode": "FULL",
+      "columnName": "productline"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.productline.productline1"],
+      "mode": "FULL",
+      "columnName": "productline1"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.productline.prod"],
+      "mode": "FULL",
+      "columnName": "prod"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.productline.productorspecificsolution"],
+      "mode": "FULL",
+      "columnName": "productorspecificsolution"
+    }],
+    "dataSet": "dataset.productline",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.leadchannel.leadchannel"],
+      "mode": "FULL",
+      "columnName": "leadchannel"
+    }],
+    "dataSet": "dataset.leadchannel",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.stage.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.stage.id.name"],
+      "mode": "FULL",
+      "columnName": "name"
+    }, {
+      "populates": ["label.stage.id.order"],
+      "mode": "FULL",
+      "columnName": "order"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.stage.is_won"],
+      "mode": "FULL",
+      "columnName": "is_won"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.stage.status"],
+      "mode": "FULL",
+      "columnName": "status"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.stage.is_active"],
+      "mode": "FULL",
+      "columnName": "is_active"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.stage.is_closed"],
+      "mode": "FULL",
+      "columnName": "is_closed"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.stage.issao"],
+      "mode": "FULL",
+      "columnName": "issao"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.stage.amconsolidatedstage"],
+      "mode": "FULL",
+      "columnName": "amconsolidatedstage"
+    }, {
+      "populates": ["label.stage.amconsolidatedstage.amstageorder"],
+      "mode": "FULL",
+      "columnName": "amstageorder"
+    }],
+    "dataSet": "dataset.stage",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.opp_owner.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.opp_owner.id.name"],
+      "mode": "FULL",
+      "columnName": "name"
+    }, {
+      "populates": ["label.opp_owner.id.oppownerpicture"],
+      "mode": "FULL",
+      "columnName": "oppownerpicture"
+    }, {
+      "populates": ["label.opp_owner.id.url"],
+      "mode": "FULL",
+      "columnName": "url"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.opp_owner.region"],
+      "mode": "FULL",
+      "columnName": "region"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.opp_owner.department"],
+      "mode": "FULL",
+      "columnName": "department"
+    }, {
+      "populates": ["oppownerstart.date.mdyy"],
+      "mode": "FULL",
+      "constraints": {
+        "date": "dd/MM/yyyy"
+      },
+      "columnName": "oppownerstart",
+      "referenceKey": 1
+    }],
+    "dataSet": "dataset.opp_owner",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.activity.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.activity.id.subject"],
+      "mode": "FULL",
+      "columnName": "subject"
+    }, {
+      "populates": ["label.activity.id.url"],
+      "mode": "FULL",
+      "columnName": "url"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.activity.status"],
+      "mode": "FULL",
+      "columnName": "status"
+    }, {
+      "referenceKey": 1,
+      "populates": ["label.activity.type"],
+      "mode": "FULL",
+      "columnName": "type"
+    }],
+    "dataSet": "dataset.activity",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.opportunity.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.opportunity.id.name"],
+      "mode": "FULL",
+      "columnName": "name"
+    }, {
+      "populates": ["label.opportunity.id.url"],
+      "mode": "FULL",
+      "columnName": "url"
+    }],
+    "dataSet": "dataset.opportunity",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.bookingtype.booking_type_id"],
+      "mode": "FULL",
+      "columnName": "booking_type_id"
+    }, {
+      "populates": ["label.bookingtype.booking_type_id.booking_type_nm"],
+      "mode": "FULL",
+      "columnName": "booking_type_nm"
+    }],
+    "dataSet": "dataset.bookingtype",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}, {
+  "dataSetSLIManifest": {
+    "parts": [{
+      "referenceKey": 1,
+      "populates": ["label.forecast.id"],
+      "mode": "FULL",
+      "columnName": "id"
+    }, {
+      "populates": ["label.forecast.id.forecastcategoryordered"],
+      "mode": "FULL",
+      "columnName": "forecastcategoryordered"
+    }],
+    "dataSet": "dataset.forecast",
+    "file": "data.csv",
+    "csvParams": {
+      "quoteChar": "\"",
+      "escapeChar": "\"",
+      "separatorChar": ",",
+      "endOfLine": "\n"
+    }
+  }
+}]

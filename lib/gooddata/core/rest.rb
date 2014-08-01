@@ -95,9 +95,9 @@ module GoodData
       connection.download(file, where, options.merge(:staging_url => url))
     end
 
-    def poll(result, key, options = {})
+    def poll(result, key = nil, options = {}, &bl)
       sleep_interval = options[:sleep_interval] || 10
-      link = result[key]['links']['poll']
+      link = bl ? bl.call(result) : result[key]['links']['poll']
       response = GoodData.get(link, :process => false)
       while response.code != 204
         sleep sleep_interval
@@ -106,6 +106,16 @@ module GoodData
           response = GoodData.get(link, :process => false)
         end
       end
+    end
+
+    def poll_on_root(result, root, &bl)
+      polling_url = bl.call(result)
+      polling_result = GoodData.get(polling_url)
+      while polling_result[root]
+        sleep(3)
+        polling_result = GoodData.get(polling_url)
+      end
+      polling_result
     end
 
     def wait_for_polling_result(polling_url)
