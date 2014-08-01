@@ -64,8 +64,6 @@ module GoodData
             GoodData.upload_to_user_webdav(temp.path)
             temp.path
           end
-          GoodData.upload_to_user_webdav(temp.path)
-          temp
         end
       end
 
@@ -131,7 +129,7 @@ module GoodData
     end
 
     def process
-      raw_data['process']
+      json['process']
     end
 
     def name

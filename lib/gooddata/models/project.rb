@@ -8,6 +8,9 @@ require 'zip'
 
 require_relative 'process'
 require_relative '../exceptions/no_project_error'
+
+require_relative '../mixins/mixins'
+
 require_relative 'project_role'
 
 require_relative '../rest/resource'
@@ -22,7 +25,19 @@ module GoodData
 
     attr_accessor :connection, :json
 
+    alias_method :to_json, :json
+    alias_method :raw_data, :json
+
+    include GoodData::Mixin::MetaGetter
+    include GoodData::Mixin::DataGetter
+
     class << self
+      include GoodData::Mixin::RootKeySetter
+
+      include GoodData::Mixin::MetaPropertyReader
+
+      include GoodData::Mixin::MetaPropertyWriter
+
       # Returns an array of all projects accessible by
       # current user
       def all
@@ -50,6 +65,14 @@ module GoodData
           GoodData.connection.factory.create(Project, response)
         end
       end
+
+      Project.root_key :project
+
+      include GoodData::Mixin::RootKeyGetter
+      include GoodData::Mixin::DataGetter
+      include GoodData::Mixin::Author
+      include GoodData::Mixin::Contributor
+      include GoodData::Mixin::Timestamps
 
       # Create a project from a given attributes
       # Expected keys:
@@ -157,14 +180,6 @@ module GoodData
       rep.save
     end
 
-    # Gets author of project
-    #
-    # @return [String] Project author
-    def author
-      # TODO: Return object instead
-      @json['project']['meta']['author']
-    end
-
     # Returns web interface URI of project
     #
     # @return [String] Project URL
@@ -222,27 +237,6 @@ module GoodData
         state = result['taskState']['status']
       end
       new_project
-    end
-
-    # Project contributor
-    #
-    # @return [String] Project contributor
-    # TODO: Return as object
-    def contributor
-      # TODO: Return object instead
-      @json['project']['meta']['contributor']
-    end
-
-    # Gets the date when created
-    #
-    # @return [DateTime] Date time when created
-    def created
-      DateTime.parse(@json['project']['meta']['created'])
-    end
-
-    # Gets ruby wrapped raw project JSON data
-    def data
-      raw_data['project']
     end
 
     def datasets
@@ -614,7 +608,7 @@ module GoodData
 
     # Saves project
     def save
-      response = GoodData.post PROJECTS_PATH, raw_data
+      response = GoodData.post PROJECTS_PATH, json
       if uri.nil?
         response = GoodData.get response['uri']
         @json = response
@@ -647,7 +641,7 @@ module GoodData
     def slis
       link = "#{data['links']['metadata']}#{SLIS_PATH}"
 
-      # TODO: Review what to do with passed extra argument
+      # FIXME: Review what to do with passed extra argument
       Metadata.new GoodData.get(link)
     end
 
@@ -658,26 +652,7 @@ module GoodData
       data['content']['state'].downcase.to_sym if data['content'] && data['content']['state']
     end
 
-    # Gets project summary
-    #
-    # @return [String] Project summary
-    def summary
-      data['meta']['summary'] if data['meta']
-    end
-
-    # Gets project title
-    #
-    # @return [String] Project title
-    def title
-      data['meta']['title'] if data['meta']
-    end
-
-    # Gets project update date
-    #
-    # @return [DateTime] Date time of last update
-    def updated
-      DateTime.parse(@json['project']['meta']['updated'])
-    end
+    Project.metadata_property_reader :summary, :title
 
     # Uploads file to project
     #
@@ -863,8 +838,5 @@ module GoodData
       end
       polling_result
     end
-
-    alias_method :to_json, :json
-    alias_method :raw_data, :json
   end
 end

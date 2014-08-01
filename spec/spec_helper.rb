@@ -18,6 +18,7 @@ RSpec.configure do |config|
   config.include BlueprintHelper
   config.include CliHelper
   config.include ConnectionHelper
+  config.include CryptoHelper
   config.include CsvHelper
   config.include ProcessHelper
   config.include ProjectHelper
