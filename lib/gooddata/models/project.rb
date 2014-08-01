@@ -119,6 +119,10 @@ module GoodData
         project
       end
 
+      def create_from_blueprint(blueprint, options = {})
+        GoodData::Model::ProjectCreator.migrate(:spec => blueprint, :token => options[:auth_token])
+      end
+
       # Takes one CSV line and creates hash from data extracted
       #
       # @param row CSV row
@@ -139,14 +143,16 @@ module GoodData
 
     def add_metric(options = {})
       options[:expression] || fail('Metric has to have its expression defined')
-      m1 = GoodData::Metric.create(options)
+      m1 = GoodData::Metric.xcreate(options)
       m1.save
     end
+    alias_method :create_metric, :add_metric
 
     def add_report(options = {})
       rep = GoodData::Report.create(options)
       rep.save
     end
+    alias_method :create_report, :add_report
 
     # Returns an indication whether current user is admin in this project
     #
@@ -262,6 +268,14 @@ module GoodData
         sleep 10
         result = GoodData.get polling_uri
       end
+    end
+
+    # Helper for getting facts of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
+    # @return [GoodData::Fact] fact instance or list
+    def fact(id)
+      GoodData::Fact[id, project: self]
     end
 
     # Gets project role by its identifier
