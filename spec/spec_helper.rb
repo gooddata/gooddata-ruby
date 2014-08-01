@@ -21,7 +21,7 @@ RSpec.configure do |config|
   config.include CryptoHelper
   config.include CsvHelper
   config.include ProjectHelper
-  config.include SchemaHelper
+  # config.include SchemaHelper
 
   config.filter_run_excluding :broken => true
 
