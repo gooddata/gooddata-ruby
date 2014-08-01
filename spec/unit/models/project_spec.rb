@@ -23,7 +23,7 @@ describe GoodData::Project do
 
             # Following lines are ugly hack
             'role' => row[6],
-            'password' => row[3],
+            'password' => CryptoHelper.generate_password,
             'domain' => row[9],
 
             # And following lines are even much more ugly hack
@@ -190,6 +190,7 @@ describe GoodData::Project do
 
   describe '#users' do
     it 'Returns array of GoodData::Users' do
+      pending 'Disable as it is TOOOO SLOOOW'
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
@@ -250,7 +251,7 @@ describe GoodData::Project do
 
               # Following lines are ugly hack
               'role' => 'admin',
-              'password' => 'password',
+              'password' => CryptoHelper.generate_password,
               'domain' => ConnectionHelper::DEFAULT_DOMAIN,
 
               # And following lines are even much more ugly hack
@@ -313,7 +314,12 @@ describe GoodData::Project do
         }
       end
 
-      res = project.set_users_roles(list)
+      begin
+        res = project.set_users_roles(list)
+      rescue Exception => e
+        puts e.inspect
+      end
+
       expect(res.length).to equal(list.length)
       res.each do |update_result|
         expect(update_result[:result]['projectUsersUpdateResult']['successful'][0]).to include(update_result[:user].uri)
@@ -351,6 +357,23 @@ describe GoodData::Project do
       res = project.set_users_roles(list)
       expect(res.length).to equal(list.length)
     end
+  end
 
+  describe '#summary' do
+    it 'Properly gets title of project' do
+      project = ProjectHelper.get_default_project
+
+      res = project.summary
+      expect(res).to include(ProjectHelper::PROJECT_SUMMARY)
+    end
+  end
+
+  describe '#title' do
+    it 'Properly gets title of project' do
+      project = ProjectHelper.get_default_project
+
+      res = project.title
+      expect(res).to include(ProjectHelper::PROJECT_TITLE)
+    end
   end
 end

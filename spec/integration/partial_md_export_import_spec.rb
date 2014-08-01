@@ -19,7 +19,7 @@ describe "Spin a project", :constraint => 'slow' do
 
   it "should transfer a metric" do
     GoodData.with_project(@source_project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines changed')
+      f = GoodData::Fact.find_first_by_title('Lines Changed')
       metric_title = "Testing metric to be exported"
       metric = GoodData::Metric.xcreate(:expression => "SELECT SUM(#\"#{f.title}\")", :title => metric_title)
       metric.save

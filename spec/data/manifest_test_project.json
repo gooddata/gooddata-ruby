@@ -1,0 +1,116 @@
+[
+  {
+    "dataSetSLIManifest": {
+      "parts": [
+        {
+          "referenceKey": 1,
+          "populates": [
+            "label.repos.repo_id"
+          ],
+          "mode": "FULL",
+          "columnName": "repo_id"
+        },
+        {
+          "populates": [
+            "label.repos.repo_id.name"
+          ],
+          "mode": "FULL",
+          "columnName": "name"
+        },
+        {
+          "referenceKey": 1,
+          "populates": [
+            "label.repos.department"
+          ],
+          "mode": "FULL",
+          "columnName": "department"
+        }
+      ],
+      "dataSet": "dataset.repos",
+      "file": "data.csv",
+      "csvParams": {
+        "quoteChar": "\"",
+        "escapeChar": "\"",
+        "separatorChar": ",",
+        "endOfLine": "\n"
+      }
+    }
+  },
+  {
+    "dataSetSLIManifest": {
+      "parts": [
+        {
+          "referenceKey": 1,
+          "populates": [
+            "label.devs.dev_id"
+          ],
+          "mode": "FULL",
+          "columnName": "dev_id"
+        },
+        {
+          "populates": [
+            "label.devs.dev_id.email"
+          ],
+          "mode": "FULL",
+          "columnName": "email"
+        }
+      ],
+      "dataSet": "dataset.devs",
+      "file": "data.csv",
+      "csvParams": {
+        "quoteChar": "\"",
+        "escapeChar": "\"",
+        "separatorChar": ",",
+        "endOfLine": "\n"
+      }
+    }
+  },
+  {
+    "dataSetSLIManifest": {
+      "parts": [
+        {
+          "populates": [
+            "fact.commits.lines_changed"
+          ],
+          "mode": "FULL",
+          "columnName": "lines_changed"
+        },
+        {
+          "populates": [
+            "committed_on.date.mdyy"
+          ],
+          "mode": "FULL",
+          "constraints": {
+            "date": "dd/MM/yyyy"
+          },
+          "columnName": "committed_on",
+          "referenceKey": 1
+        },
+        {
+          "populates": [
+            "label.devs.dev_id"
+          ],
+          "mode": "FULL",
+          "columnName": "dev_id",
+          "referenceKey": 1
+        },
+        {
+          "populates": [
+            "label.repos.repo_id"
+          ],
+          "mode": "FULL",
+          "columnName": "repo_id",
+          "referenceKey": 1
+        }
+      ],
+      "dataSet": "dataset.commits",
+      "file": "data.csv",
+      "csvParams": {
+        "quoteChar": "\"",
+        "escapeChar": "\"",
+        "separatorChar": ",",
+        "endOfLine": "\n"
+      }
+    }
+  }
+]

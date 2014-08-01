@@ -6,8 +6,6 @@ require_relative 'version'
 require_relative 'connection'
 require_relative 'helpers/helpers'
 
-FasterCSV = CSV
-
 # # GoodData API wrapper
 #
 # A convenient Ruby wrapper around the GoodData RESTful API.

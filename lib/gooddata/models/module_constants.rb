@@ -23,7 +23,5 @@ module GoodData
     TIME_FACT_PREFIX = 'tm.dt'
     TIME_ATTRIBUTE_PREFIX = 'attr.time'
     FACT_FOLDER_PREFIX = 'ffld'
-
-    SKIP_FIELD = false
   end
 end
