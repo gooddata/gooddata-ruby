@@ -1,5 +1,10 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.6
+
+## O.6.5
+- Mixins
+
 ## 0.6.4
 - Ability to get blueprint directly through API. This way you can work with projects that was not created using SDK
 - Added basis for GD_LINT that checks your project for typical problems
