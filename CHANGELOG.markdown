@@ -1,6 +1,8 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.6
+- Fixed the scaffolding templates to take advantage of new syntax (missing references in dataset refs) 
+- Fixing inclusion of extensions when using CLI
 
 ## 0.6.5
 - Mixins
