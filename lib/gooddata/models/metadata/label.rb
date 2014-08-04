@@ -14,11 +14,11 @@ module GoodData
     # @param [String] value value of an label you are looking for
     # @return [String]
     def find_value_uri(value)
-      value = CGI.escape(value)
-      results = GoodData.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{value}", {})
+      escaped_value = CGI.escape(value)
+      results = GoodData.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{escaped_value}", {})
       items = results['validElements']['items']
       if items.empty?
-        fail "#{value} not found"
+        fail(AttributeElementNotFound, value)
       else
         items.first['element']['uri']
       end
@@ -28,7 +28,7 @@ module GoodData
     # @param [Object] element_id Element identifier either Number or a uri as a String
     # @return [String] value of the element if found
     def find_element_value(element_id)
-      element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
+      element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d+)/)[1] : element_id
       uri = links['elements']
       result = GoodData.get(uri + "/?id=#{element_id}")
       items = result['attributeElements']['elements']
@@ -37,6 +37,16 @@ module GoodData
       else
         items.first['title']
       end
+    end
+
+    # Finds if a label has an attribute element for given value.
+    # @param [String] value value of an label you are looking for
+    # @return [Boolean]
+    def value?(value)
+      find_value_uri(value)
+      true
+    rescue AttributeElementNotFound
+      false
     end
 
     # Returns all values for this label. This is for inspection purposes only since obviously there can be huge number of elements.

@@ -141,6 +141,16 @@ module GoodData
             p.validate
           end
         end
+
+        def jack_in(project_id)
+          GoodData.with_project(project_id) do |project|
+            puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
+            binding.pry(:quiet => true,
+                        :prompt => [proc do |target_self, nest_level, pry|
+                          'project_live_sesion: '
+                        end])
+          end
+        end
       end
     end
   end

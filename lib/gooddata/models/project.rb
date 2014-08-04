@@ -100,7 +100,6 @@ module GoodData
         json['project']['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
         project = Project.new json
         project.save
-
         # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
         while project.state.to_s != 'enabled'
           if project.state.to_s == 'deleted'
@@ -138,26 +137,6 @@ module GoodData
       end
     end
 
-    # Creates a data set within the project
-    #
-    # == Usage
-    # p.add_dataset 'Test', [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
-    # p.add_dataset 'title' => 'Test', 'columns' => [ { 'name' => 'a1', 'type' => 'ATTRIBUTE' ... } ... ]
-    #
-    def add_dataset(schema_def, columns = nil, &block)
-      schema = if block
-                 builder = block.call(Model::SchemaBuilder.new(schema_def))
-                 builder.to_schema
-               else
-                 sch = { :title => schema_def, :columns => columns } if columns
-                 sch = Model::Schema.new schema_def if schema_def.is_a? Hash
-                 sch = schema_def if schema_def.is_a?(Model::Schema)
-                 fail(ArgumentError, 'Required either schema object or title plus columns array') unless schema_def.is_a? Model::Schema
-                 sch
-               end
-      Model.add_schema(schema, self)
-    end
-
     def add_metric(options = {})
       options[:expression] || fail('Metric has to have its expression defined')
       m1 = GoodData::Metric.create(options)
@@ -167,6 +146,22 @@ module GoodData
     def add_report(options = {})
       rep = GoodData::Report.create(options)
       rep.save
+    end
+
+    # Returns an indication whether current user is admin in this project
+    #
+    # @return [Boolean] True if user has admin role in the project, false otherwise.
+    def am_i_admin?
+      user_has_role?(GoodData.user, 'admin')
+    end
+
+    # Gets project blueprint from the server
+    #
+    # @return [GoodData::ProjectRole] Project role if found
+    def blueprint
+      result = GoodData.get("/gdc/projects/#{pid}/model/view")
+      model = GoodData.poll_on_root(result, 'asyncTask') { |r| r['asyncTask']['link']['poll'] }
+      GoodData::Model::FromWire.from_wire(model)
     end
 
     # Returns web interface URI of project
@@ -188,10 +183,10 @@ module GoodData
       # TODO: Refactor so if export or import fails the new_project will be cleaned
       with_data = options[:data] || true
       with_users = options[:users] || false
-      title = options[:title] || "Clone of #{title}"
+      a_title = options[:title] || "Clone of #{title}"
 
       # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
-      new_project = GoodData::Project.create(options.merge(:title => title))
+      new_project = GoodData::Project.create(options.merge(:title => a_title))
 
       export = {
         :exportProject => {
@@ -229,6 +224,7 @@ module GoodData
     end
 
     def datasets
+      blueprint.datasets
       datasets_uri = "#{md['data']}/sets"
       response = GoodData.get datasets_uri
       response['dataSetsInfo']['sets'].map do |ds|
@@ -252,6 +248,24 @@ module GoodData
     # Deletes dashboards for project
     def delete_dashboards
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
+    end
+
+    # Executes DML expression. See (https://developer.gooddata.com/article/deleting-records-from-datasets)
+    # for some examples and explanations
+    #
+    # @param dml [String] DML expression
+    def execute_dml(dml)
+      uri = "/gdc/md/#{pid}/dml/manage"
+      result = GoodData.post(uri,
+                             manage: {
+                               maql: dml
+                             })
+      polling_uri = result['uri']
+      result = GoodData.get(polling_uri)
+      while result['taskState'] && result['taskState']['status'] == 'WAIT'
+        sleep 10
+        result = GoodData.get polling_uri
+      end
     end
 
     # Gets project role by its identifier
@@ -314,6 +328,7 @@ module GoodData
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
       return name if name.instance_of?(GoodData::Membership)
+      return member(name) if name.instance_of?(GoodData::Profile)
       name.downcase!
       user_list.each do |user|
         return user if user.uri.downcase == name ||
@@ -321,6 +336,19 @@ module GoodData
           user.email.downcase == name
       end
       nil
+    end
+
+    # Checks whether user has particular role in given proejct
+    #
+    # @param user [GoodData::Profile | GoodData::Membership | String] User in question. Can be passed by login (String), profile or membershi objects
+    # @param role_name [String || GoodData::ProjectRole] Project role cna be given by either string or GoodData::ProjectRole object
+    # @return [Boolean] Tru if user has role_name
+    def user_has_role?(user, role_name)
+      member = get_user(user)
+      role = get_role(role_name)
+      member.roles.include?(role)
+    rescue
+      false
     end
 
     # Initializes object instance from raw wire JSON
@@ -387,6 +415,10 @@ module GoodData
     # @return [Hash] Project related links
     def links
       data['links']
+    end
+
+    def lint
+      blueprint.lint
     end
 
     def md
@@ -472,6 +504,28 @@ module GoodData
       true
     end
 
+    def info
+      results = blueprint.datasets.map do |ds|
+        [ds, ds.count]
+      end
+      puts title
+      puts GoodData::Helpers.underline(title)
+      puts
+      puts "Datasets - #{results.count}"
+      puts
+      results.each do |x|
+        dataset, count = x
+        dataset.title.tap do |t|
+          puts t
+          puts GoodData::Helpers.underline(t)
+          puts "Size - #{count} rows"
+          puts "#{dataset.attributes_and_anchors.count} attributes, #{dataset.facts.count} facts, #{dataset.references.count} references"
+          puts
+        end
+      end
+      nil
+    end
+
     # Forces project to reload
     def reload!
       if saved?
@@ -495,11 +549,19 @@ module GoodData
 
     # Saves project
     def save
-      response = GoodData.post PROJECTS_PATH, json
-      if uri.nil?
-        response = GoodData.get response['uri']
-        @json = response
-      end
+      data_to_send = raw_data.deep_dup
+      data_to_send['project']['content'].delete('cluster')
+      data_to_send['project']['content'].delete('isPublic')
+      data_to_send['project']['content'].delete('state')
+      response = if uri
+                   GoodData.post(PROJECT_PATH % pid, data_to_send)
+                   GoodData.get uri
+                 else
+                   result = GoodData.post(PROJECTS_PATH, data_to_send)
+                   GoodData.get result['uri']
+                 end
+      @json = response
+      self
     end
 
     # Checks if is project saved
@@ -541,12 +603,19 @@ module GoodData
 
     Project.metadata_property_reader :summary, :title
 
+    # Gets project title
+    #
+    # @return [String] Project title
+    def title=(a_title)
+      data['meta']['title'] = a_title if data['meta']
+    end
+
     # Uploads file to project
     #
     # @param file File to be uploaded
     # @param schema Schema to be used
-    def upload(file, schema, mode = 'FULL')
-      schema.upload file, self, mode
+    def upload(file, dataset_blueprint, mode = 'FULL')
+      dataset_blueprint.upload file, self, mode
     end
 
     def uri
@@ -719,7 +788,7 @@ module GoodData
     # metric_filter - Checks metadata for inconsistent metric filters.
     # invalid_objects - Checks metadata for invalid/corrupted objects.
     # asyncTask response
-    def validate(filters = %w(ldm, pdm, metric_filter, invalid_objects))
+    def validate(filters = %w(ldm pdm metric_filter invalid_objects))
       response = GoodData.post "#{GoodData.project.md['validate-project']}", 'validateProject' => filters
       polling_link = response['asyncTask']['link']['poll']
       polling_result = GoodData.get(polling_link)

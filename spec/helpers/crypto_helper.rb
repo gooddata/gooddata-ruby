@@ -1,7 +1,9 @@
+require 'securerandom'
+
 module CryptoHelper
   class << self
     def generate_password
-      'password' # '123.tajny<!>.456'
+      SecureRandom.hex(16)
     end
   end
 end

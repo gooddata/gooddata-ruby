@@ -23,7 +23,7 @@ describe GoodData::Project do
 
             # Following lines are ugly hack
             'role' => row[6],
-            'password' => row[3],
+            'password' => CryptoHelper.generate_password,
             'domain' => row[9],
 
             # And following lines are even much more ugly hack
@@ -314,7 +314,12 @@ describe GoodData::Project do
         }
       end
 
-      res = project.set_users_roles(list)
+      begin
+        res = project.set_users_roles(list)
+      rescue Exception => e
+        puts e.inspect
+      end
+
       expect(res.length).to equal(list.length)
       res.each do |update_result|
         expect(update_result[:result]['projectUsersUpdateResult']['successful'][0]).to include(update_result[:user].uri)
