@@ -44,6 +44,8 @@ module GoodData
       include GoodData::Mixin::MdIdToUri
     end
 
+    root_key :metric
+
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
     metadata_property_writer :tags, :summary, :title, :identifier
 
