@@ -15,35 +15,24 @@ module GoodData
 
     alias_method :raw_data, :json
     alias_method :to_hash, :json
-    alias_method :data, :json
 
-    include GoodData::Mixin::RootKeyGetter
-    include GoodData::Mixin::MdJson
-    include GoodData::Mixin::DataGetter
-    include GoodData::Mixin::MetaGetter
-    include GoodData::Mixin::ObjId
-    include GoodData::Mixin::ContentGetter
-    include GoodData::Mixin::Timestamps
-    include GoodData::Mixin::Links
-    include GoodData::Mixin::NotAttribute
-    include GoodData::Mixin::NotExportable
-    include GoodData::Mixin::NotFact
-    include GoodData::Mixin::NotMetric
-    include GoodData::Mixin::NotLabel
-    include GoodData::Mixin::MdRelations
-
-    class << self
-      include GoodData::Mixin::RootKeySetter
-      include GoodData::Mixin::MetaPropertyReader
-      include GoodData::Mixin::MetaPropertyWriter
-      include GoodData::Mixin::MdObjId
-      include GoodData::Mixin::MdObjectQuery
-      include GoodData::Mixin::MdObjectIndexer
-      include GoodData::Mixin::MdFinders
-      include GoodData::Mixin::MdIdToUri
-    end
+    include GoodData::Mixin::RestResource
 
     root_key :metric
+
+    class << self
+      def metadata_property_reader(*props)
+        props.each do |prop|
+          define_method prop, proc { meta[prop.to_s] }
+        end
+      end
+
+      def metadata_property_writer(*props)
+        props.each do |prop|
+          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
+        end
+      end
+    end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
     metadata_property_writer :tags, :summary, :title, :identifier

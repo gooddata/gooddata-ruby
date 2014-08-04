@@ -2,10 +2,10 @@
 
 require 'multi_json'
 
-require_relative '../rest/object'
-
 require_relative 'project'
 require_relative 'project_role'
+
+require_relative '../rest/object'
 
 module GoodData
   class Membership < GoodData::Rest::Object

@@ -69,11 +69,11 @@ module GoodData
             fail "Object given by id \"#{item}\" could not be found" if x.nil?
             case x.raw_data.keys.first.to_s
             when 'attribute'
-              GoodData::Attribute.new(x.raw_data).display_forms.first
+              GoodData::Attribute.new(x.json).display_forms.first
             when 'attributeDisplayForm'
-              GoodData::Label.new(x.raw_data)
+              GoodData::Label.new(x.json)
             when 'metric'
-              GoodData::Metric.new(x.raw_data)
+              GoodData::Metric.new(x.json)
             end
           elsif item.is_a?(Hash) && item.keys.include?(:title)
             case item[:type].to_s
@@ -127,7 +127,7 @@ module GoodData
       end
 
       def execute_inline(rd)
-        rd = rd.respond_to?(:raw_data) ? rd.raw_data : rd
+        rd = rd.respond_to?(:json) ? rd.json : rd
         data = {
           report_req: {
             definitionContent: {

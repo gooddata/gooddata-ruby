@@ -6,14 +6,13 @@ require 'fileutils'
 require 'pmap'
 require 'zip'
 
-require_relative 'process'
 require_relative '../exceptions/no_project_error'
 
-require_relative '../mixins/mixins'
-
-require_relative 'project_role'
-
+require_relative '../mixins/rest_resource'
 require_relative '../rest/resource'
+
+require_relative 'process'
+require_relative 'project_role'
 
 module GoodData
   class Project < GoodData::Rest::Resource
@@ -28,16 +27,14 @@ module GoodData
     alias_method :to_json, :json
     alias_method :raw_data, :json
 
-    include GoodData::Mixin::MetaGetter
-    include GoodData::Mixin::DataGetter
+    include GoodData::Mixin::RestResource
+
+    Project.root_key :project
+
+    include GoodData::Mixin::Author
+    include GoodData::Mixin::Contributor
 
     class << self
-      include GoodData::Mixin::RootKeySetter
-
-      include GoodData::Mixin::MetaPropertyReader
-
-      include GoodData::Mixin::MetaPropertyWriter
-
       # Returns an array of all projects accessible by
       # current user
       def all
@@ -65,14 +62,6 @@ module GoodData
           GoodData.connection.factory.create(Project, response)
         end
       end
-
-      Project.root_key :project
-
-      include GoodData::Mixin::RootKeyGetter
-      include GoodData::Mixin::DataGetter
-      include GoodData::Mixin::Author
-      include GoodData::Mixin::Contributor
-      include GoodData::Mixin::Timestamps
 
       # Create a project from a given attributes
       # Expected keys:

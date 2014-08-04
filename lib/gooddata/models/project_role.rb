@@ -4,21 +4,16 @@ require_relative 'profile'
 
 require_relative '../rest/rest'
 
-require_relative '../mixins/mixins'
+require_relative '../mixins/rest_resource'
 
 module GoodData
   class ProjectRole < GoodData::Rest::Object
     attr_accessor :json
 
-    include GoodData::Mixin::RestGetters
+    include GoodData::Mixin::RestResource
 
-    class << self
-      include GoodData::Mixin::RestResource
-    end
+    root_key :projectRole
 
-    ProjectRole.root_key :projectRole
-
-    include GoodData::Mixin::RootKeyGetter
     include GoodData::Mixin::Author
     include GoodData::Mixin::Contributor
     include GoodData::Mixin::Timestamps
@@ -27,9 +22,9 @@ module GoodData
       @json = json
     end
 
-    ProjectRole.data_property_reader :permissions
+    data_property_reader :permissions
 
-    ProjectRole.metadata_property_reader :identifier, :title, :summary
+    metadata_property_reader :identifier, :title, :summary
 
     # Gets Users with this Role
     #

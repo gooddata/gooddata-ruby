@@ -1,12 +1,18 @@
 # encoding: UTF-8
 
 require_relative '../../goodzilla/goodzilla'
+require_relative '../../mixins/mixins'
 require_relative '../metadata'
 require_relative 'metadata'
 
 module GoodData
   # Metric representation
   class Metric < MdObject
+    attr_reader :json
+
+    alias_method :to_hash, :json
+
+    include GoodData::Mixin::RestResource
     root_key :metric
 
     PARSE_MAQL_OBJECT_REGEXP = /\[([^\]]+)\]/

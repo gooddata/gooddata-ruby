@@ -1,10 +1,10 @@
 # encoding: UTF-8
 
-require 'gooddata'
+require 'gooddata/models/metadata/metric'
 
 describe GoodData::Metric do
 
-=begin
+
   RAW_DATA2 = {'metric' =>
                  {'content' =>
                     {'format' => '#,##0',
@@ -88,8 +88,5 @@ describe GoodData::Metric do
       @instance.contain?(USED_METRIC).should == false
       @instance.contain?(UNUSED_METRIC).should == true
     end
-
   end
-=end
-
 end
