@@ -1,0 +1,81 @@
+{
+    "projectModelView": {
+        "model": {
+            "projectModel": {
+                "datasets": [
+                    {
+                        "dataset": {
+                            "identifier": "dataset.stage_history",
+                            "title": "stage_history",
+                            "anchor": {
+                                "attribute": {
+                                    "identifier": "attr.stage_history.factsof",
+                                    "title": "Records of stage_history"
+                                }
+                            },
+                            "attributes": [
+                                {
+                                    "attribute": {
+                                        "identifier": "attr.stage_history.current_status",
+                                        "title": "Current Status",
+                                        "labels": [
+                                            {
+                                                "label": {
+                                                    "identifier": "label.stage_history.current_status",
+                                                    "title": "Current Status",
+                                                    "type": "GDC.text",
+                                                    "dataType": "VARCHAR(128)"
+                                                }
+                                            }
+                                        ],
+                                        "defaultLabel": "label.stage_history.current_status"
+                                    }
+                                }
+                            ],
+                            "facts": [
+                                {
+                                    "fact": {
+                                        "identifier": "fact.stage_history.stage_velocity",
+                                        "title": "Stage Velocity",
+                                        "dataType": "DECIMAL(12,2)"
+                                    }
+                                },
+                                {
+                                    "fact": {
+                                        "identifier": "fact.stage_history.stage_duration",
+                                        "title": "Stage Duration",
+                                        "dataType": "DECIMAL(12,2)"
+                                    }
+                                },
+                                {
+                                    "fact": {
+                                        "identifier": "dt.stage_history.opp_created_date",
+                                        "title": "Opp. Created (Date) for Stage History",
+                                        "dataType": "INT"
+                                    }
+                                },
+                                {
+                                    "fact": {
+                                        "identifier": "dt.stage_history.opp_close_date",
+                                        "title": "Opp. Close (Date) for Stage History",
+                                        "dataType": "INT"
+                                    }
+                                }
+                            ],
+                            "references": [
+                                "dataset.account",
+                                "dataset.product",
+                                "dataset.stage",
+                                "dataset.opp_owner",
+                                "dataset.opportunity",
+                                "dataset.bookingtype",
+                                "oppclose",
+                                "oppcreated"
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

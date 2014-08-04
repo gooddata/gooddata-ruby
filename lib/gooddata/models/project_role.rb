@@ -55,5 +55,9 @@ module GoodData
     def uri
       @json['projectRole']['links']['roleUsers'].split('/')[0...-1].join('/')
     end
+
+    def ==(other)
+      uri == other.uri
+    end
   end
 end

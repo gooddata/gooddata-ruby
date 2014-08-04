@@ -46,7 +46,7 @@ module GoodData
           # schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
           # project = GoodData.project unless project
           uri = "/gdc/projects/#{GoodData.project.pid}/model/diff"
-          result = GoodData.post(uri, bp.to_wire_model)
+          result = GoodData.post(uri, bp.to_wire)
           link = result['asyncTask']['link']['poll']
           response = GoodData.get(link, :process => false)
           # pp response
@@ -75,9 +75,10 @@ module GoodData
 
           end
 
-          bp.datasets.each do |ds|
-            schema = ds.to_schema
-            GoodData::ProjectMetadata["manifest_#{schema.name}"] = schema.to_manifest.to_json
+          bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
+            dataset = ds[0]
+            manifest = ds[1]
+            GoodData::ProjectMetadata["manifest_#{dataset.name}"] = manifest.to_json
           end
         end
 
