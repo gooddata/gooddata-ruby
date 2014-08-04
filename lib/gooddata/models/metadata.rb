@@ -3,9 +3,8 @@
 require_relative '../core/connection'
 require_relative '../core/project'
 
-require_relative '../rest/object'
-
 require_relative '../mixins/mixins'
+require_relative '../rest/object'
 
 module GoodData
   class MdObject < GoodData::Rest::Object

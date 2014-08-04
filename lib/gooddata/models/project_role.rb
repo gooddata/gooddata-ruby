@@ -9,10 +9,6 @@ require_relative '../mixins/mixins'
 module GoodData
   class ProjectRole < GoodData::Rest::Object
     attr_accessor :json
-    
-    def initialize(json)
-      @json = json
-    end
 
     include GoodData::Mixin::RestGetters
 
