@@ -103,12 +103,7 @@ module GoodData
     def export(format)
       result = GoodData.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
       result1 = GoodData.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
-      png = GoodData.get(result1['uri'], :process => false)
-      while png.code == 202
-        sleep(1)
-        png = GoodData.get(result1['uri'], :process => false)
-      end
-      png
+      GoodData.poll_on_code(result1['uri'], process: false)
     end
   end
 end

@@ -396,27 +396,9 @@ describe GoodData::Schedule do
     end
 
     it 'Should save a schedule' do
-      pending 'Investigate why is this failing'
-
-      saved = false
-      url = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules"
-      req = GoodData.get url
-      schedules = req['schedules']['items']
-      schedules.each do |schedule|
-        schedule_self = schedule['schedule']['links']['self']
-        if schedule_self == @schedule.uri
-          saved = true
-        end
-      end
-
-      @schedule.timezone = 'UTC'
-
-      @schedule.save
-
-      expect(saved).to be(true)
-
+      expect(GoodData::Schedule[@schedule.uri]).to eq @schedule
+      expect(GoodData::Project[ProjectHelper::PROJECT_ID].schedules).to include(@schedule)
     end
-
   end
 
   describe '#state' do
@@ -520,9 +502,6 @@ describe GoodData::Schedule do
       res.should_not be_nil
       res.should be_a_kind_of(Integer)
     end
-
-
-
   end
 
   describe '#reschedule=' do
@@ -542,7 +521,4 @@ describe GoodData::Schedule do
       expect(@schedule.dirty).to eq(true)
     end
   end
-
-
-
 end
