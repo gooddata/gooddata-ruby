@@ -10,15 +10,22 @@ module GoodData
       #
       # @param spec [String | Hash] value of an label you are looking for
       # @return [GoodData::Model::ProjectBlueprint]
-      def self.from_json(spec)
-        if spec.is_a?(String)
-          if File.file?(spec)
-            ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+      class << self
+        def from_json(spec)
+          if spec.is_a?(String)
+            if File.file?(spec)
+              ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+            else
+              ProjectBlueprint.new(MultiJson.load(spec, :symbolize_keys => true))
+            end
           else
-            ProjectBlueprint.new(MultiJson.load(spec, :symbolize_keys => true))
+            ProjectBlueprint.new(spec)
           end
-        else
-          ProjectBlueprint.new(spec)
+        end
+
+        def build(title, &block)
+          pb = ProjectBuilder.create(title, &block)
+          pb.to_blueprint
         end
       end
 

@@ -24,8 +24,9 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def query(query_obj_type, klass, options = {})
-        fail(NoProjectError, 'Connect to a project before searching for an object') unless GoodData.project
-        query_result = GoodData.get(GoodData.project.md['query'] + "/#{query_obj_type}/")['query']['entries']
+        project = options[:project] || GoodData.project
+        fail(NoProjectError, 'Connect to a project before searching for an object') unless project
+        query_result = GoodData.get(project.md['query'] + "/#{query_obj_type}/")['query']['entries']
         options[:full] ? query_result.map { |item| klass[item['link']] } : query_result
       end
 
