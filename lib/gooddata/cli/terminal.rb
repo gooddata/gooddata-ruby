@@ -5,7 +5,7 @@ require 'highline'
 # Define GoodData::CLI as GLI Wrapper
 module GoodData
   module CLI
-    DEFAULT_TERMINAL = HighLine.new
+    DEFAULT_TERMINAL = HighLine.new unless const_defined?(:DEFAULT_TERMINAL)
 
     class << self
       def terminal

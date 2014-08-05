@@ -2,11 +2,17 @@
 
 require_relative 'profile'
 
+require_relative '../rest/rest'
+
 require_relative '../mixins/mixins'
 
 module GoodData
-  class ProjectRole
+  class ProjectRole < GoodData::Rest::Object
     attr_accessor :json
+    
+    def initialize(json)
+      @json = json
+    end
 
     include GoodData::Mixin::RestGetters
 

@@ -8,6 +8,6 @@ describe GoodData::Invitation do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 end

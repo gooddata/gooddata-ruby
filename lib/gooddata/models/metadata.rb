@@ -3,16 +3,20 @@
 require_relative '../core/connection'
 require_relative '../core/project'
 
+require_relative '../rest/object'
+
 require_relative '../mixins/mixins'
 
 module GoodData
-  class MdObject
+  class MdObject < GoodData::Rest::Object
+    MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
     attr_reader :json
 
     alias_method :raw_data, :json
     alias_method :to_hash, :json
+    alias_method :data, :json
 
     include GoodData::Mixin::RootKeyGetter
     include GoodData::Mixin::MdJson

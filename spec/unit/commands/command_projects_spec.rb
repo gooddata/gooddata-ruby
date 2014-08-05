@@ -6,7 +6,7 @@ describe GoodData::Command::Project do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Project instance" do

@@ -20,6 +20,7 @@ RSpec.configure do |config|
   config.include ConnectionHelper
   config.include CryptoHelper
   config.include CsvHelper
+  config.include ProcessHelper
   config.include ProjectHelper
   # config.include SchemaHelper
 

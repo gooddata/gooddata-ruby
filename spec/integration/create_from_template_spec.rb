@@ -2,7 +2,11 @@ require 'gooddata'
 
 describe "Spin a project from template", :constraint => 'slow' do
   before(:all) do
-    ConnectionHelper::create_default_connection
+    ConnectionHelper.create_default_connection
+  end
+
+  after(:all) do
+    ConnectionHelper.disconnect
   end
 
   it "should spin a project from a template that does not exist. It should throw an error" do

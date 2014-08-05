@@ -22,15 +22,15 @@ describe GoodData::Connection do
   describe '#connect' do
     it "Connects using username and password" do
       c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
-      c.should be_a(GoodData::Connection)
-      GoodData.disconnect
+      c.should be_a(GoodData::Rest::Client)
+      ConnectionHelper.disconnect
     end
   end
 
   describe '#disconnect' do
     it "Connects using username and password" do
       GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
-      GoodData.disconnect
+      ConnectionHelper.disconnect
     end
   end
 
@@ -49,7 +49,7 @@ describe GoodData::Connection do
         :password => ConnectionHelper::DEFAULT_PASSWORD
       }
       GoodData.create_authenticated_connection(opts)
-      GoodData.disconnect
+      ConnectionHelper.disconnect
     end
   end
 end

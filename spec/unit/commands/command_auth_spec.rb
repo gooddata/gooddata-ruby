@@ -4,7 +4,7 @@ require 'gooddata/cli/terminal'
 require 'gooddata/commands/auth'
 
 describe GoodData::Command::Auth do
-  ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL
+  ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL unless const_defined?(:ORIG_TERMINAL)
 
   DEFAULT_CREDENTIALS = {
     :email => 'joedoe@example.com',
@@ -38,7 +38,7 @@ describe GoodData::Command::Auth do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Auth instance" do
