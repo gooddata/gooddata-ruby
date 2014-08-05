@@ -14,33 +14,9 @@ GoodData::CLI.module_eval do
     c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
     c.command :jack_in do |jack|
       jack.action do |global_options, options, args|
-        goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
-
-        spin_session = proc do |goodfile, blueprint|
-          project_id = global_options[:project_id] || goodfile[:project_id]
-          fail "You have to provide 'project_id'. You can either provide it through -p flag or even better way is to fill it in in your Goodfile under key \"project_id\". If you just started a project you have to create it first. One way might be through \"gooddata project build\"" if project_id.nil? || project_id.empty?
-
-          opts = options.merge(global_options)
-          GoodData.connect(opts)
-
-          begin
-            require 'gooddata'
-            GoodData::Command::Project.jack_in(project_id)
-          rescue GoodData::ProjectNotFound
-            puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
-          end
-        end
-
-        if goodfile_path
-          goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
-          model_key = goodfile[:model]
-          blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
-          FileUtils.cd(goodfile_path.dirname) do
-            spin_session.call(goodfile, blueprint)
-          end
-        else
-          spin_session.call({}, nil)
-        end
+        opts = options.merge(global_options)
+        GoodData.connect(opts)
+        GoodData::Command::Project.jack_in(opts)
       end
     end
 
