@@ -1,6 +1,6 @@
 require 'gooddata/models/schedule'
 
-describe GoodData::Schedule, :broken => true do
+describe GoodData::Schedule do
 
   TEST_CRON = '0 15 27 7 *'
 
@@ -16,10 +16,10 @@ describe GoodData::Schedule, :broken => true do
   }
 
 
-  TEST_PROCESS_ID = 'f12975d2-5958-4248-9c3d-4c8f2e1f067d'
+  TEST_PROCESS_ID = 'dc143d80-58a1-4acd-96b6-8d11fc4571de'
 
-  SCHEDULE_ID = '53642303e4b0ae3190e464a8'
-  SCHEDULE_URL = '/gdc/projects/wgqhml3se0035s8n5byqdq0j0ob5jam4/schedules/53642303e4b0ae3190e464a8'
+  SCHEDULE_ID = '53e03c25e4b0c7f987a2f6fd'
+  SCHEDULE_URL = '/gdc/projects/we1vvh4il93r0927r809i3agif50d7iz/schedules/53e03c25e4b0c7f987a2f6fd'
 
   before(:each) do
     ConnectionHelper.create_default_connection
@@ -27,7 +27,7 @@ describe GoodData::Schedule, :broken => true do
     GoodData.project = ProjectHelper::PROJECT_ID
 
     @project = GoodData.project
-    @project_executable = "#{@project.title}/graph/graph.grf"
+    @project_executable = "./graph/graph.grf"
   end
 
   after(:each) do
@@ -399,25 +399,9 @@ describe GoodData::Schedule, :broken => true do
     end
 
     it 'Should save a schedule' do
-      saved = false
-      url = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules"
-      req = GoodData.get url
-      schedules = req['schedules']['items']
-      schedules.each do |schedule|
-        schedule_self = schedule['schedule']['links']['self']
-        if schedule_self == @schedule.uri
-          saved = true
-        end
-      end
-
-      @schedule.timezone = 'UTC'
-
-      @schedule.save
-
-      expect(saved).to be(true)
-
+      expect(GoodData::Schedule[@schedule.uri]).to eq @schedule
+      expect(GoodData::Project[ProjectHelper::PROJECT_ID].schedules).to include(@schedule)
     end
-
   end
 
   describe '#state' do
@@ -519,12 +503,8 @@ describe GoodData::Schedule, :broken => true do
     it 'Should return reschedule as integer' do
       res = @schedule.reschedule
       res.should_not be_nil
-      res.should_not be_empty
       res.should be_a_kind_of(Integer)
     end
-
-
-
   end
 
   describe '#reschedule=' do
@@ -544,7 +524,4 @@ describe GoodData::Schedule, :broken => true do
       expect(@schedule.dirty).to eq(true)
     end
   end
-
-
-
 end

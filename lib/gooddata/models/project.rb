@@ -577,12 +577,8 @@ module GoodData
     #
     # @return [Array<GoodData::Schedule>] List of schedules
     def schedules
-      res = []
       tmp = GoodData.get @json['project']['links']['schedules']
-      tmp['schedules']['items'].each do |schedule|
-        res << GoodData::Schedule.new(schedule)
-      end
-      res
+      tmp['schedules']['items'].map { |schedule| GoodData::Schedule.new(schedule) }
     end
 
     # Gets SLIs data
