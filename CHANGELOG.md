@@ -1,10 +1,13 @@
 # GoodData Ruby SDK Changelog
 
-## 0.6.6
+## 0.6.7
 - Fixed the scaffolding templates to take advantage of new syntax (missing references in dataset refs) 
 - Fixing inclusion of extensions when using CLI
 - Fixed pollers and added/fixed tests for schedules and processes
 - Added with_connection which automatically disconnects when you are done
+
+## 0.6.6
+ - Various fixes
 
 ## 0.6.5
 - Mixins
