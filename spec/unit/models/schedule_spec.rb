@@ -518,7 +518,6 @@ describe GoodData::Schedule do
     it 'Should return reschedule as integer' do
       res = @schedule.reschedule
       res.should_not be_nil
-      res.should_not be_empty
       res.should be_a_kind_of(Integer)
     end
 
