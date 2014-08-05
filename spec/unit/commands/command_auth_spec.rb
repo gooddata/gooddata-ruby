@@ -102,7 +102,7 @@ describe GoodData::Command::Auth do
   describe "#store" do
     it 'Stores credentials' do
       pending("Mock STDIO")
-      
+
       @input.string = ''
       @input << DEFAULT_CREDENTIALS[:email] << "\n"
       @input << DEFAULT_CREDENTIALS[:password] << "\n"

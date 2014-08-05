@@ -7,6 +7,6 @@ require 'multi_json'
 require 'gooddata/models/models'
 
 module ProcessHelper
-  PROCESS_ID = '0b974a9c-7ee3-4301-aabb-09ccf69dbf35'
+  PROCESS_ID = 'dc143d80-58a1-4acd-96b6-8d11fc4571de'
   DEPLOY_NAME = 'graph'
 end

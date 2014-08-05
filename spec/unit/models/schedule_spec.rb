@@ -1,6 +1,6 @@
 require 'gooddata/models/schedule'
 
-describe GoodData::Schedule, :broken => true do
+describe GoodData::Schedule do
 
   TEST_CRON = '0 15 27 7 *'
 
@@ -15,11 +15,8 @@ describe GoodData::Schedule, :broken => true do
       :reschedule => 15
   }
 
-
-  TEST_PROCESS_ID = 'f12975d2-5958-4248-9c3d-4c8f2e1f067d'
-
-  SCHEDULE_ID = '53642303e4b0ae3190e464a8'
-  SCHEDULE_URL = '/gdc/projects/wgqhml3se0035s8n5byqdq0j0ob5jam4/schedules/53642303e4b0ae3190e464a8'
+  SCHEDULE_ID = '53e029bde4b035034ad4abb6'
+  SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
   before(:each) do
     ConnectionHelper.create_default_connection
@@ -27,7 +24,7 @@ describe GoodData::Schedule, :broken => true do
     GoodData.project = ProjectHelper::PROJECT_ID
 
     @project = GoodData.project
-    @project_executable = "#{@project.title}/graph/graph.grf"
+    @project_executable = "./graph/graph.grf"
   end
 
   after(:each) do
@@ -72,7 +69,7 @@ describe GoodData::Schedule, :broken => true do
     it 'Creates new schedule if mandatory params passed' do
       sched = nil
       expect {
-        sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
       }.not_to raise_error
 
       sched.should_not be_nil
@@ -82,7 +79,7 @@ describe GoodData::Schedule, :broken => true do
     it 'Creates new schedule if mandatory params passed and optional params are present' do
       sched = nil
       expect {
-        sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
+        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
       }.not_to raise_error
 
       sched.should_not be_nil
@@ -97,7 +94,7 @@ describe GoodData::Schedule, :broken => true do
 
     it 'Throws exception when no executable specified' do
       expect {
-        sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, nil, TEST_DATA)
+        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, nil, TEST_DATA)
       }.to raise_error 'Executable has to be provided'
     end
 
@@ -105,7 +102,7 @@ describe GoodData::Schedule, :broken => true do
       data = TEST_DATA.deep_dup
       data[:cron] = nil
       expect {
-        sched = GoodData::Schedule.create(TEST_PROCESS_ID, nil, @project_executable, data)
+        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
       }.to raise_error 'Cron schedule has to be provided'
     end
 
@@ -113,7 +110,7 @@ describe GoodData::Schedule, :broken => true do
       data = TEST_DATA.deep_dup
       data[:timezone] = nil
       expect {
-        sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, data)
+        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, data)
       }.to raise_error 'A timezone has to be provided'
     end
 
@@ -121,14 +118,14 @@ describe GoodData::Schedule, :broken => true do
       data = TEST_DATA.deep_dup
       data[:type] = nil
       expect {
-        sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, data)
+        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, data)
       }.to raise_error 'Schedule type has to be provided'
     end
   end
 
   describe '#cron' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -145,7 +142,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#cron=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -165,8 +162,8 @@ describe GoodData::Schedule, :broken => true do
     it 'Should delete schedule' do
       pending 'Setup test environment first'
 
-      sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
-      proc = GoodData::Process[TEST_PROCESS_ID]
+      sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      proc = GoodData::Process[ProcessHelper::PROCESS_ID]
 
       # Delete created schedule
       sched.delete
@@ -179,7 +176,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#executable' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -196,7 +193,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#executable=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -217,7 +214,7 @@ describe GoodData::Schedule, :broken => true do
       pending 'Setup environment for this test'
 
       # Create one a schedule
-      sched = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
 
       execution_time = Time.new
       execution_request = sched.execute
@@ -246,7 +243,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#execution_url' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -263,7 +260,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#type' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -279,7 +276,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#hidden_params' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -295,7 +292,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#hidden_params=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -317,7 +314,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#params' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -334,7 +331,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#params=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -356,7 +353,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#process_id' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -373,7 +370,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#process_id=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -391,11 +388,11 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#save' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     it 'Should save a schedule' do
@@ -422,7 +419,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#state' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -439,7 +436,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#type' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -456,7 +453,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#type=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -474,7 +471,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#timezone' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -491,7 +488,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#timezone=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA)
     end
 
     after(:each) do
@@ -509,7 +506,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#reschedule' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
     end
 
     after(:each) do
@@ -529,7 +526,7 @@ describe GoodData::Schedule, :broken => true do
 
   describe '#reschedule=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(TEST_PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
+      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, TEST_CRON, @project_executable, TEST_DATA_WITH_OPTIONAL_PARAM)
     end
 
     after(:each) do
