@@ -108,11 +108,12 @@ module GoodData
         pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull']
         task = GoodData.post link, pull
-        # TODO: Refactor the task status out
-        while GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'RUNNING' || GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'PREPARED'
-          sleep 30
+
+        res = GoodData.poll_on_response(task['pullTask']['uri']) do |body|
+          body['taskStatus'] == 'RUNNING' || body['taskStatus'] == 'PREPARED'
         end
-        if GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'ERROR'
+
+        if res['taskStatus'] == 'ERROR'
           s = StringIO.new
           GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
           js = MultiJson.load(s.string)

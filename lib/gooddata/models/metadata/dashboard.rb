@@ -86,14 +86,9 @@ module GoodData
       fail "Wrong format provied \"#{format}\". Only supports formats #{supported_formats.join(', ')}" unless supported_formats.include?(format)
       tab = options[:tab] || ''
 
-      req_uri = "/gdc/projects/#{GoodData.project.uri}/clientexport"
-      x = GoodData.post(req_uri, { 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title } }, :process => false)
-      while x.code == 202
-        sleep(1)
-        uri = MultiJson.load(x.body)['asyncTask']['link']['poll']
-        x = GoodData.get(uri, :process => false)
-      end
-      x
+      req_uri = "/gdc/projects/#{GoodData.project.pid}/clientexport"
+      x = GoodData.post(req_uri, 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title })
+      GoodData.poll_on_code(x['asyncTask']['link']['poll'], process: false)
     end
 
     def tabs

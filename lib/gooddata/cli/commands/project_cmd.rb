@@ -95,11 +95,12 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         id = global_options[:project_id]
         token = opts[:token]
-
+        opts[:auth_token] = token
         fail 'You have to provide a token for creating a project. Please use parameter --token' if token.nil? || token.empty?
 
         GoodData.connect(opts)
-        GoodData::Command::Project.clone(id, opts)
+        new_project = GoodData::Command::Project.clone(id, opts)
+        puts "Project with title \"#{new_project.title}\" was cloned with id #{new_project.pid}"
       end
     end
 

@@ -188,7 +188,7 @@ module GoodData
                                :hiddenParams => hidden_params
                              })
       begin
-        GoodData.poll(result, 'executionTask')
+        GoodData.poll_on_code(result['executionTask']['links']['poll'])
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure
