@@ -129,7 +129,7 @@ module GoodData
     end
 
     def process
-      json['process']
+      data['process']
     end
 
     def name
