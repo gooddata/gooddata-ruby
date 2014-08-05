@@ -65,14 +65,10 @@ module GoodData
           chunks['updateScript']['maqlDdlChunks'].each do |chunk|
             response = GoodData.post ldm_uri, 'manage' => { 'maql' => chunk }
             polling_url = response['entries'].first['link']
-
-            polling_result = GoodData.get(polling_url)
-            while polling_result['wTaskStatus']['status'] == 'RUNNING'
-              sleep(3)
-              polling_result = GoodData.get(polling_url)
+            polling_result = GoodData.poll_on_response(polling_url) do |body|
+              body['wTaskStatus']['status'] == 'RUNNING'
             end
             fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
-
           end
 
           bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|

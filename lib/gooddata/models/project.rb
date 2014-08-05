@@ -160,7 +160,8 @@ module GoodData
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint
       result = GoodData.get("/gdc/projects/#{pid}/model/view")
-      model = GoodData.poll_on_root(result, 'asyncTask') { |r| r['asyncTask']['link']['poll'] }
+      polling_url = result['asyncTask']['link']['poll']
+      model = GoodData.poll_on_code(polling_url)
       GoodData::Model::FromWire.from_wire(model)
     end
 
@@ -197,13 +198,10 @@ module GoodData
 
       result = GoodData.post("/gdc/md/#{obj_id}/maintenance/export", export)
       export_token = result['exportArtifact']['token']
-      status_url = result['exportArtifact']['status']['uri']
 
-      state = GoodData.get(status_url)['taskState']['status']
-      while state == 'RUNNING'
-        sleep 5
-        result = GoodData.get(status_url)
-        state = result['taskState']['status']
+      status_url = result['exportArtifact']['status']['uri']
+      GoodData.poll_on_response(status_url) do |body|
+        body['taskState']['status'] == 'RUNNING'
       end
 
       import = {
@@ -214,12 +212,10 @@ module GoodData
 
       result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
       status_url = result['uri']
-      state = GoodData.get(status_url)['taskState']['status']
-      while state == 'RUNNING'
-        sleep 5
-        result = GoodData.get(status_url)
-        state = result['taskState']['status']
+      GoodData.poll_on_response(status_url) do |body|
+        body['taskState']['status'] == 'RUNNING'
       end
+
       new_project
     end
 
@@ -476,9 +472,11 @@ module GoodData
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
 
-      polling_result = GoodData.wait_for_polling_result(polling_url)
+      polling_result = GoodData.poll_on_response(polling_url) do |body|
+        body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+      end
 
-      fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+      fail 'Exporting objects failed' if polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'ERROR'
 
       import_payload = {
         :partialMDImport => {
@@ -490,7 +488,10 @@ module GoodData
 
       result = GoodData.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
       polling_url = result['uri']
-      polling_result = GoodData.wait_for_polling_result(polling_url)
+
+      GoodData.poll_on_response(polling_url) do |body|
+        body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+      end
 
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
     end
@@ -576,12 +577,8 @@ module GoodData
     #
     # @return [Array<GoodData::Schedule>] List of schedules
     def schedules
-      res = []
       tmp = GoodData.get @json['project']['links']['schedules']
-      tmp['schedules']['items'].each do |schedule|
-        res << GoodData::Schedule.new(schedule)
-      end
-      res
+      tmp['schedules']['items'].map { |schedule| GoodData::Schedule.new(schedule) }
     end
 
     # Gets SLIs data
@@ -791,12 +788,9 @@ module GoodData
     def validate(filters = %w(ldm pdm metric_filter invalid_objects))
       response = GoodData.post "#{GoodData.project.md['validate-project']}", 'validateProject' => filters
       polling_link = response['asyncTask']['link']['poll']
-      polling_result = GoodData.get(polling_link)
-      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_link)
+      GoodData.poll_on_response(polling_link) do |body|
+        body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
-      polling_result
     end
   end
 end
