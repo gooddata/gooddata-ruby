@@ -4,7 +4,7 @@ require 'gooddata/cli/terminal'
 require 'gooddata/commands/auth'
 
 describe GoodData::Command::Auth do
-  ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL
+  ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL unless const_defined?(:ORIG_TERMINAL)
 
   DEFAULT_CREDENTIALS = {
     :email => 'joedoe@example.com',
@@ -38,7 +38,7 @@ describe GoodData::Command::Auth do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Auth instance" do
@@ -101,6 +101,8 @@ describe GoodData::Command::Auth do
 
   describe "#store" do
     it 'Stores credentials' do
+      pending("Mock STDIO")
+
       @input.string = ''
       @input << DEFAULT_CREDENTIALS[:email] << "\n"
       @input << DEFAULT_CREDENTIALS[:password] << "\n"
@@ -114,6 +116,8 @@ describe GoodData::Command::Auth do
     end
 
     it 'Overwrites credentials if confirmed' do
+      pending("Mock STDIO")
+
       @input.string = ''
       @input << DEFAULT_CREDENTIALS[:email] << "\n"
       @input << DEFAULT_CREDENTIALS[:password] << "\n"
@@ -128,6 +132,8 @@ describe GoodData::Command::Auth do
     end
 
     it 'Do not overwrites credentials if not confirmed' do
+      pending("Mock STDIO")
+
       @input.string = ''
       @input << DEFAULT_CREDENTIALS_OVER[:email] << "\n"
       @input << DEFAULT_CREDENTIALS_OVER[:password] << "\n"

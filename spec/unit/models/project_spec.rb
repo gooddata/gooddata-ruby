@@ -8,7 +8,7 @@ describe GoodData::Project do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   def load_users_from_csv

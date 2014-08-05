@@ -7,7 +7,7 @@ describe GoodData::Command::Datasets do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Datasets instance" do

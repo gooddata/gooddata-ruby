@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative '../metadata'
+
 require_relative 'metadata'
 
 require_relative '../../mixins/is_attribute'

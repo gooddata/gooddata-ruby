@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative 'data_getter'
+
 module GoodData
   module Mixin
     module DataPropertyReader

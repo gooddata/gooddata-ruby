@@ -3,16 +3,19 @@
 require 'csv'
 require 'zip'
 require 'fileutils'
+require 'pmap'
+require 'zip'
 
-require_relative 'process'
 require_relative '../exceptions/no_project_error'
 
-require_relative '../mixins/mixins'
+require_relative '../mixins/rest_resource'
+require_relative '../rest/resource'
 
+require_relative 'process'
 require_relative 'project_role'
 
 module GoodData
-  class Project
+  class Project < GoodData::Rest::Resource
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
@@ -24,16 +27,14 @@ module GoodData
     alias_method :to_json, :json
     alias_method :raw_data, :json
 
-    include GoodData::Mixin::MetaGetter
-    include GoodData::Mixin::DataGetter
+    include GoodData::Mixin::RestResource
+
+    Project.root_key :project
+
+    include GoodData::Mixin::Author
+    include GoodData::Mixin::Contributor
 
     class << self
-      include GoodData::Mixin::RootKeySetter
-
-      include GoodData::Mixin::MetaPropertyReader
-
-      include GoodData::Mixin::MetaPropertyWriter
-
       # Returns an array of all projects accessible by
       # current user
       def all
@@ -58,17 +59,9 @@ module GoodData
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
           response = GoodData.get PROJECT_PATH % id
-          Project.new response
+          GoodData.connection.factory.create(Project, response)
         end
       end
-
-      Project.root_key :project
-
-      include GoodData::Mixin::RootKeyGetter
-      include GoodData::Mixin::DataGetter
-      include GoodData::Mixin::Author
-      include GoodData::Mixin::Contributor
-      include GoodData::Mixin::Timestamps
 
       # Create a project from a given attributes
       # Expected keys:
@@ -117,6 +110,13 @@ module GoodData
         end
         sleep 3
         project
+      end
+
+      def find(opts = {}, client = GoodData::Rest::Client.client)
+        user = client.user
+        user.projects['projects'].map do |project|
+          client.create(GoodData::Project, project)
+        end
       end
 
       def create_from_blueprint(blueprint, options = {})
@@ -348,6 +348,107 @@ module GoodData
       nil
     end
 
+    # Exports project users to file
+    def import_users(path, opts = { :header => true }, &block)
+      opts[:path] = path
+
+      ##########################
+      # Caching/Cached objects
+      ##########################
+      domains = {}
+      current_users = users
+      role_list = roles
+
+      ##########################
+      # Load users from CSV
+      ##########################
+      new_users = GoodData::Helpers.csv_read(opts) do |row|
+        json = {}
+        if block_given?
+          json = yield row
+        else
+          json = {
+            'user' => {
+              'content' => {
+                'email' => row[0],
+                'login' => row[1],
+                'firstname' => row[2],
+                'lastname' => row[3]
+              },
+              'meta' => {}
+            }
+          }
+        end
+
+        GoodData::User.new(json)
+      end
+
+      ##########################
+      # Diff users
+      ##########################
+      diff = GoodData::User.diff_list(current_users, new_users)
+
+      ##########################
+      # Create new users
+      ##########################
+      diff[:added].map do |user|
+        # TODO: Add user here
+        domain_name = user.json['user']['content']['domain']
+
+        # Lookup for domain in cache'
+        domain = domains[domain_name]
+
+        # Get domain info from REST, add to cache
+        if domain.nil?
+          domain = {
+            :domain => GoodData::Domain[domain_name],
+            :users => GoodData::Domain[domain_name].users
+          }
+
+          domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
+          domains[domain_name] = domain
+        end
+
+        # Check if user exists in domain
+        domain_user = domain[:users_map][user.email]
+
+        # Create domain user if needed
+        unless domain_user
+          password = user.json['user']['content']['password']
+
+          # Fill necessary user data
+          user_data = {
+            :login => user.login,
+            :firstName => user.first_name,
+            :lastName => user.last_name,
+            :password => password,
+            :verifyPassword => password,
+            :email => user.login
+          }
+
+          # Add created user to cache
+          domain_user = domain[:domain].add_user(user_data)
+          domain[:users] << domain_user
+          domain[:users_map][user.email] = domain_user
+        end
+
+        # Lookup for role
+        role_name = user.json['user']['content']['role'] || 'readOnlyUser'
+        role = get_role_by_identifier(role_name, role_list)
+        next if role.nil?
+
+        # Assign user project role
+        add_user(domain_user, [role.uri])
+      end
+
+      ##########################
+      # Remove old users
+      ##########################
+      # diff[:removed].map do |user|
+      #   user.disable(self)
+      # end
+    end
+
     # Checks whether user has particular role in given proejct
     #
     # @param user [GoodData::Profile | GoodData::Membership | String] User in question. Can be passed by login (String), profile or membershi objects
@@ -365,6 +466,7 @@ module GoodData
     #
     # @param json Json used for initialization
     def initialize(json)
+      super
       @json = json
     end
 
@@ -410,14 +512,10 @@ module GoodData
     #
     # @return [Array<GoodData::Invitation>] List of invitations
     def invitations
-      res = []
-
-      tmp = GoodData.get @json['project']['links']['invitations']
-      tmp['invitations'].each do |invitation|
-        res << GoodData::Invitation.new(invitation)
+      invitations = client.get @json['project']['links']['invitations']
+      invitations['invitations'].pmap do |invitation|
+        client.create GoodData::Invitation, invitation
       end
-
-      res
     end
 
     # Returns project related links
@@ -425,10 +523,6 @@ module GoodData
     # @return [Hash] Project related links
     def links
       data['links']
-    end
-
-    def lint
-      blueprint.lint
     end
 
     def md
@@ -555,10 +649,13 @@ module GoodData
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
       url = "/gdc/projects/#{pid}/roles"
-      tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].map do |role_url|
-        json = GoodData.get role_url
-        GoodData::ProjectRole.new(json)
+
+      client = GoodData.client
+
+      tmp = client.get(url)
+      tmp['projectRoles']['roles'].pmap do |role_url|
+        json = client.get role_url
+        client.create(GoodData::ProjectRole, json)
       end
     end
 
@@ -637,14 +734,10 @@ module GoodData
     #
     # @return [Array<GoodData::User>] List of users
     def users
-      res = []
-
-      tmp = GoodData.get @json['project']['links']['users']
+      tmp = client.factory.connection.get @json['project']['links']['users']
       tmp['users'].map do |user|
-        res << GoodData::Membership.new(user)
+        client.factory.create(GoodData::Membership, user)
       end
-
-      res
     end
 
     alias_method :members, :users

@@ -9,7 +9,7 @@ describe GoodData do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   describe '#get_project_webdav_path' do

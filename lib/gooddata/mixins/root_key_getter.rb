@@ -4,7 +4,7 @@ module GoodData
   module Mixin
     module RootKeyGetter
       def root_key
-        raw_data.keys.first
+        json.keys.first
       end
     end
   end
