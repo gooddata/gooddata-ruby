@@ -146,6 +146,7 @@ module GoodData
         @cookies = { :cookies => {} }
       end
 
+      # TODO: Store PH_MAP for wildcarding of URLs in reports in separate file
       PH_MAP = [
         ['/gdc/projects/{id}/roles/{id}', %r{/gdc/projects/[\w]+/roles/[\d]+}],
         ['/gdc/projects/{id}/model/diff/{id}', %r{/gdc/projects/[\w]+/model/diff/[\w]+}],
