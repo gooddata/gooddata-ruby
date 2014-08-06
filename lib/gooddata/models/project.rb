@@ -58,8 +58,8 @@ module GoodData
 
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
-          response = GoodData.get PROJECT_PATH % id
-          GoodData.connection.factory.create(Project, response)
+          response = client.get PROJECT_PATH % id
+          client.factory.create(Project, response)
         end
       end
 
