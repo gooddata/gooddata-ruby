@@ -3,7 +3,7 @@
 require 'pry'
 
 module GoodData
-  class Process
+  class Process < GoodData::Rest::Object
     attr_reader :data
 
     alias_method :raw_data, :data
@@ -12,15 +12,23 @@ module GoodData
 
     class << self
       def [](id, options = {})
-        if id == :all
-          uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes"
+        project = options[:project]
+        client = options[:client] || GoodData.connection.client
+        if id == :all && project
+          uri = "/gdc/projects/#{project.pid}/dataload/processes"
           data = GoodData.get(uri)
           data['processes']['items'].map do |process_data|
             Process.new(process_data)
           end
+        elsif id == :all
+          uri = "/gdc/account/profile/#{client.user.obj_id}/dataload/processes"
+          data = GoodData.get(uri)
+          data['processes']['items'].map do |process_data|
+            client.create(Process, process_data)
+          end
         else
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{id}"
-          new(GoodData.get(uri))
+          client.create(Process, GoodData.get(uri))
         end
       end
 

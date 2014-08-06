@@ -164,7 +164,7 @@ module GoodData
     # Helper for getting attributes of a project
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Attribute[id]
-    # @return [GoodData::Attribute] fact instance or list
+    # @return [GoodData::Attribute | Array<GoodData::Attribute>] fact instance or list
     def attribute(id)
       GoodData::Attribute[id, project: self]
     end
@@ -281,7 +281,7 @@ module GoodData
     # Helper for getting facts of a project
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
-    # @return [GoodData::Fact] fact instance or list
+    # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
     def fact(id)
       GoodData::Fact[id, project: self]
     end
@@ -551,6 +551,14 @@ module GoodData
       list.find { |m| m.login == profile.login }
     end
 
+    # Helper for getting metrics of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
+    # @return [GoodData::Metric | Array<GoodData::Metric>] matric instance or list
+    def metric(id)
+      GoodData::Metric[id, project: self]
+    end
+
     # Checks if the profile is member of project
     #
     # @param [GoodData::Profile] profile - Profile to be checked
@@ -650,6 +658,14 @@ module GoodData
         @json = response
       end
       self
+    end
+
+    # Helper for getting reports of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
+    # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
+    def report(id)
+      GoodData::Report[id, project: self]
     end
 
     # Gets the list or project roles

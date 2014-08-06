@@ -114,7 +114,11 @@ module GoodData
       end
 
       def project(id = :all)
-        GoodData::Project[id]
+        GoodData::Project[id, client: self]
+      end
+
+      def process(id = :all)
+        GoodData::Process[id, client: self]
       end
 
       def connect
