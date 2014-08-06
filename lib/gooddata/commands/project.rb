@@ -120,6 +120,7 @@ module GoodData
 
             begin
               require 'gooddata'
+              gd = gd_client = c = client = GoodData.connect(options)
               GoodData.with_project(project_id) do |project|
                 puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
                 binding.pry(:quiet => true,

@@ -324,7 +324,7 @@ module GoodData
     # @return [Array<GoodData::Project>] Array of project where account settings belongs to
     def projects
       projects = client.get @json['accountSetting']['links']['projects']
-      projects['projects'].pmap do |project|
+      projects['projects'].map do |project|
         client.create(GoodData::Project, project)
       end
     end

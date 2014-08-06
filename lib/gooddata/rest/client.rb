@@ -113,6 +113,10 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
+      def project(id = :all)
+        GoodData::Project[id]
+      end
+
       def connect
         username = @opts[:username]
         password = @opts[:password]

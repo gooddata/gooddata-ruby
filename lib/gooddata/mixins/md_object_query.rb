@@ -27,7 +27,7 @@ module GoodData
         project = options[:project] || GoodData.project
         fail(NoProjectError, 'Connect to a project before searching for an object') unless project
         query_result = GoodData.get(project.md['query'] + "/#{query_obj_type}/")['query']['entries']
-        options[:full] ? query_result.map { |item| klass[item['link']] } : query_result
+        options[:full] == false ? query_result : query_result.pmap { |item| klass[item['link'], options] }
       end
 
       def dependency(uri, key = nil)

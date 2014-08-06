@@ -161,6 +161,14 @@ module GoodData
       user_has_role?(GoodData.user, 'admin')
     end
 
+    # Helper for getting attributes of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Attribute[id]
+    # @return [GoodData::Attribute] fact instance or list
+    def attribute(id)
+      GoodData::Attribute[id, project: self]
+    end
+
     # Gets project blueprint from the server
     #
     # @return [GoodData::ProjectRole] Project role if found

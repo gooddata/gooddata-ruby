@@ -27,7 +27,8 @@ module GoodData
               else
                 fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
               end
-        new(GoodData.get uri) unless uri.nil?
+        # new(GoodData.get uri) unless uri.nil?
+        project.client.create(self, GoodData.get(uri)) if uri
       end
 
       alias_method :get_by_id, :[]
