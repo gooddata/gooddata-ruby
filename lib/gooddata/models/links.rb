@@ -20,8 +20,8 @@ module GoodData
     end
 
     def links(category, identifier = nil)
-      return Links.new(GoodData.get(self[category])) unless identifier
-      Links.new GoodData.get(get(category, identifier))
+      return Links.new(client.get(self[category])) unless identifier
+      Links.new client.get(get(category, identifier))
     end
 
     def [](category)

@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'pmap'
+
 require_relative 'profile'
 
 require_relative '../rest/rest'
@@ -32,12 +34,11 @@ module GoodData
     def users
       res = []
       url = data['links']['roleUsers']
-      tmp = GoodData.get url
-      tmp['associatedUsers']['users'].each do |user_url|
-        user = GoodData.get user_url
+      tmp = client.get url
+      tmp['associatedUsers']['users'].pmap do |user_url|
+        user = client.get user_url
         res << GoodData::Profile.new(user)
       end
-      res
     end
 
     # Gets Raw object URI

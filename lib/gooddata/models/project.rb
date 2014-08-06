@@ -173,7 +173,7 @@ module GoodData
     #
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint
-      result = GoodData.get("/gdc/projects/#{pid}/model/view")
+      result = client.get("/gdc/projects/#{pid}/model/view")
       polling_url = result['asyncTask']['link']['poll']
       model = GoodData.poll_on_code(polling_url)
       GoodData::Model::FromWire.from_wire(model)
@@ -236,7 +236,7 @@ module GoodData
     def datasets
       blueprint.datasets
       datasets_uri = "#{md['data']}/sets"
-      response = GoodData.get datasets_uri
+      response = client.get datasets_uri
       response['dataSetsInfo']['sets'].map do |ds|
         DataSet[ds['meta']['uri']]
       end
@@ -271,10 +271,10 @@ module GoodData
                                maql: dml
                              })
       polling_uri = result['uri']
-      result = GoodData.get(polling_uri)
+      result = client.get(polling_uri)
       while result['taskState'] && result['taskState']['status'] == 'WAIT'
         sleep 10
-        result = GoodData.get polling_uri
+        result = client.get polling_uri
       end
     end
 
@@ -534,7 +534,7 @@ module GoodData
     end
 
     def md
-      @md ||= Links.new GoodData.get(data['links']['metadata'])
+      @md ||= Links.new client.get(data['links']['metadata'])
     end
 
     # Gets membership for profile specified
@@ -654,7 +654,7 @@ module GoodData
     # Forces project to reload
     def reload!
       if saved?
-        response = GoodData.get(uri)
+        response = client.get(uri)
         @json = response
       end
       self
@@ -690,11 +690,11 @@ module GoodData
       data_to_send['project']['content'].delete('isPublic')
       data_to_send['project']['content'].delete('state')
       response = if uri
-                   GoodData.post(PROJECT_PATH % pid, data_to_send)
-                   GoodData.get uri
+                   client.post(PROJECT_PATH % pid, data_to_send)
+                   client.get uri
                  else
-                   result = GoodData.post(PROJECTS_PATH, data_to_send)
-                   GoodData.get result['uri']
+                   result = client.post(PROJECTS_PATH, data_to_send)
+                   client.get result['uri']
                  end
       @json = response
       self
@@ -712,7 +712,8 @@ module GoodData
     #
     # @return [Array<GoodData::Schedule>] List of schedules
     def schedules
-      tmp = GoodData.get @json['project']['links']['schedules']
+      tmp = client.get @json['project']['links']['schedules']
+      # TODO: Transform schedule to proper rest resource
       tmp['schedules']['items'].map { |schedule| GoodData::Schedule.new(schedule) }
     end
 
@@ -723,7 +724,7 @@ module GoodData
       link = "#{data['links']['metadata']}#{SLIS_PATH}"
 
       # FIXME: Review what to do with passed extra argument
-      Metadata.new GoodData.get(link)
+      Metadata.new client.get(link)
     end
 
     # Gets project state
@@ -758,7 +759,7 @@ module GoodData
     #
     # @return [Array<GoodData::User>] List of users
     def users
-      tmp = client.factory.connection.get @json['project']['links']['users']
+      tmp = client.get @json['project']['links']['users']
       tmp['users'].map do |user|
         client.factory.create(GoodData::Membership, user)
       end
@@ -852,7 +853,7 @@ module GoodData
     #
     # @param list List of users to be disabled
     def users_remove(list)
-      list.map do |user|
+      list.pmap do |user|
         user.disable
       end
     end
@@ -899,7 +900,7 @@ module GoodData
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
     def set_users_roles(list, role_list = roles)
-      list.map do |user_hash|
+      list.pmap do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:role] || user_hash[:roles]
         {
