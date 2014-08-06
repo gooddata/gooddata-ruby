@@ -92,8 +92,6 @@ module GoodData
       # @param login [String] User login
       # @return [GoodData::Profile] User profile
       def find_user_by_login(domain, login, opts = {})
-        client = opts[:connection] || opts[:client] || GoodData.connection
-
         url = "/gdc/account/domains/#{domain}/users?login=#{login}"
         tmp = client.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
