@@ -121,7 +121,7 @@ module GoodData
         username = @opts[:username]
         password = @opts[:password]
 
-        @connection.connect(username, password)
+        @connection.connect(username, password, @opts)
       end
 
       def disconnect
