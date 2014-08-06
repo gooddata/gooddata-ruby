@@ -25,7 +25,13 @@ module GoodData
     #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
     # Assigns global/default GoodData project
     def project=(project)
-      @project = project
+      if project.is_a? Project
+        @project = project
+      elsif project.nil?
+        @project = nil
+      else
+        @project = Project[project]
+      end
       @project
     end
 
