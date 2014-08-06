@@ -201,7 +201,7 @@ module GoodData
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure
-        result = GoodData.get(result['executionTask']['links']['detail'])
+        result = client.get(result['executionTask']['links']['detail'])
         if result['executionDetail']['status'] == 'ERROR'
           fail "Runing process failed. You can look at a log here #{result["executionDetail"]["logFileName"]}"
         end

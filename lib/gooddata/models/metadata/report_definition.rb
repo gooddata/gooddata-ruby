@@ -146,14 +146,16 @@ module GoodData
       # @return [GoodData::ReportDataResult]
       def data_result(result)
         data_result_uri = result['execResult']['dataResult']
-        result = GoodData.get data_result_uri
+        result = client.get data_result_uri
 
         while result && result['taskState'] && result['taskState']['status'] == 'WAIT'
           sleep 10
-          result = GoodData.get data_result_uri
+          result = client.get data_result_uri
         end
+
         return nil unless result
-        ReportDataResult.new(GoodData.get data_result_uri)
+
+        ReportDataResult.new(client.get data_result_uri)
       end
 
       def create(options = {})
