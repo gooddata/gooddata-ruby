@@ -50,7 +50,7 @@ module GoodData
     end
 
     def reload!
-      @json = GoodData.get(uri) if saved?
+      @json = client.get(uri) if saved?
       self
     end
 
