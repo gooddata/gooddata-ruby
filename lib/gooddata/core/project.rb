@@ -3,8 +3,6 @@
 module GoodData
   @project = nil
 
-  attr_reader :project
-
   class << self
     # Sets the active project
     #
@@ -32,6 +30,8 @@ module GoodData
     end
 
     alias_method :use, :project=
+
+    attr_reader :project
 
     # Returns the active project
     #

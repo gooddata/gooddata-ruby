@@ -21,7 +21,7 @@ describe GoodData::Schedule do
   before(:each) do
     ConnectionHelper.create_default_connection
 
-    GoodData.project = ProjectHelper::PROJECT_ID
+    GoodData.project = ProjectHelper.get_default_project
 
     @project = GoodData.project
     @project_executable = "./graph/graph.grf"
