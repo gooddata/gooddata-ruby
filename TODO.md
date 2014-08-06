@@ -18,6 +18,7 @@
 - Rubocop spec/**/*.rb
 - Properly split unit and integration tests
 
-## Other
+## All Timers
 
-- Review in-code notes - [rake notes](https://gist.github.com/korczis/a127456afdda3df4e3a6)
+- [Issues](https://github.com/gooddata/gooddata-ruby/issues)
+- Rake notes - [rake notes](https://gist.github.com/korczis/a127456afdda3df4e3a6)
