@@ -242,13 +242,6 @@ module GoodData
       end
     end
 
-    # Gets processes for the project
-    #
-    # @return [Array<GoodData::Process>] Processes for the current project
-    def processes
-      GoodData::Process.all
-    end
-
     # Deletes project
     def delete
       fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
@@ -621,6 +614,14 @@ module GoodData
     end
 
     alias_method :transfer_objects, :partial_md_export
+
+    # Helper for getting reports of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
+    # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
+    def process(id)
+      GoodData::Process[id, project: self]
+    end
 
     # Checks if this object instance is project
     #
