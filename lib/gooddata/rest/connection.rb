@@ -44,6 +44,7 @@ module GoodData
         @user = nil
 
         @stats = {}
+        @opts = opts
 
         # Initialize cookies
         reset_cookies!
