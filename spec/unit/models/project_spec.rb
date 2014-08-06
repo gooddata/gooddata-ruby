@@ -195,8 +195,6 @@ describe GoodData::Project do
 
   describe '#users' do
     it 'Returns array of GoodData::Users' do
-      pending 'Disable as it is TOOOO SLOOOW'
-
       project = GoodData::Project[ProjectHelper::PROJECT_ID]
 
       invitations = project.invitations
