@@ -6,6 +6,7 @@ require 'gooddata/core/rest'
 describe GoodData do
   before(:each) do
     ConnectionHelper.create_default_connection
+    GoodData.project = ProjectHelper.get_default_project
   end
 
   after(:each) do
