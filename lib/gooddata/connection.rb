@@ -2,7 +2,6 @@
 
 require_relative 'core/connection'
 require_relative 'core/logging'
-require_relative 'core/threaded'
 
 require_relative 'rest/rest'
 

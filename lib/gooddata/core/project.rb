@@ -1,15 +1,9 @@
 # encoding: UTF-8
 
-require_relative 'threaded'
-
 module GoodData
-  # Assigns global/default GoodData project
-  def project=(project)
-    GoodData.project = project
-    GoodData.project
-  end
+  @project = nil
 
-  alias_method :use, :project=
+  attr_reader :project
 
   class << self
     # Sets the active project
@@ -31,24 +25,19 @@ module GoodData
     #
     #     # Select project using indexer on GoodData::Project class
     #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
-    #
+    # Assigns global/default GoodData project
     def project=(project)
-      if project.is_a? Project
-        threaded[:project] = project
-      elsif project.nil?
-        threaded[:project] = nil
-      else
-        threaded[:project] = Project[project]
-      end
+      @project = project
+      @project
     end
 
     alias_method :use, :project=
 
     # Returns the active project
     #
-    def project
-      threaded[:project]
-    end
+    # def project
+    #   threaded[:project]
+    # end
 
     # Perform block in context of another project than currently set
     #

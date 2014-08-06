@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'pmap'
+
 require 'gooddata'
 
 describe GoodData::Project do
@@ -43,6 +45,9 @@ describe GoodData::Project do
       projects = GoodData::Project[:all]
       projects.should_not be_nil
       projects.should be_a_kind_of(Array)
+      projects.pmap do |project|
+        expect(project).to be_an_instance_of(GoodData::Project)
+      end
     end
 
     it 'Returns project if ID passed' do
@@ -220,7 +225,7 @@ describe GoodData::Project do
         # invitations = user.invitations
         # invitations.should_not be_nil
 
-        if(user.email == 'tomas.korcak@gooddata.com')
+        if (user.email == 'tomas.korcak@gooddata.com')
           projects = user.projects
           projects.should_not be_nil
           expect(projects).to be_instance_of(Array)
@@ -326,7 +331,7 @@ describe GoodData::Project do
       end
 
       domain_users.each do |user|
-         user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
+        user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
       end
     end
 
