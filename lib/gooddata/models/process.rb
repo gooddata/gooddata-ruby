@@ -13,22 +13,23 @@ module GoodData
     class << self
       def [](id, options = {})
         project = options[:project]
-        client = options[:client] || GoodData.connection.client
+        c = client(options)
+
         if id == :all && project
           uri = "/gdc/projects/#{project.pid}/dataload/processes"
-          data = GoodData.get(uri)
+          data = c.get(uri)
           data['processes']['items'].map do |process_data|
             Process.new(process_data)
           end
         elsif id == :all
-          uri = "/gdc/account/profile/#{client.user.obj_id}/dataload/processes"
-          data = GoodData.get(uri)
+          uri = "/gdc/account/profile/#{c.user.obj_id}/dataload/processes"
+          data = c.get(uri)
           data['processes']['items'].map do |process_data|
-            client.create(Process, process_data)
+            c.create(Process, process_data)
           end
         else
           uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{id}"
-          client.create(Process, GoodData.get(uri))
+          c.create(Process, c.get(uri))
         end
       end
 
