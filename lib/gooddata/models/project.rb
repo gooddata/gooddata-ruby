@@ -165,7 +165,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Attribute[id]
     # @return [GoodData::Attribute | Array<GoodData::Attribute>] fact instance or list
-    def attribute(id = :all)
+    def attributes(id = :all)
       GoodData::Attribute[id, project: self]
     end
 
@@ -237,7 +237,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
     # @return [GoodData::Dashboard | Array<GoodData::Dashboard>] dashboard instance or list
-    def dashboard(id = :all)
+    def dashboards(id = :all)
       GoodData::Dashboard[:all, project: self, client: client]
     end
 
@@ -278,7 +278,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
-    def fact(id)
+    def facts(id)
       GoodData::Fact[id, project: self]
     end
 
@@ -534,7 +534,7 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to
     # GoodData::Label[id] + it supports :all as welll
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
-    def label(id = :all)
+    def labels(id = :all)
       attribute.pmapcat {|a| a.labels}
     end
 
@@ -560,7 +560,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
     # @return [GoodData::Metric | Array<GoodData::Metric>] matric instance or list
-    def metric(id)
+    def metrics(id = :all)
       GoodData::Metric[id, project: self]
     end
 
@@ -631,7 +631,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
     # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
-    def process(id)
+    def processes(id = :all)
       GoodData::Process[id, project: self, client: client]
     end
 
@@ -677,7 +677,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
     # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
-    def report(id)
+    def reports(id = :all)
       GoodData::Report[id, project: self]
     end
 
@@ -685,8 +685,8 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::ReportDefinition[id]
     # @return [GoodData::ReportDefinition | Array<GoodData::ReportDefinition>] report definition instance or list
-    def report_definition(id = :all)
-      GoodData::ReportDefinition[:all, project: self, client: client]
+    def report_definitions(id = :all)
+      GoodData::ReportDefinition[id, project: self, client: client]
     end
 
     # Gets the list or project roles
@@ -731,7 +731,7 @@ module GoodData
 
     # @param [String | Number | Object] Anything that you can pass to GoodData::Schedule[id]
     # @return [GoodData::Schedule | Array<GoodData::Schedule>] schedule instance or list
-    def schedule(id = :all)
+    def schedules(id = :all)
       GoodData::Schedule[id, project: self, client: client]
     end
 
