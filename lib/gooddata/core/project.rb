@@ -53,8 +53,7 @@ module GoodData
       fail 'You have to specify a project when using with_project' if project.nil? || (project.is_a?(String) && project.empty?)
       old_project = GoodData.project
       begin
-        GoodData.use(project)
-        bl.call(GoodData.project)
+        bl.call(project)
       rescue RestClient::ResourceNotFound
         raise(GoodData::ProjectNotFound, 'Project was not found')
       ensure

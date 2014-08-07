@@ -17,13 +17,13 @@ module GoodData
       # @return [GoodData::Schedule|Array<GoodData::Schedule>] List of schedules
       def [](id, opts = {:client => GoodData.connection, :project => GoodData.project})
         c = client(opts)
-        fail ArgumentError, "No :client specified" if c.nil?
+        fail ArgumentError, 'No :client specified' if c.nil?
 
         p = opts[:project]
-        fail ArgumentError, "No :project specified" if p.nil?
+        fail ArgumentError, 'No :project specified' if p.nil?
 
         project = GoodData::Project[p, opts]
-        fail ArgumentError, "Wrong :project specified" if project.nil?
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         if id == :all
           GoodData::Schedule.all(opts)
@@ -43,13 +43,13 @@ module GoodData
       # @return [Array<GoodData::Schedule>] List of schedules
       def all(opts = {:client => GoodData.connection, :project => GoodData.project})
         c = client(opts)
-        fail ArgumentError, "No :client specified" if c.nil?
+        fail ArgumentError, 'No :client specified' if c.nil?
 
         p = opts[:project]
-        fail ArgumentError, "No :project specified" if p.nil?
+        fail ArgumentError, 'No :project specified' if p.nil?
 
         project = GoodData::Project[p, opts]
-        fail ArgumentError, "Wrong :project specified" if project.nil?
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         tmp = c.get "/gdc/projects/#{project.pid}/schedules"
         tmp['schedules']['items'].map { |schedule| c.create(GoodData::Schedule, schedule) }
@@ -64,12 +64,13 @@ module GoodData
       # @return [GoodData::Schedule] New GoodData::Schedule instance
       def create(process_id, cron, executable, options = {})
         c = client(options)
-        fail ArgumentError, "No :client specified" if c.nil?
+        fail ArgumentError, 'No :client specified' if c.nil?
 
         p = options[:project]
-        fail ArgumentError, "No :project specified" if p.nil?
+        fail ArgumentError, 'No :project specified' if p.nil?
 
         project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         default_opts = {
           :type => 'MSETL',

@@ -91,14 +91,25 @@ module GoodData
         end
 
         # Update project
-        def update(options = {})
-          project = options[:project]
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :project => project)
+        def update(opts = {})
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          p = opts[:project]
+          fail ArgumentError, 'No :project specified' if p.nil?
+
+          project = GoodData::Project[p, opts]
+          fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+          GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :client => client, :project => project)
         end
 
         # Build project
-        def build(options = {})
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
+        def build(opts = {})
+          client = opts[:client]
+          fail ArgumentError, "No :client specified" if client.nil?
+
+          GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :token => opts[:token], :client => client)
         end
 
         def validate(project_id)
