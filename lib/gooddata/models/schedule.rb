@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require_relative '../rest/resource'
+require_relative '../extensions/hash'
 
 module GoodData
   class Schedule < Rest::Resource
@@ -106,7 +107,7 @@ module GoodData
         default[:params] = default_params
 
         json = {
-          'schedule' => default.merge(options)
+          'schedule' => default.merge(options.except(:project, :client))
         }
 
         tmp = json['schedule'][:params]['PROCESS_ID']
@@ -139,12 +140,13 @@ module GoodData
     # @param json [Object] Raw JSON
     # @return [GoodData::Schedule] New GoodData::Schedule instance
     def initialize(json)
+      super
       @json = json
     end
 
     # Deletes schedule
     def delete
-      GoodData.delete uri
+      client.delete uri
     end
 
     # Executes schedule
@@ -154,7 +156,7 @@ module GoodData
       data = {
         :execution => {}
       }
-      execution = GoodData.post(execution_url, data)
+      execution = client.post(execution_url, data)
       GoodData.poll_on_response(execution['execution']['links']['self']) do |body|
         body['execution'] && body['execution']['status'] == 'RUNNING'
       end
