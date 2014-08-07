@@ -49,7 +49,8 @@ module GoodData
       #  - <id>
       #
       def [](id, opts = {})
-        return id if id.respond_to?(:project?) && id.project?
+        return id if id.instance_of? GoodData::Project || id.respond_to?(:project?) && id.project?
+
         if id == :all
           Project.all(opts)
         else
