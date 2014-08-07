@@ -92,10 +92,11 @@ module GoodData
       # @param login [String] User login
       # @return [GoodData::Profile] User profile
       def find_user_by_login(domain, login, opts = {})
+        c = client(opts)
         url = "/gdc/account/domains/#{domain}/users?login=#{login}"
-        tmp = client(opts).get url
+        tmp = c.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
-        items && items.length > 0 ? client.factory.create(GoodData::Profile, items.first) : nil
+        items && items.length > 0 ? c.factory.create(GoodData::Profile, items.first) : nil
       end
 
       # Returns list of users for domain specified

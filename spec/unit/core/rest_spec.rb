@@ -5,12 +5,12 @@ require 'gooddata/core/rest'
 
 describe GoodData do
   before(:each) do
-    ConnectionHelper.create_default_connection
-    GoodData.project = ProjectHelper.get_default_project
+    @client = ConnectionHelper.create_default_connection
+    @project = ProjectHelper.get_default_project(:client => @client)
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   describe '#get_project_webdav_path' do

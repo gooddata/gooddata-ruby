@@ -6,11 +6,11 @@ describe GoodData::Command::Scaffold do
   end
 
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Scaffold instance" do

@@ -7,11 +7,11 @@ require 'gooddata/models/project'
 
 describe GoodData::Profile do
   before(:all) do
-    ConnectionHelper.create_default_connection
-    @user = GoodData::Domain.find_user_by_login(ConnectionHelper::DEFAULT_DOMAIN, ConnectionHelper::DEFAULT_USERNAME)
+    @client = ConnectionHelper.create_default_connection
+    @user = GoodData::Domain.find_user_by_login(ConnectionHelper::DEFAULT_DOMAIN, ConnectionHelper::DEFAULT_USERNAME, :client => @client)
 
     @users = [
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'petr.cvengros@gooddata.com',
@@ -21,7 +21,7 @@ describe GoodData::Profile do
         }
       ),
 
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'tomas.korcak@gooddata.com',
@@ -31,7 +31,7 @@ describe GoodData::Profile do
         }
       ),
 
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'patrick.mcconlogue@gooddata.com',
@@ -42,7 +42,7 @@ describe GoodData::Profile do
         }
       ),
 
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'tomas.svarovsky@gooddata.com',
@@ -54,12 +54,12 @@ describe GoodData::Profile do
     ]
   end
 
-  def deep_dup(obj)
-    Marshal.load(Marshal.dump(obj))
+  after(:all) do
+    @client.disconnect
   end
 
-  after(:all) do
-    ConnectionHelper.disconnect
+  def deep_dup(obj)
+    Marshal.load(Marshal.dump(obj))
   end
 
   describe '#==' do

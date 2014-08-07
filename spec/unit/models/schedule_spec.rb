@@ -19,16 +19,15 @@ describe GoodData::Schedule do
   SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
 
-    GoodData.project = ProjectHelper.get_default_project
+    @project = ProjectHelper.get_default_project(:client => @client)
 
-    @project = GoodData.project
     @project_executable = "./graph/graph.grf"
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   describe '#[]' do

@@ -5,14 +5,14 @@ require 'gooddata/models/project_role'
 
 describe GoodData::ProjectRole do
   before(:all) do
-    ConnectionHelper.create_default_connection
-    @project = ProjectHelper.get_default_project
+    @client = ConnectionHelper.create_default_connection
+    @project = ProjectHelper.get_default_project(:client => @client)
     @roles = @project.roles
     @role = @roles.first
   end
 
   after(:all) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   describe '#author' do

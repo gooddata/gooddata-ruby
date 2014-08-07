@@ -6,11 +6,11 @@ require 'gooddata'
 
 describe GoodData::Project do
   before(:each) do
-    ConnectionHelper::create_default_connection
+    @client = ConnectionHelper::create_default_connection
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   def load_users_from_csv
@@ -51,13 +51,13 @@ describe GoodData::Project do
     end
 
     it 'Returns project if ID passed' do
-      project = ProjectHelper.get_default_project
+      project = GoodData::Project[ProjectHelper::PROJECT_ID, :client => @client]
       project.should_not be_nil
       project.should be_a_kind_of(GoodData::Project)
     end
 
     it 'Returns project if URL passed' do
-      project = ProjectHelper.get_default_project
+      project = GoodData::Project[ProjectHelper::PROJECT_URL, :client => @client]
       project.should_not be_nil
       project.should be_a_kind_of(GoodData::Project)
     end

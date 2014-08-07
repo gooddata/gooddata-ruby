@@ -4,11 +4,11 @@ require 'gooddata/models/domain'
 
 describe GoodData::Domain do
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   describe '#add_user' do
