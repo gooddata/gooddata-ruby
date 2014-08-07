@@ -50,15 +50,15 @@ module GoodData
         expression = if extended_notation
                        dict = {
                          :facts => GoodData::Fact[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                           memo[item.title] = item.uri
                            memo
                          end,
                          :attributes => GoodData::Attribute[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                           memo[item.title] = item.uri
                            memo
                          end,
                          :metrics => GoodData::Metric[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                           memo[item.title] = item.uri
                            memo
                          end
                        }
