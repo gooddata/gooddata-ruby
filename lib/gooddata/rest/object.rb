@@ -20,7 +20,7 @@ module GoodData
 
       class << self
         def client(opts = {})
-          opts[:client] || GoodData.client
+          opts[:client] # || GoodData.client
         end
       end
     end

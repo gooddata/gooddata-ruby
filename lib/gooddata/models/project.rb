@@ -37,8 +37,9 @@ module GoodData
     class << self
       # Returns an array of all projects accessible by
       # current user
-      def all
-        GoodData.profile.projects
+      def all(opts = {})
+        c = client(opts)
+        c.profile.projects
       end
 
       # Returns a Project object identified by given string
@@ -47,10 +48,11 @@ module GoodData
       #  - /gdc/projects/<id>
       #  - <id>
       #
-      def [](id, options = {})
-        return id if id.respond_to?(:project?) && id.project?
+      def [](id, opts = {})
+        return id if id.instance_of? GoodData::Project || id.respond_to?(:project?) && id.project?
+
         if id == :all
-          Project.all
+          Project.all(opts)
         else
           if id.to_s !~ %r{^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$}
             fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
@@ -58,8 +60,9 @@ module GoodData
 
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
-          response = client.get PROJECT_PATH % id
-          client.factory.create(Project, response)
+          c = client(opts)
+          response = c.get PROJECT_PATH % id
+          c.factory.create(Project, response)
         end
       end
 
@@ -692,10 +695,8 @@ module GoodData
     # Gets the list or project roles
     #
     # @return [Array<GoodData::ProjectRole>] List of roles
-    def roles
+    def roles()
       url = "/gdc/projects/#{pid}/roles"
-
-      client = GoodData.client
 
       tmp = client.get(url)
       tmp['projectRoles']['roles'].pmap do |role_url|

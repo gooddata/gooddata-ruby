@@ -1,7 +1,9 @@
 # encoding: UTF-8
 
+require_relative '../rest/resource'
+
 module GoodData
-  class Schedule
+  class Schedule < Rest::Resource
     attr_reader :dirty, :data
 
     alias_method :json, :data
@@ -12,26 +14,44 @@ module GoodData
       # Looks for schedule
       # @param id [String] URL, ID of schedule or :all
       # @return [GoodData::Schedule|Array<GoodData::Schedule>] List of schedules
-      def [](id, options = {})
+      def [](id, opts = {:client => GoodData.connection, :project => GoodData.project})
+        c = client(opts)
+        fail ArgumentError, "No :client specified" if c.nil?
+
+        p = opts[:project]
+        fail ArgumentError, "No :project specified" if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, "Wrong :project specified" if project.nil?
+
         if id == :all
-          GoodData::Schedule.all
+          GoodData::Schedule.all(opts)
         else
           if id =~ %r{\/gdc\/projects\/[a-zA-Z\d]+\/schedules\/?[a-zA-Z\d]*}
             url = id
-            tmp = GoodData.get url
-            return GoodData::Schedule.new(tmp)
+            tmp = c.get url
+            return c.create(GoodData::Schedule, tmp)
           end
 
-          tmp = GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules/#{id}"
-          GoodData::Schedule.new(tmp)
+          tmp = c.get "/gdc/projects/#{project.pid}/schedules/#{id}"
+          c.create(GoodData::Schedule, tmp)
         end
       end
 
       # Returns list of all schedules for active project
       # @return [Array<GoodData::Schedule>] List of schedules
-      def all
-        tmp = GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules"
-        tmp['schedules']['items'].map { |schedule| GoodData::Schedule.new(schedule) }
+      def all(opts = {:client => GoodData.connection, :project => GoodData.project})
+        c = client(opts)
+        fail ArgumentError, "No :client specified" if c.nil?
+
+        p = opts[:project]
+        fail ArgumentError, "No :project specified" if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, "Wrong :project specified" if project.nil?
+
+        tmp = c.get "/gdc/projects/#{project.pid}/schedules"
+        tmp['schedules']['items'].map { |schedule| c.create(GoodData::Schedule, schedule) }
       end
 
       # Creates new schedules from parameters passed
@@ -42,6 +62,14 @@ module GoodData
       # @param options [Hash] Optional options
       # @return [GoodData::Schedule] New GoodData::Schedule instance
       def create(process_id, cron, executable, options = {})
+        c = client(options)
+        fail ArgumentError, "No :client specified" if c.nil?
+
+        p = options[:project]
+        fail ArgumentError, "No :project specified" if p.nil?
+
+        project = GoodData::Project[p, options]
+
         default_opts = {
           :type => 'MSETL',
           :timezone => 'UTC',
@@ -96,13 +124,13 @@ module GoodData
         tmp = json['schedule'][:type]
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
-        url = "/gdc/projects/#{GoodData.project.pid}/schedules"
-        res = GoodData.post url, json
+        url = "/gdc/projects/#{project.pid}/schedules"
+        res = c.post url, json
 
         fail 'Unable to create new schedule' if res.nil?
 
-        new_obj_json = GoodData.get res['schedule']['links']['self']
-        GoodData::Schedule.new(new_obj_json)
+        new_obj_json = c.get res['schedule']['links']['self']
+        c.create(GoodData::Schedule, new_obj_json)
       end
     end
 
@@ -239,7 +267,7 @@ module GoodData
     def executions
       if @json
         url = @json['schedule']['links']['executions']
-        res = GoodData.get url
+        res = client.get url
         res['executions']['items']
       end
     end

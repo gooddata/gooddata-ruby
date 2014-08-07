@@ -5,12 +5,12 @@ describe GoodData::Command::Process do
   graph_path = 'graph/graph.grf'
 
   before(:each) do
-    ConnectionHelper.create_default_connection
-    GoodData.project = ProjectHelper.get_default_project
+    @client = ConnectionHelper.create_default_connection
+    @project = ProjectHelper.get_default_project(:client => @client)
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Process instance" do

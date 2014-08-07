@@ -60,19 +60,19 @@ module GoodData
           end
 
           # new_opts = new_opts.merge(Hash.new({}))
-          res = Client.new(new_opts)
+          client = Client.new(new_opts)
 
-          unless @@instance # rubocop:disable ClassVars
+          unless client
             at_exit do
-              if @@instance && @@instance.connection
-                puts @@instance.connection.stats_table
+              if client && client.connection
+                puts client.connection.stats_table
               end
             end
           end
 
           # HACK: This line assigns class instance # if not done yet
-          @@instance = res # rubocop:disable ClassVars
-          res
+          # @@instance = client # rubocop:disable ClassVars
+          client
         end
 
         def disconnect
