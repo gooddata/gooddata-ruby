@@ -9,12 +9,11 @@ module GoodData
     #
     # MUST provide way to use - DELETE, GET, POST, PUT
     # SHOULD provide way to use - HEAD, Bulk GET ...
-    # SHOULD wrap some existing library/gem - RestClient, Typhoeus
     class Client
       #################################
       # Constants
       #################################
-      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::RestClientConnection # Connections::TyphoeusConnection # Connections::DummyConnection
+      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::RestClientConnection
 
       #################################
       # Class variables
