@@ -398,8 +398,8 @@ describe GoodData::Schedule do
     end
 
     it 'Should save a schedule' do
-      expect(GoodData::Schedule[@schedule.uri]).to eq @schedule
-      expect(GoodData::Project[ProjectHelper::PROJECT_ID].schedules).to include(@schedule)
+      expect(GoodData::Schedule[@schedule.uri, :project => @project, :client => @client]).to eq @schedule
+      expect(GoodData::Project[ProjectHelper::PROJECT_ID, :project => @project, :client => @client].schedules).to include(@schedule)
     end
   end
 
