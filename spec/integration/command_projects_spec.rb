@@ -19,12 +19,11 @@ describe GoodData::Command::Project, :constraint => 'slow' do
 
   it "should update the project" do
     @blueprint.merge!(@module_blueprint)
-    GoodData.with_project(@project) do |p|
-      p.blueprint.datasets.count.should == 3
-      p.blueprint.datasets(:include_date_dimensions => true).count.should == 4
-      GoodData::Command::Project.update({:spec => @blueprint, :project => p})
-      p.blueprint.datasets.count.should == 4
-      p.blueprint.datasets(:include_date_dimensions => true).count.should == 5
-    end
+    @project.blueprint.datasets.count.should == 3
+    @project.blueprint.datasets(:include_date_dimensions => true).count.should == 4
+    GoodData::Command::Project.update({:spec => @blueprint, :client => @client, :project => @project})
+    @project.blueprint.datasets.count.should == 4
+    @project.blueprint.datasets(:include_date_dimensions => true).count.should == 5
+
   end
 end

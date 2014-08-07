@@ -26,7 +26,7 @@ module GoodData
           begin
             GoodData.with_project(project) do |p|
               # migrate_date_dimensions(p, spec[:date_dimensions] || [])
-              migrate_datasets(p, spec)
+              migrate_datasets(spec, :project => p, :client => client)
               load(p, spec)
               migrate_metrics(p, spec[:metrics] || [])
               migrate_reports(p, spec[:reports] || [])
@@ -46,18 +46,18 @@ module GoodData
 
         def migrate_datasets(spec, opts = {:client => GoodData.connection})
           client = opts[:client]
-          fail ArgumentError, "No :client specified" if client.nil?
+          fail ArgumentError, 'No :client specified' if client.nil?
 
           p = opts[:project]
-          fail ArgumentError, "No :project specified" if p.nil?
+          fail ArgumentError, 'No :project specified' if p.nil?
 
           project = Project[p, {:client => client}]
-          fail ArgumentError, "Wrong :project specified" if project.nil?
+          fail ArgumentError, 'Wrong :project specified' if project.nil?
 
           bp = ProjectBlueprint.new(spec)
           # schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
           # project = GoodData.project unless project
-          uri = "/gdc/projects/#{GoodData.project.pid}/model/diff"
+          uri = "/gdc/projects/#{project.pid}/model/diff"
           result = client.post(uri, bp.to_wire)
 
           link = result['asyncTask']['link']['poll']
@@ -66,7 +66,7 @@ module GoodData
           # pp response
           while response.code != 200
             sleep 1
-            GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+            client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
               sleep 1
               response = client.get(link, :process => false)
               # pp response
@@ -91,7 +91,7 @@ module GoodData
           bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
             dataset = ds[0]
             manifest = ds[1]
-            GoodData::ProjectMetadata["manifest_#{dataset.name}"] = manifest.to_json
+            GoodData::ProjectMetadata["manifest_#{dataset.name}", :client => client, :project => project] = manifest.to_json
           end
         end
 

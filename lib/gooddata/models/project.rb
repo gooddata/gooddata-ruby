@@ -181,7 +181,7 @@ module GoodData
     def blueprint
       result = client.get("/gdc/projects/#{pid}/model/view")
       polling_url = result['asyncTask']['link']['poll']
-      model = GoodData.poll_on_code(polling_url)
+      model = client.poll_on_code(polling_url)
       GoodData::Model::FromWire.from_wire(model)
     end
 
