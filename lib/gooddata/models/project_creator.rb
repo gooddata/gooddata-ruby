@@ -9,15 +9,18 @@ module GoodData
   module Model
     class ProjectCreator
       class << self
-        def migrate(options = {})
-          spec = options[:spec] || fail('You need to provide spec for migration')
+        def migrate(opts = {})
+          client = opts[:client]
+          fail ArgumentError, "No :client specified" if client.nil?
+
+          spec = opts[:spec] || fail('You need to provide spec for migration')
           bp = ProjectBlueprint.new(spec)
           spec = bp.to_hash
 
           fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
 
-          token = options[:token]
-          project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
+          token = opts[:token]
+          project = opts[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token, :client => client)
           fail('You need to specify token for project creation') if token.nil? && project.nil?
 
           begin
@@ -41,34 +44,48 @@ module GoodData
           end
         end
 
-        def migrate_datasets(project, spec)
+        def migrate_datasets(spec, opts = {:client => GoodData.connection})
+          client = opts[:client]
+          fail ArgumentError, "No :client specified" if client.nil?
+
+          p = opts[:project]
+          fail ArgumentError, "No :project specified" if p.nil?
+
+          project = Project[p, {:client => client}]
+          fail ArgumentError, "Wrong :project specified" if project.nil?
+
           bp = ProjectBlueprint.new(spec)
           # schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
           # project = GoodData.project unless project
           uri = "/gdc/projects/#{GoodData.project.pid}/model/diff"
-          result = GoodData.post(uri, bp.to_wire)
+          result = client.post(uri, bp.to_wire)
+
           link = result['asyncTask']['link']['poll']
-          response = GoodData.get(link, :process => false)
+          response = client.get(link, :process => false)
+
           # pp response
           while response.code != 200
             sleep 1
             GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
               sleep 1
-              response = GoodData.get(link, :process => false)
+              response = client.get(link, :process => false)
               # pp response
             end
           end
-          response = GoodData.get(link)
-          ldm_links = GoodData.get project.md[LDM_CTG]
+
+          response = client.get(link)
+          ldm_links = client.get project.md[LDM_CTG]
           ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
+
           chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
           chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-            response = GoodData.post ldm_uri, 'manage' => { 'maql' => chunk }
-            polling_url = response['entries'].first['link']
-            polling_result = GoodData.poll_on_response(polling_url) do |body|
-              body['wTaskStatus']['status'] == 'RUNNING'
-            end
-            fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+          response = client.post ldm_uri, 'manage' => { 'maql' => chunk }
+          polling_url = response['entries'].first['link']
+          polling_result = client.poll_on_response(polling_url) do |body|
+            body['wTaskStatus']['status'] == 'RUNNING'
+          end
+
+          fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
           end
 
           bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|

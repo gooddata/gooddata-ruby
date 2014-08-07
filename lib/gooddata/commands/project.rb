@@ -98,7 +98,9 @@ module GoodData
 
         # Build project
         def build(options = {})
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
+          client = options[:client]
+          fail ArgumentError, "No :client specified" if client.nil?
+          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token], :client => client)
         end
 
         def validate(project_id)
