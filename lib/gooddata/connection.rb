@@ -11,7 +11,8 @@ module GoodData
     #
     # @see GoodData.connect
     def connection
-      Rest::Client.connection || fail('Please authenticate with GoodData.connect first')
+      # TODO: Remove this after successful rest-factory transition
+      Rest::Client.connection # || fail('Please authenticate with GoodData.connect first')
     end
 
     alias_method :client, :connection
