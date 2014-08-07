@@ -539,7 +539,7 @@ module GoodData
     end
 
     def md
-      @md ||= Links.new client.get(data['links']['metadata'])
+      @md ||= client.create(Links, client.get(data['links']['metadata']))
     end
 
     # Gets membership for profile specified

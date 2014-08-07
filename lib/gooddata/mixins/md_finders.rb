@@ -4,7 +4,7 @@ module GoodData
   module Mixin
     module MdFinders
       def find_by_tag(tag)
-        self[:all].select { |r| r['tags'].split(',').include?(tag) }
+        self[:all, client: client].select { |r| r.tags.split(',').include?(tag) }
       end
 
       def find_first_by_title(title, options = {})

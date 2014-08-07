@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 module GoodData
-  class Links
+  class Links < GoodData::Rest::Object
     attr_reader :data
 
     def initialize(items)
