@@ -32,12 +32,11 @@ module GoodData
     #
     # @return [Array<GoodData::Profile>] List of users
     def users
-      res = []
       url = data['links']['roleUsers']
       tmp = client.get url
       tmp['associatedUsers']['users'].pmap do |user_url|
         user = client.get user_url
-        res << GoodData::Profile.new(user)
+        GoodData::Profile.new(user)
       end
     end
 
