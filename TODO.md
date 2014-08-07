@@ -2,6 +2,7 @@
 
 ## Lib
 
+- Check all GoodData::Something[:all], they used to return Array of Hashes in many cases now they are all returning Objects
 - Use less strict versioning See [#96](https://github.com/gooddata/gooddata-ruby/pull/196)
 - Library wide-logging to tmp/logs/{{TIMESTAMP}}.log
 - Globar library crash handler storing stacktraces to tmp/crashes/{{TIMESTAMP}}.log
@@ -22,3 +23,7 @@
 
 - [Issues](https://github.com/gooddata/gooddata-ruby/issues)
 - Rake notes - [rake notes](https://gist.github.com/korczis/a127456afdda3df4e3a6)
+
+# Done
+
+- walked through Project and added majority of the helpers for getting project related objects (fact, attr, metric, etc)

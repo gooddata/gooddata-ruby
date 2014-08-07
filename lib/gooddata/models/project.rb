@@ -165,7 +165,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Attribute[id]
     # @return [GoodData::Attribute | Array<GoodData::Attribute>] fact instance or list
-    def attribute(id)
+    def attributes(id = :all)
       GoodData::Attribute[id, project: self]
     end
 
@@ -233,20 +233,16 @@ module GoodData
       new_project
     end
 
-    def datasets
-      blueprint.datasets
-      datasets_uri = "#{md['data']}/sets"
-      response = client.get datasets_uri
-      response['dataSetsInfo']['sets'].map do |ds|
-        DataSet[ds['meta']['uri']]
-      end
+    # Helper for getting dashboards of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
+    # @return [GoodData::Dashboard | Array<GoodData::Dashboard>] dashboard instance or list
+    def dashboards(id = :all)
+      GoodData::Dashboard[:all, project: self, client: client]
     end
 
-    # Gets processes for the project
-    #
-    # @return [Array<GoodData::Process>] Processes for the current project
-    def processes
-      GoodData::Process.all
+    def datasets
+      blueprint.datasets
     end
 
     # Deletes project
@@ -282,7 +278,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
-    def fact(id)
+    def facts(id)
       GoodData::Fact[id, project: self]
     end
 
@@ -533,6 +529,15 @@ module GoodData
       data['links']
     end
 
+    # Helper for getting labels of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to
+    # GoodData::Label[id] + it supports :all as welll
+    # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
+    def labels(id = :all)
+      attribute.pmapcat {|a| a.labels}
+    end
+
     def md
       @md ||= Links.new client.get(data['links']['metadata'])
     end
@@ -555,7 +560,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
     # @return [GoodData::Metric | Array<GoodData::Metric>] matric instance or list
-    def metric(id)
+    def metrics(id = :all)
       GoodData::Metric[id, project: self]
     end
 
@@ -622,6 +627,14 @@ module GoodData
 
     alias_method :transfer_objects, :partial_md_export
 
+    # Helper for getting reports of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
+    # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
+    def processes(id = :all)
+      GoodData::Process[id, project: self, client: client]
+    end
+
     # Checks if this object instance is project
     #
     # @return [Boolean] Return true for all instances
@@ -630,7 +643,7 @@ module GoodData
     end
 
     def info
-      results = blueprint.datasets.map do |ds|
+      results = blueprint.datasets.pmap do |ds|
         [ds, ds.count]
       end
       puts title
@@ -664,8 +677,16 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
     # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
-    def report(id)
+    def reports(id = :all)
       GoodData::Report[id, project: self]
+    end
+
+    # Helper for getting report definitions of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::ReportDefinition[id]
+    # @return [GoodData::ReportDefinition | Array<GoodData::ReportDefinition>] report definition instance or list
+    def report_definitions(id = :all)
+      GoodData::ReportDefinition[id, project: self, client: client]
     end
 
     # Gets the list or project roles
@@ -708,13 +729,10 @@ module GoodData
       !res
     end
 
-    # Gets project schedules
-    #
-    # @return [Array<GoodData::Schedule>] List of schedules
-    def schedules
-      tmp = client.get @json['project']['links']['schedules']
-      # TODO: Transform schedule to proper rest resource
-      tmp['schedules']['items'].map { |schedule| GoodData::Schedule.new(schedule) }
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Schedule[id]
+    # @return [GoodData::Schedule | Array<GoodData::Schedule>] schedule instance or list
+    def schedules(id = :all)
+      GoodData::Schedule[id, project: self, client: client]
     end
 
     # Gets SLIs data
