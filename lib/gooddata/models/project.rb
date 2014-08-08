@@ -885,7 +885,16 @@ module GoodData
     # @param user User to be updated
     # @param desired_roles Roles to be assigned to user
     # @param role_list Optional cached list of roles used for lookups
-    def set_user_roles(user, desired_roles, role_list = roles)
+    def set_user_roles(user, desired_roles, role_list = roles, opts = {:client => GoodData.connection, :project => GoodData.project})
+      client = opts[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+
+      p = opts[:project]
+      fail ArgumentError, 'No :project specified' if p.nil?
+
+      project = GoodData::Project[p, opts]
+      fail ArgumentError, 'Wrong :project specified' if project.nil?
+
       if user.is_a? String
         user = get_user(user)
         fail ArgumentError, "Invalid user '#{user}' specified" if user.nil?
@@ -912,7 +921,7 @@ module GoodData
         }
       }
 
-      GoodData.post url, payload
+      client.post url, payload
     end
 
     alias_method :add_user, :set_user_roles
@@ -921,13 +930,13 @@ module GoodData
     #
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
-    def set_users_roles(list, role_list = roles)
+    def set_users_roles(list, role_list = roles, opts = {:client => GoodData.connection, :project => GoodData.project})
       list.pmap do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:role] || user_hash[:roles]
         {
           :user => user,
-          :result => set_user_roles(user, roles, role_list)
+          :result => set_user_roles(user, roles, role_list, opts)
         }
       end
     end

@@ -37,6 +37,8 @@ describe 'GoodData - project' do
 
   describe '#project' do
     it 'Returns project assigned' do
+      pending 'GoodData.project= is disabled for now'
+
       GoodData.project = nil
       GoodData.project.should == nil
 

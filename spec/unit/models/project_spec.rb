@@ -269,7 +269,8 @@ describe GoodData::Project do
         GoodData::Membership.new(json)
       end
 
-      res = GoodData::Domain.users_create(users)
+      project = GoodData::Project[ProjectHelper::PROJECT_ID, {:client => @client}]
+      res = GoodData::Domain.users_create(users, {:client => @client, :project => project})
 
       project.users_create(users)
 

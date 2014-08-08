@@ -131,7 +131,7 @@ module GoodData
       def users_create(list, default_domain = nil, opts = {:client => GoodData.connection, :project => GoodData.project})
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
         domains = {}
-        list.map do |user|
+        list(opts).map do |user|
           # TODO: Add user here
           domain_name = user.json['user']['content']['domain'] || default_domain_name
 
@@ -143,7 +143,7 @@ module GoodData
             d = GoodData::Domain[domain_name, opts]
             domain = {
               :domain => d,
-              :users => d.users
+              :users => d.users(opts)
             }
 
             domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
@@ -225,7 +225,7 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.users
     #
-    def users(opts = USERS_OPTIONS)
+    def users(opts = USERS_OPTIONS.merge(:client => GoodData.connection))
       GoodData::Domain.users(name, opts)
     end
 
