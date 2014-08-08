@@ -37,6 +37,8 @@ describe 'GoodData - project' do
 
   describe '#project' do
     it 'Returns project assigned' do
+      pending 'GoodData.project= is disabled for now'
+
       GoodData.project = nil
       GoodData.project.should == nil
 
@@ -47,7 +49,7 @@ describe 'GoodData - project' do
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID] do
+      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID, :client => @client] do
       end
     end
   end

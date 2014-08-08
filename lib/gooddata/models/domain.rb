@@ -15,9 +15,10 @@ module GoodData
       #
       # @param domain_name [String] Domain name
       # @return [String] Domain object instance
-      def [](domain_name, options = {})
+      def [](domain_name, options = {:client => GoodData.connection})
+        c = client(options)
         fail "Using pseudo-id 'all' is not supported by GoodData::Domain" if domain_name.to_s == 'all'
-        GoodData::Domain.new(domain_name)
+        c.create(GoodData::Domain, domain_name)
       end
 
       # Adds user to domain
@@ -127,10 +128,10 @@ module GoodData
       # @param [Array<GoodData::Membership>] list List of users
       # @param [String] default_domain_name Default domain name used when no specified in user
       # @return [Array<GoodData::User>] List of users created
-      def users_create(list, default_domain = nil)
+      def users_create(list, default_domain = nil, opts = {:client => GoodData.connection, :project => GoodData.project})
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
         domains = {}
-        list.map do |user|
+        list(opts).map do |user|
           # TODO: Add user here
           domain_name = user.json['user']['content']['domain'] || default_domain_name
 
@@ -139,9 +140,10 @@ module GoodData
 
           # Get domain info from REST, add to cache
           if domain.nil?
+            d = GoodData::Domain[domain_name, opts]
             domain = {
-              :domain => GoodData::Domain[domain_name],
-              :users => GoodData::Domain[domain_name].users
+              :domain => d,
+              :users => d.users(opts)
             }
 
             domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
@@ -223,7 +225,7 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.users
     #
-    def users(opts = USERS_OPTIONS)
+    def users(opts = USERS_OPTIONS.merge(:client => GoodData.connection))
       GoodData::Domain.users(name, opts)
     end
 

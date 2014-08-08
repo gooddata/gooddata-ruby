@@ -195,7 +195,7 @@ describe GoodData::Project do
   describe '#users' do
     it 'Returns array of GoodData::Users' do
       pending 'Investigate why is this soo slooow'
-      
+
       project = GoodData::Project[ProjectHelper::PROJECT_ID, {:client => @client}]
 
       invitations = project.invitations
@@ -269,7 +269,8 @@ describe GoodData::Project do
         GoodData::Membership.new(json)
       end
 
-      res = GoodData::Domain.users_create(users)
+      project = GoodData::Project[ProjectHelper::PROJECT_ID, {:client => @client}]
+      res = GoodData::Domain.users_create(users, {:client => @client, :project => project})
 
       project.users_create(users)
 
@@ -296,7 +297,7 @@ describe GoodData::Project do
     it 'Properly updates user roles as needed' do
       project = ProjectHelper.get_default_project(:client => @client)
 
-      project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin')
+      project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin', :client => @client, :project => @project)
     end
   end
 
@@ -307,7 +308,7 @@ describe GoodData::Project do
       list = load_users_from_csv
 
       # Create domain users
-      domain_users = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
+      domain_users = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN, :client => @client, :project => project)
       expect(domain_users.length).to equal(list.length)
 
       # Create list with user, desired_roles hashes
@@ -349,7 +350,7 @@ describe GoodData::Project do
     end
 
     it 'Properly updates user roles when user specified by email and :roles specified as string with role name' do
-      project = ProjectHelper.get_default_project
+      project = ProjectHelper.get_default_project(:client => @client)
 
       list = [
         {
