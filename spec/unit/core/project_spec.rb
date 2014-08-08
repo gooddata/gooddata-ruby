@@ -20,14 +20,17 @@ describe 'GoodData - project' do
     end
 
     it 'Assigns project using project ID' do
+      pending 'GoodData::project= is disabled for now'
       GoodData.project = ProjectHelper::PROJECT_ID
     end
 
     it 'Assigns project using project URL' do
+      pending 'GoodData::project= is disabled for now'
       GoodData.project = ProjectHelper::PROJECT_URL
     end
 
     it 'Assigns project directly' do
+      pending 'GoodData::project= is disabled for now'
       GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID]
     end
   end

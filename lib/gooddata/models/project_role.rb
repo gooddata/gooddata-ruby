@@ -36,7 +36,7 @@ module GoodData
       tmp = client.get url
       tmp['associatedUsers']['users'].pmap do |user_url|
         user = client.get user_url
-        c.create(GoodData::Profile, user)
+        client.create(GoodData::Profile, user)
       end
     end
 

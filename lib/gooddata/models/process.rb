@@ -153,7 +153,7 @@ module GoodData
     end
 
     def delete
-      GoodData.delete(uri)
+      client.delete(uri)
     end
 
     # Redeploy existing process.

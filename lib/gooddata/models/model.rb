@@ -61,7 +61,15 @@ module GoodData
       end
 
       # Load given file into a data set described by the given schema
-      def upload_data(path, project_blueprint, dataset, options = {})
+      def upload_data(path, project_blueprint, dataset, options = {:client => GoodData.client, :project => GoodData.project})
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
         # path = if path =~ URI.regexp
         #   Tempfile.open('remote_file') do |temp|
         #     temp << open(path).read
@@ -99,7 +107,7 @@ module GoodData
           end
 
           # upload it
-          GoodData.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir))
+          client.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir), :client => options[:client], :project => options[:project])
         ensure
           FileUtils.rm_rf dir
         end
@@ -107,15 +115,15 @@ module GoodData
         # kick the load
         pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull']
-        task = GoodData.post link, pull
+        task = client.post link, pull
 
-        res = GoodData.poll_on_response(task['pullTask']['uri']) do |body|
+        res = client.poll_on_response(task['pullTask']['uri']) do |body|
           body['taskStatus'] == 'RUNNING' || body['taskStatus'] == 'PREPARED'
         end
 
         if res['taskStatus'] == 'ERROR'
           s = StringIO.new
-          GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
+          client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
           js = MultiJson.load(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end
