@@ -75,15 +75,15 @@ module GoodData
 
         # TODO: It will be nice if the API will return us user just newly created
         url = "/gdc/account/domains/#{opts[:domain]}/users"
-        response = GoodData.post(url, :accountSetting => data)
+        response = client(opts).post(url, :accountSetting => data)
 
-        raw = GoodData.get response['uri']
+        raw = client(opts).get response['uri']
 
         # TODO: Remove this hack when POST /gdc/account/domains/{domain-name}/users returns full profile
         raw['accountSetting']['links'] = {} unless raw['accountSetting']['links']
         raw['accountSetting']['links']['self'] = response['uri'] unless raw['accountSetting']['links']['self']
 
-        GoodData::Profile.new(raw)
+        client.create(GoodData::Profile, raw)
       end
 
       # Finds user in domain by login
@@ -91,12 +91,12 @@ module GoodData
       # @param domain [String] Domain name
       # @param login [String] User login
       # @return [GoodData::Profile] User profile
-      def find_user_by_login(domain, login)
+      def find_user_by_login(domain, login, opts = {})
+        c = client(opts)
         url = "/gdc/account/domains/#{domain}/users?login=#{login}"
-        tmp = GoodData.get url
+        tmp = c.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
-        return GoodData::Profile.new(items.first) if items && items.length > 0
-        nil
+        items && items.length > 0 ? c.factory.create(GoodData::Profile, items.first) : nil
       end
 
       # Returns list of users for domain specified
@@ -113,9 +113,9 @@ module GoodData
         uri = "/gdc/account/domains/#{domain}/users?offset=#{offset}&limit=#{options[:limit]}"
         loop do
           break unless uri
-          tmp = GoodData.get(uri)
+          tmp = client(opts).get(uri)
           tmp['accountSettings']['items'].each do |account|
-            result << GoodData::Profile.new(account)
+            result << client(opts).create(GoodData::Profile, account)
           end
           uri = tmp['accountSettings']['paging']['next']
         end

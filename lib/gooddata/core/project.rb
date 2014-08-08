@@ -1,15 +1,7 @@
 # encoding: UTF-8
 
-require_relative 'threaded'
-
 module GoodData
-  # Assigns global/default GoodData project
-  def project=(project)
-    GoodData.project = project
-    GoodData.project
-  end
-
-  alias_method :use, :project=
+  @project = nil
 
   class << self
     # Sets the active project
@@ -31,24 +23,27 @@ module GoodData
     #
     #     # Select project using indexer on GoodData::Project class
     #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
-    #
+    # Assigns global/default GoodData project
     def project=(project)
       if project.is_a? Project
-        threaded[:project] = project
+        @project = project
       elsif project.nil?
-        threaded[:project] = nil
+        @project = nil
       else
-        threaded[:project] = Project[project]
+        @project = Project[project]
       end
+      @project
     end
 
     alias_method :use, :project=
 
+    attr_reader :project
+
     # Returns the active project
     #
-    def project
-      threaded[:project]
-    end
+    # def project
+    #   threaded[:project]
+    # end
 
     # Perform block in context of another project than currently set
     #
@@ -58,8 +53,7 @@ module GoodData
       fail 'You have to specify a project when using with_project' if project.nil? || (project.is_a?(String) && project.empty?)
       old_project = GoodData.project
       begin
-        GoodData.use(project)
-        bl.call(GoodData.project)
+        bl.call(project)
       rescue RestClient::ResourceNotFound
         raise(GoodData::ProjectNotFound, 'Project was not found')
       ensure

@@ -118,26 +118,36 @@ module GoodData
         unsaved_metrics.each { |m| m.title = 'Untitled metric' unless m.title }
 
         begin
-          unsaved_metrics.each { |m| m.save }
+          unsaved_metrics.each { |m| m.save(options) }
           rd = GoodData::ReportDefinition.create(options)
-          data_result(execute_inline(rd))
+          data_result(execute_inline(rd, options))
         ensure
           unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
       end
 
-      def execute_inline(rd)
+      def execute_inline(rd, opts = {:client => GoodData.client, :project => GoodData.project})
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
         rd = rd.respond_to?(:json) ? rd.json : rd
         data = {
           report_req: {
             definitionContent: {
               content: rd,
-              projectMetadata: GoodData.project.links['metadata']
+              projectMetadata: project.links['metadata']
             }
           }
         }
-        uri = "/gdc/app/projects/#{GoodData.project.pid}/execute"
-        GoodData.post(uri, data)
+        uri = "/gdc/app/projects/#{project.pid}/execute"
+
+        client.post(uri, data)
       end
 
       # TODO: refactor the method. It should be instance method
@@ -146,14 +156,16 @@ module GoodData
       # @return [GoodData::ReportDataResult]
       def data_result(result)
         data_result_uri = result['execResult']['dataResult']
-        result = GoodData.get data_result_uri
+        result = client.get data_result_uri
 
         while result && result['taskState'] && result['taskState']['status'] == 'WAIT'
           sleep 10
-          result = GoodData.get data_result_uri
+          result = client.get data_result_uri
         end
+
         return nil unless result
-        ReportDataResult.new(GoodData.get data_result_uri)
+
+        ReportDataResult.new(client.get data_result_uri)
       end
 
       def create(options = {})
@@ -201,14 +213,23 @@ module GoodData
       content['grid']['metrics'].map { |i| GoodData::Metric[i['uri']] }
     end
 
-    def execute
+    def execute(opts = {:client => GoodData.client, :project => GoodData.project})
+      client = opts[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+
+      p = opts[:project]
+      fail ArgumentError, 'No :project specified' if p.nil?
+
+      project = GoodData::Project[p, opts]
+      fail ArgumentError, 'Wrong :project specified' if project.nil?
+
       result = if saved?
                  pars = {
                    'report_req' => { 'reportDefinition' => uri }
                  }
-                 GoodData.post '/gdc/xtab2/executor', pars
+                 client.post '/gdc/xtab2/executor', pars
                else
-                 ReportDefinition.execute_inline(self)
+                 ReportDefinition.execute_inline(self, opts)
                end
       ReportDefinition.data_result(result)
     end

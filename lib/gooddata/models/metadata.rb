@@ -50,7 +50,7 @@ module GoodData
     end
 
     def reload!
-      @json = GoodData.get(uri) if saved?
+      @json = client.get(uri) if saved?
       self
     end
 
@@ -79,11 +79,20 @@ module GoodData
       !res
     end
 
-    def save
+    def save(opts = {:client => GoodData.client, :project => GoodData.project})
+      client = opts[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+
+      p = opts[:project]
+      fail ArgumentError, 'No :project specified' if p.nil?
+
+      project = GoodData::Project[p, opts]
+      fail ArgumentError, 'Wrong :project specified' if project.nil?
+
       fail('Validation failed') unless validate
 
       if saved?
-        GoodData.put(uri, to_json)
+        client.put(uri, to_json)
       else
         explicit_identifier = meta['identifier']
         # Pre-check to provide a user-friendly error rather than
@@ -91,7 +100,9 @@ module GoodData
         if explicit_identifier && MdObject[explicit_identifier]
           fail "Identifier '#{explicit_identifier}' already in use"
         end
-        result = GoodData.post(GoodData.project.md['obj'], to_json)
+
+        req_uri = project.md['obj']
+        result = client.post(req_uri, to_json)
         saved_object = self.class[result['uri']]
         # TODO: add test for explicitly provided identifier
 
@@ -102,11 +113,11 @@ module GoodData
           # it explicitly with an extra PUT call.
           meta['identifier'] = explicit_identifier
           begin
-            GoodData.put(uri, to_json)
+            client.put(uri, to_json)
           rescue => e
             # Cannot change the identifier (perhaps because it's in use
             # already?), cleaning up.
-            GoodData.delete(uri)
+            client.delete(uri)
             raise e
           end
         end

@@ -30,7 +30,7 @@ module GoodData
     def find_element_value(element_id)
       element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d+)/)[1] : element_id
       uri = links['elements']
-      result = GoodData.get(uri + "/?id=#{element_id}")
+      result = client.get(uri + "/?id=#{element_id}")
       items = result['attributeElements']['elements']
       if items.empty?
         fail "Element id #{element_id} was not found"

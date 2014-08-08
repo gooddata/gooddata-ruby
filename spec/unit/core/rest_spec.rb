@@ -5,29 +5,30 @@ require 'gooddata/core/rest'
 
 describe GoodData do
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
+    @project = ProjectHelper.get_default_project(:client => @client)
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   describe '#get_project_webdav_path' do
     it 'Returns path' do
-      GoodData.get_project_webdav_path('test-file.csv')
+      @client.get_project_webdav_path('test-file.csv')
     end
   end
 
   describe '#upload_to_project_webdav' do
     it 'Uploads file' do
       pending('Research how to properly upload file')
-      GoodData.upload_to_project_webdav('spec/data/test-ci-data.csv')
+      @client.upload_to_project_webdav('spec/data/test-ci-data.csv')
     end
   end
 
   describe '#get_user_webdav_path' do
     it 'Gets the path' do
-      GoodData.get_user_webdav_path('test.csv')
+      @client.get_user_webdav_path('test.csv')
     end
   end
 end

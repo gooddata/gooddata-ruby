@@ -3,7 +3,7 @@
 require 'pry'
 
 module GoodData
-  class Process
+  class Process < GoodData::Rest::Object
     attr_reader :data
 
     alias_method :raw_data, :data
@@ -12,15 +12,24 @@ module GoodData
 
     class << self
       def [](id, options = {})
-        if id == :all
-          uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes"
-          data = GoodData.get(uri)
+        project = options[:project]
+        c = client(options)
+
+        if id == :all && project
+          uri = "/gdc/projects/#{project.pid}/dataload/processes"
+          data = c.get(uri)
           data['processes']['items'].map do |process_data|
             Process.new(process_data)
           end
+        elsif id == :all
+          uri = "/gdc/account/profile/#{c.user.obj_id}/dataload/processes"
+          data = c.get(uri)
+          data['processes']['items'].map do |process_data|
+            c.create(Process, process_data)
+          end
         else
-          uri = "/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{id}"
-          new(GoodData.get(uri))
+          uri = "/gdc/projects/#{project.pid}/dataload/processes/#{id}"
+          c.create(Process, c.get(uri))
         end
       end
 
@@ -30,6 +39,15 @@ module GoodData
 
       # TODO: Check the params.
       def with_deploy(dir, options = {}, &block)
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
         # verbose = options[:verbose] || false
         GoodData.with_project(options[:project_id] || options[:project]) do |project|
           params = options[:params].nil? ? [] : [options[:params]]
@@ -46,7 +64,16 @@ module GoodData
         end
       end
 
-      def upload_package(path, files_to_exclude)
+      def upload_package(path, files_to_exclude, opts = {:client => GoodData.connection})
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
         if !path.directory?
           GoodData.upload_to_user_webdav(path)
           path
@@ -65,7 +92,8 @@ module GoodData
                 end
               end
             end
-            GoodData.upload_to_user_webdav(temp.path)
+
+            client.upload_to_user_webdav(temp.path, opts)
             temp.path
           end
         end
@@ -80,6 +108,15 @@ module GoodData
       # @option options [String] :process_id ID of a process to be redeployed (do not set if you want to create a new process)
       # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
       def deploy(path, options = {})
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'No :project specified' if project.nil?
+
         path = Pathname(path) || fail('Path is not specified')
         files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |p| Pathname(p) }
         process_id = options[:process_id]
@@ -90,7 +127,7 @@ module GoodData
 
         verbose = options[:verbose] || false
         puts HighLine.color("Deploying #{path}", HighLine::BOLD) if verbose
-        deployed_path = Process.upload_package(path, files_to_exclude)
+        deployed_path = Process.upload_package(path, files_to_exclude, :client => client, :project => project)
         data = {
           :process => {
             :name => deploy_name,
@@ -100,12 +137,12 @@ module GoodData
         }
 
         res = if process_id.nil?
-                GoodData.post("/gdc/projects/#{GoodData.project.pid}/dataload/processes", data)
+                client.post("/gdc/projects/#{project.pid}/dataload/processes", data)
               else
-                GoodData.put("/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{process_id}", data)
+                client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
               end
 
-        process = Process.new(res)
+        process = client.create(Process, res)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
       end
@@ -116,7 +153,7 @@ module GoodData
     end
 
     def delete
-      GoodData.delete(uri)
+      client.delete(uri)
     end
 
     # Redeploy existing process.
@@ -192,7 +229,7 @@ module GoodData
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure
-        result = GoodData.get(result['executionTask']['links']['detail'])
+        result = client.get(result['executionTask']['links']['detail'])
         if result['executionDetail']['status'] == 'ERROR'
           fail "Runing process failed. You can look at a log here #{result["executionDetail"]["logFileName"]}"
         end

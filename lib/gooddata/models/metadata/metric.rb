@@ -27,17 +27,22 @@ module GoodData
         query('metrics', Metric, options)
       end
 
-      def xcreate(options)
-        if options.is_a?(String)
-          create(:expression => options, :extended_notation => true)
-        else
-          create(options.merge(:extended_notation => true))
-        end
+      def xcreate(metric, options= {:client => GoodData::client, :project => GoodData.project})
+        create(metric, options.merge(:extended_notation => true))
       end
 
-      def create(options = {})
-        if options.is_a?(String)
-          expression = options
+      def create(metric, options = {:client => GoodData::client, :project => GoodData.project})
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        if metric.is_a?(String)
+          expression = metric
           extended_notation = false
           title = nil
         else
@@ -49,16 +54,16 @@ module GoodData
 
         expression = if extended_notation
                        dict = {
-                         :facts => GoodData::Fact[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                         :facts => GoodData::Fact[:all, options].reduce({}) do |memo, item|
+                           memo[item.title] = item.uri
                            memo
                          end,
-                         :attributes => GoodData::Attribute[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                         :attributes => GoodData::Attribute[:all, options].reduce({}) do |memo, item|
+                           memo[item.title] = item.uri
                            memo
                          end,
-                         :metrics => GoodData::Metric[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                         :metrics => GoodData::Metric[:all, options].reduce({}) do |memo, item|
+                           memo[item.title] = item.uri
                            memo
                          end
                        }
@@ -83,7 +88,8 @@ module GoodData
         }
         # TODO: add test for explicitly provided identifier
         metric['metric']['meta']['identifier'] = options[:identifier] if options[:identifier]
-        Metric.new(metric)
+
+        client.create(Metric, metric)
       end
 
       def execute(expression, options = {})
@@ -103,17 +109,31 @@ module GoodData
         m.execute
       end
 
-      def xexecute(expression)
-        if expression.is_a?(String)
-          execute(:expression => expression, :extended_notation => true)
-        else
-          execute(expression.merge(:extended_notation => true))
-        end
+      def xexecute(expression, opts = {:client => GoodData.client, :project => GoodData.project})
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        execute(opts.merge(:expression => expression, :extended_notation => true))
       end
     end
 
-    def execute
-      res = GoodData::ReportDefinition.execute(:left => self)
+    def execute(opts = {:client => GoodData.client, :project => GoodData.project})
+      client = opts[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+
+      p = opts[:project]
+      fail ArgumentError, 'No :project specified' if p.nil?
+
+      project = GoodData::Project[p, opts]
+      fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+      res = GoodData::ReportDefinition.execute(opts.merge(:left => self))
       res && res[0][0]
     end
 
