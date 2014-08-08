@@ -16,7 +16,7 @@ describe GoodData::Command::User do
 
   describe "#show" do
     it "Shows profile" do
-      GoodData::Command::User.show
+      GoodData::Command::User.show(:client => @client)
     end
   end
 end

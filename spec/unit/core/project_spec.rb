@@ -47,7 +47,7 @@ describe 'GoodData - project' do
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID] do
+      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID, :client => @client] do
       end
     end
   end
