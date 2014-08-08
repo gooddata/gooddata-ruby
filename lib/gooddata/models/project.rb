@@ -39,7 +39,7 @@ module GoodData
       # current user
       def all(opts = {})
         c = client(opts)
-        c.profile.projects
+        c.user.projects
       end
 
       # Returns a Project object identified by given string
@@ -940,9 +940,9 @@ module GoodData
     # invalid_objects - Checks metadata for invalid/corrupted objects.
     # asyncTask response
     def validate(filters = %w(ldm pdm metric_filter invalid_objects))
-      response = GoodData.post "#{GoodData.project.md['validate-project']}", 'validateProject' => filters
+      response = client.post "#{md['validate-project']}", 'validateProject' => filters
       polling_link = response['asyncTask']['link']['poll']
-      GoodData.poll_on_response(polling_link) do |body|
+      client.poll_on_response(polling_link) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
     end

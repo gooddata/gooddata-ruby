@@ -16,7 +16,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should not build an invalid model" do
     expect {
-      GoodData::Model::ProjectCreator.migrate({:spec => @invalid_spec, :token => ConnectionHelper::GD_PROJECT_TOKEN})
+      GoodData::Model::ProjectCreator.migrate({:spec => @invalid_spec, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
     }.to raise_error(GoodData::ValidationError)
   end
 
@@ -42,11 +42,9 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should compute an empty metric" do
-    GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines Changed')
-      metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")")
-      metric.execute.should be_nil
-    end
+    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
+    metric.execute(:client => @client, :project => @project).should be_nil
   end
 
   it "should load the data" do
@@ -57,7 +55,7 @@ describe "Full project implementation", :constraint => 'slow' do
         [1,"01/01/2014",1,1],
         [3,"01/02/2014",2,2],
         [5,"05/02/2014",3,1]]
-      GoodData::Model.upload_data(commits_data, blueprint, 'commits')
+      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
       # blueprint.find_dataset('commits').upload(commits_data)
 
       devs_data = [
@@ -65,98 +63,93 @@ describe "Full project implementation", :constraint => 'slow' do
         [1, "tomas@gooddata.com"],
         [2, "petr@gooddata.com"],
         [3, "jirka@gooddata.com"]]
-      GoodData::Model.upload_data(devs_data, blueprint, 'devs')
+      GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
       # blueprint.find_dataset('devs').upload(devs_data)
     end
   end
 
   it "should compute a metric" do
-    GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines Changed')
-      metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")")
-      metric.execute.should == 9
-    end
+    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
+    metric.execute(:client => @client, :project => @project).should == 9
   end
 
   it "should execute an anonymous metric twice and not fail" do
-    GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines Changed')
-      metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")")
-      metric.execute.should == 9
-      # Since GD platform cannot execute inline specified metric the metric has to be saved
-      # The code tries to resolve this as transparently as possible
-      metric.execute.should == 9
-    end
+    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
+    metric.execute(:client => @client, :project => @project).should == 9
+    # Since GD platform cannot execute inline specified metric the metric has to be saved
+    # The code tries to resolve this as transparently as possible
+    metric.execute(:client => @client, :project => @project).should == 9
   end
 
   it "should compute a report" do
-    GoodData.with_project(@project) do |p|
-      f = GoodData::Fact.find_first_by_title('Lines Changed')
-      # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
-      metric = GoodData::Metric.xcreate(:title => "My metric", :expression => "SELECT SUM(#\"#{f.title}\")")
-      metric.save
-      result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
-      result[1][1].should == 3
-      result.include_row?(["jirka@gooddata.com", 5]).should == true
+    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
 
-      result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email']).execute
-      result2[1][1].should == 3
-      result2.include_row?(["jirka@gooddata.com", 5]).should == true
-      result2.should == result
-    end
+    # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
+    metric = GoodData::Metric.xcreate(:title => "My metric", :expression => "SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
+    metric.save(:client => @client, :project => @project)
+    result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
+    result[1][1].should == 3
+    result.include_row?(["jirka@gooddata.com", 5]).should == true
+
+    result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email']).execute(:client => @client, :project => @project)
+    result2[1][1].should == 3
+    result2.include_row?(["jirka@gooddata.com", 5]).should == true
+    result2.should == result
   end
 
   it "should throw an exception if trying to access object without explicitely specifying a project" do
     expect do
-      GoodData::Metric[:all]
+      GoodData::Metric[:all, :client => @client, :project => @project]
     end.to raise_exception(GoodData::NoProjectError)
   end
 
   it "should be possible to get all metrics" do
-    metrics1 = GoodData::Metric[:all]
-    metrics2 = GoodData::Metric.all
+    metrics1 = GoodData::Metric[:all, :client => @client, :project => @project]
+    metrics2 = GoodData::Metric.all(:client => @client, :project => @project)
     metrics1.should == metrics2
   end
 
   it "should be possible to get all metrics with full objects" do
-    metrics1 = GoodData::Metric[:all, :full => true]
-    metrics2 = GoodData::Metric.all :full => true
+    metrics1 = GoodData::Metric[:all, :full => true, :client => @client, :project => @project]
+    metrics2 = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
     metrics1.should == metrics2
   end
 
   it "should be able to get a metric by identifier" do
-    metrics = GoodData::Metric.all :full => true
-    metric = GoodData::Metric[metrics.first.identifier]
+    metrics = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
+    metric = GoodData::Metric[metrics.first.identifier, :client => @client, :project => @project]
     metric.identifier == metrics.first.identifier
     metrics.first == metric
   end
 
   it "should be able to get a metric by uri" do
-    metrics = GoodData::Metric.all :full => true
-    metric = GoodData::Metric[metrics.first.uri]
+    metrics = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
+    metric = GoodData::Metric[metrics.first.uri, :client => @client, :project => @project]
     metric.uri == metrics.first.uri
     metrics.first == metric
   end
 
   it "should be able to get a metric by object id" do
-    metrics = GoodData::Metric.all :full => true
-    metric = GoodData::Metric[metrics.first.obj_id]
+    metrics = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
+    metric = GoodData::Metric[metrics.first.obj_id, :client => @client, :project => @project]
     metric.obj_id == metrics.first.obj_id
     metrics.first == metric
   end
 
   it "should exercise the object relations and getting them in various ways" do
     # Find a metric by name
-    metric = GoodData::Metric.find_first_by_title('My metric')
-    the_same_metric = GoodData::Metric[metric]
+    metric = GoodData::Metric.find_first_by_title('My metric', :client => @client, :project => @project)
+    the_same_metric = GoodData::Metric[metric, :client => @client, :project => @project]
     metric.should == metric
 
     # grab fact in several different ways
-    fact1 = GoodData::Fact.find_first_by_title('Lines Changed')
-    fact2 = GoodData::Fact[fact1.identifier]
-    fact3 = GoodData::Fact[fact2.obj_id]
-    fact4 = GoodData::Fact[fact3.uri]
-    fact5 = GoodData::Fact.new(fact4)
+    fact1 = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    fact2 = GoodData::Fact[fact1.identifier, :client => @client, :project => @project]
+    fact3 = GoodData::Fact[fact2.obj_id, :client => @client, :project => @project]
+    fact4 = GoodData::Fact[fact3.uri, :client => @client, :project => @project]
+    fact5 = @client.create(GoodData::Fact, fact4)
 
     # All should be the same
     fact1.should == fact2
@@ -188,32 +181,32 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should try setting and getting by tags" do
-    fact = GoodData::Fact.find_first_by_title('Lines Changed')
+    fact = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
     fact.tags.should be_empty
 
     fact.tags = "tag1,tag2,tag3"
-    fact.save
+    fact.save(:client => @client, :project => @project)
 
     tagged_facts = GoodData::Fact.find_by_tag('tag3')
     tagged_facts.count.should == 1
   end
 
   it "should contain metadata for each dataset in project metadata" do
-    k = GoodData::ProjectMetadata.keys
+    k = GoodData::ProjectMetadata.keys(:client => @client, :project => @project)
     k.should include("manifest_devs")
   end
 
   it "should be able to interpolate metric based on" do
-    res = GoodData::Metric.xexecute "SELECT SUM(![fact.commits.lines_changed])"
+    res = GoodData::Metric.xexecute "SELECT SUM(![fact.commits.lines_changed])", :client => @client, :project => @project
     res.should == 9
 
-    res = GoodData::Metric.xexecute({:expression => "SELECT SUM(![fact.commits.lines_changed])"})
+    res = GoodData::Metric.xexecute({:expression => "SELECT SUM(![fact.commits.lines_changed])", :client => @client, :project => @project})
     res.should == 9
 
-    res = GoodData::Metric.execute({:expression => "SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true})
+    res = GoodData::Metric.execute({:expression => "SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true, :client => @client, :project => @project})
     res.should == 9
 
-    res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true)
+    res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true, :client => @client, :project => @project)
     res.should == 9
 
     fact = GoodData::Fact.find_first_by_title('Lines Changed')
@@ -227,20 +220,20 @@ describe "Full project implementation", :constraint => 'slow' do
     devs_data = [
       ["dev_id", "email"],
       [4, "josh@gooddata.com"]]
-    GoodData::Model.upload_data(devs_data, blueprint, 'devs', mode: 'INCREMENTAL')
+    GoodData::Model.upload_data(devs_data, blueprint, 'devs', mode: 'INCREMENTAL', :client => @client, :project => @project)
     # blueprint.find_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
   end
 
   it "should have more users"  do
-    attribute = GoodData::Attribute['attr.devs.dev_id']
+    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
     attribute.attribute?.should == true
     attribute.create_metric.execute.should == 4
   end
 
   it "should tell you whether metric contains a certain attribute" do
-    attribute = GoodData::Attribute['attr.devs.dev_id']
-    repo_attribute = GoodData::Attribute['attr.repos.repo_id']
-    metric = attribute.create_metric(:title => "My test metric")
+    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
+    repo_attribute = GoodData::Attribute['attr.repos.repo_id', :client => @client, :project => @project]
+    metric = attribute.create_metric(:title => "My test metric", :client => @client, :project => @project)
     metric.save
     metric.execute.should == 4
 
@@ -259,27 +252,27 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to compute count of different datasets" do
-    attribute = GoodData::Attribute['attr.devs.dev_id']
-    dataset_attribute = GoodData::Attribute['attr.commits.factsof']
+    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
+    dataset_attribute = GoodData::Attribute['attr.commits.factsof', :client => @client, :project => @project]
     attribute.create_metric(:attribute => dataset_attribute).execute.should == 3
   end
 
   it "should be able to tell you if a value is contained in a metric" do
-    attribute = GoodData::Attribute['attr.devs.dev_id']
+    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
     label = attribute.primary_label
     value = label.values.first
-    fact = GoodData::Fact['fact.commits.lines_changed']
-    metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
+    fact = GoodData::Fact['fact.commits.lines_changed', :client => @client, :project => @project]
+    metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
     metric.contain_value?(label, value[:value]).should == true
   end
 
   it "should be able to replace the values in a metric" do
-    attribute = GoodData::Attribute['attr.devs.dev_id']
+    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
     label = attribute.primary_label
     value = label.values.first
     different_value = label.values[1]
-    fact = GoodData::Fact['fact.commits.lines_changed']
-    metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
+    fact = GoodData::Fact['fact.commits.lines_changed', :client => @client, :project => @project]
+    metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
     metric.replace_value(label, value[:value], different_value[:value])
     metric.contain_value?(label, value[:value]).should == false
     metric.pretty_expression.should == "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
@@ -287,7 +280,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to lookup the attributes by regexp and return a collection" do
     GoodData.with_project(@project) do |p|
-      attrs = GoodData::Attribute.find_by_title(/Date/i)
+      attrs = GoodData::Attribute.find_by_title(/Date/i, :project => @project)
       attrs.count.should == 1
     end
   end

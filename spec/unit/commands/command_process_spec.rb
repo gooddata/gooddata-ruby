@@ -43,7 +43,7 @@ describe GoodData::Command::Process do
     end
 
     it "Deploys graph" do
-      GoodData::Command::Process.deploy(deploy_dir, :name => ProcessHelper::DEPLOY_NAME, :project_id => ProjectHelper::PROJECT_ID)
+      GoodData::Command::Process.deploy(deploy_dir, :name => ProcessHelper::DEPLOY_NAME, :project_id => ProjectHelper::PROJECT_ID, :client => @client, :project => @project)
     end
   end
 
@@ -62,7 +62,7 @@ describe GoodData::Command::Process do
     end
 
     it "Returns processes" do
-      res = GoodData::Command::Process.list(:project_id => ProjectHelper::PROJECT_ID)
+      res = GoodData::Command::Process.list(:project_id => ProjectHelper::PROJECT_ID, :client => @client, :project => @project)
       expect(res).to be_an_instance_of(Array)
     end
   end
@@ -89,7 +89,7 @@ describe GoodData::Command::Process do
 
     it "Executes block when deploying" do
       # pending('Project ID needed')
-      GoodData::Process.with_deploy(deploy_dir, :name => ProcessHelper::DEPLOY_NAME, :project_id => ProjectHelper::PROJECT_ID) do
+      GoodData::Process.with_deploy(deploy_dir, :name => ProcessHelper::DEPLOY_NAME, :project_id => ProjectHelper::PROJECT_ID, :client => @client, :project => @project) do
         msg = "Hello World!"
       end
     end

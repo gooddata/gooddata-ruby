@@ -3,8 +3,8 @@
 module GoodData
   class ProjectMetadata
     class << self
-      def keys
-        ProjectMetadata[:all].keys
+      def keys(opts = {:client => GoodData.client})
+        ProjectMetadata[:all, opts].keys
       end
 
       def [](key, opts = {:client => GoodData.client})

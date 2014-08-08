@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
-require_relative '../core/core'
-
 require 'highline/import'
 require 'multi_json'
+
+require_relative '../core/core'
 
 module GoodData
   module Command
