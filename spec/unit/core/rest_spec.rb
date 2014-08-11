@@ -15,20 +15,20 @@ describe GoodData do
 
   describe '#get_project_webdav_path' do
     it 'Returns path' do
-      @client.get_project_webdav_path('test-file.csv')
+      @client.get_project_webdav_path('test-file.csv', :project => @project)
     end
   end
 
   describe '#upload_to_project_webdav' do
     it 'Uploads file' do
       pending('Research how to properly upload file')
-      @client.upload_to_project_webdav('spec/data/test-ci-data.csv')
+      @client.upload_to_project_webdav('spec/data/test-ci-data.csv', :project => @project)
     end
   end
 
   describe '#get_user_webdav_path' do
     it 'Gets the path' do
-      @client.get_user_webdav_path('test.csv')
+      @client.get_user_webdav_path('test.csv', :project => @project)
     end
   end
 end

@@ -270,7 +270,7 @@ describe GoodData::Project do
       end
 
       project = GoodData::Project[ProjectHelper::PROJECT_ID, {:client => @client}]
-      res = GoodData::Domain.users_create(users, {:client => @client, :project => project})
+      res = GoodData::Domain.users_create(users, nil, {:client => @client, :project => project})
 
       project.users_create(users)
 
@@ -297,7 +297,7 @@ describe GoodData::Project do
     it 'Properly updates user roles as needed' do
       project = ProjectHelper.get_default_project(:client => @client)
 
-      project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin', :client => @client, :project => @project)
+      project.set_user_roles(ConnectionHelper::DEFAULT_USERNAME, 'admin')
     end
   end
 

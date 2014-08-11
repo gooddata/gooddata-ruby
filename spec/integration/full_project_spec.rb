@@ -87,7 +87,7 @@ describe "Full project implementation", :constraint => 'slow' do
     f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
 
     # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
-    metric = GoodData::Metric.xcreate(:title => "My metric", :expression => "SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
+    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => "My metric", :client => @client, :project => @project)
     metric.save(:client => @client, :project => @project)
     result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
     result[1][1].should == 3

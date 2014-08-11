@@ -332,6 +332,7 @@ module GoodData
 
       role_name.downcase!
       role_list.each do |role|
+        a = role
         return role if role.uri == role_name ||
           role.identifier.downcase == role_name ||
           role.identifier.downcase.gsub(/role$/, '') == role_name ||
@@ -800,9 +801,10 @@ module GoodData
 
         # Get domain info from REST, add to cache
         if domain.nil?
+          d = GoodData::Domain[domain_name, {:client => client}]
           domain = {
-            :domain => GoodData::Domain[domain_name],
-            :users => GoodData::Domain[domain_name].users
+            :domain => d,
+            :users => d.users(:client => client)
           }
 
           domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
@@ -885,16 +887,7 @@ module GoodData
     # @param user User to be updated
     # @param desired_roles Roles to be assigned to user
     # @param role_list Optional cached list of roles used for lookups
-    def set_user_roles(user, desired_roles, role_list = roles, opts = {:client => GoodData.connection, :project => GoodData.project})
-      client = opts[:client]
-      fail ArgumentError, 'No :client specified' if client.nil?
-
-      p = opts[:project]
-      fail ArgumentError, 'No :project specified' if p.nil?
-
-      project = GoodData::Project[p, opts]
-      fail ArgumentError, 'Wrong :project specified' if project.nil?
-
+    def set_user_roles(user, desired_roles, role_list = roles)
       if user.is_a? String
         user = get_user(user)
         fail ArgumentError, "Invalid user '#{user}' specified" if user.nil?
@@ -930,13 +923,13 @@ module GoodData
     #
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
-    def set_users_roles(list, role_list = roles, opts = {:client => GoodData.connection, :project => GoodData.project})
+    def set_users_roles(list, role_list = roles)
       list.pmap do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:role] || user_hash[:roles]
         {
           :user => user,
-          :result => set_user_roles(user, roles, role_list, opts)
+          :result => set_user_roles(user, roles)
         }
       end
     end
