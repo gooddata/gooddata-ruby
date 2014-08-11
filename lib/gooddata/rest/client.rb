@@ -61,6 +61,9 @@ module GoodData
             new_opts[:password] = password
           end
 
+          fail ArgumentError, 'No username specified' if new_opts[:username].nil?
+          fail ArgumentError, 'No password specified' if new_opts[:password].nil?
+
           # new_opts = new_opts.merge(Hash.new({}))
           client = Client.new(new_opts)
 
@@ -169,6 +172,30 @@ module GoodData
       # @param uri [String] Target URI
       def get(uri, opts = {})
         @connection.get uri, opts
+      end
+
+      # FIXME: Invstigate _file argument
+      def get_project_webdav_path(_file, opts = {:project => GoodData.project})
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        u = URI(project.links['uploads'])
+        URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{project.pid}/")
+      end
+
+      # FIXME: Invstigate _file argument
+      def get_user_webdav_path(_file, opts = {:project => GoodData.project})
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        u = URI(project.links['uploads'])
+        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled

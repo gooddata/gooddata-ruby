@@ -19,7 +19,9 @@ module GoodData
       end
 
       class << self
-        def client(opts = {})
+        def default_client
+          end
+        def client(opts = {:client => GoodData.connection})
           opts[:client] # || GoodData.client
         end
       end

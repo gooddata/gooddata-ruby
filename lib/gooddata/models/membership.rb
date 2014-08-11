@@ -395,7 +395,7 @@ module GoodData
         }
       }
 
-      @json = GoodData.post("/gdc/projects/#{project_id}/users", payload)
+      @json = client.post("/gdc/projects/#{project_id}/users", payload)
     end
   end
 end

@@ -209,7 +209,7 @@ module GoodData
 
     # Deletes this account settings
     def delete
-      GoodData.delete uri
+      client.delete uri
     end
 
     # Gets hash representing diff of profiles
