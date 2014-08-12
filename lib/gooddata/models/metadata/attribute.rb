@@ -30,7 +30,7 @@ module GoodData
       # @return [String] Textual representation of a particular attribute element
       def find_element_value(uri, opts = {:client => @client, :project => @project})
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
-        Attribute[matches[1], opts].primary_label.find_element_value(uri, opts)
+        Attribute[matches[1], opts].primary_label(opts).find_element_value(uri)
       end
     end
 
@@ -68,9 +68,9 @@ module GoodData
     # For an element id find values (titles) for all display forms. Element id can be given as both number id or URI as a string beginning with /
     # @param [Object] element_id Element identifier either Number or a uri as a String
     # @return [Array] list of values for certain element. Returned in the same order as is the order of labels
-    def values_for(element_id)
+    def values_for(element_id, opts = {:client => @client, :project => @project})
       # element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
-      labels.map do |label|
+      labels(opts).map do |label|
         label.find_element_value(element_id)
       end
     end
@@ -79,8 +79,8 @@ module GoodData
     # @param [Hash] options the options to pass to the value list
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
-    def values(options = {})
-      results = labels.map do |label|
+    def values(options = {:client => GoodData.client, :project => GoodData.project})
+      results = labels(options).map do |label|
         label.values(options)
       end
       results.first.zip(*results[1..-1])
@@ -89,8 +89,8 @@ module GoodData
     # Allows to search in attribute labels by name. It uses the string as a basis for regexp and tries to match either a title or an identifier. Returns first match.
     # @param name [String] name used as a basis for regular expression
     # @return [GoodData::Label]
-    def label_by_name(name)
-      labels.find { |label| label.title.downcase =~ /#{name}/ || label.identifier.downcase =~ /#{name}/ }
+    def label_by_name(name, opts = {:client => GoodData.client, :project => GoodData.project})
+      labels(opts).find { |label| label.title.downcase =~ /#{name}/ || label.identifier.downcase =~ /#{name}/ }
     end
   end
 end

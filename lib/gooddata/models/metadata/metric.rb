@@ -212,14 +212,14 @@ module GoodData
 
     # Looks up the readable values of the objects used inside of MAQL epxpressions. Labels and elements titles are based on the primary label.
     # @return [String] Ther resulting MAQL like expression
-    def pretty_expression
+    def pretty_expression(opts = {:client => GoodData.connection, :project => GoodData.client})
       temp = expression.dup
       expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
         uri = uri.first
         if uri =~ /elements/
-          temp.sub!(uri, Attribute.find_element_value(uri))
+          temp.sub!(uri, Attribute.find_element_value(uri, opts))
         else
-          obj = GoodData::MdObject[uri]
+          obj = GoodData::MdObject[uri, opts]
           temp.sub!(uri, obj.title)
         end
       end

@@ -129,13 +129,15 @@ module GoodData
     #
     # @param new_title [String] New title. If not provided one is provided
     # @return [GoodData::MdObject] MdObject that has been saved as
-    def save_as(new_title = "Clone of #{title}")
+    def save_as(new_title = nil, opts = {:client => GoodData.connection, :project => GoodData.project})
+      new_title = "Clone of #{title}" if new_title.nil?
+
       dupped = Marshal.load(Marshal.dump(json))
       dupped[root_key]['meta'].delete('uri')
       dupped[root_key]['meta'].delete('identifier')
       dupped[root_key]['meta']['title'] = new_title
       x = self.class.new(dupped)
-      x.save
+      x.save(opts)
     end
 
     def ==(other)

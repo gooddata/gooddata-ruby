@@ -9,7 +9,7 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = {})
-        fail NotImplementedError, 'Method should be implemented in subclass. Currently there is no way hoe to get all metadata objects on API.'
+        fail NotImplementedError, 'Method should be implemented in subclass. Currently there is no way how to get all metadata objects on API.'
       end
 
       # Method intended to be called by individual classes in their all
@@ -52,13 +52,13 @@ module GoodData
       end
 
       # Checks for dependency
-      def dependency?(type, uri, target_uri)
+      def dependency?(type, uri, target_uri, opts = {:client => GoodData.connection, :project => GoodData.project})
         uri = uri.respond_to?(:uri) ? uri.uri : uri
         objs = case type
                when :usedby
-                 usedby(uri)
+                 usedby(uri, nil, opts)
                when :using
-                 using(uri)
+                 using(uri, nil, opts)
                end
 
         target_uri = target_uri.respond_to?(:uri) ? target_uri.uri : target_uri
@@ -68,26 +68,38 @@ module GoodData
       end
 
       # Returns which objects uses this MD resource
-      def usedby(uri, key = nil, project = GoodData.project)
-        dependency("#{project.md['usedby2']}/#{obj_id(uri)}", key)
+      def usedby(uri, key = nil, opts = {:client => GoodData.connection, :project => GoodData.project})
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'No :project specified' if project.nil?
+
+        dependency("#{project.md['usedby2']}/#{obj_id(uri)}", key, opts)
       end
 
       alias_method :used_by, :usedby
 
       # Returns which objects this MD resource uses
-      def using(uri, key = nil)
-        dependency("#{GoodData.project.md['using2']}/#{obj_id(uri)}", key)
+      def using(uri, key = nil, opts = {:client => GoodData.connection, :project => GoodData.project})
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'No :project specified' if project.nil?
+
+        dependency("#{project.md['using2']}/#{obj_id(uri)}", key, opts)
       end
 
-      def usedby?(uri, target_uri)
-        dependency?(:usedby, uri, target_uri)
+      def usedby?(uri, target_uri, opts = {:client => GoodData.connection, :project => GoodData.project})
+        dependency?(:usedby, uri, target_uri, opts)
       end
 
       alias_method :used_by?, :usedby?
 
       # Checks if obj is using this MD resource
-      def using?(uri, target_uri)
-        dependency?(:using, uri, target_uri)
+      def using?(uri, target_uri, opts = {:client => GoodData.connection, :project => GoodData.project})
+        dependency?(:using, uri, target_uri, opts)
       end
     end
   end
