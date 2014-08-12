@@ -42,9 +42,10 @@ module GoodData
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         if metric.is_a?(String)
-          expression = metric
-          extended_notation = false
-          title = nil
+          expression = metric || options[:expression]
+          extended_notation = options[:extended_notation] || false
+          title = options[:title]
+          summary = options[:summary]
         else
           title = options[:title]
           summary = options[:summary]
@@ -92,21 +93,24 @@ module GoodData
         client.create(Metric, metric)
       end
 
-      def execute(expression, options = {})
+      def execute(expression, options = {:client => GoodData.connection})
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
         m = if expression.is_a?(String)
               tmp = {
                 :title => 'Temporary metric to be deleted',
                 :expression => expression
               }.merge(options)
 
-              GoodData::Metric.create(tmp)
+              GoodData::Metric.create(tmp, options)
             else
               tmp = {
                 :title => 'Temporary metric to be deleted'
               }.merge(expression)
-              GoodData::Metric.create(tmp)
+              GoodData::Metric.create(tmp, options)
             end
-        m.execute
+        m.execute(opts)
       end
 
       def xexecute(expression, opts = {:client => GoodData.client, :project => GoodData.project})
@@ -146,7 +150,7 @@ module GoodData
     end
 
     def validate
-      fail 'Meric needs to have title' if title.nil?
+      fail 'Metric needs to have title' if title.nil?
       true
     end
 

@@ -28,7 +28,7 @@ module GoodData
         uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{project.md[MD_OBJ_CTG]}/#{id}"
               elsif id !~ /\//
-                identifier_to_uri id
+                identifier_to_uri options, id
               elsif id =~ /^\//
                 id
               else

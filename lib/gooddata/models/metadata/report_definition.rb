@@ -60,12 +60,15 @@ module GoodData
         parts
       end
 
-      def find(stuff)
+      def find(stuff, opts = {:client => GoodData.connection, :project => GoodData.project})
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
         stuff.map do |item|
           if item.respond_to?(:attribute?) && item.attribute?
             item.display_forms.first
           elsif item.is_a?(String)
-            x = GoodData::MdObject.get_by_id(item)
+            x = GoodData::MdObject.get_by_id(item, opts)
             fail "Object given by id \"#{item}\" could not be found" if x.nil?
             case x.raw_data.keys.first.to_s
             when 'attribute'
@@ -120,8 +123,8 @@ module GoodData
         begin
           unsaved_metrics.each { |m| m.save(options) }
           rd = GoodData::ReportDefinition.create(options)
-          data_result(execute_inline(rd, options))
-        ensure
+          data_result(execute_inline(rd, options), options)
+        rescue Exception => e
           unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
       end
@@ -154,7 +157,10 @@ module GoodData
       # Method used for getting a data_result from a wire representation of
       # @param result [Hash, Object] Wire data from JSON
       # @return [GoodData::ReportDataResult]
-      def data_result(result)
+      def data_result(result, options = {:client => GoodData.connection})
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
         data_result_uri = result['execResult']['dataResult']
         result = client.get data_result_uri
 
@@ -165,15 +171,18 @@ module GoodData
 
         return nil unless result
 
-        ReportDataResult.new(client.get data_result_uri)
+        client.create(ReportDataResult, client.get(data_result_uri))
       end
 
-      def create(options = {})
+      def create(options = {:client => GoodData.connection})
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
         left = Array(options[:left])
         top = Array(options[:top])
 
-        left = ReportDefinition.find(left)
-        top = ReportDefinition.find(top)
+        left = ReportDefinition.find(left, options)
+        top = ReportDefinition.find(top, options)
 
         # TODO: Put somewhere for i18n
         fail_msg = 'All metrics in report definition must be saved'
@@ -205,7 +214,7 @@ module GoodData
         # TODO: write test for report definitions with explicit identifiers
         pars['reportDefinition']['meta']['identifier'] = options[:identifier] if options[:identifier]
 
-        ReportDefinition.new(pars)
+        client.create(ReportDefinition, pars)
       end
     end
 
@@ -231,7 +240,7 @@ module GoodData
                else
                  ReportDefinition.execute_inline(self, opts)
                end
-      ReportDefinition.data_result(result)
+      ReportDefinition.data_result(result, opts)
     end
   end
 end

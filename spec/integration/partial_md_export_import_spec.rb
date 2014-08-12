@@ -18,12 +18,12 @@ describe "Spin a project", :constraint => 'slow' do
   end
 
   it "should transfer a metric" do
-    f = GoodData::Fact.find_first_by_title('Lines Changed')
+    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @source_project)
     metric_title = "Testing metric to be exported"
-    metric = GoodData::Metric.xcreate(:expression => "SELECT SUM(#\"#{f.title}\")", :title => metric_title)
+    metric = GoodData::Metric.xcreate(:expression => "SELECT SUM(#\"#{f.title}\")", :title => metric_title, :client => @client, :project => @source_project)
     metric.save
 
-    GoodData.with_project(@target_project) { |p| GoodData::Metric[:all].count.should == 0 }
+    GoodData.with_project(@target_project) { |p| GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 0 }
 
     @project.partial_md_export([metric.uri], :project => @target_project)
     GoodData.with_project(@target_project) do |p|
