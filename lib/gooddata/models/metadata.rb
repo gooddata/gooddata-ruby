@@ -43,7 +43,7 @@ module GoodData
 
     def delete
       if saved?
-        GoodData.delete(uri)
+        client.delete(uri)
         meta.delete('uri')
         # ["uri"] = nil
       end
@@ -97,13 +97,13 @@ module GoodData
         explicit_identifier = meta['identifier']
         # Pre-check to provide a user-friendly error rather than
         # failing later
-        if explicit_identifier && MdObject[explicit_identifier]
+        if explicit_identifier && MdObject[explicit_identifier, opts]
           fail "Identifier '#{explicit_identifier}' already in use"
         end
 
         req_uri = project.md['obj']
         result = client.post(req_uri, to_json)
-        saved_object = self.class[result['uri']]
+        saved_object = self.class[result['uri'], opts]
         # TODO: add test for explicitly provided identifier
 
         @json = saved_object.json

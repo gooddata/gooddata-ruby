@@ -37,8 +37,11 @@ module GoodData
         options[:full] == false ? query_result : query_result.pmap { |item| klass[item['link'], options] }
       end
 
-      def dependency(uri, key = nil)
-        result = GoodData.get(uri)['entries']
+      def dependency(uri, key = nil, opts = {:client => GoodData.connection})
+        c = opts[:client]
+        fail ArgumentError, 'No :client specified' if c.nil?
+
+        result = c.get(uri)['entries']
         if key.nil?
           result
         elsif key.respond_to?(:category)

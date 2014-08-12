@@ -89,11 +89,11 @@ describe "Full project implementation", :constraint => 'slow' do
     # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => "My metric", :client => @client, :project => @project)
     metric.save(:client => @client, :project => @project)
-    result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'])
+    result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project)
     result[1][1].should == 3
     result.include_row?(["jirka@gooddata.com", 5]).should == true
 
-    result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email']).execute(:client => @client, :project => @project)
+    result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project).execute(:client => @client, :project => @project)
     result2[1][1].should == 3
     result2.include_row?(["jirka@gooddata.com", 5]).should == true
     result2.should == result
@@ -101,8 +101,8 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should throw an exception if trying to access object without explicitely specifying a project" do
     expect do
-      GoodData::Metric[:all, :client => @client, :project => @project]
-    end.to raise_exception(GoodData::NoProjectError)
+      GoodData::Metric[:all, :client => @client]
+    end.to raise_exception(ArgumentError, 'No :project specified')
   end
 
   it "should be possible to get all metrics" do
@@ -161,16 +161,16 @@ describe "Full project implementation", :constraint => 'slow' do
     fact3.title = "Somewhat changed title"
     fact1.should_not == fact3
 
-    metric.using
-    metric.using('fact').count.should == 1
+    metric.using(nil, :client => @client, :project => @project)
+    metric.using('fact', :client => @client, :project => @project).count.should == 1
 
     fact1.used_by
     fact1.used_by('metric').count.should == 1
 
-    res = metric.using?(fact1)
+    res = metric.using?(fact1, :client => @client, :project => @project)
     expect(res).to be(true)
 
-    res = fact1.using?(metric)
+    res = fact1.using?(metric, :client => @client, :project => @project)
     expect(res).to be(false)
 
     res = metric.used_by?(fact1)
@@ -187,7 +187,7 @@ describe "Full project implementation", :constraint => 'slow' do
     fact.tags = "tag1,tag2,tag3"
     fact.save(:client => @client, :project => @project)
 
-    tagged_facts = GoodData::Fact.find_by_tag('tag3')
+    tagged_facts = GoodData::Fact.find_by_tag('tag3', :client => @client, :project => @project)
     tagged_facts.count.should == 1
   end
 
