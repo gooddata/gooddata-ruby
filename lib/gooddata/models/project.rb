@@ -207,7 +207,7 @@ module GoodData
       a_title = options[:title] || "Clone of #{title}"
 
       # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
-      new_project = GoodData::Project.create(options.merge(:title => a_title))
+      new_project = GoodData::Project.create(options.merge(:title => a_title, :client => client))
 
       export = {
         :exportProject => {
@@ -216,11 +216,11 @@ module GoodData
         }
       }
 
-      result = GoodData.post("/gdc/md/#{obj_id}/maintenance/export", export)
+      result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
       export_token = result['exportArtifact']['token']
 
       status_url = result['exportArtifact']['status']['uri']
-      GoodData.poll_on_response(status_url) do |body|
+      client.poll_on_response(status_url) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
 
@@ -230,9 +230,9 @@ module GoodData
         }
       }
 
-      result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
+      result = client.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
       status_url = result['uri']
-      GoodData.poll_on_response(status_url) do |body|
+      client.poll_on_response(status_url) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
 
@@ -254,7 +254,7 @@ module GoodData
     # Deletes project
     def delete
       fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
-      GoodData.delete(uri)
+      client.delete(uri)
     end
 
     # Deletes dashboards for project

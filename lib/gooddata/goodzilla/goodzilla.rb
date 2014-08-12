@@ -38,12 +38,12 @@ module GoodData
       }
     end
 
-    def self.interpolate_ids(*ids)
+    def self.interpolate_ids(options, *ids)
       ids = ids.flatten
       if ids.empty?
         []
       else
-        res = GoodData::MdObject.identifier_to_uri(*ids)
+        res = GoodData::MdObject.identifier_to_uri(options, *ids)
         fail 'Not all of the identifiers were resolved' if Array(res).size != ids.size
         res
       end
@@ -54,7 +54,7 @@ module GoodData
       keys.zip(x)
     end
 
-    def self.interpolate_metric(metric, dictionary)
+    def self.interpolate_metric(metric, dictionary, options = {:client => GoodData.connection, :project => GoodData.project})
       interpolated = interpolate({
                                    :facts => GoodData::SmallGoodZilla.get_facts(metric),
                                    :attributes => GoodData::SmallGoodZilla.get_attributes(metric),
@@ -62,7 +62,7 @@ module GoodData
                                  }, dictionary)
 
       ids = GoodData::SmallGoodZilla.get_ids(metric)
-      interpolated_ids = ids.zip(Array(interpolate_ids(ids)))
+      interpolated_ids = ids.zip(Array(interpolate_ids(options, ids)))
 
       metric = interpolated[:facts].reduce(metric) { |a, e| a.sub("#\"#{e[0]}\"", "[#{e[1]}]") }
       metric = interpolated[:attributes].reduce(metric) { |a, e| a.sub("@\"#{e[0]}\"", "[#{e[1]}]") }

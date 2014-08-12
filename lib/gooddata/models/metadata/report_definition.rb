@@ -124,7 +124,7 @@ module GoodData
           unsaved_metrics.each { |m| m.save(options) }
           rd = GoodData::ReportDefinition.create(options)
           data_result(execute_inline(rd, options), options)
-        rescue Exception => e
+        ensure
           unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
       end

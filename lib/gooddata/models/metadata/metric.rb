@@ -47,10 +47,10 @@ module GoodData
           title = options[:title]
           summary = options[:summary]
         else
-          title = options[:title]
-          summary = options[:summary]
-          expression = options[:expression] || fail('Metric has to have its expression defined')
-          extended_notation = options[:extended_notation] || false
+          title = metric[:title] || options[:title]
+          summary = metric[:summary] || options[:summary]
+          expression = metric[:expression] || options[:expression] || fail('Metric has to have its expression defined')
+          extended_notation = metric[:extended_notation] || options[:extended_notation] || false
         end
 
         expression = if extended_notation
@@ -68,7 +68,7 @@ module GoodData
                            memo
                          end
                        }
-                       interpolated_metric = GoodData::SmallGoodZilla.interpolate_metric(expression, dict)
+                       interpolated_metric = GoodData::SmallGoodZilla.interpolate_metric(expression, dict, options)
                        interpolated_metric
                      else
                        expression
@@ -94,8 +94,10 @@ module GoodData
       end
 
       def execute(expression, options = {:client => GoodData.connection})
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
+        # client = options[:client]
+        # fail ArgumentError, 'No :client specified' if client.nil?
+
+        options = expression if expression.is_a?(Hash)
 
         m = if expression.is_a?(String)
               tmp = {
@@ -110,7 +112,7 @@ module GoodData
               }.merge(expression)
               GoodData::Metric.create(tmp, options)
             end
-        m.execute(opts)
+        m.execute(options)
       end
 
       def xexecute(expression, opts = {:client => GoodData.client, :project => GoodData.project})
@@ -123,7 +125,7 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        execute(opts.merge(:expression => expression, :extended_notation => true))
+        execute(expression, opts.merge(:extended_notation => true))
       end
     end
 
@@ -210,14 +212,14 @@ module GoodData
 
     # Looks up the readable values of the objects used inside of MAQL epxpressions. Labels and elements titles are based on the primary label.
     # @return [String] Ther resulting MAQL like expression
-    def pretty_expression
+    def pretty_expression(opts = {:client => GoodData.connection, :project => GoodData.client})
       temp = expression.dup
       expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
         uri = uri.first
         if uri =~ /elements/
-          temp.sub!(uri, Attribute.find_element_value(uri))
+          temp.sub!(uri, Attribute.find_element_value(uri, opts))
         else
-          obj = GoodData::MdObject[uri]
+          obj = GoodData::MdObject[uri, opts]
           temp.sub!(uri, obj.title)
         end
       end

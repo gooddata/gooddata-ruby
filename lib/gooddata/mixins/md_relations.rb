@@ -8,8 +8,8 @@ module GoodData
       end
 
       # Checks for dependency
-      def dependency?(type, obj)
-        GoodData::MdObject.dependency?(type, self, obj)
+      def dependency?(type, obj, opts = {:client => GoodData.connection, :project => GoodData.project})
+        GoodData::MdObject.dependency?(type, self, obj, opts)
       end
 
       # Returns which objects uses this MD resource
@@ -43,8 +43,8 @@ module GoodData
       alias_method :used_by?, :usedby?
 
       # Checks if obj is using this MD resource
-      def using?(obj)
-        dependency?(:using, obj)
+      def using?(obj, opts = {:client => GoodData.connection, :project => GoodData.project})
+        dependency?(:using, obj, opts)
       end
     end
   end
