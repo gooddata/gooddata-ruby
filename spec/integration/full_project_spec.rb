@@ -275,7 +275,7 @@ describe "Full project implementation", :constraint => 'slow' do
     metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
     metric.replace_value(label, value[:value], different_value[:value])
     metric.contain_value?(label, value[:value]).should == false
-    metric.pretty_expression.should == "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
+    metric.pretty_expression(:client => @client, :project => @project).should == "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
   end
 
   it "should be able to lookup the attributes by regexp and return a collection" do
