@@ -28,23 +28,23 @@ module GoodData
       #
       # @param uri [String] Uri of the element. in the form of /gdc/md/PID/obj/OBJ_ID/elements?id=21
       # @return [String] Textual representation of a particular attribute element
-      def find_element_value(uri)
+      def find_element_value(uri, opts = {:client => @client, :project => @project})
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
-        Attribute[matches[1]].primary_label.find_element_value(uri)
+        Attribute[matches[1], opts].primary_label.find_element_value(uri, opts)
       end
     end
 
     # Returns the labels of an attribute
     # @return [Array<GoodData::Label>]
-    def display_forms
-      content['displayForms'].map { |df| GoodData::Label[df['meta']['uri']] }
+    def display_forms(opts = {:client => GoodData.client, :project => GoodData.project})
+      content['displayForms'].map { |df| GoodData::Label[df['meta']['uri'], opts] }
     end
     alias_method :labels, :display_forms
 
     # Returns the first display form which is the primary one
     # @return [GoodData::Label] Primary label
-    def primary_display_form
-      labels.first
+    def primary_display_form(opts = {:client => GoodData.client, :project => GoodData.project})
+      labels(opts).first
     end
     alias_method :primary_label, :primary_display_form
 
@@ -59,9 +59,9 @@ module GoodData
       fail "Suggested aggreagtion function (#{a_type}) does not exist for base metric created out of attribute. You can use only one of #{ATTRIBUTE_BASE_AGGREGATIONS.map { |x| ":" + x.to_s }.join(',')}" unless ATTRIBUTE_BASE_AGGREGATIONS.include?(a_type)
       a_title = options[:title] || "#{a_type} of #{title}"
       if an_attribute
-        Metric.xcreate(:expression => "SELECT #{a_type.to_s.upcase}(![#{identifier}], ![#{an_attribute.identifier}])", :title => a_title)
+        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}], ![#{an_attribute.identifier}])", :title => a_title, :client => options[:client], :project => options[:project])
       else
-        Metric.xcreate(:expression => "SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title)
+        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title, :client => options[:client], :project => options[:project])
       end
     end
 

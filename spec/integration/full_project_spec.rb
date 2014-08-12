@@ -164,8 +164,8 @@ describe "Full project implementation", :constraint => 'slow' do
     metric.using(nil, :client => @client, :project => @project)
     metric.using('fact', :client => @client, :project => @project).count.should == 1
 
-    fact1.used_by
-    fact1.used_by('metric').count.should == 1
+    fact1.used_by(nil, :client => @client, :project => @project)
+    fact1.used_by('metric', :client => @client, :project => @project).count.should == 1
 
     res = metric.using?(fact1, :client => @client, :project => @project)
     expect(res).to be(true)
@@ -173,10 +173,10 @@ describe "Full project implementation", :constraint => 'slow' do
     res = fact1.using?(metric, :client => @client, :project => @project)
     expect(res).to be(false)
 
-    res = metric.used_by?(fact1)
+    res = metric.used_by?(fact1, :client => @client, :project => @project)
     expect(res).to be(false)
 
-    res = fact1.used_by?(metric)
+    res = fact1.used_by?(metric, :client => @client, :project => @project)
     expect(res).to be(true)
   end
 
@@ -227,7 +227,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should have more users"  do
     attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
     attribute.attribute?.should == true
-    attribute.create_metric.execute.should == 4
+    attribute.create_metric(:client => @client, :project => @project).execute(:client => @client, :projet => @project).should == 4
   end
 
   it "should tell you whether metric contains a certain attribute" do
@@ -254,7 +254,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should be able to compute count of different datasets" do
     attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
     dataset_attribute = GoodData::Attribute['attr.commits.factsof', :client => @client, :project => @project]
-    attribute.create_metric(:attribute => dataset_attribute).execute.should == 3
+    attribute.create_metric(:attribute => dataset_attribute, :client => @client, :project => @project).execute(:client => @client, :project => @project).should == 3
   end
 
   it "should be able to tell you if a value is contained in a metric" do
@@ -302,12 +302,12 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to find specific element and give you the primary label value" do
-    attribute = GoodData::Attribute['attr.devs.dev_id']
-    GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2").should == 'tomas@gooddata.com'
+    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
+    GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2", :client => @client, :project => @project).should == 'tomas@gooddata.com'
   end
 
   it "should be able to give you label by name" do
-    attribute = GoodData::Attribute['attr.devs.dev_id']
+    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
     label = attribute.label_by_name('email')
     label.label?.should == true
     label.title.should == 'Email'
@@ -325,11 +325,11 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to save_as a metric" do
-    m = GoodData::Metric.find_first_by_title("My test metric")
+    m = GoodData::Metric.find_first_by_title("My test metric", :client => @client, :project => @project)
     cloned = m.save_as
-    m_cloned = GoodData::Metric.find_first_by_title("Clone of My test metric")
+    m_cloned = GoodData::Metric.find_first_by_title("Clone of My test metric", :client => @client, :project => @project)
     m_cloned.should == cloned
-    m_cloned.execute.should == cloned.execute
+    m_cloned.execute(client => @client, :project => @project).should == cloned.execute(client => @client, :project => @project)
   end
 
   it "should be able to clone a project" do
