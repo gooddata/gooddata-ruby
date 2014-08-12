@@ -139,8 +139,8 @@ module GoodData
       #######################
       # Factory stuff
       ######################
-      def create(klass, opts = {})
-        @factory.create(klass, opts)
+      def create(klass, data = {}, opts = {})
+        @factory.create(klass, data, opts)
       end
 
       def find(klass, opts = {})

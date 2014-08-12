@@ -35,7 +35,7 @@ module GoodData
                 fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
               end
         # new(GoodData.get uri) unless uri.nil?
-        project.client.create(self, client.get(uri)) if uri
+        project.client.create(self, client.get(uri), project: options[:project]) if uri
       end
 
       alias_method :get_by_id, :[]

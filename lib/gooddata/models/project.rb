@@ -172,7 +172,15 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to GoodData::Attribute[id]
     # @return [GoodData::Attribute | Array<GoodData::Attribute>] fact instance or list
     def attributes(id = :all)
-      GoodData::Attribute[id, project: self]
+      GoodData::Attribute[id, project: self, client: client]
+    end
+
+    def attribute_by_title(title)
+      GoodData::Attribute.find_first_by_title(title, project: self, client: client)
+    end
+
+    def attributes_by_title(title)
+      GoodData::Attribute.find_by_title(title, project: self, client: client)
     end
 
     # Gets project blueprint from the server
@@ -284,8 +292,16 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
-    def facts(id)
+    def facts(id = :all)
       GoodData::Fact[id, project: self]
+    end
+
+    def fact_by_title(title)
+      GoodData::Fact.find_first_by_title(title, project: self, client: client)
+    end
+
+    def facts_by_title(title)
+      GoodData::Fact.find_by_title(title, project: self, client: client)
     end
 
     # Gets project role by its identifier
@@ -568,7 +584,15 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
     # @return [GoodData::Metric | Array<GoodData::Metric>] matric instance or list
     def metrics(id = :all)
-      GoodData::Metric[id, project: self]
+      GoodData::Metric[id, project: self, client: client]
+    end
+
+    def metric_by_title(title)
+      GoodData::Metric.find_first_by_title(title, project: self, client: client)
+    end
+
+    def metrics_by_title(title)
+      GoodData::Metric.find_by_title(title, project: self, client: client)
     end
 
     # Checks if the profile is member of project

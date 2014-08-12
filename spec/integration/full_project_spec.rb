@@ -42,7 +42,7 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should compute an empty metric" do
-    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    f = @project.fact_by_title('Lines Changed')
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
     metric.execute(:client => @client, :project => @project).should be_nil
   end
@@ -69,13 +69,13 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should compute a metric" do
-    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    f = @project.fact_by_title('Lines Changed')
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
     metric.execute(:client => @client, :project => @project).should == 9
   end
 
   it "should execute an anonymous metric twice and not fail" do
-    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    f = @project.fact_by_title('Lines Changed')
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
     metric.execute(:client => @client, :project => @project).should == 9
     # Since GD platform cannot execute inline specified metric the metric has to be saved
@@ -84,7 +84,7 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should compute a report" do
-    f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    f = @project.fact_by_title('Lines Changed')
 
     # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => "My metric", :client => @client, :project => @project)
@@ -132,23 +132,23 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to get a metric by object id" do
-    metrics = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
-    metric = GoodData::Metric[metrics.first.obj_id, :client => @client, :project => @project]
+    metrics = @project.metrics
+    metric = @project.metrics(metrics.first.obj_id)
     metric.obj_id == metrics.first.obj_id
     metrics.first == metric
   end
 
   it "should exercise the object relations and getting them in various ways" do
     # Find a metric by name
-    metric = GoodData::Metric.find_first_by_title('My metric', :client => @client, :project => @project)
-    the_same_metric = GoodData::Metric[metric, :client => @client, :project => @project]
+    metric = @project.metric_by_title('My metric')
+    the_same_metric = @project.metrics(metric)
     metric.should == metric
 
     # grab fact in several different ways
-    fact1 = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
-    fact2 = GoodData::Fact[fact1.identifier, :client => @client, :project => @project]
-    fact3 = GoodData::Fact[fact2.obj_id, :client => @client, :project => @project]
-    fact4 = GoodData::Fact[fact3.uri, :client => @client, :project => @project]
+    fact1 = @project.fact_by_title('Lines Changed')
+    fact2 = @project.facts(fact1.identifier)
+    fact3 = @project.facts(fact2.obj_id)
+    fact4 = @project.facts(fact3.uri)
     fact5 = @client.create(GoodData::Fact, fact4)
 
     # All should be the same
@@ -181,7 +181,7 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should try setting and getting by tags" do
-    fact = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    fact = @project.fact_by_title('Lines Changed')
     fact.tags.should be_empty
 
     fact.tags = "tag1,tag2,tag3"
@@ -209,7 +209,7 @@ describe "Full project implementation", :constraint => 'slow' do
     res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true, :client => @client, :project => @project)
     res.should == 9
 
-    fact = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @project)
+    fact = @project.fact_by_title('Lines Changed')
     fact.fact?.should == true
     res = fact.create_metric(:type => :sum, :client => @client, :project => @project).execute(:client => @client, :project => @project)
     res.should == 9
@@ -225,14 +225,14 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should have more users"  do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
+    attribute = @project.attributes('attr.devs.dev_id')
     attribute.attribute?.should == true
     attribute.create_metric(:client => @client, :project => @project).execute(:client => @client, :project => @project).should == 4
   end
 
   it "should tell you whether metric contains a certain attribute" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    repo_attribute = GoodData::Attribute['attr.repos.repo_id', :client => @client, :project => @project]
+    attribute = @project.attributes('attr.devs.dev_id')
+    repo_attribute = @project.attributes('attr.repos.repo_id')
     metric = attribute.create_metric(:title => "My test metric", :client => @client, :project => @project)
     metric.save(:client => @client, :project => @project)
     metric.execute(:client => @client, :project => @project).should == 4
@@ -252,26 +252,26 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to compute count of different datasets" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    dataset_attribute = GoodData::Attribute['attr.commits.factsof', :client => @client, :project => @project]
-    attribute.create_metric(:attribute => dataset_attribute, :client => @client, :project => @project).execute(:client => @client, :project => @project).should == 3
+    attribute = @project.attributes('attr.devs.dev_id')
+    dataset_attribute = @project.attributes('attr.commits.factsof')
+    attribute.create_metric(:attribute => dataset_attribute).execute.should == 3
   end
 
   it "should be able to tell you if a value is contained in a metric" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    label = attribute.primary_label(:client => @client, :project => @project)
-    value = label.values(:client => @client, :project => @project).first
-    fact = GoodData::Fact['fact.commits.lines_changed', :client => @client, :project => @project]
+    attribute = @project.attributes('attr.devs.dev_id')
+    label = attribute.primary_label
+    value = label.values.first
+    fact = @project.facts('fact.commits.lines_changed')
     metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
     metric.contain_value?(label, value[:value]).should == true
   end
 
   it "should be able to replace the values in a metric" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    label = attribute.primary_label(:client => @client, :project => @project)
-    value = label.values(:client => @client, :project => @project).first
+    attribute = @project.attributes('attr.devs.dev_id')
+    label = attribute.primary_label
+    value = label.values.first
     different_value = label.values[1]
-    fact = GoodData::Fact['fact.commits.lines_changed', :client => @client, :project => @project]
+    fact = @project.facts('fact.commits.lines_changed')
     metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
     metric.replace_value(label, value[:value], different_value[:value])
     metric.contain_value?(label, value[:value]).should == false
@@ -279,10 +279,8 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to lookup the attributes by regexp and return a collection" do
-    GoodData.with_project(@project) do |p|
-      attrs = GoodData::Attribute.find_by_title(/Date/i, :client => @client, :project => @project)
-      attrs.count.should == 1
-    end
+    attrs = @project.attributes_by_title(/Date/i)
+    expect(attrs.count).to eq 1
   end
 
   it "should be able to give you values of the label as an array of hashes" do
@@ -302,13 +300,13 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to find specific element and give you the primary label value" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2", :client => @client, :project => @project).should == 'tomas@gooddata.com'
+    attribute = @project.attributes('attr.devs.dev_id')
+    GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2").should == 'tomas@gooddata.com'
   end
 
   it "should be able to give you label by name" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    label = attribute.label_by_name('email', :client => @client, :project => @project)
+    attribute = @project.attributes('attr.devs.dev_id')
+    label = attribute.label_by_name('email')
     label.label?.should == true
     label.title.should == 'Email'
     label.identifier.should == "label.devs.dev_id.email"
@@ -317,7 +315,7 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to return values of the attribute for inspection" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
+    attribute = @project.attributes('attr.devs.dev_id')
     vals = attribute.values(:client => @client, :project => @project)
     vals.count.should == 4
     vals.first.count.should == 2
@@ -325,9 +323,9 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to save_as a metric" do
-    m = GoodData::Metric.find_first_by_title("My test metric", :client => @client, :project => @project)
+    m = @project.metric_by_title("My test metric")
     cloned = m.save_as(nil, :client => @client, :project => @project)
-    m_cloned = GoodData::Metric.find_first_by_title("Clone of My test metric", :client => @client, :project => @project)
+    m_cloned = @project.metric_by_title("Clone of My test metric")
     m_cloned.should == cloned
     m_cloned.execute(:client => @client, :project => @project).should == cloned.execute(:client => @client, :project => @project)
   end

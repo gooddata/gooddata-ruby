@@ -9,6 +9,7 @@ module GoodData
     # MUST NOT create new connections.
     class Object
       attr_writer :client
+      attr_accessor :project
 
       def initialize(opts = {})
         @client = nil
