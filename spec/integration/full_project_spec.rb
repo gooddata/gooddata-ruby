@@ -10,6 +10,8 @@ describe "Full project implementation", :constraint => 'slow' do
 
   after(:all) do
     @project.delete unless @project.nil?
+
+    ConnectionHelper.disconnect
   end
 
   it "should not build an invalid model" do
@@ -282,8 +284,8 @@ describe "Full project implementation", :constraint => 'slow' do
       l = attribute.primary_label
       value = l.values.first[:value]
       l.find_element_value(l.find_value_uri(value)).should == value
-      expect(l.value?(value)).should == true
-      expect(l.value?("DEFINITELY NON EXISTENT VALUE HOPEFULLY")).should == false
+      expect(l.value?(value)).to eq true
+      expect(l.value?("DEFINITELY NON EXISTENT VALUE HOPEFULLY")).to eq false
     end
   end
 
@@ -383,6 +385,15 @@ describe "Full project implementation", :constraint => 'slow' do
       m_cloned = GoodData::Metric.find_first_by_title("Clone of My test metric")
       m_cloned.should == cloned
       m_cloned.execute.should == cloned.execute
+    end
+  end
+
+  it "should be able to clone a project" do
+    GoodData.with_project(@project) do |p|
+      title = 'My new clone proejct'
+      cloned_project = p.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      expect(cloned_project.title).to eq title
+      cloned_project.delete
     end
   end
 end

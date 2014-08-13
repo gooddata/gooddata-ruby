@@ -32,44 +32,9 @@ module GoodData
 
         # Clone existing project
         def clone(project_id, options)
-          with_data = options[:data] || true
-          with_users = options[:users] || false
-          export = {
-            :exportProject => {
-              :exportUsers => with_users ? 1 : 0,
-              :exportData => with_data ? 1 : 0
-            }
-          }
-
-          result = GoodData.post("/gdc/md/#{project_id}/maintenance/export", export)
-          export_token = result['exportArtifact']['token']
-          status_url = result['exportArtifact']['status']['uri']
-
-          state = GoodData.get(status_url)['taskState']['status']
-          while state == 'RUNNING'
-            sleep 5
-            result = GoodData.get(status_url)
-            state = result['taskState']['status']
+          GoodData.with_project(project_id) do |project|
+            project.clone(options)
           end
-
-          old_project = GoodData::Project[project_id]
-          project_uri = create(options.merge(:title => "Clone of #{old_project.title}"))
-          new_project = GoodData::Project[project_uri]
-
-          import = {
-            :importProject => {
-              :token => export_token
-            }
-          }
-          result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
-          status_url = result['uri']
-          state = GoodData.get(status_url)['taskState']['status']
-          while state == 'RUNNING'
-            sleep 5
-            result = GoodData.get(status_url)
-            state = result['taskState']['status']
-          end
-          true
         end
 
         # Delete existing project
@@ -142,13 +107,40 @@ module GoodData
           end
         end
 
-        def jack_in(project_id)
-          GoodData.with_project(project_id) do |project|
-            puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-            binding.pry(:quiet => true,
-                        :prompt => [proc do |target_self, nest_level, pry|
-                          'project_live_sesion: '
-                        end])
+        def jack_in(options)
+          goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
+
+          spin_session = proc do |goodfile, blueprint|
+            project_id = options[:project_id] || goodfile[:project_id]
+            message = 'You have to provide "project_id". You can either provide it through -p flag'\
+               'or even better way is to fill it in in your Goodfile under key "project_id".'\
+               'If you just started a project you have to create it first. One way might be'\
+               'through "gooddata project build"'
+            fail message if project_id.nil? || project_id.empty?
+
+            begin
+              require 'gooddata'
+              GoodData.with_project(project_id) do |project|
+                puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
+                binding.pry(:quiet => true,
+                            :prompt => [proc do |target_self, nest_level, pry|
+                              'project_live_sesion: '
+                            end])
+              end
+            rescue GoodData::ProjectNotFound
+              puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
+            end
+          end
+
+          if goodfile_path
+            goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
+            model_key = goodfile[:model]
+            blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
+            FileUtils.cd(goodfile_path.dirname) do
+              spin_session.call(goodfile, blueprint)
+            end
+          else
+            spin_session.call({}, nil)
           end
         end
       end

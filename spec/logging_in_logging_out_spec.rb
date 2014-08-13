@@ -10,7 +10,8 @@ describe GoodData::Connection, :constraint => 'slow' do
     GoodData.get("/gdc/md")
 
     conn = GoodData.connection
-    GoodData.disconnect
+    ConnectionHelper.disconnect
+
     expect{GoodData.connection}.to raise_error
     conn.connected?.should == false
   end

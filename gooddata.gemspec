@@ -48,10 +48,13 @@ Gem::Specification.new do |s|
   s.add_dependency 'json_pure', "~> 1.8", '>= 1.8.1'
   s.add_dependency "multi_json", "~> 1.10", '>= 1.10.0'
   s.add_dependency 'parseconfig', "~> 1.0.4", '>= 1.0.4'
+  s.add_dependency 'pmap', '~> 1.0', '>= 1.0.1'
   s.add_dependency 'pry', '~> 0.9', '>= 0.9.12.6'
   s.add_dependency 'restforce', "~> 1.4", '>= 1.4.3'
   s.add_dependency 'rest-client', "~> 1.6", '>= 1.6.7'
   s.add_dependency 'rubyzip', "~> 1.1", '>= 1.1.0'
+  s.add_dependency "terminal-table", "~> 1.4", ">= 1.4.5"
+  s.add_dependency 'typhoeus', '~> 0.6', '>= 0.6.8'
   s.add_dependency 'salesforce_bulk_query', "~> 0.0"
   s.add_dependency 'aws-sdk', "~> 1.45"
 end

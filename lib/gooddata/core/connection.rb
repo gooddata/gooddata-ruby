@@ -4,6 +4,7 @@ require 'multi_json'
 require 'rest-client'
 
 require_relative '../version'
+require_relative '../rest/rest'
 
 module GoodData
   # # GoodData HTTP wrapper
@@ -92,8 +93,7 @@ module GoodData
 
     # Returns the user JSON object of the currently logged in GoodData user account.
     def user
-      ensure_connection
-      @user
+      Rest::Client.connection.user
     end
 
     # Performs a HTTP GET request.
@@ -107,10 +107,12 @@ module GoodData
     #     Connection.new(username, password).get '/gdc/projects'
     #
     def get(path, options = {})
-      GoodData.logger.debug "GET #{@server}#{path}"
-      ensure_connection
-      b = proc { @server[path].get cookies }
-      process_response(options, &b)
+      # GoodData.logger.debug "GET #{@server}#{path}"
+      # ensure_connection
+      # b = proc { @server[path].get cookies }
+      # process_response(options, &b)
+
+      Rest::Client.get(path, options)
     end
 
     # Performs a HTTP POST request.
@@ -125,11 +127,13 @@ module GoodData
     #     Connection.new(username, password).post '/gdc/projects', { ... }
     #
     def post(path, data, options = {})
-      GoodData.logger.debug("POST #{@server}#{path}, payload: #{scrub_params(data, [:password, :login, :authorizationToken])}")
-      ensure_connection
-      payload = data.is_a?(Hash) ? data.to_json : data
-      b = proc { @server[path].post payload, cookies }
-      process_response(options, &b)
+      # GoodData.logger.debug("POST #{@server}#{path}, payload: #{scrub_params(data, [:password, :login, :authorizationToken])}")
+      # ensure_connection
+      # payload = data.is_a?(Hash) ? data.to_json : data
+      # b = proc { @server[path].post payload, cookies }
+      # process_response(options, &b)
+
+      Rest::Client.post(path, data, options)
     end
 
     # Performs a HTTP PUT request.
@@ -144,11 +148,13 @@ module GoodData
     #     Connection.new(username, password).put '/gdc/projects', { ... }
     #
     def put(path, data, options = {})
-      payload = data.is_a?(Hash) ? data.to_json : data
-      GoodData.logger.debug "PUT #{@server}#{path}, payload: #{payload}"
-      ensure_connection
-      b = proc { @server[path].put payload, cookies }
-      process_response(options, &b)
+      # payload = data.is_a?(Hash) ? data.to_json : data
+      # GoodData.logger.debug "PUT #{@server}#{path}, payload: #{payload}"
+      # ensure_connection
+      # b = proc { @server[path].put payload, cookies }
+      # process_response(options, &b)
+
+      Rest::Client.put(path, data, options)
     end
 
     # Performs a HTTP DELETE request.
@@ -162,10 +168,12 @@ module GoodData
     #     Connection.new(username, password).delete '/gdc/project/1'
     #
     def delete(path, options = {})
-      GoodData.logger.debug "DELETE #{@server}#{path}"
-      ensure_connection
-      b = proc { @server[path].delete cookies }
-      process_response(options, &b)
+      # GoodData.logger.debug "DELETE #{@server}#{path}"
+      # ensure_connection
+      # b = proc { @server[path].delete cookies }
+      # process_response(options, &b)
+
+      Rest::Client.delete(path, options)
     end
 
     # Get the cookies associated with the current connection.
@@ -346,6 +354,9 @@ module GoodData
       if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
         result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
         GoodData.logger.debug "Response: #{result.inspect}"
+      elsif ['text/plain;charset=UTF-8', 'text/plain; charset=UTF-8', 'text/plain'].include?(content_type)
+        result = response
+        GoodData.logger.debug 'Response: plain text'
       elsif content_type == 'application/zip'
         result = response
         GoodData.logger.debug 'Response: a zipped stream'

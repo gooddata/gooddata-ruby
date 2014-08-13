@@ -10,7 +10,7 @@ describe GoodData::Command::Scaffold do
   end
 
   after(:each) do
-    GoodData.disconnect
+    ConnectionHelper.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Scaffold instance" do

@@ -2,7 +2,11 @@
 
 module GoodData
   class Schedule
-    attr_reader :dirty
+    attr_reader :dirty, :data
+
+    alias_method :json, :data
+    alias_method :raw_data, :data
+    alias_method :to_hash, :data
 
     class << self
       # Looks for schedule
@@ -122,7 +126,10 @@ module GoodData
       data = {
         :execution => {}
       }
-      GoodData.post execution_url, data
+      execution = GoodData.post(execution_url, data)
+      GoodData.poll_on_response(execution['execution']['links']['self']) do |body|
+        body['execution'] && body['execution']['status'] == 'RUNNING'
+      end
     end
 
     # Returns execution URL
@@ -295,6 +302,10 @@ module GoodData
     # @return [String] Schedule URL
     def uri
       @json['schedule']['links']['self'] if @json && @json['schedule'] && @json['schedule']['links']
+    end
+
+    def ==(other)
+      other.respond_to?(:uri) && other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
     end
   end
 end

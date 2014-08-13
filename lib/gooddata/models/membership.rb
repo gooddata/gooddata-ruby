@@ -5,8 +5,10 @@ require 'multi_json'
 require_relative 'project'
 require_relative 'project_role'
 
+require_relative '../rest/object'
+
 module GoodData
-  class Membership
+  class Membership < GoodData::Rest::Object
     attr_reader :json
 
     ASSIGNABLE_MEMBERS = [

@@ -4,14 +4,18 @@ require_relative 'core/connection'
 require_relative 'core/logging'
 require_relative 'core/threaded'
 
+require_relative 'rest/rest'
+
 module GoodData
   class << self
     # Returns the active GoodData connection earlier initialized via GoodData.connect call
     #
     # @see GoodData.connect
     def connection
-      threaded[:connection] || fail('Please authenticate with GoodData.connect first')
+      Rest::Client.connection || fail('Please authenticate with GoodData.connect first')
     end
+
+    alias_method :client, :connection
 
     # Connect to the GoodData API
     #
@@ -20,31 +24,12 @@ module GoodData
     # @param third_options
     #
     def connect(options = nil, second_options = nil, third_options = {})
-      GoodData.logger.debug 'GoodData#connect'
-      threaded[:connection] = if options.is_a? Hash
-                                fail 'You have to provide login and password' if (options[:login].nil? || options[:login].empty?) && (options[:password].nil? || options[:password].empty?)
-                                Connection.new(options[:login], options[:password], options)
-                                conn = Connection.new(options[:login], options[:password], options)
-                                GoodData.project = options[:project] if options[:project]
-                                conn
-                              elsif options.is_a?(String) && second_options.is_a?(String)
-                                fail 'You have to provide login and password' if (options.nil? || options.empty?) && (second_options.nil? || second_options.empty?)
-                                Connection.new(options, second_options, third_options)
-                              elsif options.nil? && second_options.nil?
-                                p = GoodData::Command::Auth.read_credentials
-                                Connection.new(p[:login] || p[:username], p[:password], p)
-                              end
-      threaded[:connection]
+      Rest::Client.connect(options, second_options, third_options)
     end
 
     # Disconnect (logout) if logged in
     def disconnect
-      GoodData.logger.debug 'GoodData#disconnect'
-
-      if threaded[:connection]
-        threaded[:connection].disconnect
-        threaded[:connection] = nil
-      end
+      Rest::Client.disconnect
     end
 
     # Hepler for starting with SST easier
@@ -66,6 +51,13 @@ module GoodData
       connection.merge_cookies!(server_cookies)
       connection.status = :logged_in
       connection
+    end
+
+    def with_connection(options = nil, second_options = nil, third_options = {}, &bl)
+      connection = connect(options, second_options, third_options)
+      bl.call(connection)
+    ensure
+      disconnect
     end
   end
 end

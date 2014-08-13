@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative 'meta_getter'
+
 module GoodData
   module Mixin
     module MetaPropertyReader

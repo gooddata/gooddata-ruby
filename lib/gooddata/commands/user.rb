@@ -25,7 +25,7 @@ module GoodData
         end
 
         def show
-          GoodData.profile.to_json
+          pp GoodData.profile.json
         end
       end
     end

@@ -3,6 +3,8 @@
 require_relative 'connection'
 
 module GoodData
+  DEFAULT_SLEEP_INTERVAL = 10
+
   class << self
     # Performs a HTTP GET request.
     #
@@ -65,7 +67,7 @@ module GoodData
     end
 
     def upload_to_user_webdav(file, options = {})
-      u = URI(connection.options[:webdav_server] || GoodData.project.links['uploads'])
+      u = URI(GoodData.project.links['uploads'])
       url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
       connection.upload(file, options.merge(
         :directory => options[:directory],
@@ -74,7 +76,7 @@ module GoodData
     end
 
     def get_project_webdav_path(file, options = {})
-      u = URI(connection.options[:webdav_server] || GoodData.project.links['uploads'])
+      u = URI(GoodData.project.links['uploads'])
       URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{GoodData.project.pid}/")
     end
 
@@ -86,7 +88,7 @@ module GoodData
     end
 
     def get_user_webdav_path(file, options = {})
-      u = URI(connection.options[:webdav_server] || GoodData.project.links['uploads'])
+      u = URI(GoodData.project.links['uploads'])
       URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
     end
 
@@ -95,36 +97,53 @@ module GoodData
       connection.download(file, where, options.merge(:staging_url => url))
     end
 
-    def poll(result, key = nil, options = {}, &bl)
-      sleep_interval = options[:sleep_interval] || 10
-      link = bl ? bl.call(result) : result[key]['links']['poll']
+    # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
+    # this is a helper that should help you with resources where the information about "Are we done"
+    # is the http code of response. By default we repeat as long as the code == 202. You can
+    # change the code if necessary. It expects the URI as an input where it can poll. It returns the
+    # value of last poll. In majority of cases these are the data that you need.
+    #
+    # @param link [String] Link for polling
+    # @param options [Hash] Options
+    # @return [Hash] Result of polling
+    def poll_on_code(link, options = {})
+      code = options[:code] || 202
+      sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
       response = GoodData.get(link, :process => false)
-      while response.code != 204
+      while response.code == code
         sleep sleep_interval
         GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
           sleep sleep_interval
           response = GoodData.get(link, :process => false)
         end
       end
+      if options[:process] == false
+        response
+      else
+        GoodData.get(link)
+      end
     end
 
-    def poll_on_root(result, root, &bl)
-      polling_url = bl.call(result)
-      polling_result = GoodData.get(polling_url)
-      while polling_result[root]
-        sleep(3)
-        polling_result = GoodData.get(polling_url)
+    # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
+    # this is a helper that should help you with resources where the information about "Are we done"
+    # is inside the response. It expects the URI as an input where it can poll and a block that should
+    # return either true -> 'meaning we are done' or false -> meaning sleep and repeat. It returns the
+    # value of last poll. In majority of cases these are the data that you need
+    #
+    # @param link [String] Link for polling
+    # @param options [Hash] Options
+    # @return [Hash] Result of polling
+    def poll_on_response(link, options = {}, &bl)
+      sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
+      response = GoodData.get(link)
+      while bl.call(response)
+        sleep sleep_interval
+        GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+          sleep sleep_interval
+          response = GoodData.get(link)
+        end
       end
-      polling_result
-    end
-
-    def wait_for_polling_result(polling_url)
-      polling_result = GoodData.get(polling_url)
-      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_url)
-      end
-      polling_result
+      response
     end
   end
 end

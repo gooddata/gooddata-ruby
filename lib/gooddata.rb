@@ -14,6 +14,7 @@ require_relative 'gooddata/helpers/helpers'
 require_relative 'gooddata/models/models'
 
 # Files
+require_relative 'gooddata/app/app'
 require_relative 'gooddata/client'
 require_relative 'gooddata/connection'
 require_relative 'gooddata/extract'

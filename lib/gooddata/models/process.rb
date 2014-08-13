@@ -6,6 +6,10 @@ module GoodData
   class Process
     attr_reader :data
 
+    alias_method :raw_data, :data
+    alias_method :json, :data
+    alias_method :to_hash, :data
+
     class << self
       def [](id, options = {})
         if id == :all
@@ -27,7 +31,7 @@ module GoodData
       # TODO: Check the params.
       def with_deploy(dir, options = {}, &block)
         # verbose = options[:verbose] || false
-        GoodData.with_project(options[:project_id]) do |project|
+        GoodData.with_project(options[:project_id] || options[:project]) do |project|
           params = options[:params].nil? ? [] : [options[:params]]
           if block
             begin
@@ -71,7 +75,6 @@ module GoodData
       #
       # @param path [String] Path to ZIP archive or to a directory containing files that should be ZIPed
       # @option options [String] :files_to_exclude
-      # @option options [String] :process_id ('nobody') From address
       # @option options [String] :type ('GRAPH') Type of process - GRAPH or RUBY
       # @option options [String] :name Readable name of the process
       # @option options [String] :process_id ID of a process to be redeployed (do not set if you want to create a new process)
@@ -83,6 +86,8 @@ module GoodData
 
         type = options[:type] || 'GRAPH'
         deploy_name = options[:name]
+        fail ArgumentError, 'options[:deploy_name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
+
         verbose = options[:verbose] || false
         puts HighLine.color("Deploying #{path}", HighLine::BOLD) if verbose
         deployed_path = Process.upload_package(path, files_to_exclude)
@@ -93,11 +98,13 @@ module GoodData
             :type => type
           }
         }
+
         res = if process_id.nil?
                 GoodData.post("/gdc/projects/#{GoodData.project.pid}/dataload/processes", data)
               else
                 GoodData.put("/gdc/projects/#{GoodData.project.pid}/dataload/processes/#{process_id}", data)
               end
+
         process = Process.new(res)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
@@ -125,7 +132,7 @@ module GoodData
     end
 
     def process
-      json['process']
+      data['process']
     end
 
     def name
@@ -164,19 +171,12 @@ module GoodData
     end
 
     def schedules
-      res = []
-
-      scheds = GoodData::Schedule[:all]
-      scheds['schedules']['items'].each do |item|
-        if item['schedule']['params']['PROCESS_ID'] == obj_id
-          res << GoodData::Schedule.new(item)
-        end
-      end
-
-      res
+      GoodData::Schedule[:all].select { |schedule| schedule.process_id == obj_id }
     end
 
-    alias_method :raw_data, :data
+    def create_schedule(cron, executable, options = {})
+      GoodData::Schedule.create(process_id, cron, executable, options)
+    end
 
     def execute(executable, options = {})
       params = options[:params] || {}
@@ -188,7 +188,7 @@ module GoodData
                                :hiddenParams => hidden_params
                              })
       begin
-        GoodData.poll(result, 'executionTask')
+        GoodData.poll_on_code(result['executionTask']['links']['poll'])
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure
