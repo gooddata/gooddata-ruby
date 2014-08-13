@@ -9,7 +9,7 @@ module GoodData
   module Model
     class ProjectCreator
       class << self
-        def migrate(opts = {})
+        def migrate(opts = { :client => GoodData.connection, :project => GoodData.project })
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -24,7 +24,7 @@ module GoodData
           fail('You need to specify token for project creation') if token.nil? && project.nil?
 
           begin
-            GoodData.with_project(project) do |p|
+            GoodData.with_project(project, opts) do |p|
               # migrate_date_dimensions(p, spec[:date_dimensions] || [])
               migrate_datasets(spec, :project => p, :client => client)
               load(p, spec)
