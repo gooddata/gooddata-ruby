@@ -22,7 +22,7 @@ GoodData::CLI.module_eval do
 
       proj = GoodData::Project[pid, :client => client]
 
-      GoodData.with_project(proj) do |project|
+      GoodData.with_project(proj, :client => client) do |project|
         fail ArgumentError, 'Wrong project specified' if project.nil?
 
         puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
