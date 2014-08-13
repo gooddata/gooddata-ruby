@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative '../rest/object'
+
 module GoodData
   class Links < GoodData::Rest::Object
     attr_reader :data
