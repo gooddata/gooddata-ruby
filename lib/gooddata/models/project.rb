@@ -621,18 +621,18 @@ module GoodData
 
       target_project = options[:project]
       fail 'You have to provide a project instance or project pid to migrate to' if target_project.nil?
-      target_project = GoodData::Project[target_project]
-      objects = objects.map { |obj| GoodData::MdObject[obj] }
+      target_project = GoodData::Project[target_project, options]
+      objects = objects.map { |obj| GoodData::MdObject[obj, options] }
       export_payload = {
         :partialMDExport => {
           :uris => objects.map { |obj| obj.uri }
         }
       }
-      result = GoodData.post("#{GoodData.project.md['maintenance']}/partialmdexport", export_payload)
+      result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
 
-      polling_result = GoodData.poll_on_response(polling_url) do |body|
+      polling_result = client.poll_on_response(polling_url) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
 
@@ -646,10 +646,10 @@ module GoodData
         }
       }
 
-      result = GoodData.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
+      result = client.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
       polling_url = result['uri']
 
-      GoodData.poll_on_response(polling_url) do |body|
+      client.poll_on_response(polling_url) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
 
