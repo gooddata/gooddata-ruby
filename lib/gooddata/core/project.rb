@@ -24,13 +24,13 @@ module GoodData
     #     # Select project using indexer on GoodData::Project class
     #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
     # Assigns global/default GoodData project
-    def project=(project)
+    def project=(project, opts = { :client => GoodData.connection })
       if project.is_a? Project
         @project = project
       elsif project.nil?
         @project = nil
       else
-        @project = Project[project]
+        @project = Project[project, opts]
       end
       @project
     end
@@ -49,16 +49,21 @@ module GoodData
     #
     # @param project Project to use
     # @param bl Block to be performed
-    def with_project(project, &bl)
+    def with_project(project, opts = { :client => GoodData.connection }, &bl)
       fail 'You have to specify a project when using with_project' if project.nil? || (project.is_a?(String) && project.empty?)
       old_project = GoodData.project
+
       begin
-        bl.call(project)
+        GoodData.use(project, opts)
+        res = bl.call(GoodData.project)
       rescue RestClient::ResourceNotFound
-        raise(GoodData::ProjectNotFound, 'Project was not found')
-      ensure
         GoodData.project = old_project
+        raise(GoodData::ProjectNotFound, 'Project was not found')
       end
+
+      GoodData.project = old_project
+
+      res
     end
   end
 end

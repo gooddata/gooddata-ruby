@@ -2,6 +2,8 @@
 
 require 'pry'
 
+require_relative '../rest/resource'
+
 module GoodData
   class Process < GoodData::Rest::Object
     attr_reader :data
@@ -48,8 +50,7 @@ module GoodData
         project = GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        # verbose = options[:verbose] || false
-        GoodData.with_project(options[:project_id] || options[:project]) do
+        GoodData.with_project(project) do
           params = options[:params].nil? ? [] : [options[:params]]
           if block
             begin

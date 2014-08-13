@@ -131,8 +131,11 @@ module GoodData
 
             begin
               require 'gooddata'
-              GoodData.connect(options)
-              GoodData.with_project(project_id) do |_project|
+              client = GoodData.connect(options)
+
+              GoodData.with_project(project_id, :client => client) do |project|
+                fail ArgumentError, 'Wrong project specified' if project.nil?
+
                 puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
                 binding.pry(:quiet => true,
                             :prompt => [proc do |target_self, nest_level, pry|
