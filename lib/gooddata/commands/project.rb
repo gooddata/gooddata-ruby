@@ -129,10 +129,12 @@ module GoodData
                'through "gooddata project build"'
             fail message if project_id.nil? || project_id.empty?
 
+
             begin
               require 'gooddata'
-              GoodData.connect(options)
-              GoodData.with_project(project_id) do |project|
+              client = GoodData.connect(options)
+
+              GoodData.with_project(project_id, :client => client) do |project|
                 fail ArgumentError, 'Wrong project specified' if project.nil?
 
                 puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."

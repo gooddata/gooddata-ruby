@@ -61,7 +61,9 @@ module GoodData
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
           c = client(opts)
-          response = c.get PROJECT_PATH % id
+          fail ArgumentError, 'No :client specified' if c.nil?
+
+          response = c.get(PROJECT_PATH % id)
           c.factory.create(Project, response)
         end
       end
