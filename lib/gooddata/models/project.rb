@@ -589,7 +589,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
     # @return [GoodData::Metric] matric instance or list
-    def metric(opts = {:full => false})
+    def metric(id, opts = {:full => false})
       GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
