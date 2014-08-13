@@ -129,7 +129,6 @@ module GoodData
                'through "gooddata project build"'
             fail message if project_id.nil? || project_id.empty?
 
-
             begin
               require 'gooddata'
               client = GoodData.connect(options)
