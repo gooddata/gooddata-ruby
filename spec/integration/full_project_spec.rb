@@ -254,12 +254,12 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should be able to compute count of different datasets" do
     attribute = @project.attributes('attr.devs.dev_id')
     dataset_attribute = @project.attributes('attr.commits.factsof')
-    attribute.create_metric(:attribute => dataset_attribute).execute.should == 3
+    attribute.create_metric(:attribute => dataset_attribute, :client => @client, :project => @project).execute(:client => @client, :project => @project).should == 3
   end
 
   it "should be able to tell you if a value is contained in a metric" do
     attribute = @project.attributes('attr.devs.dev_id')
-    label = attribute.primary_label
+    label = attribute.primary_label(:client => @client, :project => @project)
     value = label.values.first
     fact = @project.facts('fact.commits.lines_changed')
     metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
@@ -268,9 +268,9 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to replace the values in a metric" do
     attribute = @project.attributes('attr.devs.dev_id')
-    label = attribute.primary_label
-    value = label.values.first
-    different_value = label.values[1]
+    label = attribute.primary_label(:client => @client, :project => @project)
+    value = label.values(:client => @client, :project => @project).first
+    different_value = label.values(:client => @client, :project => @project)[1]
     fact = @project.facts('fact.commits.lines_changed')
     metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
     metric.replace_value(label, value[:value], different_value[:value])
@@ -301,12 +301,12 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to find specific element and give you the primary label value" do
     attribute = @project.attributes('attr.devs.dev_id')
-    GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2").should == 'tomas@gooddata.com'
+    GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2", :client => @client, :project => @project).should == 'tomas@gooddata.com'
   end
 
   it "should be able to give you label by name" do
     attribute = @project.attributes('attr.devs.dev_id')
-    label = attribute.label_by_name('email')
+    label = attribute.label_by_name('email', :client => @client, :project => @project)
     label.label?.should == true
     label.title.should == 'Email'
     label.identifier.should == "label.devs.dev_id.email"

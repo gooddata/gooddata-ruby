@@ -293,7 +293,7 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
     def facts(id = :all)
-      GoodData::Fact[id, project: self]
+      GoodData::Fact[id, project: self, client: client]
     end
 
     def fact_by_title(title)
