@@ -49,7 +49,7 @@ module GoodData
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         # verbose = options[:verbose] || false
-        GoodData.with_project(options[:project_id] || options[:project]) do |project|
+        GoodData.with_project(options[:project_id] || options[:project]) do
           params = options[:params].nil? ? [] : [options[:params]]
           if block
             begin
@@ -64,7 +64,7 @@ module GoodData
         end
       end
 
-      def upload_package(path, files_to_exclude, opts = {:client => GoodData.connection})
+      def upload_package(path, files_to_exclude, opts = { :client => GoodData.connection })
         client = opts[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -118,7 +118,7 @@ module GoodData
         fail ArgumentError, 'No :project specified' if project.nil?
 
         path = Pathname(path) || fail('Path is not specified')
-        files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |p| Pathname(p) }
+        files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |pname| Pathname(pname) }
         process_id = options[:process_id]
 
         type = options[:type] || 'GRAPH'

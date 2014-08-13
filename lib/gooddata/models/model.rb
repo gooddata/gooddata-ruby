@@ -61,7 +61,7 @@ module GoodData
       end
 
       # Load given file into a data set described by the given schema
-      def upload_data(path, project_blueprint, dataset, options = {:client => GoodData.client, :project => GoodData.project})
+      def upload_data(path, project_blueprint, dataset, options = { :client => GoodData.connection, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 

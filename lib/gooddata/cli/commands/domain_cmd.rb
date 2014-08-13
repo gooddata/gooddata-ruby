@@ -36,7 +36,7 @@ GoodData::CLI.module_eval do
         domain = args[0]
         fail ArgumentError, 'Domain name has to be provided' if domain.nil? || domain.empty?
 
-        users = GoodData::Command::Domain.list_users(domain, {:client => client})
+        users = GoodData::Command::Domain.list_users(domain, :client => client)
         puts users.map { |u| [u['firstName'], u['lastName'], u['login']].join(',') }
       end
     end

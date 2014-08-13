@@ -27,11 +27,11 @@ module GoodData
         query('metrics', Metric, options)
       end
 
-      def xcreate(metric, options= {:client => GoodData::client, :project => GoodData.project})
+      def xcreate(metric, options = { :client => GoodData.connection, :project => GoodData.project })
         create(metric, options.merge(:extended_notation => true))
       end
 
-      def create(metric, options = {:client => GoodData::client, :project => GoodData.project})
+      def create(metric, options = { :client => GoodData.connection, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -93,7 +93,7 @@ module GoodData
         client.create(Metric, metric)
       end
 
-      def execute(expression, options = {:client => GoodData.connection})
+      def execute(expression, options = { :client => GoodData.connection })
         # client = options[:client]
         # fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -115,7 +115,7 @@ module GoodData
         m.execute(options)
       end
 
-      def xexecute(expression, opts = {:client => GoodData.client, :project => GoodData.project})
+      def xexecute(expression, opts = { :client => GoodData.connection, :project => GoodData.project })
         client = opts[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -129,7 +129,7 @@ module GoodData
       end
     end
 
-    def execute(opts = {:client => GoodData.client, :project => GoodData.project})
+    def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
       client = opts[:client]
       fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -212,7 +212,7 @@ module GoodData
 
     # Looks up the readable values of the objects used inside of MAQL epxpressions. Labels and elements titles are based on the primary label.
     # @return [String] Ther resulting MAQL like expression
-    def pretty_expression(opts = {:client => GoodData.connection, :project => GoodData.client})
+    def pretty_expression(opts = { :client => GoodData.connection, :project => GoodData.project })
       temp = expression.dup
       expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
         uri = uri.first

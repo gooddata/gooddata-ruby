@@ -135,7 +135,7 @@ module GoodData
     # @return [Hash] Result of polling
     def poll_on_response(link, options = {}, &bl)
       client = options[:client]
-      fail ArgumentError, "No :client specified" if client.nil?
+      fail ArgumentError, 'No :client specified' if client.nil?
 
       sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
       response = get(link)

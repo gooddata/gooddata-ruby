@@ -15,7 +15,7 @@ module GoodData
       # Looks for schedule
       # @param id [String] URL, ID of schedule or :all
       # @return [GoodData::Schedule|Array<GoodData::Schedule>] List of schedules
-      def [](id, opts = {:client => GoodData.connection, :project => GoodData.project})
+      def [](id, opts = { :client => GoodData.connection, :project => GoodData.project })
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?
 
@@ -41,7 +41,7 @@ module GoodData
 
       # Returns list of all schedules for active project
       # @return [Array<GoodData::Schedule>] List of schedules
-      def all(opts = {:client => GoodData.connection, :project => GoodData.project})
+      def all(opts = { :client => GoodData.connection, :project => GoodData.project })
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?
 

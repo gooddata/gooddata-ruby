@@ -8,7 +8,7 @@ module GoodData
   module Command
     class Process
       class << self
-        def list(options = {:client => GoodData.connection, :project => GoodData.project})
+        def list(options = { :client => GoodData.connection, :project => GoodData.project })
           GoodData::Process[:all, options]
         end
 
@@ -24,23 +24,23 @@ module GoodData
           end
         end
 
-        def delete(process_id, options = {:client => GoodData.connection, :project => GoodData.project})
+        def delete(process_id, options = { :client => GoodData.connection, :project => GoodData.project })
           process = GoodData::Process[process_id, options]
           process.delete
         end
 
         # TODO: check files_to_exclude param. Does it do anything? It should check that in case of using CLI, it makes sure the files are not deployed
-        def deploy(dir, options = {:client => GoodData.connection, :project => GoodData.project})
+        def deploy(dir, options = { :client => GoodData.connection, :project => GoodData.project })
           params = options[:params].nil? ? [] : [options[:params]]
           GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
         end
 
-        def execute_process(process_id, executable, options = {:client => GoodData.connection, :project => GoodData.project})
+        def execute_process(process_id, executable, options = { :client => GoodData.connection, :project => GoodData.project })
           process = GoodData::Process[process_id, options]
           process.execute_process(executable, options)
         end
 
-        def run(dir, executable, options = {:client => GoodData.connection, :project => GoodData.project})
+        def run(dir, executable, options = { :client => GoodData.connection, :project => GoodData.project })
           verbose = options[:v]
           dir = Pathname(dir)
           name = options[:name] || "Temporary deploy[#{dir}][#{options[:project_name]}]"

@@ -60,7 +60,7 @@ module GoodData
         parts
       end
 
-      def find(stuff, opts = {:client => GoodData.connection, :project => GoodData.project})
+      def find(stuff, opts = { :client => GoodData.connection, :project => GoodData.project })
         client = opts[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -129,7 +129,7 @@ module GoodData
         end
       end
 
-      def execute_inline(rd, opts = {:client => GoodData.client, :project => GoodData.project})
+      def execute_inline(rd, opts = { :client => GoodData.connection, :project => GoodData.project })
         client = opts[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -157,7 +157,7 @@ module GoodData
       # Method used for getting a data_result from a wire representation of
       # @param result [Hash, Object] Wire data from JSON
       # @return [GoodData::ReportDataResult]
-      def data_result(result, options = {:client => GoodData.connection})
+      def data_result(result, options = { :client => GoodData.connection })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -174,7 +174,7 @@ module GoodData
         client.create(ReportDataResult, client.get(data_result_uri))
       end
 
-      def create(options = {:client => GoodData.connection})
+      def create(options = { :client => GoodData.connection })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -222,7 +222,7 @@ module GoodData
       content['grid']['metrics'].map { |i| GoodData::Metric[i['uri']] }
     end
 
-    def execute(opts = {:client => GoodData.client, :project => GoodData.project})
+    def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
       client = opts[:client]
       fail ArgumentError, 'No :client specified' if client.nil?
 

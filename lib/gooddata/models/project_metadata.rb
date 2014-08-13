@@ -3,11 +3,11 @@
 module GoodData
   class ProjectMetadata
     class << self
-      def keys(opts = {:client => GoodData.client})
+      def keys(opts = { :client => GoodData.connection })
         ProjectMetadata[:all, opts].keys
       end
 
-      def [](key, opts = {:client => GoodData.client})
+      def [](key, opts = { :client => GoodData.connection })
         client = opts[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -31,14 +31,14 @@ module GoodData
       alias_method :get, :[]
       alias_method :get_key, :[]
 
-      def key?(key, opts = {:client => GoodData.client})
+      def key?(key, opts = { :client => GoodData.connection })
         ProjectMetadata[key, opts]
         true
       rescue RestClient::ResourceNotFound
         false
       end
 
-      def []=(key, opts = {:client => GoodData.connection}, val = nil)
+      def []=(key, opts = { :client => GoodData.connection }, val = nil)
         client = opts[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 

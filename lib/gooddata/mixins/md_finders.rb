@@ -3,7 +3,7 @@
 module GoodData
   module Mixin
     module MdFinders
-      def find_by_tag(tag, opts = {:client => GoodData.connection})
+      def find_by_tag(tag, opts = { :client => GoodData.connection })
         c = client || opts[:client]
 
         p = opts[:project]
@@ -15,7 +15,7 @@ module GoodData
         self[:all, client: c, project: project].select { |r| r.tags.split(',').include?(tag) }
       end
 
-      def find_first_by_title(title, options = {:client => GoodData.connection, :project => GoodData.project})
+      def find_first_by_title(title, options = { :client => GoodData.connection, :project => GoodData.project })
         all = self[:all, options.merge(full: false)]
         item = if title.is_a?(Regexp)
                  all.find { |r| r['title'] =~ title }

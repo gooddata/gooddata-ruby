@@ -295,8 +295,6 @@ module GoodData
     #
     # @return [Array<GoodData::Project>] Array of projets
     def projects
-      res = []
-
       tmp = client.get @json['user']['links']['projects']
       tmp['projects'].map do |project_meta|
         project_uri = project_meta['project']['links']['self']
@@ -314,8 +312,6 @@ module GoodData
     #
     # @return [Array<GoodData::ProjectRole>] Array of project roles
     def roles
-      res = []
-
       tmp = client.get @json['user']['links']['roles']
       tmp['associatedRoles']['roles'].pmap do |role_uri|
         role = client.get role_uri
