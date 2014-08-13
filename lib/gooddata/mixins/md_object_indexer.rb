@@ -37,7 +37,7 @@ module GoodData
         # new(GoodData.get uri) unless uri.nil?
         if uri
           raw = client.get(uri)
-          project.client.create(self, raw, client: client, project: project)
+          client.create(self, raw, client: client, project: project)
         end
       end
 
