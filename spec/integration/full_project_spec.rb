@@ -133,8 +133,8 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to get a metric by object id" do
     metrics = @project.metrics
-    metric = @project.metric(metrics.first.obj_id)
-    metric.obj_id == metrics.first.obj_id
+    metric = @project.metric(metrics.first.obj_id, :full => true)
+    metric.obj_id == metrics(:full => true).first.obj_id
     metrics.first == metric
   end
 

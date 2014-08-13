@@ -581,7 +581,7 @@ module GoodData
     # Helper for getting metrics of a project
     #
     # @return [Array<GoodData::Metric>] matric instance or list
-    def metrics(opts = { :full => false })
+    def metrics(opts = { :full => true })
       GoodData::Metric[:all, opts.merge(project: self, client: client)]
     end
 
@@ -589,7 +589,7 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
     # @return [GoodData::Metric] matric instance or list
-    def metric(id, opts = {:full => false})
+    def metric(id, opts = { :full => true })
       GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
