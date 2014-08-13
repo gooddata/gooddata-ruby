@@ -2,6 +2,8 @@
 
 require 'pry'
 
+require_relative '../rest/resource'
+
 module GoodData
   class Process < GoodData::Rest::Object
     attr_reader :data
