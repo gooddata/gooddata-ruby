@@ -67,7 +67,7 @@ module GoodData
           # new_opts = new_opts.merge(Hash.new({}))
           client = Client.new(new_opts)
 
-          unless client
+          if client
             at_exit do
               puts client.connection.stats_table if client && client.connection
             end
