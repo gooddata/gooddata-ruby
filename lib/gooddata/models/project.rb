@@ -580,10 +580,17 @@ module GoodData
 
     # Helper for getting metrics of a project
     #
+    # @return [Array<GoodData::Metric>] matric instance or list
+    def metrics(opts = { :full => true })
+      GoodData::Metric[:all, opts.merge(project: self, client: client)]
+    end
+
+    # Helper for getting metrics of a project
+    #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
-    # @return [GoodData::Metric | Array<GoodData::Metric>] matric instance or list
-    def metrics(id = :all)
-      GoodData::Metric[id, project: self, client: client]
+    # @return [GoodData::Metric] matric instance or list
+    def metric(id, opts = { :full => true })
+      GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
     def metric_by_title(title)

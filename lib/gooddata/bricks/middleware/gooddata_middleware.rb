@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
-require 'gooddata'
+# TODO: REmove this
+# require 'gooddata'
 
 require_relative 'base_middleware'
 

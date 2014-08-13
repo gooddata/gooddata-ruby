@@ -13,6 +13,8 @@
   - [ProjectNotFound](https://github.com/gooddata/gooddata-ruby/blob/master/lib/gooddata/exceptions/project_not_found.rb)
 - Use more of pmap
 - Create class (GoodData::Storage) for abstracting remote FS (=> WebDav)
+- Print stats at client disconnect and not at_exit as now!
+- Make stats optional via cmd-line switch
 
 ## Tests
 
