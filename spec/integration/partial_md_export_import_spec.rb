@@ -21,14 +21,14 @@ describe "Spin a project", :constraint => 'slow' do
     f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @source_project)
     metric_title = "Testing metric to be exported"
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => metric_title, :client => @client, :project => @source_project)
-    metric.save(:client => @client, :project => @project)
+    metric.save(:client => @client, :project => @source_project)
 
     GoodData.with_project(@target_project) { |p| GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 0 }
 
-    @project.partial_md_export([metric.uri], :project => @target_project)
-    GoodData.with_project(@target_project) do |p|
-      GoodData::Metric[:all].count.should == 1
-      metric = GoodData::Metric.find_first_by_title(metric_title)
+    @source_project.partial_md_export([metric.uri], :client => @client, :project => @target_project)
+    GoodData.with_project(@target_project) do |_p|
+      GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 1
+      metric = GoodData::Metric.find_first_by_title(metric_title, :client => @client, :project => @target_project)
       metric.should_not be_nil
       metric.title.should == metric_title
     end

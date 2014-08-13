@@ -18,8 +18,6 @@ module GoodData
 
     include GoodData::Mixin::RestResource
 
-    root_key :metric
-
     class << self
       def metadata_property_reader(*props)
         props.each do |prop|
