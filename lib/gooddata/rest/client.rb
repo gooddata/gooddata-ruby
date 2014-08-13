@@ -69,9 +69,7 @@ module GoodData
 
           unless client
             at_exit do
-              if client && client.connection
-                puts client.connection.stats_table
-              end
+              puts client.connection.stats_table if client && client.connection
             end
           end
 
@@ -175,7 +173,7 @@ module GoodData
       end
 
       # FIXME: Invstigate _file argument
-      def get_project_webdav_path(_file, opts = {:project => GoodData.project})
+      def get_project_webdav_path(_file, opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -187,7 +185,7 @@ module GoodData
       end
 
       # FIXME: Invstigate _file argument
-      def get_user_webdav_path(_file, opts = {:project => GoodData.project})
+      def get_user_webdav_path(_file, opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 

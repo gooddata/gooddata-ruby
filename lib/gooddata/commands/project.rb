@@ -107,7 +107,7 @@ module GoodData
         # Build project
         def build(opts = {})
           client = opts[:client]
-          fail ArgumentError, "No :client specified" if client.nil?
+          fail ArgumentError, 'No :client specified' if client.nil?
 
           GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :token => opts[:token], :client => client)
         end
@@ -131,8 +131,8 @@ module GoodData
 
             begin
               require 'gooddata'
-              gd = gd_client = c = client = GoodData.connect(options)
-              GoodData.with_project(project_id) do |project|
+              GoodData.connect(options)
+              GoodData.with_project(project_id) do |_project|
                 puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
                 binding.pry(:quiet => true,
                             :prompt => [proc do |target_self, nest_level, pry|

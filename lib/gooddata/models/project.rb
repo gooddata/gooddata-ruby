@@ -49,7 +49,7 @@ module GoodData
       #  - <id>
       #
       def [](id, opts = {})
-        return id if id.instance_of? GoodData::Project || id.respond_to?(:project?) && id.project?
+        return id if id.instance_of?(GoodData::Project) || id.respond_to?(:project?) && id.project?
 
         if id == :all
           Project.all(opts)
@@ -72,11 +72,11 @@ module GoodData
       # - :summary
       # - :template (default /projects/blank)
       #
-      def create(opts = {:client => GoodData.connection}, &block)
+      def create(opts = { :client => GoodData.connection }, &block)
         GoodData.logger.info "Creating project #{opts[:title]}"
 
         c = client(opts)
-        fail ArgumentError, "No :client specified" if c.nil?
+        fail ArgumentError, 'No :client specified' if c.nil?
 
         auth_token = opts[:auth_token] || GoodData.connection.auth_token
         fail 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
@@ -348,7 +348,6 @@ module GoodData
 
       role_name.downcase!
       role_list.each do |role|
-        a = role
         return role if role.uri == role_name ||
           role.identifier.downcase == role_name ||
           role.identifier.downcase.gsub(/role$/, '') == role_name ||
@@ -558,7 +557,7 @@ module GoodData
     # GoodData::Label[id] + it supports :all as welll
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
     def labels(id = :all)
-      attribute.pmapcat {|a| a.labels}
+      attribute.pmapcat { |a| a.labels }
     end
 
     def md
@@ -723,7 +722,7 @@ module GoodData
     # Gets the list or project roles
     #
     # @return [Array<GoodData::ProjectRole>] List of roles
-    def roles()
+    def roles
       url = "/gdc/projects/#{pid}/roles"
 
       tmp = client.get(url)
@@ -825,7 +824,7 @@ module GoodData
 
         # Get domain info from REST, add to cache
         if domain.nil?
-          d = GoodData::Domain[domain_name, {:client => client}]
+          d = GoodData::Domain[domain_name, { :client => client }]
           domain = {
             :domain => d,
             :users => d.users(:client => client)

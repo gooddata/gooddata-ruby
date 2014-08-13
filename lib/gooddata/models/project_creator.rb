@@ -11,7 +11,7 @@ module GoodData
       class << self
         def migrate(opts = {})
           client = opts[:client]
-          fail ArgumentError, "No :client specified" if client.nil?
+          fail ArgumentError, 'No :client specified' if client.nil?
 
           spec = opts[:spec] || fail('You need to provide spec for migration')
           bp = ProjectBlueprint.new(spec)
@@ -44,14 +44,14 @@ module GoodData
           end
         end
 
-        def migrate_datasets(spec, opts = {:client => GoodData.connection})
+        def migrate_datasets(spec, opts = { :client => GoodData.connection })
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
           p = opts[:project]
           fail ArgumentError, 'No :project specified' if p.nil?
 
-          project = Project[p, {:client => client}]
+          project = Project[p, { :client => client }]
           fail ArgumentError, 'Wrong :project specified' if project.nil?
 
           bp = ProjectBlueprint.new(spec)
@@ -79,13 +79,13 @@ module GoodData
 
           chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
           chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-          response = client.post ldm_uri, 'manage' => { 'maql' => chunk }
-          polling_url = response['entries'].first['link']
-          polling_result = client.poll_on_response(polling_url) do |body|
-            body['wTaskStatus']['status'] == 'RUNNING'
-          end
+            response = client.post ldm_uri, 'manage' => { 'maql' => chunk }
+            polling_url = response['entries'].first['link']
+            polling_result = client.poll_on_response(polling_url) do |body|
+              body['wTaskStatus']['status'] == 'RUNNING'
+            end
 
-          fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+            fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
           end
 
           bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|

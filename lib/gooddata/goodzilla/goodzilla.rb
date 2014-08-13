@@ -54,7 +54,7 @@ module GoodData
       keys.zip(x)
     end
 
-    def self.interpolate_metric(metric, dictionary, options = {:client => GoodData.connection, :project => GoodData.project})
+    def self.interpolate_metric(metric, dictionary, options = { :client => GoodData.connection, :project => GoodData.project })
       interpolated = interpolate({
                                    :facts => GoodData::SmallGoodZilla.get_facts(metric),
                                    :attributes => GoodData::SmallGoodZilla.get_attributes(metric),

@@ -77,7 +77,7 @@ module GoodData
       !res
     end
 
-    def save(opts = {:client => GoodData.client, :project => GoodData.project})
+    def save(opts = { :client => GoodData.connection, :project => GoodData.project })
       client = opts[:client]
       fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -127,7 +127,7 @@ module GoodData
     #
     # @param new_title [String] New title. If not provided one is provided
     # @return [GoodData::MdObject] MdObject that has been saved as
-    def save_as(new_title = nil, opts = {:client => GoodData.connection, :project => GoodData.project})
+    def save_as(new_title = nil, opts = { :client => GoodData.connection, :project => GoodData.project })
       new_title = "Clone of #{title}" if new_title.nil?
 
       dupped = Marshal.load(Marshal.dump(json))

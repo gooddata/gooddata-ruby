@@ -15,7 +15,7 @@ module GoodData
       #
       # @param domain_name [String] Domain name
       # @return [String] Domain object instance
-      def [](domain_name, options = {:client => GoodData.connection})
+      def [](domain_name, options = { :client => GoodData.connection })
         c = client(options)
         fail "Using pseudo-id 'all' is not supported by GoodData::Domain" if domain_name.to_s == 'all'
         c.create(GoodData::Domain, domain_name)
@@ -129,7 +129,7 @@ module GoodData
       # @param [Array<GoodData::Membership>] list List of users
       # @param [String] default_domain_name Default domain name used when no specified in user
       # @return [Array<GoodData::User>] List of users created
-      def users_create(list, default_domain = nil, opts = {:client => GoodData.connection, :project => GoodData.project})
+      def users_create(list, default_domain = nil, opts = { :client => GoodData.connection, :project => GoodData.project })
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
         domains = {}
         list.map do |user|

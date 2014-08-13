@@ -24,7 +24,7 @@ module GoodData
           roles
         end
 
-        def show(opts = {:client => GoodData.client})
+        def show(opts = { :client => GoodData.connection })
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
           pp client.user.json
