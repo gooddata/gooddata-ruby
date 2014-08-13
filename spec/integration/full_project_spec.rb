@@ -133,7 +133,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to get a metric by object id" do
     metrics = @project.metrics
-    metric = @project.metrics(metrics.first.obj_id)
+    metric = @project.metric(metrics.first.obj_id)
     metric.obj_id == metrics.first.obj_id
     metrics.first == metric
   end
@@ -141,7 +141,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should exercise the object relations and getting them in various ways" do
     # Find a metric by name
     metric = @project.metric_by_title('My metric')
-    the_same_metric = @project.metrics(metric)
+    the_same_metric = @project.metric(metric)
     metric.should == metric
 
     # grab fact in several different ways
