@@ -88,7 +88,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
     # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => "My metric", :client => @client, :project => @project)
-    metric.save(:client => @client, :project => @project)
+    metric.save
     result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project)
     result[1][1].should == 3
     result.include_row?(["jirka@gooddata.com", 5]).should == true
@@ -185,7 +185,7 @@ describe "Full project implementation", :constraint => 'slow' do
     fact.tags.should be_empty
 
     fact.tags = "tag1,tag2,tag3"
-    fact.save(:client => @client, :project => @project)
+    fact.save
 
     tagged_facts = GoodData::Fact.find_by_tag('tag3', :client => @client, :project => @project)
     tagged_facts.count.should == 1
