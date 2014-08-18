@@ -201,9 +201,9 @@ module GoodData
     def browser_uri(options = {})
       grey = options[:grey]
       if grey
-        GoodData.connection.url + uri
+        client.connection.url + uri
       else
-        GoodData.connection.url + '#s=' + uri
+        client.connection.url + '#s=' + uri
       end
     end
 

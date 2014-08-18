@@ -44,7 +44,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should compute an empty metric" do
     f = @project.fact_by_title('Lines Changed')
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
-    metric.execute(:client => @client, :project => @project).should be_nil
+    metric.execute.should be_nil
   end
 
   it "should load the data" do
@@ -71,16 +71,16 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should compute a metric" do
     f = @project.fact_by_title('Lines Changed')
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
-    metric.execute(:client => @client, :project => @project).should == 9
+    metric.execute.should == 9
   end
 
   it "should execute an anonymous metric twice and not fail" do
     f = @project.fact_by_title('Lines Changed')
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
-    metric.execute(:client => @client, :project => @project).should == 9
+    metric.execute.should == 9
     # Since GD platform cannot execute inline specified metric the metric has to be saved
     # The code tries to resolve this as transparently as possible
-    metric.execute(:client => @client, :project => @project).should == 9
+    metric.execute.should == 9
   end
 
   it "should compute a report" do
@@ -93,7 +93,7 @@ describe "Full project implementation", :constraint => 'slow' do
     result[1][1].should == 3
     result.include_row?(["jirka@gooddata.com", 5]).should == true
 
-    result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project).execute(:client => @client, :project => @project)
+    result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project).execute
     result2[1][1].should == 3
     result2.include_row?(["jirka@gooddata.com", 5]).should == true
     result2.should == result
@@ -211,7 +211,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
     fact = @project.fact_by_title('Lines Changed')
     fact.fact?.should == true
-    res = fact.create_metric(:type => :sum, :client => @client, :project => @project).execute(:client => @client, :project => @project)
+    res = fact.create_metric(:type => :sum, :client => @client, :project => @project).execute
     res.should == 9
   end
 
@@ -227,7 +227,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should have more users"  do
     attribute = @project.attributes('attr.devs.dev_id')
     attribute.attribute?.should == true
-    attribute.create_metric(:client => @client, :project => @project).execute(:client => @client, :project => @project).should == 4
+    attribute.create_metric(:client => @client, :project => @project).execute.should == 4
   end
 
   it "should tell you whether metric contains a certain attribute" do
@@ -235,16 +235,16 @@ describe "Full project implementation", :constraint => 'slow' do
     repo_attribute = @project.attributes('attr.repos.repo_id')
     metric = attribute.create_metric(:title => "My test metric", :client => @client, :project => @project)
     metric.save(:client => @client, :project => @project)
-    metric.execute(:client => @client, :project => @project).should == 4
+    metric.execute.should == 4
 
     metric.contain?(attribute).should == true
     metric.contain?(repo_attribute).should == false
 
     metric.replace(attribute, repo_attribute)
     metric.save(:client => @client, :project => @project)
-    metric.execute(:client => @client, :project => @project).should_not == 4
+    metric.execute.should_not == 4
 
-    l = attribute.primary_label(:client => @client, :project => @project)
+    l = attribute.primary_label
     value = l.values.first[:value]
     l.find_element_value(l.find_value_uri(value)).should == value
     expect(l.value?(value)).to eq true
@@ -254,12 +254,12 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should be able to compute count of different datasets" do
     attribute = @project.attributes('attr.devs.dev_id')
     dataset_attribute = @project.attributes('attr.commits.factsof')
-    attribute.create_metric(:attribute => dataset_attribute, :client => @client, :project => @project).execute(:client => @client, :project => @project).should == 3
+    attribute.create_metric(:attribute => dataset_attribute, :client => @client, :project => @project).execute.should == 3
   end
 
   it "should be able to tell you if a value is contained in a metric" do
     attribute = @project.attributes('attr.devs.dev_id')
-    label = attribute.primary_label(:client => @client, :project => @project)
+    label = attribute.primary_label
     value = label.values.first
     fact = @project.facts('fact.commits.lines_changed')
     metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
@@ -268,14 +268,14 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to replace the values in a metric" do
     attribute = @project.attributes('attr.devs.dev_id')
-    label = attribute.primary_label(:client => @client, :project => @project)
-    value = label.values(:client => @client, :project => @project).first
-    different_value = label.values(:client => @client, :project => @project)[1]
+    label = attribute.primary_label
+    value = label.values.first
+    different_value = label.values[1]
     fact = @project.facts('fact.commits.lines_changed')
     metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
     metric.replace_value(label, value[:value], different_value[:value])
     metric.contain_value?(label, value[:value]).should == false
-    metric.pretty_expression(:client => @client, :project => @project).should == "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
+    metric.pretty_expression.should == "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
   end
 
   it "should be able to lookup the attributes by regexp and return a collection" do
@@ -285,8 +285,8 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to give you values of the label as an array of hashes" do
     attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    label = attribute.primary_label(:client => @client, :project => @project)
-    label.values(:client => @client).map { |v| v[:value] }.should == [
+    label = attribute.primary_label
+    label.values.map { |v| v[:value] }.should == [
       'jirka@gooddata.com',
       'josh@gooddata.com',
       'petr@gooddata.com',
@@ -296,7 +296,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to give you values for" do
     attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    attribute.values_for(2, :client => @client, :project => @project).should == ["tomas@gooddata.com", "1"]
+    attribute.values_for(2).should == ["tomas@gooddata.com", "1"]
   end
 
   it "should be able to find specific element and give you the primary label value" do
@@ -306,17 +306,17 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to give you label by name" do
     attribute = @project.attributes('attr.devs.dev_id')
-    label = attribute.label_by_name('email', :client => @client, :project => @project)
+    label = attribute.label_by_name('email')
     label.label?.should == true
     label.title.should == 'Email'
     label.identifier.should == "label.devs.dev_id.email"
     label.attribute_uri.should == attribute.uri
-    label.attribute(:client => @client, :project => @project).should == attribute
+    label.attribute.should == attribute
   end
 
   it "should be able to return values of the attribute for inspection" do
     attribute = @project.attributes('attr.devs.dev_id')
-    vals = attribute.values(:client => @client, :project => @project)
+    vals = attribute.values
     vals.count.should == 4
     vals.first.count.should == 2
     vals.first.first[:value].should == "jirka@gooddata.com"
@@ -324,10 +324,10 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to save_as a metric" do
     m = @project.metric_by_title("My test metric")
-    cloned = m.save_as(nil, :client => @client, :project => @project)
+    cloned = m.save_as
     m_cloned = @project.metric_by_title("Clone of My test metric")
     m_cloned.should == cloned
-    m_cloned.execute(:client => @client, :project => @project).should == cloned.execute(:client => @client, :project => @project)
+    m_cloned.execute.should == cloned.execute
   end
 
   it "should be able to clone a project" do

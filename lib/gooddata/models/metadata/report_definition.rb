@@ -121,7 +121,7 @@ module GoodData
         unsaved_metrics.each { |m| m.title = 'Untitled metric' unless m.title }
 
         begin
-          unsaved_metrics.each { |m| m.save(options) }
+          unsaved_metrics.each { |m| m.save }
           rd = GoodData::ReportDefinition.create(options)
           data_result(execute_inline(rd, options), options)
         ensure
@@ -174,9 +174,15 @@ module GoodData
         client.create(ReportDataResult, client.get(data_result_uri))
       end
 
-      def create(options = { :client => GoodData.connection })
+      def create(options = { :client => GoodData.connection, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         left = Array(options[:left])
         top = Array(options[:top])
@@ -214,7 +220,7 @@ module GoodData
         # TODO: write test for report definitions with explicit identifiers
         pars['reportDefinition']['meta']['identifier'] = options[:identifier] if options[:identifier]
 
-        client.create(ReportDefinition, pars)
+        client.create(ReportDefinition, pars, {:project => project})
       end
     end
 
@@ -223,14 +229,10 @@ module GoodData
     end
 
     def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
-      client = opts[:client]
-      fail ArgumentError, 'No :client specified' if client.nil?
-
-      p = opts[:project]
-      fail ArgumentError, 'No :project specified' if p.nil?
-
-      project = GoodData::Project[p, opts]
-      fail ArgumentError, 'Wrong :project specified' if project.nil?
+      opts = {
+        :client => client,
+        :project => project
+      }
 
       result = if saved?
                  pars = {

@@ -90,7 +90,7 @@ module GoodData
         # TODO: add test for explicitly provided identifier
         metric['metric']['meta']['identifier'] = options[:identifier] if options[:identifier]
 
-        client.create(Metric, metric)
+        client.create(Metric, metric, {:project => project})
       end
 
       def execute(expression, options = { :client => GoodData.connection })
@@ -112,7 +112,7 @@ module GoodData
               }.merge(expression)
               GoodData::Metric.create(tmp, options)
             end
-        m.execute(options)
+        m.execute
       end
 
       def xexecute(expression, opts = { :client => GoodData.connection, :project => GoodData.project })
@@ -129,15 +129,11 @@ module GoodData
       end
     end
 
-    def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
-      client = opts[:client]
-      fail ArgumentError, 'No :client specified' if client.nil?
-
-      p = opts[:project]
-      fail ArgumentError, 'No :project specified' if p.nil?
-
-      project = GoodData::Project[p, opts]
-      fail ArgumentError, 'Wrong :project specified' if project.nil?
+    def execute
+      opts = {
+        :client => client,
+        :project => project
+      }
 
       res = GoodData::ReportDefinition.execute(opts.merge(:left => self))
       res && res[0][0]
@@ -212,8 +208,11 @@ module GoodData
 
     # Looks up the readable values of the objects used inside of MAQL epxpressions. Labels and elements titles are based on the primary label.
     # @return [String] Ther resulting MAQL like expression
-    def pretty_expression(opts = { :project => GoodData.project })
-      opts[:client] = client unless opts[:client]
+    def pretty_expression
+      opts = {
+        :client => client,
+        :project => project
+      }
 
       temp = expression.dup
       expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
