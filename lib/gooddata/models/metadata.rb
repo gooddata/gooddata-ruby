@@ -130,8 +130,8 @@ module GoodData
       dupped[root_key]['meta'].delete('uri')
       dupped[root_key]['meta'].delete('identifier')
       dupped[root_key]['meta']['title'] = new_title
-      x = self.class.new(dupped)
-      x.save(opts)
+      x = client.create(self.class, dupped, :project => project)
+      x.save
     end
 
     def ==(other)

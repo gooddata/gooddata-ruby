@@ -21,7 +21,7 @@ describe "Spin a project", :constraint => 'slow' do
     f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @source_project)
     metric_title = "Testing metric to be exported"
     metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => metric_title, :client => @client, :project => @source_project)
-    metric.save(:client => @client, :project => @source_project)
+    metric.save
 
     GoodData.with_project(@target_project) { |p| GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 0 }
 

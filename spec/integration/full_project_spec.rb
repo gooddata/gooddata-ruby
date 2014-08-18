@@ -234,14 +234,14 @@ describe "Full project implementation", :constraint => 'slow' do
     attribute = @project.attributes('attr.devs.dev_id')
     repo_attribute = @project.attributes('attr.repos.repo_id')
     metric = attribute.create_metric(:title => "My test metric", :client => @client, :project => @project)
-    metric.save(:client => @client, :project => @project)
+    metric.save
     metric.execute.should == 4
 
     metric.contain?(attribute).should == true
     metric.contain?(repo_attribute).should == false
 
     metric.replace(attribute, repo_attribute)
-    metric.save(:client => @client, :project => @project)
+    metric.save
     metric.execute.should_not == 4
 
     l = attribute.primary_label
