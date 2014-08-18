@@ -6,23 +6,14 @@ categories: get-started
 pygments: true
 ---
 
-You just installed the Ruby GEM and want to start playing around, right? Follow this guide to learn more about the basics and most common use cases.  
-
-##Disclaimer
-
-Though we did everything in our power to make it simple. This SDK is still intended for developers. Programming experience is required. Some operations that can be executed using the SDK can be destructive to your projects and data. For more information, please contact GoodData Customer Support or let the authors know. Any feedback is appreciated.
-
-Also take note that we still have not reach version 1.0.0 which means the API could and will change. We try to be as gentle as possible but sometimes if we want to make progress we have to break things.
-
 ##Prerequisites
 
-1. Acquired a GoodData platform account.
-2. Set up your Ruby environment. Supported versions of ruby are 1.9, 2.0 and higher. Jruby 1.7 and higher. 1.8 is not supported.
-3. Acquired a project authentication key if you are creating new projects or have Administrator access to any project that you wish to modify using this SDK.
-
+1. Setup GoodData Developer [account](https://secure.gooddata.com/account.html?#/registration/projectTemplate/urn%3Agooddata%3AOnboarding).
+2. Set up your Ruby environment. Supported versions of Ruby are 1.9, 2.0 and higher. JRuby 1.7 (JRuby 1.8 is not supported).
+3. If you are creating new projects or have Administrator access to any project that you wish to modify, you will need a [project token](https://developer.gooddata.com/trial/).
 ##Install
 
-If you are using gems just
+If you are using Ruby Gems just
 
 {% highlight ruby %}
 gem install gooddata
@@ -87,25 +78,25 @@ Let's try to log in to the GoodData platform with your credentials through the S
 * For clarity, the `>` sign is omitted in the irb session from now on.
 
 {% highlight ruby %}
-  GoodData.connect("john@example.com", "password")
+  client = GoodData.connect("john@example.com", "password")
 {% endhighlight %}
 
 You should be logged in. Now, you can perform tasks that do not require you to be inside of a specific project. For example, use the following to list all of your projects:
 
 {% highlight ruby %}
-  GoodData::Project.all
+  projects = GoodData::Project[:all]
 {% endhighlight %}
 
 To work with a project, you must define the project for the SDK. For example, suppose you wish to list the reports in a project. You must tell the SDK the project to review: 
 
 {% highlight ruby %}
-  GoodData.project = 'YOUR_PROJECT_ID'
+  project = GoodData::Project['YOUR_PROJECT_ID', :client => client]
 {% endhighlight %}
 
 To list the reports in this project:
 
 {% highlight ruby %}
-  GoodData::Report.all
+  reports = GoodData::Report[:all]
 {% endhighlight %}
 
 Ok. To exit irb, enter:
@@ -138,7 +129,7 @@ For even better results, you can try using the following:
 In a single command, the above launches the command line interface, logs you into the platform, and identifies the project to which to connect. At this point, you may begin entering commands:
 
 {% highlight ruby %}
-  GoodData::Report.all
+  GoodData::Report[:all]
 {% endhighlight %}
 
 **Tip:** Use `gooddata auth store` to save your username and password locally, so you do not have to type it every single time. If you do not specify this command explicitly, the stored default is used. 
@@ -152,8 +143,8 @@ A simple program that does something useful is the following:
   require 'gooddata'
   require 'pp'
 
-  GoodData.connect('username', 'password')
-  GoodData.use 'my_project_id'
+  client = GoodData.connect('YOUR_USERNAME', 'YOUR_PASSWORD')
+  project = GoodData::Project['my_project_id', :client => client]
 
   pp GoodData::Report[:all]
 {% endhighlight %}
