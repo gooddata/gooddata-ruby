@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Tutorials | GoodData Ruby SDK
+title: Guides | GoodData Ruby SDK
 ---
 <div class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-inner">
@@ -13,40 +13,30 @@ title: Tutorials | GoodData Ruby SDK
       <a class="brand" href="{{ site.url }}">
       <img src="{{ site.url }}/images/header-logo.png" alt="GoodData Labs" width="24" height="24">
       GoodData<span style="color: #dc2020;">Ruby
-</a>
-      <div class="nav-collapse collapse container"  >
+</a>      <div class="nav-collapse collapse container">
         <ul class="nav">
-          <li class="">
-            <a href="{{ site.url }}/">Home</a>
-          </li>
           <li class="">
             <a href="{{ site.url }}/getting-started">Get Started</a>
           </li>
+    <li class="">
+            <a href="{{ site.url }}/examples">Examples</a>
+          </li>
           <li class="active">
-            <a href="{{ site.url }}/tutorials">Tutorials</a>
+            <a href="{{ site.url }}/support">Support</a>
           </li>
-          <li class="">
-            <a href="{{ site.url }}/guides">Guides</a>
+      <li class="">
           </li>
-          <li class="">
-            <a href="{{ site.url }}/refs">Reference</a>
-          </li>
-          <li class="">
-            <a href="http://rubydoc.info/gems/gooddata/0.6.3/frames" target="_blank">API Documentation</a>
-          </li>
-		  <li class="">
-            <a href="https://developer.gooddata.com/forum" target="_blank">Forum</a>
-          </li>          
-        </ul>
+         </ul>
       </div>
     </div>
   </div>
 </div>
 
+
 <div class="container-narrow">
   <ul class="posts">
     {% for post in site.posts reversed %}
-      {% if post.categories contains 'tutorial' %}
+      {% if post.categories contains 'guide' %}
         <div>
           <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
           <div>{{ post.perex }}</div>
