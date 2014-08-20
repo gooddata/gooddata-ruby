@@ -52,6 +52,13 @@ gem "gooddata"
 bundle install
 {% endhighlight %}
 
+
+{% for post in site.posts %}
+{% if post.categories contains 'introduction' %}
+  {{ post.content }}
+{% endif %}
+{% endfor %}
+
 <ul class="posts">
     {% for post in site.posts reversed %}
       {% if post.categories contains 'get-started' %}
