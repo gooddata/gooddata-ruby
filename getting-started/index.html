@@ -30,15 +30,17 @@ title: Getting Started | GoodData Ruby SDK
 
 <div class="container-narrow">
 
-{% for post in site.posts %}
-{% if post.categories contains 'get-started' %}
-     <h1>Get Started</h1>
-  {{ post.content }}
-          
-{% endif %}
-{% endfor %}
+<ul class="posts">
+    {% for post in site.posts reversed %}
+      {% if post.categories contains 'get-started' %}
+        <div>
+          <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+          <div>{{ post.perex }}</div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </ul>
 
 {% include section-nav.html %}
-
 
 </div>
