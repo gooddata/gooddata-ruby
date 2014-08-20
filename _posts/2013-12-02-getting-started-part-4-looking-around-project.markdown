@@ -1,6 +1,6 @@
 ---
 layout: gs-template
-title:  "Part V - Looking around project"
+title:  "Part IV - Looking around project"
 date:   2014-01-19 13:56:00
 categories: get-started
 prev_section: get-started/get-started-part-5-loading-data
@@ -24,7 +24,6 @@ GoodData.project.pid
 The following prints a URI, which will take you to the project.
 
 * On a Mac, press command and double click.
-
 
 {% highlight ruby %}
 GoodData.project.browser_uri
