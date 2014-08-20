@@ -69,7 +69,7 @@ module GoodData
     end
 
     def project
-      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, '')]
+      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, ''), :client => client, :project => project]
     end
 
     def saved?
@@ -77,17 +77,13 @@ module GoodData
       !res
     end
 
-    def save(opts = { :client => GoodData.connection, :project => GoodData.project })
-      client = opts[:client]
-      fail ArgumentError, 'No :client specified' if client.nil?
-
-      p = opts[:project]
-      fail ArgumentError, 'No :project specified' if p.nil?
-
-      project = GoodData::Project[p, opts]
-      fail ArgumentError, 'Wrong :project specified' if project.nil?
-
+    def save
       fail('Validation failed') unless validate
+
+      opts = {
+        :client => client,
+        :project => project
+      }
 
       if saved?
         client.put(uri, to_json)
@@ -127,15 +123,15 @@ module GoodData
     #
     # @param new_title [String] New title. If not provided one is provided
     # @return [GoodData::MdObject] MdObject that has been saved as
-    def save_as(new_title = nil, opts = { :client => GoodData.connection, :project => GoodData.project })
+    def save_as(new_title = nil)
       new_title = "Clone of #{title}" if new_title.nil?
 
       dupped = Marshal.load(Marshal.dump(json))
       dupped[root_key]['meta'].delete('uri')
       dupped[root_key]['meta'].delete('identifier')
       dupped[root_key]['meta']['title'] = new_title
-      x = self.class.new(dupped)
-      x.save(opts)
+      x = client.create(self.class, dupped, :project => project)
+      x.save
     end
 
     def ==(other)
