@@ -1,9 +1,9 @@
 ---
 layout: gs-template
-title:  "Part I - Setting Up"
+title:  "Part I - Introduction"
 date:   2014-01-19 13:56:00
-categories: get-started
-next_section: get-started/get-started-part-2-model
+categories: introduction
+next_section: get-started/get-started-part-1-setting-up
 pygments: true
 perex: Getting started with Ruby and first steps with the GoodData Gem.
 ---
