@@ -6,7 +6,7 @@ categories: get-started
 next_section: get-started/get-started-part-3-model
 prev_section: get-started/get-started-part-1-setting-up
 pygments: true
-perex: Spin up the example project to use in these tutorials. It only takes 5 minutes. Promise.
+perex: Spin up the example project to use in these tutorials. 5 minutes, and you are done!
 ---
 
 Now that you are all set up let's spin up an example Ruby project which we can use to explore the SDK in the remainder of this tutorial.
