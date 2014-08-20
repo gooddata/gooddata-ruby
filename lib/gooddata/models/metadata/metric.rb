@@ -90,7 +90,7 @@ module GoodData
         # TODO: add test for explicitly provided identifier
         metric['metric']['meta']['identifier'] = options[:identifier] if options[:identifier]
 
-        client.create(Metric, metric, {:project => project})
+        client.create(Metric, metric, :project => project)
       end
 
       def execute(expression, options = { :client => GoodData.connection })
