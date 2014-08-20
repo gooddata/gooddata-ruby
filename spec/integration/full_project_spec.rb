@@ -6,6 +6,11 @@ describe "Full project implementation", :constraint => 'slow' do
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
     @project = GoodData::Model::ProjectCreator.migrate({:spec => @spec, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
+
+    p = ProjectHelper.get_default_project(:client => @client)
+    dashboards = p.dashboards
+    dashboard = p.dashboards('Test Dashboard 20140730051843.780439')
+    stop = true
   end
 
   after(:all) do

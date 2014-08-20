@@ -80,7 +80,9 @@ module GoodData
         url = "/gdc/account/domains/#{opts[:domain]}/users"
         response = c.post(url, :accountSetting => data)
 
-        raw = c.get response['uri']
+        # Remove this ugly hack, see
+        url = response['uri'] + '//'
+        raw = c.get url
 
         # TODO: Remove this hack when POST /gdc/account/domains/{domain-name}/users returns full profile
         raw['accountSetting']['links'] = {} unless raw['accountSetting']['links']

@@ -35,7 +35,8 @@ module GoodData
       url = data['links']['roleUsers']
       tmp = client.get url
       tmp['associatedUsers']['users'].pmap do |user_url|
-        user = client.get user_url
+        url = user_url + '//' # TODO: Remove this hack, see https://jira.intgdc.com/browse/WA-3318
+        user = client.get url
         client.create(GoodData::Profile, user)
       end
     end

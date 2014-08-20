@@ -254,7 +254,7 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
     # @return [GoodData::Dashboard | Array<GoodData::Dashboard>] dashboard instance or list
     def dashboards(id = :all)
-      GoodData::Dashboard[:all, project: self, client: client]
+      GoodData::Dashboard[id, project: self, client: client]
     end
 
     def datasets
