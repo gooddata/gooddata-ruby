@@ -12,7 +12,7 @@ module ProjectHelper
   PROJECT_TITLE = 'GoodTravis'
   PROJECT_SUMMARY = 'No summary'
 
-  def self.get_default_project
-    GoodData::Project[PROJECT_ID]
+  def self.get_default_project(opts = { :client => GoodData.connection })
+    GoodData::Project[PROJECT_ID, opts]
   end
 end

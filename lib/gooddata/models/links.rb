@@ -1,7 +1,9 @@
 # encoding: UTF-8
 
+require_relative '../rest/object'
+
 module GoodData
-  class Links
+  class Links < GoodData::Rest::Object
     attr_reader :data
 
     def initialize(items)
@@ -20,8 +22,8 @@ module GoodData
     end
 
     def links(category, identifier = nil)
-      return Links.new(GoodData.get(self[category])) unless identifier
-      Links.new GoodData.get(get(category, identifier))
+      return Links.new(client.get(self[category])) unless identifier
+      Links.new client.get(get(category, identifier))
     end
 
     def [](category)

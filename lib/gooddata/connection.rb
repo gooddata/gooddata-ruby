@@ -2,7 +2,6 @@
 
 require_relative 'core/connection'
 require_relative 'core/logging'
-require_relative 'core/threaded'
 
 require_relative 'rest/rest'
 
@@ -12,7 +11,8 @@ module GoodData
     #
     # @see GoodData.connect
     def connection
-      Rest::Client.connection || fail('Please authenticate with GoodData.connect first')
+      # TODO: Remove this after successful rest-factory transition
+      Rest::Client.connection # || fail('Please authenticate with GoodData.connect first')
     end
 
     alias_method :client, :connection

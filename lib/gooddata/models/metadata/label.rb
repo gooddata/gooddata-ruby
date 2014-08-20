@@ -15,7 +15,7 @@ module GoodData
     # @return [String]
     def find_value_uri(value)
       escaped_value = CGI.escape(value)
-      results = GoodData.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{escaped_value}", {})
+      results = client.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{escaped_value}", {})
       items = results['validElements']['items']
       if items.empty?
         fail(AttributeElementNotFound, value)
@@ -30,7 +30,7 @@ module GoodData
     def find_element_value(element_id)
       element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d+)/)[1] : element_id
       uri = links['elements']
-      result = GoodData.get(uri + "/?id=#{element_id}")
+      result = client.get(uri + "/?id=#{element_id}")
       items = result['attributeElements']['elements']
       if items.empty?
         fail "Element id #{element_id} was not found"
@@ -55,7 +55,7 @@ module GoodData
     # @return [Array]
     def values(options = {})
       limit = options[:limit] || 100
-      results = GoodData.post("#{uri}/validElements?limit=#{limit}&offset=0&order=asc", {})
+      results = client.post("#{uri}/validElements?limit=#{limit}&offset=0&order=asc", {})
       results['validElements']['items'].map do |el|
         v = el['element']
         {
@@ -67,8 +67,12 @@ module GoodData
 
     # Gives an attribute of current label
     # @return [GoodData::Attibute]
-    def attribute
-      GoodData::Attribute[content['formOf']]
+    def attribute()
+      opts = {
+        :client => client,
+        :project => project
+      }
+      GoodData::Attribute[content['formOf'], opts]
     end
 
     # Gives an attribute url of current label. Useful for mass actions when it does not introduce HTTP call.

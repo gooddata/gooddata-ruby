@@ -12,18 +12,18 @@ GoodData::CLI.module_eval do
     c.command :add_user do |add_user|
       add_user.action do |global_options, options, args|
         opts = options.merge(global_options)
-        GoodData.connect(opts)
+        client = GoodData.connect(opts)
 
         domain = args[0]
-        fail 'Domain name has to be provided' if domain.nil? || domain.empty?
+        fail ArgumentError, 'Domain name has to be provided' if domain.nil? || domain.empty?
 
         email = args[1]
-        fail 'Email has to be provided' if email.nil? || email.empty?
+        fail ArgumentError, 'Email has to be provided' if email.nil? || email.empty?
 
         password = args[2]
-        fail 'Password has to be provided' if password.nil? || password.empty?
+        fail ArgumentError, 'Password has to be provided' if password.nil? || password.empty?
 
-        GoodData::Command::Domain.add_user(domain, email, password)
+        GoodData::Command::Domain.add_user(domain, email, password, :client => client)
       end
     end
 
@@ -31,12 +31,12 @@ GoodData::CLI.module_eval do
     c.command :list_users do |list_users|
       list_users.action do |global_options, options, args|
         opts = options.merge(global_options)
-        GoodData.connect(opts)
+        client = GoodData.connect(opts)
 
         domain = args[0]
-        fail 'Domain name has to be provided' if domain.nil? || domain.empty?
+        fail ArgumentError, 'Domain name has to be provided' if domain.nil? || domain.empty?
 
-        users = GoodData::Command::Domain.list_users(domain)
+        users = GoodData::Command::Domain.list_users(domain, :client => client)
         puts users.map { |u| [u['firstName'], u['lastName'], u['login']].join(',') }
       end
     end

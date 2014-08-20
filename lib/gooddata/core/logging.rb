@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
 require_relative 'nil_logger'
-require_relative 'threaded'
 
 module GoodData
   class << self

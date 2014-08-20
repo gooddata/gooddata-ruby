@@ -52,9 +52,10 @@ module GoodData
         @resources = ObjectFactory.resources
       end
 
-      def create(type, opts = {})
-        res = type.new(opts)
+      def create(type, data = {}, opts = {})
+        res = type.new(data)
         res.client = client
+        res.project = opts[:project]
         res
       end
 

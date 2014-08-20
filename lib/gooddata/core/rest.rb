@@ -134,13 +134,16 @@ module GoodData
     # @param options [Hash] Options
     # @return [Hash] Result of polling
     def poll_on_response(link, options = {}, &bl)
+      client = options[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+
       sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
-      response = GoodData.get(link)
+      response = get(link)
       while bl.call(response)
         sleep sleep_interval
-        GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+        client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
           sleep sleep_interval
-          response = GoodData.get(link)
+          response = get(link)
         end
       end
       response

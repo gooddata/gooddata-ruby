@@ -30,11 +30,11 @@ module GoodData
     # @param [Hash] options the options to pass to the value list
     # @option options [Symbol] :type type of aggregation function. Default is :sum
     # @return [GoodData::Metric]
-    def create_metric(options = {})
+    def create_metric(options = {:type => :sum})
       a_type = options[:type] || :sum
       fail "Suggested aggreagtion function (#{a_type}) does not exist for base metric created out of fact. You can use only one of #{FACT_BASE_AGGREGATIONS.map { |x| ":" + x.to_s }.join(',')}" unless FACT_BASE_AGGREGATIONS.include?(a_type)
       a_title = options[:title] || "#{a_type} of #{title}"
-      Metric.xcreate(:expression => "SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title)
+      Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title, :client => client, :project => project)
     end
   end
 end
