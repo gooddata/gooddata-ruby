@@ -1,5 +1,5 @@
 ---
-layout: get-started
+layout: gs-template
 title:  "Part VII - Updating a model"
 date:   2014-01-19 13:56:00
 categories: get-started

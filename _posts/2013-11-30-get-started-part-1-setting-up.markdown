@@ -1,11 +1,11 @@
 ---
-layout: get-started
+layout: gs-template
 title:  "Part I - Setting Up Your Environment"
 date:   2014-01-19 13:56:00
 categories: get-started
 next_section: get-started/get-started-part-2-model
 pygments: true
-perex: Spin up the example project to use in these tutorials. It only takes 5 minutes. Promise.
+perex: Prerequisties and the developer environment.
 ---
 
 1. Setup GoodData Developer [account](https://secure.gooddata.com/account.html?#/registration/projectTemplate/urn%3Agooddata%3AOnboarding).

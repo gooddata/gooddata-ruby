@@ -1,5 +1,5 @@
 ---
-layout: get-started
+layout: gs-template
 title:  "Part VI - Computing reports"
 date:   2014-01-19 13:56:00
 categories: get-started
