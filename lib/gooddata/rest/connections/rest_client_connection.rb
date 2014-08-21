@@ -44,7 +44,7 @@ module GoodData
         #
         # @param uri [String] Target URI
         def get(uri, options = {})
-            profile "GET #{uri}" do
+          profile "GET #{uri}" do
             b = proc { @server[uri].get cookies }
             process_response(options, &b)
           end

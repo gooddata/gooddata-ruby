@@ -67,7 +67,7 @@ module GoodData
 
     # Gives an attribute of current label
     # @return [GoodData::Attibute]
-    def attribute()
+    def attribute
       opts = {
         :client => client,
         :project => project

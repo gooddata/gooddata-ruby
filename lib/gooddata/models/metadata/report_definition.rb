@@ -220,7 +220,7 @@ module GoodData
         # TODO: write test for report definitions with explicit identifiers
         pars['reportDefinition']['meta']['identifier'] = options[:identifier] if options[:identifier]
 
-        client.create(ReportDefinition, pars, {:project => project})
+        client.create(ReportDefinition, pars, :project => project)
       end
     end
 
