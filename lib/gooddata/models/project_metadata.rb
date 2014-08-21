@@ -3,21 +3,27 @@
 module GoodData
   class ProjectMetadata
     class << self
-      def keys
-        ProjectMetadata[:all].keys
+      def keys(opts = { :client => GoodData.connection })
+        ProjectMetadata[:all, opts].keys
       end
 
-      def [](key, options = {})
+      def [](key, opts = { :client => GoodData.connection })
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        project = opts[:project]
+        fail ArgumentError, 'No :project specified' if project.nil?
+
         if key == :all
-          uri = "/gdc/projects/#{GoodData.project.pid}/dataload/metadata"
-          res = GoodData.get(uri)
+          uri = "/gdc/projects/#{project.pid}/dataload/metadata"
+          res = client.get(uri)
           res['metadataItems']['items'].reduce({}) do |memo, i|
             memo[i['metadataItem']['key']] = i['metadataItem']['value']
             memo
           end
         else
-          uri = "/gdc/projects/#{GoodData.project.pid}/dataload/metadata/#{key}"
-          res = GoodData.get(uri)
+          uri = "/gdc/projects/#{project.pid}/dataload/metadata/#{key}"
+          res = client.get(uri)
           res['metadataItem']['value']
         end
       end
@@ -25,27 +31,33 @@ module GoodData
       alias_method :get, :[]
       alias_method :get_key, :[]
 
-      def key?(key)
-        ProjectMetadata[key]
+      def key?(key, opts = { :client => GoodData.connection })
+        ProjectMetadata[key, opts]
         true
       rescue RestClient::ResourceNotFound
         false
       end
 
-      def []=(key, val)
+      def []=(key, opts = { :client => GoodData.connection }, val = nil)
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        project = opts[:project]
+        fail ArgumentError, 'No :project specified' if project.nil?
+
         data = {
           :metadataItem => {
             :key => key,
             :value => val
           }
         }
-        uri = "/gdc/projects/#{GoodData.project.pid}/dataload/metadata/"
+        uri = "/gdc/projects/#{project.pid}/dataload/metadata/"
         update_uri = uri + key
 
-        if key?(key)
-          GoodData.put(update_uri, data)
+        if key?(key, opts)
+          client.put(update_uri, data)
         else
-          GoodData.post(uri, data)
+          client.post(uri, data)
         end
       end
     end

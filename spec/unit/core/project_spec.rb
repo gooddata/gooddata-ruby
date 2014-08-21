@@ -7,11 +7,11 @@ require 'gooddata/models/project'
 
 describe 'GoodData - project' do
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   describe '#project=' do
@@ -20,20 +20,25 @@ describe 'GoodData - project' do
     end
 
     it 'Assigns project using project ID' do
+      pending 'GoodData::project= is disabled for now'
       GoodData.project = ProjectHelper::PROJECT_ID
     end
 
     it 'Assigns project using project URL' do
+      pending 'GoodData::project= is disabled for now'
       GoodData.project = ProjectHelper::PROJECT_URL
     end
 
     it 'Assigns project directly' do
+      pending 'GoodData::project= is disabled for now'
       GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID]
     end
   end
 
   describe '#project' do
     it 'Returns project assigned' do
+      pending 'GoodData.project= is disabled for now'
+
       GoodData.project = nil
       GoodData.project.should == nil
 
@@ -44,7 +49,7 @@ describe 'GoodData - project' do
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID] do
+      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID, :client => @client] do
       end
     end
   end

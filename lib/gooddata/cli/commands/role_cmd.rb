@@ -13,12 +13,12 @@ GoodData::CLI.module_eval do
     c.command :list do |list|
       list.action do |global_options, options, args|
         opts = options.merge(global_options)
-        GoodData.connect(opts)
+        client = GoodData.connect(opts)
 
         pid = global_options[:project_id]
         fail 'Project ID has to be provided' if pid.nil? || pid.empty?
 
-        role_list = GoodData::Command::Role.list(pid)
+        role_list = GoodData::Command::Role.list(pid, :client => client)
         role_list.each do |k, v|
           puts [k, v[:uri]].join(',')
         end

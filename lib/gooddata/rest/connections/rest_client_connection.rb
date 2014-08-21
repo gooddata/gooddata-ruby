@@ -17,13 +17,15 @@ module GoodData
           @user = nil
           @server = nil
 
+          @opts = opts
           headers = opts[:headers] || {}
           @headers.merge! headers
         end
 
         # Connect using username and password
         def connect(username, password, options = {})
-          @server = RestClient::Resource.new DEFAULT_URL, DEFAULT_LOGIN_PAYLOAD
+          server = options[:server] || DEFAULT_URL
+          @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD
 
           super
         end

@@ -8,7 +8,7 @@ module GoodData
       # @return [GoodData::Profile] Project Role author
       def author
         url = meta['author']
-        tmp = GoodData.get url
+        tmp = client.get url
         GoodData::Profile.new(tmp)
       end
     end

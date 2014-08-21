@@ -10,12 +10,17 @@ module GoodData
       attr_reader :name
 
       class << self
-        def add_user(domain, login, password)
-          GoodData::Domain.add_user(domain, login, password)
+        def add_user(domain, login, password, opts = { :client => GoodData.connection })
+          data = {
+            :domain => domain,
+            :login => login,
+            :password => password
+          }
+          GoodData::Domain.add_user(data.merge(opts))
         end
 
-        def list_users(domain)
-          GoodData::Domain.users(domain)
+        def list_users(domain, opts = { :client => GoodData.connection })
+          GoodData::Domain.users(domain, opts)
         end
       end
     end

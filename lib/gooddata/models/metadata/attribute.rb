@@ -28,16 +28,16 @@ module GoodData
       #
       # @param uri [String] Uri of the element. in the form of /gdc/md/PID/obj/OBJ_ID/elements?id=21
       # @return [String] Textual representation of a particular attribute element
-      def find_element_value(uri)
+      def find_element_value(uri, opts = { :client => @client, :project => @project })
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
-        Attribute[matches[1]].primary_label.find_element_value(uri)
+        Attribute[matches[1], :client => opts[:client], :project => opts[:project]].primary_label.find_element_value(uri)
       end
     end
 
     # Returns the labels of an attribute
     # @return [Array<GoodData::Label>]
     def display_forms
-      content['displayForms'].map { |df| GoodData::Label[df['meta']['uri']] }
+      content['displayForms'].map { |df| GoodData::Label[df['meta']['uri'], :client => client, :project => project] }
     end
     alias_method :labels, :display_forms
 
@@ -59,9 +59,9 @@ module GoodData
       fail "Suggested aggreagtion function (#{a_type}) does not exist for base metric created out of attribute. You can use only one of #{ATTRIBUTE_BASE_AGGREGATIONS.map { |x| ":" + x.to_s }.join(',')}" unless ATTRIBUTE_BASE_AGGREGATIONS.include?(a_type)
       a_title = options[:title] || "#{a_type} of #{title}"
       if an_attribute
-        Metric.xcreate(:expression => "SELECT #{a_type.to_s.upcase}(![#{identifier}], ![#{an_attribute.identifier}])", :title => a_title)
+        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}], ![#{an_attribute.identifier}])", :title => a_title, :client => options[:client], :project => options[:project])
       else
-        Metric.xcreate(:expression => "SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title)
+        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title, :client => options[:client], :project => options[:project])
       end
     end
 
@@ -79,9 +79,9 @@ module GoodData
     # @param [Hash] options the options to pass to the value list
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
-    def values(options = {})
+    def values
       results = labels.map do |label|
-        label.values(options)
+        label.values
       end
       results.first.zip(*results[1..-1])
     end

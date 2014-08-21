@@ -18,8 +18,6 @@ module GoodData
 
     include GoodData::Mixin::RestResource
 
-    root_key :metric
-
     class << self
       def metadata_property_reader(*props)
         props.each do |prop|
@@ -43,14 +41,14 @@ module GoodData
 
     def delete
       if saved?
-        GoodData.delete(uri)
+        client.delete(uri)
         meta.delete('uri')
         # ["uri"] = nil
       end
     end
 
     def reload!
-      @json = GoodData.get(uri) if saved?
+      @json = client.get(uri) if saved?
       self
     end
 
@@ -71,7 +69,7 @@ module GoodData
     end
 
     def project
-      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, '')]
+      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, ''), :client => client, :project => project]
     end
 
     def saved?
@@ -82,17 +80,24 @@ module GoodData
     def save
       fail('Validation failed') unless validate
 
+      opts = {
+        :client => client,
+        :project => project
+      }
+
       if saved?
-        GoodData.put(uri, to_json)
+        client.put(uri, to_json)
       else
         explicit_identifier = meta['identifier']
         # Pre-check to provide a user-friendly error rather than
         # failing later
-        if explicit_identifier && MdObject[explicit_identifier]
+        if explicit_identifier && MdObject[explicit_identifier, opts]
           fail "Identifier '#{explicit_identifier}' already in use"
         end
-        result = GoodData.post(GoodData.project.md['obj'], to_json)
-        saved_object = self.class[result['uri']]
+
+        req_uri = project.md['obj']
+        result = client.post(req_uri, to_json)
+        saved_object = self.class[result['uri'], opts]
         # TODO: add test for explicitly provided identifier
 
         @json = saved_object.json
@@ -102,11 +107,11 @@ module GoodData
           # it explicitly with an extra PUT call.
           meta['identifier'] = explicit_identifier
           begin
-            GoodData.put(uri, to_json)
+            client.put(uri, to_json)
           rescue => e
             # Cannot change the identifier (perhaps because it's in use
             # already?), cleaning up.
-            GoodData.delete(uri)
+            client.delete(uri)
             raise e
           end
         end
@@ -118,12 +123,14 @@ module GoodData
     #
     # @param new_title [String] New title. If not provided one is provided
     # @return [GoodData::MdObject] MdObject that has been saved as
-    def save_as(new_title = "Clone of #{title}")
+    def save_as(new_title = nil)
+      new_title = "Clone of #{title}" if new_title.nil?
+
       dupped = Marshal.load(Marshal.dump(json))
       dupped[root_key]['meta'].delete('uri')
       dupped[root_key]['meta'].delete('identifier')
       dupped[root_key]['meta']['title'] = new_title
-      x = self.class.new(dupped)
+      x = client.create(self.class, dupped, :project => project)
       x.save
     end
 

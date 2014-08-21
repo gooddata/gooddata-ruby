@@ -2,8 +2,10 @@
 
 require_relative '../extensions/big_decimal'
 
+require_relative '../rest/object'
+
 module GoodData
-  class DataResult
+  class DataResult < Rest::Object
     attr_reader :data
 
     def initialize(data)

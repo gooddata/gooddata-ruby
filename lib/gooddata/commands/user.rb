@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
-require_relative '../core/core'
-
 require 'highline/import'
 require 'multi_json'
+
+require_relative '../core/core'
 
 module GoodData
   module Command
@@ -24,8 +24,10 @@ module GoodData
           roles
         end
 
-        def show
-          pp GoodData.profile.json
+        def show(opts = { :client => GoodData.connection })
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+          pp client.user.json
         end
       end
     end

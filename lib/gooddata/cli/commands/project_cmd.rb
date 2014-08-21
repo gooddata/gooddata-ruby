@@ -15,7 +15,6 @@ GoodData::CLI.module_eval do
     c.command :jack_in do |jack|
       jack.action do |global_options, options, args|
         opts = options.merge(global_options)
-        GoodData.connect(opts)
         GoodData::Command::Project.jack_in(opts)
       end
     end

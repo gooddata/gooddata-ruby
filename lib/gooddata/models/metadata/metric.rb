@@ -27,42 +27,48 @@ module GoodData
         query('metrics', Metric, options)
       end
 
-      def xcreate(options)
-        if options.is_a?(String)
-          create(:expression => options, :extended_notation => true)
-        else
-          create(options.merge(:extended_notation => true))
-        end
+      def xcreate(metric, options = { :client => GoodData.connection, :project => GoodData.project })
+        create(metric, options.merge(:extended_notation => true))
       end
 
-      def create(options = {})
-        if options.is_a?(String)
-          expression = options
-          extended_notation = false
-          title = nil
-        else
+      def create(metric, options = { :client => GoodData.connection, :project => GoodData.project })
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        if metric.is_a?(String)
+          expression = metric || options[:expression]
+          extended_notation = options[:extended_notation] || false
           title = options[:title]
           summary = options[:summary]
-          expression = options[:expression] || fail('Metric has to have its expression defined')
-          extended_notation = options[:extended_notation] || false
+        else
+          title = metric[:title] || options[:title]
+          summary = metric[:summary] || options[:summary]
+          expression = metric[:expression] || options[:expression] || fail('Metric has to have its expression defined')
+          extended_notation = metric[:extended_notation] || options[:extended_notation] || false
         end
 
         expression = if extended_notation
                        dict = {
-                         :facts => GoodData::Fact[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                         :facts => GoodData::Fact[:all, options].reduce({}) do |memo, item|
+                           memo[item.title] = item.uri
                            memo
                          end,
-                         :attributes => GoodData::Attribute[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                         :attributes => GoodData::Attribute[:all, options].reduce({}) do |memo, item|
+                           memo[item.title] = item.uri
                            memo
                          end,
-                         :metrics => GoodData::Metric[:all].reduce({}) do |memo, item|
-                           memo[item['title']] = item['link']
+                         :metrics => GoodData::Metric[:all, options].reduce({}) do |memo, item|
+                           memo[item.title] = item.uri
                            memo
                          end
                        }
-                       interpolated_metric = GoodData::SmallGoodZilla.interpolate_metric(expression, dict)
+                       interpolated_metric = GoodData::SmallGoodZilla.interpolate_metric(expression, dict, options)
                        interpolated_metric
                      else
                        expression
@@ -83,37 +89,53 @@ module GoodData
         }
         # TODO: add test for explicitly provided identifier
         metric['metric']['meta']['identifier'] = options[:identifier] if options[:identifier]
-        Metric.new(metric)
+
+        client.create(Metric, metric, :project => project)
       end
 
-      def execute(expression, options = {})
+      def execute(expression, options = { :client => GoodData.connection })
+        # client = options[:client]
+        # fail ArgumentError, 'No :client specified' if client.nil?
+
+        options = expression if expression.is_a?(Hash)
+
         m = if expression.is_a?(String)
               tmp = {
                 :title => 'Temporary metric to be deleted',
                 :expression => expression
               }.merge(options)
 
-              GoodData::Metric.create(tmp)
+              GoodData::Metric.create(tmp, options)
             else
               tmp = {
                 :title => 'Temporary metric to be deleted'
               }.merge(expression)
-              GoodData::Metric.create(tmp)
+              GoodData::Metric.create(tmp, options)
             end
         m.execute
       end
 
-      def xexecute(expression)
-        if expression.is_a?(String)
-          execute(:expression => expression, :extended_notation => true)
-        else
-          execute(expression.merge(:extended_notation => true))
-        end
+      def xexecute(expression, opts = { :client => GoodData.connection, :project => GoodData.project })
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        execute(expression, opts.merge(:extended_notation => true))
       end
     end
 
     def execute
-      res = GoodData::ReportDefinition.execute(:left => self)
+      opts = {
+        :client => client,
+        :project => project
+      }
+
+      res = GoodData::ReportDefinition.execute(opts.merge(:left => self))
       res && res[0][0]
     end
 
@@ -126,7 +148,7 @@ module GoodData
     end
 
     def validate
-      fail 'Meric needs to have title' if title.nil?
+      fail 'Metric needs to have title' if title.nil?
       true
     end
 
@@ -187,13 +209,18 @@ module GoodData
     # Looks up the readable values of the objects used inside of MAQL epxpressions. Labels and elements titles are based on the primary label.
     # @return [String] Ther resulting MAQL like expression
     def pretty_expression
+      opts = {
+        :client => client,
+        :project => project
+      }
+
       temp = expression.dup
       expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
         uri = uri.first
         if uri =~ /elements/
-          temp.sub!(uri, Attribute.find_element_value(uri))
+          temp.sub!(uri, Attribute.find_element_value(uri, opts))
         else
-          obj = GoodData::MdObject[uri]
+          obj = GoodData::MdObject[uri, opts]
           temp.sub!(uri, obj.title)
         end
       end
