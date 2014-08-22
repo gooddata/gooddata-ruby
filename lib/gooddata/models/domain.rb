@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'cgi'
+
 require_relative 'profile'
 
 require_relative '../rest/object'
@@ -80,8 +82,7 @@ module GoodData
         url = "/gdc/account/domains/#{opts[:domain]}/users"
         response = c.post(url, :accountSetting => data)
 
-        # Remove this ugly hack, see
-        url = response['uri'] + '//'
+        url = response['uri']
         raw = c.get url
 
         # TODO: Remove this hack when POST /gdc/account/domains/{domain-name}/users returns full profile
@@ -98,7 +99,8 @@ module GoodData
       # @return [GoodData::Profile] User profile
       def find_user_by_login(domain, login, opts = {})
         c = client(opts)
-        url = "/gdc/account/domains/#{domain}/users?login=#{login}"
+        escaped_login = CGI.escape(login)
+        url = "/gdc/account/domains/#{domain}/users?login=#{escaped_login}"
         tmp = c.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
         items && items.length > 0 ? c.factory.create(GoodData::Profile, items.first) : nil
