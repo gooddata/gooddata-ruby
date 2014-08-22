@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: guides
 title:  "Creating User Filters"
 date:   2014-05-27 12:30:00
 categories: filter
