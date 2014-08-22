@@ -1,6 +1,6 @@
 ---
 layout: reference
-title:  "Crunching numbers"
+title:  "Crunching Numbers"
 date:   2014-01-19 13:56:00
 categories: example, metric, attribute
 pygments: true
