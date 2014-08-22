@@ -1,6 +1,6 @@
 ---
 layout: reference
-title:  "Loading data into a project"
+title:  "Loading Data Into A Project"
 date:   2014-01-19 13:56:00
 categories: example, general
 pygments: true

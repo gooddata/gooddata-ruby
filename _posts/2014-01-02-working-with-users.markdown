@@ -1,6 +1,6 @@
 ---
 layout: reference
-title:  "Working with users and invitations"
+title:  "Working With Users & Invitations"
 date:   2014-01-19 13:56:00
 categories: example, user
 pygments: true

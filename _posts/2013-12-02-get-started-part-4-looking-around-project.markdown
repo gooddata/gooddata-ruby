@@ -1,6 +1,6 @@
 ---
 layout: gs-template
-title:  "Part IV - Looking around project"
+title:  "Part IV - Looking Around A Project"
 date:   2014-01-19 13:56:00
 categories: get-started
 prev_section: get-started/get-started-part-5-loading-data

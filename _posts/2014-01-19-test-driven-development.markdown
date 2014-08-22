@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Test-driven development"
+title:  "Test-driven Development"
 date:   2014-01-19 13:56:00
-categories: recipe
+categories: example general
 pygments: true
 perex: Let's have a look how you can enhance project development to achieve test-driven development of your reports and projects. 
 ---

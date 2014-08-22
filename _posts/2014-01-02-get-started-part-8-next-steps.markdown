@@ -1,6 +1,6 @@
 ---
 layout: gs-template
-title:  "The end - Next steps"
+title:  "The end - Next Steps"
 date:   2014-01-19 13:56:00
 categories: get-started
 prev_section: get-started/get-started-part-6-updating-column

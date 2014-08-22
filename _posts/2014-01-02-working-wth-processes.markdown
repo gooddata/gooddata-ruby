@@ -1,6 +1,6 @@
 ---
 layout: reference
-title:  "Working with processes"
+title:  "Working With Processes"
 date:   2014-01-19 13:56:00
 categories: example, process
 pygments: true

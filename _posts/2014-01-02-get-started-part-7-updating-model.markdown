@@ -1,6 +1,6 @@
 ---
 layout: gs-template
-title:  "Part VII - Updating a model"
+title:  "Part VII - Updating A Model"
 date:   2014-01-19 13:56:00
 categories: get-started
 prev_section: get-started/get-started-part-5-computing

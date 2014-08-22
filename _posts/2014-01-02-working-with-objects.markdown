@@ -1,6 +1,6 @@
 ---
 layout: reference
-title:  "Working with objects"
+title:  "Working With Objects"
 date:   2014-01-19 13:56:00
 categories: example, general
 pygments: true
