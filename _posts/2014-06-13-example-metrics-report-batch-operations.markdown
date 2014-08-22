@@ -2,7 +2,7 @@
 layout: guides
 title:  "Generating Multiple Metrics/Reports"
 date:   2014-06-13 10:00:00
-categories: example metrics
+categories: example, metrics
 pygments: true
 perex: Learn how you can quickly generate set of metrics and reports in your newly created project.
 ---

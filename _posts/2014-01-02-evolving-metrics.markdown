@@ -2,7 +2,7 @@
 layout: reference
 title:  "Evolving metrics and reports"
 date:   2014-01-19 13:56:00
-categories: example metrics
+categories: example, metrics
 pygments: true
 perex: Let's have a look at magic you can do with metrics and soon whole reports. How to transform them and change them so you can never have to delete and redo another report form scratch. Let's walk through what is possible and look at couple of real world scenarios.
 ---
