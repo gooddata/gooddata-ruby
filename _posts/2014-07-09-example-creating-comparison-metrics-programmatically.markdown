@@ -2,7 +2,7 @@
 layout: guides
 title:  "Creating Comparison Metrics Programatically"
 date:   2014-07-09 10:00:00
-categories: example, metric
+categories: metric
 pygments: true
 perex: Learn how you can automate comparison metrics creation based on give metric and attribute.
 ---

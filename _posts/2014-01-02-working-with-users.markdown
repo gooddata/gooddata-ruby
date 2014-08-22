@@ -2,7 +2,7 @@
 layout: reference
 title:  "Working With Users & Invitations"
 date:   2014-01-19 13:56:00
-categories: example, user
+categories: general
 pygments: true
 perex: "Invite users from and into project."
 ---

@@ -2,7 +2,7 @@
 layout: reference
 title:  "Working With Objects"
 date:   2014-01-19 13:56:00
-categories: example, general
+categories: general
 pygments: true
 perex: Learn how to work with individual project objects
 ---

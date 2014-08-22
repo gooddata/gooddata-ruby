@@ -2,7 +2,7 @@
 layout: reference
 title:  "Loading Data Into A Project"
 date:   2014-01-19 13:56:00
-categories: example, general
+categories: general
 pygments: true
 perex: Whatever you do you need data. Let's look at options how to get them into the project.
 ---
