@@ -4,7 +4,7 @@ title:  "Working With Users & Invitations"
 date:   2014-01-19 13:56:00
 categories: general
 pygments: true
-perex: "Invite users from and into project."
+perex: Invite users from and into project.
 ---
 
 Users are integral part of any project. Who else would look at your beautiful data. Let's investigate ways how users can be invited so they can participate in the project.
