@@ -1,6 +1,6 @@
 ---
 layout: reference
-title:  "Evolving metrics and reports"
+title:  "Evolving Metrics and Reports"
 date:   2014-01-19 13:56:00
 categories: example, metric
 pygments: true
