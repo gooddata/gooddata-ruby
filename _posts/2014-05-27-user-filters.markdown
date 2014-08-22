@@ -2,7 +2,7 @@
 layout: post
 title:  "Creating User Filters"
 date:   2014-05-27 12:30:00
-categories: recipe
+categories: recipe, example, user, filter
 pygments: true
 perex: Here we will build project end-to-end with the SDK ultimately applying Mandatory User Filters and Variable filters to the project.
 ---

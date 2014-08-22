@@ -2,7 +2,7 @@
 layout: reference
 title:  "Crunching numbers"
 date:   2014-01-19 13:56:00
-categories: reference
+categories: example, metric, attribute
 pygments: true
 perex: The most important goal for any project is to get some numbers out of it. Let’s do it, using Ruby.
 ---

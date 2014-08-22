@@ -2,7 +2,7 @@
 layout: reference
 title:  "Working with processes"
 date:   2014-01-19 13:56:00
-categories: reference
+categories: example, process
 pygments: true
 perex: Use the Ruby SDK to interact with ETL processes that you have uploaded to the GoodData platform.
 ---

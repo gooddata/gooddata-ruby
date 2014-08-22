@@ -2,7 +2,7 @@
 layout: guides
 title:  "Tagging Multiple Metrics"
 date:   2014-06-10 10:56:00
-categories: metrics
+categories: example, metric
 pygments: true
 perex: Imagine you want to do some changes in your projects that would take a lot of manual work. Let's use Ruby SDK to avoid this boring work.
 ---
