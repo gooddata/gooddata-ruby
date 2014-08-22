@@ -44,19 +44,54 @@ title: Examples | GoodData Ruby SDK
     <li><a href="#facts">Facts</a></li>
 </ul>
 <div class="tabcontents">
+
+    <!-- Tab General -->
     <div id="general">
-        General (misc) Examples
+          <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'general' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
     </div>
+
+    <!-- Tab Projects -->
     <div id="projects">
-        Project Examples
+        <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'project' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
     </div>
+
+    <!-- Tab Attributes -->
     <div id="attributes">
-        Attributes (misc) Examples
+        <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'attribute' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
     </div>
+
+    <!-- Tab Metrics -->
     <div id="metrics">
           <ul class="posts">
         {% for post in site.posts reversed %}
-          {% if post.categories contains 'metrics' %}
+          {% if post.categories contains 'metric' %}
           <div>
             <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
             <div>{{ post.perex }}</div>
@@ -65,8 +100,18 @@ title: Examples | GoodData Ruby SDK
         {% endfor %}
           </ul>
     </div>
+
     <div id="facts">
-        Fact Examples
+           <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'fact' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+          </ul>
     </div>
 </div>
 </div>
