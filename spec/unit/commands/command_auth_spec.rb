@@ -49,7 +49,7 @@ describe GoodData::Command::Auth do
 
   describe "#credentials_file" do
     it "Returns credentials_file" do
-      GoodData::Command::Auth.credentials_file
+      GoodData::Helpers::AuthHelper.credentials_file
     end
   end
 
@@ -93,7 +93,7 @@ describe GoodData::Command::Auth do
     it 'Writes credentials' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
 
-      result = GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      result = GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
       GoodData::Command::Auth.unstore(temp_path)
 
       result.should == DEFAULT_CREDENTIALS
@@ -127,7 +127,7 @@ describe GoodData::Command::Auth do
       @input.rewind
 
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
       GoodData::Command::Auth.store(temp_path)
     end
@@ -143,7 +143,7 @@ describe GoodData::Command::Auth do
       @input.rewind
 
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
       GoodData::Command::Auth.store(temp_path)
       result = GoodData::Helpers::AuthHelper.read_credentials(temp_path)
@@ -155,7 +155,7 @@ describe GoodData::Command::Auth do
   describe "#unstore" do
     it 'Removes stored credentials' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
       GoodData::Command::Auth.unstore(temp_path)
     end
   end
