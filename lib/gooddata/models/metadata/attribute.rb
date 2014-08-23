@@ -59,9 +59,9 @@ module GoodData
       fail "Suggested aggreagtion function (#{a_type}) does not exist for base metric created out of attribute. You can use only one of #{ATTRIBUTE_BASE_AGGREGATIONS.map { |x| ":" + x.to_s }.join(',')}" unless ATTRIBUTE_BASE_AGGREGATIONS.include?(a_type)
       a_title = options[:title] || "#{a_type} of #{title}"
       if an_attribute
-        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}], ![#{an_attribute.identifier}])", :title => a_title, :client => options[:client], :project => options[:project])
+        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}], ![#{an_attribute.identifier}])", :title => a_title, :client => client, :project => project)
       else
-        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title, :client => options[:client], :project => options[:project])
+        Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title, :client => client, :project => project)
       end
     end
 
