@@ -249,6 +249,10 @@ module GoodData
       new_project
     end
 
+    def create_schedule(process, date, executable)
+      GoodData::Schedule.create(process, date, executable, :client => client, :project => self)
+    end
+
     # Helper for getting dashboards of a project
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]

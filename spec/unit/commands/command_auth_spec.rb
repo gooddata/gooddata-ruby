@@ -2,6 +2,7 @@ require 'highline'
 
 require 'gooddata/cli/terminal'
 require 'gooddata/commands/auth'
+require 'gooddata/helpers/auth_helpers'
 
 describe GoodData::Command::Auth do
   ORIG_TERMINAL = GoodData::CLI::DEFAULT_TERMINAL unless const_defined?(:ORIG_TERMINAL)
@@ -48,7 +49,7 @@ describe GoodData::Command::Auth do
 
   describe "#credentials_file" do
     it "Returns credentials_file" do
-      GoodData::Command::Auth.credentials_file
+      GoodData::Helpers::AuthHelper.credentials_file
     end
   end
 
@@ -67,15 +68,15 @@ describe GoodData::Command::Auth do
 
   describe "#read_credentials" do
     it 'Reads credentials from default file if no path specified' do
-      GoodData::Command::Auth.read_credentials
+      GoodData::Helpers::AuthHelper.read_credentials
     end
 
     it 'Reads credentials from file specified' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
 
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      result = GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
-      result = GoodData::Command::Auth.read_credentials(temp_path)
+      GoodData::Helpers::AuthHelper.read_credentials(temp_path)
       GoodData::Command::Auth.unstore(temp_path)
 
       result.should == DEFAULT_CREDENTIALS
@@ -83,7 +84,7 @@ describe GoodData::Command::Auth do
 
     it 'Returns empty hash if invalid path specified' do
       expect = {}
-      result = GoodData::Command::Auth.read_credentials('/some/invalid/path')
+      result = GoodData::Helpers::AuthHelper.read_credentials('/some/invalid/path')
       result.should == expect
     end
   end
@@ -92,7 +93,7 @@ describe GoodData::Command::Auth do
     it 'Writes credentials' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
 
-      result = GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      result = GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
       GoodData::Command::Auth.unstore(temp_path)
 
       result.should == DEFAULT_CREDENTIALS
@@ -126,7 +127,7 @@ describe GoodData::Command::Auth do
       @input.rewind
 
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
       GoodData::Command::Auth.store(temp_path)
     end
@@ -142,10 +143,10 @@ describe GoodData::Command::Auth do
       @input.rewind
 
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
       GoodData::Command::Auth.store(temp_path)
-      result = GoodData::Command::Auth.read_credentials(temp_path)
+      result = GoodData::Helpers::AuthHelper.read_credentials(temp_path)
 
       result.should == DEFAULT_CREDENTIALS
     end
@@ -154,7 +155,7 @@ describe GoodData::Command::Auth do
   describe "#unstore" do
     it 'Removes stored credentials' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
       GoodData::Command::Auth.unstore(temp_path)
     end
   end
