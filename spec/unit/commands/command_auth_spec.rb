@@ -74,7 +74,7 @@ describe GoodData::Command::Auth do
     it 'Reads credentials from file specified' do
       temp_path = Tempfile.new(DEFAULT_CREDENTIALS_TEMP_FILE_NAME).path
 
-      GoodData::Command::Auth.write_credentials(DEFAULT_CREDENTIALS, temp_path)
+      GoodData::Helpers::AuthHelper.write_credentials(DEFAULT_CREDENTIALS, temp_path)
 
       GoodData::Helpers::AuthHelper.read_credentials(temp_path)
       GoodData::Command::Auth.unstore(temp_path)
