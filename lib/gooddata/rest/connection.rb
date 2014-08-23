@@ -79,6 +79,7 @@ module GoodData
           get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
         rescue Exception => e # rubocop:disable RescueException
           puts e.message
+          raise e
         end
       end
 

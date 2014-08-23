@@ -56,7 +56,7 @@ module GoodData
     def with_connection(options = nil, second_options = nil, third_options = {}, &bl)
       connection = connect(options, second_options, third_options)
       bl.call(connection)
-    rescue Exception => e
+    rescue Exception => e # rubocop:disable RescueException
         puts e.message
         raise e
     ensure
