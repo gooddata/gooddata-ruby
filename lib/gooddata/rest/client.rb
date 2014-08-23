@@ -58,7 +58,7 @@ module GoodData
           if username.is_a? Hash
             new_opts[:username] = username[:login]
             new_opts[:password] = username[:password]
-          elsif username.nil? && password.nil? && opts.nil? || opts.empty?
+          elsif username.nil? && password.nil? && (opts.nil? || opts.empty?)
             new_opts = Helpers::AuthHelper.read_credentials
           else
             new_opts[:username] = username
