@@ -537,7 +537,7 @@ module GoodData
       }
 
       url = "/gdc/projects/#{pid}/invitations"
-      GoodData.post(url, data)
+      client.post(url, data)
     end
 
     # Returns invitations to project
