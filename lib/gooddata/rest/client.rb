@@ -2,6 +2,8 @@
 
 require 'rest-client'
 
+require_relative '../helpers/auth_helpers'
+
 require_relative 'connections/connections'
 require_relative 'object_factory'
 
@@ -56,6 +58,8 @@ module GoodData
           if username.is_a? Hash
             new_opts[:username] = username[:login]
             new_opts[:password] = username[:password]
+          elsif username.nil? && password.nil? && opts.nil? || opts.empty?
+            new_opts = Helpers::AuthHelper.read_credentials
           else
             new_opts[:username] = username
             new_opts[:password] = password
