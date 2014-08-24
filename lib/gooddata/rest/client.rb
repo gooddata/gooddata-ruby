@@ -119,6 +119,10 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
+      def domain(domain_name)
+        GoodData::Domain[domain_name, :client => client]
+      end
+
       def project(id = :all)
         GoodData::Project[id, client: self]
       end
