@@ -339,42 +339,6 @@ module GoodData
       @status = :logged_in
     end
 
-    def process_response(options = {}, &block)
-      begin
-        response = block.call
-      rescue RestClient::Unauthorized
-        raise $ERROR_INFO if options[:dont_reauth]
-        refresh_token
-        response = block.call
-      end
-      merge_cookies! response.cookies
-      content_type = response.headers[:content_type]
-      return response if options[:process] == false
-
-      if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
-        result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
-        GoodData.logger.debug "Response: #{result.inspect}"
-      elsif ['text/plain;charset=UTF-8', 'text/plain; charset=UTF-8', 'text/plain'].include?(content_type)
-        result = response
-        GoodData.logger.debug 'Response: plain text'
-      elsif content_type == 'application/zip'
-        result = response
-        GoodData.logger.debug 'Response: a zipped stream'
-      elsif response.headers[:content_length].to_s == '0'
-        result = nil
-        GoodData.logger.debug 'Response: Empty response possibly 204'
-      elsif response.code == 204
-        result = nil
-        GoodData.logger.debug 'Response: 204 no content'
-      else
-        fail "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
-      end
-      result
-    rescue RestClient::Exception => e
-      GoodData.logger.debug "Response: #{e.response}"
-      raise $ERROR_INFO
-    end
-
     def refresh_token(options = {})
       GoodData.logger.debug 'Getting authentication token...'
       begin

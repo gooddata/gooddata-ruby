@@ -35,7 +35,7 @@ module GoodData
           end
 
           tmp = c.get "/gdc/projects/#{project.pid}/schedules/#{id}"
-          c.create(GoodData::Schedule, tmp)
+          c.create(GoodData::Schedule, tmp, project: project)
         end
       end
 
@@ -132,7 +132,7 @@ module GoodData
         fail 'Unable to create new schedule' if res.nil?
 
         new_obj_json = c.get res['schedule']['links']['self']
-        c.create(GoodData::Schedule, new_obj_json)
+        c.create(GoodData::Schedule, new_obj_json, client: c, project: p)
       end
     end
 
@@ -158,8 +158,8 @@ module GoodData
         :execution => {}
       }
       execution = client.post(execution_url, data)
-      GoodData.poll_on_response(execution['execution']['links']['self']) do |body|
-        body['execution'] && body['execution']['status'] == 'RUNNING'
+      client.poll_on_response(execution['execution']['links']['self']) do |body|
+        body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
       end
     end
 

@@ -4,11 +4,9 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper::create_default_connection
     @project = GoodData::Project.create(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, :client => @client)
-    @process = GoodData::Process.with_deploy('./spec/data/ruby_process',
+    @process = @project.deploy_process('./spec/data/ruby_process',
                                   type: 'RUBY',
-                                  project: @project,
-                                  name: 'Test ETL Process',
-                                  client: @client)
+                                  name: 'Test ETL Process')
   end
 
   after(:all) do
@@ -60,7 +58,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     result = schedule.execute
-    log = GoodData.get(result['execution']['log'])
+    log = @client.get(result['execution']['log'])
     expect(log.index('Hello Ruby executors')).not_to eq nil
     expect(log.index('Hello Ruby from the deep')).not_to eq nil
   end

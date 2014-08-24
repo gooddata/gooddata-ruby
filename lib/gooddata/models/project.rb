@@ -276,6 +276,10 @@ module GoodData
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
     end
 
+    def deploy_process(path, options = {})
+      GoodData::Process.deploy(path, options.merge(client: client, project: self))
+    end
+
     # Executes DML expression. See (https://developer.gooddata.com/article/deleting-records-from-datasets)
     # for some examples and explanations
     #

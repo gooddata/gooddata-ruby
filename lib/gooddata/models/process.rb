@@ -31,7 +31,7 @@ module GoodData
           end
         else
           uri = "/gdc/projects/#{project.pid}/dataload/processes/#{id}"
-          c.create(Process, c.get(uri))
+          c.create(Process, c.get(uri), project: project)
         end
       end
 
@@ -75,8 +75,27 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        if !path.directory?
-          GoodData.upload_to_user_webdav(path)
+        if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
+
+          Tempfile.open('deploy-graph-archive') do |temp|
+            Zip::OutputStream.open(temp.path) do |zio|
+              FileUtils.cd(path.parent) do
+                files_to_pack = [path.basename]
+                files_to_pack.each do |item|
+                  puts "including #{item}"
+                  unless File.directory?(item)
+                    zio.put_next_entry(item)
+                    zio.print IO.read(item)
+                  end
+                end
+              end
+            end
+
+            client.upload_to_user_webdav(temp.path, opts)
+            temp.path
+          end
+        elsif !path.directory?
+          client.upload_to_user_webdav(path, opts)
           path
         else
           Tempfile.open('deploy-graph-archive') do |temp|
@@ -85,7 +104,7 @@ module GoodData
 
                 files_to_pack = Dir.glob('./**/*').reject { |f| files_to_exclude.include?(Pathname(path) + f) }
                 files_to_pack.each do |item|
-                  # puts "including #{item}" if verbose
+                  puts "including #{item}"
                   unless File.directory?(item)
                     zio.put_next_entry(item)
                     zio.print IO.read(item)
@@ -124,10 +143,11 @@ module GoodData
 
         type = options[:type] || 'GRAPH'
         deploy_name = options[:name]
-        fail ArgumentError, 'options[:deploy_name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
+        fail ArgumentError, 'options[:name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
 
         verbose = options[:verbose] || false
         puts HighLine.color("Deploying #{path}", HighLine::BOLD) if verbose
+
         deployed_path = Process.upload_package(path, files_to_exclude, :client => client, :project => project)
         data = {
           :process => {
@@ -143,7 +163,7 @@ module GoodData
                 client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
               end
 
-        process = client.create(Process, res)
+        process = client.create(Process, res, project: p)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
       end
@@ -209,24 +229,24 @@ module GoodData
     end
 
     def schedules
-      GoodData::Schedule[:all].select { |schedule| schedule.process_id == obj_id }
+      GoodData::Schedule[:all, client: client, project: project].select { |schedule| schedule.process_id == obj_id }
     end
 
     def create_schedule(cron, executable, options = {})
-      GoodData::Schedule.create(process_id, cron, executable, options)
+      GoodData::Schedule.create(process_id, cron, executable, options.merge(client: client, project: project))
     end
 
     def execute(executable, options = {})
       params = options[:params] || {}
       hidden_params = options[:hidden_params] || {}
-      result = GoodData.post(executions_link,
+      result = client.post(executions_link,
                              :execution => {
                                :graph => executable.to_s,
                                :params => params,
                                :hiddenParams => hidden_params
                              })
       begin
-        GoodData.poll_on_code(result['executionTask']['links']['poll'])
+        client.poll_on_code(result['executionTask']['links']['poll'])
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure
