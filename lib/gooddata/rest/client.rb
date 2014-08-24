@@ -120,7 +120,7 @@ module GoodData
       end
 
       def domain(domain_name)
-        GoodData::Domain[domain_name, :client => client]
+        GoodData::Domain[domain_name, :client => self]
       end
 
       def project(id = :all)
