@@ -674,7 +674,7 @@ module GoodData
 
     alias_method :transfer_objects, :partial_md_export
 
-    # Helper for getting reports of a project
+    # Helper for getting processes of a project
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
     # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
@@ -725,7 +725,7 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
     # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
     def reports(id = :all)
-      GoodData::Report[id, project: self]
+      GoodData::Report[id, project: self, client: client]
     end
 
     # Helper for getting report definitions of a project
