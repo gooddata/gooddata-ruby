@@ -1,5 +1,5 @@
 ---
-layout: reference
+layout: guides
 title:  "Working With Objects"
 date:   2014-01-19 13:56:00
 categories: general

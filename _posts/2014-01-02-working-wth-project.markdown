@@ -1,5 +1,5 @@
 ---
-layout: reference
+layout: guides
 title:  "Working With A Project"
 date:   2014-01-19 13:56:00
 categories: project

@@ -1,5 +1,5 @@
 ---
-layout: reference
+layout: guides
 title:  "Loading Data Into A Project"
 date:   2014-01-19 13:56:00
 categories: general
