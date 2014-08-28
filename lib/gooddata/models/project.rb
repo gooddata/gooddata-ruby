@@ -298,10 +298,7 @@ module GoodData
     # @return [Hash] Result of executing DML
     def execute_dml(dml)
       uri = "/gdc/md/#{pid}/dml/manage"
-      result = GoodData.post(uri,
-                             manage: {
-                               maql: dml
-                             })
+      result = client.post(uri, manage: { maql: dml })
       polling_uri = result['uri']
 
       client.poll_on_response(polling_uri) do |body|
