@@ -47,6 +47,14 @@ describe "Full project implementation", :constraint => 'slow' do
     metric.execute.should be_nil
   end
 
+  it "should compute an empty report" do
+    @project.delete_all_data(force: true)
+    f = @project.fact_by_title('Lines Changed')
+    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
+    res = GoodData::ReportDefinition.execute(:left => [metric], :client => @client, :project => @project);
+    expect(res).to be_empty
+  end
+
   it "should load the data" do
     GoodData.with_project(@project) do |p|
       blueprint = GoodData::Model::ProjectBlueprint.new(@spec)

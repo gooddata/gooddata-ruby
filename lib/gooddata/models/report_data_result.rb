@@ -85,6 +85,10 @@ module GoodData
       differences
     end
 
+    def empty?
+      false
+    end
+
     private
 
     def each_level(table, level, children, lookup)

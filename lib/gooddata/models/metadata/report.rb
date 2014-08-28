@@ -89,12 +89,15 @@ module GoodData
       result = client.post '/gdc/xtab2/executor3', 'report_req' => { 'report' => uri }
       data_result_uri = result['execResult']['dataResult']
 
-      result = client.get data_result_uri
-      while result['taskState'] && result['taskState']['status'] == 'WAIT'
-        sleep 10
-        result = client.get data_result_uri
+      result = client.poll_on_response(data_result_uri) do |body|
+        body && body['taskState'] && body['taskState']['status'] == 'WAIT'
       end
-      ReportDataResult.new(client.get data_result_uri)
+
+      if result.empty?
+        client.create(EmptyResult, result)
+      else
+        client.create(ReportDataResult, result)
+      end
     end
 
     def exportable?

@@ -271,6 +271,17 @@ module GoodData
       client.delete(uri)
     end
 
+    # Helper for getting rid of all data in the project
+    #
+    # @option options [Boolean] :force has to be added otherwise the operation is not performed
+    # @return [Array] Result of executing MAQLs
+    def delete_all_data(options = {})
+      return false unless options[:force]
+      datasets.pmap do |dataset|
+        execute_maql("SYNCHRONIZE {#{dataset.identifier}}")
+      end
+    end
+
     # Deletes dashboards for project
     def delete_dashboards
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
@@ -284,6 +295,7 @@ module GoodData
     # for some examples and explanations
     #
     # @param dml [String] DML expression
+    # @return [Hash] Result of executing DML
     def execute_dml(dml)
       uri = "/gdc/md/#{pid}/dml/manage"
       result = GoodData.post(uri,
@@ -291,10 +303,24 @@ module GoodData
                                maql: dml
                              })
       polling_uri = result['uri']
-      result = client.get(polling_uri)
-      while result['taskState'] && result['taskState']['status'] == 'WAIT'
-        sleep 10
-        result = client.get polling_uri
+
+      client.poll_on_response(polling_uri) do |body|
+        body && body['taskState'] && body['taskState']['status'] == 'WAIT'
+      end
+    end
+
+    # Executes MAQL expression and waits for it to be finished.
+    #
+    # @param maql [String] MAQL expression
+    # @return [Hash] Result of executing MAQL
+    def execute_maql(maql)
+      ldm_links = client.get(md[GoodData::Model::LDM_CTG])
+      ldm_uri = Links.new(ldm_links)[GoodData::Model::LDM_MANAGE_CTG]
+      response = client.post(ldm_uri, manage: { maql: maql })
+      polling_uri = response['entries'].first['link']
+
+      client.poll_on_response(polling_uri) do |body|
+        body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
     end
 

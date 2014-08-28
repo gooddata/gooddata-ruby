@@ -162,16 +162,15 @@ module GoodData
         fail ArgumentError, 'No :client specified' if client.nil?
 
         data_result_uri = result['execResult']['dataResult']
-        result = client.get data_result_uri
-
-        while result && result['taskState'] && result['taskState']['status'] == 'WAIT'
-          sleep 10
-          result = client.get data_result_uri
+        result = client.poll_on_response(data_result_uri) do |body|
+          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
         end
 
-        return nil unless result
-
-        client.create(ReportDataResult, client.get(data_result_uri))
+        if result.empty?
+          client.create(EmptyResult, result)
+        else
+          client.create(ReportDataResult, result)
+        end
       end
 
       def create(options = { :client => GoodData.connection, :project => GoodData.project })

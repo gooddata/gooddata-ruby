@@ -16,8 +16,6 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it "should be able to execute a process" do
-    pending('Account cannot execute Ruby')
-
     result = @process.execute(@process.executables.first)
     log = @client.get(result['executionDetail']['links']['log'])
     expect(log.index('Hello Ruby executors')).not_to eq nil
@@ -25,20 +23,15 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it "should be able to grab executables" do 
-    pending('Account cannot execute Ruby')
 
     expect(@process.executables).to eq ['./process.rb']
   end
 
   it "should have empty schedules on deploy" do 
-    pending('Account cannot execute Ruby')
-
     expect(@process.schedules).to eq []
   end
 
   it "should be able to schedule" do
-    pending('Account cannot execute Ruby')
-
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     expect(@process.schedules.count).to eq 1
     expect(@process.schedules).to eq [schedule]
@@ -46,20 +39,44 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it "should be possible to read status of schedule" do
-    pending('Account cannot execute Ruby')
-
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     expect(schedule.state).to eq 'ENABLED'
     schedule.delete
   end
 
   it "should be possible to execute schedule" do
-    pending('Account cannot execute Ruby')
-
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     result = schedule.execute
     log = @client.get(result['execution']['log'])
     expect(log.index('Hello Ruby executors')).not_to eq nil
     expect(log.index('Hello Ruby from the deep')).not_to eq nil
+  end
+
+  it "should be possible to deploy only a single file" do
+    process = @project.deploy_process('./spec/data/hello_world_process/hello_world.rb',
+                                  type: 'RUBY',
+                                  name: 'Test ETL one file Process')
+    begin
+      schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
+      result = schedule.execute
+      log = @client.get(result['execution']['log'])
+      expect(log.index('HELLO WORLD')).not_to eq nil
+    ensure
+      process && process.delete
+    end
+  end
+
+  it "should be possible to deploy already zipped file" do
+    process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
+                                  type: 'RUBY',
+                                  name: 'Test ETL zipped file Process')
+    begin
+      schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
+      result = schedule.execute
+      log = @client.get(result['execution']['log'])
+      expect(log.index('HELLO WORLD')).not_to eq nil
+    ensure
+      process && process.delete
+    end
   end
 end
