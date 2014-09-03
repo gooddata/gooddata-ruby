@@ -9,7 +9,7 @@ require_relative '../../client'
 
 GoodData::CLI.module_eval do
 
-  desc 'Run ruby bricks either locally or remotely deployed on our server'
+  desc 'Run ruby bricks either locally or remotely deployed on our server. Currently private alpha.'
 # arg_name 'show'
   command :run_ruby do |c|
 

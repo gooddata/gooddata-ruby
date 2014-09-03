@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-require_relative 'core/connection'
 require_relative 'core/logging'
 
 require_relative 'rest/rest'

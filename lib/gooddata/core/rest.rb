@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-require_relative 'connection'
-
 module GoodData
   DEFAULT_SLEEP_INTERVAL = 10
 

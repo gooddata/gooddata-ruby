@@ -83,6 +83,13 @@ module GoodData
         end
       end
 
+      # Returns server URI
+      #
+      # @return [String] server uri
+      def server_url
+        @server && @server.url
+      end
+
       # HTTP DELETE
       #
       # @param uri [String] Target URI

@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-require_relative '../core/connection'
 require_relative '../core/project'
 
 require_relative '../mixins/mixins'

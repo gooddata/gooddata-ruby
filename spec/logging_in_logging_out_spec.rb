@@ -3,7 +3,7 @@
 require 'gooddata'
 require 'pry'
 
-describe GoodData::Connection, :constraint => 'slow' do
+describe GoodData::Rest::Connection, :constraint => 'slow' do
 
   it "should log in and disconnect" do
     client = ConnectionHelper::create_default_connection

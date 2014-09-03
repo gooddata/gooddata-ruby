@@ -128,11 +128,11 @@ module GoodData
         GoodData::Domain[domain_name, :client => self]
       end
 
-      def project(id = :all)
+      def projects(id = :all)
         GoodData::Project[id, client: self]
       end
 
-      def process(id = :all)
+      def processes(id = :all)
         GoodData::Process[id, client: self]
       end
 
@@ -306,6 +306,10 @@ module GoodData
           :directory => options[:directory],
           :staging_url => url
         ))
+      end
+
+      def with_project(pid, &block)
+        GoodData.with_project(pid, client: self, &block)
       end
     end
   end
