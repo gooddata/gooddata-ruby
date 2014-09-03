@@ -50,10 +50,6 @@ module GoodData
           end
         end
 
-        def inspect
-          nil
-        end
-
         # HTTP PUT
         #
         # @param uri [String] Target URI

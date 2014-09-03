@@ -7,6 +7,8 @@ require_relative '../helpers/auth_helpers'
 require_relative 'connections/connections'
 require_relative 'object_factory'
 
+require_relative '../mixins/inspector'
+
 module GoodData
   module Rest
     # User's interface to GoodData Platform.
@@ -33,6 +35,9 @@ module GoodData
 
       # TODO: Decide if we need provide direct access to factory
       attr_reader :factory
+
+      include Mixin::Inspector
+      inspector :object_id
 
       #################################
       # Class methods
@@ -202,10 +207,6 @@ module GoodData
 
         u = URI(project.links['uploads'])
         URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
-      end
-
-      def inspect
-        nil
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
