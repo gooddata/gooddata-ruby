@@ -76,7 +76,7 @@ module GoodData
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
-
+          puts 'Creating package for upload'
           Tempfile.open('deploy-graph-archive') do |temp|
             Zip::OutputStream.open(temp.path) do |zio|
               FileUtils.cd(path.parent) do
@@ -240,11 +240,11 @@ module GoodData
       params = options[:params] || {}
       hidden_params = options[:hidden_params] || {}
       result = client.post(executions_link,
-                             :execution => {
-                               :graph => executable.to_s,
-                               :params => params,
-                               :hiddenParams => hidden_params
-                             })
+                           :execution => {
+                             :graph => executable.to_s,
+                             :params => params,
+                             :hiddenParams => hidden_params
+                           })
       begin
         client.poll_on_code(result['executionTask']['links']['poll'])
       rescue RestClient::RequestFailed => e

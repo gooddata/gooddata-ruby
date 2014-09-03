@@ -261,6 +261,13 @@ module GoodData
         DatasetBlueprint.find_column_by_type(to_hash, type, all)
       end
 
+      # Returns identifier for dataset
+      #
+      # @return [String] identifier
+      def identifier
+        GoodData::Model.identifier_for(to_hash)
+      end
+
       # Creates a DatasetBlueprint
       #
       # @param dataset [Hash] Dataset blueprint

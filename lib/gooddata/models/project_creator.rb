@@ -74,18 +74,11 @@ module GoodData
           end
 
           response = client.get(link)
-          ldm_links = client.get project.md[LDM_CTG]
-          ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
 
           chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
           chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-            response = client.post ldm_uri, 'manage' => { 'maql' => chunk }
-            polling_url = response['entries'].first['link']
-            polling_result = client.poll_on_response(polling_url) do |body|
-              body['wTaskStatus']['status'] == 'RUNNING'
-            end
-
-            fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+            result = project.execute_maql(chunk)
+            fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
           end
 
           bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
