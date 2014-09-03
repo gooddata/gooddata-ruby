@@ -208,6 +208,7 @@ module GoodData
     def link
       links['self']
     end
+
     alias_method :uri, :link
 
     def obj_id
@@ -240,11 +241,11 @@ module GoodData
       params = options[:params] || {}
       hidden_params = options[:hidden_params] || {}
       result = client.post(executions_link,
-                             :execution => {
-                               :graph => executable.to_s,
-                               :params => params,
-                               :hiddenParams => hidden_params
-                             })
+                           :execution => {
+                             :graph => executable.to_s,
+                             :params => params,
+                             :hiddenParams => hidden_params
+                           })
       begin
         client.poll_on_code(result['executionTask']['links']['poll'])
       rescue RestClient::RequestFailed => e
