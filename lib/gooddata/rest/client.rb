@@ -204,6 +204,10 @@ module GoodData
         URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
       end
 
+      def inspect
+        nil
+      end
+
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
       # this is a helper that should help you with resources where the information about "Are we done"
       # is the http code of response. By default we repeat as long as the code == 202. You can
