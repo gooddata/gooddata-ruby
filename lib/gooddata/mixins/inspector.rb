@@ -21,7 +21,6 @@ module GoodData
     # To use it, drop it in spec/support/inspector.rb and class_eval the models to
     # override `inspect`.
     module Inspector
-
       def inspect
         string = "#<#{self.class.name}:#{object_id} "
         fields = self.class.inspector_fields.map { |field| "#{field}: #{send(field)}" }
@@ -32,11 +31,11 @@ module GoodData
         @inspected ||= []
       end
 
-      def self.included source
+      def self.included(source)
         # $stdout.puts "Overriding inspect on #{source}"
         inspected << source
         source.class_eval do
-          def self.inspector *fields
+          def self.inspector(*fields)
             @inspector_fields = *fields
           end
 
