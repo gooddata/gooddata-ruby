@@ -9,7 +9,6 @@ require 'zip'
 
 require_relative '../exceptions/no_project_error'
 
-require_relative '../mixins/inspector'
 require_relative '../rest/resource'
 
 require_relative 'process'
@@ -383,20 +382,6 @@ module GoodData
           user.email.downcase == name
       end
       nil
-    end
-
-    def inspect
-      tmp = @json.dup
-      tmp['project']['content'].delete('authorizationToken')
-      @json = tmp
-      JSON.pretty_print(tmp)
-    end
-
-    def to_s
-      tmp = @json.dup
-      tmp['project']['content'].delete('authorizationToken')
-      @json = tmp
-      JSON.pretty_print(tmp)
     end
 
     # Exports project users to file
