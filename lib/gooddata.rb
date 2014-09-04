@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 require 'pmap'
-$pmap_default_thread_count = 1
+$pmap_default_thread_count = 20
 
 # GoodData Module
 module GoodData
