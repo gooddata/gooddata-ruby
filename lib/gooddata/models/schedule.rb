@@ -62,7 +62,7 @@ module GoodData
       # @param executable [String] Execution executable
       # @param options [Hash] Optional options
       # @return [GoodData::Schedule] New GoodData::Schedule instance
-      def   create(process_id, cron, executable, options = {})
+      def create(process_id, cron, executable, options = {})
         c = client(options)
         fail ArgumentError, 'No :client specified' if c.nil?
 

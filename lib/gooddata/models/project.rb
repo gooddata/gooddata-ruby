@@ -252,8 +252,8 @@ module GoodData
       new_project
     end
 
-    def create_schedule(process, date, executable)
-      GoodData::Schedule.create(process, date, executable, :client => client, :project => self)
+    def create_schedule(process, date, executable, options = {})
+      GoodData::Schedule.create(process, date, executable, options.merge(:client => client, :project => self))
     end
 
     # Helper for getting dashboards of a project
@@ -717,7 +717,7 @@ module GoodData
 
     def info
       results = blueprint.datasets.pmap do |ds|
-        [ds, ds.count]
+        [ds, ds.count(self)]
       end
       puts title
       puts GoodData::Helpers.underline(title)
