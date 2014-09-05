@@ -1,5 +1,4 @@
 require 'gooddata/connection'
-require 'gooddata/core/connection'
 
 describe GoodData::Rest::Connection do
   before(:all) do

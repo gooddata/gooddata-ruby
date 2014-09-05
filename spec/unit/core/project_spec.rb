@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
 require 'gooddata/connection'
-require 'gooddata/core/connection'
 require 'gooddata/core/project'
 require 'gooddata/models/project'
 
