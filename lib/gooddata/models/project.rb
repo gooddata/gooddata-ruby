@@ -3,13 +3,16 @@
 require 'csv'
 require 'zip'
 require 'fileutils'
+require 'multi_json'
 require 'pmap'
 require 'zip'
 
 require_relative '../exceptions/no_project_error'
 
-require_relative '../mixins/rest_resource'
 require_relative '../rest/resource'
+require_relative '../mixins/author'
+require_relative '../mixins/contributor'
+require_relative '../mixins/rest_resource'
 
 require_relative 'process'
 require_relative 'project_role'

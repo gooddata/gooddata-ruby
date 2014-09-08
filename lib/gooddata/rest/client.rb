@@ -7,6 +7,8 @@ require_relative '../helpers/auth_helpers'
 require_relative 'connections/connections'
 require_relative 'object_factory'
 
+require_relative '../mixins/inspector'
+
 module GoodData
   module Rest
     # User's interface to GoodData Platform.
@@ -33,6 +35,9 @@ module GoodData
 
       # TODO: Decide if we need provide direct access to factory
       attr_reader :factory
+
+      include Mixin::Inspector
+      inspector :object_id
 
       #################################
       # Class methods

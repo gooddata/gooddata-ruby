@@ -208,6 +208,7 @@ module GoodData
     def link
       links['self']
     end
+
     alias_method :uri, :link
 
     def obj_id
