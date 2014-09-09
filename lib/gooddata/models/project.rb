@@ -592,8 +592,12 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to
     # GoodData::Label[id] + it supports :all as welll
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
-    def labels(id = :all)
-      attribute.pmapcat { |a| a.labels }
+    def labels(id = :all, opts = {})
+      if id == :all
+        attributes.pmapcat { |a| a.labels }.uniq
+      else
+        GoodData::Label[id, opts.merge(project: self, client: client)]
+      end
     end
 
     def md
@@ -617,8 +621,8 @@ module GoodData
     # Helper for getting metrics of a project
     #
     # @return [Array<GoodData::Metric>] matric instance or list
-    def metrics(opts = { :full => true })
-      GoodData::Metric[:all, opts.merge(project: self, client: client)]
+    def metrics(id = :all, opts = { :full => true })
+      GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
     # Helper for getting metrics of a project
@@ -758,8 +762,8 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::ReportDefinition[id]
     # @return [GoodData::ReportDefinition | Array<GoodData::ReportDefinition>] report definition instance or list
-    def report_definitions(id = :all)
-      GoodData::ReportDefinition[id, project: self, client: client]
+    def report_definitions(id = :all, options = {})
+      GoodData::ReportDefinition[id, options.merge(project: self, client: client)]
     end
 
     # Gets the list or project roles

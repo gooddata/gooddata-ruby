@@ -3,7 +3,7 @@
 module GoodData
   module Mixin
     module MdFinders
-      def find_by_tag(tag, opts = { :client => GoodData.connection })
+      def find_by_tag(tag, opts = { :client => GoodData.connection, :project => GoodData.project })
         c = client || opts[:client]
 
         p = opts[:project]
@@ -30,7 +30,7 @@ module GoodData
       # @param title [String] title that has to match exactly
       # @param title [Regexp] regular expression that has to match
       # @return [Array<GoodData::MdObject>] Array of MdObject
-      def find_by_title(title, options = {})
+      def find_by_title(title, options = { :client => GoodData.connection, :project => GoodData.project })
         all = self[:all, options.merge(full: false)]
         items = if title.is_a?(Regexp)
                   all.select { |r| r['title'] =~ title }

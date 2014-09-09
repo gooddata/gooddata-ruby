@@ -48,6 +48,10 @@ module GoodData
     end
 
     def definitions
+      content['definitions'].pmap {|uri| project.report_definitions(uri)}
+    end
+
+    def definition_uris
       content['definitions']
     end
 
@@ -56,7 +60,7 @@ module GoodData
     end
 
     def latest_report_definition
-      GoodData::MdObject[latest_report_definition_uri]
+      project.report_definitions(latest_report_definition_uri)
     end
 
     def remove_definition(definition)
@@ -108,6 +112,13 @@ module GoodData
       result = GoodData.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
       result1 = GoodData.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
       GoodData.poll_on_code(result1['uri'], process: false)
+    end
+
+    def replace(what, for_what)
+      new_defs = definitions.map do |rep_def|
+        rep_def.replace(what, for_what)
+      end
+      new_defs.pmap &:save
     end
   end
 end

@@ -267,6 +267,11 @@ module GoodData
       content['filters'].map {|f| f['expression']}
     end
 
+    # Replace certain object in report definition. Returns new definition which is not saved.
+    #
+    # @param what [GoodData::MdObject | String] Object which responds to uri or a string that should be replaced
+    # @option for_what [GoodData::MdObject | String] Object which responds to uri or a string that should used as replacement
+    # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
     def replace(what, for_what = nil)
       pairs = if what.is_a?(Hash)
         whats = what.keys
@@ -338,8 +343,6 @@ module GoodData
             item
           end
         end
-
-
 
         if content.key?('chart')
           content['chart']['buckets'] = content['chart']['buckets'].reduce({}) do |a, e|
