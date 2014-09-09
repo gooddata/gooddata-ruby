@@ -65,6 +65,9 @@ GoodData::CLI.module_eval do
                                   else
                                     { 'config' => {} }
                                   end
+      # if there are some GDC_* params in config, put them on the level above
+      gdc_params = options[:expanded_params]['config'].select { |k, _| k =~ /GDC_.*/ }
+      options[:expanded_params].merge!(gdc_params)
       opts = options.merge(global_options).merge(:type => 'RUBY')
       GoodData.connect(opts)
       if options[:remote]
