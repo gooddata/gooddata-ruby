@@ -223,8 +223,27 @@ module GoodData
       end
     end
 
+    def attribute_parts
+      cols = content['grid']['columns'] || []
+      rows = content['grid']['rows'] || []
+      items = cols + rows
+      items.select { |item| item.is_a?(Hash) && item.keys.first == 'attribute' }
+    end
+
+    def attributes
+      labels.map {|label| label.attribute}
+    end
+
+    def labels
+      attribute_parts.map {|part| project.labels(part['attribute']['uri'])}
+    end
+
+    def metric_parts
+      content['grid']['metrics']
+    end
+
     def metrics
-      content['grid']['metrics'].map { |i| GoodData::Metric[i['uri']] }
+      metric_parts.map { |i| project.metrics(i['uri']) }
     end
 
     def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
@@ -242,6 +261,10 @@ module GoodData
                  ReportDefinition.execute_inline(self, opts)
                end
       ReportDefinition.data_result(result, opts)
+    end
+
+    def filters
+      content['filters'].map {|f| f['expression']}
     end
 
     def replace(what, for_what = nil)
