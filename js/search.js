@@ -174,17 +174,14 @@ $(function() {
         crossDomain: true,
         type: 'GET'
       }).done(function(data){
-         console.log(data);
+        posts = alxPrc.filterPostsByPropertyValue(data, type, value);
+        if (posts.length === 0) {
+          alxPrc.noResultsPage(type, value);
+        } else {
+          alxPrc.layoutResultsPage(type, value, posts);
+        }
       });
 
-      // $.getJSON('{{ site.url }}/search.json', function(data) {
-      //   posts = alxPrc.filterPostsByPropertyValue(data, type, value);
-      //   if (posts.length === 0) {
-      //     alxPrc.noResultsPage(type, value);
-      //   } else {
-      //     alxPrc.layoutResultsPage(type, value, posts);
-      //   }
-      // });
     }
   });
 
