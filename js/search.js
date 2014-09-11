@@ -39,10 +39,9 @@
     posts.pop();
     for (var i in posts) {
       var post = posts[i],
-          prop = post[property],
-          title = prop.title;
+          prop = post[property];
 
-      console.log(title);
+      console.log(prop);
       // Last element of tags is null
       post.tags.pop();
 
