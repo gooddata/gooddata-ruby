@@ -1,0 +1,34 @@
+---
+layout: default
+title: Examples | GoodData Ruby SDK
+---
+<div id="results">
+  <h1><!-- `key` listing for `value` --></h1>
+
+  <ul class="results">
+    <!-- results lists -->
+  </ul>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://0.0.0.0:4000/js/search.js"></script>
+<script>
+var map = {
+  'category' : getParam('category'),
+  'tags'     : getParam('tags')
+};
+
+$.each(map, function(type, value) {
+  if (value !== null) {
+    $.getJSON('/search.json', function(data) {
+      posts = filterPostsByPropertyValue(data, type, value);
+      if (posts.length === 0) {
+        // Display 'no results found' or similar here
+        noResultsPage();
+      } else {
+        layoutResultsPage(type, value, posts);
+      }
+    });
+  }
+});
+</script>
