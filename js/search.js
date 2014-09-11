@@ -168,14 +168,23 @@ $(function() {
 
   $.each(map, function(type, value) {
     if (value !== null) {
-      $.getJSON('https://thnkr.github.io/gooddata-ruby/search.json', function(data) {
-        posts = alxPrc.filterPostsByPropertyValue(data, type, value);
-        if (posts.length === 0) {
-          alxPrc.noResultsPage(type, value);
-        } else {
-          alxPrc.layoutResultsPage(type, value, posts);
-        }
+
+      $.ajax({
+        url: 'https://thnkr.github.io/gooddata-ruby/search.json',
+        crossDomain: true,
+        type: 'GET'
+      }).then(function(data){
+         console.log(data);
       });
+      
+      // $.getJSON('{{ site.url }}/search.json', function(data) {
+      //   posts = alxPrc.filterPostsByPropertyValue(data, type, value);
+      //   if (posts.length === 0) {
+      //     alxPrc.noResultsPage(type, value);
+      //   } else {
+      //     alxPrc.layoutResultsPage(type, value, posts);
+      //   }
+      // });
     }
   });
 
