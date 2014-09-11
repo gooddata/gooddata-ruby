@@ -188,7 +188,7 @@ $(function() {
           var titles = [];
           console.log(posts);
           posts.forEach(function(post){
-            titles.push('<li><h4><a href="/gooddata-ruby/'+post.href+'">'+post.title+'</a></h4></li>');
+            titles.push('<li><h4><a href="/gooddata-ruby'+post.href+'">'+post.title+'</a></h4></li>');
           });
 
           $('h2.header').html(posts.length+' results for "'+value+'"');
