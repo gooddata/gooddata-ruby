@@ -50,17 +50,17 @@
       }
       // The property could be a string, such as a post's category,
       // or an array, such as a post's tags
-      if (prop.constructor === String) {
-        if (title.toLowerCase().indexOf(value.toLowerCase()) > -1) {
-          filteredPosts.push(post);
-        }
-      } else if (prop.constructor === Array) {
-        for (var j in prop) {
-          if (title[j].toLowerCase() === value.toLowerCase()) {
-            filteredPosts.push(post);
-          }
-        }
-      }
+      // if (prop.constructor === String) {
+      //   if (title.toLowerCase().indexOf(value.toLowerCase()) > -1) {
+      //     filteredPosts.push(post);
+      //   }
+      // } else if (prop.constructor === Array) {
+      //   for (var j in prop) {
+      //     if (title[j].toLowerCase() === value.toLowerCase()) {
+      //       filteredPosts.push(post);
+      //     }
+      //   }
+      // }
     }
 
     return filteredPosts;
@@ -179,6 +179,7 @@ $(function() {
         type: 'GET'
       }).done(function(data){
         posts = alxPrc.filterPostsByPropertyValue(data, type, value);
+
         if (posts.length === 0) {
           $('h2.header').html('0 results for "'+value+'"');
           $('ul.results').html('No documents were found with that query.')
