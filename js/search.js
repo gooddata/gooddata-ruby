@@ -44,7 +44,7 @@
 
       // Last element of tags is null
       post.tags.pop();
-      console.log(title.indexOf(value.toLowerCase()));
+
       if (title.indexOf(value.toLowerCase()) > -1) {
           filteredPosts.push(post);
       }
@@ -164,7 +164,7 @@
 })(window, window.document);
 
 $(function() {
-  var parameters = ['category', 'tags'];
+  var parameters = ['category', 'tags','q'];
   var map = {}
   for (var idx in parameters) {
     map[parameters[idx]] = alxPrc.getParam(parameters[idx]);
