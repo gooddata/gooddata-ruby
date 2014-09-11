@@ -39,13 +39,13 @@
     posts.pop();
     for (var i in posts) {
       var post = posts[i],
-          title = post.title,
+          title = post.title.toLowerCase(),
           prop = post[property];
 
       // Last element of tags is null
       post.tags.pop();
-      console.log(value.toLowerCase());
-      if (title.toLowerCase().indexOf(value.toLowerCase()) > -1) {
+      console.log(title.indexOf(value.toLowerCase());
+      if (title.indexOf(value.toLowerCase()) > -1) {
           filteredPosts.push(post);
       }
       // The property could be a string, such as a post's category,
