@@ -183,12 +183,11 @@ $(function() {
           alxPrc.noResultsPage(type, value);
         } else {
           var titles = [];
-          console.log(posts);
           posts.forEach(function(post){
             titles.push('<li>'+post.title+'</li>');
           });
-          console.log(titles);
-          $('ul#results').append(titles);
+
+          $('ul#results').append(titles.join());
         }
       });
 
