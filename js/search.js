@@ -42,7 +42,7 @@
           title = post.title,
           prop = post[property];
 
-      console.log(title);
+      console.log(post);
       // Last element of tags is null
       post.tags.pop();
 
