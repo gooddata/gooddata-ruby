@@ -178,15 +178,14 @@ $(function() {
         crossDomain: true,
         type: 'GET'
       }).done(function(data){
-        posts = alxPrc.filterPostsByPropertyValue(data, type, value);
+        var titles = [],
+            posts = alxPrc.filterPostsByPropertyValue(data, type, value);
 
         if (posts.length === 0) {
           $('h2.header').html('0 results for "'+value+'"');
-          $('ul.results').html('No documents were found with that query.')
+          $('ul.results').html('No documents were found with that query.');
         } else {
 
-          var titles = [];
-          console.log(posts);
           posts.forEach(function(post){
             titles.push('<li><h4><a href="/gooddata-ruby'+post.href+'">'+post.title+'</a></h4></li>');
           });
