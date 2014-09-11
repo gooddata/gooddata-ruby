@@ -164,7 +164,7 @@
 })(window, window.document);
 
 $(function() {
-  var parameters = ['category', 'tags','q'];
+  var parameters = ['category', 'tags'];
   var map = {}
   for (var idx in parameters) {
     map[parameters[idx]] = alxPrc.getParam(parameters[idx]);
