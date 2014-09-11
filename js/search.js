@@ -180,7 +180,6 @@ $(function() {
       }).done(function(data){
         posts = alxPrc.filterPostsByPropertyValue(data, type, value);
         if (posts.length === 0) {
-          alxPrc.noResultsPage(type, value);
           $('ul.results').html('No documents were found with that query.')
         } else {
 
