@@ -186,7 +186,7 @@ $(function() {
           var titles = [];
           console.log(posts);
           posts.forEach(function(post){
-            titles.push('<li><h4><a href="'+post.url+'">'+post.title+'</a></h4></li>');
+            titles.push('<li><h4><a href="{{ site.url }}'+post.href+'">'+post.title+'</a></h4></li>');
           });
 
           $('ul.results').append(titles.join(' '));
