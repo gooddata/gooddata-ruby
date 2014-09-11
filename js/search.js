@@ -170,13 +170,13 @@ $(function() {
     if (value !== null) {
 
       $.ajax({
-        url: 'https://thnkr.github.io/gooddata-ruby/search.json',
+        url: 'http://thnkr.github.io/gooddata-ruby/search.json',
         crossDomain: true,
         type: 'GET'
       }).then(function(data){
          console.log(data);
       });
-      
+
       // $.getJSON('{{ site.url }}/search.json', function(data) {
       //   posts = alxPrc.filterPostsByPropertyValue(data, type, value);
       //   if (posts.length === 0) {
