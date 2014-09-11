@@ -182,12 +182,13 @@ $(function() {
         if (posts.length === 0) {
           alxPrc.noResultsPage(type, value);
         } else {
+
           var titles = [];
           posts.forEach(function(post){
-            titles.push('<li>'+post.title+'</li>');
+            titles.push('<li><h4><a href="'+post.url+'">'+post.title+'</a></h4></li>');
           });
 
-          $('ul.results').append(titles.join());
+          $('ul.results').append(titles.join(' '));
         }
       });
 
