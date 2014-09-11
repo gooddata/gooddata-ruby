@@ -42,19 +42,18 @@
           title = post.title,
           prop = post[property];
 
-      console.log(post);
       // Last element of tags is null
       post.tags.pop();
 
       // The property could be a string, such as a post's category,
       // or an array, such as a post's tags
       if (prop.constructor === String) {
-        if (prop.toLowerCase() === value.toLowerCase()) {
+        if (title.toLowerCase() === value.toLowerCase()) {
           filteredPosts.push(post);
         }
       } else if (prop.constructor === Array) {
         for (var j in prop) {
-          if (prop[j].toLowerCase() === value.toLowerCase()) {
+          if (title[j].toLowerCase() === value.toLowerCase()) {
             filteredPosts.push(post);
           }
         }
