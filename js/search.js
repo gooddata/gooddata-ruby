@@ -173,7 +173,7 @@ $(function() {
         url: 'http://thnkr.github.io/gooddata-ruby/search.json',
         crossDomain: true,
         type: 'GET'
-      }).then(function(data){
+      }).done(function(data){
          console.log(data);
       });
 
