@@ -179,6 +179,7 @@ $(function() {
           console.log('no');
           alxPrc.noResultsPage(type, value);
         } else {
+          console.log(posts);
           alxPrc.layoutResultsPage(type, value, posts);
         }
       });
