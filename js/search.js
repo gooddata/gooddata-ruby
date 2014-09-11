@@ -186,6 +186,7 @@ $(function() {
           posts.forEach(function(post){
             titles.push('<li>'+post.title+'</li>');
           });
+          console.log(titles);
           $('ul#results').append(titles);
         }
       });
