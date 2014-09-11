@@ -180,17 +180,17 @@ $(function() {
       }).done(function(data){
         posts = alxPrc.filterPostsByPropertyValue(data, type, value);
         if (posts.length === 0) {
-          $('h2.header').html('0 Results');
+          $('h2.header').html('0 results');
           $('ul.results').html('No documents were found with that query.')
         } else {
 
           var titles = [];
-          console.log(posts);
+
           posts.forEach(function(post){
-            console.log(post.href);
             titles.push('<li><h4><a href="'+post.href+'">'+post.title+'</a></h4></li>');
           });
-          $('h2.header').html(posts.length+' Results for "'+value+'"');
+
+          $('h1.header').html(posts.length+' result for "'+value+'"');
           $('ul.results').append(titles.join(' '));
         }
       });
