@@ -105,7 +105,7 @@
           // Page anchor
           + '<header>'
             + '<h1>'
-              + '<a href="' + post.href + '">' + post.title + '</a>'
+              + '<a href="/gooddata-ruby/' + post.href + '">' + post.title + '</a>'
             + '</h1>'
             // Post date
             + '<h2>'
