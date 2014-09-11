@@ -44,7 +44,7 @@
 
       // Last element of tags is null
       post.tags.pop();
-      console.log(title.indexOf(value.toLowerCase());
+      console.log(title.indexOf(value.toLowerCase()));
       if (title.indexOf(value.toLowerCase()) > -1) {
           filteredPosts.push(post);
       }
