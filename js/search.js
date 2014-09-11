@@ -190,7 +190,7 @@ $(function() {
             titles.push('<li><h4><a href="'+post.href+'">'+post.title+'</a></h4></li>');
           });
 
-          $('h1.header').html(posts.length+' result for "'+value+'"');
+          $('h2.header').html(posts.length+' results for "'+value+'"');
           $('ul.results').append(titles.join(' '));
         }
       });
