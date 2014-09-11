@@ -44,7 +44,10 @@
 
       // Last element of tags is null
       post.tags.pop();
-
+      console.log(value.toLowerCase());
+      if (title.toLowerCase().indexOf(value.toLowerCase()) > -1) {
+          filteredPosts.push(post);
+      }
       // The property could be a string, such as a post's category,
       // or an array, such as a post's tags
       if (prop.constructor === String) {
