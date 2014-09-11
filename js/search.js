@@ -180,11 +180,13 @@ $(function() {
       }).done(function(data){
         posts = alxPrc.filterPostsByPropertyValue(data, type, value);
         if (posts.length === 0) {
-          console.log('no');
           alxPrc.noResultsPage(type, value);
         } else {
-          console.log(posts);
-          alxPrc.layoutResultsPage(type, value, posts);
+          var titles = [];
+          posts.forEach(function(post){
+            titles.push('<li>'+post.title+'</li>');
+          });
+          $('ul#results').append(titles);
         }
       });
 
