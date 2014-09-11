@@ -158,3 +158,29 @@
     replaceERBTags: replaceERBTags
   };
 })(window, window.document);
+
+$(function() {
+  var parameters = ['category', 'tags'];
+  var map = {}
+  for (var idx in parameters) {
+    map[parameters[idx]] = alxPrc.getParam(parameters[idx]);
+  }
+
+  $.each(map, function(type, value) {
+    if (value !== null) {
+      $.getJSON('/search.json', function(data) {
+        posts = alxPrc.filterPostsByPropertyValue(data, type, value);
+        if (posts.length === 0) {
+          alxPrc.noResultsPage(type, value);
+        } else {
+          alxPrc.layoutResultsPage(type, value, posts);
+        }
+      });
+    }
+  });
+
+  // Replace ERB-style Liquid tags in highlighted code blocks...
+  alxPrc.replaceERBTags($('div.highlight').find('code.text'));
+  // ... and in inline code
+  alxPrc.replaceERBTags($('p code'));
+});
