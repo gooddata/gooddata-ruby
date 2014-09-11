@@ -180,6 +180,7 @@ $(function() {
       }).done(function(data){
         posts = alxPrc.filterPostsByPropertyValue(data, type, value);
         if (posts.length === 0) {
+          $('h2.header').html('0 Results');
           $('ul.results').html('No documents were found with that query.')
         } else {
 
@@ -189,7 +190,7 @@ $(function() {
             console.log(post.href);
             titles.push('<li><h4><a href="'+post.href+'">'+post.title+'</a></h4></li>');
           });
-
+          $('h2.header').html(posts.length+' Results for "'+value+'"');
           $('ul.results').append(titles.join(' '));
         }
       });
