@@ -187,7 +187,7 @@ $(function() {
             titles.push('<li>'+post.title+'</li>');
           });
 
-          $('ul#results').append(titles.join());
+          $('ul.results').append(titles.join());
         }
       });
 
