@@ -176,6 +176,7 @@ $(function() {
       }).done(function(data){
         posts = alxPrc.filterPostsByPropertyValue(data, type, value);
         if (posts.length === 0) {
+          console.log('no');
           alxPrc.noResultsPage(type, value);
         } else {
           alxPrc.layoutResultsPage(type, value, posts);
