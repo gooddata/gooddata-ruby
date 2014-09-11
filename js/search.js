@@ -168,7 +168,7 @@ $(function() {
 
   $.each(map, function(type, value) {
     if (value !== null) {
-      $.getJSON('/search.json', function(data) {
+      $.getJSON('https://thnkr.github.io/gooddata-ruby/search.json', function(data) {
         posts = alxPrc.filterPostsByPropertyValue(data, type, value);
         if (posts.length === 0) {
           alxPrc.noResultsPage(type, value);
