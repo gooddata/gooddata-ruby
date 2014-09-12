@@ -2,7 +2,7 @@
 layout: guides
 title:  "Save/Export Metrics to CSV"
 date:   2014-07-09 10:00:00
-categories: general
+categories: metric
 tags:
 - metrics
 - facts
