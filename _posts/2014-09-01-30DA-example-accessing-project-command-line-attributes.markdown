@@ -15,14 +15,14 @@ perex: Learn how to print or search for attributes, metrics, facts, using the bu
 
 Learn how to print or search for attributes, metrics, facts using the command line tool “jack_in”.
 
-![jack in](https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/693f9e51-b6e6-45d0-8534-320301fdd7fa.png)
+![jack in](https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/693f9e51-b6e6-45d0-8534-320301fdd7fa.png =400)
 
 - Open the Terminal on your Mac.
 - Make sure you have the GoodData Ruby Gem.
-  gem install gooddata
 
-
-
+{% highlight bash %}
+gem install gooddata
+{% endhighlight %}
 
 In the beginning, we have to connect to the GoodData Platform:
 
