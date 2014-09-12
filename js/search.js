@@ -40,12 +40,13 @@
     for (var i in posts) {
       var post = posts[i],
           title = post.title.toLowerCase(),
+          title_plus = title.split(' ').join('+'),
           prop = post[property];
 
       // Last element of tags is null
       post.tags.pop();
 
-      if (title.indexOf(value.toLowerCase()) > -1) {
+      if (title_plus.indexOf(value.toLowerCase()) > -1) {
           filteredPosts.push(post);
       }
       // The property could be a string, such as a post's category,
