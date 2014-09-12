@@ -15,11 +15,13 @@ Learn how to print or search for attributes, metrics, facts using the command li
 
 ### Exploring Your Project with "Jack In."
 
+<br></br>
 <div class="center">
 <img class="tutorial" src="https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/693f9e51-b6e6-45d0-8534-320301fdd7fa.png">
 <div>
 <small>Open up Terminal on your Mac/Linux machine.</small></div>
 </div>
+<br></br>
 
 - Open the Terminal on your Mac.
 - Make sure you have the GoodData Ruby Gem.
@@ -34,11 +36,14 @@ gem install gooddata
 gooddata -p PROJECT_ID -U YOUR-USERNAME -P YOUR-PASSWORD project jack_in
 {% endhighlight %}
 
+<br></br>
 <div class="center">
 <img class="tutorial" src="https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/706f934f-249a-4f97-b287-768ba718adf2.png">
 <div>
 <small>You now have full access to all of the methods within the SDK so let's start exploring...</small></div>
 </div>
+<br></br>
+
 - Enter, “GoodData::Attribute.all” and a list of all the project attributes will be returned. Use space bar to scroll down and press “q” to step back out of the list.
 - However, that is a lot of data, select an attributes title from within the terminal window. Any attribute will do and then type...
 
