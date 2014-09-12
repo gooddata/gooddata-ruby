@@ -85,6 +85,20 @@ title: Examples | GoodData Ruby SDK
         </ul>
     </div>
 
+    <!-- Tab Models -->
+    <div id="models">
+        <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'model' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
     <!-- Tab Attributes -->
     <div id="attributes">
         <ul class="posts">
@@ -138,5 +152,20 @@ title: Examples | GoodData Ruby SDK
         {% endfor %}
           </ul>
     </div>
+
+        <!-- Tab Cool -->
+    <div id="cool">
+          <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'cool' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
 </div>
 </div>
