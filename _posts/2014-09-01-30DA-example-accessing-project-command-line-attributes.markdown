@@ -31,8 +31,8 @@ gooddata -p PROJECT_ID -U YOUR-USERNAME -P YOUR-PASSWORD project jack_in
 
 <div class="center">
 <img class="tutorial" src="https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/706f934f-249a-4f97-b287-768ba718adf2.png" style="width: 70%;">
-	</div>
-	<small>You now have full access to all of the methods within the SDK so let's start exploring...</small></div>
+<div>
+<small>You now have full access to all of the methods within the SDK so let's start exploring...</small></div>
 </div>
 
 
