@@ -60,6 +60,7 @@ metric = GoodData::Fact['fact.orderlines.price'].create_metric(:type => :avg)
 <div>
 </div>
 </div>
+</div>
 
 - Save the new metric. Remember we defined the metric as an object above.
 
