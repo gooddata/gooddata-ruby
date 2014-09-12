@@ -24,7 +24,11 @@ Learn how to print or search for attributes, metrics, facts using the command li
 gem install gooddata
 {% endhighlight %}
 
-In the beginning, we have to connect to the GoodData Platform:
+- Using a project id from any of your projects execute this command.
+
+{% highlight bash %}
+gooddata -p PROJECT_ID -U YOUR-USERNAME -P YOUR-PASSWORD project jack_in
+{% endhighlight %}
 
 {% highlight ruby %}
 require "gooddata"
