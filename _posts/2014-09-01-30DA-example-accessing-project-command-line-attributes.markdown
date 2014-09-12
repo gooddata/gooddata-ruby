@@ -57,5 +57,6 @@ GoodData::Attribute.find_by_title(“ATTR-TITLE”).
 GoodData::Attribute[“ATTR-IDENTIFIER”]
 {% endhighlight %}
 
-- Type, "exit" to leave "jack_in" and you are done!
+<br></br>
+Type, "exit" to leave "jack_in" and you are done!
 
