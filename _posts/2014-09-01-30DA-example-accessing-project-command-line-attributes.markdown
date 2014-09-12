@@ -11,11 +11,10 @@ pygments: true
 perex: Learn how to print or search for attributes, metrics, facts, using the built in command line tool "jack_in".
 ---
 
-### Exploring Your Project with "Jack In".
-
 Learn how to print or search for attributes, metrics, facts using the command line tool “jack_in”.
 
-![jack in](https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/693f9e51-b6e6-45d0-8534-320301fdd7fa.png =650x200)
+### Exploring Your Project with "Jack In."
+![jack in](https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/693f9e51-b6e6-45d0-8534-320301fdd7fa.png=650x200)
 
 - Open the Terminal on your Mac.
 - Make sure you have the GoodData Ruby Gem.
@@ -30,13 +29,7 @@ gem install gooddata
 gooddata -p PROJECT_ID -U YOUR-USERNAME -P YOUR-PASSWORD project jack_in
 {% endhighlight %}
 
-{% highlight ruby %}
-require "gooddata"
-require "pp"
-
-GoodData.connect("username","password")
-GoodData.use("YOUR-PROJECT-ID")
-{% endhighlight %}
+![termina](https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/706f934f-249a-4f97-b287-768ba718adf2.png)
 
 ### The method
 
