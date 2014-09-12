@@ -169,7 +169,7 @@ The `transfer_objects` can be used to transfer metrics, dashboards and reports.
 project_from = GoodData::Project['project_id_from_which_migrate']
 project_to = GoodData::Project['project_id_to_which_migrate']
 objects = GoodData::Report.all.first
-project_from.object_transfer(objects, :project => project_to)
+project_from.transfer_objects(objects, :project => project_to)
 {% endhighlight %}
 
 You can use one of multiple supported methods for specifying projects and objects: Project id or project object for projects and object_id, uri and the object itself for the objects.
