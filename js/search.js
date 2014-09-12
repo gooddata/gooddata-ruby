@@ -174,7 +174,7 @@ $(function() {
     if (value !== null) {
 
       $.ajax({
-        url: 'http://thnkr.github.io/gooddata-ruby/search.json',
+        url: 'http://sdk.gooddata.com/gooddata-ruby/search.json',
         crossDomain: true,
         type: 'GET'
       }).done(function(data){
