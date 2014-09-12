@@ -1,6 +1,6 @@
 ---
 layout: guides
-title:  "Creating Models In Code"
+title:  "Create Data Models"
 date:   2014-07-09 10:00:00
 categories: model
 tags:
