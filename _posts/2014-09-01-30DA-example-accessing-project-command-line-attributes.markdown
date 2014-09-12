@@ -29,7 +29,7 @@ gem install gooddata
 gooddata -p PROJECT_ID -U YOUR-USERNAME -P YOUR-PASSWORD project jack_in
 {% endhighlight %}
 
-![termina](http://i.imgur.com/3I4xXNZ)
+![termina](http://i.imgur.com/3I4xXNZ.png)
 [terminal](http://i.imgur.com/3I4xXNZ.png)
 [Imgur](http://i.imgur.com/3I4xXNZ)
 > You now have full access to all of the methods within the SDK so let's start exploring...
