@@ -48,21 +48,8 @@ ruby metrics_to_csv.rb
 <small>Pasting the Project ID in Terminal.</small></div>
 </div>
 </div>
+- Now look at your documents and it should have a csv document with all of your metrics printed in human readable form. Curious to understand the magic? The key is the ".pretty_expression" in the script which prints out translations of the MAQL and Objects involved in a metric.
+- If you find that nothing printed to your Terminal and no document was made, make sure that you chose a project which uses metrics.
 
-
-- Enter, “GoodData::Attribute.all” and a list of all the project attributes will be returned. Use space bar to scroll down and press “q” to step back out of the list.
-- However, that is a lot of data, select an attributes title from within the terminal window. Any attribute will do and then type...
-
-{% highlight bash %}
-GoodData::Attribute.find_by_title(“ATTR-TITLE”).
-{% endhighlight %}
-
-- You can also use this to find the attribute by it’s identifier.
-
-{% highlight bash %}
-GoodData::Attribute[“ATTR-IDENTIFIER”]
-{% endhighlight %}
-
-
-Type, "exit" to leave "jack_in" and you are done!
+And that is it! now you can open your new CSV listing all metrics within a project.
 
