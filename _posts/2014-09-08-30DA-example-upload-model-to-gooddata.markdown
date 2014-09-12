@@ -1,6 +1,6 @@
 ---
 layout: guides
-title:  "Create & Upload A Data Model to GoodData"
+title:  "Edit & Upload A Data Model to GoodData"
 date:   2014-07-09 10:00:00
 categories: model
 tags:
