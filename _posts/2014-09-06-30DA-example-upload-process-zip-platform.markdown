@@ -35,10 +35,8 @@ Jumping right in, let's deploy a process with three lines of code that will be e
 It is important to see the what the script is doing here. First, it performs the traditional behavior by logging you in with "GoodData.connect" once that is complete, notice how it references the "process.zip" file. All of the Ruby processes must be uploaded as a Zip.
 
 <div style="padding-top: 40px; padding-bottom: 40px;">
-<div class="center">
 <img class="tutorial" src="https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/214c84d8-6633-4e74-9261-3a2ab9c28b80.png">
 <div>
-</div>
 </div>
 </div>
 
