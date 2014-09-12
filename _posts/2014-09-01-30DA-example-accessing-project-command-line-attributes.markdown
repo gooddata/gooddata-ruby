@@ -39,55 +39,18 @@ gooddata -p PROJECT_ID -U YOUR-USERNAME -P YOUR-PASSWORD project jack_in
 <div>
 <small>You now have full access to all of the methods within the SDK so let's start exploring...</small></div>
 </div>
+- Enter, “GoodData::Attribute.all” and a list of all the project attributes will be returned. Use space bar to scroll down and press “q” to step back out of the list.
+- However, that is a lot of data, select an attributes title from within the terminal window. Any attribute will do and then type...
 
-
-### The method
-
-Once we are connected, we can specify the core of our example. `create_div_metric` is the method that creates metrics for this and previous period, save them to the GoodData project and then creates third metric, that shows you the the share between those two periods.
-
-{% highlight ruby %}
-def create_div_metrics(metric,date_attribute)
-
-  this = GoodData::Metric.xcreate(:expression => "SELECT ![#{metric.identifier}] WHERE ![#{date_attribute.identifier}] = THIS", :title => "SUM this #{date_attribute.title}")
-  this.save
-
-  previous = GoodData::Metric.xcreate(:expression => "SELECT ![#{metric.identifier}] WHERE ![#{date_attribute.identifier}] = THIS - 1", :title => "SUM previous #{date_attribute.title}")
-  previous.save
-
-  div = GoodData::Metric.xcreate(:expression => "SELECT ![#{this.identifier}]/![#{previous.identifier}] - 1", :title => "Div by #{date_attribute.title}")
-  div.save
-  
-end
+{% highlight bash %}
+GoodData::Attribute.find_by_title(“ATTR-TITLE”).
 {% endhighlight %}
 
-### Preparing facts and attributes
+- You can also use this to find the attribute by it’s identifier.
 
-Great is that we can reuse this method for any number of facts. We just need to specify which fact should be use. You can even reuse it in some more advanced programatical logic. As you can see below, we are grabing the first fact that is returned from the GoodData Project and the method creates metrics based on this fact. 
-
-{% highlight ruby %}
-facts = GoodData::Fact.all(:full => true)
-fact = facts.first
-metric = GoodData::Metric.xcreate(:expression => "SELECT SUM(![#{fact.identifier}])", :title => "Simple sum")
-metric.save
+{% highlight bash %}
+GoodData::Attribute[“ATTR-IDENTIFIER”]
 {% endhighlight %}
 
-You can use this guide together with the [Batch operation tutorial](http://sdk.gooddata.com/gooddata-ruby/guide/metric-report-batch-operations/) to create multiple number of metrics. Now, let's say we would like to see metrics for two date dimensions (`Month/Year (Committed on)` and `Quarter/Year (Committed on)`). As you can see, you can easily find those attributes, save them to the variable and use later.
-
-{% highlight ruby %}
-attributes = GoodData::Attribute.all(:full => true)
-
-attribute_month_year = attributes.find{|a| a.title == "Month/Year (Committed on)"}
-attribute_quarter_year = attributes.find{|a| a.title == "Quarter/Year (Committed on)"}
-{% endhighlight %}
-
-### Metric creation
-
-Finally, let's call the method we've created with parameters.
-
-{% highlight ruby %}
-create_div_metrics(metric,attribute_month_year)
-create_div_metrics(metric,attribute_quarter_year)
-{% endhighlight %}
-
-That's all. You can check out your Project and put your metrics to Report.
+- Type, "exit" to leave "jack_in" and you are done!
 
