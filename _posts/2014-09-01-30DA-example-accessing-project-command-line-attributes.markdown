@@ -34,10 +34,12 @@ gem install gooddata
 gooddata -p PROJECT_ID -U YOUR-USERNAME -P YOUR-PASSWORD project jack_in
 {% endhighlight %}
 
-<div class="center" style="padding: 20px;">
+<div style="padding-top: 40px; padding-bottom: 40px;">
+<div class="center">
 <img class="tutorial" src="https://gallery.mailchimp.com/cc49eba2c07a5a3f516bf3fed/images/706f934f-249a-4f97-b287-768ba718adf2.png">
 <div>
 <small>You now have full access to all of the methods within the SDK so let's start exploring...</small></div>
+</div>
 </div>
 
 
