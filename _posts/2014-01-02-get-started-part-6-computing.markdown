@@ -20,7 +20,9 @@ Right now you are probably interested in how many developers are there in the pr
 
 ###Count
 {% highlight ruby %}
-GoodData::Attribute['attr.devs.dev_id'].create_metric.execute
+client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
+project = Goodata::Project['YOUR_PROJECT_ID', :client => client]
+attr = GoodData::Attribute['attr.devs.dev_id', :project => project].create_metric.execute
 {% endhighlight %}
 
 This will find an attribute creates a metric out of it (the only aggregation usable on attribute is a Count and that is default) and executes it.
@@ -31,20 +33,20 @@ It returns 3 which is correct result.
 The previous example created a metric on the fly. If we like it we can of course save it.
 
 {% highlight ruby %}
-GoodData::Attribute['attr.devs.dev_id'].create_metric.save
+attr = GoodData::Attribute['attr.devs.dev_id', :project => project].create_metric.save
 {% endhighlight %}
 
 You can make sure it worked by using what we learned last time. Run
 
 {% highlight ruby %}
-GoodData::Metric.all
+metrics = GoodData::Metric[:all, :project => project]
 {% endhighlight %}
 
 Our metric should be the only one there. You can grab it if you know its link and inspect it further.
 
 {% highlight ruby %}
-uri = GoodData::Metric.all.first['link']
-metric = GoodData::Metric[uri]
+uri = GoodData::Metric[:all, :project => project].first['link']
+metric = GoodData::Metric[uri, :project => project]
 metric.title
 metric.expression
 {% endhighlight %}
@@ -56,13 +58,15 @@ This should return `SELECT COUNT([/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/2
 Let's say that you would like to create another metric. This time out of fact. The only fact we have is called 'Lines changed'. If it worked with attribute let's try the same with a fact.
 
 {% highlight ruby %}
-GoodData::Fact.find_first_by_title('Lines changed').create_metric.execute
+metric = GoodData::Fact.find_first_by_title('Lines changed').create_metric
+metric.execute
 {% endhighlight %}
 
 Great very similar. Note couple of differences. We used `find_first_by_title` just to illustrate that there are various ways how to get to the object we want. Create_metrics works the same. The default aggregation function here is `SUM` but there are actually many more available for the fact. Let's say you are interested in average.
 
 {% highlight ruby %}
-GoodData::Fact.find_first_by_title('Lines changed').create_metric(:type => :avg).execute
+metric = GoodData::Fact.find_first_by_title('Lines changed').create_metric(:type => :avg)
+metric.execute
 {% endhighlight %}
 
 Let's save both of the metrics like we did previously.
@@ -119,7 +123,9 @@ report.execute
 Similar enough. Now the report is really in project and accessibel in the UI.
 
 {% highlight ruby %}
-GoodData::Report.all
+client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
+project = GoodData::Project['YOUR-PROJECT-ID', :client => client]
+GoodData::Report[:all, :project => project]
 {% endhighlight %}
 
 ##Exporting your work

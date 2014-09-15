@@ -17,7 +17,8 @@ MAQL is very useful language and it helps keep reports terse and flexible compar
 Imagine grabbing metric
 
 {% highlight ruby %}
-m = GoodData::Metric[259]
+project = GoodData::Project['YOUR-PROJECT-ID']
+m = GoodData::Metric[259, :project => project]
 {% endhighlight %}
 
 You can print the expression that came over the wire
@@ -46,7 +47,7 @@ SELECT SUM([Lines changed]) WHERE [Date (Committed on)]= [10/17/1909]
 Much better. You can easilly produce a list of metrics with a readable interpretation something like this.
 
 {% highlight ruby %}
-metrics = GoodData::Metric.all :full => true
+metrics = GoodData::Metric[:all, :full => true, :project => project ]
 File.open('list_of_metrics.txt', 'w') do |f|
   metrics.each do |metric|
     f.puts("#{metric.title} - #{metrics.pretty_expression}")
@@ -59,7 +60,7 @@ end
 It is useful in many cases to ask if certain metric contains some other object. From the expression above we see that the metric contains fact with id 204. Let's test that
 
 {% highlight ruby %}
-f = GoodData::Fact[204]
+f = GoodData::Fact[204, :project => project]
 m.contain?(f)
 {% endhighlight %}
 
@@ -73,12 +74,12 @@ Often times a customer comes and asks us. We created 200 reports for our marketi
 Let's take our above example. We want to exchange filtered value on all metrics. First we need to find out what attribute a product is.
 
 {% highlight ruby %}
-product_attribute = GoodData::Attribute.find_first_by_title('Product')
+product_attribute = GoodData::Attribute.find_first_by_title('Product', :project => project)
 {% endhighlight %}
 
 Let's grab all metrics that we would like to change
 {% highlight ruby %}
-metrics = GoodData::Metric.all :full => true
+metrics = GoodData::Metric[:all, :full => true, :project => project]
 {% endhighlight %}
 
 Last step is replacing the value
@@ -104,8 +105,10 @@ metric.expression
 Now we know that the product has `object_id=70`. Let's say that you want to exchange it for a different attribute with id `89`.
 
 {% highlight ruby %}
-product_attribute = GoodData::Attribute[70]
-other_attribute = GoodData::Attribute[89]
+product_attribute = GoodData::Attribute[70, :project => project]
+other_attribute = GoodData::Attribute[89, :project => project]
 metric.replace(product_attribute, other_attribute)
 metric.save
 {% endhighlight %}
+
+It is important that you note you can move Metrics or Attributes across projects by defining the project through an option.

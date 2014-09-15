@@ -18,7 +18,8 @@ gooddata -U username -P pass project jack_in
 Verify that you are connected to the project:
 
 {% highlight ruby %}
-GoodData.project.pid
+project = GoodData.project
+project.pid
 {% endhighlight %}
 
 The following prints a URI, which will take you to the project.
@@ -26,7 +27,7 @@ The following prints a URI, which will take you to the project.
 * On a Mac, press command and double click.
 
 {% highlight ruby %}
-GoodData.project.browser_uri
+project.browser_uri
 {% endhighlight %}
 
 ##Model
@@ -34,7 +35,7 @@ GoodData.project.browser_uri
 Let's have a look at the model.
 
 {% highlight ruby %}
-GoodData.project.datasets.map { |d| d.title }
+project.datasets.map { |d| d.title }
 {% endhighlight %}
 
 The above shows what is currently in the project.
@@ -72,7 +73,7 @@ In both cases, we should see one fact.
 You can list all attributes from the project:
 
 {% highlight ruby %}
-attrs = GoodData::Attribute.all
+attrs = GoodData::Attribute[:all, :project => project]
 attrs.map { |f| f['title'] }
 {% endhighlight %}
 
@@ -88,9 +89,9 @@ attrs.map { |f| f[:name] }
 You may also look for other objects using the following commands. Right now, our example project contains none of these:
 
 {% highlight ruby %}
-GoodData::Dashboard.all
-GoodData::Metric.all
-GoodData::Report.all
+dashboards = GoodData::Dashboard[:all, :project => project]
+metrics = GoodData::Metric[:all, :project => project]
+reports = GoodData::Report[:all, :project => project]
 {% endhighlight %}
 
 We will start creating these in the next part.

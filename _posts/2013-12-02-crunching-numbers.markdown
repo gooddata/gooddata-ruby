@@ -2,7 +2,7 @@
 layout: guides
 title:  "Crunching Numbers"
 date:   2014-01-19 13:56:00
-categories: metric fact
+categories: metric
 pygments: true
 perex: The most important goal for any project is to get some numbers out of it. Let’s do it, using Ruby.
 ---
@@ -42,14 +42,14 @@ You may use the gooddata jack_in command to log in to the platform and to spin u
 After you jack in, let's have a look around. From the tutorial project, there are no metrics:
 
 {% highlight ruby %}
-    GoodData::Metric[:all]
+    metrics = GoodData::Metric[:all]
     > []
 {% endhighlight %}
 
 You should have one fact: 
 
 {% highlight ruby %}
-    GoodData::Fact[:all]
+    fact = GoodData::Fact[:all]
     > [{"link"=>"/gdc/md/ptbedvc1841r4obgptywd2mzhbwjsfyr/obj/223",
       "author"=>"/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248",
       "tags"=>"",

@@ -1,6 +1,6 @@
 ---
 layout: guides
-title:  "Working With A Project"
+title:  "Working With A Project & Cloning Projects"
 date:   2014-01-19 13:56:00
 categories: project
 pygments: true
@@ -135,6 +135,7 @@ project.clone(
   :title => "Title of the cloned project",
   :with_data => true,
   :with_users => true
+  :auth_token => 'AUTH-TOKEN'
 )
 {% endhighlight %}
 

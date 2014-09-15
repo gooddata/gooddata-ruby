@@ -57,18 +57,20 @@ Note: NAME_OF_THE_EXECUTABLE is a name of the executed graph or a script. Best w
 
 The following Ruby commands execute GoodData APIs for managing processes.
 
+Let's start by setting up the client and project you will be using.
+
+{% highlight ruby %}
+  client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
+  project = GoodData['YOUR-PROJECT-ID', :client => client]
+{% endhighlight %}
 ###Get processes in a project
 {% highlight ruby %}
-  GoodData.with_project(project_id) do
-    processes = GoodData::Process.all
-  end
+  processes = GoodData::Process[:all, :project => project]
 {% endhighlight %}
 
 ###Get specific processes by a process id
 {% highlight ruby %}
-  GoodData.with_project(project_id) do
-    process = GoodData::Process[process_id]
-  end
+  process = GoodData::Process[process_id, :project => project]
 {% endhighlight %}
 
 ###Accessing specified process properties
@@ -83,20 +85,9 @@ The following Ruby commands execute GoodData APIs for managing processes.
 ###Deploying process
 You can deploy process with SDK like this
 {% highlight ruby %}
-  GoodData.with_project(options[:project_id]) do
-    GoodData::Process.deploy(dir, :name => "Testing process")
-  end
-{% endhighlight %}
-
-Sometimes it is useful to redeploy an existing process. You can do it like this
-{% highlight ruby %}
-  GoodData.with_project(options[:project_id]) do
-    process = GoodData::Process[process_id]
-    process.deploy(dir, :name => "Testing process")
-  end
-{% endhighlight %}
-
-###Execute process
+  process = GoodData::Process[process_id, :project => project]
+  process.deploy(dir, :name => "Testing process")
+{% endhighlight %}e process
 
 **NOTE:** This command blocks subsequent commands until process execution is done.
 
