@@ -625,14 +625,6 @@ module GoodData
       GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
-    # Helper for getting metrics of a project
-    #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
-    # @return [GoodData::Metric] matric instance or list
-    def metric(id, opts = { :full => true })
-      GoodData::Metric[id, opts.merge(project: self, client: client)]
-    end
-
     def metric_by_title(title)
       GoodData::Metric.find_first_by_title(title, project: self, client: client)
     end
@@ -659,19 +651,25 @@ module GoodData
 
     alias_method :pid, :obj_id
 
-    def partial_md_export(objects, options = {})
-      # TODO: refactor polling to md_polling in client
+    # Helper for getting objects of a project
+    #
+    # @return [Array<GoodData::MdObject>] object instance or list
+    def objects(id, opts = {})
+      GoodData::MdObject[id, opts.merge(project: self, client: client)]
+    end
 
-      fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objects.nil? || objects.empty?
-      fail 'The objects to migrate has to be provided as an array' unless objects.is_a?(Array)
+    def partial_md_export(objs, options = {})
+      fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objs.nil?
+      objs = [objs] unless objs.is_a?(Array)
+      fail 'Nothing to migrate. The list you provided is empty' if objs.empty?
 
       target_project = options[:project]
       fail 'You have to provide a project instance or project pid to migrate to' if target_project.nil?
-      target_project = GoodData::Project[target_project, options]
-      objects = objects.map { |obj| GoodData::MdObject[obj, options] }
+      target_project = client.projects(target_project)
+      objs = objs.pmap { |obj| objects(obj) }
       export_payload = {
         :partialMDExport => {
-          :uris => objects.map { |obj| obj.uri }
+          :uris => objs.map { |obj| obj.uri }
         }
       }
       result = client.post("#{md['maintenance']}/partialmdexport", export_payload)

@@ -56,7 +56,7 @@ module GoodData
     end
 
     def latest_report_definition_uri
-      definitions.last
+      definition_uris.last
     end
 
     def latest_report_definition
@@ -65,13 +65,13 @@ module GoodData
 
     def remove_definition(definition)
       def_uri = is_a?(GoodData::ReportDefinition) ? definition.uri : definition
-      content['definitions'] = definitions.reject { |x| x == def_uri }
+      content['definitions'] = definition_uris.reject { |x| x == def_uri }
       self
     end
 
     # TODO: Cover with test. You would probably need something that will be able to create a report easily from a definition
     def remove_definition_but_latest
-      to_remove = definitions - [latest_report_definition_uri]
+      to_remove = definition_uris - [latest_report_definition_uri]
       to_remove.each do |uri|
         remove_definition(uri)
       end
@@ -79,12 +79,12 @@ module GoodData
     end
 
     def purge_report_of_unused_definitions!
-      full_list = definitions
+      full_list = definition_uris
       remove_definition_but_latest
-      purged_list = definitions
+      purged_list = definition_uris
       to_remove = full_list - purged_list
       save
-      to_remove.each { |uri| GoodData.delete(uri) }
+      to_remove.each { |uri| client.delete(uri) }
       self
     end
 

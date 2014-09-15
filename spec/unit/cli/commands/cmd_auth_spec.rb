@@ -2,7 +2,7 @@
 
 require 'gooddata/cli/cli'
 
-describe 'GoodData::CLI - auth' do
+describe 'GoodData::CLI - auth', :broken => true do
   describe 'auth' do
     it 'Can be called without arguments' do
       args = %w(auth)

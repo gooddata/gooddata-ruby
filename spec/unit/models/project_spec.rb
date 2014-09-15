@@ -182,6 +182,7 @@ describe GoodData::Project do
 
   describe '#roles' do
     it 'Returns array of GoodData::ProjectRole' do
+      pending 'Investigate why is this soo slooow'
       project = ProjectHelper.get_default_project(:client => @client)
       roles = project.roles
       expect(roles).to be_instance_of(Array)

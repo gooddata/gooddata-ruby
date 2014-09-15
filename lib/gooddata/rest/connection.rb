@@ -53,12 +53,20 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         # Reset old cookies first
-        credentials = Connection.construct_login_payload(username, password)
+        if options[:sst_token]
+          # server_cookies = options[:cookies]
+          # options.merge(:cookies => { 'GDCAuthSST' => token })
+          merge_cookies!({ 'GDCAuthSST' => options[:sst_token] })
+          # status = :logged_in
+          refresh_token :dont_reauth => true
+        else
+          credentials = Connection.construct_login_payload(username, password)
 
-        @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
+          @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
-        @user = get(@auth['profile'])
-        refresh_token :dont_reauth => true
+          @user = get(@auth['profile'])
+          refresh_token :dont_reauth => true
+        end
       end
 
       # Disconnect
