@@ -1,13 +1,13 @@
 ---
 layout: guides
-title:  "Create Data Models"
+title:  "One Page Project"
 date:   2014-07-09 10:00:00
 categories: cool
 tags:
 - model
 - project
 pygments: true
-perex: A comprhensive one page script which replaces any GUI for building an entire project creating a model, uploading data, and inviting users.
+perex: A comprehensive one page script which replaces any GUI for building an entire project creating a model, uploading data, and inviting users.
 ---
 
 <div style="padding-top: 40px; padding-bottom: 40px;">
