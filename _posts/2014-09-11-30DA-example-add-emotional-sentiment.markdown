@@ -7,7 +7,7 @@ tags:
 - model
 - project
 pygments: true
-perex: Adds three domains of sentiment to data and demonstrates how to integrate that into the a GoodData model.
+perex: Generates three domains of sentiment to data and demonstrates how to integrate that into the a GoodData model.
 ---
 
 Using the machine learning library *Sentimental* we will learn how to add sentiment to a users comments in our demo project. This is important for two reasons: A. How unbelieavably cool is it to be able to have your computer read hundreds of millions of comments and tell you how each "feels" but B. This snippet is meant to unlock your mind regarding what will now be possible with the Ruby SDK.
