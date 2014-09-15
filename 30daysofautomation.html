@@ -1,0 +1,174 @@
+---
+layout: default
+title: 30 Days of Automation | GoodData Ruby SDK
+---
+<form action="/gooddata-ruby/search" method="get">
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div style="margin-left: 100px;">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="{{ site.url }}">
+      <img src="{{ site.url }}/images/header-logo.png" alt="GoodData Labs" width="24" height="24">
+      GoodData<span style="color: #dc2020;">Ruby
+</a>      
+      
+      <div class="ab-center">
+        <ul class="nav">
+          <li class="">
+            <a href="{{ site.url }}/get-started">Get Started</a>
+          </li>
+          <li class="active">
+            <a href="{{ site.url }}/examples">Examples</a>
+          </li>
+          <li class="">
+            <a href="{{ site.url }}/ask">Ask</a>
+          </li>
+          <li>
+
+            <input id="search-query" style="margin-top: 9px; margin-left: 20px; border-top-style: none;
+    border-right-style: none;
+    border-bottom-style: 1px solid #fff;
+    border-left-style: none;
+    background: transparent; color: #fff;" name="tags" placeholder="Search..." autocomplete="off">
+
+          </li>
+         </ul>
+      </div>
+    
+    </div>
+  </div>
+</div>
+</form>
+<div class="container-narrow">
+  <img src="http://thnkr.github.com/gooddata-ruby/images/promo/header.png">
+  <br />
+   <ul class="tabs" data-persist="true" style="background-color: light-grey; margin-bottom: 0px;">
+    <li><a href="#general">General</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#models">Models</a></li>
+    <li><a href="#attributes">Attributes</a></li>
+    <li><a href="#metrics">Metrics</a></li>
+    <li><a href="#filters">Filters</a></li>
+    <li><a href="#processes">Processes</a></li>
+    <li><a href="#cool" style="color: red;">Cool</a></li>
+</ul>
+<div class="tabcontents">
+
+    <!-- Tab General -->
+    <div id="general">
+          <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'general' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Tab Projects -->
+    <div id="projects">
+        <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'project' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Tab Models -->
+    <div id="models">
+        <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'model' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Tab Attributes -->
+    <div id="attributes">
+        <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'attribute' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Tab Metrics -->
+    <div id="metrics">
+          <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'metric' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+          </ul>
+    </div>
+
+    <!-- Tab Processes -->
+    <div id="processes">
+           <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'process' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+          </ul>
+    </div>
+
+    <!-- Tab Permissions -->
+    <div id="filters">
+           <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'filter' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+          </ul>
+    </div>
+
+    <!-- Tab Cool -->
+    <div id="cool">
+          <ul class="posts">
+        {% for post in site.posts reversed %}
+          {% if post.categories contains 'cool' %}
+          <div>
+            <a href="{{ site.url }}{{ post.url }}"><h3>{{ post.title }}</h3></a>
+            <div>{{ post.perex }}</div>
+          </div>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
+</div>
+</div>
