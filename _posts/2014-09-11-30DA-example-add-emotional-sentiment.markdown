@@ -1,6 +1,6 @@
 ---
 layout: guides
-title:  "Add Emotional Sentiment To Your Data"
+title:  "Add Emotional Sentiment To Your Project"
 date:   2014-07-09 10:00:00
 categories: cool
 tags:
