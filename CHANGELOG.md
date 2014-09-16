@@ -3,6 +3,15 @@
 ## 0.6.8
 
 - REST Factory - See [PR #224](https://github.com/gooddata/gooddata-ruby/pull/224)
+- Replace on report definitions allows to swap attributes, metrics and other things in report definitions
+- Fixed bug in clone so you can clone projects without data
+- Many map call on REST happen in parallel
+- Query requests (all attributes, all metrics etc) are happening in parallel and full: true is now the default
+- Computing an a report which returns no results does not fail but returns nil
+- Refactored handling of all various asynchronous resources into 2 methods
+- added ability to log in with only SST token
+- added with_connection
+- ability to deploy just one file, zipped files or directory
 
 ## 0.6.7
 
