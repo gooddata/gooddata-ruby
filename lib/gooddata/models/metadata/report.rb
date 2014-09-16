@@ -13,7 +13,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('reports', Report, options)
       end
 
@@ -26,9 +26,9 @@ module GoodData
 
         project = GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
-        
+
         title = options[:title]
-        fail "Report needs a title specified" unless title
+        fail 'Report needs a title specified' unless title
         summary = options[:summary] || ''
         rd = options[:rd] || ReportDefinition.create(options)
         rd.save
@@ -55,7 +55,7 @@ module GoodData
 
     # Add a report definition to a report. This will show on a UI as a new version.
     #
-    # @param report_definition [GoodData::ReportDefinition | String] Report definition to add. Either it can be a URI of a report definition or an actual report definition object. 
+    # @param report_definition [GoodData::ReportDefinition | String] Report definition to add. Either it can be a URI of a report definition or an actual report definition object.
     # @return [GoodData::Report] Return self
     def add_definition(report_definition)
       rep_def = project.report_definitions(report_definition)
@@ -68,7 +68,7 @@ module GoodData
     end
 
     def definitions
-      content['definitions'].pmap {|uri| project.report_definitions(uri)}
+      content['definitions'].pmap { |uri| project.report_definitions(uri) }
     end
 
     def definition_uris
@@ -138,7 +138,7 @@ module GoodData
       new_defs = definitions.map do |rep_def|
         rep_def.replace(what, for_what)
       end
-      new_defs.pmap &:save
+      new_defs.pmap(&:save)
     end
   end
 end

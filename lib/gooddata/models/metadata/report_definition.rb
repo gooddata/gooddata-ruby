@@ -16,7 +16,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('reportdefinition', ReportDefinition, options)
       end
 
@@ -231,11 +231,11 @@ module GoodData
     end
 
     def attributes
-      labels.map {|label| label.attribute}
+      labels.map { |label| label.attribute }
     end
 
     def labels
-      attribute_parts.map {|part| project.labels(part['attribute']['uri'])}
+      attribute_parts.map { |part| project.labels(part['attribute']['uri']) }
     end
 
     def metric_parts
@@ -264,7 +264,7 @@ module GoodData
     end
 
     def filters
-      content['filters'].map {|f| f['expression']}
+      content['filters'].map { |f| f['expression'] }
     end
 
     # Replace certain object in report definition. Returns new definition which is not saved.
@@ -274,12 +274,12 @@ module GoodData
     # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
     def replace(what, for_what = nil)
       pairs = if what.is_a?(Hash)
-        whats = what.keys
-        to_whats = what.values
-        whats.zip(to_whats)
-      else
-        [[what, for_what]]
-      end
+                whats = what.keys
+                to_whats = what.values
+                whats.zip(to_whats)
+              else
+                [[what, for_what]]
+              end
 
       pairs.each do |pair|
         what = pair[0]
@@ -333,9 +333,9 @@ module GoodData
         content['grid']['sort']['columns'] = sort.map do |item|
           if item.is_a?(Hash)
             item.deep_dup.tap do |i|
-              next if not i.key?('metricSort')
-              next if not i['metricSort'].key?('locators')
-              next if not i['metricSort']['locators'][0].key?('attributeLocator2')
+              next unless i.key?('metricSort')
+              next unless i['metricSort'].key?('locators')
+              next unless i['metricSort']['locators'][0].key?('attributeLocator2')
               i['metricSort']['locators'][0]['attributeLocator2']['uri'].gsub!(uri_what, uri_for_what)
               i['metricSort']['locators'][0]['attributeLocator2']['element'].gsub!(uri_what, uri_for_what)
             end
@@ -358,7 +358,7 @@ module GoodData
           end
         end
 
-        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub(uri_what, uri_for_what) }}
+        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub(uri_what, uri_for_what) } }
       end
       self
     end

@@ -85,7 +85,7 @@ module GoodData
           end
 
           # HACK: This line assigns class instance # if not done yet
-          # @@instance = client # rubocop:disable ClassVars
+          @@instance = client # rubocop:disable ClassVars
           client
         end
 
