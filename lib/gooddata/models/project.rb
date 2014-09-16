@@ -152,15 +152,18 @@ module GoodData
       end
     end
 
-    def add_metric(options = {})
-      options[:expression] || fail('Metric has to have its expression defined')
-      m1 = GoodData::Metric.xcreate(options)
-      m1.save
+    def add_metric(metric, options = {})
+      default = { client: client, project: self }
+      if metric.is_a?(String)
+        GoodData::Metric.xcreate(metric, options.merge(default))
+      else
+        GoodData::Metric.xcreate(metric.merge(default))
+      end
     end
     alias_method :create_metric, :add_metric
 
     def add_report(options = {})
-      rep = GoodData::Report.create(options)
+      rep = GoodData::Report.create(options.merge(client: client, project: self))
       rep.save
     end
     alias_method :create_report, :add_report
@@ -338,6 +341,10 @@ module GoodData
 
     def facts_by_title(title)
       GoodData::Fact.find_by_title(title, project: self, client: client)
+    end
+
+    def find_attribute_element_value(uri)
+      GoodData::Attribute.find_element_value(uri, client: client, project: self)
     end
 
     # Gets project role by its identifier

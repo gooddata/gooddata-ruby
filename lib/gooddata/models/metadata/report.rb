@@ -17,10 +17,20 @@ module GoodData
         query('reports', Report, options)
       end
 
-      def create(options = {})
+      def create(options = { :client => GoodData.connection, :project => GoodData.project })
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        
         title = options[:title]
+        fail "Report needs a title specified" unless title
         summary = options[:summary] || ''
-        rd = options[:rd] || ReportDefinition.create(:top => options[:top], :left => options[:left])
+        rd = options[:rd] || ReportDefinition.create(options)
         rd.save
 
         report = {
@@ -39,8 +49,18 @@ module GoodData
         }
         # TODO: write test for report definitions with explicit identifiers
         report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
-        Report.new report
+        client.create(Report, report, :project => project)
       end
+    end
+
+    # Add a report definition to a report. This will show on a UI as a new version.
+    #
+    # @param report_definition [GoodData::ReportDefinition | String] Report definition to add. Either it can be a URI of a report definition or an actual report definition object. 
+    # @return [GoodData::Report] Return self
+    def add_definition(report_definition)
+      rep_def = project.report_definitions(report_definition)
+      content['definitions'] = definition_uris << rep_def.uri
+      self
     end
 
     def results

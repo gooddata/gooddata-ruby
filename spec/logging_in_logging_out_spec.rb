@@ -14,4 +14,14 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
     client.disconnect
   end
 
+  it "should log in and disconnect with SST" do
+    regular_client = ConnectionHelper::create_default_connection
+    sst = regular_client.connection.sst_token
+
+    sst_client = GoodData.connect(sst_token: sst)
+    expect(sst_client.projects.count).to be > 0
+    sst_client.disconnect
+
+    regular_client.disconnect
+  end
 end

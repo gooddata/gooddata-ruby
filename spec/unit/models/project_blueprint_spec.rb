@@ -102,33 +102,33 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'should be able to grab attribute' do
-    pending('UAAA')
+    pending('Wrap into object')
     @repos.labels.size.should == 1
     @repos.labels.first.attribute.name.should == 'repo_id'
   end
 
   it 'anchor should have labels' do
-    pending('UAAA')
+    pending('Wrap into object')
     @repos.anchor.labels.first.identifier.should == 'label.repos.repo_id'
   end
 
   it 'attribute should have labels' do
-    pending('UAAA')
+    pending('Wrap into object')
     @repos.attributes.first.labels.first.identifier.should == 'label.repos.department'
   end
 
   it 'commits should have one fact' do
-    pending('UAAA')
+    pending('Wrap into object')
     @commits.facts.size.should == 1
   end
 
   it 'Anchor on repos should have a label' do
-    pending('UAAA')
+    pending('Wrap into object')
     @repos.anchor.labels.size.should == 2
   end
 
   it 'should not have a label for a dataset without anchor with label' do
-    pending('UAAA')
+    pending('Wrap into object')
     @commits.anchor.should == nil
     # @commits.to_schema.anchor.labels.empty?.should == true
   end

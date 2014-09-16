@@ -30,7 +30,7 @@ module GoodData
       # @return [String] Textual representation of a particular attribute element
       def find_element_value(uri, opts = { :client => @client, :project => @project })
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
-        Attribute[matches[1], :client => opts[:client], :project => opts[:project]].primary_label.find_element_value(uri)
+        opts[:project].attributes(matches[1]).primary_label.find_element_value(uri)
       end
     end
 

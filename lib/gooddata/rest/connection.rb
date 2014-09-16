@@ -54,14 +54,12 @@ module GoodData
       def connect(username, password, options = {})
         # Reset old cookies first
         if options[:sst_token]
-          # server_cookies = options[:cookies]
-          # options.merge(:cookies => { 'GDCAuthSST' => token })
           merge_cookies!({ 'GDCAuthSST' => options[:sst_token] })
-          # status = :logged_in
+          @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
+          @auth = {}
           refresh_token :dont_reauth => true
         else
           credentials = Connection.construct_login_payload(username, password)
-
           @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
           @user = get(@auth['profile'])
@@ -73,7 +71,7 @@ module GoodData
       def disconnect
         # TODO: Wrap somehow
         url = @auth['state']
-        delete url
+        delete url if url
 
         @auth = nil
         @server = nil
@@ -126,6 +124,13 @@ module GoodData
         fail NotImplementedError "POST #{uri}"
       end
 
+      # Reader method for SST token
+      #
+      # @return uri [String] SST token
+      def sst_token
+        cookies[:cookies]['GDCAuthSST']
+      end
+
       def stats_table(values = stats)
         sorted = values.sort_by { |k, v| v[:avg] }
         Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
@@ -141,6 +146,13 @@ module GoodData
             t.add_row row
           end
         end
+      end
+
+      # Reader method for TT token
+      #
+      # @return uri [String] TT token
+      def tt_token
+        cookies[:cookies]['GDCAuthTT']
       end
 
       private
