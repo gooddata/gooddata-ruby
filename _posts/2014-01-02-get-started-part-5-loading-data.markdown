@@ -24,14 +24,12 @@ As discussed in [getting started](/getting-started), the `jack_in` command is us
 When the session is initiated, enter the following to upload the three datasets from CSVs stored in the project's `data` directory:
 
 {% highlight ruby %}
-devs = blueprint.find_dataset("devs")
-devs.upload("data/devs.csv")
 
-repos = blueprint.find_dataset("repos")
-repos.upload("data/repos.csv")
+blueprint = eval(File.read('./model/model.rb')).to_blueprint
 
-commits = blueprint.find_dataset("commits")
-commits.upload("data/commits.csv")
+devs = GoodData::Model.upload_data('./data/devs.csv', blueprint, 'devs')
+repos = GoodData::Model.upload_data('./data/repos.csv', blueprint, 'repos')
+commits = GoodData::Model.upload_data('./data/commits.csv', blueprint, 'commits')
 
 {% endhighlight %}
 
@@ -52,7 +50,7 @@ devs = blueprint.find_dataset("devs")
 After we have acquired the dataset, we can load the data into it. You may reference a path to file:
 
 {% highlight ruby %}
-devs.upload("data/devs.csv")
+devs = GoodData::Model.upload_data('./data/devs.csv', blueprint, 'devs')
 {% endhighlight %}
 
 To exit the interactive session, enter `exit`.
