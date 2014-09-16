@@ -215,8 +215,8 @@ module GoodData
     # @return [GoodData::Project] Newly created project
     def clone(options = {})
       # TODO: Refactor so if export or import fails the new_project will be cleaned
-      with_data = options[:data] || true
-      with_users = options[:users] || false
+      with_data = options[:data].nil? ? true : options[:data]
+      with_users = options[:users].nil? ? false : options[:users]
       a_title = options[:title] || "Clone of #{title}"
 
       # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
