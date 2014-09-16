@@ -15,6 +15,8 @@ Users are integral part of any project. Who else would look at your beautiful da
 You can get users in particular project like this
 
 {% highlight ruby %}
+client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
+project = GoodData::Project['YOUR-PROJECT-ID', :project => project]
 project.users
 {% endhighlight %}
 

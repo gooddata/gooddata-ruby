@@ -36,12 +36,9 @@ Let's first look at how to retrieve the individual objects from server.
 Retrieve all objects in the currently selected project.
 
 {% highlight ruby %}
-reports = GoodData::Report[:all]
-{% endhighlight %}
-
-An equivalent statement:
-{% highlight ruby %}
-reports = GoodData::Report.all
+client = GoodData.connect 'YOUR-USER@gooddata.com', 'YOUR_PASS'
+project = GoodData::Project['YOUR-PROJECT-ID', :client => client]
+reports = GoodData::Report[:all, :project => project]
 {% endhighlight %}
 
 ###Retrieving specific objects
@@ -54,7 +51,7 @@ Numbers are unique within a project and are assigned increasing consecutive inte
 **NOTE:** These ids are not unique across projects, so to use them, you must be connected to a specific project.
 
 {% highlight ruby %}
-report = GoodData::Report[12]
+report = GoodData::Report[12, :project => project]
 {% endhighlight %}
 
 You can access the object id from an object:
@@ -71,7 +68,7 @@ Each object has an internal identifier, which is a string value unique inside th
 You can look the object up by providing an identifier.
 
 {% highlight ruby %}
-attribute = GoodData::Attribute["attr.devs.dev_id"]
+attribute = GoodData::Attribute["attr.devs.dev_id", :project => project]
 {% endhighlight %}
 
 The identifier can be acquired using the following:
@@ -85,7 +82,7 @@ report.identifier
 You can also provide full URI. This identifier is unique for the object within the entire hosting datacenter.
 
 {% highlight ruby %}
-report = GoodData::Report["/gdc/md/{PID}/obj/12"]
+report = GoodData::Report["/gdc/md/{PID}/obj/12", :project => project]
 {% endhighlight %}
 
 The URI for a selected object can be accessed using the URI method:
@@ -101,7 +98,10 @@ report.uri
 If you need to work with full objects, you can use deploy the following method:
 
 {% highlight ruby %}
-reports = GoodData::Report.all.map { |data| GoodData::Report[data['link']] }
+client = GoodData.connect 'YOUR-USER@gooddata.com', 'YOUR_PASS'
+project = GoodData::Project['YOUR-PROJECT-ID', :client => client]
+
+reports = GoodData::Report[:all, :project => project].map { |data| GoodData::Report[data['link'], :project => project] }
 {% endhighlight %}
 
 The above performs N+1 requests on the API, which may result in slow performance. When using this method, deploy it against the smallest usable collection to speed performance.
@@ -111,7 +111,7 @@ The above performs N+1 requests on the API, which may result in slow performance
 In some cases, you may have the object identifier and need to acquire the datacenter-unique URI. If you know the object type, you can execute a query similar to the following, which is looking for an attribute object identifier:
 
 {% highlight ruby %}
-attribute = GoodData::Attribute["attr.devs.dev_id"]
+attribute = GoodData::Attribute["attr.devs.dev_id", :project => project]
 attribute.uri
 {% endhighlight %}
 
@@ -139,13 +139,13 @@ GoodData::Attribute.new(obj)
 You can retrieve reports based on tags. Tags are used in projects to organize collections of metrics and reports:
 
 {% highlight ruby %}
-reports = GoodData::Report.find_by_tag("some_tag")
+reports = GoodData::Report[:all, :project => project].find_by_tag("some_tag")
 {% endhighlight %}
 
 You can retrieve an object based on its title. The following query returns the first object of that name in the selected project. Display names do not need to be unique.
 
 {% highlight ruby %}
-report = GoodData::Report.find_first_by_title('My first report')
+report = GoodData::Report[:all, :project => project].find_first_by_title('My first report')
 {% endhighlight %}
 
 ##Accesssing object properties
@@ -229,7 +229,7 @@ report.used_by("attribute")
 If you have retrieved an object already, you can just pass it to the API to retrieve the category value for you:
 
 {% highlight ruby %}
-attribute = Attribute[Attribute.all.first["link"]]
+attribute = GoodData::Attribute[Attribute[:all, :project => project].first["link"], :project => project]
 
 report.using(attribute)
 {% endhighlight %}
@@ -239,7 +239,7 @@ report.using(attribute)
 You can also ask about dependencies of one object on another specific object. This query can be made either with the object uri as a string or with a particular object identifier. This method returns a boolean value.
 
 {% highlight ruby %}
-attribute = Attribute[Attribute.all.first["link"]]
+attribute = GoodData::Attribute[Attribute[:all, :project => project].first["link"], :project => project]
 
 report.using?(attribute)
 {% endhighlight %}
