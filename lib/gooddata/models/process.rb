@@ -230,11 +230,11 @@ module GoodData
     end
 
     def schedules
-      GoodData::Schedule[:all, client: client, project: project].select { |schedule| schedule.process_id == obj_id }
+      project.schedules.select { |schedule| schedule.process_id == obj_id }
     end
 
     def create_schedule(cron, executable, options = {})
-      GoodData::Schedule.create(process_id, cron, executable, options.merge(client: client, project: project))
+      project.create_schedule(process_id, cron, executable, options.merge(client: client, project: project))
     end
 
     def execute(executable, options = {})

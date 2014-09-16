@@ -68,11 +68,7 @@ module GoodData
     # Gives an attribute of current label
     # @return [GoodData::Attibute]
     def attribute
-      opts = {
-        :client => client,
-        :project => project
-      }
-      GoodData::Attribute[content['formOf'], opts]
+      project.attributes(content['formOf'])
     end
 
     # Gives an attribute url of current label. Useful for mass actions when it does not introduce HTTP call.

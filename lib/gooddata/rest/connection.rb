@@ -53,19 +53,25 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         # Reset old cookies first
-        credentials = Connection.construct_login_payload(username, password)
+        if options[:sst_token]
+          merge_cookies!('GDCAuthSST' => options[:sst_token])
+          @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
+          @auth = {}
+          refresh_token :dont_reauth => true
+        else
+          credentials = Connection.construct_login_payload(username, password)
+          @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
-        @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
-
-        @user = get(@auth['profile'])
-        refresh_token :dont_reauth => true
+          @user = get(@auth['profile'])
+          refresh_token :dont_reauth => true
+        end
       end
 
       # Disconnect
       def disconnect
         # TODO: Wrap somehow
         url = @auth['state']
-        delete url
+        delete url if url
 
         @auth = nil
         @server = nil
@@ -81,6 +87,13 @@ module GoodData
           puts e.message
           raise e
         end
+      end
+
+      # Returns server URI
+      #
+      # @return [String] server uri
+      def server_url
+        @server && @server.url
       end
 
       # HTTP DELETE
@@ -111,6 +124,13 @@ module GoodData
         fail NotImplementedError "POST #{uri}"
       end
 
+      # Reader method for SST token
+      #
+      # @return uri [String] SST token
+      def sst_token
+        cookies[:cookies]['GDCAuthSST']
+      end
+
       def stats_table(values = stats)
         sorted = values.sort_by { |k, v| v[:avg] }
         Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
@@ -126,6 +146,13 @@ module GoodData
             t.add_row row
           end
         end
+      end
+
+      # Reader method for TT token
+      #
+      # @return uri [String] TT token
+      def tt_token
+        cookies[:cookies]['GDCAuthTT']
       end
 
       private

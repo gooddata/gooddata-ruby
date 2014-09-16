@@ -16,7 +16,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('reportdefinition', ReportDefinition, options)
       end
 
@@ -223,8 +223,27 @@ module GoodData
       end
     end
 
+    def attribute_parts
+      cols = content['grid']['columns'] || []
+      rows = content['grid']['rows'] || []
+      items = cols + rows
+      items.select { |item| item.is_a?(Hash) && item.keys.first == 'attribute' }
+    end
+
+    def attributes
+      labels.map { |label| label.attribute }
+    end
+
+    def labels
+      attribute_parts.map { |part| project.labels(part['attribute']['uri']) }
+    end
+
+    def metric_parts
+      content['grid']['metrics']
+    end
+
     def metrics
-      content['grid']['metrics'].map { |i| GoodData::Metric[i['uri']] }
+      metric_parts.map { |i| project.metrics(i['uri']) }
     end
 
     def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
@@ -242,6 +261,106 @@ module GoodData
                  ReportDefinition.execute_inline(self, opts)
                end
       ReportDefinition.data_result(result, opts)
+    end
+
+    def filters
+      content['filters'].map { |f| f['expression'] }
+    end
+
+    # Replace certain object in report definition. Returns new definition which is not saved.
+    #
+    # @param what [GoodData::MdObject | String] Object which responds to uri or a string that should be replaced
+    # @option for_what [GoodData::MdObject | String] Object which responds to uri or a string that should used as replacement
+    # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
+    def replace(what, for_what = nil)
+      pairs = if what.is_a?(Hash)
+                whats = what.keys
+                to_whats = what.values
+                whats.zip(to_whats)
+              else
+                [[what, for_what]]
+              end
+
+      pairs.each do |pair|
+        what = pair[0]
+        for_what = pair[1]
+
+        uri_what = what.respond_to?(:uri) ? what.uri : what
+        uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
+
+        content['grid']['metrics'] = metric_parts.map do |item|
+          item.deep_dup.tap do |i|
+            i['uri'].gsub!(uri_what, uri_for_what)
+          end
+        end
+
+        cols = content['grid']['columns'] || []
+        content['grid']['columns'] = cols.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              i['attribute']['uri'].gsub!(uri_what, uri_for_what)
+            end
+          else
+            item
+          end
+        end
+
+        rows = content['grid']['rows'] || []
+        content['grid']['rows'] = rows.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              i['attribute']['uri'].gsub!(uri_what, uri_for_what)
+            end
+          else
+            item
+          end
+        end
+
+        widths = content['grid']['columnWidths'] || []
+        content['grid']['columnWidths'] = widths.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              if i['locator'][0].key?('attributeHeaderLocator')
+                i['locator'][0]['attributeHeaderLocator']['uri'].gsub!(uri_what, uri_for_what)
+              end
+            end
+          else
+            item
+          end
+        end
+
+        sort = content['grid']['sort']['columns'] || []
+        content['grid']['sort']['columns'] = sort.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              next unless i.key?('metricSort')
+              next unless i['metricSort'].key?('locators')
+              next unless i['metricSort']['locators'][0].key?('attributeLocator2')
+              i['metricSort']['locators'][0]['attributeLocator2']['uri'].gsub!(uri_what, uri_for_what)
+              i['metricSort']['locators'][0]['attributeLocator2']['element'].gsub!(uri_what, uri_for_what)
+            end
+          else
+            item
+          end
+        end
+
+        if content.key?('chart')
+          content['chart']['buckets'] = content['chart']['buckets'].reduce({}) do |a, e|
+            key = e[0]
+            val = e[1]
+            # binding.pry
+            a[key] = val.map do |item|
+              item.deep_dup.tap do |i|
+                i['uri'].gsub!(uri_what, uri_for_what)
+              end
+            end
+            a
+          end
+        end
+
+        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub(uri_what, uri_for_what) } }
+      end
+      self
     end
   end
 end

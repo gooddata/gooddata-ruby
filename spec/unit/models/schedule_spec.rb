@@ -35,7 +35,7 @@ describe GoodData::Schedule do
 
   describe '#[]' do
     it 'Returns all schedules when :all passed' do
-      res = GoodData::Schedule[:all, :client => @client, :project => @project]
+      res = @project.schedules
       res.should_not be_nil
       res.should be_a_kind_of(Array)
       res.each do |schedule|
@@ -44,13 +44,13 @@ describe GoodData::Schedule do
     end
 
     it 'Returns specific schedule when schedule ID passed' do
-      res = GoodData::Schedule[SCHEDULE_ID, :client => @client, :project => @project]
+      res = @project.schedules(SCHEDULE_ID)
       res.should_not be_nil
       res.should be_a_kind_of(GoodData::Schedule)
     end
 
     it 'Returns specific schedule when schedule URL passed' do
-      res = GoodData::Schedule[SCHEDULE_URL, :client => @client, :project => @project]
+      res = @project.schedules(SCHEDULE_ID)
       res.should_not be_nil
       res.should be_a_kind_of(GoodData::Schedule)
     end
@@ -58,7 +58,7 @@ describe GoodData::Schedule do
 
   describe '#all' do
     it 'Returns all schedules' do
-      res = GoodData::Schedule.all(:client => @client, :project => @project)
+      res = @project.schedules
       res.should_not be_nil
       res.should be_a_kind_of(Array)
       res.each do |schedule|
@@ -71,7 +71,7 @@ describe GoodData::Schedule do
     it 'Creates new schedule if mandatory params passed' do
       sched = nil
       expect {
-        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        sched = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
       }.not_to raise_error
 
       sched.should_not be_nil
@@ -81,7 +81,7 @@ describe GoodData::Schedule do
     it 'Creates new schedule if mandatory params passed and optional params are present' do
       sched = nil
       expect {
-        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        sched = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
       }.not_to raise_error
 
       sched.should_not be_nil
@@ -90,13 +90,13 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no process ID specified' do
       expect {
-        sched = GoodData::Schedule.create(nil, @test_cron, @project_executable, @test_data)
+        sched = @project.create_schedule(nil, @test_cron, @project_executable, @test_data)
       }.to raise_error 'Process ID has to be provided'
     end
 
     it 'Throws exception when no executable specified' do
       expect {
-        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, nil, @test_data)
+        sched = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, nil, @test_data)
       }.to raise_error 'Executable has to be provided'
     end
 
@@ -104,7 +104,7 @@ describe GoodData::Schedule do
       data = @test_data.deep_dup
       data[:cron] = nil
       expect {
-        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
+        sched = @project.create_schedule(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
       }.to raise_error 'Cron schedule has to be provided'
     end
 
@@ -112,7 +112,7 @@ describe GoodData::Schedule do
       data = @test_data.deep_dup
       data[:timezone] = nil
       expect {
-        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
+        sched = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
       }.to raise_error 'A timezone has to be provided'
     end
 
@@ -120,14 +120,14 @@ describe GoodData::Schedule do
       data = @test_data.deep_dup
       data[:type] = nil
       expect {
-        sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
+        sched = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
       }.to raise_error 'Schedule type has to be provided'
     end
   end
 
   describe '#cron' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -144,7 +144,7 @@ describe GoodData::Schedule do
 
   describe '#cron=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -160,25 +160,9 @@ describe GoodData::Schedule do
     end
   end
 
-  describe '#delete' do
-    it 'Should delete schedule' do
-      pending 'Setup test environment first'
-
-      sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
-      proc = GoodData::Process[ProcessHelper::PROCESS_ID]
-
-      # Delete created schedule
-      sched.delete
-
-      proc.schedules.each do |tmp_sched|
-        tmp_sched.uri.should_not equal(sched.uri)
-      end
-    end
-  end
-
   describe '#executable' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -195,7 +179,7 @@ describe GoodData::Schedule do
 
   describe '#executable=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -211,41 +195,9 @@ describe GoodData::Schedule do
     end
   end
 
-  describe '#execute' do
-    it 'Executes schedule on process' do
-      pending 'Setup environment for this test'
-
-      # Create one a schedule
-      sched = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
-
-      execution_time = Time.new
-      execution_request = sched.execute
-
-      # Call execute
-      executed = false
-      start_time = Time.new
-      while (Time.new - start_time < 30)
-        # Check if the last execution time
-        sched.executions.each do |execution|
-          next if execution['execution'].nil? || execution['execution']['startTime'].nil?
-          parsed_time = Time.parse(execution['execution']['startTime'])
-          executed_schedule = execution_request['execution']['links']['self'] == execution['execution']['links']['self']
-          if (execution_time <= parsed_time && executed_schedule)
-            executed = true
-            break
-          end
-        end
-        break if executed
-        sleep 1
-      end
-
-      expect(executed).to be(true)
-    end
-  end
-
   describe '#execution_url' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -262,7 +214,7 @@ describe GoodData::Schedule do
 
   describe '#type' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -278,7 +230,7 @@ describe GoodData::Schedule do
 
   describe '#hidden_params' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -294,7 +246,7 @@ describe GoodData::Schedule do
 
   describe '#hidden_params=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -316,7 +268,7 @@ describe GoodData::Schedule do
 
   describe '#params' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -333,7 +285,7 @@ describe GoodData::Schedule do
 
   describe '#params=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -355,7 +307,7 @@ describe GoodData::Schedule do
 
   describe '#process_id' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -372,7 +324,7 @@ describe GoodData::Schedule do
 
   describe '#process_id=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -390,22 +342,22 @@ describe GoodData::Schedule do
 
   describe '#save' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     it 'Should save a schedule' do
-      expect(GoodData::Schedule[@schedule.uri, :project => @project, :client => @client]).to eq @schedule
-      expect(GoodData::Project[ProjectHelper::PROJECT_ID, :project => @project, :client => @client].schedules).to include(@schedule)
+      expect(@project.schedules(@schedule.uri)).to eq @schedule
+      expect(@client.projects(ProjectHelper::PROJECT_ID).schedules).to include(@schedule)
     end
   end
 
   describe '#state' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -422,7 +374,7 @@ describe GoodData::Schedule do
 
   describe '#type' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -439,7 +391,7 @@ describe GoodData::Schedule do
 
   describe '#type=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -457,7 +409,7 @@ describe GoodData::Schedule do
 
   describe '#timezone' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -474,7 +426,7 @@ describe GoodData::Schedule do
 
   describe '#timezone=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end
 
     after(:each) do
@@ -492,7 +444,7 @@ describe GoodData::Schedule do
 
   describe '#reschedule' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
     end
 
     after(:each) do
@@ -508,7 +460,7 @@ describe GoodData::Schedule do
 
   describe '#reschedule=' do
     before(:each) do
-      @schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
     end
 
     after(:each) do

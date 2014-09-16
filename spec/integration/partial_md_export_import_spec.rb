@@ -25,7 +25,7 @@ describe "Spin a project", :constraint => 'slow' do
 
     GoodData.with_project(@target_project) { |p| GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 0 }
 
-    @source_project.partial_md_export([metric.uri], :client => @client, :project => @target_project)
+    @source_project.partial_md_export(metric, :client => @client, :project => @target_project)
     GoodData.with_project(@target_project) do |_p|
       GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 1
       metric = GoodData::Metric.find_first_by_title(metric_title, :client => @client, :project => @target_project)

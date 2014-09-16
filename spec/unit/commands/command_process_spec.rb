@@ -57,10 +57,6 @@ describe GoodData::Command::Process do
   end
 
   describe "#list" do
-    it "Should throw exception if no project specified" do
-      expect { GoodData::Command::Process.list }.to raise_error
-    end
-
     it "Returns processes" do
       res = GoodData::Command::Process.list(:project_id => ProjectHelper::PROJECT_ID, :client => @client, :project => @project)
       expect(res).to be_an_instance_of(Array)

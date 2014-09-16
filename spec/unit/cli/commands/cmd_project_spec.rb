@@ -2,7 +2,7 @@
 
 require 'gooddata/cli/cli'
 
-describe 'GoodData::CLI - project' do
+describe 'GoodData::CLI - project', :broken => true do
   describe 'project' do
     it 'Complains when no subcommand specified' do
       args = %w(project)

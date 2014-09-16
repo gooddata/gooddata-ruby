@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-require 'gooddata/core/connection'
 require 'gooddata/core/rest'
 
 describe GoodData do

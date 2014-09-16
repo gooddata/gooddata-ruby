@@ -20,7 +20,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('attributes', Attribute, options)
       end
 
@@ -30,7 +30,7 @@ module GoodData
       # @return [String] Textual representation of a particular attribute element
       def find_element_value(uri, opts = { :client => @client, :project => @project })
         matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
-        Attribute[matches[1], :client => opts[:client], :project => opts[:project]].primary_label.find_element_value(uri)
+        opts[:project].attributes(matches[1]).primary_label.find_element_value(uri)
       end
     end
 

@@ -23,7 +23,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('metrics', Metric, options)
       end
 
@@ -55,15 +55,15 @@ module GoodData
 
         expression = if extended_notation
                        dict = {
-                         :facts => GoodData::Fact[:all, options].reduce({}) do |memo, item|
+                         :facts => project.facts.reduce({}) do |memo, item|
                            memo[item.title] = item.uri
                            memo
                          end,
-                         :attributes => GoodData::Attribute[:all, options].reduce({}) do |memo, item|
+                         :attributes => project.attributes.reduce({}) do |memo, item|
                            memo[item.title] = item.uri
                            memo
                          end,
-                         :metrics => GoodData::Metric[:all, options].reduce({}) do |memo, item|
+                         :metrics => project.metrics.reduce({}) do |memo, item|
                            memo[item.title] = item.uri
                            memo
                          end
@@ -215,14 +215,19 @@ module GoodData
       }
 
       temp = expression.dup
-      expression.scan(PARSE_MAQL_OBJECT_REGEXP).each do |uri|
+      pairs = expression.scan(PARSE_MAQL_OBJECT_REGEXP).pmap do |uri|
         uri = uri.first
         if uri =~ /elements/
-          temp.sub!(uri, Attribute.find_element_value(uri, opts))
+          [uri, Attribute.find_element_value(uri, opts)]
         else
-          obj = GoodData::MdObject[uri, opts]
-          temp.sub!(uri, obj.title)
+          [uri, GoodData::MdObject[uri, opts].title]
         end
+      end
+
+      pairs.each do |el|
+        uri = el[0]
+        obj = el[1]
+        temp.sub!(uri, obj)
       end
       temp
     end

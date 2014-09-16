@@ -152,15 +152,18 @@ module GoodData
       end
     end
 
-    def add_metric(options = {})
-      options[:expression] || fail('Metric has to have its expression defined')
-      m1 = GoodData::Metric.xcreate(options)
-      m1.save
+    def add_metric(metric, options = {})
+      default = { client: client, project: self }
+      if metric.is_a?(String)
+        GoodData::Metric.xcreate(metric, options.merge(default))
+      else
+        GoodData::Metric.xcreate(metric.merge(default))
+      end
     end
     alias_method :create_metric, :add_metric
 
     def add_report(options = {})
-      rep = GoodData::Report.create(options)
+      rep = GoodData::Report.create(options.merge(client: client, project: self))
       rep.save
     end
     alias_method :create_report, :add_report
@@ -215,8 +218,8 @@ module GoodData
     # @return [GoodData::Project] Newly created project
     def clone(options = {})
       # TODO: Refactor so if export or import fails the new_project will be cleaned
-      with_data = options[:data] || true
-      with_users = options[:users] || false
+      with_data = options[:data].nil? ? true : options[:data]
+      with_users = options[:users].nil? ? false : options[:users]
       a_title = options[:title] || "Clone of #{title}"
 
       # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
@@ -252,8 +255,8 @@ module GoodData
       new_project
     end
 
-    def create_schedule(process, date, executable)
-      GoodData::Schedule.create(process, date, executable, :client => client, :project => self)
+    def create_schedule(process, date, executable, options = {})
+      GoodData::Schedule.create(process, date, executable, options.merge(:client => client, :project => self))
     end
 
     # Helper for getting dashboards of a project
@@ -338,6 +341,10 @@ module GoodData
 
     def facts_by_title(title)
       GoodData::Fact.find_by_title(title, project: self, client: client)
+    end
+
+    def find_attribute_element_value(uri)
+      GoodData::Attribute.find_element_value(uri, client: client, project: self)
     end
 
     # Gets project role by its identifier
@@ -592,8 +599,12 @@ module GoodData
     # @param [String | Number | Object] Anything that you can pass to
     # GoodData::Label[id] + it supports :all as welll
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
-    def labels(id = :all)
-      attribute.pmapcat { |a| a.labels }
+    def labels(id = :all, opts = {})
+      if id == :all
+        attributes.pmapcat { |a| a.labels }.uniq
+      else
+        GoodData::Label[id, opts.merge(project: self, client: client)]
+      end
     end
 
     def md
@@ -617,15 +628,7 @@ module GoodData
     # Helper for getting metrics of a project
     #
     # @return [Array<GoodData::Metric>] matric instance or list
-    def metrics(opts = { :full => true })
-      GoodData::Metric[:all, opts.merge(project: self, client: client)]
-    end
-
-    # Helper for getting metrics of a project
-    #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Metric[id]
-    # @return [GoodData::Metric] matric instance or list
-    def metric(id, opts = { :full => true })
+    def metrics(id = :all, opts = { :full => true })
       GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
@@ -655,19 +658,25 @@ module GoodData
 
     alias_method :pid, :obj_id
 
-    def partial_md_export(objects, options = {})
-      # TODO: refactor polling to md_polling in client
+    # Helper for getting objects of a project
+    #
+    # @return [Array<GoodData::MdObject>] object instance or list
+    def objects(id, opts = {})
+      GoodData::MdObject[id, opts.merge(project: self, client: client)]
+    end
 
-      fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objects.nil? || objects.empty?
-      fail 'The objects to migrate has to be provided as an array' unless objects.is_a?(Array)
+    def partial_md_export(objs, options = {})
+      fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objs.nil?
+      objs = [objs] unless objs.is_a?(Array)
+      fail 'Nothing to migrate. The list you provided is empty' if objs.empty?
 
       target_project = options[:project]
       fail 'You have to provide a project instance or project pid to migrate to' if target_project.nil?
-      target_project = GoodData::Project[target_project, options]
-      objects = objects.map { |obj| GoodData::MdObject[obj, options] }
+      target_project = client.projects(target_project)
+      objs = objs.pmap { |obj| objects(obj) }
       export_payload = {
         :partialMDExport => {
-          :uris => objects.map { |obj| obj.uri }
+          :uris => objs.map { |obj| obj.uri }
         }
       }
       result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
@@ -717,7 +726,7 @@ module GoodData
 
     def info
       results = blueprint.datasets.pmap do |ds|
-        [ds, ds.count]
+        [ds, ds.count(self)]
       end
       puts title
       puts GoodData::Helpers.underline(title)
@@ -758,8 +767,8 @@ module GoodData
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::ReportDefinition[id]
     # @return [GoodData::ReportDefinition | Array<GoodData::ReportDefinition>] report definition instance or list
-    def report_definitions(id = :all)
-      GoodData::ReportDefinition[id, project: self, client: client]
+    def report_definitions(id = :all, options = {})
+      GoodData::ReportDefinition[id, options.merge(project: self, client: client)]
     end
 
     # Gets the list or project roles

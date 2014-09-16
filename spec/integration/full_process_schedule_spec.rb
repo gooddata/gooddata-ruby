@@ -31,7 +31,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     expect(@process.schedules).to eq []
   end
 
-  it "should be able to schedule" do
+  it "should be able to delete schedule" do
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     expect(@process.schedules.count).to eq 1
     expect(@process.schedules).to eq [schedule]

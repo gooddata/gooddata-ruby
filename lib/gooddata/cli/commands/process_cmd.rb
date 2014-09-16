@@ -35,11 +35,11 @@ GoodData::CLI.module_eval do
     c.command :list do |list|
       list.action do |global_options, options, args|
         opts = options.merge(global_options)
-        GoodData.connect(opts)
+        client = GoodData.connect(opts)
         opts = opts.merge(:project_id => args[0]) if args.length > 0
-        processes = GoodData::Command::Process.list(opts)
+        processes = GoodData::Command::Process.list(opts.merge(client: client))
         processes.each do |process|
-          puts "#{process.name},#{GoodData.connection.url + process.uri}"
+          puts "#{process.name},#{client.connection.server_url + process.uri}"
         end
       end
     end
@@ -48,8 +48,8 @@ GoodData::CLI.module_eval do
     c.command :show do |get|
       get.action do |global_options, options, args|
         opts = options.merge(global_options)
-        GoodData.connect(opts)
-        pp GoodData::Command::Process.get(options.merge(global_options)).raw_data
+        client = GoodData.connect(opts)
+        pp GoodData::Command::Process.get(opts.merge(client: client)).raw_data
       end
     end
 
@@ -61,8 +61,9 @@ GoodData::CLI.module_eval do
         name = opts[:name]
         fail 'You have to provide a directory or a file to deploy. Use --dir param' if dir.nil? || dir.empty?
         fail 'You have to provide a name of the deployed process.  Use --name param' if name.nil? || name.empty?
-        GoodData.connect(opts)
-        pp GoodData::Command::Process.deploy(dir, options.merge(global_options))
+        client = GoodData.connect(opts)
+        process = GoodData::Command::Process.deploy(dir, opts.merge(client: client))
+        puts "Process #{process.uri} was deployed"
       end
     end
 
@@ -72,8 +73,9 @@ GoodData::CLI.module_eval do
         opts = options.merge(global_options)
         process_id = opts[:process_id]
         fail 'You have to provide a process id. Use --process_id param' if process_id.nil? || process_id.empty?
-        GoodData.connect(opts)
-        pp GoodData::Command::Process.delete(process_id, opts)
+        client = GoodData.connect(opts)
+        GoodData::Command::Process.delete(process_id, opts.merge(client: client))
+        puts "Process #{process_id} was deleted"
       end
     end
 

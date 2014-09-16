@@ -60,8 +60,10 @@ module GoodData
         # @return [GoodData::Rest::Client] Client
         def connect(username, password, opts = {})
           new_opts = opts.dup
-          if username.is_a? Hash
-            new_opts[:username] = username[:login]
+          if username.is_a?(Hash) && username.key?(:sst_token)
+            new_opts[:sst_token] = username[:sst_token]
+          elsif username.is_a? Hash
+            new_opts[:username] = username[:login] || username[:user] || username[:username]
             new_opts[:password] = username[:password]
           elsif username.nil? && password.nil? && (opts.nil? || opts.empty?)
             new_opts = Helpers::AuthHelper.read_credentials
@@ -69,11 +71,11 @@ module GoodData
             new_opts[:username] = username
             new_opts[:password] = password
           end
+          unless new_opts[:sst_token]
+            fail ArgumentError, 'No username specified' if new_opts[:username].nil?
+            fail ArgumentError, 'No password specified' if new_opts[:password].nil?
+          end
 
-          fail ArgumentError, 'No username specified' if new_opts[:username].nil?
-          fail ArgumentError, 'No password specified' if new_opts[:password].nil?
-
-          # new_opts = new_opts.merge(Hash.new({}))
           client = Client.new(new_opts)
 
           if client
@@ -83,7 +85,7 @@ module GoodData
           end
 
           # HACK: This line assigns class instance # if not done yet
-          # @@instance = client # rubocop:disable ClassVars
+          @@instance = client # rubocop:disable ClassVars
           client
         end
 
@@ -128,11 +130,11 @@ module GoodData
         GoodData::Domain[domain_name, :client => self]
       end
 
-      def project(id = :all)
+      def projects(id = :all)
         GoodData::Project[id, client: self]
       end
 
-      def process(id = :all)
+      def processes(id = :all)
         GoodData::Process[id, client: self]
       end
 
@@ -306,6 +308,10 @@ module GoodData
           :directory => options[:directory],
           :staging_url => url
         ))
+      end
+
+      def with_project(pid, &block)
+        GoodData.with_project(pid, client: self, &block)
       end
     end
   end

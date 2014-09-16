@@ -43,14 +43,14 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should compute an empty metric" do
     f = @project.fact_by_title('Lines Changed')
-    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
-    metric.execute.should be_nil
+    metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")")
+    expect(metric.execute).to be_nil
   end
 
-  it "should compute an empty report" do
+  it "should compute an empty report def" do
     @project.delete_all_data(force: true)
     f = @project.fact_by_title('Lines Changed')
-    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
+    metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")")
     res = GoodData::ReportDefinition.execute(:left => [metric], :client => @client, :project => @project);
     expect(res).to be_empty
   end
@@ -78,79 +78,85 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should compute a metric" do
     f = @project.fact_by_title('Lines Changed')
-    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
-    metric.execute.should == 9
+    metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")")
+    expect(metric.execute).to eq 9
   end
 
   it "should execute an anonymous metric twice and not fail" do
     f = @project.fact_by_title('Lines Changed')
-    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :client => @client, :project => @project)
-    metric.execute.should == 9
+    metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")")
+    expect(metric.execute).to eq 9
     # Since GD platform cannot execute inline specified metric the metric has to be saved
     # The code tries to resolve this as transparently as possible
-    metric.execute.should == 9
+    # Here we are testing that you can execute the metric twice. The first execution is on unsaved metric
+    # We wanna make sure that when we are cleaning up we are not messing things up
+    expect(metric.execute).to eq 9
   end
 
-  it "should compute a report" do
+  it "should compute a report def" do
     f = @project.fact_by_title('Lines Changed')
 
     # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
-    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => "My metric", :client => @client, :project => @project)
+    metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")", :title => "My metric")
     metric.save
     result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project)
-    result[1][1].should == 3
-    result.include_row?(["jirka@gooddata.com", 5]).should == true
+    expect(result[1][1]).to eq 3
+    expect(result.include_row?(["jirka@gooddata.com", 5])).to be true
 
     result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project).execute
-    result2[1][1].should == 3
-    result2.include_row?(["jirka@gooddata.com", 5]).should == true
-    result2.should == result
+    expect(result2[1][1]).to eq 3
+    expect(result2.include_row?(["jirka@gooddata.com", 5])).to eq true
+    expect(result2).to eq result
   end
 
-  it "should throw an exception if trying to access object without explicitely specifying a project" do
-    expect do
-      GoodData::Metric[:all, :client => @client]
-    end.to raise_exception(ArgumentError, 'No :project specified')
+  it "should be able to purge report from older revisions" do
+    m = @project.metrics.first
+    r = @project.create_report(top: [m], title: 'xy')
+    expect(r.definitions.count).to eq 1
+
+    rd = GoodData::ReportDefinition.create(:top => [m], :client => @client, :project => @project)
+    rd.save
+    r.add_definition(rd)
+    r.save
+    expect(r.definitions.count).to eq 2
   end
 
   it "should be possible to get all metrics" do
-    metrics1 = GoodData::Metric[:all, :client => @client, :project => @project]
-    metrics2 = GoodData::Metric.all(:client => @client, :project => @project)
-    metrics1.should == metrics2
+    metrics1 = @project.metrics
+    expect(metrics1.count).to be >= 0
   end
 
   it "should be possible to get all metrics with full objects" do
-    metrics1 = GoodData::Metric[:all, :full => true, :client => @client, :project => @project]
-    metrics2 = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
-    metrics1.should == metrics2
+    metrics1 = @project.metrics(:all, full: false)
+    expect(metrics1.first.class).to be Hash
   end
 
   it "should be able to get a metric by identifier" do
-    metrics = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
-    metric = GoodData::Metric[metrics.first.identifier, :client => @client, :project => @project]
-    metric.identifier == metrics.first.identifier
-    metrics.first == metric
+    metrics = @project.metrics
+    metric = @project.metrics(metrics.first.identifier)
+    expect(metric.identifier).to eq metrics.first.identifier
+    expect(metrics.first).to eq metric
   end
 
   it "should be able to get a metric by uri" do
-    metrics = GoodData::Metric.all(:full => true, :client => @client, :project => @project)
-    metric = GoodData::Metric[metrics.first.uri, :client => @client, :project => @project]
-    metric.uri == metrics.first.uri
-    metrics.first == metric
+    metrics = @project.metrics
+    metric = @project.metrics(metrics.first.uri)
+    expect(metric.uri).to eq metrics.first.uri
+    expect(metrics.first).to eq metric
   end
 
   it "should be able to get a metric by object id" do
     metrics = @project.metrics
-    metric = @project.metric(metrics.first.obj_id, :full => true)
-    metric.obj_id == metrics.first.obj_id
-    metrics.first == metric
+    metric = @project.metrics(metrics.first.obj_id)
+    expect(metric.obj_id).to eq metrics.first.obj_id
+    expect(metrics.first).to eq metric
   end
 
   it "should exercise the object relations and getting them in various ways" do
     # Find a metric by name
     metric = @project.metric_by_title('My metric')
-    the_same_metric = @project.metric(metric)
-    metric.should == metric
+    the_same_metric = @project.metrics(metric)
+    expect(metric).to eq the_same_metric
 
     # grab fact in several different ways
     fact1 = @project.fact_by_title('Lines Changed')
@@ -160,67 +166,67 @@ describe "Full project implementation", :constraint => 'slow' do
     fact5 = @client.create(GoodData::Fact, fact4)
 
     # All should be the same
-    fact1.should == fact2
-    fact1.should == fact2
-    fact1.should == fact3
-    fact1.should == fact4
-    fact1.should == fact5
+    expect(fact1).to eq fact2
+    expect(fact1).to eq fact2
+    expect(fact1).to eq fact3
+    expect(fact1).to eq fact4
+    expect(fact1).to eq fact5
 
     fact3.title = "Somewhat changed title"
-    fact1.should_not == fact3
+    expect(fact1).not_to eq fact3
 
-    metric.using(nil, :client => @client, :project => @project)
-    metric.using('fact', :client => @client, :project => @project).count.should == 1
+    metric.using(nil)
+    expect(metric.using('fact', :client => @client, :project => @project).count).to eq 1
 
-    fact1.used_by(nil, :client => @client, :project => @project)
-    fact1.used_by('metric', :client => @client, :project => @project).count.should == 1
+    fact1.used_by(nil)
+    expect(fact1.used_by('metric', :client => @client, :project => @project).count).to eq 1
 
-    res = metric.using?(fact1, :client => @client, :project => @project)
+    res = metric.using?(fact1)
     expect(res).to be(true)
 
-    res = fact1.using?(metric, :client => @client, :project => @project)
+    res = fact1.using?(metric)
     expect(res).to be(false)
 
-    res = metric.used_by?(fact1, :client => @client, :project => @project)
+    res = metric.used_by?(fact1)
     expect(res).to be(false)
 
-    res = fact1.used_by?(metric, :client => @client, :project => @project)
+    res = fact1.used_by?(metric)
     expect(res).to be(true)
   end
 
   it "should try setting and getting by tags" do
     fact = @project.fact_by_title('Lines Changed')
-    fact.tags.should be_empty
+    expect(fact.tags.empty?).to be_true
 
     fact.tags = "tag1,tag2,tag3"
     fact.save
 
     tagged_facts = GoodData::Fact.find_by_tag('tag3', :client => @client, :project => @project)
-    tagged_facts.count.should == 1
+    expect(tagged_facts.count).to eq 1
   end
 
   it "should contain metadata for each dataset in project metadata" do
     k = GoodData::ProjectMetadata.keys(:client => @client, :project => @project)
-    k.should include("manifest_devs")
+    expect(k).to include("manifest_devs")
   end
 
   it "should be able to interpolate metric based on" do
     res = GoodData::Metric.xexecute "SELECT SUM(![fact.commits.lines_changed])", :client => @client, :project => @project
-    res.should == 9
+    expect(res).to eq 9
 
     res = GoodData::Metric.xexecute( "SELECT SUM(![fact.commits.lines_changed])", :client => @client, :project => @project)
-    res.should == 9
+    expect(res).to eq 9
 
     res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true, :client => @client, :project => @project)
-    res.should == 9
+    expect(res).to eq 9
 
     res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true, :client => @client, :project => @project)
-    res.should == 9
+    expect(res).to eq 9
 
     fact = @project.fact_by_title('Lines Changed')
-    fact.fact?.should == true
-    res = fact.create_metric(:type => :sum, :client => @client, :project => @project).execute
-    res.should == 9
+    expect(fact.fact?).to be true
+    res = fact.create_metric(:type => :sum).execute
+    expect(res).to eq 9
   end
 
   it "should load the data" do
@@ -234,27 +240,27 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should have more users"  do
     attribute = @project.attributes('attr.devs.dev_id')
-    attribute.attribute?.should == true
-    attribute.create_metric(:client => @client, :project => @project).execute.should == 4
+    expect(attribute.attribute?).to be true
+    expect(attribute.create_metric.execute).to eq 4
   end
 
   it "should tell you whether metric contains a certain attribute" do
     attribute = @project.attributes('attr.devs.dev_id')
     repo_attribute = @project.attributes('attr.repos.repo_id')
-    metric = attribute.create_metric(:title => "My test metric", :client => @client, :project => @project)
+    metric = attribute.create_metric(:title => "My test metric")
     metric.save
-    metric.execute.should == 4
+    expect(metric.execute).to eq 4
 
-    metric.contain?(attribute).should == true
-    metric.contain?(repo_attribute).should == false
+    expect(metric.contain?(attribute)).to be true
+    expect(metric.contain?(repo_attribute)).to be false
 
     metric.replace(attribute, repo_attribute)
     metric.save
-    metric.execute.should_not == 4
+    expect(metric.execute).not_to eq 4
 
     l = attribute.primary_label
     value = l.values.first[:value]
-    l.find_element_value(l.find_value_uri(value)).should == value
+    expect(l.find_element_value(l.find_value_uri(value))).to eq value
     expect(l.value?(value)).to eq true
     expect(l.value?("DEFINITELY NON EXISTENT VALUE HOPEFULLY")).to eq false
   end
@@ -262,7 +268,7 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should be able to compute count of different datasets" do
     attribute = @project.attributes('attr.devs.dev_id')
     dataset_attribute = @project.attributes('attr.commits.factsof')
-    attribute.create_metric(:attribute => dataset_attribute, :client => @client, :project => @project).execute.should == 3
+    expect(attribute.create_metric(:attribute => dataset_attribute).execute).to eq 3
   end
 
   it "should be able to tell you if a value is contained in a metric" do
@@ -270,8 +276,8 @@ describe "Full project implementation", :constraint => 'slow' do
     label = attribute.primary_label
     value = label.values.first
     fact = @project.facts('fact.commits.lines_changed')
-    metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
-    metric.contain_value?(label, value[:value]).should == true
+    metric = @project.create_metric("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
+    expect(metric.contain_value?(label, value[:value])).to be true
   end
 
   it "should be able to replace the values in a metric" do
@@ -280,10 +286,10 @@ describe "Full project implementation", :constraint => 'slow' do
     value = label.values.first
     different_value = label.values[1]
     fact = @project.facts('fact.commits.lines_changed')
-    metric = GoodData::Metric.xcreate("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", :client => @client, :project => @project)
+    metric = @project.create_metric("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
     metric.replace_value(label, value[:value], different_value[:value])
-    metric.contain_value?(label, value[:value]).should == false
-    metric.pretty_expression.should == "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
+    expect(metric.contain_value?(label, value[:value])).to be false
+    expect(metric.pretty_expression).to eq "SELECT SUM([Lines Changed]) WHERE [Dev] = [josh@gooddata.com]"
   end
 
   it "should be able to lookup the attributes by regexp and return a collection" do
@@ -292,9 +298,9 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to give you values of the label as an array of hashes" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
+    attribute = @project.attributes('attr.devs.dev_id')
     label = attribute.primary_label
-    label.values.map { |v| v[:value] }.should == [
+    expect(label.values.map { |v| v[:value] }).to eq [
       'jirka@gooddata.com',
       'josh@gooddata.com',
       'petr@gooddata.com',
@@ -303,45 +309,54 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to give you values for" do
-    attribute = GoodData::Attribute['attr.devs.dev_id', :client => @client, :project => @project]
-    attribute.values_for(2).should == ["tomas@gooddata.com", "1"]
+    attribute = @project.attributes('attr.devs.dev_id')
+    expect(attribute.values_for(2)).to eq ["tomas@gooddata.com", "1"]
   end
 
   it "should be able to find specific element and give you the primary label value" do
     attribute = @project.attributes('attr.devs.dev_id')
-    GoodData::Attribute.find_element_value("#{attribute.uri}/elements?id=2", :client => @client, :project => @project).should == 'tomas@gooddata.com'
+    expect(@project.find_attribute_element_value("#{attribute.uri}/elements?id=2")).to eq 'tomas@gooddata.com'
   end
 
   it "should be able to give you label by name" do
     attribute = @project.attributes('attr.devs.dev_id')
     label = attribute.label_by_name('email')
-    label.label?.should == true
-    label.title.should == 'Email'
-    label.identifier.should == "label.devs.dev_id.email"
-    label.attribute_uri.should == attribute.uri
-    label.attribute.should == attribute
+    expect(label.label?).to eq true
+    expect(label.title).to eq 'Email'
+    expect(label.identifier).to eq 'label.devs.dev_id.email'
+    expect(label.attribute_uri).to eq attribute.uri
+    expect(label.attribute).to eq attribute
   end
 
   it "should be able to return values of the attribute for inspection" do
     attribute = @project.attributes('attr.devs.dev_id')
     vals = attribute.values
-    vals.count.should == 4
-    vals.first.count.should == 2
-    vals.first.first[:value].should == "jirka@gooddata.com"
+    expect(vals.count).to eq 4
+    expect(vals.first.count).to eq 2
+    expect(vals.first.first[:value]).to eq "jirka@gooddata.com"
   end
 
   it "should be able to save_as a metric" do
     m = @project.metric_by_title("My test metric")
     cloned = m.save_as
     m_cloned = @project.metric_by_title("Clone of My test metric")
-    m_cloned.should == cloned
-    m_cloned.execute.should == cloned.execute
+    expect(m_cloned).to eq cloned
+    expect(m_cloned.execute).to eq cloned.execute
   end
 
   it "should be able to clone a project" do
     title = 'My new clone proejct'
-    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, :client => @client)
+    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
     expect(cloned_project.title).to eq title
+    expect(cloned_project.facts.first.create_metric.execute).to eq 9
+    cloned_project.delete
+  end
+
+  it "should be able to clone a project without data" do
+    title = 'My new clone project'
+    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, data: false)
+    expect(cloned_project.title).to eq title
+    expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete
   end
 end

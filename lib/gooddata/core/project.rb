@@ -51,6 +51,7 @@ module GoodData
     # @param bl Block to be performed
     def with_project(project, opts = { :client => GoodData.connection }, &bl)
       fail 'You have to specify a project when using with_project' if project.nil? || (project.is_a?(String) && project.empty?)
+      fail 'You have to specify block' unless bl
       old_project = GoodData.project
 
       begin

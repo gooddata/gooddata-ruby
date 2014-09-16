@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-require_relative '../core/connection'
 require_relative '../core/rest'
 
 require_relative 'metadata/metadata'

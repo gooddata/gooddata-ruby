@@ -1,22 +1,21 @@
 require 'gooddata/connection'
-require 'gooddata/core/connection'
 
-describe GoodData::Connection do
+describe GoodData::Rest::Connection do
   before(:all) do
     USERNAME = ConnectionHelper::DEFAULT_USERNAME
     PASSWORD = ConnectionHelper::DEFAULT_PASSWORD
   end
 
   it "Has DEFAULT_URL defined" do
-    GoodData::Connection::DEFAULT_URL.should be_a(String)
+    GoodData::Rest::Connection::DEFAULT_URL.should be_a(String)
   end
 
   it "Has LOGIN_PATH defined" do
-    GoodData::Connection::LOGIN_PATH.should be_a(String)
+    GoodData::Rest::Connection::LOGIN_PATH.should be_a(String)
   end
 
   it "Has TOKEN_PATH defined" do
-    GoodData::Connection::TOKEN_PATH.should be_a(String)
+    GoodData::Rest::Connection::TOKEN_PATH.should be_a(String)
   end
 
   describe '#connect' do

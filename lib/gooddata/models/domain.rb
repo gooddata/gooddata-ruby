@@ -230,8 +230,8 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.users
     #
-    def users(opts = USERS_OPTIONS.merge(:client => GoodData.connection))
-      GoodData::Domain.users(name, opts)
+    def users(opts = USERS_OPTIONS)
+      GoodData::Domain.users(name, opts.merge(client: client))
     end
 
     def users_create(list)
