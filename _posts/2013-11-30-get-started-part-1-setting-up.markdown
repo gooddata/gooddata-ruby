@@ -1,5 +1,5 @@
 ---
-layout: gs-template
+layout: guide
 title:  "Part I - Setting Up"
 date:   2014-01-19 13:56:00
 categories: get-started
