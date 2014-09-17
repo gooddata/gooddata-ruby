@@ -3,8 +3,8 @@ layout: guides
 title:  "Part IV - Looking Around A Project"
 date:   2014-01-19 13:56:00
 categories: get-started
-prev_section: get-started/get-started-part-5-loading-data
-next_section: get-started/get-started-part-3-model
+prev_section: get-started/get-started-part-3-model
+next_section: get-started/get-started-part-5-loading-data
 pygments: true
 perex: "Before we dive into numbers, let's explore the open sandbox of your project through which you can examine almost any aspect of the project: number of users, facts, or attributes, as well as the number of stars in the model."
 ---
