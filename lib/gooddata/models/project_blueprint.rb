@@ -339,9 +339,9 @@ module GoodData
       # @return [Array<Hash>]
       def can_break(dataset)
         dataset = find_dataset(dataset) if dataset.is_a?(String)
-        (referenced_by(dataset) + [dataset]).mapcat do |dataset|
-          dataset.attributes_and_anchors.map do |attr|
-            [dataset, attr]
+        (referenced_by(dataset) + [dataset]).mapcat do |ds|
+          ds.attributes_and_anchors.map do |attr|
+            [ds, attr]
           end
         end
       end
