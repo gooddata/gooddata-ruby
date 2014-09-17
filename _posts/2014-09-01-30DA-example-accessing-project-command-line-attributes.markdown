@@ -1,6 +1,6 @@
 ---
 layout: guides
-title:  "Accessing Projects, Browsing Attributes, Facts, & Metrics"
+title:  "Browsing Attributes, Facts, & Metrics"
 date:   2014-07-09 10:00:00
 categories: general
 tags:
