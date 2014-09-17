@@ -54,7 +54,7 @@ module GoodData
     alias_method :refresh, :reload!
 
     def browser_uri
-      GoodData.connection.url + meta['uri']
+      client.connection.server_url + meta['uri']
     end
 
     def deprecated=(flag)

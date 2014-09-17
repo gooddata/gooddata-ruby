@@ -126,6 +126,14 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
+      def create_project(options = {})
+        GoodData::Project.create(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, client: self)
+      end
+
+      def create_project_from_blueprint(blueprint, options = {})
+        GoodData::Model::ProjectCreator.migrate(spec: blueprint, token: options[:auth_token], client: self)
+      end
+
       def domain(domain_name)
         GoodData::Domain[domain_name, :client => self]
       end

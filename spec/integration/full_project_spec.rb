@@ -5,7 +5,7 @@ describe "Full project implementation", :constraint => 'slow' do
     @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
-    @project = GoodData::Model::ProjectCreator.migrate({:spec => @spec, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
+    @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
   end
 
   after(:all) do
@@ -16,7 +16,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should not build an invalid model" do
     expect {
-      GoodData::Model::ProjectCreator.migrate({:spec => @invalid_spec, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
+      @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
     }.to raise_error(GoodData::ValidationError)
   end
 
@@ -51,7 +51,7 @@ describe "Full project implementation", :constraint => 'slow' do
     @project.delete_all_data(force: true)
     f = @project.fact_by_title('Lines Changed')
     metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")")
-    res = GoodData::ReportDefinition.execute(:left => [metric], :client => @client, :project => @project);
+    res = @project.compute_report(:left => [metric])
     expect(res).to be_empty
   end
 
@@ -99,11 +99,11 @@ describe "Full project implementation", :constraint => 'slow' do
     # TODO: Here we create metric which is not deleted and is used by another test - "should exercise the object relations and getting them in various ways"
     metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")", :title => "My metric")
     metric.save
-    result = GoodData::ReportDefinition.execute(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project)
+    result = @project.compute_report(:top => [metric], :left => ['label.devs.dev_id.email'])
     expect(result[1][1]).to eq 3
     expect(result.include_row?(["jirka@gooddata.com", 5])).to be true
 
-    result2 = GoodData::ReportDefinition.create(:title => "My report", :top => [metric], :left => ['label.devs.dev_id.email'], :client => @client, :project => @project).execute
+    result2 = @project.compute_report(:top => [metric], :left => ['label.devs.dev_id.email'])
     expect(result2[1][1]).to eq 3
     expect(result2.include_row?(["jirka@gooddata.com", 5])).to eq true
     expect(result2).to eq result
@@ -176,10 +176,10 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(fact1).not_to eq fact3
 
     metric.using(nil)
-    expect(metric.using('fact', :client => @client, :project => @project).count).to eq 1
+    expect(metric.using('fact').count).to eq 1
 
     fact1.used_by(nil)
-    expect(fact1.used_by('metric', :client => @client, :project => @project).count).to eq 1
+    expect(fact1.used_by('metric').count).to eq 1
 
     res = metric.using?(fact1)
     expect(res).to be(true)
@@ -211,16 +211,16 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be able to interpolate metric based on" do
-    res = GoodData::Metric.xexecute "SELECT SUM(![fact.commits.lines_changed])", :client => @client, :project => @project
+    res = @project.compute_metric "SELECT SUM(![fact.commits.lines_changed])"
     expect(res).to eq 9
 
-    res = GoodData::Metric.xexecute( "SELECT SUM(![fact.commits.lines_changed])", :client => @client, :project => @project)
+    res = @project.compute_metric "SELECT SUM(![fact.commits.lines_changed])"
     expect(res).to eq 9
 
-    res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true, :client => @client, :project => @project)
+    res = @project.compute_metric "SELECT SUM(![fact.commits.lines_changed])"
     expect(res).to eq 9
 
-    res = GoodData::Metric.execute("SELECT SUM(![fact.commits.lines_changed])", :extended_notation => true, :client => @client, :project => @project)
+    res = @project.compute_metric "SELECT SUM(![fact.commits.lines_changed])"
     expect(res).to eq 9
 
     fact = @project.fact_by_title('Lines Changed')

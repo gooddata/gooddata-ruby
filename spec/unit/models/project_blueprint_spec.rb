@@ -213,7 +213,6 @@ describe GoodData::Model::ProjectBlueprint do
     attrs = @blueprint.can_break('commits')
     attrs.count.should == 3
 
-    pending("At least those from the same dataset should be able to break")
     attrs = @blueprint.can_break('devs')
     attrs.count.should == 1
   end

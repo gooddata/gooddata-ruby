@@ -19,29 +19,24 @@ describe 'GoodData - project' do
     end
 
     it 'Assigns project using project ID' do
-      pending 'GoodData::project= is disabled for now'
-      GoodData.project = ProjectHelper::PROJECT_ID
+      GoodData.use(ProjectHelper::PROJECT_ID, client: @client)
     end
 
     it 'Assigns project using project URL' do
-      pending 'GoodData::project= is disabled for now'
-      GoodData.project = ProjectHelper::PROJECT_URL
+      GoodData.use ProjectHelper::PROJECT_URL, client: @client
     end
 
     it 'Assigns project directly' do
-      pending 'GoodData::project= is disabled for now'
-      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID, client: @client]
     end
   end
 
   describe '#project' do
     it 'Returns project assigned' do
-      pending 'GoodData.project= is disabled for now'
-
       GoodData.project = nil
       GoodData.project.should == nil
 
-      GoodData.project = ProjectHelper::PROJECT_ID
+      GoodData.use ProjectHelper::PROJECT_ID, client: @client
       GoodData.project.should_not == nil
     end
   end

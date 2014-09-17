@@ -131,7 +131,7 @@ module GoodData
       end
 
       def create_from_blueprint(blueprint, options = {})
-        GoodData::Model::ProjectCreator.migrate(:spec => blueprint, :token => options[:auth_token])
+        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: GoodData.connection))
       end
 
       # Takes one CSV line and creates hash from data extracted
@@ -253,6 +253,14 @@ module GoodData
       end
 
       new_project
+    end
+
+    def compute_report(spec = {})
+      GoodData::ReportDefinition.execute(spec.merge(:client => client, :project => self))
+    end
+
+    def compute_metric(expression)
+      GoodData::Metric.xexecute(expression, :client => client, :project => self)
     end
 
     def create_schedule(process, date, executable, options = {})

@@ -1,13 +1,13 @@
 require 'gooddata'
 
-describe "Spin a project", :constraint => 'slow' do
+describe "Object export between projects", :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 
     spec = MultiJson.load(File.read("./spec/data/test_project_model_spec.json"), :symbolize_keys => true)
 
-    @source_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
-    @target_project = GoodData::Model::ProjectCreator.migrate({:spec => spec, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
+    @source_project = @client.create_project_from_blueprint(spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @target_project = @client.create_project_from_blueprint(spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
   end
 
   after(:all) do
@@ -20,18 +20,17 @@ describe "Spin a project", :constraint => 'slow' do
   it "should transfer a metric" do
     f = GoodData::Fact.find_first_by_title('Lines Changed', :client => @client, :project => @source_project)
     metric_title = "Testing metric to be exported"
-    metric = GoodData::Metric.xcreate("SELECT SUM(#\"#{f.title}\")", :title => metric_title, :client => @client, :project => @source_project)
+    metric = @source_project.create_metric("SELECT SUM(#\"#{f.title}\")", :title => metric_title)
     metric.save
 
-    GoodData.with_project(@target_project) { |p| GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 0 }
+    @target_project.metrics.count.should == 0
 
-    @source_project.partial_md_export(metric, :client => @client, :project => @target_project)
-    GoodData.with_project(@target_project) do |_p|
-      GoodData::Metric[:all, :client => @client, :project => @target_project].count.should == 1
-      metric = GoodData::Metric.find_first_by_title(metric_title, :client => @client, :project => @target_project)
-      metric.should_not be_nil
-      metric.title.should == metric_title
-    end
+    @source_project.partial_md_export(metric, :project => @target_project)
+
+    expect(@target_project.metrics.count).to eq 1
+    metric = GoodData::Metric.find_first_by_title(metric_title, :client => @client, :project => @target_project)
+    expect(metric).not_to be_nil
+    expect(metric.title).to eq metric_title
   end
 
 end
