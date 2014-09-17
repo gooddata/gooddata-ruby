@@ -61,19 +61,19 @@ Let's try to log in to the GoodData platform with your credentials through the S
 You should be logged in. Now, you can perform tasks that do not require you to be inside of a specific project. For example, use the following to list all of your projects:
 
 {% highlight ruby %}
-  projects = GoodData::Project[:all]
+  client.projects
 {% endhighlight %}
 
 To work with a project, you must define the project for the SDK. For example, suppose you wish to list the reports in a project. You must tell the SDK the project to review: 
 
 {% highlight ruby %}
-  project = GoodData::Project['YOUR_PROJECT_ID', :client => client]
+  project = client.projects('YOUR_PROJECT_ID')
 {% endhighlight %}
 
 To list the reports in this project:
 
 {% highlight ruby %}
-  reports = GoodData::Report[:all]
+  project.reports
 {% endhighlight %}
 
 Ok. To exit irb, enter:
@@ -106,7 +106,7 @@ For even better results, you can try using the following:
 In a single command, the above launches the command line interface, logs you into the platform, and identifies the project to which to connect. At this point, you may begin entering commands:
 
 {% highlight ruby %}
-  GoodData::Report[:all]
+  reports = GoodData::Report[:all]
 {% endhighlight %}
 
 **Tip:** Use `gooddata auth store` to save your username and password locally, so you do not have to type it every single time. If you do not specify this command explicitly, the stored default is used. 
@@ -121,9 +121,9 @@ A simple program that does something useful is the following:
   require 'pp'
 
   client = GoodData.connect('YOUR_USERNAME', 'YOUR_PASSWORD')
-  project = GoodData::Project['my_project_id', :client => client]
+  client.projects('YOUR-PROJECT-ID')
 
-  pp GoodData::Report[:all]
+  pp project.reports
 {% endhighlight %}
 
 Save this into a file called `my_first.rb`. Run it using the following command: 
