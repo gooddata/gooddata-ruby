@@ -1,5 +1,10 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.9
+- Fixing issues with creating models.
+- Adding couple more helpers for report/metric computation
+- Rewriting several full_* specs to use the new syntax
+
 ## 0.6.8
 
 - REST Factory - See [PR #224](https://github.com/gooddata/gooddata-ruby/pull/224)
