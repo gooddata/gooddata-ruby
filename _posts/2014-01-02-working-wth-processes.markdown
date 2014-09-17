@@ -61,21 +61,22 @@ Let's start by setting up the client and project you will be using.
 
 {% highlight ruby %}
   client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
-  project = GoodData['YOUR-PROJECT-ID', :client => client]
+  project = client.projects('YOUR-PROJECT-ID')
 {% endhighlight %}
 ###Get processes in a project
 {% highlight ruby %}
-  processes = GoodData::Process[:all, :project => project]
+  project = client.projects('YOUR-PROJECT-ID')
+  processes = project.processes
 {% endhighlight %}
 
 ###Get specific processes by a process id
 {% highlight ruby %}
-  process = GoodData::Process[process_id, :project => project]
+  process = project.processes('YOUR-PROCESS-ID')
 {% endhighlight %}
 
 ###Accessing specified process properties
 {% highlight ruby %}
-  process = processes.first
+  p = project.processes.first
   p.name
   p.type
   p.graphs
@@ -83,26 +84,27 @@ Let's start by setting up the client and project you will be using.
 {% endhighlight %}
 
 ###Deploying process
-You can deploy process with SDK like this
+You can deploy process with SDK like this:
+
 {% highlight ruby %}
-  process = GoodData::Process[process_id, :project => project]
-  process.deploy(dir, :name => "Testing process")
+  client = GoodData.connect 'YOUR-USER@gooddata.com', 'YOUR-PASSWORD'
+  project = client.projects('YOUR-PROJECT-ID')
+  process = project.deploy_process('./spec/data/ruby_process', type: 'RUBY', name: 'Demo Process')
 {% endhighlight %}e process
 
 **NOTE:** This command blocks subsequent commands until process execution is done.
 
 {% highlight ruby %}
-  graph_to_execute = p.executables.first // just an example you have to pick whichever makes sense for you
-  process.execute_process(graph_to_execute, :params => {"param1" => "value1", "param2" => "value2"}, :hidden_params => {"param1" => "value1"})
+  graph = process.execute(process.executables.first, :params => {"param1" => "value1", "param2" => "value2"}, :hidden_params => {"param1" => "value1"}))
 {% endhighlight %}
 
 ###Creating a schedule
 {% highlight ruby %}
-schedule = GoodData::Schedule.create(PROCESS_ID, '0 15 27 7 *', 'main.grf', :hidden_params => {:param1 => 'val1'})
+  schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
 {% endhighlight %}
 
 
 ###Execute a schedule
 {% highlight ruby %}
-schedule.execute
+  schedule.execute
 {% endhighlight %}

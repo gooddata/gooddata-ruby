@@ -74,7 +74,7 @@ Often times a customer comes and asks us. We created 200 reports for our marketi
 Let's take our above example. We want to exchange filtered value on all metrics. First we need to find out what attribute a product is.
 
 {% highlight ruby %}
-product_attribute = GoodData::Attribute.find_first_by_title('Product', :project => project)
+product_attribute = GoodData::Attribute.find_first_by_title('Product')
 {% endhighlight %}
 
 Let's grab all metrics that we would like to change
