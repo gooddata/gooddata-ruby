@@ -73,7 +73,7 @@ In both cases, we should see one fact.
 You can list all attributes from the project:
 
 {% highlight ruby %}
-attrs = GoodData::Attribute[:all, :project => project]
+attrs = GoodData::Attribute[:all]
 attrs.map { |f| f['title'] }
 {% endhighlight %}
 
@@ -89,9 +89,9 @@ attrs.map { |f| f[:name] }
 You may also look for other objects using the following commands. Right now, our example project contains none of these:
 
 {% highlight ruby %}
-dashboards = GoodData::Dashboard[:all, :project => project]
-metrics = GoodData::Metric[:all, :project => project]
-reports = GoodData::Report[:all, :project => project]
+dashboards = GoodData::Dashboard[:all]
+metrics = GoodData::Metric[:all]
+reports = GoodData::Report[:all]
 {% endhighlight %}
 
 We will start creating these in the next part.
