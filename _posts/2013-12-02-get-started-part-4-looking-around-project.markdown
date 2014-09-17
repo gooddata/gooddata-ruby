@@ -55,8 +55,7 @@ Let's list all the attributes and facts of the model and print their titles to v
 The following displays all facts in the project:
 
 {% highlight ruby %}
-facts = GoodData::Fact.all
-facts.map { |f| f['title'] }
+facts = project.facts.map { |f| f['title'] }
 {% endhighlight %}
 
 The following displays all facts in the blueprint:
@@ -73,8 +72,7 @@ In both cases, we should see one fact.
 You can list all attributes from the project:
 
 {% highlight ruby %}
-attrs = GoodData::Attribute[:all]
-attrs.map { |f| f['title'] }
+attrs = project.attributes.map { |f| f['title'] }
 {% endhighlight %}
 
 And this command lists is all attributes from the blueprint:
@@ -89,9 +87,9 @@ attrs.map { |f| f[:name] }
 You may also look for other objects using the following commands. Right now, our example project contains none of these:
 
 {% highlight ruby %}
-dashboards = GoodData::Dashboard[:all]
-metrics = GoodData::Metric[:all]
-reports = GoodData::Report[:all]
+dashboards = project.dashboards
+metrics = project.metrics
+reports = project.reporst
 {% endhighlight %}
 
 We will start creating these in the next part.

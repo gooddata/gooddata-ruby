@@ -33,7 +33,7 @@ commits = GoodData::Model.upload_data('./data/commits.csv', blueprint, 'commits'
 
 {% endhighlight %}
 
-Done. After a minute or two, data should be in the project.
+Done. After a few seconds the data should be in the project.
 
 ###What is going on?
 

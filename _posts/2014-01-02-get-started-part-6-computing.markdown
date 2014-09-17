@@ -20,9 +20,9 @@ Right now you are probably interested in how many developers are there in the pr
 
 ###Count
 {% highlight ruby %}
-client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
-project = Goodata::Project['YOUR_PROJECT_ID', :client => client]
-attr = GoodData::Attribute['attr.devs.dev_id', :project => project].create_metric.execute
+  client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
+  project = client.projects('YOUR-PROJECT-ID')
+  developers = project.attributes('attr.devs.dev_id').create_metric.execute
 {% endhighlight %}
 
 This will find an attribute creates a metric out of it (the only aggregation usable on attribute is a Count and that is default) and executes it.
@@ -33,22 +33,22 @@ It returns 3 which is correct result.
 The previous example created a metric on the fly. If we like it we can of course save it.
 
 {% highlight ruby %}
-attr = GoodData::Attribute['attr.devs.dev_id', :project => project].create_metric.save
+  developers = project.attributes('attr.devs.dev_id').create_metric.save
 {% endhighlight %}
 
 You can make sure it worked by using what we learned last time. Run
 
 {% highlight ruby %}
-metrics = GoodData::Metric[:all, :project => project]
+  metrics = project.metrics
 {% endhighlight %}
 
 Our metric should be the only one there. You can grab it if you know its link and inspect it further.
 
 {% highlight ruby %}
-uri = GoodData::Metric[:all, :project => project].first['link']
-metric = GoodData::Metric[uri, :project => project]
-metric.title
-metric.expression
+  uri = project.metrics.first['link']
+  metric = project.metrics(uri)
+  metric.title
+  metric.expression
 {% endhighlight %}
 
 This should return `SELECT COUNT([/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/201])`. You can see that behind the scene it created a full fledged maql metric.
@@ -58,22 +58,26 @@ This should return `SELECT COUNT([/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/2
 Let's say that you would like to create another metric. This time out of fact. The only fact we have is called 'Lines changed'. If it worked with attribute let's try the same with a fact.
 
 {% highlight ruby %}
-metric = GoodData::Fact.find_first_by_title('Lines changed').create_metric
-metric.execute
+  metric = project.facts.find_first_by_title('Lines Changed').create_metric
+  metric.execute
 {% endhighlight %}
 
 Great very similar. Note couple of differences. We used `find_first_by_title` just to illustrate that there are various ways how to get to the object we want. Create_metrics works the same. The default aggregation function here is `SUM` but there are actually many more available for the fact. Let's say you are interested in average.
 
 {% highlight ruby %}
-metric = GoodData::Fact.find_first_by_title('Lines changed').create_metric(:type => :avg)
-metric.execute
+
+  metric = project.facts.find_first_by_title('Lines Changed').create_metric(:type => :avg)
+  metric.execute
+
 {% endhighlight %}
 
 Let's save both of the metrics like we did previously.
 
 {% highlight ruby %}
-sum = GoodData::Fact.find_first_by_title('Lines changed').create_metric.save
-avg = GoodData::Fact.find_first_by_title('Lines changed').create_metric(:type => :avg).save
+
+  sum = project.facts.find_first_by_title('Lines Changed').create_metric.save
+  avg = project.facts.find_first_by_title('Lines Changed').create_metric(:type => :avg).save
+
 {% endhighlight %}
 
 ##First report
@@ -115,7 +119,9 @@ Notice that we said we are doing reports yet we used ReportDefinition class. I d
 Let's create the same report. The only difference is that we need to provide a title so we can save it.
 
 {% highlight ruby %}
-report = GoodData::Report.create :title => 'Devs lines commited per repository', :top => [sum, 'attr.repos.repo_id'], :left => 'attr.devs.dev_id'
+client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
+project = client.projects('YOUR-PROJECT-ID')
+report = project.create_report (:title => 'Devs lines commited per repository', :top => [sum, 'attr.repos.repo_id'], :left => 'attr.devs.dev_id')
 report.save
 report.execute
 {% endhighlight %}
@@ -124,8 +130,8 @@ Similar enough. Now the report is really in project and accessibel in the UI.
 
 {% highlight ruby %}
 client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
-project = GoodData::Project['YOUR-PROJECT-ID', :client => client]
-GoodData::Report[:all, :project => project]
+project = client.projects('YOUR-PROJECT-ID')
+reports = project.reports
 {% endhighlight %}
 
 ##Exporting your work
