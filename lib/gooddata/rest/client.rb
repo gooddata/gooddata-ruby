@@ -75,7 +75,9 @@ module GoodData
             fail ArgumentError, 'No username specified' if new_opts[:username].nil?
             fail ArgumentError, 'No password specified' if new_opts[:password].nil?
           end
-
+          if username.is_a?(Hash) && username.key?(:server)
+            new_opts[:server] = username[:server]
+          end
           client = Client.new(new_opts)
 
           if client

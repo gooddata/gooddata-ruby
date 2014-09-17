@@ -34,7 +34,7 @@ module GoodData
         #
         # @param uri [String] Target URI
         def delete(uri, options = {})
-          GoodData.logger.debug "DELETE: #{uri}"
+          GoodData.logger.debug "DELETE: #{@server[uri]}#{uri}"
           profile "DELETE #{uri}" do
             b = proc { @server[uri].delete cookies }
             process_response(options, &b)
@@ -45,7 +45,7 @@ module GoodData
         #
         # @param uri [String] Target URI
         def get(uri, options = {})
-          GoodData.logger.debug "GET: #{uri}"
+          GoodData.logger.debug "GET: #{@server[uri]}#{uri}"
           profile "GET #{uri}" do
             b = proc { @server[uri].get cookies }
             process_response(options, &b)
@@ -57,7 +57,7 @@ module GoodData
         # @param uri [String] Target URI
         def put(uri, data, options = {})
           payload = data.is_a?(Hash) ? data.to_json : data
-          GoodData.logger.debug "PUT: #{uri}, #{data}"
+          GoodData.logger.debug "PUT: #{@server[uri]}#{uri}, #{data}"
           profile "PUT #{uri}" do
             b = proc { @server[uri].put payload, cookies }
             process_response(options, &b)
@@ -68,7 +68,7 @@ module GoodData
         #
         # @param uri [String] Target URI
         def post(uri, data, options = {})
-          GoodData.logger.debug "POST: #{uri}, #{data}"
+          GoodData.logger.debug "POST: #{@server[uri]}#{uri}, #{data}"
           profile "POST #{uri}" do
             payload = data.is_a?(Hash) ? data.to_json : data
             b = proc { @server[uri].post payload, cookies }
