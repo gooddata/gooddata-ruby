@@ -1,5 +1,5 @@
 ---
-layout: gs-template
+layout: guides
 title:  "The end - Next Steps"
 date:   2014-01-19 13:56:00
 categories: get-started

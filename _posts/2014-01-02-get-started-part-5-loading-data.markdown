@@ -1,5 +1,5 @@
 ---
-layout: gs-template
+layout: guides
 title:  "Part V - Loading Data"
 date:   2014-01-19 13:56:00
 categories: get-started

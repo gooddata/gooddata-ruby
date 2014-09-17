@@ -1,5 +1,5 @@
 ---
-layout: gs-template
+layout: guides
 title:  "Part III - Creating A Data Model"
 date:   2014-01-19 13:56:00
 categories: get-started
@@ -28,7 +28,7 @@ The model we created looks like the following:
 Let's explore how the model is defined in Ruby. In the project directory, open the file called `model/model.rb`. You should see the following code:
 
 {% highlight ruby %}
-GoodData::Model::ProjectBuilder.create("my_test_project") do |p|
+model = GoodData::Model::ProjectBuilder.create("my_test_project") do |p|
   p.add_date_dimension("committed_on")
 
   p.add_dataset("repos") do |d|

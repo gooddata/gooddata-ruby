@@ -70,12 +70,15 @@ project_user.enable
 Thanks to power of ruby you can do mass purges of users. For example disablng all editors in 4 lines of code
 
 {% highlight ruby %}
-GoodData.with_project(pid) do |p|
-  editor_role = p.roles.find {|role| role.title == "Editor"}
-  p.users.select do |project_user|
-    project_user.role == editor_role
-  end.each { |editor| editor.disable }
-end
+
+client = GoodData.connect 'YOUR-USER@gooddata.com', 'YOUR-PASS'
+project = GoodData::Project['YOUR-PROJECT-ID', :client => client]
+
+editor_role = project.roles.find { |role| role.title == "Editor" }
+project.users.select do |project_user|
+  project_user.role == editor_role
+end.each { |editor| editor.disable }
+
 {% endhighlight %}
 
 ##Adding users to the project
@@ -86,9 +89,7 @@ There are generally two ways how to add user to a project. Let's look at the fir
 Inviting is a process that requires cooperation of the invitee. If you invite him he is sent an email. If he accepts he is added to the project or taken through the registration process if he is not yet a user. User is in complete controll of his account you only controll whether he is or is not enabled in the project.
 
 {% highlight ruby %}
-GoodData.with_project("pid") do |p|
-  invitation = p.invite(email, role, msg)
-end
+invitation = project.invite('theemail@example.com', 'Editor', 'A welcome message for the Project!')
 {% endhighlight %}
 
 ###Adding a user
@@ -96,16 +97,14 @@ end
 Sometimes you want complete control over the users. This is typical scenario with SSO providers where you do not want user to know he has to create and manage a user at gooddata. In this case user is not sent an email and there is no action required on his side. You are in complete control of not ony his presence in a project but also his account. You can change his name, phone number and even password. The condition is that this user is added to an Domain (also called organization). And we get to that part in a minute. If you have a user in a domain you can add him to the project like this.
 
 {% highlight ruby %}
-GoodData.with_project("pid") do |p|
-  p.add_user(email, role)
-end
+user = project.add_user('email@example.com', 'Editor')
 {% endhighlight %}
 
 This will only work if you are an administrator of a domain, which the user is in. Let's have a look how to add a user to a domain.
 
 {% highlight ruby %}
 domain = GoodData::Domain['my_domain_name']
-damain.add_user('joe@example.com', 'jindrisska')
+domain.add_user('joe@example.com', 'jindrisska')
 {% endhighlight %}
 
 Of course there are couple of things to make the work with domains easier
