@@ -106,7 +106,7 @@ For even better results, you can try using the following:
 In a single command, the above launches the command line interface, logs you into the platform, and identifies the project to which to connect. At this point, you may begin entering commands:
 
 {% highlight ruby %}
-  reports = GoodData::Report[:all]
+  reports = project.reports
 {% endhighlight %}
 
 **Tip:** Use `gooddata auth store` to save your username and password locally, so you do not have to type it every single time. If you do not specify this command explicitly, the stored default is used. 

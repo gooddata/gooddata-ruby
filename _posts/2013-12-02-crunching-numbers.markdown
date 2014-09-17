@@ -42,14 +42,14 @@ You may use the gooddata jack_in command to log in to the platform and to spin u
 After you jack in, let's have a look around. From the tutorial project, there are no metrics:
 
 {% highlight ruby %}
-    metrics = GoodData::Metric[:all]
+    metrics = project.metrics
     > []
 {% endhighlight %}
 
 You should have one fact: 
 
 {% highlight ruby %}
-    fact = GoodData::Fact[:all]
+    fact = project.facts
     > [{"link"=>"/gdc/md/ptbedvc1841r4obgptywd2mzhbwjsfyr/obj/223",
       "author"=>"/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248",
       "tags"=>"",
@@ -190,7 +190,7 @@ You can already see that you have a metric by reference, and an attribute can be
 Let's pass the attribute as an object, too:
 
 {% highlight ruby %}
-    a = GoodData::Attribute.get_by_id("attr.devs.id")
+    a = project.attributes.get_by_id("attr.devs.id")
     GoodData::ReportDefinition.execute(:top => [a], :left => [m])
 {% endhighlight %}
 
@@ -261,7 +261,7 @@ For now, Ruby SDK selected the first one. In the future, a "this is ambiguous" e
 All of the above information is combined in the following: 
 
 {% highlight ruby %}
-    a = GoodData::Attribute.find_first_by_title(/month\/year/i)
+    a = project.attributes.find_first_by_title(/month\/year/i)
     GoodData::ReportDefinition.execute(:top => [{:type => :attribute, :title => "Id"}], :left => [m, a])
 {% endhighlight %}
 
@@ -270,15 +270,14 @@ All of the above information is combined in the following:
 Until now, you've been computing reports for demo purposes. It is easy to create a report that you would actually save and deploy into a project. Simple:
 
 {% highlight ruby %}
-    report = GoodData::Report.create(
+    report = project.create_report(
       :title => "Fantastic report",
       :top => [{:type => :attribute, :title => /Month\/Year/}],
-      :left => m)
-    
+      :left => metric)
     report.save
 {% endhighlight %}
 
-Note that we are using Report instead of ReportDefinition. All other values are the same. When you try to save the report, a title must be set. 
+Note that we are using Report instead of ReportDefinition. All other values are the same. When you try to save the report, a title must be set.
 
 ###Results
 

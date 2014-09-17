@@ -17,14 +17,15 @@ MAQL is very useful language and it helps keep reports terse and flexible compar
 Imagine grabbing metric
 
 {% highlight ruby %}
-project = GoodData::Project['YOUR-PROJECT-ID']
-m = GoodData::Metric[259, :project => project]
+client = GoodData.connect 'YOUR-USER@gooddata.com', 'YOUR-PASS'
+project = client.projects('YOUR-PROJECT-ID')
+metric = project.metrics('YOUR-METRIC-ID')
 {% endhighlight %}
 
 You can print the expression that came over the wire
 
 {% highlight ruby %}
-m.expression
+metric.expression
 {% endhighlight %}
 
 This will return something along the lines of
@@ -36,7 +37,7 @@ SELECT SUM([/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/204]) WHERE [/gdc/md/ks
 As you can see this is not ideal. SDK provides additional method to make this more reaable
 
 {% highlight ruby %}
-m.pretty_expression
+metric.pretty_expression
 {% endhighlight %}
 
 Which will return for our particular metric
@@ -47,7 +48,7 @@ SELECT SUM([Lines changed]) WHERE [Date (Committed on)]= [10/17/1909]
 Much better. You can easilly produce a list of metrics with a readable interpretation something like this.
 
 {% highlight ruby %}
-metrics = GoodData::Metric[:all, :full => true]
+metrics = project.metrics(:full => true)
 File.open('list_of_metrics.txt', 'w') do |f|
   metrics.each do |metric|
     f.puts("#{metric.title} - #{metrics.pretty_expression}")
@@ -60,8 +61,8 @@ end
 It is useful in many cases to ask if certain metric contains some other object. From the expression above we see that the metric contains fact with id 204. Let's test that
 
 {% highlight ruby %}
-f = GoodData::Fact[204]
-m.contain?(f)
+fact = project.facts('YOUR-FACT-ID')
+metric.contain?(f)
 {% endhighlight %}
 
 Obvious question is how this compares to `used_by` and `using`. The difference is that these two checks objects that are directly or even indirectly used. `contain?` will check only object itself. What you want depends on the situation.
@@ -74,7 +75,7 @@ Often times a customer comes and asks us. We created 200 reports for our marketi
 Let's take our above example. We want to exchange filtered value on all metrics. First we need to find out what attribute a product is.
 
 {% highlight ruby %}
-product_attribute = GoodData::Attribute.find_first_by_title('Product')
+product_attribute = project.attributes.find_first_by_title('Product')
 {% endhighlight %}
 
 Let's grab all metrics that we would like to change

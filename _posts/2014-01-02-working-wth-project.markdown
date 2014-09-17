@@ -82,12 +82,9 @@ Using the GoodData APIs, you can begin exploring the capabilities of the Ruby SD
 ###Creating a project
 
 {% highlight ruby %}
-GoodData::Project.create(
-  :title => title,
-  :summary => summary,
-  :template => template,
-  :auth_token => token
-)
+client = GoodData.connect 'YOUR-USERNAME@gooddata.com', 'YOUR-PASSWORD'
+project = client.create_project(:title => 'My New Project, :auth_token => 'Your Developer Token')
+
 {% endhighlight %}
 
 * For API documentation, see [Project API](https://developer.gooddata.com/api#project).
@@ -97,11 +94,15 @@ GoodData::Project.create(
 Most of your platform operations occur inside a project. As part of your basic workflow, you must select a specific project. All of the following are equivalent methods for selecting a project:
 
 {% highlight ruby %}
-  GoodData.use(project_id)
+  client.projects('YOUR-PROJECT-ID')
 {% endhighlight %}
 
 {% highlight ruby %}
-  GoodData.project = project_id
+  GoodData.use('YOUR-PROJECT-ID')
+{% endhighlight %}
+
+{% highlight ruby %}
+  GoodData.project = 'YOUR-PROJECT-ID'
 {% endhighlight %}
 
 {% highlight ruby %}
@@ -114,9 +115,7 @@ The project remains the selected one until you change it.
 If you are working with several projects at the same, you can specify individual commands to apply to a specific project, in case the active project has been specified somewhere further upstream. Use the `with_project` method:
 
 {% highlight ruby %}
-  GoodData.with_project(project_id) do
-    processes = GoodData::Process.all
-  end
+  project.processes
 {% endhighlight %}
 
 The `project_id` value can be specified as either a string or a project identifier. 
@@ -125,12 +124,12 @@ The `project_id` value can be specified as either a string or a project identifi
 
 ###Cloning a project
 
-You can clone a project through the APIs. The parameters and their defaults are the same as those specified for the command-line interface version, enabling you to choose to optionally include data and users from the source project into the clone. 
+You can clone a project through the APIs. The parameters and their defaults are the same as those specified for the command-line interface version, enabling you to choose to optionally include data and users from the source project into the clone.
 
 * For API documentation, see [Project API](https://developer.gooddata.com/api#project).
 
 {% highlight ruby %}
-project = GoodData::Project['project_id']
+project = client.projects('YOUR-PROJECT-ID')
 project.clone(
   :title => "Title of the cloned project",
   :with_data => true,
@@ -144,7 +143,7 @@ project.clone(
 **WARNING: Deleting a project cannot be reverted.**
 
 {% highlight ruby %}
-project = GoodData::Project['project_id']
+project = client.projects('YOUR-PROJECT-ID')
 project.delete
 {% endhighlight %}
 
@@ -153,7 +152,7 @@ project.delete
 Use the following to validate a project, which also checks for referential integrity issues:
 
 {% highlight ruby %}
-project = GoodData::Project['project_id']
+project = client.projects('YOUR-PROJECT-ID')
 project.validate
 {% endhighlight %}
 * For API documentation, see [Data Model API](https://developer.gooddata.com/api#data-model).
