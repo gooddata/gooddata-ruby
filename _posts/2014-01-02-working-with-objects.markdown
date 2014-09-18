@@ -91,21 +91,6 @@ The URI for a selected object can be accessed using the URI method:
   report.uri
 {% endhighlight %}
 
-####Difference between list and single-object response
-
-**NOTE:** When you query for individual objects, a class is returned through Ruby SDK. When you query for all objects of a specified type, a hash is returned. The API endpoints return only a subset of the available data during collection queries.
-
-If you need to work with full objects, you can use deploy the following method:
-
-{% highlight ruby %}
-client = GoodData.connect 'YOUR-USER@gooddata.com', 'YOUR_PASS'
-project = client.projects('YOUR-PROJECT-ID')
-
-reports = project.reports.map { |data| GoodData::Report[data['link']] }
-{% endhighlight %}
-
-The above performs N+1 requests on the API, which may result in slow performance. When using this method, deploy it against the smallest usable collection to speed performance.
-
 ###Translating URIs to identifiers
 
 In some cases, you may have the object identifier and need to acquire the datacenter-unique URI. If you know the object type, you can execute a query similar to the following, which is looking for an attribute object identifier:
