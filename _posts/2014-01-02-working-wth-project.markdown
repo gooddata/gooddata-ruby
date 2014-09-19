@@ -133,7 +133,7 @@ project = client.projects('YOUR-PROJECT-ID')
 project.clone(
   :title => "Title of the cloned project",
   :with_data => true,
-  :with_users => true
+  :with_users => true,
   :auth_token => 'AUTH-TOKEN'
 )
 {% endhighlight %}
