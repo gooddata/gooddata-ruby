@@ -61,6 +61,14 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       result = schedule.execute
       log = @client.get(result['execution']['log'])
       expect(log.index('HELLO WORLD')).not_to eq nil
+      expect(schedule.enabled?).to be_true
+      schedule.disable
+      schedule.save
+      expect(schedule.enabled?).to be_false
+      expect(schedule.disabled?).to be_true
+      schedule.enable
+      schedule.save
+      expect(schedule.enabled?).to be_true
     ensure
       process && process.delete
     end
