@@ -19,4 +19,9 @@ module Enumerable
       a
     end
   end
+
+  def pselect(&block)
+    intermediate = pmap(&block)
+    self.zip(intermediate).select {|x| x[1]}.map {|x| x.first}
+  end
 end
