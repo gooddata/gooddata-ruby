@@ -206,8 +206,11 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should contain metadata for each dataset in project metadata" do
-    k = GoodData::ProjectMetadata.keys(:client => @client, :project => @project)
+    k = @project.metadata.keys
     expect(k).to include("manifest_devs")
+    expect(@project.metadata("manifest_devs")).not_to be_nil
+    @project.set_metadata('a', 'b')
+    expect(@project.metadata('a')).to eq 'b'
   end
 
   it "should be able to interpolate metric based on" do

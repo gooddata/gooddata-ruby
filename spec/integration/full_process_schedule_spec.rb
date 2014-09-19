@@ -79,10 +79,12 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
                                   type: 'RUBY',
                                   name: 'Test ETL zipped file Process')
     begin
+      expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
       log = @client.get(result['execution']['log'])
       expect(log.index('HELLO WORLD')).not_to eq nil
+      expect(process.schedules.count).to eq 1
     ensure
       process && process.delete
     end
