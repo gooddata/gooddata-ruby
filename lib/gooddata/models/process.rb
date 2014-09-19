@@ -26,11 +26,14 @@ module GoodData
         elsif id == :all
           uri = "/gdc/account/profile/#{c.user.obj_id}/dataload/processes"
           data = c.get(uri)
-          pids = data['processes']['items'].map { |process_data| process_data['process']['links']['self'].match(/\/gdc\/projects\/(\w*)\//)[1] }.uniq
-          projects_lookup = pids.pmap { |pid| c.projects(pid) }.reduce({}) {|a, e| a[e.pid] = e; a}
+          pids = data['processes']['items'].map { |process_data| process_data['process']['links']['self'].match(%r{/gdc/projects/(\w*)/})[1] }.uniq
+          projects_lookup = pids.pmap { |pid| c.projects(pid) }.reduce({}) do |a, e|
+            a[e.pid] = e
+            a
+          end
 
           data['processes']['items'].map do |process_data|
-            pid = process_data['process']['links']['self'].match(/\/gdc\/projects\/(\w*)\//)[1]
+            pid = process_data['process']['links']['self'].match(%r{/gdc/projects/(\w*)/})[1]
             c.create(Process, process_data, project: projects_lookup[pid])
           end
         else
