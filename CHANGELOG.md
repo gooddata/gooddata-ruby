@@ -6,6 +6,8 @@
 - Scrubing params in logs is back
 - Added ProjectMetadata helpers on project
 - Listing processes on client works as expected
+- Schedule can be enabled/disabled
+- Added pselect helper function
 
 
 ## 0.6.9
