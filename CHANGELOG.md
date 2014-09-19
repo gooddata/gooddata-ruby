@@ -1,5 +1,13 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.10
+- Fixed client default missing in ProjectMetadata
+- Listing schedules on processes is working
+- Scrubing params in logs is back
+- Added ProjectMetadata helpers on project
+- Listing processes on client works as expected
+
+
 ## 0.6.9
 - Fixing issues with creating models.
 - Adding couple more helpers for report/metric computation
