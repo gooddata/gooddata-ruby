@@ -40,7 +40,7 @@ module GoodData
     class << self
       # Returns an array of all projects accessible by
       # current user
-      def all(opts = {})
+      def all(opts = { client: GoodData.connection })
         c = client(opts)
         c.user.projects
       end
@@ -55,7 +55,7 @@ module GoodData
         return id if id.instance_of?(GoodData::Project) || id.respond_to?(:project?) && id.project?
 
         if id == :all
-          Project.all(opts)
+          Project.all({client: GoodData.connection}.merge(opts))
         else
           if id.to_s !~ %r{^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$}
             fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
