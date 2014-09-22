@@ -7,6 +7,23 @@ require_relative '../../commands/process'
 require_relative '../../commands/runners'
 require_relative '../../client'
 
+# translate given params (with dots) to json-like params
+def load_undot(filename)
+  p = MultiJson.load(File.read(filename))
+  # for each key-value config given
+  hashes = p.map do |k, v|
+    # dot notation to hash
+    k.split('__').reverse.reduce(v) do |memo, obj|
+      { obj => memo }
+    end
+  end
+
+  # merge back the keys as they came
+  hashes.reduce do |memo, obj|
+    memo.deep_merge(obj)
+  end
+end
+
 GoodData::CLI.module_eval do
 
   desc 'Run ruby bricks either locally or remotely deployed on our server. Currently private alpha.'
@@ -21,9 +38,13 @@ GoodData::CLI.module_eval do
     c.default_value nil
     c.flag [:l, :logger]
 
-    c.desc 'Params file path. Inside should be hash of key values'
+    c.desc 'Params file path. Inside should be hash of key values. These params override any defaults given in bricks.'
     c.default_value nil
     c.flag [:params]
+
+    c.desc 'Remote system credentials file path. Inside should be hash of key values.'
+    c.default_value nil
+    c.flag [:credentials]
 
     c.desc 'Run on remote machine'
     c.switch [:r, :remote]
@@ -35,11 +56,18 @@ GoodData::CLI.module_eval do
     c.action do |global_options, options, args|
       verbose = global_options[:verbose]
       options[:expanded_params] = if options[:params]
-                                    MultiJson.load(File.read(options[:params]))
+                                    # load params and credentials if given
+                                    runtime_params = load_undot(options[:params])
+                                    if options[:credentials]
+                                      runtime_params = runtime_params.deep_merge(load_undot(options[:credentials]))
+                                    end
+                                    { 'config' => runtime_params }
                                   else
-                                    {}
+                                    { 'config' => {} }
                                   end
-
+      # if there are some GDC_* params in config, put them on the level above
+      gdc_params = options[:expanded_params]['config'].select { |k, _| k =~ /GDC_.*/ }
+      options[:expanded_params].merge!(gdc_params)
       opts = options.merge(global_options).merge(:type => 'RUBY')
       GoodData.connect(opts)
       if options[:remote]
@@ -53,5 +81,4 @@ GoodData::CLI.module_eval do
       puts HighLine.color('Running ruby brick - DONE', HighLine::GREEN) if verbose
     end
   end
-
 end
