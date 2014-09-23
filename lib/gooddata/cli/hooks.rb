@@ -3,6 +3,8 @@
 require 'gli'
 require 'pp'
 
+require_relative '../helpers/auth_helpers'
+
 GoodData::CLI.module_eval do
   pre do |global, command, options, args|
     require 'logger'
@@ -11,7 +13,7 @@ GoodData::CLI.module_eval do
     password = global[:password]
     token = global[:token]
 
-    creds = GoodData::Command::Auth.read_credentials
+    creds = GoodData::Helpers::AuthHelper.read_credentials
 
     username = creds[:username] if username.nil?
     password = creds[:password] if password.nil?
@@ -39,7 +41,7 @@ GoodData::CLI.module_eval do
     # return false to skip default error handling
     # binding.pry
     # pp exception.backtrace
-    pp exception
+    # pp exception
     true
   end
 end

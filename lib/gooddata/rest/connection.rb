@@ -44,6 +44,7 @@ module GoodData
         @user = nil
 
         @stats = {}
+        @opts = opts
 
         # Initialize cookies
         reset_cookies!
@@ -52,19 +53,25 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         # Reset old cookies first
-        credentials = Connection.construct_login_payload(username, password)
+        if options[:sst_token]
+          merge_cookies!('GDCAuthSST' => options[:sst_token])
+          @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
+          @auth = {}
+          refresh_token :dont_reauth => true
+        else
+          credentials = Connection.construct_login_payload(username, password)
+          @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
-        @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
-
-        @user = get(@auth['profile'])
-        refresh_token :dont_reauth => true
+          @user = get(@auth['profile'])
+          refresh_token :dont_reauth => true
+        end
       end
 
       # Disconnect
       def disconnect
         # TODO: Wrap somehow
         url = @auth['state']
-        delete url
+        delete url if url
 
         @auth = nil
         @server = nil
@@ -78,7 +85,15 @@ module GoodData
           get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
         rescue Exception => e # rubocop:disable RescueException
           puts e.message
+          raise e
         end
+      end
+
+      # Returns server URI
+      #
+      # @return [String] server uri
+      def server_url
+        @server && @server.url
       end
 
       # HTTP DELETE
@@ -109,6 +124,13 @@ module GoodData
         fail NotImplementedError "POST #{uri}"
       end
 
+      # Reader method for SST token
+      #
+      # @return uri [String] SST token
+      def sst_token
+        cookies[:cookies]['GDCAuthSST']
+      end
+
       def stats_table(values = stats)
         sorted = values.sort_by { |k, v| v[:avg] }
         Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
@@ -124,6 +146,13 @@ module GoodData
             t.add_row row
           end
         end
+      end
+
+      # Reader method for TT token
+      #
+      # @return uri [String] TT token
+      def tt_token
+        cookies[:cookies]['GDCAuthTT']
       end
 
       private
@@ -146,7 +175,21 @@ module GoodData
         @cookies = { :cookies => {} }
       end
 
+      def scrub_params(params, keys)
+        keys = keys.reduce([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
+
+        new_params = params.deep_dup
+        GoodData::Helpers.hash_dfs(new_params) do |k, key|
+          keys.each do |key_to_scrub|
+            k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.key?(key_to_scrub) && k[key_to_scrub]
+          end
+        end
+        new_params
+      end
+
+      # TODO: Store PH_MAP for wildcarding of URLs in reports in separate file
       PH_MAP = [
+        ['/gdc/projects/{id}/users/{id}/permissions', %r{/gdc/projects/[\w]+/users/[\w]+/permissions}],
         ['/gdc/projects/{id}/roles/{id}', %r{/gdc/projects/[\w]+/roles/[\d]+}],
         ['/gdc/projects/{id}/model/diff/{id}', %r{/gdc/projects/[\w]+/model/diff/[\w]+}],
         ['/gdc/projects/{id}/', %r{/gdc/projects/[\w]+/}],

@@ -12,8 +12,8 @@ GoodData::CLI.module_eval do
     c.command :list do |list|
       list.action do |global_options, options, args|
         opts = options.merge(global_options)
-        GoodData.connect(opts)
-        list = GoodData::Command::Projects.list
+        client = GoodData.connect(opts)
+        list = GoodData::Command::Projects.list(client: client)
         puts list.map { |p| [p.uri, p.title].join(',') }
       end
     end

@@ -1,15 +1,7 @@
 # encoding: UTF-8
 
-require_relative 'threaded'
-
 module GoodData
-  # Assigns global/default GoodData project
-  def project=(project)
-    GoodData.project = project
-    GoodData.project
-  end
-
-  alias_method :use, :project=
+  @project = nil
 
   class << self
     # Sets the active project
@@ -31,40 +23,48 @@ module GoodData
     #
     #     # Select project using indexer on GoodData::Project class
     #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
-    #
-    def project=(project)
+    # Assigns global/default GoodData project
+    def project=(project, opts = { :client => GoodData.connection })
       if project.is_a? Project
-        threaded[:project] = project
+        @project = project
       elsif project.nil?
-        threaded[:project] = nil
+        @project = nil
       else
-        threaded[:project] = Project[project]
+        @project = Project[project, opts]
       end
+      @project
     end
 
     alias_method :use, :project=
 
+    attr_reader :project
+
     # Returns the active project
     #
-    def project
-      threaded[:project]
-    end
+    # def project
+    #   threaded[:project]
+    # end
 
     # Perform block in context of another project than currently set
     #
     # @param project Project to use
     # @param bl Block to be performed
-    def with_project(project, &bl)
+    def with_project(project, opts = { :client => GoodData.connection }, &bl)
       fail 'You have to specify a project when using with_project' if project.nil? || (project.is_a?(String) && project.empty?)
+      fail 'You have to specify block' unless bl
       old_project = GoodData.project
+
       begin
-        GoodData.use(project)
-        bl.call(GoodData.project)
+        GoodData.use(project, opts)
+        res = bl.call(GoodData.project)
       rescue RestClient::ResourceNotFound
-        raise(GoodData::ProjectNotFound, 'Project was not found')
-      ensure
         GoodData.project = old_project
+        raise(GoodData::ProjectNotFound, 'Project was not found')
       end
+
+      GoodData.project = old_project
+
+      res
     end
   end
 end

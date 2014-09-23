@@ -2,7 +2,7 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI do
+describe GoodData::CLI, :broken => true do
   describe 'role' do
     it 'Complains when no parameters specified' do
       args = %w(role)
@@ -13,7 +13,14 @@ describe GoodData::CLI do
 
     describe 'role list' do
       it 'Complains when no project ID specified' do
-        args = %w(role list)
+        args = [
+          '-U',
+          ConnectionHelper::DEFAULT_USERNAME,
+          '-P',
+          ConnectionHelper::DEFAULT_PASSWORD,
+          'role',
+          'list'
+        ]
 
         out = run_cli(args)
         out.should include 'Project ID has to be provided'
@@ -23,6 +30,10 @@ describe GoodData::CLI do
         pending 'Investignate which project to use'
 
         args = [
+          '-U',
+          ConnectionHelper::DEFAULT_USERNAME,
+          '-P',
+          ConnectionHelper::DEFAULT_PASSWORD,
           '-p',
           ProjectHelper::PROJECT_ID,
           'role',

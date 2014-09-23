@@ -14,6 +14,7 @@ The best documentation for the GoodData API can be found using these resources:
 ## Status
 
 [![Gem Version](https://badge.fury.io/rb/gooddata.png)](http://badge.fury.io/rb/gooddata)
+[![Downloads](http://img.shields.io/gem/dt/gooddata.svg)](http://rubygems.org/gems/gooddata)
 [![Dependency Status](https://gemnasium.com/gooddata/gooddata-ruby.png)](https://gemnasium.com/gooddata/gooddata-ruby)
 [![Code Climate](https://codeclimate.com/github/gooddata/gooddata-ruby.png)](https://codeclimate.com/github/gooddata/gooddata-ruby)
 [![Build Status](https://travis-ci.org/gooddata/gooddata-ruby.png)](https://travis-ci.org/gooddata/gooddata-ruby)
@@ -49,9 +50,16 @@ If you are using gems just
 
 ## Credits
 
-This project is developed and maintained by Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ] and Tomas Svarovsky [<mailto:svarovsky.tomas@gmail.com> / [@fluke777](http://twitter.com/fluke777)]
+This project was originaly started by Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ] 
 
-Special thanks to Thomas Watson Steen [ <mailto:w@tson.dk> / [@wa7son](http://twitter.com/wa7son) ]
+Project is now actively developed and maintained by following folks
+
+- [Tomas Korcak](https://github.com/korczis) [<mailto:korczis@gmail.com> / [@korczis](http://twitter.com/korczis)] 
+- [Tomas Svarovsky](https://github.com/fluke777) [<mailto:svarovsky.tomas@gmail.com> / [@fluke777](http://twitter.com/fluke777)]
+- [Patrick McConlogue](https://github.com/thnkr/)
+- [Petr Cvengros](https://github.com/cvengros)
+
+Special thanks to Thomas Watson Steen [ <mailto:w@tson.dk> / [@wa7son](http://twitter.com/wa7son) ].
 
 ## Copyright
 

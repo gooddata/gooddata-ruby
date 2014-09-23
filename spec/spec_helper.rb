@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'simplecov'
+require 'pmap'
 require 'rspec'
 require 'coveralls'
 require 'pathname'
@@ -30,8 +31,8 @@ RSpec.configure do |config|
     # TODO: Move this to some method.
     # TODO Make more intelligent so two test suites can run at the same time.
     # ConnectionHelper.create_default_connection
-    # users = GoodData::Domain.users_map(ConnectionHelper::DEFAULT_DOMAIN)
-    # users.each do |user|
+    # users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
+    # users.pmap do |user|
     #   user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
     # end
 

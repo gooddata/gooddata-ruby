@@ -8,7 +8,7 @@ module GoodData
       # @return [GoodData::Profile] Project Role Contributor
       def contributor
         url = meta['contributor']
-        tmp = GoodData.get url
+        tmp = client.get url
         GoodData::Profile.new(tmp)
       end
     end

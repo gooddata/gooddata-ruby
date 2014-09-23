@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
-require 'gooddata'
+# TODO: REmove this
+# require 'gooddata'
 
 require_relative 'base_middleware'
 
@@ -22,9 +23,9 @@ module GoodData
         fail 'GoodData username is missing. Expected param :GDC_USERNAME' if params['GDC_USERNAME'].nil?
         fail 'GoodData password is missing. Expected param :GDC_PASSWORD' if params['GDC_PASSWORD'].nil?
 
-        GoodData.connect(params['GDC_USERNAME'], params['GDC_PASSWORD'], :server => server)
+        client = GoodData.connect(params['GDC_USERNAME'], params['GDC_PASSWORD'], :server => server)
         GoodData.logger = logger
-        GoodData.with_project(project_id) do |p|
+        GoodData.with_project(project_id, :client => client) do |p|
           @app.call(params)
         end
       end

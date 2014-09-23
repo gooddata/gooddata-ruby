@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'pmap'
+
 require_relative '../rest/object'
 
 require_relative 'project'
@@ -207,7 +209,7 @@ module GoodData
 
     # Deletes this account settings
     def delete
-      GoodData.delete uri
+      client.delete uri
     end
 
     # Gets hash representing diff of profiles
@@ -321,17 +323,10 @@ module GoodData
     #
     # @return [Array<GoodData::Project>] Array of project where account settings belongs to
     def projects
-      res = []
-
-      # TODO: Strip this out after transition
-      client = GoodData.client
-
       projects = client.get @json['accountSetting']['links']['projects']
-      projects['projects'].each do |project|
-        res << client.create(GoodData::Project, project)
+      projects['projects'].map do |project|
+        client.create(GoodData::Project, project)
       end
-
-      res
     end
 
     # Saves object if dirty, clears dirty flag

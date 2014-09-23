@@ -1,17 +1,16 @@
 # encoding: UTF-8
 
 require 'gooddata/connection'
-require 'gooddata/core/connection'
 require 'gooddata/core/project'
 require 'gooddata/models/project'
 
 describe 'GoodData - project' do
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
   end
 
   after(:each) do
-    ConnectionHelper.disconnect
+    @client.disconnect
   end
 
   describe '#project=' do
@@ -20,15 +19,15 @@ describe 'GoodData - project' do
     end
 
     it 'Assigns project using project ID' do
-      GoodData.project = ProjectHelper::PROJECT_ID
+      GoodData.use(ProjectHelper::PROJECT_ID, client: @client)
     end
 
     it 'Assigns project using project URL' do
-      GoodData.project = ProjectHelper::PROJECT_URL
+      GoodData.use ProjectHelper::PROJECT_URL, client: @client
     end
 
     it 'Assigns project directly' do
-      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID]
+      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID, client: @client]
     end
   end
 
@@ -37,14 +36,14 @@ describe 'GoodData - project' do
       GoodData.project = nil
       GoodData.project.should == nil
 
-      GoodData.project = ProjectHelper::PROJECT_ID
+      GoodData.use ProjectHelper::PROJECT_ID, client: @client
       GoodData.project.should_not == nil
     end
   end
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID] do
+      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID, :client => @client] do
       end
     end
   end

@@ -31,5 +31,27 @@ module GoodData
     def diff(otherDataResult)
       ['empty']
     end
+
+    def [](index, options = {})
+      to_table[index]
+    end
+
+    alias_method :row, :[]
+
+    def empty?
+      true
+    end
+
+    def column(index)
+      table[index]
+    end
+
+    def include_row?(row = nil)
+      false
+    end
+
+    def include_column?(row = nil)
+      false
+    end
   end
 end

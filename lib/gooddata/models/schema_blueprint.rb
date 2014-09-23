@@ -199,14 +199,13 @@ module GoodData
       # datasets with or without anchor
       #
       # @return [Boolean]
-      def count
+      def count(project)
         id = if anchor?
                GoodData::Model.identifier_for(to_hash, anchor)
              else
                GoodData::Model.identifier_for(to_hash, type: :anchor_no_label)
              end
-        # binding.pry
-        attribute = GoodData::Attribute[id]
+        attribute = project.attributes(id)
         attribute.create_metric.execute
       end
 
@@ -259,6 +258,13 @@ module GoodData
       # @return [Array<Hash>] matching fields
       def find_column_by_type(type, all = nil)
         DatasetBlueprint.find_column_by_type(to_hash, type, all)
+      end
+
+      # Returns identifier for dataset
+      #
+      # @return [String] identifier
+      def identifier
+        GoodData::Model.identifier_for(to_hash)
       end
 
       # Creates a DatasetBlueprint

@@ -7,39 +7,49 @@ module GoodData
     class Project
       class << self
         # Create new project based on options supplied
-        def create(options = {})
+        def create(options = { client: GoodData.connection })
           title = options[:title]
           summary = options[:summary]
           template = options[:template]
           token = options[:token]
-
-          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
+          client = options[:client]
+          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token, :client => client)
         end
 
         # Show existing project
-        def show(id)
-          GoodData::Project[id]
+        def show(id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.projects(id)
         end
 
-        def invite(project_id, email, role, msg = GoodData::Project::DEFAULT_INVITE_MESSAGE)
-          msg = GoodData::Project::DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
-
-          project = GoodData::Project[project_id]
+        def invite(project_id, email, role, msg = GoodData::Project::DEFAULT_INVITE_MESSAGE, options = {})
+          client = options[:client]
+          project = client.projects(project_id)
           fail "Invalid project id '#{project_id}' specified" if project.nil?
 
           project.invite(email, role, msg)
         end
 
         # Clone existing project
-        def clone(project_id, options)
-          GoodData.with_project(project_id) do |project|
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to delete
+        # @option options [String] :data Clone including all the data (default true)
+        # @option options [String] :users Clone including all the users (default false)
+        # @option options [String] :title Name of the cloned project (default "Clone of {old_project_title}")
+        # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
+        def clone(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |project|
             project.clone(options)
           end
         end
 
-        # Delete existing project
-        def delete(project_id)
-          p = GoodData::Project[project_id]
+        # Deletes existing project
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to delete
+        def delete(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          p = client.projects(project_id)
           p.delete
         end
 
@@ -62,47 +72,35 @@ module GoodData
           [spec, goodfile[:project_id]]
         end
 
-        def list_users(pid)
-          users = []
-          finished = false
-          offset = 0
-          # Limit set to 1000 to be safe
-          limit = 1000
-          until finished
-            result = GoodData.get('/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{limit}')
-            result['users'].map do |u|
-              as = u['user']
-              users.push(
-                  :login => as['content']['email'],
-                  :uri => as['links']['self'],
-                  :first_name => as['content']['firstname'],
-                  :last_name => as['content']['lastname'],
-                  :role => as['content']['userRoles'].first,
-                  :status => as['content']['status']
-            )
-            end
-            if result['users'].count == limit
-              offset += limit
-            else
-              finished = true
-            end
-          end
-          users
-        end
-
         # Update project
-        def update(options = {})
-          project = options[:project]
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :project => project)
+        def update(opts = { client: GoodData.connection })
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          p = opts[:project]
+          fail ArgumentError, 'No :project specified' if p.nil?
+
+          project = GoodData::Project[p, opts]
+          fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+          GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :client => client, :project => project)
         end
 
         # Build project
-        def build(options = {})
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
+        def build(opts = { client: GoodData.connection })
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :token => opts[:token], :client => client)
         end
 
-        def validate(project_id)
-          GoodData.with_project(project_id) do |p|
+        # Performs project validation
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to validate
+        # @return [Object] Report of found problems
+        def validate(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |p|
             p.validate
           end
         end
@@ -120,7 +118,11 @@ module GoodData
 
             begin
               require 'gooddata'
-              GoodData.with_project(project_id) do |project|
+              client = GoodData.connect(options)
+
+              GoodData.with_project(project_id, :client => client) do |project|
+                fail ArgumentError, 'Wrong project specified' if project.nil?
+
                 puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
                 binding.pry(:quiet => true,
                             :prompt => [proc do |target_self, nest_level, pry|
@@ -141,6 +143,28 @@ module GoodData
             end
           else
             spin_session.call({}, nil)
+          end
+        end
+
+        # Lists roles in a project
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to list the users in
+        # @return [Array <GoodData::Role>] List of project roles
+        def roles(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |p|
+            p.roles
+          end
+        end
+
+        # Lists users in a project
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to list the users in
+        # @return [Array <GoodData::Membership>] List of project users
+        def users(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |p|
+            p.users
           end
         end
       end

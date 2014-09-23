@@ -1,37 +1,58 @@
 # encoding: UTF-8
 
-module GoodData
-  class Schedule
-    attr_reader :dirty, :data
+require_relative '../rest/resource'
+require_relative '../extensions/hash'
 
-    alias_method :json, :data
-    alias_method :raw_data, :data
-    alias_method :to_hash, :data
+module GoodData
+  class Schedule < Rest::Resource
+    attr_reader :dirty, :json
+
+    alias_method :data, :json
+    alias_method :raw_data, :json
+    alias_method :to_hash, :json
 
     class << self
       # Looks for schedule
       # @param id [String] URL, ID of schedule or :all
       # @return [GoodData::Schedule|Array<GoodData::Schedule>] List of schedules
-      def [](id, options = {})
+      def [](id, opts = { :client => GoodData.connection, :project => GoodData.project })
+        c = client(opts)
+        fail ArgumentError, 'No :client specified' if c.nil?
+
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
         if id == :all
-          GoodData::Schedule.all
+          GoodData::Schedule.all(opts)
         else
           if id =~ %r{\/gdc\/projects\/[a-zA-Z\d]+\/schedules\/?[a-zA-Z\d]*}
             url = id
-            tmp = GoodData.get url
-            return GoodData::Schedule.new(tmp)
+            tmp = c.get url
+            return c.create(GoodData::Schedule, tmp)
           end
 
-          tmp = GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules/#{id}"
-          GoodData::Schedule.new(tmp)
+          tmp = c.get "/gdc/projects/#{project.pid}/schedules/#{id}"
+          c.create(GoodData::Schedule, tmp, project: project)
         end
       end
 
       # Returns list of all schedules for active project
       # @return [Array<GoodData::Schedule>] List of schedules
-      def all
-        tmp = GoodData.get "/gdc/projects/#{GoodData.project.pid}/schedules"
-        tmp['schedules']['items'].map { |schedule| GoodData::Schedule.new(schedule) }
+      def all(opts = { :client => GoodData.connection, :project => GoodData.project })
+        c = client(opts)
+        fail ArgumentError, 'No :client specified' if c.nil?
+
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        tmp = c.get "/gdc/projects/#{project.pid}/schedules"
+        tmp['schedules']['items'].map { |schedule| c.create(GoodData::Schedule, schedule) }
       end
 
       # Creates new schedules from parameters passed
@@ -42,6 +63,15 @@ module GoodData
       # @param options [Hash] Optional options
       # @return [GoodData::Schedule] New GoodData::Schedule instance
       def create(process_id, cron, executable, options = {})
+        c = client(options)
+        fail ArgumentError, 'No :client specified' if c.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
         default_opts = {
           :type => 'MSETL',
           :timezone => 'UTC',
@@ -50,9 +80,9 @@ module GoodData
             :process_id => process_id,
             :executable => executable
           },
-          :hidden_params => {}
+          :hidden_params => {},
+          :reschedule => options[:reschedule] || 0
         }
-        default_opts.merge!(:reschedule => options[:reschedule])
 
         inject_schema = {
           :hidden_params => 'hiddenParams'
@@ -78,7 +108,7 @@ module GoodData
         default[:params] = default_params
 
         json = {
-          'schedule' => default.merge(options)
+          'schedule' => default.merge(options.except(:project, :client))
         }
 
         tmp = json['schedule'][:params]['PROCESS_ID']
@@ -96,13 +126,13 @@ module GoodData
         tmp = json['schedule'][:type]
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
-        url = "/gdc/projects/#{GoodData.project.pid}/schedules"
-        res = GoodData.post url, json
+        url = "/gdc/projects/#{project.pid}/schedules"
+        res = c.post url, json
 
         fail 'Unable to create new schedule' if res.nil?
 
-        new_obj_json = GoodData.get res['schedule']['links']['self']
-        GoodData::Schedule.new(new_obj_json)
+        new_obj_json = c.get res['schedule']['links']['self']
+        c.create(GoodData::Schedule, new_obj_json, client: c, project: p)
       end
     end
 
@@ -111,12 +141,45 @@ module GoodData
     # @param json [Object] Raw JSON
     # @return [GoodData::Schedule] New GoodData::Schedule instance
     def initialize(json)
+      super
       @json = json
     end
 
     # Deletes schedule
     def delete
-      GoodData.delete uri
+      client.delete uri
+    end
+
+    # Is schedule enabled?
+    #
+    # @return [Boolean]
+    def disabled?
+      state == 'DISABLED'
+    end
+
+    # Is schedule enabled?
+    #
+    # @return [Boolean]
+    def enabled?
+      !disabled?
+    end
+
+    # enables
+    #
+    # @return [GoodData::Schedule]
+    def enable
+      @json['schedule']['state'] = 'ENABLED'
+      @dirty = true
+      self
+    end
+
+    # Is schedule enabled?
+    #
+    # @return [GoodData::Schedule]
+    def disable
+      @json['schedule']['state'] = 'DISABLED'
+      @dirty = true
+      self
     end
 
     # Executes schedule
@@ -126,9 +189,9 @@ module GoodData
       data = {
         :execution => {}
       }
-      execution = GoodData.post(execution_url, data)
-      GoodData.poll_on_response(execution['execution']['links']['self']) do |body|
-        body['execution'] && body['execution']['status'] == 'RUNNING'
+      execution = client.post(execution_url, data)
+      client.poll_on_response(execution['execution']['links']['self']) do |body|
+        body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
       end
     end
 
@@ -239,7 +302,7 @@ module GoodData
     def executions
       if @json
         url = @json['schedule']['links']['executions']
-        res = GoodData.get url
+        res = client.get url
         res['executions']['items']
       end
     end
@@ -282,13 +345,14 @@ module GoodData
         update_json = {
           'schedule' => {
             'type' => @json['schedule']['type'],
+            'state' => @json['schedule']['state'],
             'timezone' => @json['schedule']['timezone'],
             'cron' => @json['schedule']['cron'],
             'params' => @json['schedule']['params'],
-            'hiddenParams' => @json['schedule']['hiddenParams']
+            'hiddenParams' => @json['schedule']['hiddenParams'],
+            'reschedule' => @json['schedule']['reschedule'] || 0
           }
         }
-        update_json['schedule'].merge!('reschedule' => @json['schedule']['reschedule'])
         res = GoodData.put uri, update_json
         @json = res
         @dirty = false

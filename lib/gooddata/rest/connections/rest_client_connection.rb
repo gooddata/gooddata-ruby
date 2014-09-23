@@ -17,13 +17,15 @@ module GoodData
           @user = nil
           @server = nil
 
+          @opts = opts
           headers = opts[:headers] || {}
           @headers.merge! headers
         end
 
         # Connect using username and password
         def connect(username, password, options = {})
-          @server = RestClient::Resource.new DEFAULT_URL, DEFAULT_LOGIN_PAYLOAD
+          server = options[:server] || DEFAULT_URL
+          @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD
 
           super
         end
@@ -32,6 +34,7 @@ module GoodData
         #
         # @param uri [String] Target URI
         def delete(uri, options = {})
+          GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
           profile "DELETE #{uri}" do
             b = proc { @server[uri].delete cookies }
             process_response(options, &b)
@@ -42,6 +45,7 @@ module GoodData
         #
         # @param uri [String] Target URI
         def get(uri, options = {})
+          GoodData.logger.debug "GET: #{@server.url}#{uri}"
           profile "GET #{uri}" do
             b = proc { @server[uri].get cookies }
             process_response(options, &b)
@@ -53,7 +57,7 @@ module GoodData
         # @param uri [String] Target URI
         def put(uri, data, options = {})
           payload = data.is_a?(Hash) ? data.to_json : data
-
+          GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, [:password, :login, :authorizationToken])}"
           profile "PUT #{uri}" do
             b = proc { @server[uri].put payload, cookies }
             process_response(options, &b)
@@ -64,6 +68,7 @@ module GoodData
         #
         # @param uri [String] Target URI
         def post(uri, data, options = {})
+          GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, [:password, :login, :authorizationToken])}"
           profile "POST #{uri}" do
             payload = data.is_a?(Hash) ? data.to_json : data
             b = proc { @server[uri].post payload, cookies }
@@ -146,6 +151,9 @@ module GoodData
           if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
             result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
             GoodData.logger.debug "Response: #{result.inspect}"
+          elsif ['text/plain;charset=UTF-8', 'text/plain; charset=UTF-8', 'text/plain'].include?(content_type)
+            result = response
+            GoodData.logger.debug 'Response: plain text'
           elsif content_type == 'application/zip'
             result = response
             GoodData.logger.debug 'Response: a zipped stream'

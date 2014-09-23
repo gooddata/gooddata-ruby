@@ -6,10 +6,10 @@ require 'gooddata/models/project_role'
 
 describe GoodData::Membership do
   before(:all) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
 
     @users = [
-      GoodData::Membership.new(
+      @client.create(GoodData::Membership,
         {
           'user' => {
             'content' => {
@@ -35,7 +35,7 @@ describe GoodData::Membership do
         }
       ),
 
-      GoodData::Membership.new(
+      @client.create(GoodData::Membership,
         {
           'user' => {
             'content' => {
@@ -48,7 +48,7 @@ describe GoodData::Membership do
         }
       ),
 
-      GoodData::Membership.new(
+      @client.create(GoodData::Membership,
         {
           'user' => {
             'content' => {
@@ -64,7 +64,7 @@ describe GoodData::Membership do
   end
 
   after(:all) do
-    GoodData.disconnect
+    @client.disconnect
   end
 
   describe '#diff_list' do

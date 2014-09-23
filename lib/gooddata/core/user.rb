@@ -1,8 +1,5 @@
 # encoding: UTF-8
 
-require_relative 'connection'
-require_relative 'threaded'
-
 require_relative '../models/profile'
 
 module GoodData

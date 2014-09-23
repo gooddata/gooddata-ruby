@@ -30,7 +30,7 @@ GoodData::CLI.module_eval do
   flag [:p, :project_id]
 
   desc 'Server'
-  default_value GoodData::Connection::DEFAULT_URL
+  default_value GoodData::Rest::Connection::DEFAULT_URL
   arg_name 'server'
   flag [:s, :server]
 

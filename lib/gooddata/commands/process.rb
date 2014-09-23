@@ -8,10 +8,8 @@ module GoodData
   module Command
     class Process
       class << self
-        def list(options = {})
-          GoodData.with_project(options[:project_id]) do
-            GoodData::Process[:all]
-          end
+        def list(options = { :client => GoodData.connection, :project => GoodData.project })
+          GoodData::Process[:all, options]
         end
 
         def get(options = {})
@@ -20,35 +18,37 @@ module GoodData
 
           id = options[:process_id]
           fail ArgumentError, 'None or invalid process_id' if id.nil? || id.empty?
-
-          GoodData.with_project(pid) do
-            GoodData::Process[id]
+          c = options[:client]
+          c.with_project(pid) do |project|
+            project.processes(id)
           end
         end
 
-        def delete(process_id, options = {})
-          GoodData.with_project(options[:project_id]) do
-            process = GoodData::Process[process_id]
-            process.delete
+        def delete(process_id, options = { :client => GoodData.connection, :project => GoodData.project })
+          c = options[:client]
+          pid = options[:project_id]
+          process = c.with_project(pid) do |project|
+            project.processes(process_id)
           end
+          process.delete
         end
 
         # TODO: check files_to_exclude param. Does it do anything? It should check that in case of using CLI, it makes sure the files are not deployed
-        def deploy(dir, options = {})
-          GoodData.with_project(options[:project_id]) do
-            params = options[:params].nil? ? [] : [options[:params]]
-            GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
+        def deploy(dir, options = { :client => GoodData.connection, :project => GoodData.project })
+          params = options[:params].nil? ? [] : [options[:params]]
+          c = options[:client]
+          pid = options[:project_id]
+          c.with_project(pid) do |project|
+            project.deploy_process(dir, options.merge(:files_to_exclude => params))
           end
         end
 
-        def execute_process(process_id, executable, options = {})
-          GoodData.with_project(options[:project_id]) do
-            process = GoodData::Process[process_id]
-            process.execute_process(executable, options)
-          end
+        def execute_process(process_id, executable, options = { :client => GoodData.connection, :project => GoodData.project })
+          process = GoodData::Process[process_id, options]
+          process.execute_process(executable, options)
         end
 
-        def run(dir, executable, options = {})
+        def run(dir, executable, options = { :client => GoodData.connection, :project => GoodData.project })
           verbose = options[:v]
           dir = Pathname(dir)
           name = options[:name] || "Temporary deploy[#{dir}][#{options[:project_name]}]"

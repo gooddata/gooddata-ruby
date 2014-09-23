@@ -9,21 +9,24 @@ module GoodData
   module Model
     class ProjectCreator
       class << self
-        def migrate(options = {})
-          spec = options[:spec] || fail('You need to provide spec for migration')
+        def migrate(opts = { :client => GoodData.connection, :project => GoodData.project })
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          spec = opts[:spec] || fail('You need to provide spec for migration')
           bp = ProjectBlueprint.new(spec)
           spec = bp.to_hash
 
           fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
 
-          token = options[:token]
-          project = options[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token)
+          token = opts[:token]
+          project = opts[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token, :client => client)
           fail('You need to specify token for project creation') if token.nil? && project.nil?
 
           begin
-            GoodData.with_project(project) do |p|
+            GoodData.with_project(project, opts) do |p|
               # migrate_date_dimensions(p, spec[:date_dimensions] || [])
-              migrate_datasets(p, spec)
+              migrate_datasets(spec, :project => p, :client => client)
               load(p, spec)
               migrate_metrics(p, spec[:metrics] || [])
               migrate_reports(p, spec[:reports] || [])
@@ -41,40 +44,47 @@ module GoodData
           end
         end
 
-        def migrate_datasets(project, spec)
+        def migrate_datasets(spec, opts = { :client => GoodData.connection })
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          p = opts[:project]
+          fail ArgumentError, 'No :project specified' if p.nil?
+
+          project = Project[p, { :client => client }]
+          fail ArgumentError, 'Wrong :project specified' if project.nil?
+
           bp = ProjectBlueprint.new(spec)
           # schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
           # project = GoodData.project unless project
-          uri = "/gdc/projects/#{GoodData.project.pid}/model/diff"
-          result = GoodData.post(uri, bp.to_wire)
+          uri = "/gdc/projects/#{project.pid}/model/diff"
+          result = client.post(uri, bp.to_wire)
+
           link = result['asyncTask']['link']['poll']
-          response = GoodData.get(link, :process => false)
+          response = client.get(link, :process => false)
+
           # pp response
           while response.code != 200
             sleep 1
-            GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+            client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
               sleep 1
-              response = GoodData.get(link, :process => false)
+              response = client.get(link, :process => false)
               # pp response
             end
           end
-          response = GoodData.get(link)
-          ldm_links = GoodData.get project.md[LDM_CTG]
-          ldm_uri = Links.new(ldm_links)[LDM_MANAGE_CTG]
+
+          response = client.get(link)
+
           chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
           chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-            response = GoodData.post ldm_uri, 'manage' => { 'maql' => chunk }
-            polling_url = response['entries'].first['link']
-            polling_result = GoodData.poll_on_response(polling_url) do |body|
-              body['wTaskStatus']['status'] == 'RUNNING'
-            end
-            fail 'Creating dataset failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+            result = project.execute_maql(chunk)
+            fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
           end
 
           bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
             dataset = ds[0]
             manifest = ds[1]
-            GoodData::ProjectMetadata["manifest_#{dataset.name}"] = manifest.to_json
+            GoodData::ProjectMetadata["manifest_#{dataset.name}", :client => client, :project => project] = manifest.to_json
           end
         end
 
