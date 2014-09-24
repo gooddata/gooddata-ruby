@@ -59,7 +59,7 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password, opts = {:verify_ssl => true})
+        def connect(username, password, opts = { :verify_ssl => true })
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
             new_opts[:sst_token] = username[:sst_token]
@@ -199,7 +199,7 @@ module GoodData
       end
 
       # FIXME: Invstigate _file argument
-      def get_project_webdav_path(_file, opts = {:project => GoodData.project})
+      def get_project_webdav_path(_file, opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -211,7 +211,7 @@ module GoodData
       end
 
       # FIXME: Invstigate _file argument
-      def get_user_webdav_path(_file, opts = {:project => GoodData.project})
+      def get_user_webdav_path(_file, opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -288,7 +288,7 @@ module GoodData
 
       # Retry blok if exception thrown
       def retryable(options = {}, &block)
-        opts = {:tries => 1, :on => Exception}.merge(options)
+        opts = { :tries => 1, :on => Exception }.merge(options)
 
         retry_exception, retries = opts[:on], opts[:tries]
 
