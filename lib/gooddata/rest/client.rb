@@ -35,6 +35,7 @@ module GoodData
 
       # TODO: Decide if we need provide direct access to factory
       attr_reader :factory
+      attr_reader :opts
 
       include Mixin::Inspector
       inspector :object_id
@@ -58,7 +59,7 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password, opts = {})
+        def connect(username, password, opts = {:verify_ssl => true})
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
             new_opts[:sst_token] = username[:sst_token]
@@ -198,7 +199,7 @@ module GoodData
       end
 
       # FIXME: Invstigate _file argument
-      def get_project_webdav_path(_file, opts = { :project => GoodData.project })
+      def get_project_webdav_path(_file, opts = {:project => GoodData.project})
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -210,7 +211,7 @@ module GoodData
       end
 
       # FIXME: Invstigate _file argument
-      def get_user_webdav_path(_file, opts = { :project => GoodData.project })
+      def get_user_webdav_path(_file, opts = {:project => GoodData.project})
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -287,7 +288,7 @@ module GoodData
 
       # Retry blok if exception thrown
       def retryable(options = {}, &block)
-        opts = { :tries => 1, :on => Exception }.merge(options)
+        opts = {:tries => 1, :on => Exception}.merge(options)
 
         retry_exception, retries = opts[:on], opts[:tries]
 
@@ -309,10 +310,16 @@ module GoodData
         p = options[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
-        project = GoodData::Project[p, options]
+        project = options[:project] || GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         u = URI(project.links['uploads'])
+        us = u.to_s
+        ws = options[:client].opts[:webdav_server]
+        if !us.empty? && !us.downcase.start_with?('http') && !ws.empty?
+          u = URI.join(ws, us)
+        end
+
         url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
         upload(file, options.merge(
           :directory => options[:directory],
