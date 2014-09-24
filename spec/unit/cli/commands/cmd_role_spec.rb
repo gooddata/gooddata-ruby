@@ -2,7 +2,7 @@
 
 require 'gooddata/cli/cli'
 
-describe GoodData::CLI, :broken => true do
+describe GoodData::CLI do
   describe 'role' do
     it 'Complains when no parameters specified' do
       args = %w(role)

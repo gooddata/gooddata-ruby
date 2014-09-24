@@ -8,13 +8,16 @@ module CliHelper
   # @returns Captured output as string
   def capture_stdout(&block)
     original_stdout = $stdout
-    $stdout = fake = StringIO.new
+    original_stderr = $stderr
+    $stdout = $stderr = StringIO.new
+
     begin
       yield
+      $stdout.string
     ensure
       $stdout = original_stdout
+      $stderr = original_stderr
     end
-    fake.string
   end
 
   # Run CLI with arguments and return captured stdout
