@@ -133,6 +133,30 @@ module GoodData
           true
         end
 
+        def download(what, where, options = {})
+          staging_uri = options[:staging_url].to_s
+          url = staging_uri + what
+          req = RestClient::Request.new(
+            :method => 'GET',
+            :url => url,
+            :user => @username,
+            :password => @password)
+
+          if where.is_a?(String)
+            File.open(where, 'w') do |f|
+              req.execute do |chunk, x, y|
+                f.write chunk
+              end
+            end
+
+          else
+            # Assume it is a IO stream
+            req.execute do |chunk, x, y|
+              where.write chunk
+            end
+          end
+        end
+
         private
 
         def process_response(options = {}, &block)
