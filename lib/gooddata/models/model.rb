@@ -122,7 +122,7 @@ module GoodData
 
         if res['taskStatus'] == 'ERROR'
           s = StringIO.new
-          client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
+          GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
           js = MultiJson.load(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end
