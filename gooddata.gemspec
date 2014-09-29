@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib/", __FILE__)
-require "gooddata/version"
+require 'gooddata/version'
 
 Gem::Specification.new do |s|
   s.name = %q{gooddata}
@@ -26,18 +26,18 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # s.add_development_dependency "debase" if RUBY_VERSION >= '2.1'
-  s.add_development_dependency 'rake', '~> 10.3.1'
-  s.add_development_dependency 'rake-notes', '~> 0.2.0'
-  s.add_development_dependency 'redcarpet', '~> 3.1.1' if RUBY_PLATFORM != 'java'
-  s.add_development_dependency 'rspec', '~> 2.14.1'
+  s.add_development_dependency 'rake', '~> 10.3', '>= 10.3.1'
+  s.add_development_dependency 'rake-notes', '~> 0.2', '>= 0.2.0'
+  s.add_development_dependency 'redcarpet', '~> 3.1', '>= 3.1.1' if RUBY_PLATFORM != 'java'
+  s.add_development_dependency 'rspec', '~> 2.14', '>= 2.14.1'
   # s.add_development_dependency "ruby-debug-base"
   # s.add_development_dependency "ruby-debug-ide" if RUBY_VERSION >= '2.1'
   s.add_development_dependency 'rubocop', '~> 0.20.1'
-  s.add_development_dependency 'simplecov', '~> 0.8.2'
+  s.add_development_dependency 'simplecov', '~> 0.8', '>= 0.8.2'
   s.add_development_dependency 'yard', '~> 0.8.7.3'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
-  s.add_development_dependency 'ZenTest', '~> 4.10.0'
-  s.add_development_dependency 'coveralls', '~> 0.7.0'
+  s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.10.0'
+  s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
 
   s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
   s.add_dependency 'bundler', '~> 1.7', '>= 1.7.3'
