@@ -2,7 +2,7 @@
 
 require 'gooddata/cli/cli'
 
-describe 'GoodData::CLI - domain', :broken => true do
+describe 'GoodData::CLI - domain' do
   describe 'domain' do
     it 'Complains when no subcommand specified' do
       args = %w(domain)
