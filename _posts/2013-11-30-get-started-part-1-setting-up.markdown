@@ -79,26 +79,9 @@ To list the reports in this project:
 Ok. To exit irb, enter:
  `exit`
 
-###gooddata console
-Working with GoodData SDK using irb can be cumbersome. To make things a bit easier, Gooddata SDK includes a `gooddata` command line interface. 
-
-To start the console:
-
-{% highlight ruby %}
-  gooddata console
-{% endhighlight %}
-
-In the terminal, you should see something like the following:
-
-{% highlight ruby %}
-  sdk_live_sesion:
-{% endhighlight %}
-
-Since the console requires the SDK, you do not need to require it. So, you can log in and begin working with your projects:
-* To exit, enter: `exit`
-
 ###jack_in
-For even better results, you can try using the following:
+Working with GoodData SDK using irb can be cumbersome. To make things a bit easier, Gooddata SDK includes a `gooddata` command line interface. One of the commands is `jack_in` which brings you into a live project where you can poke and explore.
+
 {% highlight ruby %}
   gooddata -U john@example.com -P password -p PROJECT_ID project jack_in
 {% endhighlight %}
