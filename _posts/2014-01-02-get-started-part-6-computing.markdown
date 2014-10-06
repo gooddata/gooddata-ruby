@@ -20,6 +20,7 @@ Right now you are probably interested in how many developers are there in the pr
 
 ###Count
 {% highlight ruby %}
+  require 'gooddata'
   client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
   project = client.projects('YOUR-PROJECT-ID')
   developers = project.attributes('attr.devs.dev_id').create_metric.execute
@@ -58,7 +59,7 @@ This should return `SELECT COUNT([/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/2
 Let's say that you would like to create another metric. This time out of fact. The only fact we have is called 'Lines changed'. If it worked with attribute let's try the same with a fact.
 
 {% highlight ruby %}
-  metric = project.facts.find_first_by_title('Lines Changed').create_metric
+  metric = project.facts.find{ |fact| fact.title == 'Lines Changed' }.create_metric
   metric.execute
 {% endhighlight %}
 
@@ -85,7 +86,8 @@ Let's save both of the metrics like we did previously.
 Metrics are all fine but we always got back one number. To get more insight we want to slice and dice that number by various attributes. Let's see how each developer performed
 
 {% highlight ruby %}
-GoodData::ReportDefinition.execute :top => [sum], :left => 'attr.devs.dev_id'
+report = project.create_report(title: 'Awesome_report', top: [sum], left: ['label.devs.dev_id'])
+report.execute
 {% endhighlight %}
 
 This should return something along the lines
@@ -98,8 +100,9 @@ This should return something along the lines
 
 The result here is just an array of arrays so you can dig deeper if you need to. Let's find out how people performed across projects.
 
-{% highlight ruby %}
-GoodData::ReportDefinition.execute :top => [sum, 'attr.repos.repo_id'], :left => 'attr.devs.dev_id'
+{% highlight ruby %}'
+report = project.create_report(title: 'Awesome_report', top: [sum], left: ['label.devs.dev_id.email'])
+report.execute
 {% endhighlight %}
 
 Which returns something like
@@ -132,6 +135,7 @@ Similar enough. Now the report is really in project and accessibel in the UI.
 client = GoodData.connect 'YOUR_USER@gooddata.com', 'YOUR_PASSWORD'
 project = client.projects('YOUR-PROJECT-ID')
 reports = project.reports
+report = reports.find { |report| report.title == 'Devs lines commited per repository' }
 {% endhighlight %}
 
 ##Exporting your work

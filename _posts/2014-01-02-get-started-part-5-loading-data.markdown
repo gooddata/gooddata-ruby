@@ -19,7 +19,7 @@ First, change to the `my_test_project` directory. Run the following command:
 gooddata project jack_in
 {% endhighlight %}
 
-As discussed in [getting started](/getting-started), the `jack_in` command is used to start an interactive session with a project. Since you are in the project directory, a project ID is not required, as it was extracted from the `Goodfile`.
+As discussed in [getting started](/get-started), the `jack_in` command is used to start an interactive session with a project. Since you are in the project directory, a project ID is not required, as it was extracted from the `Goodfile`.
 
 When the session is initiated, enter the following to upload the three datasets from CSVs stored in the project's `data` directory:
 
