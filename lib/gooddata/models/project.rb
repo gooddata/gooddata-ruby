@@ -941,7 +941,8 @@ module GoodData
       diff = GoodData::Membership.diff_list(users, new_users)
 
       # Create domain users
-      # GoodData::Domain.users_create(diff[:added], domain)
+      GoodData::Domain.users_create(diff[:added], domain)
+
       # Create new users
       role_list = roles
       users_create(diff[:added], role_list)
