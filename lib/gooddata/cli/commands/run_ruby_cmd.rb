@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'pp'
+require 'hashie'
 
 require_relative '../shared'
 require_relative '../../commands/process'
@@ -9,12 +10,12 @@ require_relative '../../client'
 
 # translate given params (with dots) to json-like params
 def load_undot(filename)
-  p = MultiJson.load(File.read(filename))
+  p = MultiJson.load(File.read(filename)).extend(Hashie::Extensions::DeepMerge)
   # for each key-value config given
   hashes = p.map do |k, v|
     # dot notation to hash
     k.split('__').reverse.reduce(v) do |memo, obj|
-      { obj => memo }
+      { obj => memo }.extend(Hashie::Extensions::DeepMerge)
     end
   end
 
