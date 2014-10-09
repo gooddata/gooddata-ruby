@@ -301,12 +301,46 @@ module GoodData
         yield
       end
 
-      # Uploads file
+      # Uploads file to staging
+      #
+      # @param file [String] file to be uploaded
+      # @param options [Hash] must contain :staging_url key (file will be uploaded to :staging_url + File.basename(file))
       def upload(file, options = {})
         @connection.upload file, options
       end
 
+      # Downloads file from staging
+      #
+      # @param source_relative_path [String] path relative to @param options[:staging_url]
+      # @param target_file_path [String] path to be downloaded to
+      # @param options [Hash] must contain :staging_url key (file will be downloaded from :staging_url + source_relative_path)
+      def download(source_relative_path, target_file_path, options = {})
+        @connection.download source_relative_path, target_file_path, options
+      end
+
+      def download_from_user_webdav(source_relative_path, target_file_path, options = {})
+        download(source_relative_path, target_file_path, options.merge(
+            :directory => options[:directory],
+            :staging_url => get_user_webdav_url(options)
+        ))
+      end
+
       def upload_to_user_webdav(file, options = {})
+        upload(file, options.merge(
+          :directory => options[:directory],
+          :staging_url => get_user_webdav_url(options)
+        ))
+      end
+
+      def with_project(pid, &block)
+        GoodData.with_project(pid, client: self, &block)
+      end
+
+      ###################### PRIVATE ######################
+
+      private
+
+      def get_user_webdav_url(options = {})
         p = options[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -320,15 +354,7 @@ module GoodData
           u = URI.join(ws, us)
         end
 
-        url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
-        upload(file, options.merge(
-          :directory => options[:directory],
-          :staging_url => url
-        ))
-      end
-
-      def with_project(pid, &block)
-        GoodData.with_project(pid, client: self, &block)
+        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
       end
     end
   end
