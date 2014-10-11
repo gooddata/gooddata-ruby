@@ -11,7 +11,7 @@ perex: Now that you have created the logical data model for your project, you ca
 
 There are several ways of loading the data. For now, we will stick to the simplest approach for the problem at hand.
 
-* We will explain the other methods later. For more information, see [Data Loading Reference](/recipe/ref-loading-data).
+* We will explain the other methods later. For more information, see [Data Loading Reference](http://sdk.gooddata.com/gooddata-ruby/general/ref-loading-data/).
 
 First, change to the `my_test_project` directory. Run the following command:
 
@@ -19,7 +19,7 @@ First, change to the `my_test_project` directory. Run the following command:
 gooddata project jack_in
 {% endhighlight %}
 
-As discussed in [getting started](/get-started), the `jack_in` command is used to start an interactive session with a project. Since you are in the project directory, a project ID is not required, as it was extracted from the `Goodfile`.
+As discussed in [getting started](http://sdk.gooddata.com/gooddata-ruby/get-started/get-started-part-1-setting-up/), the `jack_in` command is used to start an interactive session with a project. Since you are in the project directory, a project ID is not required, as it was extracted from the `Goodfile`.
 
 When the session is initiated, enter the following to upload the three datasets from CSVs stored in the project's `data` directory:
 
