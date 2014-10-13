@@ -2,7 +2,7 @@ require 'fileutils'
 
 require 'gooddata/cli/cli'
 
-describe 'GoodData::CLI - scaffold', :broken => true do
+describe 'GoodData::CLI - scaffold' do
   TEST_PROJECT_NAME = 'test-project'
   TEST_BRICK_NAME = 'test-brick'
 

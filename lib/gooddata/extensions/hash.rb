@@ -1,6 +1,10 @@
 # encoding: UTF-8
 
+require 'hashie/extensions/deep_merge'
+
 class Hash
+  include Hashie::Extensions::DeepMerge
+
   # Return a hash that includes everything but the given keys. This is useful for
   # limiting a set of parameters to everything but a few known toggles:
   #
