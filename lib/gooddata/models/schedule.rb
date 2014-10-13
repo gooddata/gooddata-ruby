@@ -108,7 +108,7 @@ module GoodData
         default[:params] = default_params
 
         json = {
-          'schedule' => default.merge(options.except(:project, :client))
+          'schedule' => default.deep_merge(options.except(:project, :client))
         }
 
         tmp = json['schedule'][:params]['PROCESS_ID']
