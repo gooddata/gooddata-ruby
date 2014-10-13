@@ -25,18 +25,62 @@ describe 'GoodData::Schedule::Params' do
       }
 
       res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", params: params)
-      expect(true).to be_true
+      expect(res).to be_true
+    end
+
+    it 'Works with nested params' do
+      params = {
+        :test => '1234',
+        :nested => {
+          :name => 'joe'
+        }
+      }
+
+      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", params: params)
+      expect(res).to be_true
+    end
+
+    it 'Works with array in params' do
+      params = {
+        :test => '1234',
+        :array => [1, 2, 3, 4, 5]
+      }
+
+      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", params: params)
+      expect(res).to be_true
     end
   end
 
   describe 'hiddenParams' do
     it 'Works with hiddenParams' do
       params = {
-        :test => "1234"
+        :test => '1234'
       }
 
       res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", hiddenParams: params)
-      expect(true).to be_true
+      expect(res).to be_true
+    end
+
+    it 'Works with nested hiddenParams' do
+      params = {
+        :test => '1234',
+        :nested => {
+          :name => 'joe'
+        }
+      }
+
+      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", hiddenParams: params)
+      expect(res).to be_true
+    end
+
+    it 'Works with array in hiddenParams' do
+      params = {
+        :test => '1234',
+        :array => [1, 2, 3, 4, 5]
+      }
+
+      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", hiddenParams: params)
+      expect(res).to be_true
     end
   end
 end

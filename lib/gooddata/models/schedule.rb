@@ -85,12 +85,12 @@ module GoodData
         }
 
         inject_schema = {
-          :hidden_params => 'hiddenParams'
+          :hidden_params => :hiddenParams
         }
 
         inject_params = {
-          :process_id => 'PROCESS_ID',
-          :executable => 'EXECUTABLE'
+          :process_id => :PROCESS_ID,
+          :executable => :EXECUTABLE
         }
 
         default_params = default_opts[:params].reduce({}) do |new_hash, (k, v)|
@@ -111,10 +111,10 @@ module GoodData
           'schedule' => default.deep_merge(options.except(:project, :client))
         }
 
-        tmp = json['schedule'][:params]['PROCESS_ID']
+        tmp = json['schedule'][:params][:PROCESS_ID]
         fail 'Process ID has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule'][:params]['EXECUTABLE']
+        tmp = json['schedule'][:params][:EXECUTABLE]
         fail 'Executable has to be provided' if tmp.nil? || tmp.empty?
 
         tmp = json['schedule'][:cron]
@@ -125,6 +125,19 @@ module GoodData
 
         tmp = json['schedule'][:type]
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
+
+        # json['schedule'][:params] = JSON.generate(json['schedule'][:params])
+
+        tmp = json['schedule'][:params]
+        json['schedule'][:params] = {
+          :PROCESS_ID => tmp[:PROCESS_ID],
+          :EXECUTABLE => tmp[:EXECUTABLE],
+          :data => JSON.generate(tmp.except(:PROCESS_ID, :EXECUTABLE))
+        }
+
+        tmp = json['schedule'][:hiddenParams]
+        json['schedule'][:hiddenParams] = {}
+        json['schedule'][:hiddenParams][:data] = JSON.generate(tmp) if !tmp.nil?
 
         url = "/gdc/projects/#{project.pid}/schedules"
         res = c.post url, json
