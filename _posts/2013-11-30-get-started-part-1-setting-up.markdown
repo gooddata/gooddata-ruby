@@ -104,7 +104,7 @@ A simple program that does something useful is the following:
   require 'pp'
 
   client = GoodData.connect('YOUR_USERNAME', 'YOUR_PASSWORD')
-  client.projects('YOUR-PROJECT-ID')
+  project = client.projects('YOUR-PROJECT-ID')
 
   pp project.reports
 {% endhighlight %}
