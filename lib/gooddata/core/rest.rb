@@ -66,8 +66,9 @@ module GoodData
 
     def upload_to_user_webdav(file, options = {})
       u = URI(GoodData.project.links['uploads'])
+      file_path = options[:file_path] || file
       url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
-      connection.upload(file, options.merge(
+      connection.upload(file_path, options.merge(
         :directory => options[:directory],
         :staging_url => url
       ))
@@ -80,7 +81,8 @@ module GoodData
 
     def upload_to_project_webdav(file, options = {})
       url = get_project_webdav_path(file, options)
-      connection.upload(file, options.merge(
+      file_path = options[:file_path] || file
+      connection.upload(file_path, options.merge(
         :directory => options[:directory],
         :staging_url => url))
     end
