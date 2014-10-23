@@ -115,7 +115,7 @@ module GoodData
           # puts "uploading the file #{URI.join(url, filename).to_s}"
           raw = {
             :method => :put,
-            :url => URI.join(url, filename).to_s,
+            :url => URI.join(url, CGI.escape(filename)).to_s,
             :headers => {
               :user_agent => GoodData.gem_version_string
             },
