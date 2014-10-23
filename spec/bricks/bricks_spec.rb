@@ -22,18 +22,36 @@ describe GoodData::Bricks do
       class TestMiddleWare < GoodData::Bricks::Middleware
         def initialize(options={})
           @config = 'spec/bricks/default-config.json'
-          @config_namespace = 'my__namespace'
           super(options)
         end
 
-        def default_loaded_call(params)
+        def call(params)
+          params = super(params)
+          my_stuff = params['config']['my']['namespace']
+          puts "Now I have the defaults and runtime parameters merged and loaded: #{my_stuff['key']}"
+
+          # Doing something cool and puting it into params
+          params['something_cool'] = "#{my_stuff['key']} and also #{my_stuff['default_key']}"
+
+          @app.call(params)
+        end
+      end
+
+      class TestBrick
+        def call(params)
+          # doing something with params
+          puts "Brick: #{params['something_cool']}"
           params
         end
       end
 
       it "puts them into params" do
-        m = TestMiddleWare.new
-        res = m.call({
+        p = GoodData::Bricks::Pipeline.prepare([
+          TestMiddleWare,
+          TestBrick
+        ])
+
+        res = p.call({
           'config' => {
             'my' => {
               'namespace' => {
@@ -59,7 +77,8 @@ describe GoodData::Bricks do
             'other_namespace' => {
               'some_key' => 'some value'
             }
-          }
+          },
+          "something_cool" => "redefined value and also default value 2"
         })
       end
     end
