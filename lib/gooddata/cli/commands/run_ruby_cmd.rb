@@ -11,18 +11,7 @@ require_relative '../../client'
 # translate given params (with dots) to json-like params
 def load_undot(filename)
   p = MultiJson.load(File.read(filename)).extend(Hashie::Extensions::DeepMerge)
-  # for each key-value config given
-  hashes = p.map do |k, v|
-    # dot notation to hash
-    k.split('__').reverse.reduce(v) do |memo, obj|
-      { obj => memo }.extend(Hashie::Extensions::DeepMerge)
-    end
-  end
-
-  # merge back the keys as they came
-  hashes.reduce do |memo, obj|
-    memo.deep_merge(obj)
-  end
+  p.undot
 end
 
 GoodData::CLI.module_eval do
