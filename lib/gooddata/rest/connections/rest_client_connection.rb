@@ -77,8 +77,6 @@ module GoodData
         end
 
         # Uploads a file to GoodData server
-        # /uploads/ resources are special in that they use a different
-        # host and a basic authentication.
         def upload(file, options = {})
           dir = options[:directory] || ''
           staging_uri = options[:staging_url].to_s
@@ -93,7 +91,6 @@ module GoodData
               raw = {
                 :method => method,
                 :url => url,
-                # :timeout => @options[:timeout],
                 :headers => @headers
               }.merge(cookies)
               RestClient::Request.execute(raw)
@@ -104,7 +101,6 @@ module GoodData
                 raw = {
                   :method => method,
                   :url => url,
-                  # :timeout => @options[:timeout],
                   :headers => @headers
                 }.merge(cookies)
                 RestClient::Request.execute(raw)
@@ -120,38 +116,37 @@ module GoodData
           raw = {
             :method => :put,
             :url => URI.join(url, filename).to_s,
-            # :timeout => @options[:timeout],
             :headers => {
               :user_agent => GoodData.gem_version_string
             },
             :payload => payload,
-            :raw_response => true,
-            # :user => @username,
-            # :password => @password
+            :raw_response => true
           }.merge(cookies)
           RestClient::Request.execute(raw)
           true
         end
 
         def download(what, where, options = {})
-          staging_uri = options[:staging_url].to_s
-          url = staging_uri + what
-          req = RestClient::Request.new(
-            :method => 'GET',
-            :url => url,
-            :user => @username,
-            :password => @password)
+          url = options[:staging_url].to_s + what
+
+          raw = {
+            :headers => {
+              :user_agent => GoodData.gem_version_string
+            },
+            :method => :get,
+            :url => url
+          }.merge(cookies)
 
           if where.is_a?(String)
             File.open(where, 'w') do |f|
-              req.execute do |chunk, x, y|
+              RestClient::Request.execute(raw) do |chunk, x, y|
                 f.write chunk
               end
             end
 
           else
             # Assume it is a IO stream
-            req.execute do |chunk, x, y|
+            RestClient::Request.execute(raw) do |chunk, x, y|
               where.write chunk
             end
           end

@@ -51,7 +51,7 @@ module GoodData
       #  - /gdc/projects/<id>
       #  - <id>
       #
-      def [](id, opts = {})
+      def [](id, opts = { client: GoodData.connection })
         return id if id.instance_of?(GoodData::Project) || id.respond_to?(:project?) && id.project?
 
         if id == :all
