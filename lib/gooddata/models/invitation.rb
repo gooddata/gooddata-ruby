@@ -19,7 +19,7 @@ module GoodData
     end
 
     def created
-      DateTime.parse(@json['invitation']['meta']['created'])
+      Time.parse(@json['invitation']['meta']['created'])
     end
 
     def email
@@ -70,7 +70,7 @@ module GoodData
     end
 
     def updated
-      DateTime.parse(@json['invitation']['meta']['updated'])
+      Time.parse(@json['invitation']['meta']['updated'])
     end
 
     def uri

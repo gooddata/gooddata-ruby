@@ -204,7 +204,7 @@ module GoodData
     #
     # @return [DateTime] Created date
     def created
-      DateTime.parse(@json['accountSetting']['created'])
+      Time.parse(@json['accountSetting']['created'])
     end
 
     # Deletes this account settings
@@ -362,7 +362,7 @@ module GoodData
     #
     # @return [DateTime] Updated date
     def updated
-      DateTime.parse(@json['accountSetting']['updated'])
+      Time.parse(@json['accountSetting']['updated'])
     end
 
     # Gets the resource REST URI
