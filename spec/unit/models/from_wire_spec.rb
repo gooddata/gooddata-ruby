@@ -41,20 +41,12 @@ describe GoodData::Model::FromWire do
     expect(blueprint.datasets.mapcat { |ds| ds.columns }.any? {|col| col[:name].titleize == col[:title]}).to eq false
   end
 
-  it "should create a label" do
-    pending("UAAA")
-  end
-
   it "should enable sorting" do
     pending("UAAA")
   end
 
   it "should allow defining date dimensions" do
     pending('UAAA')
-  end
-
-  it "should be creating default label" do
-    pending("something else getting finished")
   end
 
   it "should generate the same thing it parsed" do
@@ -71,7 +63,8 @@ describe GoodData::Model::FromWire do
         name: "techoppanalysis",
         title: "Tech Opp. Analysis",
         gd_data_type: "VARCHAR(128)",
-        gd_type: "GDC.text"
+        gd_type: "GDC.text",
+        default_label: true
       }]
   end
 
@@ -82,7 +75,8 @@ describe GoodData::Model::FromWire do
         :type=>'attribute',
         :name=>"month",
         :gd_data_type=>"VARCHAR(128)",
-        :gd_type=>"GDC.text"
+        :gd_type=>"GDC.text",
+        :default_label=>true
       },
      {
        :type=>'label',
@@ -97,7 +91,29 @@ describe GoodData::Model::FromWire do
        :name=>"cohorttype",
        :title=>"Cohort Type",
        :gd_data_type=>"VARCHAR(128)",
-       :gd_type=>"GDC.text"
+       :gd_type=>"GDC.text",
+       :default_label=>true
+      }]
+  end
+
+  it "should be able to parse the anchor out of dataset when there are multiple labels and primary label and default label are not the same" do
+    x = FromWire.parse_anchor(@model_view['projectModelView']['model']['projectModel']['datasets'][7])
+    expect(x).to eq [
+      {
+        :type=>"anchor",
+        :name=>"factsof",
+        :title=>"Records of opp_records",
+        :gd_data_type=>"VARCHAR(128)",
+        :gd_type=>"GDC.text"
+      },
+      {
+        :type=>"label",
+        :reference=>"factsof",
+        :name=>"opp_records_conctn_point",
+        :title=>"opp_records_conctn_point",
+        :gd_data_type=>"VARCHAR(128)",
+        :gd_type=>"GDC.text",
+        :default_label => true
       }]
   end
 end

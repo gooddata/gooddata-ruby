@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-require_relative '../core/connection'
 require_relative '../core/rest'
 
 require_relative 'metadata/metadata'
@@ -31,7 +30,6 @@ module GoodData
 
       def identifier_for(dataset, column = nil, column2 = nil)
         return "dataset.#{dataset[:name]}" if column.nil?
-
         column = DatasetBlueprint.find_column_by_name(dataset, column) if column.is_a?(String)
         case column[:type].to_sym
         when :anchor_no_label
@@ -62,7 +60,15 @@ module GoodData
       end
 
       # Load given file into a data set described by the given schema
-      def upload_data(path, project_blueprint, dataset, options = {})
+      def upload_data(path, project_blueprint, dataset, options = { :client => GoodData.connection, :project => GoodData.project })
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
         # path = if path =~ URI.regexp
         #   Tempfile.open('remote_file') do |temp|
         #     temp << open(path).read
@@ -100,7 +106,7 @@ module GoodData
           end
 
           # upload it
-          GoodData.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir))
+          client.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir), :client => options[:client], :project => options[:project])
         ensure
           FileUtils.rm_rf dir
         end
@@ -108,14 +114,15 @@ module GoodData
         # kick the load
         pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull']
-        task = GoodData.post link, pull
-        # TODO: Refactor the task status out
-        while GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'RUNNING' || GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'PREPARED'
-          sleep 30
+        task = client.post link, pull
+
+        res = client.poll_on_response(task['pullTask']['uri']) do |body|
+          body['taskStatus'] == 'RUNNING' || body['taskStatus'] == 'PREPARED'
         end
-        if GoodData.get(task['pullTask']['uri'])['taskStatus'] == 'ERROR'
+
+        if res['taskStatus'] == 'ERROR'
           s = StringIO.new
-          GoodData.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
+          client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
           js = MultiJson.load(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end

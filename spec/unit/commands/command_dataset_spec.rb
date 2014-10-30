@@ -2,12 +2,12 @@ require 'gooddata/commands/datasets'
 
 describe GoodData::Command::Datasets do
   before(:each) do
-    ConnectionHelper::create_default_connection
+    @client = ConnectionHelper::create_default_connection
     @cmd = GoodData::Command::Datasets.new()
   end
 
   after(:each) do
-    GoodData.disconnect
+    @client.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Datasets instance" do

@@ -2,11 +2,15 @@ require 'gooddata'
 
 describe "Spin a project from template", :constraint => 'slow' do
   before(:all) do
-    ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
+  end
+
+  after(:all) do
+    @client.disconnect
   end
 
   it "should spin a project from a template that does not exist. It should throw an error" do
-    expect{GoodData::Project.create(:title => "Test project", :template => "/some/nonexisting/template/uri", :auth_token => ConnectionHelper::GD_PROJECT_TOKEN)}.to raise_error
+    expect{GoodData::Project.create(:title => "Test project", :template => "/some/nonexisting/template/uri", :auth_token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client)}.to raise_error
   end
 
 end

@@ -4,10 +4,10 @@ require 'gooddata/models/invitation'
 
 describe GoodData::Invitation do
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
   end
 
   after(:each) do
-    GoodData.disconnect
+    @client.disconnect
   end
 end

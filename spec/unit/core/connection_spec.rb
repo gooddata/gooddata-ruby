@@ -1,36 +1,35 @@
 require 'gooddata/connection'
-require 'gooddata/core/connection'
 
-describe GoodData::Connection do
+describe GoodData::Rest::Connection do
   before(:all) do
     USERNAME = ConnectionHelper::DEFAULT_USERNAME
     PASSWORD = ConnectionHelper::DEFAULT_PASSWORD
   end
 
   it "Has DEFAULT_URL defined" do
-    GoodData::Connection::DEFAULT_URL.should be_a(String)
+    GoodData::Rest::Connection::DEFAULT_URL.should be_a(String)
   end
 
   it "Has LOGIN_PATH defined" do
-    GoodData::Connection::LOGIN_PATH.should be_a(String)
+    GoodData::Rest::Connection::LOGIN_PATH.should be_a(String)
   end
 
   it "Has TOKEN_PATH defined" do
-    GoodData::Connection::TOKEN_PATH.should be_a(String)
+    GoodData::Rest::Connection::TOKEN_PATH.should be_a(String)
   end
 
   describe '#connect' do
     it "Connects using username and password" do
       c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
-      c.should be_a(GoodData::Connection)
-      GoodData.disconnect
+      c.should be_a(GoodData::Rest::Client)
+      c.disconnect
     end
   end
 
   describe '#disconnect' do
     it "Connects using username and password" do
-      GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
-      GoodData.disconnect
+      c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
+      c.disconnect
     end
   end
 
@@ -49,7 +48,7 @@ describe GoodData::Connection do
         :password => ConnectionHelper::DEFAULT_PASSWORD
       }
       GoodData.create_authenticated_connection(opts)
-      GoodData.disconnect
+      ConnectionHelper.disconnect
     end
   end
 end

@@ -6,8 +6,9 @@ module GoodData
   module Command
     class Projects
       class << self
-        def list
-          GoodData::Project.all
+        def list(options = { client: GoodData.connection })
+          client = options[:client]
+          client.projects
         end
       end
     end

@@ -1,12 +1,15 @@
 # encoding: UTF-8
 
 require 'multi_json'
+require 'pmap'
 
 require_relative 'project'
 require_relative 'project_role'
 
+require_relative '../rest/object'
+
 module GoodData
-  class Membership
+  class Membership < GoodData::Rest::Object
     attr_reader :json
 
     ASSIGNABLE_MEMBERS = [
@@ -128,8 +131,8 @@ module GoodData
     # @return [String] Author
     def author
       url = @json['user']['meta']['author']
-      data = GoodData.get url
-      GoodData::Membership.new(data)
+      data = client.get url
+      client.factory.create(GoodData::Membership, data)
     end
 
     # Gets the contributor
@@ -137,8 +140,8 @@ module GoodData
     # @return [String] Contributor
     def contributor
       url = @json['user']['meta']['contributor']
-      data = GoodData.get url
-      GoodData::Membership.new(data)
+      data = client.get url
+      client.factory.create(GoodData::Membership, data)
     end
 
     # Gets date when created
@@ -190,7 +193,7 @@ module GoodData
     def invitations
       res = []
 
-      tmp = GoodData.get @json['user']['links']['invitations']
+      tmp = client.get @json['user']['links']['invitations']
       tmp['invitations'].each do |invitation|
         # TODO: Something is missing here
       end
@@ -239,7 +242,7 @@ module GoodData
     def permissions
       res = {}
 
-      tmp = GoodData.get @json['user']['links']['permissions']
+      tmp = client.get @json['user']['links']['permissions']
       tmp['associatedPermissions']['permissions'].each do |permission_name, permission_value|
         res[permission_name] = permission_value
       end
@@ -263,8 +266,8 @@ module GoodData
 
     # Gets profile of this membership
     def profile
-      raw = GoodData.get @json['user']['links']['self']
-      GoodData::Profile.new(raw)
+      raw = client.get @json['user']['links']['self']
+      client.factory.create(GoodData::Profile, raw)
     end
 
     # Gets URL of profile membership
@@ -274,8 +277,8 @@ module GoodData
 
     # Gets project which this membership relates to
     def project
-      raw = GoodData.get project_url
-      GoodData::Project.new(raw)
+      raw = client.get project_url
+      client.factory.create(GoodData::Project, raw)
     end
 
     # Gets project id
@@ -292,16 +295,12 @@ module GoodData
     #
     # @return [Array<GoodData::Project>] Array of projets
     def projects
-      res = []
-
-      tmp = GoodData.get @json['user']['links']['projects']
-      tmp['projects'].each do |project_meta|
+      tmp = client.get @json['user']['links']['projects']
+      tmp['projects'].map do |project_meta|
         project_uri = project_meta['project']['links']['self']
-        project = GoodData.get project_uri
-        res << GoodData::Project.new(project)
+        project = client.get project_uri
+        client.factory.create(GoodData::Project, project)
       end
-
-      res
     end
 
     # Gets first role
@@ -313,15 +312,11 @@ module GoodData
     #
     # @return [Array<GoodData::ProjectRole>] Array of project roles
     def roles
-      res = []
-
-      tmp = GoodData.get @json['user']['links']['roles']
-      tmp['associatedRoles']['roles'].each do |role_uri|
-        role = GoodData.get role_uri
-        res << GoodData::ProjectRole.new(role)
+      tmp = client.get @json['user']['links']['roles']
+      tmp['associatedRoles']['roles'].pmap do |role_uri|
+        role = client.get role_uri
+        client.factory.create(GoodData::ProjectRole, role)
       end
-
-      res
     end
 
     # Gets the status
@@ -396,7 +391,7 @@ module GoodData
         }
       }
 
-      @json = GoodData.post("/gdc/projects/#{project_id}/users", payload)
+      @json = client.post("/gdc/projects/#{project_id}/users", payload)
     end
   end
 end

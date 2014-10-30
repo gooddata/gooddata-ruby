@@ -10,15 +10,22 @@ module GoodData
       #
       # @param spec [String | Hash] value of an label you are looking for
       # @return [GoodData::Model::ProjectBlueprint]
-      def self.from_json(spec)
-        if spec.is_a?(String)
-          if File.file?(spec)
-            ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+      class << self
+        def from_json(spec)
+          if spec.is_a?(String)
+            if File.file?(spec)
+              ProjectBlueprint.new(MultiJson.load(File.read(spec), :symbolize_keys => true))
+            else
+              ProjectBlueprint.new(MultiJson.load(spec, :symbolize_keys => true))
+            end
           else
-            ProjectBlueprint.new(MultiJson.load(spec, :symbolize_keys => true))
+            ProjectBlueprint.new(spec)
           end
-        else
-          ProjectBlueprint.new(spec)
+        end
+
+        def build(title, &block)
+          pb = ProjectBuilder.create(title, &block)
+          pb.to_blueprint
         end
       end
 
@@ -251,12 +258,12 @@ module GoodData
         if datasets.count == 1
           []
         else
-          x = datasets.reduce([]) { |a, e| e.anchor? ? a << [e.name, e.anchor[:name]] : a } + date_dimensions.map { |y| [y[:name], nil] }
+          x = datasets.reduce([]) { |a, e| e.anchor? ? a << [e.name] : a } + date_dimensions.map { |y| [y[:name]] }
           refs = datasets.reduce([]) do |a, e|
             a.concat(e.references)
           end
           refs.reduce([]) do |a, e|
-            x.include?([e[:dataset], e[:reference]]) ? a : a.concat([e])
+            x.include?([e[:dataset]]) ? a : a.concat([e])
           end
         end
       end
@@ -332,11 +339,10 @@ module GoodData
       # @return [Array<Hash>]
       def can_break(dataset)
         dataset = find_dataset(dataset) if dataset.is_a?(String)
-        referenced_by(dataset).reduce([]) do |a, e|
-          e.attributes_and_anchors.each do |attr|
-            a.push([e, attr])
+        (referenced_by(dataset) + [dataset]).mapcat do |ds|
+          ds.attributes_and_anchors.map do |attr|
+            [ds, attr]
           end
-          a
         end
       end
 
@@ -344,32 +350,45 @@ module GoodData
       #
       # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
       # @return [Array<Hash>]
-      def lint
+      def lint(full = false)
         errors = []
         find_star_centers.each do |dataset|
           if dataset.anchor?
             errors << {
               type: :anchor_on_fact_dataset,
               dataset_name: dataset.name,
-              anchor_name: dataset.anchor.name
+              anchor_name: dataset.anchor[:name]
             }
           end
         end
 
         date_facts = datasets.mapcat { |d| d.date_facts }
-        unless date_facts.empty?
-          puts 'You have some date facts in your projects. These were deprecated and it may cause problems'
-          pp date_facts
+        date_facts.each do |date_fact|
+          errors << {
+            type: :date_fact,
+            date_fact: date_fact[:name]
+          }
         end
 
         unique_titles = fields.map { |f| Model.title(f) }.uniq
-        if unique_titles.count != fields.count
-          puts 'Man there are some fields with duplicate titles. Nobody can read that stuff.'
+        (fields.map { |f| Model.title(f) } - unique_titles).each do |duplicate_title|
+          errors << {
+            type: :duplicate_title,
+            title: duplicate_title
+          }
         end
 
-        if datasets.any?(&:wide?)
-          puts 'Man some of your datasets are too wide'
+        datasets.select(&:wide?).each do |wide_dataset|
+          errors << {
+            type: :wide_dataset,
+            dataset: wide_dataset.name
+          }
         end
+
+        if full
+          # GoodData::Attributes.all(:full => true).select { |attr| attr.used_by}
+        end
+        errors
       end
 
       # Return list of datasets that are centers of the stars in datamart.

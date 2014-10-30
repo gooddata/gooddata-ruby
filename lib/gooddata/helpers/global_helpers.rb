@@ -61,6 +61,10 @@ module GoodData
         ActiveSupport::Inflector.humanize(str)
       end
 
+      def underline(x)
+        '=' * x.size
+      end
+
       # Recurscively changes the string keys of a hash to symbols.
       #
       # @param h [Hash] Data structure to change

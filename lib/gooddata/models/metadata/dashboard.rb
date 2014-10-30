@@ -21,7 +21,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('projectdashboards', Dashboard, options)
       end
 
@@ -100,14 +100,9 @@ module GoodData
       fail "Wrong format provied \"#{format}\". Only supports formats #{supported_formats.join(', ')}" unless supported_formats.include?(format)
       tab = options[:tab] || ''
 
-      req_uri = "/gdc/projects/#{GoodData.project.uri}/clientexport"
-      x = GoodData.post(req_uri, { 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title } }, :process => false)
-      while x.code == 202
-        sleep(1)
-        uri = MultiJson.load(x.body)['asyncTask']['link']['poll']
-        x = GoodData.get(uri, :process => false)
-      end
-      x
+      req_uri = "/gdc/projects/#{GoodData.project.pid}/clientexport"
+      x = GoodData.post(req_uri, 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title })
+      GoodData.poll_on_code(x['asyncTask']['link']['poll'], process: false)
     end
 
     def remove_report(report)

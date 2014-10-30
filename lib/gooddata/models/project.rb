@@ -3,13 +3,22 @@
 require 'csv'
 require 'zip'
 require 'fileutils'
+require 'multi_json'
+require 'pmap'
+require 'zip'
+
+require_relative '../exceptions/no_project_error'
+
+require_relative '../rest/resource'
+require_relative '../mixins/author'
+require_relative '../mixins/contributor'
+require_relative '../mixins/rest_resource'
 
 require_relative 'process'
-require_relative '../exceptions/no_project_error'
 require_relative 'project_role'
 
 module GoodData
-  class Project
+  class Project < GoodData::Rest::Resource
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
@@ -18,11 +27,22 @@ module GoodData
 
     attr_accessor :connection, :json
 
+    alias_method :to_json, :json
+    alias_method :raw_data, :json
+
+    include GoodData::Mixin::RestResource
+
+    Project.root_key :project
+
+    include GoodData::Mixin::Author
+    include GoodData::Mixin::Contributor
+
     class << self
       # Returns an array of all projects accessible by
       # current user
-      def all
-        GoodData.profile.projects
+      def all(opts = { client: GoodData.connection })
+        c = client(opts)
+        c.user.projects
       end
 
       # Returns a Project object identified by given string
@@ -31,10 +51,11 @@ module GoodData
       #  - /gdc/projects/<id>
       #  - <id>
       #
-      def [](id, options = {})
-        return id if id.respond_to?(:project?) && id.project?
+      def [](id, opts = { client: GoodData.connection })
+        return id if id.instance_of?(GoodData::Project) || id.respond_to?(:project?) && id.project?
+
         if id == :all
-          Project.all
+          Project.all({ client: GoodData.connection }.merge(opts))
         else
           if id.to_s !~ %r{^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$}
             fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
@@ -42,8 +63,11 @@ module GoodData
 
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
 
-          response = GoodData.get PROJECT_PATH % id
-          Project.new response
+          c = client(opts)
+          fail ArgumentError, 'No :client specified' if c.nil?
+
+          response = c.get(PROJECT_PATH % id)
+          c.factory.create(Project, response)
         end
       end
 
@@ -53,31 +77,33 @@ module GoodData
       # - :summary
       # - :template (default /projects/blank)
       #
-      def create(attributes, &block)
-        GoodData.logger.info "Creating project #{attributes[:title]}"
+      def create(opts = { :client => GoodData.connection }, &block)
+        GoodData.logger.info "Creating project #{opts[:title]}"
 
-        auth_token = attributes[:auth_token] || GoodData.connection.auth_token
+        c = client(opts)
+        fail ArgumentError, 'No :client specified' if c.nil?
+
+        auth_token = opts[:auth_token] || GoodData.connection.auth_token
         fail 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
 
         json = {
           'project' =>
             {
               'meta' => {
-                'title' => attributes[:title],
-                'summary' => attributes[:summary] || 'No summary'
+                'title' => opts[:title],
+                'summary' => opts[:summary] || 'No summary'
               },
               'content' => {
-                'guidedNavigation' => attributes[:guided_navigation] || 1,
+                'guidedNavigation' => opts[:guided_navigation] || 1,
                 'authorizationToken' => auth_token,
-                'driver' => attributes[:driver] || 'Pg'
+                'driver' => opts[:driver] || 'Pg'
               }
             }
         }
 
-        json['project']['meta']['projectTemplate'] = attributes[:template] if attributes[:template] && !attributes[:template].empty?
-        project = Project.new json
+        json['project']['meta']['projectTemplate'] = opts[:template] if opts[:template] && !opts[:template].empty?
+        project = c.create(Project, json)
         project.save
-
         # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
         while project.state.to_s != 'enabled'
           if project.state.to_s == 'deleted'
@@ -95,6 +121,17 @@ module GoodData
         end
         sleep 3
         project
+      end
+
+      def find(opts = {}, client = GoodData::Rest::Client.client)
+        user = client.user
+        user.projects['projects'].map do |project|
+          client.create(GoodData::Project, project)
+        end
+      end
+
+      def create_from_blueprint(blueprint, options = {})
+        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: GoodData.connection))
       end
 
       # Takes one CSV line and creates hash from data extracted
@@ -115,35 +152,52 @@ module GoodData
       end
     end
 
-    def add_metric(options = {})
-      options[:expression] || fail('Metric has to have its expression defined')
-      m1 = GoodData::Metric.create(options)
-      m1.save
+    def add_metric(metric, options = {})
+      default = { client: client, project: self }
+      if metric.is_a?(String)
+        GoodData::Metric.xcreate(metric, options.merge(default))
+      else
+        GoodData::Metric.xcreate(metric.merge(default))
+      end
     end
+    alias_method :create_metric, :add_metric
 
     def add_report(options = {})
-      rep = GoodData::Report.create(options)
+      rep = GoodData::Report.create(options.merge(client: client, project: self))
       rep.save
     end
+    alias_method :create_report, :add_report
 
+    # Returns an indication whether current user is admin in this project
+    #
+    # @return [Boolean] True if user has admin role in the project, false otherwise.
     def am_i_admin?
-      has_role?(GoodData.user, 'admin')
+      user_has_role?(GoodData.user, 'admin')
     end
 
-    # Gets author of project
+    # Helper for getting attributes of a project
     #
-    # @return [String] Project author
-    def author
-      # TODO: Return object instead
-      @json['project']['meta']['author']
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Attribute[id]
+    # @return [GoodData::Attribute | Array<GoodData::Attribute>] fact instance or list
+    def attributes(id = :all)
+      GoodData::Attribute[id, project: self, client: client]
+    end
+
+    def attribute_by_title(title)
+      GoodData::Attribute.find_first_by_title(title, project: self, client: client)
+    end
+
+    def attributes_by_title(title)
+      GoodData::Attribute.find_by_title(title, project: self, client: client)
     end
 
     # Gets project blueprint from the server
     #
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint
-      result = GoodData.get("/gdc/projects/#{pid}/model/view")
-      model = GoodData.poll_on_root(result, 'asyncTask') { |r| r['asyncTask']['link']['poll'] }
+      result = client.get("/gdc/projects/#{pid}/model/view")
+      polling_url = result['asyncTask']['link']['poll']
+      model = client.poll_on_code(polling_url)
       GoodData::Model::FromWire.from_wire(model)
     end
 
@@ -153,9 +207,9 @@ module GoodData
     def browser_uri(options = {})
       grey = options[:grey]
       if grey
-        GoodData.connection.url + uri
+        client.connection.url + uri
       else
-        GoodData.connection.url + '#s=' + uri
+        client.connection.url + '#s=' + uri
       end
     end
 
@@ -164,12 +218,12 @@ module GoodData
     # @return [GoodData::Project] Newly created project
     def clone(options = {})
       # TODO: Refactor so if export or import fails the new_project will be cleaned
-      with_data = options[:data] || true
-      with_users = options[:users] || false
-      title = options[:title] || "Clone of #{title}"
+      with_data = options[:data].nil? ? true : options[:data]
+      with_users = options[:users].nil? ? false : options[:users]
+      a_title = options[:title] || "Clone of #{title}"
 
       # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
-      new_project = GoodData::Project.create(options.merge(:title => title))
+      new_project = GoodData::Project.create(options.merge(:title => a_title, :client => client))
 
       export = {
         :exportProject => {
@@ -178,15 +232,12 @@ module GoodData
         }
       }
 
-      result = GoodData.post("/gdc/md/#{obj_id}/maintenance/export", export)
+      result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
       export_token = result['exportArtifact']['token']
-      status_url = result['exportArtifact']['status']['uri']
 
-      state = GoodData.get(status_url)['taskState']['status']
-      while state == 'RUNNING'
-        sleep 5
-        result = GoodData.get(status_url)
-        state = result['taskState']['status']
+      status_url = result['exportArtifact']['status']['uri']
+      client.poll_on_response(status_url) do |body|
+        body['taskState']['status'] == 'RUNNING'
       end
 
       import = {
@@ -195,83 +246,54 @@ module GoodData
         }
       }
 
-      result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
+      result = client.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
       status_url = result['uri']
-      state = GoodData.get(status_url)['taskState']['status']
-      while state == 'RUNNING'
-        sleep 5
-        result = GoodData.get(status_url)
-        state = result['taskState']['status']
+      client.poll_on_response(status_url) do |body|
+        body['taskState']['status'] == 'RUNNING'
       end
+
       new_project
     end
 
-    # Project contributor
+    def compute_report(spec = {})
+      GoodData::ReportDefinition.execute(spec.merge(:client => client, :project => self))
+    end
+
+    def compute_metric(expression)
+      GoodData::Metric.xexecute(expression, :client => client, :project => self)
+    end
+
+    def create_schedule(process, date, executable, options = {})
+      GoodData::Schedule.create(process, date, executable, options.merge(:client => client, :project => self))
+    end
+
+    # Helper for getting dashboards of a project
     #
-    # @return [String] Project contributor
-    # TODO: Return as object
-    def contributor
-      # TODO: Return object instead
-      @json['project']['meta']['contributor']
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
+    # @return [GoodData::Dashboard | Array<GoodData::Dashboard>] dashboard instance or list
+    def dashboards(id = :all)
+      GoodData::Dashboard[id, project: self, client: client]
     end
 
-    # Gets the date when created
-    #
-    # @return [DateTime] Date time when created
-    def created
-      Time.parse(@json['project']['meta']['created'])
-    end
-
-    # Gets dashboard by title, link, id
-    #
-    # @param [String] name Name, ID or URL of dashboard
-    # @return [GoodData::Dashboard] Dashboard instance if found
-    def dashboard(name)
-      dbs = dashboards
-      dbs.each do |db|
-        return db if db.title == name || db.uri == name
-      end
-      nil
-    end
-
-    # Gets project dashboards
-    def dashboards
-      url = "/gdc/md/#{obj_id}/query/projectdashboards"
-      raw = GoodData.get url
-      raw['query']['entries'].map do |entry|
-        raw_dashboard = GoodData.get(entry['link'])
-        Dashboard.new(raw_dashboard)
-      end
-    end
-
-    # Gets ruby wrapped raw project JSON data
-    def data
-      raw_data['project']
-    end
-
-    # Gets datasets of a blueprint
-    #
-    # @return [Array<GoodData::Model::DatasetBlueprint] Datasets from a generated blueprint
     def datasets
       blueprint.datasets
-      datasets_uri = "#{md['data']}/sets"
-      response = GoodData.get datasets_uri
-      response['dataSetsInfo']['sets'].map do |ds|
-        DataSet[ds['meta']['uri']]
-      end
-    end
-
-    # Gets processes for the project
-    #
-    # @return [Array<GoodData::Process>] Processes for the current project
-    def processes
-      GoodData::Process.all
     end
 
     # Deletes project
     def delete
       fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
-      GoodData.delete(uri)
+      client.delete(uri)
+    end
+
+    # Helper for getting rid of all data in the project
+    #
+    # @option options [Boolean] :force has to be added otherwise the operation is not performed
+    # @return [Array] Result of executing MAQLs
+    def delete_all_data(options = {})
+      return false unless options[:force]
+      datasets.pmap do |dataset|
+        execute_maql("SYNCHRONIZE {#{dataset.identifier}}")
+      end
     end
 
     # Deletes dashboards for project
@@ -279,41 +301,58 @@ module GoodData
       Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
     end
 
+    def deploy_process(path, options = {})
+      GoodData::Process.deploy(path, options.merge(client: client, project: self))
+    end
+
+    # Executes DML expression. See (https://developer.gooddata.com/article/deleting-records-from-datasets)
+    # for some examples and explanations
+    #
+    # @param dml [String] DML expression
+    # @return [Hash] Result of executing DML
     def execute_dml(dml)
       uri = "/gdc/md/#{pid}/dml/manage"
-      result = GoodData.post(uri, {
-        manage: {
-          maql: dml
-        }
-      })
+      result = client.post(uri, manage: { maql: dml })
       polling_uri = result['uri']
-      result = GoodData.get(polling_uri)
-      while result['taskState'] && result['taskState']['status'] == 'WAIT'
-        sleep 10
-        result = GoodData.get polling_uri
+
+      client.poll_on_response(polling_uri) do |body|
+        body && body['taskState'] && body['taskState']['status'] == 'WAIT'
       end
     end
 
-    def delete_reports
-      reps = reports(:full => false)
+    # Executes MAQL expression and waits for it to be finished.
+    #
+    # @param maql [String] MAQL expression
+    # @return [Hash] Result of executing MAQL
+    def execute_maql(maql)
+      ldm_links = client.get(md[GoodData::Model::LDM_CTG])
+      ldm_uri = Links.new(ldm_links)[GoodData::Model::LDM_MANAGE_CTG]
+      response = client.post(ldm_uri, manage: { maql: maql })
+      polling_uri = response['entries'].first['link']
 
-      # dashes = dashboards
-
-      reps.each do |report|
-        uri = report['link']
-        puts "Deleting report #{uri}"
-        ub = GoodData::MdObject.usedby(uri, nil, self)
-
-        ub.map do |ref|
-          db = GoodData::Dashboard[ref, { :project => self }]
-
-          # TODO: Implement GoodData::Dashboard#remove_report
-          db.remove_report(report)
-        end
-
-        # Finally delete the report itself
-        GoodData.delete uri
+      client.poll_on_response(polling_uri) do |body|
+        body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
+    end
+
+    # Helper for getting facts of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
+    # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
+    def facts(id = :all)
+      GoodData::Fact[id, project: self, client: client]
+    end
+
+    def fact_by_title(title)
+      GoodData::Fact.find_first_by_title(title, project: self, client: client)
+    end
+
+    def facts_by_title(title)
+      GoodData::Fact.find_by_title(title, project: self, client: client)
+    end
+
+    def find_attribute_element_value(uri)
+      GoodData::Attribute.find_element_value(uri, client: client, project: self)
     end
 
     # Gets project role by its identifier
@@ -386,7 +425,113 @@ module GoodData
       nil
     end
 
-    def has_role?(user, role_name)
+    # Exports project users to file
+    def import_users(path, opts = { :header => true }, &block)
+      opts[:path] = path
+
+      ##########################
+      # Caching/Cached objects
+      ##########################
+      domains = {}
+      current_users = users
+      role_list = roles
+
+      ##########################
+      # Load users from CSV
+      ##########################
+      new_users = GoodData::Helpers.csv_read(opts) do |row|
+        json = {}
+        if block_given?
+          json = yield row
+        else
+          json = {
+            'user' => {
+              'content' => {
+                'email' => row[0],
+                'login' => row[1],
+                'firstname' => row[2],
+                'lastname' => row[3]
+              },
+              'meta' => {}
+            }
+          }
+        end
+
+        GoodData::User.new(json)
+      end
+
+      ##########################
+      # Diff users
+      ##########################
+      diff = GoodData::User.diff_list(current_users, new_users)
+
+      ##########################
+      # Create new users
+      ##########################
+      diff[:added].map do |user|
+        # TODO: Add user here
+        domain_name = user.json['user']['content']['domain']
+
+        # Lookup for domain in cache'
+        domain = domains[domain_name]
+
+        # Get domain info from REST, add to cache
+        if domain.nil?
+          domain = {
+            :domain => GoodData::Domain[domain_name],
+            :users => GoodData::Domain[domain_name].users
+          }
+
+          domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
+          domains[domain_name] = domain
+        end
+
+        # Check if user exists in domain
+        domain_user = domain[:users_map][user.email]
+
+        # Create domain user if needed
+        unless domain_user
+          password = user.json['user']['content']['password']
+
+          # Fill necessary user data
+          user_data = {
+            :login => user.login,
+            :firstName => user.first_name,
+            :lastName => user.last_name,
+            :password => password,
+            :verifyPassword => password,
+            :email => user.login
+          }
+
+          # Add created user to cache
+          domain_user = domain[:domain].add_user(user_data)
+          domain[:users] << domain_user
+          domain[:users_map][user.email] = domain_user
+        end
+
+        # Lookup for role
+        role_name = user.json['user']['content']['role'] || 'readOnlyUser'
+        role = get_role_by_identifier(role_name, role_list)
+        next if role.nil?
+
+        # Assign user project role
+        add_user(domain_user, [role.uri])
+      end
+
+      ##########################
+      # Remove old users
+      ##########################
+      # diff[:removed].map do |user|
+      #   user.disable(self)
+      # end
+    end
+
+    # Checks whether user has particular role in given proejct
+    #
+    # @param user [GoodData::Profile | GoodData::Membership | String] User in question. Can be passed by login (String), profile or membershi objects
+    # @param role_name [String || GoodData::ProjectRole] Project role cna be given by either string or GoodData::ProjectRole object
+    # @return [Boolean] Tru if user has role_name
+    def user_has_role?(user, role_name)
       member = get_user(user)
       role = get_role(role_name)
       member.roles.include?(role)
@@ -398,6 +543,7 @@ module GoodData
     #
     # @param json Json used for initialization
     def initialize(json)
+      super
       @json = json
     end
 
@@ -436,21 +582,17 @@ module GoodData
       }
 
       url = "/gdc/projects/#{pid}/invitations"
-      GoodData.post(url, data)
+      client.post(url, data)
     end
 
     # Returns invitations to project
     #
     # @return [Array<GoodData::Invitation>] List of invitations
     def invitations
-      res = []
-
-      tmp = GoodData.get @json['project']['links']['invitations']
-      tmp['invitations'].each do |invitation|
-        res << GoodData::Invitation.new(invitation)
+      invitations = client.get @json['project']['links']['invitations']
+      invitations['invitations'].pmap do |invitation|
+        client.create GoodData::Invitation, invitation
       end
-
-      res
     end
 
     # Returns project related links
@@ -460,9 +602,21 @@ module GoodData
       data['links']
     end
 
-    # Gets metadata
+    # Helper for getting labels of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to
+    # GoodData::Label[id] + it supports :all as welll
+    # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
+    def labels(id = :all, opts = {})
+      if id == :all
+        attributes.pmapcat { |a| a.labels }.uniq
+      else
+        GoodData::Label[id, opts.merge(project: self, client: client)]
+      end
+    end
+
     def md
-      @md ||= Links.new GoodData.get(data['links']['metadata'])
+      @md ||= client.create(Links, client.get(data['links']['metadata']))
     end
 
     # Gets membership for profile specified
@@ -479,6 +633,37 @@ module GoodData
       list.find { |m| m.login == profile.login }
     end
 
+    # Get data from project specific metadata storage
+    #
+    # @param [Symbol | String] :all or nothing for all keys or a string for value of specific key
+    # @return [Hash] key Hash of stored data
+    def metadata(key = :all)
+      GoodData::ProjectMetadata[key, client: client, project: self]
+    end
+
+    # Set data for specific key in project specific metadata storage
+    #
+    # @param [String] key key of the value to be stored
+    # @return [String] val value to be stored
+    def set_metadata(key, val)
+      GoodData::ProjectMetadata[key, client: client, project: self] = val
+    end
+
+    # Helper for getting metrics of a project
+    #
+    # @return [Array<GoodData::Metric>] matric instance or list
+    def metrics(id = :all, opts = { :full => true })
+      GoodData::Metric[id, opts.merge(project: self, client: client)]
+    end
+
+    def metric_by_title(title)
+      GoodData::Metric.find_first_by_title(title, project: self, client: client)
+    end
+
+    def metrics_by_title(title)
+      GoodData::Metric.find_by_title(title, project: self, client: client)
+    end
+
     # Checks if the profile is member of project
     #
     # @param [GoodData::Profile] profile - Profile to be checked
@@ -486,18 +671,6 @@ module GoodData
     # @return [Boolean] true if is member else false
     def member?(profile, list = members)
       !member(profile, list).nil?
-    end
-
-    # Gets all metric for project
-    def metrics
-      GoodData::Metric[:all, :project => self, :full => true]
-    end
-
-    # Gets metric by identifier, link or title
-    def metric(id)
-      ms = GoodData::Metric[:all, :project => self, :full => false]
-      met = ms.find { |m| m['title'] == id || m['link'] == id || m['identifier'] == id }
-      met.nil? ? nil : GoodData::Metric[met['link'], :project => self]
     end
 
     # Gets raw resource ID
@@ -509,28 +682,36 @@ module GoodData
 
     alias_method :pid, :obj_id
 
-    def partial_md_export(objects, options = {})
-      # TODO: refactor polling to md_polling in client
+    # Helper for getting objects of a project
+    #
+    # @return [Array<GoodData::MdObject>] object instance or list
+    def objects(id, opts = {})
+      GoodData::MdObject[id, opts.merge(project: self, client: client)]
+    end
 
-      fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objects.nil? || objects.empty?
-      fail 'The objects to migrate has to be provided as an array' unless objects.is_a?(Array)
+    def partial_md_export(objs, options = {})
+      fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objs.nil?
+      objs = [objs] unless objs.is_a?(Array)
+      fail 'Nothing to migrate. The list you provided is empty' if objs.empty?
 
       target_project = options[:project]
       fail 'You have to provide a project instance or project pid to migrate to' if target_project.nil?
-      target_project = GoodData::Project[target_project]
-      objects = objects.map { |obj| GoodData::MdObject[obj] }
+      target_project = client.projects(target_project)
+      objs = objs.pmap { |obj| objects(obj) }
       export_payload = {
         :partialMDExport => {
-          :uris => objects.map { |obj| obj.uri }
+          :uris => objs.map { |obj| obj.uri }
         }
       }
-      result = GoodData.post("#{GoodData.project.md['maintenance']}/partialmdexport", export_payload)
+      result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
 
-      polling_result = GoodData.wait_for_polling_result(polling_url)
+      polling_result = client.poll_on_response(polling_url) do |body|
+        body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+      end
 
-      fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+      fail 'Exporting objects failed' if polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'ERROR'
 
       import_payload = {
         :partialMDImport => {
@@ -540,14 +721,25 @@ module GoodData
         }
       }
 
-      result = GoodData.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
+      result = client.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
       polling_url = result['uri']
-      polling_result = GoodData.wait_for_polling_result(polling_url)
+
+      client.poll_on_response(polling_url) do |body|
+        body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+      end
 
       fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
     end
 
     alias_method :transfer_objects, :partial_md_export
+
+    # Helper for getting processes of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
+    # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
+    def processes(id = :all)
+      GoodData::Process[id, project: self, client: client]
+    end
 
     # Checks if this object instance is project
     #
@@ -556,57 +748,51 @@ module GoodData
       true
     end
 
-    def project_info
-      results = blueprint.datasets.map do |ds|
-        begin
-          [ds, ds.count]
-        rescue
-          nil
+    def info
+      results = blueprint.datasets.pmap do |ds|
+        [ds, ds.count(self)]
+      end
+      puts title
+      puts GoodData::Helpers.underline(title)
+      puts
+      puts "Datasets - #{results.count}"
+      puts
+      results.each do |x|
+        dataset, count = x
+        dataset.title.tap do |t|
+          puts t
+          puts GoodData::Helpers.underline(t)
+          puts "Size - #{count} rows"
+          puts "#{dataset.attributes_and_anchors.count} attributes, #{dataset.facts.count} facts, #{dataset.references.count} references"
+          puts
         end
       end
-      results.each do |x|
-        ds, res = x
-        ds && puts("#{ds && ds.title}, #{res}")
-      end
-      results
+      nil
     end
 
     # Forces project to reload
     def reload!
       if saved?
-        response = GoodData.get(uri)
+        response = client.get(uri)
         @json = response
       end
       self
     end
 
-    # Gets dashboard by title, link, id
+    # Helper for getting reports of a project
     #
-    # @param [String] name Name, ID or URL of dashboard
-    # @return [GoodData::Dashboard] Dashboard instance if found
-    def report(name)
-      reps = reports
-      reps.each do |report|
-        return report if report.title == name || report.uri == name
-      end
-      nil
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
+    # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
+    def reports(id = :all)
+      GoodData::Report[id, project: self, client: client]
     end
 
-    # Gets the project reports
-    def reports(opts = { :full => true })
-      url = "/gdc/md/#{obj_id}/query/reports"
-      res = GoodData.get url
-
-      res['query']['entries'].map do |entry|
-        next if entry.nil? || entry['link'].nil? || entry['link'].empty?
-
-        if opts[:full]
-          raw_report = GoodData.get(entry['link'])
-          Report.new(raw_report)
-        else
-          entry
-        end
-      end
+    # Helper for getting report definitions of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::ReportDefinition[id]
+    # @return [GoodData::ReportDefinition | Array<GoodData::ReportDefinition>] report definition instance or list
+    def report_definitions(id = :all, options = {})
+      GoodData::ReportDefinition[id, options.merge(project: self, client: client)]
     end
 
     # Gets the list or project roles
@@ -614,20 +800,29 @@ module GoodData
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
       url = "/gdc/projects/#{pid}/roles"
-      tmp = GoodData.get(url)
-      tmp['projectRoles']['roles'].map do |role_url|
-        json = GoodData.get role_url
-        GoodData::ProjectRole.new(json)
+
+      tmp = client.get(url)
+      tmp['projectRoles']['roles'].pmap do |role_url|
+        json = client.get role_url
+        client.create(GoodData::ProjectRole, json)
       end
     end
 
     # Saves project
     def save
-      response = GoodData.post PROJECTS_PATH, raw_data
-      if uri.nil?
-        response = GoodData.get response['uri']
-        @json = response
-      end
+      data_to_send = raw_data.deep_dup
+      data_to_send['project']['content'].delete('cluster')
+      data_to_send['project']['content'].delete('isPublic')
+      data_to_send['project']['content'].delete('state')
+      response = if uri
+                   client.post(PROJECT_PATH % pid, data_to_send)
+                   client.get uri
+                 else
+                   result = client.post(PROJECTS_PATH, data_to_send)
+                   client.get result['uri']
+                 end
+      @json = response
+      self
     end
 
     # Checks if is project saved
@@ -638,16 +833,10 @@ module GoodData
       !res
     end
 
-    # Gets project schedules
-    #
-    # @return [Array<GoodData::Schedule>] List of schedules
-    def schedules
-      res = []
-      tmp = GoodData.get @json['project']['links']['schedules']
-      tmp['schedules']['items'].each do |schedule|
-        res << GoodData::Schedule.new(schedule)
-      end
-      res
+    # @param [String | Number | Object] Anything that you can pass to GoodData::Schedule[id]
+    # @return [GoodData::Schedule | Array<GoodData::Schedule>] schedule instance or list
+    def schedules(id = :all)
+      GoodData::Schedule[id, project: self, client: client]
     end
 
     # Gets SLIs data
@@ -656,8 +845,8 @@ module GoodData
     def slis
       link = "#{data['links']['metadata']}#{SLIS_PATH}"
 
-      # TODO: Review what to do with passed extra argument
-      Metadata.new GoodData.get(link)
+      # FIXME: Review what to do with passed extra argument
+      Metadata.new client.get(link)
     end
 
     # Gets project state
@@ -667,25 +856,13 @@ module GoodData
       data['content']['state'].downcase.to_sym if data['content'] && data['content']['state']
     end
 
-    # Gets project summary
-    #
-    # @return [String] Project summary
-    def summary
-      data['meta']['summary'] if data['meta']
-    end
+    Project.metadata_property_reader :summary, :title
 
     # Gets project title
     #
     # @return [String] Project title
-    def title
-      data['meta']['title'] if data['meta']
-    end
-
-    # Gets project update date
-    #
-    # @return [DateTime] Date time of last update
-    def updated
-      Time.parse(@json['project']['meta']['updated'])
+    def title=(a_title)
+      data['meta']['title'] = a_title if data['meta']
     end
 
     # Uploads file to project
@@ -704,14 +881,10 @@ module GoodData
     #
     # @return [Array<GoodData::User>] List of users
     def users
-      res = []
-
-      tmp = GoodData.get @json['project']['links']['users']
+      tmp = client.get @json['project']['links']['users']
       tmp['users'].map do |user|
-        res << GoodData::Membership.new(user)
+        client.factory.create(GoodData::Membership, user)
       end
-
-      res
     end
 
     alias_method :members, :users
@@ -727,9 +900,10 @@ module GoodData
 
         # Get domain info from REST, add to cache
         if domain.nil?
+          d = GoodData::Domain[domain_name, { :client => client }]
           domain = {
-            :domain => GoodData::Domain[domain_name],
-            :users => GoodData::Domain[domain_name].users
+            :domain => d,
+            :users => d.users(:client => client)
           }
 
           domain[:users_map] = Hash[domain[:users].map { |u| [u.email, u] }]
@@ -802,7 +976,7 @@ module GoodData
     #
     # @param list List of users to be disabled
     def users_remove(list)
-      list.map do |user|
+      list.pmap do |user|
         user.disable
       end
     end
@@ -839,7 +1013,7 @@ module GoodData
         }
       }
 
-      GoodData.post url, payload
+      client.post url, payload
     end
 
     alias_method :add_user, :set_user_roles
@@ -849,35 +1023,29 @@ module GoodData
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
     def set_users_roles(list, role_list = roles)
-      list.map do |user_hash|
+      list.pmap do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:role] || user_hash[:roles]
         {
           :user => user,
-          :result => set_user_roles(user, roles, role_list)
+          :result => set_user_roles(user, roles)
         }
       end
     end
 
     # Run validation on project
-    # Valid settings for validation are (default all):
+    # Valid settins for validation are (default all):
     # ldm - Checks the consistency of LDM objects.
     # pdm Checks LDM to PDM mapping consistency, also checks PDM reference integrity.
     # metric_filter - Checks metadata for inconsistent metric filters.
     # invalid_objects - Checks metadata for invalid/corrupted objects.
     # asyncTask response
-    def validate(filters = %w(ldm, pdm, metric_filter, invalid_objects))
-      response = GoodData.post "#{GoodData.project.md['validate-project']}", 'validateProject' => filters
+    def validate(filters = %w(ldm pdm metric_filter invalid_objects))
+      response = client.post "#{md['validate-project']}", 'validateProject' => filters
       polling_link = response['asyncTask']['link']['poll']
-      polling_result = GoodData.get(polling_link)
-      while polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'RUNNING'
-        sleep(3)
-        polling_result = GoodData.get(polling_link)
+      client.poll_on_response(polling_link) do |body|
+        body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
-      polling_result
     end
-
-    alias_method :to_json, :json
-    alias_method :raw_data, :json
   end
 end

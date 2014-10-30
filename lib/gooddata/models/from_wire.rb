@@ -41,13 +41,16 @@ module GoodData
           []
         else
           labels = attribute['labels'] || []
-          default_label_id = attribute['defaultLabel']
-          default_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == default_label_id }
-          dl = default_labels.map do |label|
-            parse_label(attribute, label, 'anchor')
+          default_label = attribute['defaultLabel']
+          primary_label_name = attribute['identifier'].split('.').last
+          dataset_name = attribute['identifier'].split('.')[1]
+          primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
+          primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
+          dl = primary_labels.map do |label|
+            parse_label(attribute, label, 'anchor', default_label)
           end
           rl = regular_labels.map do |label|
-            parse_label(attribute, label, 'label')
+            parse_label(attribute, label, 'label', default_label)
           end
           dl + rl
         end
@@ -58,16 +61,21 @@ module GoodData
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
       def self.parse_attributes(stuff)
-        attributes = stuff['dataset']['attributes'] || []
-        attributes.mapcat do |attribute|
-          labels = attribute['attribute']['labels'] || []
-          default_label_id = attribute['attribute']['defaultLabel']
-          default_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == default_label_id }
-          dl = default_labels.map do |label|
-            parse_label(attribute['attribute'], label, 'attribute')
+        dataset = stuff['dataset']
+        attributes = dataset['attributes'] || []
+        attributes.mapcat do |a|
+          attribute = a['attribute']
+          labels = attribute['labels'] || []
+          default_label = attribute['defaultLabel']
+          primary_label_name = attribute['identifier'].split('.').last
+          dataset_name = attribute['identifier'].split('.')[1]
+          primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
+          primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
+          dl = primary_labels.map do |label|
+            parse_label(attribute, label, 'attribute', default_label)
           end
           rl = regular_labels.map do |label|
-            parse_label(attribute['attribute'], label, 'label')
+            parse_label(attribute, label, 'label', default_label)
           end
           dl + rl
         end
@@ -106,7 +114,7 @@ module GoodData
       #
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.parse_label(attribute, label, type)
+      def self.parse_label(attribute, label, type, default_label = nil)
         Hash.new.tap do |l|
           l[:type] = type
           l[:reference] = attribute['identifier'].split('.').last if type == 'label'
@@ -114,6 +122,7 @@ module GoodData
           l[:title] = label['label']['title'] if label['label']['title'] != label['label']['identifier'].split('.').last.titleize
           l[:gd_data_type] = label['label']['dataType'] if label['label'].key?('dataType')
           l[:gd_type] = label['label']['type'] if label['label'].key?('type')
+          l[:default_label] = true if default_label == label['label']['identifier']
         end
       end
 

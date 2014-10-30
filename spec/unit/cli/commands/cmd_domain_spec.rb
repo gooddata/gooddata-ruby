@@ -2,7 +2,7 @@
 
 require 'gooddata/cli/cli'
 
-describe 'GoodData::CLI - domain' do
+describe 'GoodData::CLI - domain', :broken => true do
   describe 'domain' do
     it 'Complains when no subcommand specified' do
       args = %w(domain)
@@ -18,7 +18,14 @@ describe 'GoodData::CLI - domain' do
     TEST_PASSWORD = 'p4ssw0rth'
 
     it "Outputs 'Domain name has to be provided' if none specified" do
-      args = %w(domain add_user)
+      args = [
+        '-U',
+         ConnectionHelper::DEFAULT_USERNAME,
+         '-P',
+         ConnectionHelper::DEFAULT_PASSWORD,
+         'domain',
+         'add_user'
+      ]
 
       out = run_cli(args)
       out.should include 'Domain name has to be provided'
@@ -26,6 +33,10 @@ describe 'GoodData::CLI - domain' do
 
     it "Outputs 'Email has to be provided' if none specified" do
       args = [
+        '-U',
+        ConnectionHelper::DEFAULT_USERNAME,
+        '-P',
+        ConnectionHelper::DEFAULT_PASSWORD,
         'domain',
         'add_user',
         TEST_DOMAIN
@@ -37,6 +48,10 @@ describe 'GoodData::CLI - domain' do
 
     it "Outputs 'Password has to be provided' if none specified" do
       args = [
+        '-U',
+        ConnectionHelper::DEFAULT_USERNAME,
+        '-P',
+        ConnectionHelper::DEFAULT_PASSWORD,
         'domain',
         'add_user',
         TEST_DOMAIN,
@@ -49,6 +64,10 @@ describe 'GoodData::CLI - domain' do
 
     it 'Works' do
       args = [
+        '-U',
+        ConnectionHelper::DEFAULT_USERNAME,
+        '-P',
+        ConnectionHelper::DEFAULT_PASSWORD,
         'domain',
         'add_user',
         TEST_DOMAIN,
@@ -63,7 +82,14 @@ describe 'GoodData::CLI - domain' do
 
   describe 'domain list_users' do
     it 'Complains when no parameters specified' do
-      args = %w(domain list_users)
+      args = [
+        '-U',
+        ConnectionHelper::DEFAULT_USERNAME,
+        '-P',
+        ConnectionHelper::DEFAULT_PASSWORD,
+        'domain',
+        'list_users'
+      ]
 
       out = run_cli(args)
       out.should include 'Domain name has to be provided'

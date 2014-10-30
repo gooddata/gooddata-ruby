@@ -1,85 +1,44 @@
 # encoding: UTF-8
 
+require 'pmap'
+
 require_relative 'profile'
 
+require_relative '../rest/rest'
+
+require_relative '../mixins/rest_resource'
+
 module GoodData
-  class ProjectRole
+  class ProjectRole < GoodData::Rest::Object
+    attr_accessor :json
+
+    include GoodData::Mixin::RestResource
+
+    root_key :projectRole
+
+    include GoodData::Mixin::Author
+    include GoodData::Mixin::Contributor
+    include GoodData::Mixin::Timestamps
+
     def initialize(json)
       @json = json
     end
 
-    # Gets Project Role Identifier
-    #
-    # @return [string] Project Role
-    def identifier
-      @json['projectRole']['meta']['identifier']
-    end
+    data_property_reader :permissions
 
-    # Gets Project Role Author
-    #
-    # @return [GoodData::Profile] Project Role author
-    def author
-      url = @json['projectRole']['meta']['author']
-      tmp = GoodData.get url
-      GoodData::Profile.new(tmp)
-    end
-
-    # Gets Project Role Contributor
-    #
-    # @return [GoodData::Profile] Project Role Contributor
-    def contributor
-      url = @json['projectRole']['meta']['contributor']
-      tmp = GoodData.get url
-      GoodData::Profile.new(tmp)
-    end
-
-    # Gets DateTime time when created
-    #
-    # @return [DateTime] Date time of creation
-    def created
-      Time.parse(@json['projectRole']['meta']['created'])
-    end
-
-    # Gets Project Role Permissions
-    #
-    # @return [string] Project Role
-    def permissions
-      @json['projectRole']['permissions']
-    end
-
-    # Gets Project Role Title
-    #
-    # @return [string] Project Role Title
-    def title
-      @json['projectRole']['meta']['title']
-    end
-
-    # Gets Project Role Summary
-    #
-    # @return [string] Project Role Summary
-    def summary
-      @json['projectRole']['meta']['summary']
-    end
-
-    # Gets DateTime time when updated
-    #
-    # @return [DateTime] Date time of last update
-    def updated
-      Time.parse(@json['projectRole']['meta']['updated'])
-    end
+    metadata_property_reader :identifier, :title, :summary
 
     # Gets Users with this Role
     #
     # @return [Array<GoodData::Profile>] List of users
     def users
-      res = []
-      url = @json['projectRole']['links']['roleUsers']
-      tmp = GoodData.get url
-      tmp['associatedUsers']['users'].each do |user_url|
-        user = GoodData.get user_url
-        res << GoodData::Profile.new(user)
+      url = data['links']['roleUsers']
+      tmp = client.get url
+      tmp['associatedUsers']['users'].pmap do |user_url|
+        url = user_url
+        user = client.get url
+        client.create(GoodData::Profile, user)
       end
-      res
     end
 
     # Gets Raw object URI
@@ -92,6 +51,5 @@ module GoodData
     def ==(other)
       uri == other.uri
     end
-
   end
 end

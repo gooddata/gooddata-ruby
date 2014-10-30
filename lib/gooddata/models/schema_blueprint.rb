@@ -195,9 +195,18 @@ module GoodData
       end
       alias_method :fields, :columns
 
-      def count
-        attr = GoodData::Attribute[GoodData::Model.identifier_for(to_hash, anchor)]
-        attr.create_metric.execute
+      # Creates a metric which counts numnber of lines in dataset. Works for both
+      # datasets with or without anchor
+      #
+      # @return [Boolean]
+      def count(project)
+        id = if anchor?
+               GoodData::Model.identifier_for(to_hash, anchor)
+             else
+               GoodData::Model.identifier_for(to_hash, type: :anchor_no_label)
+             end
+        attribute = project.attributes(id)
+        attribute.create_metric.execute
       end
 
       # Returns date facts of a dataset
@@ -249,6 +258,13 @@ module GoodData
       # @return [Array<Hash>] matching fields
       def find_column_by_type(type, all = nil)
         DatasetBlueprint.find_column_by_type(to_hash, type, all)
+      end
+
+      # Returns identifier for dataset
+      #
+      # @return [String] identifier
+      def identifier
+        GoodData::Model.identifier_for(to_hash)
       end
 
       # Creates a DatasetBlueprint

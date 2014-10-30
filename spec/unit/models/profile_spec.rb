@@ -7,11 +7,11 @@ require 'gooddata/models/project'
 
 describe GoodData::Profile do
   before(:all) do
-    ConnectionHelper.create_default_connection
-    @user = GoodData::Domain.find_user_by_login(ConnectionHelper::DEFAULT_DOMAIN, ConnectionHelper::DEFAULT_USERNAME)
+    @client = ConnectionHelper.create_default_connection
+    @user = GoodData::Domain.find_user_by_login(ConnectionHelper::DEFAULT_DOMAIN, ConnectionHelper::DEFAULT_USERNAME, :client => @client)
 
     @users = [
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'petr.cvengros@gooddata.com',
@@ -21,7 +21,7 @@ describe GoodData::Profile do
         }
       ),
 
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'tomas.korcak@gooddata.com',
@@ -31,7 +31,7 @@ describe GoodData::Profile do
         }
       ),
 
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'patrick.mcconlogue@gooddata.com',
@@ -42,7 +42,7 @@ describe GoodData::Profile do
         }
       ),
 
-      GoodData::Profile.new(
+      @client.create(GoodData::Profile,
         {
           'accountSetting' => {
             'email' => 'tomas.svarovsky@gooddata.com',
@@ -55,20 +55,24 @@ describe GoodData::Profile do
   end
 
   after(:all) do
-    GoodData.disconnect
+    @client.disconnect
+  end
+
+  def deep_dup(obj)
+    Marshal.load(Marshal.dump(obj))
   end
 
   describe '#==' do
     it 'Returns true for same objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(@user)
+      user2 = deep_dup(@user)
       res = user1 == user2
       res.should be_true
     end
 
     it 'Returns false for different objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(@user)
+      user2 = deep_dup(@user)
 
       # Do some little modification
       user2.first_name = 'kokos'
@@ -80,15 +84,15 @@ describe GoodData::Profile do
 
   describe '#!=' do
     it 'Returns false for same objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(@user)
+      user2 = deep_dup(@user)
       res = user1 != user2
       res.should be_false
     end
 
     it 'Returns true for different objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(@user)
+      user2 = deep_dup(@user)
 
       # Do some little modification
       user2.first_name = 'kokos'
@@ -100,8 +104,8 @@ describe GoodData::Profile do
 
   describe '#apply' do
     it 'When diff of two objects applied to first result should be same as second object' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(@user)
+      user2 = deep_dup(@user)
 
       # Do some little modification
       user2.first_name = 'kokos'
@@ -120,16 +124,16 @@ describe GoodData::Profile do
 
   describe '#diff' do
     it 'Returns empty hash for same objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(@user)
+      user2 = deep_dup(@user)
       res = user1.diff(user2)
       expect(res).to be_instance_of(Hash)
       res.length.should eql(0)
     end
 
     it 'Returns non empty hash for different objects' do
-      user1 = GoodData.user.dup
-      user2 = GoodData.user.dup
+      user1 = deep_dup(@user)
+      user2 = deep_dup(@user)
 
       # Do some little modification
       user2.first_name = 'kokos'

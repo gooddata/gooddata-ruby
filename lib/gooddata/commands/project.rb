@@ -7,74 +7,49 @@ module GoodData
     class Project
       class << self
         # Create new project based on options supplied
-        def create(options = {})
+        def create(options = { client: GoodData.connection })
           title = options[:title]
           summary = options[:summary]
           template = options[:template]
           token = options[:token]
-
-          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token)
+          client = options[:client]
+          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token, :client => client)
         end
 
         # Show existing project
-        def show(id)
-          GoodData::Project[id]
+        def show(id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.projects(id)
         end
 
-        def invite(project_id, email, role, msg = GoodData::Project::DEFAULT_INVITE_MESSAGE)
-          msg = GoodData::Project::DEFAULT_INVITE_MESSAGE if msg.nil? || msg.empty?
-
-          project = GoodData::Project[project_id]
+        def invite(project_id, email, role, msg = GoodData::Project::DEFAULT_INVITE_MESSAGE, options = {})
+          client = options[:client]
+          project = client.projects(project_id)
           fail "Invalid project id '#{project_id}' specified" if project.nil?
 
           project.invite(email, role, msg)
         end
 
         # Clone existing project
-        def clone(project_id, options)
-          with_data = options[:data] || true
-          with_users = options[:users] || false
-          export = {
-            :exportProject => {
-              :exportUsers => with_users ? 1 : 0,
-              :exportData => with_data ? 1 : 0
-            }
-          }
-
-          result = GoodData.post("/gdc/md/#{project_id}/maintenance/export", export)
-          export_token = result['exportArtifact']['token']
-          status_url = result['exportArtifact']['status']['uri']
-
-          state = GoodData.get(status_url)['taskState']['status']
-          while state == 'RUNNING'
-            sleep 5
-            result = GoodData.get(status_url)
-            state = result['taskState']['status']
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to delete
+        # @option options [String] :data Clone including all the data (default true)
+        # @option options [String] :users Clone including all the users (default false)
+        # @option options [String] :title Name of the cloned project (default "Clone of {old_project_title}")
+        # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
+        def clone(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |project|
+            project.clone(options)
           end
-
-          old_project = GoodData::Project[project_id]
-          project_uri = create(options.merge(:title => "Clone of #{old_project.title}"))
-          new_project = GoodData::Project[project_uri]
-
-          import = {
-            :importProject => {
-              :token => export_token
-            }
-          }
-          result = GoodData.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
-          status_url = result['uri']
-          state = GoodData.get(status_url)['taskState']['status']
-          while state == 'RUNNING'
-            sleep 5
-            result = GoodData.get(status_url)
-            state = result['taskState']['status']
-          end
-          true
         end
 
-        # Delete existing project
-        def delete(project_id)
-          p = GoodData::Project[project_id]
+        # Deletes existing project
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to delete
+        def delete(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          p = client.projects(project_id)
           p.delete
         end
 
@@ -97,58 +72,99 @@ module GoodData
           [spec, goodfile[:project_id]]
         end
 
-        def list_users(pid)
-          users = []
-          finished = false
-          offset = 0
-          # Limit set to 1000 to be safe
-          limit = 1000
-          until finished
-            result = GoodData.get('/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{limit}')
-            result['users'].map do |u|
-              as = u['user']
-              users.push(
-                  :login => as['content']['email'],
-                  :uri => as['links']['self'],
-                  :first_name => as['content']['firstname'],
-                  :last_name => as['content']['lastname'],
-                  :role => as['content']['userRoles'].first,
-                  :status => as['content']['status']
-            )
-            end
-            if result['users'].count == limit
-              offset += limit
-            else
-              finished = true
-            end
-          end
-          users
-        end
-
         # Update project
-        def update(options = {})
-          project = options[:project]
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :project => project)
+        def update(opts = { client: GoodData.connection })
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          p = opts[:project]
+          fail ArgumentError, 'No :project specified' if p.nil?
+
+          project = GoodData::Project[p, opts]
+          fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+          GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :client => client, :project => project)
         end
 
         # Build project
-        def build(options = {})
-          GoodData::Model::ProjectCreator.migrate(:spec => options[:spec], :token => options[:token])
+        def build(opts = { client: GoodData.connection })
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :token => opts[:token], :client => client)
         end
 
-        def validate(project_id)
-          GoodData.with_project(project_id) do |p|
+        # Performs project validation
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to validate
+        # @return [Object] Report of found problems
+        def validate(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |p|
             p.validate
           end
         end
 
-        def jack_in(project_id)
-          GoodData.with_project(project_id) do |project|
-            puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-            binding.pry(:quiet => true,
-                        :prompt => [proc do |target_self, nest_level, pry|
-                          'project_live_sesion: '
-                        end])
+        def jack_in(options)
+          goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
+
+          spin_session = proc do |goodfile, blueprint|
+            project_id = options[:project_id] || goodfile[:project_id]
+            message = 'You have to provide "project_id". You can either provide it through -p flag'\
+               'or even better way is to fill it in in your Goodfile under key "project_id".'\
+               'If you just started a project you have to create it first. One way might be'\
+               'through "gooddata project build"'
+            fail message if project_id.nil? || project_id.empty?
+
+            begin
+              require 'gooddata'
+              client = GoodData.connect(options)
+
+              GoodData.with_project(project_id, :client => client) do |project|
+                fail ArgumentError, 'Wrong project specified' if project.nil?
+
+                puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
+                binding.pry(:quiet => true,
+                            :prompt => [proc do |target_self, nest_level, pry|
+                              'project_live_sesion: '
+                            end])
+              end
+            rescue GoodData::ProjectNotFound
+              puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
+            end
+          end
+
+          if goodfile_path
+            goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
+            model_key = goodfile[:model]
+            blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
+            FileUtils.cd(goodfile_path.dirname) do
+              spin_session.call(goodfile, blueprint)
+            end
+          else
+            spin_session.call({}, nil)
+          end
+        end
+
+        # Lists roles in a project
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to list the users in
+        # @return [Array <GoodData::Role>] List of project roles
+        def roles(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |p|
+            p.roles
+          end
+        end
+
+        # Lists users in a project
+        #
+        # @param project_id [String | GoodData::Project] Project id or project instance to list the users in
+        # @return [Array <GoodData::Membership>] List of project users
+        def users(project_id, options = { client: GoodData.connection })
+          client = options[:client]
+          client.with_project(project_id) do |p|
+            p.users
           end
         end
       end

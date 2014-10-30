@@ -16,7 +16,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('reportdefinition', ReportDefinition, options)
       end
 
@@ -60,20 +60,23 @@ module GoodData
         parts
       end
 
-      def find(stuff)
+      def find(stuff, opts = { :client => GoodData.connection, :project => GoodData.project })
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
         stuff.map do |item|
           if item.respond_to?(:attribute?) && item.attribute?
             item.display_forms.first
           elsif item.is_a?(String)
-            x = GoodData::MdObject.get_by_id(item)
+            x = GoodData::MdObject.get_by_id(item, opts)
             fail "Object given by id \"#{item}\" could not be found" if x.nil?
             case x.raw_data.keys.first.to_s
             when 'attribute'
-              GoodData::Attribute.new(x.raw_data).display_forms.first
+              GoodData::Attribute.new(x.json).display_forms.first
             when 'attributeDisplayForm'
-              GoodData::Label.new(x.raw_data)
+              GoodData::Label.new(x.json)
             when 'metric'
-              GoodData::Metric.new(x.raw_data)
+              GoodData::Metric.new(x.json)
             end
           elsif item.is_a?(Hash) && item.keys.include?(:title)
             case item[:type].to_s
@@ -120,48 +123,71 @@ module GoodData
         begin
           unsaved_metrics.each { |m| m.save }
           rd = GoodData::ReportDefinition.create(options)
-          data_result(execute_inline(rd))
+          data_result(execute_inline(rd, options), options)
         ensure
           unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
       end
 
-      def execute_inline(rd)
-        rd = rd.respond_to?(:raw_data) ? rd.raw_data : rd
+      def execute_inline(rd, opts = { :client => GoodData.connection, :project => GoodData.project })
+        client = opts[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        rd = rd.respond_to?(:json) ? rd.json : rd
         data = {
           report_req: {
             definitionContent: {
               content: rd,
-              projectMetadata: GoodData.project.links['metadata']
+              projectMetadata: project.links['metadata']
             }
           }
         }
-        uri = "/gdc/app/projects/#{GoodData.project.pid}/execute"
-        GoodData.post(uri, data)
+        uri = "/gdc/app/projects/#{project.pid}/execute"
+
+        client.post(uri, data)
       end
 
       # TODO: refactor the method. It should be instance method
       # Method used for getting a data_result from a wire representation of
       # @param result [Hash, Object] Wire data from JSON
       # @return [GoodData::ReportDataResult]
-      def data_result(result)
-        data_result_uri = result['execResult']['dataResult']
-        result = GoodData.get data_result_uri
+      def data_result(result, options = { :client => GoodData.connection })
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
 
-        while result['taskState'] && result['taskState']['status'] == 'WAIT'
-          sleep 10
-          result = GoodData.get data_result_uri
+        data_result_uri = result['execResult']['dataResult']
+        result = client.poll_on_response(data_result_uri) do |body|
+          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
         end
 
-        ReportDataResult.new(GoodData.get data_result_uri)
+        if result.empty?
+          client.create(EmptyResult, result)
+        else
+          client.create(ReportDataResult, result)
+        end
       end
 
-      def create(options = {})
+      def create(options = { :client => GoodData.connection, :project => GoodData.project })
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
         left = Array(options[:left])
         top = Array(options[:top])
 
-        left = ReportDefinition.find(left)
-        top = ReportDefinition.find(top)
+        left = ReportDefinition.find(left, options)
+        top = ReportDefinition.find(top, options)
 
         # TODO: Put somewhere for i18n
         fail_msg = 'All metrics in report definition must be saved'
@@ -193,24 +219,148 @@ module GoodData
         # TODO: write test for report definitions with explicit identifiers
         pars['reportDefinition']['meta']['identifier'] = options[:identifier] if options[:identifier]
 
-        ReportDefinition.new(pars)
+        client.create(ReportDefinition, pars, :project => project)
       end
     end
 
-    def metrics
-      content['grid']['metrics'].map { |i| GoodData::Metric[i['uri']] }
+    def attribute_parts
+      cols = content['grid']['columns'] || []
+      rows = content['grid']['rows'] || []
+      items = cols + rows
+      items.select { |item| item.is_a?(Hash) && item.keys.first == 'attribute' }
     end
 
-    def execute
+    def attributes
+      labels.map { |label| label.attribute }
+    end
+
+    def labels
+      attribute_parts.map { |part| project.labels(part['attribute']['uri']) }
+    end
+
+    def metric_parts
+      content['grid']['metrics']
+    end
+
+    def metrics
+      metric_parts.map { |i| project.metrics(i['uri']) }
+    end
+
+    def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
+      opts = {
+        :client => client,
+        :project => project
+      }
+
       result = if saved?
                  pars = {
                    'report_req' => { 'reportDefinition' => uri }
                  }
-                 GoodData.post '/gdc/xtab2/executor', pars
+                 client.post '/gdc/xtab2/executor', pars
                else
-                 ReportDefinition.execute_inline(self)
+                 ReportDefinition.execute_inline(self, opts)
                end
-      ReportDefinition.data_result(result)
+      ReportDefinition.data_result(result, opts)
+    end
+
+    def filters
+      content['filters'].map { |f| f['expression'] }
+    end
+
+    # Replace certain object in report definition. Returns new definition which is not saved.
+    #
+    # @param what [GoodData::MdObject | String] Object which responds to uri or a string that should be replaced
+    # @option for_what [GoodData::MdObject | String] Object which responds to uri or a string that should used as replacement
+    # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
+    def replace(what, for_what = nil)
+      pairs = if what.is_a?(Hash)
+                whats = what.keys
+                to_whats = what.values
+                whats.zip(to_whats)
+              else
+                [[what, for_what]]
+              end
+
+      pairs.each do |pair|
+        what = pair[0]
+        for_what = pair[1]
+
+        uri_what = what.respond_to?(:uri) ? what.uri : what
+        uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
+
+        content['grid']['metrics'] = metric_parts.map do |item|
+          item.deep_dup.tap do |i|
+            i['uri'].gsub!(uri_what, uri_for_what)
+          end
+        end
+
+        cols = content['grid']['columns'] || []
+        content['grid']['columns'] = cols.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              i['attribute']['uri'].gsub!(uri_what, uri_for_what)
+            end
+          else
+            item
+          end
+        end
+
+        rows = content['grid']['rows'] || []
+        content['grid']['rows'] = rows.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              i['attribute']['uri'].gsub!(uri_what, uri_for_what)
+            end
+          else
+            item
+          end
+        end
+
+        widths = content['grid']['columnWidths'] || []
+        content['grid']['columnWidths'] = widths.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              if i['locator'][0].key?('attributeHeaderLocator')
+                i['locator'][0]['attributeHeaderLocator']['uri'].gsub!(uri_what, uri_for_what)
+              end
+            end
+          else
+            item
+          end
+        end
+
+        sort = content['grid']['sort']['columns'] || []
+        content['grid']['sort']['columns'] = sort.map do |item|
+          if item.is_a?(Hash)
+            item.deep_dup.tap do |i|
+              next unless i.key?('metricSort')
+              next unless i['metricSort'].key?('locators')
+              next unless i['metricSort']['locators'][0].key?('attributeLocator2')
+              i['metricSort']['locators'][0]['attributeLocator2']['uri'].gsub!(uri_what, uri_for_what)
+              i['metricSort']['locators'][0]['attributeLocator2']['element'].gsub!(uri_what, uri_for_what)
+            end
+          else
+            item
+          end
+        end
+
+        if content.key?('chart')
+          content['chart']['buckets'] = content['chart']['buckets'].reduce({}) do |a, e|
+            key = e[0]
+            val = e[1]
+            # binding.pry
+            a[key] = val.map do |item|
+              item.deep_dup.tap do |i|
+                i['uri'].gsub!(uri_what, uri_for_what)
+              end
+            end
+            a
+          end
+        end
+
+        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub(uri_what, uri_for_what) } }
+      end
+      self
     end
   end
 end

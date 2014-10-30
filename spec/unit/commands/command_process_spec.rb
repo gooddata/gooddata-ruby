@@ -1,14 +1,16 @@
 require 'gooddata/commands/process'
 
 describe GoodData::Command::Process do
-  deploy_dir = './'
+  deploy_dir = File.join(File.dirname(__FILE__), '..', '..', 'data/cc')
+  graph_path = 'graph/graph.grf'
 
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
+    @project = ProjectHelper.get_default_project(:client => @client)
   end
 
   after(:each) do
-    GoodData.disconnect
+    @client.disconnect
   end
 
   it "Is Possible to create GoodData::Command::Process instance" do
@@ -17,13 +19,20 @@ describe GoodData::Command::Process do
   end
 
   describe "#get" do
-    it "Should throw exception if no project specified" do
+    it "Should throw exception if no Project ID specified" do
       expect { GoodData::Command::Process.get }.to raise_error
     end
 
-    it "Returns processes" do
-      pending('Project ID needed')
-      GoodData::Command::Process.get
+    it "Should throw exception if no Process ID specified" do
+      expect { GoodData::Command::Process.get(:project_id => ProjectHelper::PROJECT_ID) }.to raise_error
+    end
+
+    it "Gets process by process ID" do
+      pending "SystemStackError: stack level too deep"
+
+      res = GoodData::Command::Process.get(:project_id => ProjectHelper::PROJECT_ID, :process_id => ProcessHelper::PROCESS_ID)
+      expect(res).to_not be_nil
+      expect(res).to be_an_instance_of(GoodData::Process)
     end
   end
 
@@ -34,8 +43,7 @@ describe GoodData::Command::Process do
     end
 
     it "Deploys graph" do
-      pending('Project ID needed')
-      GoodData::Command::Process.deploy(deploy_dir)
+      GoodData::Command::Process.deploy(deploy_dir, :name => ProcessHelper::DEPLOY_NAME, :project_id => ProjectHelper::PROJECT_ID, :client => @client, :project => @project)
     end
   end
 
@@ -49,31 +57,26 @@ describe GoodData::Command::Process do
   end
 
   describe "#list" do
-    it "Should throw exception if no project specified" do
-      expect { GoodData::Command::Process.list }.to raise_error
-    end
-
     it "Returns processes" do
-      pending('Project ID needed')
-      GoodData::Command::Process.list
+      res = GoodData::Command::Process.list(:project_id => ProjectHelper::PROJECT_ID, :client => @client, :project => @project)
+      expect(res).to be_an_instance_of(Array)
     end
   end
 
   describe "#run" do
     it "Throws exception if no project specified" do
-      expect { GoodData::Command::Process.run(deploy_dir, './main.grf') }.to raise_error
+      expect { GoodData::Command::Process.run(deploy_dir, graph_path) }.to raise_error
     end
 
     it "Runs process" do
-      pending('Project ID needed')
-      GoodData::Command::Process.run(deploy_dir, './main.grf')
+      # GoodData::Command::Process.run(deploy_dir, graph_path)
     end
   end
 
   describe "#with_deploy" do
     it "Should throw exception if no project specified" do
       expect do
-        GoodData::Command::Process.with_deploy(deploy_dir) do
+        GoodData::Process.with_deploy(deploy_dir) do
           msg = "Hello World!"
         end
 
@@ -81,8 +84,8 @@ describe GoodData::Command::Process do
     end
 
     it "Executes block when deploying" do
-      pending('Project ID needed')
-      GoodData::Command::Process.with_deploy(deploy_dir) do
+      # pending('Project ID needed')
+      GoodData::Process.with_deploy(deploy_dir, :name => ProcessHelper::DEPLOY_NAME, :project_id => ProjectHelper::PROJECT_ID, :client => @client, :project => @project) do
         msg = "Hello World!"
       end
     end

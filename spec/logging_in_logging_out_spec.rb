@@ -3,16 +3,25 @@
 require 'gooddata'
 require 'pry'
 
-describe GoodData::Connection, :constraint => 'slow' do
+describe GoodData::Rest::Connection, :constraint => 'slow' do
 
   it "should log in and disconnect" do
-    ConnectionHelper::create_default_connection
-    GoodData.get("/gdc/md")
+    client = ConnectionHelper::create_default_connection
+    expect(client).to be_kind_of(GoodData::Rest::Client)
 
-    conn = GoodData.connection
-    GoodData.disconnect
-    expect{GoodData.connection}.to raise_error
-    conn.connected?.should == false
+    client.get("/gdc/md")
+
+    client.disconnect
   end
 
+  it "should log in and disconnect with SST" do
+    regular_client = ConnectionHelper::create_default_connection
+    sst = regular_client.connection.sst_token
+
+    sst_client = GoodData.connect(sst_token: sst)
+    expect(sst_client.projects.count).to be > 0
+    sst_client.disconnect
+
+    regular_client.disconnect
+  end
 end

@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'simplecov'
+require 'pmap'
 require 'rspec'
 require 'coveralls'
 require 'pathname'
@@ -18,13 +19,10 @@ RSpec.configure do |config|
   config.include BlueprintHelper
   config.include CliHelper
   config.include ConnectionHelper
+  config.include CryptoHelper
   config.include CsvHelper
-  config.include DashboardHelper
-  config.include MetricHelper
+  config.include ProcessHelper
   config.include ProjectHelper
-  config.include ReportHelper
-  config.include ReportDefinitionHelper
-  config.include UserHelper
   # config.include SchemaHelper
 
   config.filter_run_excluding :broken => true
@@ -32,16 +30,11 @@ RSpec.configure do |config|
   config.before(:all) do
     # TODO: Move this to some method.
     # TODO Make more intelligent so two test suites can run at the same time.
-
-    ConnectionHelper.create_default_connection
-
-    # UserHelper.remove_users
-
-    # DashboardHelper.remove_dashboards
-
-    # ProjectHelper.remove_projects
-
-    # ReportHelper.remove_reports
+    # ConnectionHelper.create_default_connection
+    # users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
+    # users.pmap do |user|
+    #   user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
+    # end
 
     # TODO: Fully setup global environment
     GoodData.logging_off

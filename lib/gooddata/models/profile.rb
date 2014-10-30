@@ -1,11 +1,14 @@
 # encoding: UTF-8
 
+require 'pmap'
+
+require_relative '../rest/object'
+
 require_relative 'project'
 
 module GoodData
-  # Account settings representation with some added sugar
-  class Profile
-    attr_reader :json
+  class Profile < GoodData::Rest::Object
+    attr_reader :user, :json
 
     EMPTY_OBJECT = {
       'accountSetting' => {
@@ -73,8 +76,7 @@ module GoodData
       # Gets user currently logged in
       # @return [GoodData::Profile] User currently logged-in
       def current
-        json = GoodData.get GoodData.connection.user['profile']
-        GoodData::Profile.new(json)
+        GoodData.connection.user
       end
 
       # Gets hash representing diff of profiles
@@ -207,7 +209,7 @@ module GoodData
 
     # Deletes this account settings
     def delete
-      GoodData.delete uri
+      client.delete uri
     end
 
     # Gets hash representing diff of profiles
@@ -278,13 +280,6 @@ module GoodData
       @json['accountSetting']['login'] = val
     end
 
-    # Get full name
-    #
-    # @return [String] Full name
-    def name
-      "#{first_name} #{last_name}"
-    end
-
     # Gets the resource identifier
     #
     # @return [String] Resource identifier
@@ -328,14 +323,10 @@ module GoodData
     #
     # @return [Array<GoodData::Project>] Array of project where account settings belongs to
     def projects
-      res = []
-
-      projects = GoodData.get @json['accountSetting']['links']['projects']
-      projects['projects'].each do |project|
-        res << GoodData::Project.new(project)
+      projects = client.get @json['accountSetting']['links']['projects']
+      projects['projects'].map do |project|
+        client.create(GoodData::Project, project)
       end
-
-      res
     end
 
     # Saves object if dirty, clears dirty flag
@@ -379,6 +370,13 @@ module GoodData
     # @return [String] Resource URI
     def uri
       @json['accountSetting']['links']['self']
+    end
+
+    private
+
+    def initialize(json)
+      @json = json
+      @user = @json['accountSetting']['firstName'] + ' ' + @json['accountSetting']['lastName']
     end
   end
 end

@@ -4,16 +4,23 @@ require 'gooddata/models/domain'
 
 describe GoodData::Domain do
   before(:each) do
-    ConnectionHelper.create_default_connection
+    @client = ConnectionHelper.create_default_connection
   end
 
   after(:each) do
-    GoodData.disconnect
+    @client.disconnect
   end
 
   describe '#add_user' do
     it 'Should add user' do
-      user = GoodData::Domain.add_user(:domain => ConnectionHelper::DEFAULT_DOMAIN, :login => "gemtest#{rand(1e6)}@gooddata.com", :password => 'password')
+      args = {
+        :domain => ConnectionHelper::DEFAULT_DOMAIN,
+        :login => "gemtest#{rand(1e6)}@gooddata.com",
+        :password => CryptoHelper.generate_password,
+        :client => @client
+      }
+
+      user = GoodData::Domain.add_user(args)
       expect(user).to be_an_instance_of(GoodData::Profile)
       user.delete
     end
@@ -21,7 +28,7 @@ describe GoodData::Domain do
 
   describe '#users' do
     it 'Should list users' do
-      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
+      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, :client => @client)
       expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::Profile)
@@ -29,7 +36,7 @@ describe GoodData::Domain do
     end
 
     it 'Accepts pagination options - limit' do
-      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:limit =>1})
+      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:client => @client, :limit =>1})
       expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::Profile)
@@ -37,7 +44,7 @@ describe GoodData::Domain do
     end
 
     it 'Accepts pagination options - offset' do
-      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:offset => 1})
+      users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, {:client => @client, :offset => 1})
       expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::Profile)
@@ -62,7 +69,7 @@ describe GoodData::Domain do
 
               # Following lines are ugly hack
               'role' => 'admin',
-              'password' => 'password',
+              'password' => CryptoHelper.generate_password,
               'domain' => ConnectionHelper::DEFAULT_DOMAIN,
 
               # And following lines are even much more ugly hack
@@ -76,7 +83,7 @@ describe GoodData::Domain do
         list << user
       end
 
-      res = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN)
+      res = GoodData::Domain.users_create(list, ConnectionHelper::DEFAULT_DOMAIN, :client => @client)
 
       expect(res).to be_an_instance_of(Array)
       res.each do |r|
