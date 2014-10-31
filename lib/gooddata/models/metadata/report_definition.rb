@@ -72,7 +72,10 @@ module GoodData
             fail "Object given by id \"#{item}\" could not be found" if x.nil?
             case x.raw_data.keys.first.to_s
             when 'attribute'
-              GoodData::Attribute.new(x.json).display_forms.first
+              attr = GoodData::Attribute.new(x.json)
+              attr.client = client
+              attr.project = opts[:project]
+              attr.display_forms.first
             when 'attributeDisplayForm'
               GoodData::Label.new(x.json)
             when 'metric'
