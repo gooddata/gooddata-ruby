@@ -43,7 +43,25 @@ module GoodData
       :timezone
     ]
 
+    PROFILE_PATH = '/gdc/account/profile/%s'
+
     class << self
+      def [](id, opts = { client: GoodData.connection })
+        return id if id.instance_of?(GoodData::Profile) || id.respond_to?(:profile?) && id.profile?
+
+        if id.to_s !~ %r{^(\/gdc\/account\/profile\/)?[a-zA-Z\d]+$}
+          fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
+        end
+
+        id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
+
+        c = client(opts)
+        fail ArgumentError, 'No :client specified' if c.nil?
+
+        response = c.get(PROFILE_PATH % id)
+        c.factory.create(Profile, response)
+      end
+
       # Apply changes to object.
       #
       # @param obj [GoodData::Profile] Object to be modified

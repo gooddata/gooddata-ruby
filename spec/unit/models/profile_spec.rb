@@ -62,6 +62,22 @@ describe GoodData::Profile do
     Marshal.load(Marshal.dump(obj))
   end
 
+  describe '#[]' do
+    it 'Finds the profile by URL' do
+      project = ProjectHelper.get_default_project
+      users = project.users
+      user = GoodData::Profile[users.first.uri, :client => @client]
+      expect(user).to be_kind_of(GoodData::Profile)
+    end
+
+    it 'Finds the profile by ID' do
+      project = ProjectHelper.get_default_project
+      users = project.users
+      user = GoodData::Profile[users.first.uri.split('/').last, :client => @client]
+      expect(user).to be_kind_of(GoodData::Profile)
+    end
+  end
+
   describe '#==' do
     it 'Returns true for same objects' do
       user1 = deep_dup(@user)
