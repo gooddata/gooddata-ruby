@@ -46,6 +46,12 @@ module GoodData
     PROFILE_PATH = '/gdc/account/profile/%s'
 
     class << self
+      # Get profile by ID or URI
+      #
+      # @param id ID or URI of user to be found
+      # @param [Hash] opts Additional optional options
+      # @option opts [GoodData::Rest::Client] :client Client used for communication with server
+      # @return GoodData::Profile User Profile
       def [](id, opts = { client: GoodData.connection })
         return id if id.instance_of?(GoodData::Profile) || id.respond_to?(:profile?) && id.profile?
 
@@ -266,6 +272,13 @@ module GoodData
     def first_name=(val)
       @dirty ||= first_name != val
       @json['accountSetting']['firstName'] = val
+    end
+
+    # Get full name
+    #
+    # @return String Full Name
+    def full_name
+      "#{first_name} #{last_name}"
     end
 
     # Gets the last name
