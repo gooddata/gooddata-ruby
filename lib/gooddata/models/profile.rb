@@ -329,6 +329,8 @@ module GoodData
       @json['accountSetting']['phoneNumber'] || ''
     end
 
+    alias_method :phone_number, :phone
+
     # Set the phone
     #
     # @param val [String] Phone to be set
@@ -336,6 +338,8 @@ module GoodData
       @dirty ||= phone != val
       @json['accountSetting']['phoneNumber'] = val
     end
+
+    alias_method :phone_number=, :phone=
 
     # Gets the position in company
     #
