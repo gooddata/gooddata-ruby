@@ -326,7 +326,7 @@ module GoodData
     #
     # @return [String] Phone
     def phone
-      @json['accountSetting']['phone'] || ''
+      @json['accountSetting']['phoneNumber'] || ''
     end
 
     # Set the phone
@@ -334,7 +334,7 @@ module GoodData
     # @param val [String] Phone to be set
     def phone=(val)
       @dirty ||= phone != val
-      @json['accountSetting']['phone'] = val
+      @json['accountSetting']['phoneNumber'] = val
     end
 
     # Gets the position in company
