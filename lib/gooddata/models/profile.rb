@@ -281,6 +281,8 @@ module GoodData
       "#{first_name} #{last_name}"
     end
 
+    alias_method :title, :full_name
+
     # Gets the last name
     #
     # @return [String] Last name
