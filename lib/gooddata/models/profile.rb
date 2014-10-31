@@ -43,7 +43,31 @@ module GoodData
       :timezone
     ]
 
+    PROFILE_PATH = '/gdc/account/profile/%s'
+
     class << self
+      # Get profile by ID or URI
+      #
+      # @param id ID or URI of user to be found
+      # @param [Hash] opts Additional optional options
+      # @option opts [GoodData::Rest::Client] :client Client used for communication with server
+      # @return GoodData::Profile User Profile
+      def [](id, opts = { client: GoodData.connection })
+        return id if id.instance_of?(GoodData::Profile) || id.respond_to?(:profile?) && id.profile?
+
+        if id.to_s !~ %r{^(\/gdc\/account\/profile\/)?[a-zA-Z\d]+$}
+          fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
+        end
+
+        id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
+
+        c = client(opts)
+        fail ArgumentError, 'No :client specified' if c.nil?
+
+        response = c.get(PROFILE_PATH % id)
+        c.factory.create(Profile, response)
+      end
+
       # Apply changes to object.
       #
       # @param obj [GoodData::Profile] Object to be modified
@@ -250,6 +274,15 @@ module GoodData
       @json['accountSetting']['firstName'] = val
     end
 
+    # Get full name
+    #
+    # @return String Full Name
+    def full_name
+      "#{first_name} #{last_name}"
+    end
+
+    alias_method :title, :full_name
+
     # Gets the last name
     #
     # @return [String] Last name
@@ -293,16 +326,20 @@ module GoodData
     #
     # @return [String] Phone
     def phone
-      @json['accountSetting']['phone'] || ''
+      @json['accountSetting']['phoneNumber'] || ''
     end
+
+    alias_method :phone_number, :phone
 
     # Set the phone
     #
     # @param val [String] Phone to be set
     def phone=(val)
       @dirty ||= phone != val
-      @json['accountSetting']['phone'] = val
+      @json['accountSetting']['phoneNumber'] = val
     end
+
+    alias_method :phone_number=, :phone=
 
     # Gets the position in company
     #
