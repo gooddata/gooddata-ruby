@@ -23,7 +23,7 @@ module GoodData
       def backup(meta)
         @logger.info 'would send a backup list of files to backup' if @logger
 
-        files = meta['objects'].map { |_k, o| o }.each_with_object([]) do |a, e|
+        files = meta['objects'].map { |k, o| o }.reduce([]) do |a, e|
           a + e['filenames']
         end
 
@@ -63,7 +63,7 @@ module GoodData
 
         # save the state - whatever is in the return value of #download in the :persist key .. to project metadata
         if downloaded_data[:persist]
-          accumulated_state = downloaded_data[:persist].each_with_object([]) do |memo, item|
+          accumulated_state = downloaded_data[:persist].reduce([]) do |memo, item|
             item.key?(:state) ? memo.concat(item[:state]) : memo
           end
           accumulated_state.each do |item|

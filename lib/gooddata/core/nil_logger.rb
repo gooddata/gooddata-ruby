@@ -3,7 +3,7 @@
 module GoodData
   # Dummy implementation of logger
   class NilLogger
-    def debug(*_args)
+    def debug(*args)
     end
 
     alias_method :info, :debug

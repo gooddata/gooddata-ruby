@@ -22,7 +22,7 @@ module GoodData
           nil
         else
           identifiers = response['identifiers']
-          ids_lookup = identifiers.each_with_object({}) do |a, e|
+          ids_lookup = identifiers.reduce({}) do |a, e|
             a[e['identifier']] = e['uri']
             a
           end

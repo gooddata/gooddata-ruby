@@ -2,7 +2,7 @@
 
 module Enumerable
   def mapcat(initial = [], &block)
-    each_with_object(initial) do |a, e|
+    reduce(initial) do |a, e|
       block.call(e).each do |x|
         a << x
       end
@@ -12,7 +12,7 @@ module Enumerable
 
   def pmapcat(initial = [], &block)
     intermediate = pmap(&block)
-    intermediate.each_with_object(initial) do |a, e|
+    intermediate.reduce(initial) do |a, e|
       e.each do |x|
         a << x
       end
@@ -22,6 +22,6 @@ module Enumerable
 
   def pselect(&block)
     intermediate = pmap(&block)
-    zip(intermediate).select { |x| x[1] }.map(&:first)
+    zip(intermediate).select { |x| x[1] }.map { |x| x.first }
   end
 end

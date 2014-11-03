@@ -258,11 +258,11 @@ module GoodData
         if datasets.count == 1
           []
         else
-          x = datasets.each_with_object([]) { |a, e| e.anchor? ? a << [e.name] : a } + date_dimensions.map { |y| [y[:name]] }
-          refs = datasets.each_with_object([]) do |a, e|
+          x = datasets.reduce([]) { |a, e| e.anchor? ? a << [e.name] : a } + date_dimensions.map { |y| [y[:name]] }
+          refs = datasets.reduce([]) do |a, e|
             a.concat(e.references)
           end
-          refs.each_with_object([]) do |a, e|
+          refs.reduce([]) do |a, e|
             x.include?([e[:dataset]]) ? a : a.concat([e])
           end
         end
@@ -273,7 +273,7 @@ module GoodData
       # @return [Array] array of errors
       def validate
         refs_errors = validate_references
-        labels_errors = datasets.each_with_object([]) { |a, e| a.concat(e.validate) }
+        labels_errors = datasets.reduce([]) { |a, e| a.concat(e.validate) }
         refs_errors.concat(labels_errors)
       end
 
@@ -299,7 +299,7 @@ module GoodData
       #
       # @return [Array<Hash>]
       def attributes
-        datasets.each_with_object([]) { |a, e| a.concat(e.attributes) }
+        datasets.reduce([]) { |a, e| a.concat(e.attributes) }
       end
 
       # Returns list of attributes and anchors from all the datasets in a blueprint
@@ -353,16 +353,16 @@ module GoodData
       def lint(full = false)
         errors = []
         find_star_centers.each do |dataset|
-          next unless dataset.anchor?
-
-          errors << {
-            type: :anchor_on_fact_dataset,
-            dataset_name: dataset.name,
-            anchor_name: dataset.anchor[:name]
-          }
+          if dataset.anchor?
+            errors << {
+              type: :anchor_on_fact_dataset,
+              dataset_name: dataset.name,
+              anchor_name: dataset.anchor[:name]
+            }
+          end
         end
 
-        date_facts = datasets.mapcat(&:date_facts)
+        date_facts = datasets.mapcat { |d| d.date_facts }
         date_facts.each do |date_fact|
           errors << {
             type: :date_fact,
@@ -412,9 +412,9 @@ module GoodData
         strategy = options[:strategy] || :stupid
         case strategy
         when :stupid
-          reports = suggest_metrics.each_with_object([]) do |a, e|
+          reports = suggest_metrics.reduce([]) do |a, e|
             star, metrics = e
-            metrics.each(&:save)
+            metrics.each { |m| m.save }
             reports_stubs = metrics.map do |m|
               breaks = can_break(star).map { |ds, aM| ds.identifier_for(aM) }
               # [breaks.sample((breaks.length/10.0).ceil), m]
@@ -422,7 +422,7 @@ module GoodData
             end
             a.concat(reports_stubs)
           end
-          reports.each_with_object([]) do |a, e|
+          reports.reduce([]) do |a, e|
             attrs, metric = e
 
             attrs.each do |attr|
@@ -443,7 +443,7 @@ module GoodData
       # @return [Array<Hash>]
       def suggest_metrics
         stars = find_star_centers
-        metrics = stars.map(&:suggest_metrics)
+        metrics = stars.map { |s| s.suggest_metrics }
         stars.zip(metrics)
       end
 

@@ -12,7 +12,7 @@ module GoodData
         end
 
         # Connect using username and password
-        def connect(_username, _password)
+        def connect(username, password)
         end
 
         # Disconnect
@@ -22,28 +22,28 @@ module GoodData
         # HTTP DELETE
         #
         # @param uri [String] Target URI
-        def delete(uri, _options = {})
+        def delete(uri, options = {})
           puts "DELETE #{uri}"
         end
 
         # HTTP GET
         #
         # @param uri [String] Target URI
-        def get(uri, _options = {})
+        def get(uri, options = {})
           puts "GET #{uri}"
         end
 
         # HTTP PUT
         #
         # @param uri [String] Target URI
-        def put(uri, _data, _options = {})
+        def put(uri, data, options = {})
           puts "PUT #{uri}"
         end
 
         # HTTP POST
         #
         # @param uri [String] Target URI
-        def post(uri, _data, _options = {})
+        def post(uri, data, options = {})
           puts "POST #{uri}"
         end
       end

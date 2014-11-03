@@ -120,7 +120,7 @@ module GoodData
           body['taskStatus'] == 'RUNNING' || body['taskStatus'] == 'PREPARED'
         end
 
-        if res['taskStatus'] == 'ERROR' # rubocop:disable Style/GuardClause
+        if res['taskStatus'] == 'ERROR'
           s = StringIO.new
           client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
           js = MultiJson.load(s.string)

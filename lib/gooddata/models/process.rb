@@ -27,7 +27,7 @@ module GoodData
           uri = "/gdc/account/profile/#{c.user.obj_id}/dataload/processes"
           data = c.get(uri)
           pids = data['processes']['items'].map { |process_data| process_data['process']['links']['self'].match(%r{/gdc/projects/(\w*)/})[1] }.uniq
-          projects_lookup = pids.pmap { |pid| c.projects(pid) }.each_with_object({}) do |a, e|
+          projects_lookup = pids.pmap { |pid| c.projects(pid) }.reduce({}) do |a, e|
             a[e.pid] = e
             a
           end
@@ -260,7 +260,7 @@ module GoodData
       ensure
         result = client.get(result['executionTask']['links']['detail'])
         if result['executionDetail']['status'] == 'ERROR'
-          fail "Runing process failed. You can look at a log here #{result['executionDetail']['logFileName']}"
+          fail "Runing process failed. You can look at a log here #{result["executionDetail"]["logFileName"]}"
         end
       end
       result

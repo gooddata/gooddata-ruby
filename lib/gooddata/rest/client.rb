@@ -93,7 +93,7 @@ module GoodData
         end
 
         def disconnect
-          if @@instance # rubocop:disable ClassVars, Style/GuardClause
+          if @@instance # rubocop:disable ClassVars
             @@instance.disconnect # rubocop:disable ClassVars
             @@instance = nil # rubocop:disable ClassVars
           end
@@ -129,7 +129,7 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
-      def create_project(_options = {})
+      def create_project(options = {})
         GoodData::Project.create(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, client: self)
       end
 
@@ -287,7 +287,7 @@ module GoodData
       end
 
       # Retry blok if exception thrown
-      def retryable(options = {}, &_block)
+      def retryable(options = {}, &block)
         opts = { :tries => 1, :on => Exception }.merge(options)
 
         retry_exception, retries = opts[:on], opts[:tries]

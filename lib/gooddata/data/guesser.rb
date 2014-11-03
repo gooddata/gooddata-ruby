@@ -24,7 +24,7 @@ module GoodData
 
       def initialize(reader)
         @reader = reader
-        @headers = reader.shift.map!(&:to_s) || fail('Empty data set')
+        @headers = reader.shift.map! { |h| h.to_s } || fail('Empty data set')
         @pros = {}
         @cons = {}
         @seen = {}

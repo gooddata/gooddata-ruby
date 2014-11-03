@@ -12,7 +12,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'Info about the API version etc'
     c.command :info do |info|
-      info.action do |global_options, options, _args|
+      info.action do |global_options, options, args|
         opts = options.merge(global_options)
         GoodData.connect(opts)
         pp GoodData::Command::Api.info

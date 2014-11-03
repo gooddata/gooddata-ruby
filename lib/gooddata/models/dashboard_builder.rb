@@ -18,7 +18,7 @@ module GoodData
       def to_hash
         {
           :name => @name,
-          :tabs => @tabs.map(&:to_hash)
+          :tabs => @tabs.map { |tab| tab.to_hash }
         }
       end
     end

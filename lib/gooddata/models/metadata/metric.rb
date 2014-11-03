@@ -55,15 +55,15 @@ module GoodData
 
         expression = if extended_notation
                        dict = {
-                         :facts => project.facts.each_with_object({}) do |memo, item|
+                         :facts => project.facts.reduce({}) do |memo, item|
                            memo[item.title] = item.uri
                            memo
                          end,
-                         :attributes => project.attributes.each_with_object({}) do |memo, item|
+                         :attributes => project.attributes.reduce({}) do |memo, item|
                            memo[item.title] = item.uri
                            memo
                          end,
-                         :metrics => project.metrics.each_with_object({}) do |memo, item|
+                         :metrics => project.metrics.reduce({}) do |memo, item|
                            memo[item.title] = item.uri
                            memo
                          end

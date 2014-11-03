@@ -35,7 +35,7 @@ module GoodData
                 fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'
               end
         # new(GoodData.get uri) unless uri.nil?
-        if uri # rubocop:disable Style/GuardClause
+        if uri
           raw = client.get(uri)
           client.create(self, raw, client: client, project: project)
         end

@@ -17,7 +17,7 @@ module GoodData
         if key == :all
           uri = "/gdc/projects/#{project.pid}/dataload/metadata"
           res = client.get(uri)
-          res['metadataItems']['items'].each_with_object({}) do |memo, i|
+          res['metadataItems']['items'].reduce({}) do |memo, i|
             memo[i['metadataItem']['key']] = i['metadataItem']['value']
             memo
           end

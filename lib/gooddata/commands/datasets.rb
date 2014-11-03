@@ -125,7 +125,7 @@ module GoodData
         connection_point_set = false
         question_fmt = 'Select data type of column #%i (%s)'
         guesser.headers.each_with_index do |header, i|
-          options = guess[header].map(&:to_s)
+          options = guess[header].map { |t| t.to_s }
           options = options.select { |t| t != :connection_point.to_s } if connection_point_set
           type = ask question_fmt % [i + 1, header], :answers => options
           model.push :title => header, :name => header, :type => type.upcase

@@ -10,7 +10,7 @@ module GoodData
       # @param attribute [Hash] Attribute or Anchor
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular reference
-      def self.attribute_to_manifest(_project, dataset, a, mode)
+      def self.attribute_to_manifest(project, dataset, a, mode)
         [{
           'referenceKey' => 1,
           'populates' => [GoodData::Model.identifier_for(dataset, a.merge(type: :primary_label))],
@@ -71,7 +71,7 @@ module GoodData
       # @param reference [Hash] Reference
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular date reference
-      def self.date_ref_to_manifest(project, _dataset, reference, mode)
+      def self.date_ref_to_manifest(project, dataset, reference, mode)
         referenced_dataset = ProjectBlueprint.find_date_dimension(project, reference[:dataset])
         [{
           'populates' => [GoodData::Model.identifier_for(referenced_dataset, type: :date_ref)],
@@ -89,7 +89,7 @@ module GoodData
       # @param fact [Hash] Fact
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular fact
-      def self.fact_to_manifest(_project, dataset, fact, mode)
+      def self.fact_to_manifest(project, dataset, fact, mode)
         [{
           'populates' => [GoodData::Model.identifier_for(dataset, fact)],
           'mode' => mode,
@@ -104,7 +104,7 @@ module GoodData
       # @param label [Hash] Label
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular label
-      def self.label_to_manifest(_project, dataset, label, mode)
+      def self.label_to_manifest(project, dataset, label, mode)
         a = DatasetBlueprint.attribute_for_label(dataset, label)
         [{
           'populates' => [GoodData::Model.identifier_for(dataset, label, a)],
@@ -145,7 +145,7 @@ module GoodData
       # @param reference [Hash] Reference
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular reference
-      def self.reference_to_manifest(project, _dataset, reference, mode)
+      def self.reference_to_manifest(project, dataset, reference, mode)
         referenced_dataset = ProjectBlueprint.find_dataset(project, reference[:dataset])
         anchor = DatasetBlueprint.anchor(referenced_dataset)
         [{

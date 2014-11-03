@@ -6,7 +6,7 @@ module GoodData
   module Command
     class Role
       class << self
-        def list(_pid, opts = { :client => GoodData.connection, :project => GoodData.project })
+        def list(pid, opts = { :client => GoodData.connection, :project => GoodData.project })
           p = opts[:project]
           fail ArgumentError, 'No :project specified' if p.nil?
 

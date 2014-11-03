@@ -139,14 +139,14 @@ module GoodData
 
           if where.is_a?(String)
             File.open(where, 'w') do |f|
-              RestClient::Request.execute(raw) do |chunk, _x, _y|
+              RestClient::Request.execute(raw) do |chunk, x, y|
                 f.write chunk
               end
             end
 
           else
             # Assume it is a IO stream
-            RestClient::Request.execute(raw) do |chunk, _x, _y|
+            RestClient::Request.execute(raw) do |chunk, x, y|
               where.write chunk
             end
           end
