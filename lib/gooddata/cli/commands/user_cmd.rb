@@ -11,7 +11,7 @@ GoodData::CLI.module_eval do
   command :user do |c|
     c.desc 'Show your profile'
     c.command :show do |show|
-      show.action do |global_options, options, args|
+      show.action do |global_options, options, _args|
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
         pp GoodData::Command::User.show(client: client)

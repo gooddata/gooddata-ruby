@@ -37,7 +37,7 @@ module GoodData
       end
 
       def hash_dfs(thing, &block)
-        if !thing.is_a?(Hash) && !thing.is_a?(Array)
+        if !thing.is_a?(Hash) && !thing.is_a?(Array) # rubocop:disable Style/GuardClause
         elsif thing.is_a?(Array)
           thing.each do |child|
             hash_dfs(child, &block)

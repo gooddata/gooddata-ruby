@@ -80,7 +80,7 @@ module GoodData
         reset_cookies!
       end
 
-      def refresh_token(options = {})
+      def refresh_token(_options = {})
         begin # rubocop:disable RedundantBegin
           get TOKEN_PATH, :dont_reauth => true # avoid infinite loop GET fails with 401
         rescue Exception => e # rubocop:disable RescueException
@@ -99,28 +99,28 @@ module GoodData
       # HTTP DELETE
       #
       # @param uri [String] Target URI
-      def delete(uri, options = {})
+      def delete(uri, _options = {})
         fail NotImplementedError "DELETE #{uri}"
       end
 
       # HTTP GET
       #
       # @param uri [String] Target URI
-      def get(uri, options = {})
+      def get(uri, _options = {})
         fail NotImplementedError "GET #{uri}"
       end
 
       # HTTP PUT
       #
       # @param uri [String] Target URI
-      def put(uri, data, options = {})
+      def put(uri, _data, _options = {})
         fail NotImplementedError "PUT #{uri}"
       end
 
       # HTTP POST
       #
       # @param uri [String] Target URI
-      def post(uri, data, options = {})
+      def post(uri, _data, _options = {})
         fail NotImplementedError "POST #{uri}"
       end
 
@@ -132,7 +132,7 @@ module GoodData
       end
 
       def stats_table(values = stats)
-        sorted = values.sort_by { |k, v| v[:avg] }
+        sorted = values.sort_by { |_k, v| v[:avg] }
         Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
           sorted.each do |l|
             row = [
@@ -176,10 +176,11 @@ module GoodData
       end
 
       def scrub_params(params, keys)
-        keys = keys.reduce([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
+        keys = keys.each_with_object([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
+        keys = keys.each_with_object([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
 
         new_params = params.deep_dup
-        GoodData::Helpers.hash_dfs(new_params) do |k, key|
+        GoodData::Helpers.hash_dfs(new_params) do |k, _key|
           keys.each do |key_to_scrub|
             k[key_to_scrub] = ('*' * k[key_to_scrub].length) if k && k.key?(key_to_scrub) && k[key_to_scrub]
           end

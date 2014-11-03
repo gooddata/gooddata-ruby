@@ -106,7 +106,7 @@ module GoodData
           end
         end
 
-        def migrate_users(project, spec)
+        def migrate_users(_project, spec)
           spec.each do |user|
             puts "Would migrate user #{user}"
             # project.add_user(user)
@@ -114,7 +114,7 @@ module GoodData
         end
 
         def load(project, spec)
-          if spec.key?(:uploads)
+          if spec.key?(:uploads) # rubocop:disable Style/GuardClause
             spec[:uploads].each do |load|
               schema = GoodData::Model::Schema.new(spec[:datasets].find { |d| d[:name] == load[:dataset] })
               project.upload(load[:source], schema, load[:mode])
@@ -122,7 +122,7 @@ module GoodData
           end
         end
 
-        def execute_tests(project, spec)
+        def execute_tests(_project, spec)
           spec.each do |assert|
             result = GoodData::ReportDefinition.execute(assert[:report])
             fail "Test did not pass. Got #{result.table.inspect}, expected #{assert[:result].inspect}" if result.table != assert[:result]
@@ -138,7 +138,7 @@ module GoodData
             [true, false]
           ]
           stuff = chunks.select { |chunk| chunk['updateScript']['maqlDdlChunks'] }
-          rules.reduce(nil) do |a, e|
+          rules.each_with_object(nil) do |a, e|
             a || stuff.find { |chunk| e[0] == chunk['updateScript']['cascadeDrops'] && e[1] == chunk['updateScript']['preserveData'] }
           end
         end

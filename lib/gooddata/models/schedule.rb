@@ -93,13 +93,13 @@ module GoodData
           :executable => 'EXECUTABLE'
         }
 
-        default_params = default_opts[:params].reduce({}) do |new_hash, (k, v)|
+        default_params = default_opts[:params].each_with_object({}) do |new_hash, (k, v)|
           key = inject_params[k] || k
           new_hash[key] = v
           new_hash
         end
 
-        default = default_opts.reduce({}) do |new_hash, (k, v)|
+        default = default_opts.each_with_object({}) do |new_hash, (k, v)|
           key = inject_schema[k] || k
           new_hash[key] = v
           new_hash
@@ -300,7 +300,7 @@ module GoodData
     #
     # @return [Array] Raw Executions JSON
     def executions
-      if @json
+      if @json # rubocop:disable Style/GuardClause
         url = @json['schedule']['links']['executions']
         res = client.get url
         res['executions']['items']
