@@ -6,7 +6,7 @@ require 'pp'
 require_relative '../helpers/auth_helpers'
 
 GoodData::CLI.module_eval do
-  pre do |global, command, options, args|
+  pre do |global, _command, _options, _args|
     require 'logger'
     GoodData.logger = Logger.new(STDOUT) if global[:l]
     username = global[:username]
@@ -30,13 +30,13 @@ GoodData::CLI.module_eval do
     true
   end
 
-  post do |global, command, options, args|
+  post do |_global, _command, _options, _args|
     # Post logic here
     # Use skips_post before a command to skip this
     # block on that command only
   end
 
-  on_error do |exception|
+  on_error do |_exception|
     # Error logic here
     # return false to skip default error handling
     # binding.pry

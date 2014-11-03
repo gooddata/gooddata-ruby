@@ -120,11 +120,11 @@ module GoodData
 
         metrics = (left + top).select { |item| item.respond_to?(:metric?) && item.metric? }
 
-        unsaved_metrics = metrics.reject { |i| i.saved? }
+        unsaved_metrics = metrics.reject(&:saved?)
         unsaved_metrics.each { |m| m.title = 'Untitled metric' unless m.title }
 
         begin
-          unsaved_metrics.each { |m| m.save }
+          unsaved_metrics.each(&:save)
           rd = GoodData::ReportDefinition.create(options)
           data_result(execute_inline(rd, options), options)
         ensure
@@ -194,7 +194,7 @@ module GoodData
 
         # TODO: Put somewhere for i18n
         fail_msg = 'All metrics in report definition must be saved'
-        fail fail_msg unless (left + top).all? { |i| i.saved? }
+        fail fail_msg unless (left + top).all?(&:saved?)
 
         pars = {
           'reportDefinition' => {
@@ -234,7 +234,7 @@ module GoodData
     end
 
     def attributes
-      labels.map { |label| label.attribute }
+      labels.map(&:attribute)
     end
 
     def labels

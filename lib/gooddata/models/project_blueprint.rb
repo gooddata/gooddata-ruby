@@ -353,16 +353,15 @@ module GoodData
       def lint(full = false)
         errors = []
         find_star_centers.each do |dataset|
-          if dataset.anchor?
-            errors << {
-              type: :anchor_on_fact_dataset,
-              dataset_name: dataset.name,
-              anchor_name: dataset.anchor[:name]
-            }
-          end
+          next unless dataset.anchor?
+          errors << {
+            type: :anchor_on_fact_dataset,
+            dataset_name: dataset.name,
+            anchor_name: dataset.anchor[:name]
+          }
         end
 
-        date_facts = datasets.mapcat { |d| d.date_facts }
+        date_facts = datasets.mapcat(&:date_facts)
         date_facts.each do |date_fact|
           errors << {
             type: :date_fact,
@@ -414,7 +413,7 @@ module GoodData
         when :stupid
           reports = suggest_metrics.reduce([]) do |a, e|
             star, metrics = e
-            metrics.each { |m| m.save }
+            metrics.each(&:save)
             reports_stubs = metrics.map do |m|
               breaks = can_break(star).map { |ds, aM| ds.identifier_for(aM) }
               # [breaks.sample((breaks.length/10.0).ceil), m]
@@ -443,7 +442,7 @@ module GoodData
       # @return [Array<Hash>]
       def suggest_metrics
         stars = find_star_centers
-        metrics = stars.map { |s| s.suggest_metrics }
+        metrics = stars.map(&:suggest_metrics)
         stars.zip(metrics)
       end
 

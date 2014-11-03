@@ -23,7 +23,7 @@ module GoodData
       def backup(meta)
         @logger.info 'would send a backup list of files to backup' if @logger
 
-        files = meta['objects'].map { |k, o| o }.reduce([]) do |a, e|
+        files = meta['objects'].map { |_k, o| o }.reduce([]) do |a, e|
           a + e['filenames']
         end
 

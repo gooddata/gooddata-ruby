@@ -194,7 +194,7 @@ module GoodData
       res = []
 
       tmp = client.get @json['user']['links']['invitations']
-      tmp['invitations'].each do |invitation|
+      tmp['invitations'].each do |_invitation|
         # TODO: Something is missing here
       end
 

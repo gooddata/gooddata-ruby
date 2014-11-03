@@ -10,7 +10,7 @@ require_relative '../../client'
 GoodData::CLI.module_eval do
 
   desc 'Run ruby bricks either locally or remotely deployed on our server. Currently private alpha.'
-# arg_name 'show'
+  # arg_name 'show'
   command :run_ruby do |c|
 
     c.desc 'Directory of the ruby brick'
@@ -32,7 +32,7 @@ GoodData::CLI.module_eval do
     c.default_value nil
     c.flag [:n, :name]
 
-    c.action do |global_options, options, args|
+    c.action do |global_options, options, _args|
       verbose = global_options[:verbose]
       options[:expanded_params] = if options[:params]
                                     MultiJson.load(File.read(options[:params]))

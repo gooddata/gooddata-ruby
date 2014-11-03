@@ -5,7 +5,7 @@ module GoodData
   class AttributeElementNotFound < RuntimeError
     DEFAULT_MSG = 'Attribute element "%s" was not found'
 
-    def initialize(value, msg = DEFAULT_MSG)
+    def initialize(value, _msg = DEFAULT_MSG)
       super(sprintf(DEFAULT_MSG, value))
     end
   end

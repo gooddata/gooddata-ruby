@@ -10,7 +10,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'Store your credentials to ~/.gooddata so client does not have to ask you every single time'
     c.command :store do |store|
-      store.action do |global_options, options, args|
+      store.action do |_global_options, _options, _args|
         GoodData::Command::Auth.store
       end
     end
