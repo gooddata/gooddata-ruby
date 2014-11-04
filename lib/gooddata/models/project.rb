@@ -168,6 +168,14 @@ module GoodData
     end
     alias_method :create_report, :add_report
 
+    def add_report_definition(json)
+      rd = GoodData::ReportDefinition.new(json)
+      rd.client = client
+      rd.project = self
+      rd.save
+    end
+    alias_method :create_report_definition, :add_report_definition
+
     # Returns an indication whether current user is admin in this project
     #
     # @return [Boolean] True if user has admin role in the project, false otherwise.
