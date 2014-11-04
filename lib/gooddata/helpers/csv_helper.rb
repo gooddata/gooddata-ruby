@@ -38,7 +38,7 @@ module GoodData
         # @option opts [String] :path File to write data to
         # @option opts [Array] :data Mandatory array of data to write
         # @option opts [String] :header Optional Header row
-        def write(opts, &block)
+        def write(opts, &_block)
           path = opts[:path]
           header = opts[:header]
           data = opts[:data]

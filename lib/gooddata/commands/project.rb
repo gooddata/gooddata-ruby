@@ -108,7 +108,7 @@ module GoodData
         def jack_in(options)
           goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
 
-          spin_session = proc do |goodfile, blueprint|
+          spin_session = proc do |goodfile, _blueprint|
             project_id = options[:project_id] || goodfile[:project_id]
             message = 'You have to provide "project_id". You can either provide it through -p flag'\
                'or even better way is to fill it in in your Goodfile under key "project_id".'\
@@ -125,7 +125,7 @@ module GoodData
 
                 puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
                 binding.pry(:quiet => true,
-                            :prompt => [proc do |target_self, nest_level, pry|
+                            :prompt => [proc do |_target_self, _nest_level, _pry|
                               'project_live_sesion: '
                             end])
               end

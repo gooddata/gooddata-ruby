@@ -22,6 +22,6 @@ module Enumerable
 
   def pselect(&block)
     intermediate = pmap(&block)
-    zip(intermediate).select { |x| x[1] }.map { |x| x.first }
+    zip(intermediate).select { |x| x[1] }.map(&:first)
   end
 end

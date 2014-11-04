@@ -25,7 +25,7 @@ module GoodData
 
         client = GoodData.connect(params['GDC_USERNAME'], params['GDC_PASSWORD'], :server => server)
         GoodData.logger = logger
-        GoodData.with_project(project_id, :client => client) do |p|
+        GoodData.with_project(project_id, :client => client) do |_p|
           @app.call(params)
         end
       end

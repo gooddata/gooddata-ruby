@@ -13,7 +13,7 @@ GoodData::CLI.module_eval do
   command :project do |c|
     c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
     c.command :jack_in do |jack|
-      jack.action do |global_options, options, args|
+      jack.action do |global_options, options, _args|
         opts = options.merge(global_options)
         GoodData::Command::Project.jack_in(opts)
       end
@@ -44,7 +44,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'Delete a project. Be careful this is impossible to revert'
     c.command :delete do |delete|
-      delete.action do |global_options, options, args|
+      delete.action do |global_options, options, _args|
         id = global_options[:project_id]
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
@@ -66,7 +66,7 @@ GoodData::CLI.module_eval do
       clone.default_value true
       clone.switch [:d, :data]
 
-      clone.action do |global_options, options, args|
+      clone.action do |global_options, options, _args|
         opts = options.merge(global_options)
         id = global_options[:project_id]
         token = opts[:token]
@@ -103,7 +103,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'List users'
     c.command :users do |list|
-      list.action do |global_options, options, args|
+      list.action do |global_options, options, _args|
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
 
@@ -117,7 +117,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'Shows basic info about a project'
     c.command :show do |show|
-      show.action do |global_options, options, args|
+      show.action do |global_options, options, _args|
         id = global_options[:project_id]
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
@@ -128,7 +128,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you.'
     c.command :build do |show|
-      show.action do |global_options, options, args|
+      show.action do |global_options, options, _args|
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
         spec, _ = GoodData::Command::Project.get_spec_and_project_id('.')
@@ -139,7 +139,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you.'
     c.command :update do |show|
-      show.action do |global_options, options, args|
+      show.action do |global_options, options, _args|
 
         opts = options.merge(global_options)
         GoodData.connect(opts)
@@ -153,7 +153,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'Shows roles in the project'
     c.command :roles do |roles|
-      roles.action do |global_options, options, args|
+      roles.action do |global_options, options, _args|
         project_id = global_options[:project_id]
         fail 'Project ID has to be provided' if project_id.nil? || project_id.empty?
 
@@ -167,7 +167,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'You can run project validation which will check RI and other problems.'
     c.command :validate do |show|
-      show.action do |global_options, options, args|
+      show.action do |global_options, options, _args|
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
         pp GoodData::Command::Project.validate(global_options[:project_id], opts.merge(client: client))

@@ -10,7 +10,7 @@ module GoodData
       def call(params)
         logger = params['GDC_LOGGER'] = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
         logger.info('Pipeline starts')
-        returning(@app.call(params)) do |result|
+        returning(@app.call(params)) do |_result|
           logger.info('Pipeline ending')
         end
       end

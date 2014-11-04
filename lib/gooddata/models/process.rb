@@ -260,7 +260,7 @@ module GoodData
       ensure
         result = client.get(result['executionTask']['links']['detail'])
         if result['executionDetail']['status'] == 'ERROR'
-          fail "Runing process failed. You can look at a log here #{result["executionDetail"]["logFileName"]}"
+          fail "Runing process failed. You can look at a log here #{result['executionDetail']['logFileName']}"
         end
       end
       result

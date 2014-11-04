@@ -10,7 +10,7 @@ GoodData::CLI.module_eval do
 
     c.desc "Lists user's projects"
     c.command :list do |list|
-      list.action do |global_options, options, args|
+      list.action do |global_options, options, _args|
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
         list = GoodData::Command::Projects.list(client: client)

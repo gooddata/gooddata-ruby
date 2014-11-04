@@ -11,7 +11,7 @@ module GoodData
       # @param project [Hash] Project blueprint hash represenation
       # @param dataset [Hash] Dataset blueprint hash represenation
       # @return [Hash] Manifest for a particular reference
-      def self.anchor_to_wire(project, dataset)
+      def self.anchor_to_wire(_project, dataset)
         if DatasetBlueprint.anchor(dataset)
           attribute_to_wire(dataset, DatasetBlueprint.anchor(dataset))
         else
@@ -29,7 +29,7 @@ module GoodData
       # @param project [Hash] Project blueprint hash represenation
       # @param dataset [Hash] Dataset blueprint hash represenation
       # @return [Hash] Manifest for a particular reference
-      def self.attributes_to_wire(project, dataset)
+      def self.attributes_to_wire(_project, dataset)
         DatasetBlueprint.attributes(dataset).map do |a|
           attribute_to_wire(dataset, a)
         end
@@ -85,7 +85,7 @@ module GoodData
       # @param project [Hash] Project blueprint hash represenation
       # @param dataset [Hash] Dataset blueprint hash represenation
       # @return [Hash] Manifest for a particular reference
-      def self.date_dimensions_to_wire(project, dataset)
+      def self.date_dimensions_to_wire(_project, dataset)
         {
           dateDimension: {
             name: dataset[:name],
