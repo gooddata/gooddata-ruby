@@ -15,7 +15,7 @@ module GoodData
           pb
         end
 
-        def create(title, options = {}, &block)
+        def create(title, _options = {}, &block)
           pb = ProjectBuilder.new(title)
           block.call(pb)
           pb
@@ -104,7 +104,7 @@ module GoodData
         eliminate_empty = options[:eliminate_empty] || false
 
         if eliminate_empty
-          JSON.pretty_generate(to_hash.reject { |k, v| v.is_a?(Enumerable) && v.empty? })
+          JSON.pretty_generate(to_hash.reject { |_k, v| v.is_a?(Enumerable) && v.empty? })
         else
           JSON.pretty_generate(to_hash)
         end

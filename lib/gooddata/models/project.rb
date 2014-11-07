@@ -123,7 +123,7 @@ module GoodData
         project
       end
 
-      def find(opts = {}, client = GoodData::Rest::Client.client)
+      def find(_opts = {}, client = GoodData::Rest::Client.client)
         user = client.user
         user.projects['projects'].map do |project|
           client.create(GoodData::Project, project)
@@ -298,7 +298,7 @@ module GoodData
 
     # Deletes dashboards for project
     def delete_dashboards
-      Dashboard.all.map { |data| Dashboard[data['link']] }.each { |d| d.delete }
+      Dashboard.all.map { |data| Dashboard[data['link']] }.each(&:delete)
     end
 
     def deploy_process(path, options = {})
@@ -400,10 +400,10 @@ module GoodData
       role_name.downcase!
       role_list.each do |role|
         return role if role.uri == role_name ||
-          role.identifier.downcase == role_name ||
-          role.identifier.downcase.gsub(/role$/, '') == role_name ||
-          role.title.downcase == role_name ||
-          role.summary.downcase == role_name
+                       role.identifier.downcase == role_name ||
+                       role.identifier.downcase.gsub(/role$/, '') == role_name ||
+                       role.title.downcase == role_name ||
+                       role.summary.downcase == role_name
       end
       nil
     end
@@ -419,14 +419,14 @@ module GoodData
       name.downcase!
       user_list.each do |user|
         return user if user.uri.downcase == name ||
-          user.login.downcase == name ||
-          user.email.downcase == name
+                       user.login.downcase == name ||
+                       user.email.downcase == name
       end
       nil
     end
 
     # Exports project users to file
-    def import_users(path, opts = { :header => true }, &block)
+    def import_users(path, opts = { :header => true }, &_block)
       opts[:path] = path
 
       ##########################
@@ -609,7 +609,7 @@ module GoodData
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
     def labels(id = :all, opts = {})
       if id == :all
-        attributes.pmapcat { |a| a.labels }.uniq
+        attributes.pmapcat(&:labels).uniq
       else
         GoodData::Label[id, opts.merge(project: self, client: client)]
       end
@@ -700,7 +700,7 @@ module GoodData
       objs = objs.pmap { |obj| objects(obj) }
       export_payload = {
         :partialMDExport => {
-          :uris => objs.map { |obj| obj.uri }
+          :uris => objs.map(&:uri)
         }
       }
       result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
@@ -961,7 +961,7 @@ module GoodData
       list = list.map do |user|
         {
           :user => user,
-          :roles => new_users_map[user.email].json['user']['content']['role'].split(' ').map { |r| r.downcase }.sort
+          :roles => new_users_map[user.email].json['user']['content']['role'].split(' ').map(&:downcase).sort
         }
       end
 
@@ -976,9 +976,7 @@ module GoodData
     #
     # @param list List of users to be disabled
     def users_remove(list)
-      list.pmap do |user|
-        user.disable
-      end
+      list.pmap(&:disable)
     end
 
     # Update user
@@ -1022,7 +1020,7 @@ module GoodData
     #
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
-    def set_users_roles(list, role_list = roles)
+    def set_users_roles(list, _role_list = roles)
       list.pmap do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:role] || user_hash[:roles]

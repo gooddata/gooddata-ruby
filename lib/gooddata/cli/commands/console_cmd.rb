@@ -8,7 +8,7 @@ GoodData::CLI.module_eval do
   desc 'Interactive session with gooddata sdk loaded'
   command :console do |c|
 
-    c.action do |global_options, options, args|
+    c.action do |global_options, _options, _args|
       username = global_options[:username]
       fail ArgumentError, 'No username specified' if username.nil? || username.empty?
 
@@ -27,7 +27,7 @@ GoodData::CLI.module_eval do
 
         puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
         binding.pry(:quiet => true,
-                    :prompt => [proc do |target_self, nest_level, pry|
+                    :prompt => [proc do |_target_self, _nest_level, _pry|
                       'sdk_live_sesion: '
                     end])
       end

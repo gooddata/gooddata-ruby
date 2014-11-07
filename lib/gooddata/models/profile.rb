@@ -134,13 +134,13 @@ module GoodData
             next
           end
 
-          if user_existing != user_new
-            diff = self.diff(user_existing, user_new)
-            res[:changed] << {
-              :user => user_existing,
-              :diff => diff
-            }
-          end
+          next if user_existing == user_new
+
+          diff = self.diff(user_existing, user_new)
+          res[:changed] << {
+            :user => user_existing,
+            :diff => diff
+          }
         end
 
         tmp = Hash[list2.map { |v| [v.email, v] }]
@@ -368,7 +368,7 @@ module GoodData
 
     # Saves object if dirty, clears dirty flag
     def save!
-      if @dirty
+      if @dirty # rubocop:disable Style/GuardClause
         raw = @json.dup
         raw['accountSetting'].delete('login')
 

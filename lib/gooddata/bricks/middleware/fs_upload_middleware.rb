@@ -15,7 +15,7 @@ module GoodData
       end
 
       def call(params)
-        returning(@app.call(params)) do |result|
+        returning(@app.call(params)) do |_result|
           destination = @destination
           (params['gdc_files_to_upload'] || []).each do |f|
             webdav_filename = File.basename(f[:path])

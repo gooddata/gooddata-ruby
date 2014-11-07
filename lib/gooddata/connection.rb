@@ -35,8 +35,8 @@ module GoodData
       connection = connect(options, second_options, third_options)
       bl.call(connection)
     rescue Exception => e # rubocop:disable RescueException
-        puts e.message
-        raise e
+      puts e.message
+      raise e
     ensure
       disconnect
     end

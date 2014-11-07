@@ -11,7 +11,7 @@ module GoodData
       attr_writer :client
       attr_accessor :project
 
-      def initialize(opts = {})
+      def initialize(_opts = {})
         @client = nil
       end
 

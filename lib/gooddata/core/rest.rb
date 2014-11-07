@@ -74,7 +74,7 @@ module GoodData
       ))
     end
 
-    def get_project_webdav_path(file, options = {})
+    def get_project_webdav_path(_file, _options = {})
       u = URI(GoodData.project.links['uploads'])
       URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{GoodData.project.pid}/")
     end
@@ -87,7 +87,7 @@ module GoodData
         :staging_url => url))
     end
 
-    def get_user_webdav_path(file, options = {})
+    def get_user_webdav_path(_file, _options = {})
       u = URI(GoodData.project.links['uploads'])
       URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
     end

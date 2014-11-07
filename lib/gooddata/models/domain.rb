@@ -43,9 +43,9 @@ module GoodData
         # Optional authentication modes
         tmp = opts[:authentication_modes]
         if tmp
-          if tmp.kind_of? Array
+          if tmp.is_a? Array
             data[:authenticationModes] = tmp
-          elsif tmp.kind_of? String
+          elsif tmp.is_a? String
             data[:authenticationModes] = [tmp]
           end
         end

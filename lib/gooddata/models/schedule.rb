@@ -300,7 +300,7 @@ module GoodData
     #
     # @return [Array] Raw Executions JSON
     def executions
-      if @json
+      if @json # rubocop:disable Style/GuardClause
         url = @json['schedule']['links']['executions']
         res = client.get url
         res['executions']['items']

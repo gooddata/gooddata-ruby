@@ -24,15 +24,15 @@ module GoodData
     alias_method :to_table, :table
     alias_method :without_column_headers, :table
 
-    def ==(other)
+    def ==(_other)
       false
     end
 
-    def diff(otherDataResult)
+    def diff(_otherDataResult)
       ['empty']
     end
 
-    def [](index, options = {})
+    def [](index, _options = {})
       to_table[index]
     end
 
@@ -46,11 +46,11 @@ module GoodData
       table[index]
     end
 
-    def include_row?(row = nil)
+    def include_row?(_row = nil)
       false
     end
 
-    def include_column?(row = nil)
+    def include_column?(_row = nil)
       false
     end
   end
