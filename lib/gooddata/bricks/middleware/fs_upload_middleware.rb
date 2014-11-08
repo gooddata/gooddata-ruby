@@ -18,16 +18,17 @@ module GoodData
         returning(@app.call(params)) do |_result|
           destination = @destination
           (params['gdc_files_to_upload'] || []).each do |f|
-            webdav_filename = File.basename(f[:path])
             case destination.to_s
             when 'staging'
-              url = GoodData.get_project_webdav_path(webdav_filename)
-              GoodData.upload_to_project_webdav(webdav_filename, file_path: f[:path], directory: f[:webdav_directory])
-              puts "Uploaded local file \"#{f[:path]}\" to url \"#{url}\""
+              GoodData.upload_to_project_webdav(f[:path], directory: f[:webdav_directory])
+              puts "Uploaded local file \"#{f[:path]}\" to webdav."
             end
           end
         end
       end
     end
+
+    # Alias to make it backwards compatible
+    FsUploadMiddleware = FsProjectUploadMiddleware
   end
 end

@@ -127,7 +127,11 @@ module GoodData
         end
 
         def download(what, where, options = {})
-          url = options[:staging_url].to_s + what
+          dir = options[:directory] || ''
+          staging_uri = options[:staging_url].to_s
+
+          base_url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
+          url = URI.join(base_url, what).to_s
 
           raw = {
             :headers => {
