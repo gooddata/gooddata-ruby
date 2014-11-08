@@ -26,6 +26,12 @@ describe GoodData do
 
       path = 'spec/data/test-ci-data.csv'
 
+      if params[:special_chars]
+        source_file = Tempfile.new('Account_751800000025KabAAE_2009-02-26T16:55:29+00:00-2009-07-15T06:07:20+00:00.csv')
+        FileUtils.cp(path, source_file)
+        path = source_file.path
+      end
+
       path = File.expand_path(path) if params[:absolute_path]
 
       # upload it there
@@ -36,7 +42,7 @@ describe GoodData do
       file = Tempfile.new('foo.csv')
 
       download_method = GoodData.method(params[:download_method])
-      download_method.call('test-ci-data.csv', file, directory: dir)
+      download_method.call(File.basename(path), file, directory: dir)
 
       file.size.should be > 0
     end
@@ -57,6 +63,14 @@ describe GoodData do
         download_method: 'download_from_project_webdav'
       )
     end
+
+    it 'Uploads file with special chars in filename' do
+      test_webdav_upload(
+        special_chars: true,
+        upload_method: 'upload_to_project_webdav',
+        download_method: 'download_from_project_webdav'
+      )
+    end
   end
 
   describe '#upload_to_user_webdav' do
@@ -70,6 +84,13 @@ describe GoodData do
     it 'Uploads file with absolute path to a dir' do
       test_webdav_upload(
         absolute_path: true,
+        upload_method: 'upload_to_user_webdav',
+        download_method: 'download_from_user_webdav'
+      )
+    end
+    it 'Uploads file with special chars in filename' do
+      test_webdav_upload(
+        special_chars: true,
         upload_method: 'upload_to_user_webdav',
         download_method: 'download_from_user_webdav'
       )

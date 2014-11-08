@@ -131,7 +131,7 @@ module GoodData
           staging_uri = options[:staging_url].to_s
 
           base_url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
-          url = URI.join(base_url, what).to_s
+          url = URI.join(base_url, CGI.escape(what)).to_s
 
           raw = {
             :headers => {
