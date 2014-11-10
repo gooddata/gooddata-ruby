@@ -3,6 +3,8 @@
 require_relative '../rest/resource'
 require_relative '../extensions/hash'
 
+require_relative 'execution'
+
 module GoodData
   class Schedule < Rest::Resource
     attr_reader :dirty, :json
@@ -206,9 +208,10 @@ module GoodData
         :execution => {}
       }
       execution = client.post(execution_url, data)
-      client.poll_on_response(execution['execution']['links']['self']) do |body|
+      res = client.poll_on_response(execution['execution']['links']['self']) do |body|
         body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
       end
+      client.create(GoodData::Execution, res, client: client, project: project)
     end
 
     # Returns execution URL

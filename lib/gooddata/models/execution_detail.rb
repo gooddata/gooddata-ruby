@@ -4,7 +4,7 @@ require_relative '../rest/resource'
 require_relative '../extensions/hash'
 
 module GoodData
-  class Execution < Rest::Resource
+  class ExecutionDetail < Rest::Resource
     attr_reader :dirty, :json
 
     alias_method :data, :json
@@ -21,22 +21,22 @@ module GoodData
 
     # Timestamp when execution was created
     def created
-      Time.parse(json['execution']['createdTime'])
-    end
-
-    # Data for execution
-    def data
-      @client.get(json['execution']['data'])
+      Time.parse(json['executionDetail']['created'])
     end
 
     # Timestamp when execution was finished
     def finished
-      Time.parse(json['execution']['endTime'])
+      Time.parse(json['executionDetail']['finished'])
     end
 
     # Log for execution
     def log
-      @client.get(json['execution']['log'])
+      @client.get(json['executionDetail']['links']['log'])
+    end
+
+    # Filename of log
+    def log_filename
+      @client.get(json['executionDetail']['logFileName'])
     end
 
     # Is execution ok?
@@ -46,19 +46,24 @@ module GoodData
 
     # Timestamp when execution was started
     def started
-      Time.parse(json['execution']['startTime'])
+      Time.parse(json['executionDetail']['started'])
     end
 
     # Status of execution
     def status
-      json['execution']['status']
+      json['executionDetail']['status']
+    end
+
+    # Timestamp when execution was updated
+    def updated
+      Time.parse(json['executionDetail']['updated'])
     end
 
     # Returns URL
     #
     # @return [String] Schedule URL
     def uri
-      @json['execution']['links']['self'] if @json && @json['execution'] && @json['execution']['links']
+      @json['executionDetail']['links']['self'] if @json && @json['executionDetail'] && @json['executionDetail']['links']
     end
 
     # Compares two executions - based on their URI
