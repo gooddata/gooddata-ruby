@@ -17,7 +17,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
   it "should be able to execute a process" do
     result = @process.execute(@process.executables.first)
-    log = @client.get(result['executionDetail']['links']['log'])
+    log = result.log
     expect(log.index('Hello Ruby executors')).not_to eq nil
     expect(log.index('Hello Ruby from the deep')).not_to eq nil
   end
@@ -47,7 +47,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it "should be possible to execute schedule" do
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     result = schedule.execute
-    log = @client.get(result['execution']['log'])
+    log = result.log
     expect(log.index('Hello Ruby executors')).not_to eq nil
     expect(log.index('Hello Ruby from the deep')).not_to eq nil
   end
@@ -59,7 +59,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     begin
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
-      log = @client.get(result['execution']['log'])
+      log = result.log
       expect(log.index('HELLO WORLD')).not_to eq nil
       expect(schedule.enabled?).to be_true
       schedule.disable
@@ -82,11 +82,27 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
-      log = @client.get(result['execution']['log'])
+      log = result.log
       expect(log.index('HELLO WORLD')).not_to eq nil
       expect(process.schedules.count).to eq 1
     ensure
       process && process.delete
+    end
+  end
+
+  it 'should be possible to deploy and run zipped file and print GoodData::VERSION' do
+    process = @project.deploy_process('./spec/data/gooddata_version_process/gooddata_version.zip',
+                                      type: 'RUBY',
+                                      name: 'Test ETL zipped file GoodData Process')
+    begin
+      expect(process.schedules.count).to eq 0
+      schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
+      result = schedule.execute
+      log = result.log
+      expect(log.index(GoodData::VERSION)).not_to eq nil
+      expect(process.schedules.count).to eq 1
+    ensure
+      # process && process.delete
     end
   end
 end

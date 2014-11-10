@@ -3,6 +3,7 @@
 require 'pry'
 
 require_relative '../rest/resource'
+require_relative 'execution'
 
 module GoodData
   class Process < GoodData::Rest::Object
@@ -263,7 +264,7 @@ module GoodData
           fail "Runing process failed. You can look at a log here #{result['executionDetail']['logFileName']}"
         end
       end
-      result
+      client.create(GoodData::Execution, result, client: client, project: project)
     end
   end
 end
