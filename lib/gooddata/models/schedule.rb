@@ -11,6 +11,9 @@ module GoodData
     alias_method :raw_data, :json
     alias_method :to_hash, :json
 
+    include GoodData::Mixin::RestResource
+    root_key :schedule
+
     class << self
       # Looks for schedule
       # @param id [String] URL, ID of schedule or :all

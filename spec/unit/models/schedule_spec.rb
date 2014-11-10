@@ -1,17 +1,25 @@
 require 'gooddata/models/schedule'
 
 describe GoodData::Schedule do
-  SCHEDULE_ID = '53e029bde4b035034ad4abb6'
+  SCHEDULE_ID = ScheduleHelper::SCHEDULE_ID
   SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
   @test_cron = '0 15 27 7 *'
+
+  before(:all) do
+    @client = ConnectionHelper.create_default_connection
+
+    @project = ProjectHelper.get_default_project(:client => @client)
+
+    # ScheduleHelper.remove_old_schedules(@project)
+  end
 
   before(:each) do
     @client = ConnectionHelper.create_default_connection
 
     @project = ProjectHelper.get_default_project(:client => @client)
 
-    @project_executable = "./graph/graph.grf"
+    @project_executable = './graph/graph.grf'
 
     @test_data = {
       :timezone => 'UTC',
