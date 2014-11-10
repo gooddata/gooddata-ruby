@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'pry'
+require 'zip'
 
 require_relative '../rest/resource'
 
@@ -82,48 +83,7 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
-          puts 'Creating package for upload'
-          Tempfile.open('deploy-graph-archive') do |temp|
-            Zip::OutputStream.open(temp.path) do |zio|
-              FileUtils.cd(path.parent) do
-                files_to_pack = [path.basename]
-                files_to_pack.each do |item|
-                  puts "including #{item}"
-                  unless File.directory?(item)
-                    zio.put_next_entry(item)
-                    zio.print IO.read(item)
-                  end
-                end
-              end
-            end
-
-            client.upload_to_user_webdav(temp.path, opts)
-            temp.path
-          end
-        elsif !path.directory?
-          client.upload_to_user_webdav(path, opts)
-          path
-        else
-          Tempfile.open('deploy-graph-archive') do |temp|
-            Zip::OutputStream.open(temp.path) do |zio|
-              FileUtils.cd(path) do
-
-                files_to_pack = Dir.glob('./**/*').reject { |f| files_to_exclude.include?(Pathname(path) + f) }
-                files_to_pack.each do |item|
-                  puts "including #{item}"
-                  unless File.directory?(item)
-                    zio.put_next_entry(item)
-                    zio.print IO.read(item)
-                  end
-                end
-              end
-            end
-
-            client.upload_to_user_webdav(temp.path, opts)
-            temp.path
-          end
-        end
+        zip_and_upload path, files_to_exclude, opts
       end
 
       # Deploy a new process or redeploy existing one.
@@ -174,6 +134,46 @@ module GoodData
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
       end
+
+      # ----------------------------- Private Stuff
+
+      private
+
+      def zip_and_upload(path, files_to_exclude, opts)
+        def with_zip(opts)
+          Tempfile.open('deploy-graph-archive') do |temp|
+            zip_filename = temp.path
+            File.open(zip_filename, 'w') do |zip|
+              Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
+                yield zipfile
+              end
+            end
+            client.upload_to_user_webdav(temp.path, opts)
+            temp.path
+          end
+        end
+
+        puts 'Creating package for upload'
+        if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
+          with_zip do |zipfile|
+            zipfile.add(File.basename(path), path)
+          end
+
+        elsif !path.directory?
+          client.upload_to_user_webdav(path, opts)
+          path
+        else
+          with_zip(opts) do |zipfile|
+            Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }.each do |file|
+              file_pathname = Pathname.new(file)
+              puts "Including item #{file_pathname}"
+              file_relative_pathname = file_pathname.relative_path_from(Pathname.new(path))
+              zipfile.add(file_relative_pathname, file)
+            end
+          end
+        end
+      end
+      # -----------------------------
     end
 
     def initialize(data)
