@@ -2,6 +2,7 @@
 
 require_relative '../rest/resource'
 require_relative '../extensions/hash'
+require_relative '../mixins/rest_resource'
 
 require_relative 'execution'
 
