@@ -142,8 +142,10 @@ module GoodData
         }
 
         tmp = json['schedule'][:hiddenParams]
-        json['schedule'][:hiddenParams] = {}
-        json['schedule'][:hiddenParams][:data] = JSON.generate(tmp) unless tmp.nil?
+        if !tmp.nil? && !tmp.empty?
+          json['schedule'][:hiddenParams] = {}
+          json['schedule'][:hiddenParams][:secure_data] = JSON.generate(tmp) unless tmp.nil?
+        end
 
         url = "/gdc/projects/#{project.pid}/schedules"
         res = c.post url, json
