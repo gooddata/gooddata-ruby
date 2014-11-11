@@ -84,8 +84,7 @@ module GoodData
         fail ArgumentError, 'No :client specified' if c.nil?
 
         auth_token = opts[:auth_token] 
-
-        fail 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
+        fail ArgumentError, 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
 
         json = {
           'project' =>
