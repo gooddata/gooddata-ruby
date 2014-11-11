@@ -24,7 +24,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
   it "should be able to grab executables" do 
 
-    expect(@process.executables).to eq ['./process.rb']
+    expect(@process.executables).to eq ['process.rb']
   end
 
   it "should have empty schedules on deploy" do 
