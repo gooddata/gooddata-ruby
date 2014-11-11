@@ -7,11 +7,14 @@ require 'gooddata/models/project'
 describe 'GoodData::Schedule::Params' do
   before(:all) do
     @deploy_dir = File.join(File.dirname(__FILE__), '..', '..', 'data/cc')
-    @graph_path = 'graph/graph.grf'
+    @graph_path = 'graph.grf'
 
     @client = ConnectionHelper.create_default_connection
     @project = ProjectHelper.get_default_project
-    @processes = @project.processes
+
+    @process = @project.deploy_process('./spec/data/cc/graph/graph.grf',
+                                       type: 'GRAPH',
+                                       name: 'Test ETL Process')
   end
 
   after(:all) do
@@ -24,7 +27,7 @@ describe 'GoodData::Schedule::Params' do
         :test => '1234'
       }
 
-      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", params: params)
+      res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
       expect(res).to be_true
     end
 
@@ -36,7 +39,7 @@ describe 'GoodData::Schedule::Params' do
         }
       }
 
-      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", params: params)
+      res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
       expect(res).to be_true
     end
 
@@ -46,7 +49,7 @@ describe 'GoodData::Schedule::Params' do
         :array => [1, 2, 3, 4, 5]
       }
 
-      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", params: params)
+      res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
       expect(res).to be_true
     end
   end
@@ -57,7 +60,7 @@ describe 'GoodData::Schedule::Params' do
         :test => '1234'
       }
 
-      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", hiddenParams: params)
+      res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
       expect(res).to be_true
     end
 
@@ -69,7 +72,7 @@ describe 'GoodData::Schedule::Params' do
         }
       }
 
-      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", hiddenParams: params)
+      res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
       expect(res).to be_true
     end
 
@@ -79,7 +82,7 @@ describe 'GoodData::Schedule::Params' do
         :array => [1, 2, 3, 4, 5]
       }
 
-      res = @processes[1].create_schedule("0 12 * * *", "./graph/graph.grf", hiddenParams: params)
+      res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
       expect(res).to be_true
     end
   end
