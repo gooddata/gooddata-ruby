@@ -27,7 +27,7 @@ describe GoodData do
       path = 'spec/data/test-ci-data.csv'
 
       if params[:special_chars]
-        source_file = Tempfile.new('Account_751800000025KabAAE_2009-02-26T16:55:29+00:00-2009-07-15T06:07:20+00:00.csv')
+        source_file = Tempfile.new('abc-16:55:29+ha#he.csv')
         FileUtils.cp(path, source_file)
         path = source_file.path
       end
@@ -44,7 +44,7 @@ describe GoodData do
       download_method = GoodData.method(params[:download_method])
       download_method.call(File.basename(path), file, directory: dir)
 
-      file.size.should be > 0
+      expect(file.size).to be > 0
     end
 
   end
