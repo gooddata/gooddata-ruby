@@ -105,4 +105,25 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       process && process.delete
     end
   end
+
+  it 'should be possible to deploy and run zipped file and use nested parameters' do
+    process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip',
+                                      type: 'RUBY',
+                                      name: 'Test ETL zipped file GoodData Process')
+    begin
+      expect(process.schedules.count).to eq 0
+      params = {
+        nested: {
+          value: 42
+        }
+      }
+      schedule = process.create_schedule('0 15 27 7 *', process.executables.first, params: params)
+      result = schedule.execute
+      log = result.log
+      expect(log.index(JSON.parse(params.to_json).inspect)).not_to eq nil
+      expect(process.schedules.count).to eq 1
+    ensure
+      process && process.delete
+    end
+  end
 end
