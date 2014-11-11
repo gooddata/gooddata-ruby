@@ -18,6 +18,7 @@ describe 'GoodData::Schedule::Params' do
   end
 
   after(:all) do
+    @process.delete
     @client.disconnect
   end
 
@@ -29,6 +30,7 @@ describe 'GoodData::Schedule::Params' do
 
       res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
       expect(res).to be_true
+      res.delete
     end
 
     it 'Works with nested params' do
@@ -41,6 +43,7 @@ describe 'GoodData::Schedule::Params' do
 
       res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
       expect(res).to be_true
+      res.delete
     end
 
     it 'Works with array in params' do
@@ -51,6 +54,7 @@ describe 'GoodData::Schedule::Params' do
 
       res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
       expect(res).to be_true
+      res.delete
     end
   end
 
@@ -62,6 +66,7 @@ describe 'GoodData::Schedule::Params' do
 
       res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
       expect(res).to be_true
+      res.delete
     end
 
     it 'Works with nested hiddenParams' do
@@ -74,6 +79,7 @@ describe 'GoodData::Schedule::Params' do
 
       res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
       expect(res).to be_true
+      res.delete
     end
 
     it 'Works with array in hiddenParams' do
@@ -84,6 +90,7 @@ describe 'GoodData::Schedule::Params' do
 
       res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
       expect(res).to be_true
+      res.delete
     end
   end
 end
