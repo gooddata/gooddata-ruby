@@ -139,8 +139,8 @@ module GoodData
 
       private
 
-      def zip_and_upload(path, files_to_exclude, opts)
-        def with_zip(opts)
+      def zip_and_upload(path, files_to_exclude, opts = {})
+        def with_zip(opts = {})
           Tempfile.open('deploy-graph-archive') do |temp|
             zip_filename = temp.path
             File.open(zip_filename, 'w') do |zip|
