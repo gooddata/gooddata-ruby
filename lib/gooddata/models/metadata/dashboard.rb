@@ -11,6 +11,8 @@ module GoodData
   class Dashboard < GoodData::MdObject
     root_key :projectDashboard
 
+    include GoodData::Mixin::Lockable
+
     class << self
       # Method intended to get all objects of that type in a specified project
       #

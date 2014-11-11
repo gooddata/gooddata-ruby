@@ -10,6 +10,8 @@ module GoodData
   class Metric < MdObject
     attr_reader :json
 
+    include GoodData::Mixin::Lockable
+
     alias_method :to_hash, :json
 
     include GoodData::Mixin::RestResource
