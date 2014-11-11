@@ -46,7 +46,7 @@ You can make sure it worked by using what we learned last time. Run
 Our metric should be the only one there. You can grab it if you know its link and inspect it further.
 
 {% highlight ruby %}
-  uri = project.metrics.first['link']
+  uri = project.metrics.first.link
   metric = project.metrics(uri)
   metric.title
   metric.expression
