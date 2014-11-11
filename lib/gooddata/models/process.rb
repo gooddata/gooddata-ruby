@@ -155,7 +155,7 @@ module GoodData
 
         puts 'Creating package for upload'
         if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
-          with_zip do |zipfile|
+          with_zip(opts) do |zipfile|
             zipfile.add(File.basename(path), path)
           end
 
