@@ -67,7 +67,7 @@ Great very similar. Note couple of differences. We used `find_first_by_title` ju
 
 {% highlight ruby %}
 
-  metric = project.facts.find_first_by_title('Lines Changed').create_metric(:type => :avg)
+  metric = project.facts.find { |f| f.title == 'Lines Changed' }.create_metric(:type => :avg)
   metric.execute
 
 {% endhighlight %}
@@ -76,8 +76,8 @@ Let's save both of the metrics like we did previously.
 
 {% highlight ruby %}
 
-  sum = project.facts.find_first_by_title('Lines Changed').create_metric.save
-  avg = project.facts.find_first_by_title('Lines Changed').create_metric(:type => :avg).save
+  sum = project.facts.find { |f| f.title == 'Lines Changed' }.create_metric.save
+  avg = project.facts.find { |f| f.title == 'Lines Changed' }.create_metric(:type => :avg).save
 
 {% endhighlight %}
 
