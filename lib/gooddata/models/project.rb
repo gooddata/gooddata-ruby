@@ -162,11 +162,28 @@ module GoodData
     end
     alias_method :create_metric, :add_metric
 
+    # Creates new instance of report in context of project
+    #
+    # @param [options] Optional report options
+    # @return [GoodData::Report] Instance of new report
     def add_report(options = {})
       rep = GoodData::Report.create(options.merge(client: client, project: self))
       rep.save
     end
     alias_method :create_report, :add_report
+
+    # Creates new instance of report definition in context of project
+    # This report definition can be used for creating of GoodData::Report
+    #
+    # @param [json] Raw report definition json
+    # @return [GoodData::ReportDefinition] Instance of new report definition
+    def add_report_definition(json)
+      rd = GoodData::ReportDefinition.new(json)
+      rd.client = client
+      rd.project = self
+      rd.save
+    end
+    alias_method :create_report_definition, :add_report_definition
 
     # Returns an indication whether current user is admin in this project
     #
