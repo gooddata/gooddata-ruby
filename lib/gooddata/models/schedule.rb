@@ -64,11 +64,11 @@ module GoodData
       # Creates new schedules from parameters passed
       #
       # @param process_id [String] Process ID
-      # @param cron [String] Cron Settings
+      # @param trigger [String|GoodData::Schedule] Trigger of schedule. Can be cron string or reference to another schedule.
       # @param executable [String] Execution executable
       # @param options [Hash] Optional options
       # @return [GoodData::Schedule] New GoodData::Schedule instance
-      def create(process_id, cron, executable, options = {})
+      def create(process_id, trigger, executable, options = {})
         c = client(options)
         fail ArgumentError, 'No :client specified' if c.nil?
 
@@ -81,7 +81,6 @@ module GoodData
         default_opts = {
           :type => 'MSETL',
           :timezone => 'UTC',
-          :cron => cron,
           :params => {
             :process_id => process_id,
             :executable => executable
@@ -89,6 +88,14 @@ module GoodData
           :hidden_params => {},
           :reschedule => options[:reschedule] || 0
         }
+
+        if(trigger =~ /[a-fA-Z0-9]{24}/)
+          default_opts[:triggerScheduleId] = trigger
+        elsif trigger.kind_of?(GoodData::Schedule)
+          default_opts[:triggerScheduleId] = trigger.obj_id
+        else
+          default_opts[:cron] = trigger
+        end
 
         inject_schema = {
           :hidden_params => :hiddenParams
@@ -123,8 +130,8 @@ module GoodData
         tmp = json['schedule'][:params][:EXECUTABLE]
         fail 'Executable has to be provided' if tmp.nil? || tmp.empty?
 
-        tmp = json['schedule'][:cron]
-        fail 'Cron schedule has to be provided' if tmp.nil? || tmp.empty?
+        tmp = json['schedule'][:cron] || json['schedule'][:triggerScheduleId]
+        fail 'trigger schedule has to be provided' if !tmp || tmp.nil? || tmp.empty?
 
         tmp = json['schedule'][:timezone]
         fail 'A timezone has to be provided' if tmp.nil? || tmp.empty?
