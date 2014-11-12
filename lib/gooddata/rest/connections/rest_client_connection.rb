@@ -115,7 +115,7 @@ module GoodData
           # puts "uploading the file #{URI.join(url, filename).to_s}"
           raw = {
             :method => :put,
-            :url => URI.join(url, filename).to_s,
+            :url => URI.join(url, CGI.escape(filename)).to_s,
             :headers => {
               :user_agent => GoodData.gem_version_string
             },
@@ -127,7 +127,11 @@ module GoodData
         end
 
         def download(what, where, options = {})
-          url = options[:staging_url].to_s + what
+          dir = options[:directory] || ''
+          staging_uri = options[:staging_url].to_s
+
+          base_url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
+          url = URI.join(base_url, CGI.escape(what)).to_s
 
           raw = {
             :headers => {
