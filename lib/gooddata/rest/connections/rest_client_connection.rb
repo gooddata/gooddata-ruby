@@ -44,10 +44,10 @@ module GoodData
         # HTTP GET
         #
         # @param uri [String] Target URI
-        def get(uri, options = {})
+        def get(uri, options = {}, &user_block)
           GoodData.logger.debug "GET: #{@server.url}#{uri}"
           profile "GET #{uri}" do
-            b = proc { @server[uri].get cookies }
+            b = proc { @server[uri].get(cookies, &user_block) }
             process_response(options, &b)
           end
         end

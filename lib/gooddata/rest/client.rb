@@ -194,8 +194,8 @@ module GoodData
       # HTTP GET
       #
       # @param uri [String] Target URI
-      def get(uri, opts = {})
-        @connection.get uri, opts
+      def get(uri, opts = {}, & block)
+        @connection.get uri, opts, & block
       end
 
       # FIXME: Invstigate _file argument
