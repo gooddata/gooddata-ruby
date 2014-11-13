@@ -196,6 +196,14 @@ module GoodData
       Process.deploy(path, options.merge(:process_id => process_id))
     end
 
+    # Downloads the process from S3 in a zipped form.
+    #
+    # @return [IO] The stream of data that represents a zipped deployed process.
+    def download
+      link = links['source']
+      client.get(link, process: false) { |_, _, result| RestClient.get(result.to_hash['location'].first) }
+    end
+
     def process
       data['process']
     end
