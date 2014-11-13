@@ -78,52 +78,75 @@ module GoodData
 
         # Uploads a file to GoodData server
         def upload(file, options = {})
-          dir = options[:directory] || ''
-          staging_uri = options[:staging_url].to_s
-          url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
+          def do_stream_file(uri, filename, options = {})
+            puts "uploading the file #{uri}"
 
-          # Make a directory, if needed
-          unless dir.empty?
+            to_upload = File.new(filename)
+            cookies_str = cookies[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
+            req = Net::HTTP::Put.new(uri.path, 'User-Agent' => GoodData.gem_version_string, 'Cookie' => cookies_str)
+            req.content_length = to_upload.size
+            req.body_stream = to_upload
+            http = Net::HTTP.new(uri.host, uri.port)
+            http.use_ssl = true
+            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+            response = http.start { |client| client.request(req) }
+            case response
+            when Net::HTTPSuccess then
+              true
+            when Net::HTTPUnauthorized
+              refresh_token
+              do_stream_file uri, filename, options
+            else
+              fail "Can't upload file to webdav. Path: #{uri}, response code: #{response.code}, response body: #{response.body}"
+            end
+          end
+
+          def webdav_dir_exists?(url)
             method = :get
             GoodData.logger.debug "#{method}: #{url}"
-            begin
-              # first check if it does exits
+
+            b = proc do
+              raw = {
+                :method => method,
+                :url => url,
+                :headers => @headers
+              }
+              begin
+                RestClient::Request.execute(raw.merge(cookies))
+              rescue  RestClient::Exception => e
+                false if e.http_code == 404
+              end
+            end
+
+            process_with_tt_refresh(&b)
+          end
+
+          def create_webdav_dir_if_needed(url)
+            return if webdav_dir_exists?(url)
+
+            method = :mkcol
+            GoodData.logger.debug "#{method}: #{url}"
+            b = proc do
               raw = {
                 :method => method,
                 :url => url,
                 :headers => @headers
               }.merge(cookies)
               RestClient::Request.execute(raw)
-            rescue RestClient::Exception => e
-              if e.http_code == 404
-                method = :mkcol
-                GoodData.logger.debug "#{method}: #{url}"
-                raw = {
-                  :method => method,
-                  :url => url,
-                  :headers => @headers
-                }.merge(cookies)
-                RestClient::Request.execute(raw)
-              end
             end
+
+            process_with_tt_refresh(&b)
           end
 
-          payload = options[:stream] ? 'file' : File.read(file)
-          filename = options[:filename] || options[:stream] ? 'randome-filename.txt' : File.basename(file)
+          dir = options[:directory] || ''
+          staging_uri = options[:staging_url].to_s
+          url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
 
-          # Upload the file
-          # puts "uploading the file #{URI.join(url, filename).to_s}"
-          raw = {
-            :method => :put,
-            :url => URI.join(url, CGI.escape(filename)).to_s,
-            :headers => {
-              :user_agent => GoodData.gem_version_string
-            },
-            :payload => payload,
-            :raw_response => true
-          }.merge(cookies)
-          RestClient::Request.execute(raw)
-          true
+          # Make a directory, if needed
+          create_webdav_dir_if_needed url unless dir.empty?
+
+          webdav_filename = options[:filename] || File.basename(file)
+          do_stream_file URI.join(url, CGI.escape(webdav_filename)), file
         end
 
         def download(what, where, options = {})
@@ -133,27 +156,40 @@ module GoodData
           base_url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
           url = URI.join(base_url, CGI.escape(what)).to_s
 
-          raw = {
-            :headers => {
-              :user_agent => GoodData.gem_version_string
-            },
-            :method => :get,
-            :url => url
-          }.merge(cookies)
+          b = proc do
+            raw = {
+              :headers => {
+                :user_agent => GoodData.gem_version_string
+              },
+              :method => :get,
+              :url => url
+            }.merge(cookies)
 
-          if where.is_a?(String)
-            File.open(where, 'w') do |f|
+            if where.is_a?(String)
+              File.open(where, 'w') do |f|
+                RestClient::Request.execute(raw) do |chunk, _x, _y|
+                  f.write chunk
+                end
+              end
+
+            else
+              # Assume it is a IO stream
               RestClient::Request.execute(raw) do |chunk, _x, _y|
-                f.write chunk
+                where.write chunk
               end
             end
-
-          else
-            # Assume it is a IO stream
-            RestClient::Request.execute(raw) do |chunk, _x, _y|
-              where.write chunk
-            end
           end
+
+          process_with_tt_refresh(&b)
+        end
+
+        private
+
+        def process_with_tt_refresh(&block)
+          block.call
+        rescue RestClient::Unauthorized
+          refresh_token
+          block.call
         end
 
         private
