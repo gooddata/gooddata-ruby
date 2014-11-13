@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'hashie'
 
 class Hash
   # Return a hash that includes everything but the given keys. This is useful for
@@ -21,5 +22,20 @@ class Hash
   def except!(*keys)
     keys.each { |key| delete(key) }
     self
+  end
+
+  def undot
+    # for each key-value config given
+    hashes = map do |k, v|
+      # dot notation to hash
+      k.split('__').reverse.reduce(v) do |memo, obj|
+        { obj => memo }.extend(Hashie::Extensions::DeepMerge)
+      end
+    end
+
+    # merge back the keys as they came
+    hashes.reduce do |memo, obj|
+      memo.deep_merge(obj)
+    end
   end
 end
