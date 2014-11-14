@@ -121,6 +121,17 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(r.definitions.count).to eq 2
   end
 
+  it "should be able to clean colors from a chart report def" do
+    f = @project.fact_by_title('Lines Changed')
+    m = @project.create_metric("SELECT SUM(#\"#{f.title}\")", title: 'test metric').save
+    r = @project.create_report(top: [m], title: 'xy')
+    rd = r.latest_report_definition
+    rd.content['chart'] = { 'styles' => { 'global' => { 'colorMapping' => 1 } } }
+    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
+    rd.reset_color_mapping!
+    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
+  end
+
   it "should be possible to get all metrics" do
     metrics1 = @project.metrics
     expect(metrics1.count).to be >= 0
