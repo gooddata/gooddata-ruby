@@ -2,6 +2,7 @@
 
 ## 0.6.11
 - Ability to download deployed process
+- Added locking objects capabilities
 
 ## 0.6.10
 - Fixed client default missing in ProjectMetadata

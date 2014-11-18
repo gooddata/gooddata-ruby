@@ -109,6 +109,26 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(result2).to eq result
   end
 
+  it "should be able to lock reports and everything underneath" do
+    m = @project.metrics.first
+    r = @project.create_report(top: [m], title: 'xy')
+    r.save
+    expect(m.locked?).to eq false
+    expect(r.locked?).to eq false
+    r.lock_with_dependencies!
+    expect(r.locked?).to eq true
+    m.reload!
+    expect(m.locked?).to eq true
+    r.unlock_with_dependencies!
+    expect(r.locked?).to eq false
+    m.reload!
+    expect(m.locked?).to eq false
+    r.lock!
+    expect(r.locked?).to eq true
+    r.unlock!
+    expect(r.locked?).to eq false
+  end
+
   it "should be able to purge report from older revisions" do
     m = @project.metrics.first
     r = @project.create_report(top: [m], title: 'xy')
@@ -362,4 +382,6 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete
   end
+
+
 end
