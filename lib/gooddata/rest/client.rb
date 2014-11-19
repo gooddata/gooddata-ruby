@@ -129,8 +129,8 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
-      def create_project(_options = {})
-        GoodData::Project.create(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, client: self)
+      def create_project(options = { title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN'] })
+        GoodData::Project.create(title: options[:title], auth_token: options[:auth_token], client: self)
       end
 
       def create_project_from_blueprint(blueprint, options = {})
