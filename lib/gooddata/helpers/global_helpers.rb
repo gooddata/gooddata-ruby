@@ -36,6 +36,13 @@ module GoodData
         nil
       end
 
+      def get_path(an_object, path = [])
+        return an_object if path.empty?
+        path.reduce(an_object) do |a, e|
+          a && a.key?(e) ? a[e] : nil
+        end
+      end
+
       def hash_dfs(thing, &block)
         if !thing.is_a?(Hash) && !thing.is_a?(Array) # rubocop:disable Style/GuardClause
         elsif thing.is_a?(Array)
