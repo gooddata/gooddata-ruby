@@ -150,6 +150,14 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
     rd.reset_color_mapping!
     expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
+    r.delete
+    res = m.used_by
+    res.each do |dependency|
+      @client.delete dependency['link']
+    end
+    res = m.used_by
+    expect(res.length).to eq 0
+    m.delete
   end
 
   it "should be possible to get all metrics" do
@@ -207,10 +215,12 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(fact1).not_to eq fact3
 
     metric.using(nil)
-    expect(metric.using('fact').count).to eq 1
+    res = metric.using('fact')
+    expect(res.count).to eq 1
 
     fact1.used_by(nil)
-    expect(fact1.used_by('metric').count).to eq 1
+    res = fact1.used_by('metric')
+    expect(res.count).to eq 1
 
     res = metric.using?(fact1)
     expect(res).to be(true)
