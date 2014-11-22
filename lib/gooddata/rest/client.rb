@@ -129,8 +129,8 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
-      def create_project(_options = {})
-        GoodData::Project.create(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, client: self)
+      def create_project(options = { title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN'] })
+        GoodData::Project.create(title: options[:title], auth_token: options[:auth_token], client: self)
       end
 
       def create_project_from_blueprint(blueprint, options = {})
@@ -194,8 +194,8 @@ module GoodData
       # HTTP GET
       #
       # @param uri [String] Target URI
-      def get(uri, opts = {})
-        @connection.get uri, opts
+      def get(uri, opts = {}, & block)
+        @connection.get uri, opts, & block
       end
 
       # FIXME: Invstigate _file argument

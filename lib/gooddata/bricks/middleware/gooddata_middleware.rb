@@ -16,14 +16,16 @@ module GoodData
         project_id = params['GDC_PROJECT_ID']
 
         fail 'SST (SuperSecureToken) not present in params' if params[token_name].nil?
+
         server = if !params[protocol_name].empty? && !params[server_name].empty?
                    "#{params[protocol_name]}://#{params[server_name]}"
                  end
 
-        fail 'GoodData username is missing. Expected param :GDC_USERNAME' if params['GDC_USERNAME'].nil?
-        fail 'GoodData password is missing. Expected param :GDC_PASSWORD' if params['GDC_PASSWORD'].nil?
-
-        client = GoodData.connect(params['GDC_USERNAME'], params['GDC_PASSWORD'], :server => server)
+        client = if params['GDC_USERNAME'].nil? || params['GDC_PASSWORD'].nil?
+                   GoodData.connect(sst_token: params['GDC_SST'], server: server)
+                 else
+                   GoodData.connect(params['GDC_USERNAME'], params['GDC_PASSWORD'], server: server)
+                 end
         GoodData.logger = logger
         GoodData.with_project(project_id, :client => client) do |_p|
           @app.call(params)

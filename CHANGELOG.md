@@ -1,5 +1,10 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.11
+- Ability to download deployed process
+- Added locking objects capabilities
+- Added removing color mapping form a report definition
+
 ## 0.6.10
 - Fixed client default missing in ProjectMetadata
 - Listing schedules on processes is working

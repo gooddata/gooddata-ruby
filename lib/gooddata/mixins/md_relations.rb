@@ -14,12 +14,6 @@ module GoodData
 
       # Returns which objects uses this MD resource
       def usedby(key = nil, opts = { :client => client, :project => project })
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
         dependency("#{project.md['usedby2']}/#{obj_id}", key, opts)
       end
 
@@ -27,9 +21,6 @@ module GoodData
 
       # Returns which objects this MD resource uses
       def using(key = nil, opts = { :client => client, :project => project })
-        project = opts[:project]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
         dependency("#{project.md['using2']}/#{obj_id}", key, opts)
       end
 

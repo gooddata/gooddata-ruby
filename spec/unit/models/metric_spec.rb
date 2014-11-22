@@ -17,6 +17,7 @@ describe GoodData::Metric do
                      'identifier' => 'afo7bx1VakCz',
                      'deprecated' => '0',
                      'summary' => '',
+                     'locked' => 0,
                      'title' => 'sum of Lines changed',
                      'category' => 'metric',
                      'updated' => '2014-05-05 20:00:42',
@@ -34,6 +35,7 @@ describe GoodData::Metric do
                      'identifier' => 'afo7bx1VakCz',
                      'deprecated' => '0',
                      'summary' => '',
+                     'locked' => 1,
                      'title' => 'sum of Lines changed',
                      'category' => 'metric',
                      'updated' => '2014-05-05 20:00:42',
@@ -55,6 +57,7 @@ describe GoodData::Metric do
                     'identifier' => 'afo7bx1VakCz',
                     'deprecated' => '0',
                     'summary' => '',
+                    'locked' => 0,
                     'title' => 'sum of Lines changed',
                     'category' => 'metric',
                     'updated' => '2014-05-05 20:00:42',
@@ -87,6 +90,36 @@ describe GoodData::Metric do
       @instance.replace(USED_METRIC, UNUSED_METRIC)
       @instance.contain?(USED_METRIC).should == false
       @instance.contain?(UNUSED_METRIC).should == true
+    end
+  end
+
+  describe "#locked?" do
+    it "should be able to say if an object is locked" do
+      expect(@instance.locked?).to eq false
+    end
+  end
+
+  describe "#unlocked?" do
+    it "should be able to say if an object is unlocked" do
+      expect(@instance.unlocked?).to eq true
+    end
+  end
+
+  describe "#lock" do
+    it "should be able to lock an object" do
+      expect(@instance.locked?).to eq false
+      @instance.lock
+      expect(@instance.locked?).to eq true
+    end
+  end
+
+  describe "#lock" do
+    it "should be able to unlock an object" do
+      @instance.lock
+      expect(@instance.locked?).to eq true
+      @instance.unlock
+      expect(@instance.locked?).to eq false
+      expect(@instance.unlocked?).to eq true
     end
   end
 end

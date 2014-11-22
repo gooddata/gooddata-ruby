@@ -109,6 +109,26 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(result2).to eq result
   end
 
+  it "should be able to lock reports and everything underneath" do
+    m = @project.metrics.first
+    r = @project.create_report(top: [m], title: 'xy')
+    r.save
+    expect(m.locked?).to eq false
+    expect(r.locked?).to eq false
+    r.lock_with_dependencies!
+    expect(r.locked?).to eq true
+    m.reload!
+    expect(m.locked?).to eq true
+    r.unlock_with_dependencies!
+    expect(r.locked?).to eq false
+    m.reload!
+    expect(m.locked?).to eq false
+    r.lock!
+    expect(r.locked?).to eq true
+    r.unlock!
+    expect(r.locked?).to eq false
+  end
+
   it "should be able to purge report from older revisions" do
     m = @project.metrics.first
     r = @project.create_report(top: [m], title: 'xy')
@@ -119,6 +139,25 @@ describe "Full project implementation", :constraint => 'slow' do
     r.add_definition(rd)
     r.save
     expect(r.definitions.count).to eq 2
+  end
+
+  it "should be able to clean colors from a chart report def" do
+    f = @project.fact_by_title('Lines Changed')
+    m = @project.create_metric("SELECT SUM(#\"#{f.title}\")", title: 'test metric').save
+    r = @project.create_report(top: [m], title: 'xy')
+    rd = r.latest_report_definition
+    rd.content['chart'] = { 'styles' => { 'global' => { 'colorMapping' => 1 } } }
+    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
+    rd.reset_color_mapping!
+    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
+    r.delete
+    res = m.used_by
+    res.each do |dependency|
+      @client.delete dependency['link']
+    end
+    res = m.used_by
+    expect(res.length).to eq 0
+    m.delete
   end
 
   it "should be possible to get all metrics" do
@@ -176,10 +215,12 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(fact1).not_to eq fact3
 
     metric.using(nil)
-    expect(metric.using('fact').count).to eq 1
+    res = metric.using('fact')
+    expect(res.count).to eq 1
 
     fact1.used_by(nil)
-    expect(fact1.used_by('metric').count).to eq 1
+    res = fact1.used_by('metric')
+    expect(res.count).to eq 1
 
     res = metric.using?(fact1)
     expect(res).to be(true)
@@ -362,4 +403,6 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete
   end
+
+
 end

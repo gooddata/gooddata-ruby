@@ -237,6 +237,15 @@ module GoodData
       labels.map(&:attribute)
     end
 
+    # Removes the color mapping from report definition
+    #
+    # @return [GoodData::ReportDefinition] Returns self
+    def reset_color_mapping!
+      global_chart_options = GoodData::Helpers.get_path(content, %w(chart styles global))
+      global_chart_options['colorMapping'] = [] if global_chart_options
+      self
+    end
+
     def labels
       attribute_parts.map { |part| project.labels(part['attribute']['uri']) }
     end

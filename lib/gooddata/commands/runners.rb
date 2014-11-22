@@ -13,8 +13,8 @@ module GoodData
 
         params = options[:expanded_params] || {}
 
-        GoodData.connection.connect!
-        sst = GoodData.connection.cookies[:cookies]['GDCAuthSST']
+        client = GoodData.connect(options[:username], options[:password])
+        sst = client.connection.sst_token
         pwd = Pathname.new(Dir.pwd)
 
         server_uri = URI(options[:server]) unless options[:server].nil?

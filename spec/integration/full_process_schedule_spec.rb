@@ -142,4 +142,20 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       process && process.delete
     end
   end
+
+  it "should be possible to download deployed process" do
+    size = File.size('./spec/data/hello_world_process/hello_world.zip')
+    process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
+                                  type: 'RUBY',
+                                  name: 'Test ETL zipped file Process')
+    begin
+      Tempfile.open('downloaded-process') do |temp|
+        temp << process.download
+        temp.flush
+        expect(File.size(temp.path)).to eq size
+      end
+    ensure
+      process && process.delete
+    end
+  end
 end
