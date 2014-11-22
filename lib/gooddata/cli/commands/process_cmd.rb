@@ -5,6 +5,20 @@ require 'pp'
 require_relative '../shared'
 require_relative '../../commands/process'
 
+def read_params_file(filename)
+  # read params from a file
+  # replace all non-string values with string representation
+  # if filename nil, return empty hash
+  if filename
+    Hash[JSON.parse(IO.read(filename)).map do |k, v|
+      v = v.to_json unless v.is_a? String
+      [k.to_sym, v]
+    end]
+  else
+    {}
+  end
+end
+
 GoodData::CLI.module_eval do
 
   desc 'Work with deployed processes'
@@ -30,6 +44,18 @@ GoodData::CLI.module_eval do
     c.desc 'Specify executable of the process'
     c.default_value nil
     c.flag :executable
+
+    c.desc 'Specify parameters file to execute the process with'
+    c.default_value nil
+    c.flag :params
+
+    c.desc 'Specify hidden paremeters to execute the process with'
+    c.default_value nil
+    c.flag :hidden_params
+
+    c.desc 'Specify cron expression for the schedule'
+    c.default_value nil
+    c.flag :cron
 
     c.desc "Lists all user's processes deployed on the plaform"
     c.command :list do |list|
@@ -80,16 +106,41 @@ GoodData::CLI.module_eval do
     end
 
     c.desc 'Execute specific deployed process'
-    # TODO: Add params. HOW?
     c.command :execute do |deploy|
       deploy.action do |global_options, options, _args|
         opts = options.merge(global_options)
         process_id = opts[:process_id]
         executable = opts[:executable]
+
         fail 'You have to provide a process id. Use --process_id param' if process_id.nil? || process_id.empty?
         fail 'You have to provide an executable for the process. Use --executable param' if executable.nil? || executable.empty?
-        GoodData.connect(opts)
-        pp GoodData::Command::Process.execute_process(process_id, executable, opts)
+        client = GoodData.connect(options)
+        project = client.projects(options[:project_id])
+        process = project.processes(options[:process_id])
+        params = read_params_file(options[:params])
+        hidden_params = read_params_file(options[:hidden_params])
+        process.execute(options[:executable], params: params, hidden_params: hidden_params)
+      end
+    end
+
+    c.desc 'Schedule specific deployed process'
+    c.command :schedule do |schedule|
+      schedule.action do |global_options, command_options, _|
+        options = command_options.merge(global_options)
+        process_id = options[:process_id]
+        executable = options[:executable]
+        cron = options[:cron]
+
+        fail 'You have to provide a process id. Use --process_id param' if process_id.nil? || process_id.empty?
+        fail 'You have to provide an executable for the process. Use --executable param' if executable.nil? || executable.empty?
+        fail 'You have to provide a cron expression for the schedule. Use --cron param' if cron.nil? || cron.empty?
+
+        client = GoodData.connect(options)
+        project = client.projects(options[:project_id])
+        process = project.processes(options[:process_id])
+        params = read_params_file(options[:params])
+        hidden_params = read_params_file(options[:hidden_params])
+        process.create_schedule(cron, options[:executable], params: params, hidden_params: hidden_params)
       end
     end
   end
