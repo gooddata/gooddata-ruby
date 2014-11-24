@@ -114,7 +114,7 @@ describe GoodData::Schedule do
       data[:cron] = nil
       expect {
         sched = @project.create_schedule(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
-      }.to raise_error 'Cron schedule has to be provided'
+      }.to raise_error 'trigger schedule has to be provided'
     end
 
     it 'Throws exception when no timezone specified' do
