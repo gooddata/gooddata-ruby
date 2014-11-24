@@ -1,6 +1,25 @@
 require 'gooddata'
 
 describe "Full process and schedule exercise", :constraint => 'slow' do
+  COMPLEX_PARAMS ||= {
+    type: 'Person',
+    model_version: 1,
+    data_version: 1.5,
+    some_true_flag: true,
+    some_false_flag: false,
+    empty_value: nil,
+    user: {
+      firstname: 'Joe',
+      lastname: 'Doe',
+      age: 42
+    },
+    address: {
+      street: '#111 Sutter St.',
+      city: 'San Francisco',
+      zip: '94133'
+    }
+  }
+
   before(:all) do
     @client = ConnectionHelper::create_default_connection
     @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
@@ -35,18 +54,20 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     schedule = @process.create_schedule(schedule_first, @process.executables.first)
     res = @process.schedules
-    expect(res.count).to eq 1
-    expect(@process.schedules).to eq [schedule]
+    expect(res.count).to eq 2
+    expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
     schedule.delete
+    schedule_first.delete
   end
 
   it "should be able to create schedule triggered by another schedule specified by ID" do
     schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     schedule = @process.create_schedule(schedule_first.obj_id, @process.executables.first)
     res = @process.schedules
-    expect(res.count).to eq 1
-    expect(@process.schedules).to eq [schedule]
+    expect(res.count).to eq 2
+    expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
     schedule.delete
+    schedule_first.delete
   end
 
   it "should be able to delete schedule" do
@@ -66,6 +87,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it "should be possible to execute schedule" do
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     result = schedule.execute
+    expect(result.status).to eq :ok
     log = result.log
     expect(log.index('Hello Ruby executors')).not_to eq nil
     expect(log.index('Hello Ruby from the deep')).not_to eq nil
@@ -78,6 +100,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     begin
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
+      expect(result.status).to eq :ok
       log = result.log
       expect(log.index('HELLO WORLD')).not_to eq nil
       expect(schedule.enabled?).to be_true
@@ -89,6 +112,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       schedule.save
       expect(schedule.enabled?).to be_true
     ensure
+      schedule && schedule.delete
       process && process.delete
     end
   end
@@ -101,10 +125,12 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
+      expect(result.status).to eq :ok
       log = result.log
       expect(log.index('HELLO WORLD')).not_to eq nil
       expect(process.schedules.count).to eq 1
     ensure
+      schedule && schedule.delete
       process && process.delete
     end
   end
@@ -117,10 +143,12 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
+      expect(result.status).to eq :ok
       log = result.log
       expect(log.index(GoodData::VERSION)).not_to eq nil
       expect(process.schedules.count).to eq 1
     ensure
+      schedule && schedule.delete
       process && process.delete
     end
   end
@@ -131,17 +159,32 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
                                       name: 'Test ETL zipped file GoodData Process')
     begin
       expect(process.schedules.count).to eq 0
-      params = {
-        nested: {
-          value: 42
-        }
-      }
-      schedule = process.create_schedule('0 15 27 7 *', process.executables.first, params: params)
+      schedule = process.create_schedule('0 15 27 7 *', process.executables.first, params: COMPLEX_PARAMS)
       result = schedule.execute
+      expect(result.status).to eq :ok
       log = result.log
-      expect(log.index(JSON.parse(params.to_json).inspect)).not_to eq nil
+      expect(log.index('Joe')).not_to eq nil
+      expect(log.index('San Francisco')).not_to eq nil
       expect(process.schedules.count).to eq 1
     ensure
+      schedule && schedule.delete
+      process && process.delete
+    end
+  end
+
+  it 'should be possible to deploy and run zipped file and use nested hidden parameters' do
+    process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip',
+                                      type: 'RUBY',
+                                      name: 'Test ETL zipped file GoodData Process')
+    begin
+      expect(process.schedules.count).to eq 0
+      schedule = process.create_schedule('0 15 27 7 *', process.executables.first, hidden_params: COMPLEX_PARAMS)
+      result = schedule.execute
+      # expect(result.status).to eq :ok
+      log = result.log
+      expect(process.schedules.count).to eq 1
+    ensure
+      schedule && schedule.delete
       process && process.delete
     end
   end

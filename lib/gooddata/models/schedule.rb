@@ -82,46 +82,28 @@ module GoodData
           :type => 'MSETL',
           :timezone => 'UTC',
           :params => {
-            :process_id => process_id,
-            :executable => executable
+            :PROCESS_ID => process_id,
+            :EXECUTABLE => executable
           },
-          :hidden_params => {},
+          :hiddenParams => {},
           :reschedule => options[:reschedule] || 0
         }
 
-        if(trigger =~ /[a-fA-Z0-9]{24}/)
+        if trigger =~ /[a-fA-Z0-9]{24}/
           default_opts[:triggerScheduleId] = trigger
-        elsif trigger.kind_of?(GoodData::Schedule)
+        elsif trigger.is_a?(GoodData::Schedule)
           default_opts[:triggerScheduleId] = trigger.obj_id
         else
           default_opts[:cron] = trigger
         end
 
-        inject_schema = {
-          :hidden_params => :hiddenParams
-        }
-
-        inject_params = {
-          :process_id => :PROCESS_ID,
-          :executable => :EXECUTABLE
-        }
-
-        default_params = default_opts[:params].reduce({}) do |new_hash, (k, v)|
-          key = inject_params[k] || k
-          new_hash[key] = v
-          new_hash
+        if options.key?(:hidden_params)
+          options[:hiddenParams] = options[:hidden_params]
+          options.delete :hidden_params
         end
-
-        default = default_opts.reduce({}) do |new_hash, (k, v)|
-          key = inject_schema[k] || k
-          new_hash[key] = v
-          new_hash
-        end
-
-        default[:params] = default_params
 
         json = {
-          'schedule' => default.deep_merge(options.except(:project, :client))
+          'schedule' => default_opts.deep_merge(options.except(:project, :client))
         }
 
         tmp = json['schedule'][:params][:PROCESS_ID]
@@ -139,19 +121,14 @@ module GoodData
         tmp = json['schedule'][:type]
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
-        # json['schedule'][:params] = JSON.generate(json['schedule'][:params])
+        params = json['schedule'][:params]
+        params = sanitize_params(params)
+        json['schedule'][:params] = params
 
-        tmp = json['schedule'][:params]
-        json['schedule'][:params] = {
-          :PROCESS_ID => tmp[:PROCESS_ID],
-          :EXECUTABLE => tmp[:EXECUTABLE],
-          :data => JSON.generate(tmp.except(:PROCESS_ID, :EXECUTABLE))
-        }
-
-        tmp = json['schedule'][:hiddenParams]
-        if !tmp.nil? && !tmp.empty?
-          json['schedule'][:hiddenParams] = {}
-          json['schedule'][:hiddenParams][:secure_data] = JSON.generate(tmp) unless tmp.nil?
+        hidden_params = json['schedule'][:hiddenParams]
+        if hidden_params && !hidden_params.empty?
+          hidden_params = sanitize_params(json['schedule'][:hiddenParams])
+          json['schedule'][:hiddenParams] = hidden_params
         end
 
         url = "/gdc/projects/#{project.pid}/schedules"
@@ -161,6 +138,21 @@ module GoodData
 
         new_obj_json = c.get res['schedule']['links']['self']
         c.create(GoodData::Schedule, new_obj_json, client: c, project: p)
+      end
+
+      def sanitize_params(params)
+        res = {}
+        nested = {}
+        core_types = [FalseClass, Fixnum, Float, NilClass, TrueClass, String]
+        params.each do |k, v|
+          if core_types.include?(v.class)
+            res[k] = v
+          else
+            nested[k] = v
+          end
+        end
+        res[:data] = nested.to_json unless nested.empty?
+        res
       end
     end
 

@@ -29,6 +29,11 @@ module GoodData
       @client.get(json['execution']['data'])
     end
 
+    # Has execution failed?
+    def error?
+      status == :error
+    end
+
     # Timestamp when execution was finished
     def finished
       Time.parse(json['execution']['endTime'])
@@ -41,7 +46,7 @@ module GoodData
 
     # Is execution ok?
     def ok?
-      status.downcase == 'ok'
+      status == :ok
     end
 
     # Timestamp when execution was started
@@ -51,7 +56,7 @@ module GoodData
 
     # Status of execution
     def status
-      json['execution']['status']
+      json['execution']['status'].downcase.to_sym
     end
 
     # Returns URL
