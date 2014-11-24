@@ -12,7 +12,7 @@ perex: "Before we dive into numbers, let's explore the open sandbox of your proj
 From the project directory, jack in to the project:
 
 {% highlight ruby %}
-gooddata -U username -P pass project jack_in
+gooddata -p project_id -U username -P pass project jack_in
 {% endhighlight %}
 
 Verify that you are connected to the project:
@@ -41,6 +41,10 @@ project.datasets.map { |d| d.title }
 The above shows what is currently in the project.
 
 You can compare the above to what is stored in the blueprint:
+
+{% highlight ruby %}
+blueprint = eval(File.read('./model/model.rb')).to_blueprint
+{% endhighlight %}
 
 {% highlight ruby %}
 blueprint.datasets.map { |d| d.title }
