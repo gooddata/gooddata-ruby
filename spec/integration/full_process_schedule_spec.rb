@@ -34,7 +34,8 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it "should be able to create schedule triggered by another schedule" do
     schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     schedule = @process.create_schedule(schedule_first, @process.executables.first)
-    expect(@process.schedules.count).to eq 1
+    res = @process.schedules
+    expect(res.count).to eq 1
     expect(@process.schedules).to eq [schedule]
     schedule.delete
   end
@@ -42,14 +43,16 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it "should be able to create schedule triggered by another schedule specified by ID" do
     schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
     schedule = @process.create_schedule(schedule_first.obj_id, @process.executables.first)
-    expect(@process.schedules.count).to eq 1
+    res = @process.schedules
+    expect(res.count).to eq 1
     expect(@process.schedules).to eq [schedule]
     schedule.delete
   end
 
   it "should be able to delete schedule" do
     schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
-    expect(@process.schedules.count).to eq 1
+    res = @process.schedules
+    expect(res.count).to eq 1
     expect(@process.schedules).to eq [schedule]
     schedule.delete
   end
