@@ -95,7 +95,7 @@ module GoodData
       # @option options [String] :name Readable name of the process
       # @option options [String] :process_id ID of a process to be redeployed (do not set if you want to create a new process)
       # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
-      def deploy(path, options = {})
+      def deploy(path, options = {:client => GoodData.client, :project => GoodData.project})
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -194,7 +194,7 @@ module GoodData
     # @option options [String] :name Readable name of the process
     # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
     def deploy(path, options = {})
-      Process.deploy(path, options.merge(:process_id => process_id))
+      Process.deploy(path, options.merge(:process_id => process_id, :client => client, :project => project))
     end
 
     # Downloads the process from S3 in a zipped form.
