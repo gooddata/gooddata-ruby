@@ -150,7 +150,6 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
     rd.reset_color_mapping!
     expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
-    r.delete
     res = m.used_by
     res.each do |dependency|
       @client.delete dependency['link']

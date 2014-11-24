@@ -5,6 +5,7 @@ require 'zip'
 require 'fileutils'
 require 'multi_json'
 require 'pmap'
+require 'uri'
 require 'zip'
 
 require_relative '../exceptions/no_project_error'
@@ -898,13 +899,18 @@ module GoodData
     #
     # @return [Array<GoodData::User>] List of users
     def users
-      tmp = client.get @json['project']['links']['users']
+      users_uri = users_link + '&status=ENABLED'
+      tmp = client.get users_uri
       tmp['users'].map do |user|
         client.factory.create(GoodData::Membership, user)
       end
     end
 
     alias_method :members, :users
+
+    def users_link
+      @json['project']['links']['users']
+    end
 
     def users_create(list, role_list = roles)
       domains = {}
