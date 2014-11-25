@@ -25,3 +25,6 @@ require_relative 'gooddata/version'
 
 # Extensions
 require_relative 'gooddata/extensions/extensions'
+
+# Integration Tests
+require_relative '../integration_tests_runner'
