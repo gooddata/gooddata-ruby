@@ -232,15 +232,38 @@ module GoodData
 
     # Clones project
     #
+    # @param options [Hash] Export options
+    # @option options [Boolean] :data Clone project with data
+    # @option options [Boolean] :users Clone project with users
+    # @option options [String] :authorized_users Comma separated logins of authorized users. Users that can use the export
     # @return [GoodData::Project] Newly created project
     def clone(options = {})
-      # TODO: Refactor so if export or import fails the new_project will be cleaned
-      with_data = options[:data].nil? ? true : options[:data]
-      with_users = options[:users].nil? ? false : options[:users]
       a_title = options[:title] || "Clone of #{title}"
 
-      # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
-      new_project = GoodData::Project.create(options.merge(:title => a_title, :client => client))
+      begin
+        # Create the project first so we know that it is passing.
+        # What most likely is wrong is the token and the export actaully takes majority of the time
+        new_project = GoodData::Project.create(options.merge(:title => a_title, :client => client))
+        export_token = export_clone(options)
+        new_project.import_clone(export_token)
+      rescue
+        new_project.delete if new_project
+        raise
+      end
+    end
+
+    # Export a clone from a project to be later imported.
+    # If you do not want to do anything special and you do not need fine grained
+    # controle use clone method which does all the heavy lifting for you.
+    #
+    # @param options [Hash] Export options
+    # @option options [Boolean] :data Clone project with data
+    # @option options [Boolean] :users Clone project with users
+    # @option options [String] :authorized_users Comma separated logins of authorized users. Users that can use the export
+    # @return [String] token of the export
+    def export_clone(options = {})
+      with_data = options[:data].nil? ? true : options[:data]
+      with_users = options[:users].nil? ? false : options[:users]
 
       export = {
         :exportProject => {
@@ -248,28 +271,34 @@ module GoodData
           :exportData => with_data ? 1 : 0
         }
       }
+      export[:exportProject][:authorizedUsers] = options[:authorized_users] if options[:authorized_users]
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
-      export_token = result['exportArtifact']['token']
-
       status_url = result['exportArtifact']['status']['uri']
       client.poll_on_response(status_url) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
+      result['exportArtifact']['token']
+    end
 
+    # Imports a clone into current project. The project has to be freshly
+    # created.
+    #
+    # @param export_token [String] Export token of the package to be imported
+    # @return [Project] current project
+    def import_clone(export_token)
       import = {
         :importProject => {
           :token => export_token
         }
       }
 
-      result = client.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
+      result = client.post("/gdc/md/#{obj_id}/maintenance/import", import)
       status_url = result['uri']
       client.poll_on_response(status_url) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
-
-      new_project
+      self
     end
 
     def compute_report(spec = {})
