@@ -7,6 +7,7 @@ module GoodData
   module Model
     class ProjectBuilder
       attr_reader :title, :datasets, :reports, :metrics, :uploads, :users, :assert_report, :date_dimensions
+      attr_accessor :data
 
       class << self
         def create_from_data(blueprint, title = 'Title')

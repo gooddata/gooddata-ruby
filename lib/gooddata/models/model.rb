@@ -21,7 +21,9 @@ module GoodData
     GD_TYPES = %w(GDC.link GDC.text GDC.geo GDC.time)
     GD_DATA_TYPES = %w(INT VARCHAR DECIMAL)
 
-    DEFAULT_FACT_DATATYPE = 'INT'
+    DEFAULT_FACT_DATATYPE = 'DECIMAL(12,2)'
+    DEFAULT_ATTRIBUTE_DATATYPE = 'VARCHAR(128)'
+    DEFAULT_ATTRIBUTE_GD_DATATYPE = 'GDC.text'
 
     class << self
       def title(item)

@@ -180,11 +180,15 @@ module GoodData
       #
       # @param dataset [Hash] Dataset blueprint
       # @return [Array<Hash>] returns the labels or an empty array
-      def change(&block)
-        builder = SchemaBuilder.create_from_data(self)
-        block.call(builder)
-        @data = builder.to_hash
+      def change!(&block)
+        @data = change(&block).to_hash
         self
+      end
+
+      def change(&block)
+        builder = SchemaBuilder.create_from_data(dup.to_hash)
+        block.call(builder)
+        builder.to_blueprint
       end
 
       # Returns all the fields of a dataset. This means facts, attributes, references
@@ -245,7 +249,7 @@ module GoodData
       # @param all [Symbol] if :all is passed all mathching objects are returned
       # Otherwise only the first one is
       # @return [Array<Hash>] matching fields
-      def find_column_by_name(type, all = :all)
+      def find_column_by_name(type, all = nil)
         DatasetBlueprint.find_column_by_name(to_hash, type, all)
       end
 

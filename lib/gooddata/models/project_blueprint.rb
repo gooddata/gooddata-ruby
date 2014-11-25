@@ -155,6 +155,7 @@ module GoodData
       end
 
       def change(&block)
+        binding.pry
         builder = ProjectBuilder.create_from_data(self)
         block.call(builder)
         @data = builder.to_hash
@@ -523,7 +524,12 @@ module GoodData
       #
       # @return [Hash] a title
       def to_hash
-        @data
+        x = @data.deep_dup
+        x.keys.each do |k|
+          puts "delete key #{k}"
+          x.delete(k) if x[k].is_a?(Array) && x[k].empty?
+        end
+        x
       end
     end
   end

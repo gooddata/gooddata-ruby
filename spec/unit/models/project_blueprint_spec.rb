@@ -241,4 +241,13 @@ describe GoodData::Model::ProjectBlueprint do
   it "should generate manifest" do
     m = GoodData::Model::ToManifest.to_manifest(@blueprint.to_hash)
   end
+
+  it "should be possible to easily change model" do
+    binding.pry
+    @blueprint.change do |b|
+      b.change_dataset('refs') do |d|
+        d.remove_column('a')
+      end
+    end
+  end
 end
