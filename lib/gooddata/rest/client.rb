@@ -103,6 +103,21 @@ module GoodData
           @@instance # rubocop:disable ClassVars
         end
 
+        # Retry block if exception thrown
+        def retryable(options = {}, &_block)
+          opts = { :tries => 1, :on => Exception }.merge(options)
+
+          retry_exception, retries = opts[:on], opts[:tries]
+
+          begin
+            return yield
+          rescue retry_exception
+            retry if (retries -= 1) > 0
+          end
+
+          yield
+        end
+
         alias_method :client, :connection
       end
 
@@ -238,7 +253,7 @@ module GoodData
 
         while response.code == code
           sleep sleep_interval
-          retryable(:tries => 3, :on => RestClient::InternalServerError) do
+          GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
             sleep sleep_interval
             response = get(link, :process => false)
           end
@@ -264,7 +279,7 @@ module GoodData
         response = get(link)
         while bl.call(response)
           sleep sleep_interval
-          retryable(:tries => 3, :on => RestClient::InternalServerError) do
+          GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
             sleep sleep_interval
             response = get(link)
           end
@@ -284,21 +299,6 @@ module GoodData
       # @param uri [String] Target URI
       def post(uri, data, opts = {})
         @connection.post uri, data, opts
-      end
-
-      # Retry blok if exception thrown
-      def retryable(options = {}, &_block)
-        opts = { :tries => 1, :on => Exception }.merge(options)
-
-        retry_exception, retries = opts[:on], opts[:tries]
-
-        begin
-          return yield
-        rescue retry_exception
-          retry if (retries -= 1) > 0
-        end
-
-        yield
       end
 
       # Uploads file to staging
