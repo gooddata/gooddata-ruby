@@ -403,6 +403,4 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete
   end
-
-
 end

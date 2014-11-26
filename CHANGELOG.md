@@ -4,6 +4,7 @@
 - Ability to download deployed process
 - Added locking objects capabilities
 - Added removing color mapping form a report definition
+- Report defintions are deleted along with a report
 
 ## 0.6.10
 - Fixed client default missing in ProjectMetadata
