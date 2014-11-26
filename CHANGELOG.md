@@ -4,6 +4,9 @@
 - Ability to download deployed process
 - Added locking objects capabilities
 - Added removing color mapping form a report definition
+- Added table?/chart? helpers to report definition
+- Added all fact aggregations
+- Pretty_expression survives if there is a nonexistent label value
 
 ## 0.6.10
 - Fixed client default missing in ProjectMetadata

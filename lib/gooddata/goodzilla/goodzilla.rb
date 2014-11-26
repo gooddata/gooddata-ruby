@@ -30,6 +30,32 @@ module GoodData
       a_maql_string.scan(/\?"([^\"]+)\"/).flatten
     end
 
+    # Pretty prints the MAQL expression. This basically means it finds out names of objects and elements and print their values instead of URIs
+    # @param expression [String] Expression to be beautified
+    # @return [String] Pretty printed MAQL expression
+    def self.pretty_print(expression, opts = { client: GoodData.connection, project: GoodData.project })
+      temp = expression.dup
+      pairs = expression.scan(PARSE_MAQL_OBJECT_REGEXP).pmap do |uri|
+        uri = uri.first
+        if uri =~ /elements/
+          begin
+            [uri, Attribute.find_element_value(uri, opts)]
+          rescue
+            [uri, '(empty-value)']
+          end
+        else
+          [uri, GoodData::MdObject[uri, opts].title]
+        end
+      end
+
+      pairs.compact.each do |el|
+        uri = el[0]
+        obj = el[1]
+        temp.sub!(uri, obj)
+      end
+      temp
+    end
+
     def self.interpolate(values, dictionaries)
       {
         :facts => interpolate_values(values[:facts], dictionaries[:facts]),
