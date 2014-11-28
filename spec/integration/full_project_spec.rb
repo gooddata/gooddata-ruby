@@ -404,5 +404,14 @@ describe "Full project implementation", :constraint => 'slow' do
     cloned_project.delete
   end
 
-
+  it "should be able to clone a project without data" do
+    attribute = @project.attributes('attr.devs.dev_id')
+    label = attribute.primary_label
+    value = label.values.first
+    fact = @project.facts('fact.commits.lines_changed')
+    metric = @project.create_metric("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]", title: "Valueless metric")
+    metric.save
+    @project.execute_dml('DELETE FROM {attr.devs.dev_id}')
+    expect(metric.pretty_expression).to eq "SELECT SUM([Lines Changed]) WHERE [Dev] = [(empty-value)]"
+  end
 end
