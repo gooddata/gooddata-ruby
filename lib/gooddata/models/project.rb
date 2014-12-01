@@ -234,43 +234,14 @@ module GoodData
     # Clones project
     #
     # @return [GoodData::Project] Newly created project
-    def clone(options = {})
+    def clone(options = { users: true, data: true })
       # TODO: Refactor so if export or import fails the new_project will be cleaned
-      with_data = options[:data].nil? ? true : options[:data]
-      with_users = options[:users].nil? ? false : options[:users]
       a_title = options[:title] || "Clone of #{title}"
 
-      # Create the project first so we know that it is passing. What most likely is wrong is the tokena and the export actaully takes majoiryt of the time
+      # Create the project first so we know that it is passing. What most likely is wrong is the token and the export actually takes majority of the time
       new_project = GoodData::Project.create(options.merge(:title => a_title, :client => client))
 
-      export = {
-        :exportProject => {
-          :exportUsers => with_users ? 1 : 0,
-          :exportData => with_data ? 1 : 0
-        }
-      }
-
-      result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
-      export_token = result['exportArtifact']['token']
-
-      status_url = result['exportArtifact']['status']['uri']
-      client.poll_on_response(status_url) do |body|
-        body['taskState']['status'] == 'RUNNING'
-      end
-
-      import = {
-        :importProject => {
-          :token => export_token
-        }
-      }
-
-      result = client.post("/gdc/md/#{new_project.obj_id}/maintenance/import", import)
-      status_url = result['uri']
-      client.poll_on_response(status_url) do |body|
-        body['taskState']['status'] == 'RUNNING'
-      end
-
-      new_project
+      new_project.import(export(options))
     end
 
     def compute_report(spec = {})
@@ -351,6 +322,31 @@ module GoodData
       client.poll_on_response(polling_uri) do |body|
         body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
+    end
+
+    # Export project data
+    #
+    # @option options [Boolean] :users Export users
+    # @option options [Boolean] :data Export data
+    # @return [String] Export token used for import
+    def export(options = { users: true, data: true })
+      url = "/gdc/md/#{pid}/maintenance/export"
+      data = {
+        exportProject: {
+          exportUsers: options[:users] ? '1' : '0',
+          exportData: options[:data] ? '1' : '0'
+        }
+      }
+      res = client.post url, data
+
+      export_token = res['exportArtifact']['token']
+
+      status_url = res['exportArtifact']['status']['uri']
+      client.poll_on_response(status_url) do |body|
+        body['taskState']['status'] == 'RUNNING'
+      end
+
+      export_token
     end
 
     # Helper for getting facts of a project
@@ -441,6 +437,26 @@ module GoodData
                        user.email.downcase == name
       end
       nil
+    end
+
+    # Import project
+    #
+    # @param [String] export_token Export token created during export.
+    # @return [GoodData::Project] project itself
+    def import(export_token)
+      import = {
+        :importProject => {
+          :token => export_token
+        }
+      }
+
+      result = client.post("/gdc/md/#{pid}/maintenance/import", import)
+      status_url = result['uri']
+      client.poll_on_response(status_url) do |body|
+        body['taskState']['status'] == 'RUNNING'
+      end
+
+      self
     end
 
     # Exports project users to file
