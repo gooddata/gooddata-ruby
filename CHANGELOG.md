@@ -4,8 +4,6 @@
 - Ability to download deployed process
 - Added locking objects capabilities
 - Added removing color mapping form a report definition
-- Added function for project export - Project#export
-- Added function for project import - Project#import
 
 ## 0.6.10
 - Fixed client default missing in ProjectMetadata
