@@ -5,6 +5,7 @@ require 'zip'
 
 require_relative '../rest/resource'
 require_relative 'execution_detail'
+require_relative 'schedule'
 
 module GoodData
   class Process < GoodData::Rest::Object
@@ -41,6 +42,22 @@ module GoodData
         else
           uri = "/gdc/projects/#{project.pid}/dataload/processes/#{id}"
           c.create(Process, c.get(uri), project: project)
+        end
+
+        # Encodes parameters for passing them to GD execution platform.
+        # Core types are kept and complex types (arrays, structures, etc) are JSON encoded into "data" field of hash.
+        #
+        # Core types are following:
+        # - Boolean (true, false)
+        # - Fixnum
+        # - Float
+        # - Nil
+        # - String
+        #
+        # @param [Hash] params Parameters to be encoded
+        # @return [Hash] Encoded parameters
+        def encode_params(*args)
+          Schedule.encode_params(args)
         end
       end
 
@@ -259,8 +276,8 @@ module GoodData
       result = client.post(executions_link,
                            :execution => {
                              :graph => executable.to_s,
-                             :params => params,
-                             :hiddenParams => hidden_params
+                             :params => encode_params(params),
+                             :hiddenParams => encode_params(hidden_params)
                            })
       begin
         client.poll_on_code(result['executionTask']['links']['poll'])
