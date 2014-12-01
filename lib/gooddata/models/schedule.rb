@@ -140,6 +140,18 @@ module GoodData
         c.create(GoodData::Schedule, new_obj_json, client: c, project: p)
       end
 
+      # Sanitizes parameters for passing them to GD execution platform.
+      # Core types are kept and complex types (arrays, structures, etc) are JSON encoded into "data" field of hash.
+      #
+      # Core types are following:
+      # - Boolean (true, false)
+      # - Fixnum
+      # - Float
+      # - Nil
+      # - String
+      #
+      # @param [Hash] params Parameters to be sanitized
+      # @return [Hash] Sanitized parameters
       def sanitize_params(params)
         res = {}
         nested = {}
