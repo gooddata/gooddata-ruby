@@ -403,4 +403,13 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete
   end
+
+  it "should be able to delete report along with its definitions" do
+    m = @project.metrics.first
+    r = @project.create_report(top: [m], title: 'Report to delete')
+    r.save
+    def_uris = r.definition_uris
+    r.delete
+    expect { def_uris.each {|uri| @client.get(uri)} }.to raise_error(RestClient::ResourceNotFound)
+  end
 end
