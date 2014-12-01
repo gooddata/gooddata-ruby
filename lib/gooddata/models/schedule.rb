@@ -150,8 +150,8 @@ module GoodData
       # - Nil
       # - String
       #
-      # @param [Hash] params Parameters to be sanitized
-      # @return [Hash] Sanitized parameters
+      # @param [Hash] params Parameters to be encoded
+      # @return [Hash] Encoded parameters
       def encode_params(params)
         res = {}
         nested = {}
