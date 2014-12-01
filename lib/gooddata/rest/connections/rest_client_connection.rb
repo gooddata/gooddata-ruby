@@ -209,7 +209,7 @@ module GoodData
 
           if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
             result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
-            GoodData.logger.debug "Response: #{result.inspect}"
+            GoodData.logger.debug "Request ID: #{response.headers[:x_gdc_request]} - Response: #{result.inspect}"
           elsif ['text/plain;charset=UTF-8', 'text/plain; charset=UTF-8', 'text/plain'].include?(content_type)
             result = response
             GoodData.logger.debug 'Response: plain text'
