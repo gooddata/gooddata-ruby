@@ -66,7 +66,7 @@ module GoodData
           # pp response
           while response.code != 200
             sleep 1
-            client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+            GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
               sleep 1
               response = client.get(link, :process => false)
               # pp response

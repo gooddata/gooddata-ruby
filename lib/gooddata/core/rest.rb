@@ -114,7 +114,7 @@ module GoodData
       response = GoodData.get(link, :process => false)
       while response.code == code
         sleep sleep_interval
-        GoodData.connection.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+        GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
           sleep sleep_interval
           response = GoodData.get(link, :process => false)
         end
@@ -143,7 +143,7 @@ module GoodData
       response = get(link)
       while bl.call(response)
         sleep sleep_interval
-        client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+        GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
           sleep sleep_interval
           response = get(link)
         end
