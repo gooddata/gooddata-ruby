@@ -122,12 +122,12 @@ module GoodData
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
         params = json['schedule'][:params]
-        params = sanitize_params(params)
+        params = encode_params(params)
         json['schedule'][:params] = params
 
         hidden_params = json['schedule'][:hiddenParams]
         if hidden_params && !hidden_params.empty?
-          hidden_params = sanitize_params(json['schedule'][:hiddenParams])
+          hidden_params = encode_params(json['schedule'][:hiddenParams])
           json['schedule'][:hiddenParams] = hidden_params
         end
 
@@ -140,7 +140,7 @@ module GoodData
         c.create(GoodData::Schedule, new_obj_json, client: c, project: p)
       end
 
-      # Sanitizes parameters for passing them to GD execution platform.
+      # Encodes parameters for passing them to GD execution platform.
       # Core types are kept and complex types (arrays, structures, etc) are JSON encoded into "data" field of hash.
       #
       # Core types are following:
@@ -152,7 +152,7 @@ module GoodData
       #
       # @param [Hash] params Parameters to be sanitized
       # @return [Hash] Sanitized parameters
-      def sanitize_params(params)
+      def encode_params(params)
         res = {}
         nested = {}
         core_types = [FalseClass, Fixnum, Float, NilClass, TrueClass, String]
