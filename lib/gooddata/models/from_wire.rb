@@ -47,10 +47,10 @@ module GoodData
           primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
           primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
           dl = primary_labels.map do |label|
-            parse_label(attribute, label, 'anchor', default_label)
+            parse_label(attribute, label, :anchor, default_label)
           end
           rl = regular_labels.map do |label|
-            parse_label(attribute, label, 'label', default_label)
+            parse_label(attribute, label, :label, default_label)
           end
           dl + rl
         end

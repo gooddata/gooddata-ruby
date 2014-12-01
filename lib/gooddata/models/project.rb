@@ -281,6 +281,10 @@ module GoodData
       result['exportArtifact']['token']
     end
 
+    def update_from_blueprint(blueprint, options = {})
+      GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: GoodData.connection, project: self))
+    end
+
     # Imports a clone into current project. The project has to be freshly
     # created.
     #

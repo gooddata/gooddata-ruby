@@ -243,11 +243,16 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it "should be possible to easily change model" do
-    binding.pry
-    @blueprint.change do |b|
-      b.change_dataset('refs') do |d|
-        d.remove_column('a')
+    expect(@blueprint.find_dataset('devs').columns.count).to eq 2
+    x = @blueprint.change do |b|
+      b.change_dataset('devs') do |d|
+        d.add_attribute('a')
+        d.remove_column('email')
       end
     end
+
+    devs_dataset = @blueprint.find_dataset('devs')
+    expect(devs_dataset.columns.count).to eq 2
+    expect(devs_dataset.find_column_by_name('email')).to be_nil
   end
 end

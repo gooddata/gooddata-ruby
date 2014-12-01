@@ -6,11 +6,11 @@ describe "Full project implementation", :constraint => 'slow' do
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
     @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    binding.pry
   end
 
   after(:all) do
     @project.delete unless @project.nil?
-
     @client.disconnect
   end
 
