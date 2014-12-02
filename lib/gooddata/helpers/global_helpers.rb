@@ -18,6 +18,33 @@ module GoodData
         RUBY_PLATFORM =~ /-darwin\d/
       end
 
+      # Encodes parameters for passing them to GD execution platform.
+      # Core types are kept and complex types (arrays, structures, etc) are JSON encoded into "data" field of hash.
+      #
+      # Core types are following:
+      # - Boolean (true, false)
+      # - Fixnum
+      # - Float
+      # - Nil
+      # - String
+      #
+      # @param [Hash] params Parameters to be encoded
+      # @return [Hash] Encoded parameters
+      def encode_params(params)
+        res = {}
+        nested = {}
+        core_types = [FalseClass, Fixnum, Float, NilClass, TrueClass, String]
+        params.each do |k, v|
+          if core_types.include?(v.class)
+            res[k] = v
+          else
+            nested[k] = v
+          end
+        end
+        res[:data] = nested.to_json unless nested.empty?
+        res
+      end
+
       def error(msg)
         STDERR.puts(msg)
         exit 1

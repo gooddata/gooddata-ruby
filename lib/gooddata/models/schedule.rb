@@ -3,6 +3,7 @@
 require_relative '../rest/resource'
 require_relative '../extensions/hash'
 require_relative '../mixins/rest_resource'
+require_relative '../helpers/global_helpers'
 
 require_relative 'execution'
 
@@ -122,12 +123,12 @@ module GoodData
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
         params = json['schedule'][:params]
-        params = encode_params(params)
+        params = GoodData::Helpers.encode_params(params)
         json['schedule'][:params] = params
 
         hidden_params = json['schedule'][:hiddenParams]
         if hidden_params && !hidden_params.empty?
-          hidden_params = encode_params(json['schedule'][:hiddenParams])
+          hidden_params = GoodData::Helpers.encode_params(json['schedule'][:hiddenParams])
           json['schedule'][:hiddenParams] = hidden_params
         end
 
@@ -138,33 +139,6 @@ module GoodData
 
         new_obj_json = c.get res['schedule']['links']['self']
         c.create(GoodData::Schedule, new_obj_json, client: c, project: p)
-      end
-
-      # Encodes parameters for passing them to GD execution platform.
-      # Core types are kept and complex types (arrays, structures, etc) are JSON encoded into "data" field of hash.
-      #
-      # Core types are following:
-      # - Boolean (true, false)
-      # - Fixnum
-      # - Float
-      # - Nil
-      # - String
-      #
-      # @param [Hash] params Parameters to be encoded
-      # @return [Hash] Encoded parameters
-      def encode_params(params)
-        res = {}
-        nested = {}
-        core_types = [FalseClass, Fixnum, Float, NilClass, TrueClass, String]
-        params.each do |k, v|
-          if core_types.include?(v.class)
-            res[k] = v
-          else
-            nested[k] = v
-          end
-        end
-        res[:data] = nested.to_json unless nested.empty?
-        res
       end
     end
 
