@@ -49,6 +49,7 @@ module GoodData
           title = options[:title]
           summary = options[:summary]
         else
+          metric ||= options
           title = metric[:title] || options[:title]
           summary = metric[:summary] || options[:summary]
           expression = metric[:expression] || options[:expression] || fail('Metric has to have its expression defined')
