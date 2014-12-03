@@ -30,7 +30,7 @@ module GoodData
       end
 
       def xcreate(metric, options = { :client => GoodData.connection, :project => GoodData.project })
-        create(metric, options.merge(:extended_notation => false))
+        create(metric, {extended_notation: true}.merge(options))
       end
 
       def create(metric, options = { :client => GoodData.connection, :project => GoodData.project })
