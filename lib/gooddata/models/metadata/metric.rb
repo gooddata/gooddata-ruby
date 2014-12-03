@@ -30,7 +30,7 @@ module GoodData
       end
 
       def xcreate(metric, options = { :client => GoodData.connection, :project => GoodData.project })
-        create(metric, options.merge(:extended_notation => true))
+        create(metric, { extended_notation: true }.merge(options))
       end
 
       def create(metric, options = { :client => GoodData.connection, :project => GoodData.project })
@@ -49,6 +49,7 @@ module GoodData
           title = options[:title]
           summary = options[:summary]
         else
+          metric ||= options
           title = metric[:title] || options[:title]
           summary = metric[:summary] || options[:summary]
           expression = metric[:expression] || options[:expression] || fail('Metric has to have its expression defined')
