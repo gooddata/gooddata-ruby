@@ -5,6 +5,7 @@
 - Added locking objects capabilities
 - Added removing color mapping form a report definition
 - Report defintions are deleted along with a report
+- Added support for environment variables - GD_GEM_USER, GD_GEM_PASSWORD
 
 ## 0.6.10
 - Fixed client default missing in ProjectMetadata
