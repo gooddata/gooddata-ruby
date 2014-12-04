@@ -45,6 +45,23 @@ module GoodData
         res
       end
 
+      # Decodes params as they came from the platform
+      # The "data" key is supposed to be json and it's parsed - if this
+      def decode_params(params)
+        data_params = params['data'] || '{}'
+        hidden_data_params = params['hidden_data'] || '{}'
+
+        begin
+          parsed_data_params = JSON.parse(data_params)
+          parsed_hidden_data_params = JSON.parse(hidden_data_params)
+        rescue JSON::ParserError => e
+          raise e.class, "Error reading json from 'data' or 'hidden data' in params #{params}\n #{e.message}"
+        end
+        params.delete('data')
+        params.delete('hidden_data')
+        params.merge(parsed_data_params).merge(parsed_hidden_data_params)
+      end
+
       def error(msg)
         STDERR.puts(msg)
         exit 1

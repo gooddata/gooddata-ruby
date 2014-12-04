@@ -276,11 +276,10 @@ module GoodData
       hidden_params = options[:hidden_params] || {}
       client.post(executions_link,
                   :execution => {
-                   :graph => executable.to_s,
-                   :params => GoodData::Helpers.encode_params(params),
-                   :hiddenParams => GoodData::Helpers.encode_params(hidden_params)
+                    :graph => executable.to_s,
+                    :params => GoodData::Helpers.encode_params(params),
+                    :hiddenParams => GoodData::Helpers.encode_params(hidden_params)
                   })
     end
-
   end
 end

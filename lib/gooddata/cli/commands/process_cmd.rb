@@ -7,13 +7,9 @@ require_relative '../../commands/process'
 
 def read_params_file(filename)
   # read params from a file
-  # replace all non-string values with string representation
   # if filename nil, return empty hash
   if filename
-    Hash[JSON.parse(IO.read(filename)).map do |k, v|
-      v = v.to_json unless v.is_a? String
-      [k.to_sym, v]
-    end]
+    JSON.parse(IO.read(filename))
   else
     {}
   end
