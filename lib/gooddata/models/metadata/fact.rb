@@ -34,7 +34,7 @@ module GoodData
       a_type = options[:type] || :sum
       fail "Suggested aggreagtion function (#{a_type}) does not exist for base metric created out of fact. You can use only one of #{FACT_BASE_AGGREGATIONS.map { |x| ':' + x.to_s }.join(',')}" unless FACT_BASE_AGGREGATIONS.include?(a_type)
       a_title = options[:title] || "#{a_type} of #{title}"
-      Metric.xcreate("SELECT #{a_type.to_s.upcase}(![#{identifier}])", :title => a_title, :client => client, :project => project)
+      project.create_metric("SELECT #{a_type.to_s.upcase}([#{uri}])", title: a_title, extended_notation: false)
     end
   end
 end

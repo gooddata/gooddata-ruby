@@ -158,7 +158,7 @@ module GoodData
       if metric.is_a?(String)
         GoodData::Metric.xcreate(metric, options.merge(default))
       else
-        GoodData::Metric.xcreate(metric.merge(default))
+        GoodData::Metric.xcreate(options[:expression], metric.merge(options.merge(default)))
       end
     end
     alias_method :create_metric, :add_metric
