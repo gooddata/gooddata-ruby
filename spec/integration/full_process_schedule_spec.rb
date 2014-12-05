@@ -154,7 +154,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it 'should be possible to deploy and run zipped file and use nested parameters' do
-    process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip',
+    process = @project.deploy_process('./spec/data/ruby_params_process',
                                       type: 'RUBY',
                                       name: 'Test ETL zipped file GoodData Process')
     begin
@@ -173,7 +173,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it 'should be possible to deploy and run zipped file and use nested hidden parameters' do
-    process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip',
+    process = @project.deploy_process('./spec/data/ruby_params_process',
                                       type: 'RUBY',
                                       name: 'Test ETL zipped file GoodData Process')
     begin
