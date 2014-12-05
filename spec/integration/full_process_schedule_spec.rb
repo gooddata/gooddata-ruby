@@ -41,12 +41,18 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     expect(log.index('Hello Ruby from the deep')).not_to eq nil
   end
 
-  it "should be able to grab executables" do 
+  it "should be able to start executing a process" do
+    result = @process.start_execution(@process.executables.first)
+    expect(result["executionTask"]).not_to be_nil
+    expect(result["executionTask"]['links']['detail']).not_to be_nil
+  end
+
+  it "should be able to grab executables" do
 
     expect(@process.executables).to eq ['process.rb']
   end
 
-  it "should have empty schedules on deploy" do 
+  it "should have empty schedules on deploy" do
     expect(@process.schedules).to eq []
   end
 
