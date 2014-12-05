@@ -50,7 +50,7 @@ describe GoodData::Helpers do
       params = {
         'param' => 'value',
         'number_param' => 5,
-        'data' => '{"deep": {"deeper": "deep value"}}',
+        'gd_encoded_params' => '{"deep": {"deeper": "deep value"}}',
       }
       expected_result = {
         'param' => 'value',
@@ -59,14 +59,14 @@ describe GoodData::Helpers do
           'deeper' => 'deep value'
         }
       }
-      result = GoodData::Helpers.decode_params(params)
+      result = GoodData::Helpers.decode_params(params, false)
       expect(result).to eq(expected_result)
     end
     it 'decodes the hidden_data in hidden params' do
       params = {
         'param' => 'value',
         'number_param' => 5,
-        'hidden_data' => '{"deep_secret": {"deeper_secret": "hidden value"}}'
+        'gd_encoded_hidden_params' => '{"deep_secret": {"deeper_secret": "hidden value"}}'
       }
       expected_result = {
         'param' => 'value',
@@ -75,16 +75,16 @@ describe GoodData::Helpers do
           "deeper_secret" => "hidden value"
         }
       }
-      result = GoodData::Helpers.decode_params(params)
+      result = GoodData::Helpers.decode_params(params, true)
       expect(result).to eq(expected_result)
     end
     it 'throws an error when data params is not a valid json' do
       params = {
         'param' => 'value',
         'number_param' => 5,
-        'data' => 'This is no json.'
+        'gd_encoded_params' => 'This is no json.'
       }
-      expect { GoodData::Helpers.decode_params(params) }.to raise_error(JSON::ParserError)
+      expect { GoodData::Helpers.decode_params(params, false) }.to raise_error(JSON::ParserError)
     end
   end
 end

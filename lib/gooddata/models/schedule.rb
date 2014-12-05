@@ -123,12 +123,12 @@ module GoodData
         fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
 
         params = json['schedule'][:params]
-        params = GoodData::Helpers.encode_params(params)
+        params = GoodData::Helpers.encode_params(params, false)
         json['schedule'][:params] = params
 
         hidden_params = json['schedule'][:hiddenParams]
         if hidden_params && !hidden_params.empty?
-          hidden_params = GoodData::Helpers.encode_params(json['schedule'][:hiddenParams])
+          hidden_params = GoodData::Helpers.encode_params(json['schedule'][:hiddenParams], true)
           json['schedule'][:hiddenParams] = hidden_params
         end
 

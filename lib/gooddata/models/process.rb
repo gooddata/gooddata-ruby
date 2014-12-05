@@ -277,8 +277,8 @@ module GoodData
       client.post(executions_link,
                   :execution => {
                     :graph => executable.to_s,
-                    :params => GoodData::Helpers.encode_params(params),
-                    :hiddenParams => GoodData::Helpers.encode_params(hidden_params)
+                    :params => GoodData::Helpers.encode_params(params, false),
+                    :hiddenParams => GoodData::Helpers.encode_params(hidden_params, true)
                   })
     end
   end
