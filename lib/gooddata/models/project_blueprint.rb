@@ -475,7 +475,7 @@ module GoodData
             temp_blueprint.add_dataset(dataset.dup)
           end
         end
-        temp_blueprint
+        ProjectBlueprint.new(temp_blueprint.to_hash.merge(a_blueprint.to_hash.slice(:title, :name)))
       end
 
       # Duplicated blueprint
@@ -484,6 +484,13 @@ module GoodData
       # @return [GoodData::Model::DatasetBlueprint]
       def dup
         ProjectBlueprint.new(data.deep_dup)
+      end
+
+      # Returns title of a dataset. If not present it is generated from the name
+      #
+      # @return [String] a title
+      def name
+        to_hash[:name]
       end
 
       # Returns title of a dataset. If not present it is generated from the name

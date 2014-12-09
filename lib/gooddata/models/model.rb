@@ -27,7 +27,7 @@ module GoodData
 
     class << self
       def title(item)
-        item[:title] || item[:name].titleize
+        item[:title] || (item[:name] && item[:name].titleize)
       end
 
       def identifier_for(dataset, column = nil, column2 = nil)
