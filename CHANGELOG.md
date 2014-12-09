@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.12 (in progress)
+- Ability to create a Data Warehouse (ADS) 
+
 ## 0.6.11
 - Ability to download deployed process
 - Added locking objects capabilities
