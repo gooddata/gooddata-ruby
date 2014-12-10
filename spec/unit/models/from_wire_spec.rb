@@ -120,7 +120,7 @@ describe GoodData::Model::FromWire do
   it "should be able to deal with fiscal dimensions with weird names" do
     model_view = MultiJson.load(File.read('./spec/data/wire_models/nu_model.json'))
     blueprint = FromWire.from_wire(model_view)
-    binding.pry
+    blueprint.lint
   end
 
 end

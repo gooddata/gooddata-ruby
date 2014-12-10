@@ -15,5 +15,4 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
     expect(project.title).to eq(project_title)
     project.delete
   end
-
 end
