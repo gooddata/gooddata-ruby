@@ -28,7 +28,7 @@ describe GoodData::Domain do
 
   describe '#find_user_by_login' do
     it 'Should find user by login' do
-      domain = ConnectionHelper::DEFAULT_DOMAIN
+      domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
       user = domain.find_user_by_login(ConnectionHelper::DEFAULT_USERNAME)
       expect(user).to be_an_instance_of(GoodData::Profile)
     end
