@@ -318,7 +318,7 @@ module GoodData
         @connection.download source_relative_path, target_file_path, options
       end
 
-      def download_from_user_webdav(source_relative_path, target_file_path, options = {})
+      def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client, :project => project})
         download(source_relative_path, target_file_path, options.merge(
             :directory => options[:directory],
             :staging_url => get_user_webdav_url(options)
