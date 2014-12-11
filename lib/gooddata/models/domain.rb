@@ -97,7 +97,7 @@ module GoodData
       # @param domain [String] Domain name
       # @param login [String] User login
       # @return [GoodData::Profile] User profile
-      def find_user_by_login(domain, login, opts = {:client => GoodData.connection, :project => GoodData.project})
+      def find_user_by_login(domain, login, opts = { :client => GoodData.connection, :project => GoodData.project })
         c = client(opts)
         escaped_login = CGI.escape(login)
         url = "/gdc/account/domains/#{domain}/users?login=#{escaped_login}"
