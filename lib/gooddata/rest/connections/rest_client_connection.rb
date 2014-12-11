@@ -150,7 +150,30 @@ module GoodData
         end
 
         def download(what, where, options = {})
-          dir = options[:directory] || ''
+          # handle the path (directory) given in what
+          ilast_slash = what.rindex('/')
+          if ilast_slash.nil?
+            what_dir = ''
+          else
+            # take the directory from the path
+            what_dir = what[0..ilast_slash-1]
+            # take the filename from the path
+            what = what[ilast_slash + 1..-1]
+          end
+
+          option_dir = options[:directory] || ''
+          option_dir = option_dir[0..-2] if option_dir[-1] == '/'
+
+          # join the otion dir with the what_dir
+          # [option dir empty, what dir empty] => the joined dir
+          dir_hash = {
+            [true, true] => '',
+            [true, false] => what_dir,
+            [false, true] => option_dir,
+            [false, false] => "#{what_dir}/#{option_dir}"
+          }
+          dir = dir_hash[[option_dir.empty?, what_dir.empty?]]
+
           staging_uri = options[:staging_url].to_s
 
           base_url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
@@ -165,17 +188,22 @@ module GoodData
               :url => url
             }.merge(cookies)
 
-            if where.is_a?(String)
+            if where.is_a?(IO)
+              RestClient::Request.execute(raw) do |chunk, _x, response|
+                if response.code.to_s != '200'
+                  raise ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
+                end
+                where.write chunk
+              end
+            else
+              # Assume it is a string or file
               File.open(where, 'w') do |f|
-                RestClient::Request.execute(raw) do |chunk, _x, _y|
+                RestClient::Request.execute(raw) do |chunk, _x, response|
+                  if response.code.to_s != '200'
+                    raise ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
+                  end
                   f.write chunk
                 end
-              end
-
-            else
-              # Assume it is a IO stream
-              RestClient::Request.execute(raw) do |chunk, _x, _y|
-                where.write chunk
               end
             end
           end
