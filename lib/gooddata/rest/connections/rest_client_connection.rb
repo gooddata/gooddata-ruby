@@ -156,7 +156,7 @@ module GoodData
             what_dir = ''
           else
             # take the directory from the path
-            what_dir = what[0..ilast_slash-1]
+            what_dir = what[0..ilast_slash - 1]
             # take the filename from the path
             what = what[ilast_slash + 1..-1]
           end
@@ -191,7 +191,7 @@ module GoodData
             if where.is_a?(IO)
               RestClient::Request.execute(raw) do |chunk, _x, response|
                 if response.code.to_s != '200'
-                  raise ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
+                  fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
                 end
                 where.write chunk
               end
@@ -200,7 +200,7 @@ module GoodData
               File.open(where, 'w') do |f|
                 RestClient::Request.execute(raw) do |chunk, _x, response|
                   if response.code.to_s != '200'
-                    raise ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
+                    fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
                   end
                   f.write chunk
                 end
