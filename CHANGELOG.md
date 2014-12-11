@@ -1,11 +1,27 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.12 (in progress)
+- Ability to create a Data Warehouse (ADS) 
+
 ## 0.6.11
+
 - Ability to download deployed process
 - Added locking objects capabilities
 - Added removing color mapping form a report definition
 - Report defintions are deleted along with a report
 - Added support for environment variables - GD_GEM_USER, GD_GEM_PASSWORD
+- Report definitions are deleted along with a report
+- Improved process deployment and schedules
+- Parameters in processes and schedules are now able to take complex parameters
+- #create_metric is significantly faster
+- Pretty_expression for metric should not fail on missing data
+- Extended notation can be switched off when using create_metric
+- Implemented retry on connection related issues
+- All executions should use latest resource version
+- Uploading files to webdav should use streaming and be more memory efficient
+- Ability to pass absolute path to file upload  
+- Allowing special chars in uploaded file
+- GooddataMiddleware doesn't require username+password, when it has SST  
 
 ## 0.6.10
 - Fixed client default missing in ProjectMetadata
@@ -15,7 +31,6 @@
 - Listing processes on client works as expected
 - Schedule can be enabled/disabled
 - Added pselect helper function
-
 
 ## 0.6.9
 - Fixing issues with creating models.

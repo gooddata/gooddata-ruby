@@ -150,7 +150,7 @@ module GoodData
       end
 
       def create_project(options = { title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN'] })
-        GoodData::Project.create(title: options[:title], auth_token: options[:auth_token], client: self)
+        GoodData::Project.create(options.merge(client: self))
       end
 
       def create_project_from_blueprint(blueprint, options = {})

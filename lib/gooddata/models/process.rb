@@ -3,7 +3,11 @@
 require 'pry'
 require 'zip'
 
+require_relative '../helpers/global_helpers'
 require_relative '../rest/resource'
+
+require_relative 'execution_detail'
+require_relative 'schedule'
 
 module GoodData
   class Process < GoodData::Rest::Object
@@ -94,7 +98,7 @@ module GoodData
       # @option options [String] :name Readable name of the process
       # @option options [String] :process_id ID of a process to be redeployed (do not set if you want to create a new process)
       # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
-      def deploy(path, options = {})
+      def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -193,7 +197,7 @@ module GoodData
     # @option options [String] :name Readable name of the process
     # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
     def deploy(path, options = {})
-      Process.deploy(path, options.merge(:process_id => process_id))
+      Process.deploy(path, options.merge(:process_id => process_id, :client => client, :project => project))
     end
 
     # Downloads the process from S3 in a zipped form.
@@ -253,14 +257,7 @@ module GoodData
     end
 
     def execute(executable, options = {})
-      params = options[:params] || {}
-      hidden_params = options[:hidden_params] || {}
-      result = client.post(executions_link,
-                           :execution => {
-                             :graph => executable.to_s,
-                             :params => params,
-                             :hiddenParams => hidden_params
-                           })
+      result = start_execution(executable, options)
       begin
         client.poll_on_code(result['executionTask']['links']['poll'])
       rescue RestClient::RequestFailed => e
@@ -271,7 +268,18 @@ module GoodData
           fail "Runing process failed. You can look at a log here #{result['executionDetail']['logFileName']}"
         end
       end
-      result
+      client.create(GoodData::ExecutionDetail, result, client: client, project: project)
+    end
+
+    def start_execution(executable, options = {})
+      params = options[:params] || {}
+      hidden_params = options[:hidden_params] || {}
+      client.post(executions_link,
+                  :execution => {
+                    :graph => executable.to_s,
+                    :params => GoodData::Helpers.encode_params(params, false),
+                    :hiddenParams => GoodData::Helpers.encode_params(hidden_params, true)
+                  })
     end
   end
 end
