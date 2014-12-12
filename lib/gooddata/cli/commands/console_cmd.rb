@@ -7,7 +7,6 @@ require_relative '../shared'
 GoodData::CLI.module_eval do
   desc 'Interactive session with gooddata sdk loaded'
   command :console do |c|
-
     c.action do |global_options, _options, _args|
       username = global_options[:username]
       fail ArgumentError, 'No username specified' if username.nil? || username.empty?
