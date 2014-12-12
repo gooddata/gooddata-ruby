@@ -15,13 +15,13 @@ module GoodData
         end
 
         def create(title, _options = {}, &block)
-          pb = ProjectBuilder.new(title)
+          pb = ProjectBuilder.new(title: title)
           block.call(pb)
           pb
         end
       end
 
-      def initialize(data)
+      def initialize(data = {})
         @data = data.to_hash.deep_dup
         @data[:datasets] = [] unless @data[:datasets]
         @data[:reports] = [] unless @data[:reports]
@@ -31,16 +31,7 @@ module GoodData
         @data[:users] = [] unless @data[:users]
         @data[:dashboards] = [] unless @data[:dashboards]
         @data[:date_dimensions] = [] unless @data[:date_dimensions]
-        # 
-        # @title = title
-        # @datasets = []
-        # @reports = []
-        # @assert_tests = []
-        # @metrics = []
-        # @uploads = []
-        # @users = []
-        # @dashboards = []
-        # @date_dimensions = []
+        @data[:title] = @data[:title]
       end
 
       def add_date_dimension(name, options = {})

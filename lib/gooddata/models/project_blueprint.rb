@@ -36,11 +36,9 @@ module GoodData
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
       # @return [Hash] project with removed dataset
       def self.remove_dataset(project, dataset_name)
-        dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
-        index = project[:datasets].index(dataset)
-        dupped_project = project.deep_dup
-        dupped_project[:datasets].delete_at(index)
-        dupped_project
+        project.deep_dup.tap do |p|
+          remove_dataset!(p, dataset_name)
+        end
       end
 
       # Removes dataset from blueprint. Dataset can be given as either a name
@@ -156,7 +154,6 @@ module GoodData
 
       def change(&block)
         builder = ProjectBuilder.create_from_data(self)
-        # binding.pry
         block.call(builder)
         @data = builder.to_hash
         self
@@ -185,7 +182,7 @@ module GoodData
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
       # @return [Hash] project with removed dataset
       def remove_dataset(dataset_name)
-        ProjectBlueprint.remove_dataset(to_hash, dataset_name)
+        ProjectBlueprint.new(ProjectBlueprint.remove_dataset(to_hash, dataset_name))
       end
 
       # Removes dataset from blueprint. Dataset can be given as either a name
@@ -194,7 +191,10 @@ module GoodData
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
       # @return [Hash] project with removed dataset
       def remove_dataset!(dataset_name)
-        ProjectBlueprint.remove_dataset!(to_hash, dataset_name)
+        self.tap do |d|
+          res = ProjectBlueprint.remove_dataset!(d.to_hash, dataset_name)
+          @data = res
+        end
       end
 
       # Is this a project blueprint?
@@ -273,6 +273,7 @@ module GoodData
       #
       # @return [Array] array of errors
       def validate
+        
         refs_errors = validate_references
         labels_errors = datasets.reduce([]) { |a, e| a.concat(e.validate) }
         refs_errors.concat(labels_errors)

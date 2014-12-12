@@ -346,8 +346,11 @@ module GoodData
       #
       # @return [Array] array of errors
       def validate
-        more_than_one_anchor = find_column_by_type(:anchor, :all).count > 1 ? [{ :anchor => 2 }] : []
-        validate_label_references.concat(more_than_one_anchor)
+        [].tap do |errors|
+          errors.concat(find_column_by_type(:anchor, :all).count > 1 ? [{ :anchor => 2 }] : [])
+          errors.concat(validate_label_references)
+          errors.concat(validate_gd_data_types)
+        end
       end
 
       # Validate the blueprint and return true if model is valid. False otherwise.
@@ -357,12 +360,18 @@ module GoodData
         validate.empty?
       end
 
+      def validate_gd_data_types
+        columns.select { |column| column.key?(:gd_data_type) }
+          .reject { |col| GoodData::Model::GD_DATA_TYPES_PATTERNS.any? {|pattern| pattern =~ col[:gd_data_type] }}
+          .map { |col| { type: :error, error_type: :unsupported_data_type, message: "Type on column \"#{col[:name]}\" is \"#{col[:gd_data_type]}\". Allowed values are #{GoodData::Model::GD_DATA_TYPES_NAMES.join(', ')}" }}
+      end
+
       # Validate the that any labels are pointing to the existing attribute. If not returns the list of errors. Currently just violating labels.
       #
       # @return [Array] array of errors
       def validate_label_references
         labels.select do |label|
-          find_column_by_name(label[:reference]).empty?
+          find_column_by_name(label[:reference], :all).empty?
         end
       end
 

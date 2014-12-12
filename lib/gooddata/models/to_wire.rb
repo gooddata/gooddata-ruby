@@ -52,7 +52,7 @@ module GoodData
                 label: {
                   identifier: GoodData::Model.identifier_for(dataset, l, attribute),
                   title: GoodData::Model.title(l),
-                  type: l[:gd_type] || Model::DEFAULT_ATTRIBUTE_GD_DATATYPE,
+                  type: l[:gd_type] || Model::DEFAULT_ATTRIBUTE_GD_TYPE,
                   dataType: l[:gd_data_type] || Model::DEFAULT_ATTRIBUTE_DATATYPE
                 }
               }

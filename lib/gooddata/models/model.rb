@@ -19,15 +19,31 @@ require 'zip'
 module GoodData
   module Model
     GD_TYPES = %w(GDC.link GDC.text GDC.geo GDC.time)
-    GD_DATA_TYPES = %w(INT VARCHAR DECIMAL)
+    GD_DATA_TYPES_NAMES = %w(INT VARCHAR(x) DECIMAL(x,y))
+    GD_DATA_TYPES_PATTERNS = [/^INT$/, /^VARCHAR\(\d+\)$/, /^DECIMAL\(\d+,\d+\)$/]
 
     DEFAULT_FACT_DATATYPE = 'DECIMAL(12,2)'
     DEFAULT_ATTRIBUTE_DATATYPE = 'VARCHAR(128)'
-    DEFAULT_ATTRIBUTE_GD_DATATYPE = 'GDC.text'
+    DEFAULT_ATTRIBUTE_GD_TYPE = 'GDC.text'
 
     class << self
       def title(item)
         item[:title] || (item[:name] && item[:name].titleize)
+      end
+
+      def gd_data_type(column)
+        if column.key?(:gd_data_type)
+          column[:gd_data_type]
+        else
+          case column[:type]
+          when :fact
+            DEFAULT_FACT_DATATYPE
+          when :attribute
+            DEFAULT_ATTRIBUTE_DATATYPE
+          else
+            nil
+          end
+        end
       end
 
       def identifier_for(dataset, column = nil, column2 = nil)

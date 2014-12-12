@@ -2,11 +2,20 @@ require 'gooddata'
 
 describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
-    @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
-    @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
+    @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
+    @invalid_spec = JSON.parse(File.read("./spec/data/blueprints/blueprint_invalid.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
     @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+  end
+
+  it 'should be able to change a data type' do
     binding.pry
+    s = @spec.deep_dup
+    s[:datasets][2][:columns].first[:gd_data_type] = "DECIMAL(10,4)"
+    @project.update_from_blueprint(s)
+    binding.pry
+    s[:datasets][2][:columns].first[:gd_data_type] = "INT"
+    @project.update_from_blueprint(s)
   end
 
   after(:all) do
@@ -412,4 +421,5 @@ describe "Full project implementation", :constraint => 'slow' do
     r.delete
     expect { def_uris.each {|uri| @client.get(uri)} }.to raise_error(RestClient::ResourceNotFound)
   end
+
 end

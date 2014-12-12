@@ -1,0 +1,91 @@
+{
+  "title": "RubyGem Dev Week test",
+  "datasets": [
+    {
+      "type": "dataset",
+      "name": "repos",
+      "columns": [
+        {
+          "type": "anchor",
+          "name": "repo_id"
+        },
+        {
+          "type": "label",
+          "name": "name",
+          "reference": "repo_id",
+          "gd_data_type": "VARCHAR"
+        },
+        {
+          "type": "attribute",
+          "name": "department"
+        }
+      ]
+    },
+    {
+      "type": "dataset",
+      "name": "devs",
+      "columns": [
+        {
+          "type": "anchor",
+          "name": "dev_id"
+        },
+        {
+          "type": "label",
+          "name": "email",
+          "reference": "dev_id",
+          "default_label" : true,
+          "gd_data_type": "VARCHAR(256)"
+        }
+      ]
+    },
+    {
+      "type": "dataset",
+      "name": "commits",
+      "columns": [
+        {
+          "type": "fact",
+          "name": "lines_changed",
+          "gd_data_type": "INTEGER"
+        },
+        {
+          "type": "fact",
+          "name": "amount1",
+          "gd_data_type": "DECIMAL"
+        },
+        {
+          "type": "fact",
+          "name": "amount2",
+          "gd_data_type": "DECIMAL(10,a)"
+        },
+        {
+          "type": "fact",
+          "name": "amount3",
+          "gd_data_type": "DECIMAL(10,2)"
+        },
+        {
+          "type": "date",
+          "name": "committed_on",
+          "dataset": "committed_on"
+        },
+        {
+          "type": "reference",
+          "name": "dev_id",
+          "dataset": "devs",
+          "reference": "dev_id"
+        },
+        {
+          "type": "reference",
+          "name": "repo_id",
+          "dataset": "repos",
+          "reference": "repo_id"
+        }
+      ]
+    }
+  ],
+  "date_dimensions": [
+    {
+      "type": "date_dimension",
+      "name": "committed_on"
+    }
+  ]
+}
