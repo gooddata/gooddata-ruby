@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.11.0'
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
 
-  s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
+  s.add_dependency 'activesupport', '>= 3.1.0', '< 4.0.0'
   s.add_dependency 'bundler', '~> 1.7', '>= 1.7.3'
   s.add_dependency 'docile', '~> 1.1', '>= 1.1.5'
   s.add_dependency 'erubis', '~> 2.7', '>= 2.7.0'
