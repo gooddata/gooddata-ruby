@@ -6,7 +6,6 @@ require_relative '../../commands/role'
 require_relative '../../commands/user'
 
 GoodData::CLI.module_eval do
-
   desc 'User management'
   command :user do |c|
     c.desc 'Show your profile'
@@ -18,5 +17,4 @@ GoodData::CLI.module_eval do
       end
     end
   end
-
 end

@@ -16,11 +16,9 @@ def read_params_file(filename)
 end
 
 GoodData::CLI.module_eval do
-
   desc 'Work with deployed processes'
   arg_name 'Describe arguments to list here'
   command :process do |c|
-
     c.desc 'Use when you need to redeploy a specific process'
     c.default_value nil
     c.flag :process_id
