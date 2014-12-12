@@ -15,11 +15,9 @@ def load_undot(filename)
 end
 
 GoodData::CLI.module_eval do
-
   desc 'Run ruby bricks either locally or remotely deployed on our server. Currently private alpha.'
   # arg_name 'show'
   command :run_ruby do |c|
-
     c.desc 'Directory of the ruby brick'
     c.default_value nil
     c.flag [:d, :dir]

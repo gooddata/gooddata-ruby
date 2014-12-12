@@ -4,10 +4,8 @@ require_relative '../shared'
 require_relative '../../commands/domain'
 
 GoodData::CLI.module_eval do
-
   desc 'Manage domain'
   command :domain do |c|
-
     c.desc 'Add user to domain'
     c.command :add_user do |add_user|
       add_user.action do |global_options, options, args|
