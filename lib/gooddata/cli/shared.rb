@@ -9,7 +9,6 @@ require_relative '../extensions/extensions'
 include GLI::App
 
 GoodData::CLI.module_eval do
-
   program_desc 'GoodData Ruby gem - a wrapper over GoodData API and several useful abstractions to make your everyday usage of GoodData easier.'
 
   version GoodData::VERSION
@@ -51,5 +50,4 @@ GoodData::CLI.module_eval do
   desc 'Http logger on stdout'
   arg_name 'logger'
   switch [:l, :logger]
-
 end

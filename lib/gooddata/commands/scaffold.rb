@@ -17,7 +17,6 @@ module GoodData
 
           FileUtils.mkdir(name)
           FileUtils.cd(name) do
-
             FileUtils.mkdir('model')
             FileUtils.cd('model') do
               input = File.read(TEMPLATES_PATH + 'project/model/model.rb.erb')
