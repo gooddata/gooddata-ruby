@@ -191,7 +191,7 @@ module GoodData
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
       # @return [Hash] project with removed dataset
       def remove_dataset!(dataset_name)
-        self.tap do |d|
+        tap do |d|
           res = ProjectBlueprint.remove_dataset!(d.to_hash, dataset_name)
           @data = res
         end
@@ -273,7 +273,6 @@ module GoodData
       #
       # @return [Array] array of errors
       def validate
-        
         refs_errors = validate_references
         labels_errors = datasets.reduce([]) { |a, e| a.concat(e.validate) }
         refs_errors.concat(labels_errors)

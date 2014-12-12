@@ -362,8 +362,8 @@ module GoodData
 
       def validate_gd_data_types
         columns.select { |column| column.key?(:gd_data_type) }
-          .reject { |col| GoodData::Model::GD_DATA_TYPES_PATTERNS.any? {|pattern| pattern =~ col[:gd_data_type] }}
-          .map { |col| { type: :error, error_type: :unsupported_data_type, message: "Type on column \"#{col[:name]}\" is \"#{col[:gd_data_type]}\". Allowed values are #{GoodData::Model::GD_DATA_TYPES_NAMES.join(', ')}" }}
+          .reject { |col| GoodData::Model::GD_DATA_TYPES_PATTERNS.any? { |pattern| pattern =~ col[:gd_data_type] } }
+          .map { |col| { type: :error, error_type: :unsupported_data_type, message: "Type on column \"#{col[:name]}\" is \"#{col[:gd_data_type]}\". Allowed values are #{GoodData::Model::GD_DATA_TYPES_NAMES.join(', ')}" } }
       end
 
       # Validate the that any labels are pointing to the existing attribute. If not returns the list of errors. Currently just violating labels.

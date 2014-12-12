@@ -76,7 +76,7 @@ module GoodData
           response = client.get(link)
 
           if response['projectModelDiff']['updateScripts'].empty?
-            puts "Nothing to do"
+            puts 'Nothing to do'
           else
             chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
             chunks['updateScript']['maqlDdlChunks'].each do |chunk|
