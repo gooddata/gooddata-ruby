@@ -56,9 +56,7 @@ module GoodData
       def connect(username, password, options = {})
         # Install at_exit handler first
         unless @at_exit_handler_installed
-          at_exit {
-            disconnect if @user
-          }
+          at_exit { disconnect if @user }
           @at_exit_handler_installed = true
         end
 
