@@ -926,11 +926,27 @@ module GoodData
     # List of users in project
     #
     # @return [Array<GoodData::User>] List of users
-    def users
-      tmp = client.get @json['project']['links']['users']
-      tmp['users'].map do |user|
-        client.factory.create(GoodData::Membership, user)
+    def users(opts = {offset: 0, limit: 1000})
+      result = []
+
+      # TODO: @korczis, review this after WA-3953 get fixed
+      offset = 0 || opts[:offset]
+      uri = "/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{opts[:limit]}"
+      loop do
+        break unless uri
+        tmp = client(opts).get(uri)
+        tmp['users'].each do |user|
+          result << client.factory.create(GoodData::Membership, user)
+        end
+        offset += opts[:limit]
+        if tmp['users'].length == opts[:limit]
+          uri = "/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{opts[:limit]}"
+        else
+          uri = nil
+        end
       end
+
+      result
     end
 
     alias_method :members, :users
