@@ -225,7 +225,7 @@ module GoodData
         def process_response(options = {}, &block)
           begin
             # Simply try again when ConnectionReset, ConnectionRefused etc.. (see e.g. MSF-7591)
-            response = GoodData::Rest::Client.retryable(:tries => 2, :on => SystemCallError) do
+            response = GoodData::Rest::Client.retryable(:tries => 2, :on => [SystemCallError, RestClient::InternalServerError, RestClient::RequestTimeout]) do
               block.call
             end
           rescue RestClient::Unauthorized
