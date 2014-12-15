@@ -926,7 +926,7 @@ module GoodData
     # List of users in project
     #
     # @return [Array<GoodData::User>] List of users
-    def users(opts = {offset: 0, limit: 100})
+    def users(opts = { offset: 0, limit: 100 })
       result = []
 
       # TODO: @korczis, review this after WA-3953 get fixed

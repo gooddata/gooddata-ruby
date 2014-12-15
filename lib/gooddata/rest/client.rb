@@ -115,7 +115,7 @@ module GoodData
 
           retry_exception, retries = opts[:on], opts[:tries]
 
-          unless retry_exception.kind_of?(Array)
+          unless retry_exception.is_a?(Array)
             retry_exception = [retry_exception]
           end
 
@@ -123,7 +123,7 @@ module GoodData
             return yield
           rescue RestClient::TooManyRequests
             retry
-          rescue *retry_exception => e
+          rescue *retry_exception
             retry if (retries -= 1) > 0
           end
 
