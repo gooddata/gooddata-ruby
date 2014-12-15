@@ -48,10 +48,20 @@ module GoodData
 
         # Initialize cookies
         reset_cookies!
+
+        @at_exit_handler = nil
       end
 
       # Connect using username and password
       def connect(username, password, options = {})
+        # Install at_exit handler first
+        unless @at_exit_handler
+          @at_exit_handler = proc {
+            disconnect if @user
+          }
+          at_exit &@at_exit_handler
+        end
+
         # Reset old cookies first
         if options[:sst_token]
           merge_cookies!('GDCAuthSST' => options[:sst_token])
