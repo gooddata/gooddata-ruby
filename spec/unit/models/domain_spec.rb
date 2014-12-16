@@ -43,6 +43,14 @@ describe GoodData::Domain do
     end
   end
 
+  describe '#find_user_by_login' do
+    it 'Should find user by login' do
+      domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+      user = domain.find_user_by_login(ConnectionHelper::DEFAULT_USERNAME)
+      expect(user).to be_an_instance_of(GoodData::Profile)
+    end
+  end
+
   describe '#users' do
     it 'Should list users' do
       users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN, :client => @client)
