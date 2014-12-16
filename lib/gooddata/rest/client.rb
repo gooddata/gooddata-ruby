@@ -66,6 +66,11 @@ module GoodData
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
         def connect(username, password, opts = { :verify_ssl => true })
+          if username.nil? && password.nil?
+            username = ENV['GD_GEM_USER']
+            password = ENV['GD_GEM_PASSWORD']
+          end
+
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
             new_opts[:sst_token] = username[:sst_token]
@@ -334,7 +339,7 @@ module GoodData
         @connection.download source_relative_path, target_file_path, options
       end
 
-      def download_from_user_webdav(source_relative_path, target_file_path, options = {})
+      def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client, :project => project })
         download(source_relative_path, target_file_path, options.merge(
             :directory => options[:directory],
             :staging_url => get_user_webdav_url(options)

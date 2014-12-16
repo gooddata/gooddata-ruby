@@ -5,13 +5,18 @@
 - Ability to create a Data Warehouse (ADS) 
 - Retry all requests 3 times when SystemCallError, RestClient::InternalServerError or RestClient::RequestTimeout
 - Automatic 429/TooManyRequests Handler
+- When creating user login and email can be different now
 - Automatic client disconnect at_exit of ruby script
+- When creating user login and email can be different now
+- Fixed Domain#add_user (GH issue #354)
+- Support for GoodData.connect ENV['GD_GEM_USER'], ENV['GD_GEM_PASSWORD']
 
 ## 0.6.11
 
 - Ability to download deployed process
 - Added locking objects capabilities
 - Added removing color mapping form a report definition
+- Report defintions are deleted along with a report
 - Report definitions are deleted along with a report
 - Improved process deployment and schedules
 - Parameters in processes and schedules are now able to take complex parameters

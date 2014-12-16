@@ -29,15 +29,15 @@ module GoodData
       # @param login [String] Login of user to be invited
       # @param password [String] Default preset password
       # @return [Object] Raw response
-      def add_user(opts)
+      def add_user(opts = { :client => GoodData.connection })
         generated_pass = rand(10E10).to_s
         data = {
-          :login => opts[:login],
+          :login => opts[:login] || opts[:email],
           :firstName => opts[:first_name] || 'FirstName',
           :lastName => opts[:last_name] || 'LastName',
           :password => opts[:password] || generated_pass,
           :verifyPassword => opts[:password] || generated_pass,
-          :email => opts[:login]
+          :email => opts[:email] || opts[:login]
         }
 
         # Optional authentication modes
@@ -206,7 +206,7 @@ module GoodData
     #
     def add_user(opts)
       opts[:domain] = name
-      GoodData::Domain.add_user(opts)
+      GoodData::Domain.add_user({ :client => client }.merge(opts))
     end
 
     # Finds user in domain by login
