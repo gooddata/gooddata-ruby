@@ -119,9 +119,13 @@ module GoodData
             retry_exception = [retry_exception]
           end
 
+          retry_time = 1
           begin
             return yield
           rescue RestClient::TooManyRequests
+            GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
+            sleep retry_time
+            retry_time *= 1.5
             retry
           rescue *retry_exception
             retry if (retries -= 1) > 0
