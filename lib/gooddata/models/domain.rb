@@ -206,7 +206,7 @@ module GoodData
     #
     def add_user(opts)
       opts[:domain] = name
-      GoodData::Domain.add_user({:client => client}.merge(opts))
+      GoodData::Domain.add_user({ :client => client }.merge(opts))
     end
 
     # Finds user in domain by login
