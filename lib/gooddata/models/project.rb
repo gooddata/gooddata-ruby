@@ -958,7 +958,7 @@ module GoodData
     def users_link
       # DEPRECATED: @json['project']['links']['users']
       # TODO: @korczis, review this after WA-3953 get fixed
-      '/gdc/projects/#{pid}/users'
+      "/gdc/projects/#{pid}/users"
     end
 
     def users_create(list, role_list = roles)
