@@ -21,6 +21,12 @@ module GoodData
       #################################
       DEFAULT_CONNECTION_IMPLEMENTATION = Connections::RestClientConnection
 
+      RETRYABLE_ERRORS = [
+        SystemCallError,
+        RestClient::InternalServerError,
+        RestClient::RequestTimeout
+      ]
+
       #################################
       # Class variables
       #################################
@@ -105,13 +111,23 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &_block)
-          opts = { :tries => 1, :on => Exception }.merge(options)
+          opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
 
           retry_exception, retries = opts[:on], opts[:tries]
 
+          unless retry_exception.is_a?(Array)
+            retry_exception = [retry_exception]
+          end
+
+          retry_time = 1
           begin
             return yield
-          rescue retry_exception
+          rescue RestClient::TooManyRequests
+            GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
+            sleep retry_time
+            retry_time *= 1.5
+            retry
+          rescue *retry_exception
             retry if (retries -= 1) > 0
           end
 
@@ -253,7 +269,7 @@ module GoodData
 
         while response.code == code
           sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+          GoodData::Rest::Client.retryable(:tries => 3) do
             sleep sleep_interval
             response = get(link, :process => false)
           end
@@ -279,7 +295,7 @@ module GoodData
         response = get(link)
         while bl.call(response)
           sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+          GoodData::Rest::Client.retryable(:tries => 3) do
             sleep sleep_interval
             response = get(link)
           end
