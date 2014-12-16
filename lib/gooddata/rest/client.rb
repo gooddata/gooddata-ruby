@@ -22,9 +22,10 @@ module GoodData
       DEFAULT_CONNECTION_IMPLEMENTATION = Connections::RestClientConnection
 
       RETRYABLE_ERRORS = [
-        SystemCallError,
+        Net::ReadTimeout,
         RestClient::InternalServerError,
-        RestClient::RequestTimeout
+        RestClient::RequestTimeout,
+        SystemCallError
       ]
 
       #################################
