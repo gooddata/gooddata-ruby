@@ -151,7 +151,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       result = schedule.execute
       expect(result.status).to eq :ok
       log = result.log
-      expect(log.index(GoodData::VERSION)).not_to eq nil
+      expect(log.index('GoodData::VERSION - 0.6.')).not_to eq nil
       expect(process.schedules.count).to eq 1
     ensure
       schedule && schedule.delete
