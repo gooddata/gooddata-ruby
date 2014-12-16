@@ -6,6 +6,7 @@
 - Retry all requests 3 times when SystemCallError, RestClient::InternalServerError or RestClient::RequestTimeout
 - Automatic 429/TooManyRequests Handler
 - When creating user login and email can be different now
+- Fixed Domain#add_user (GH issue #354)
 
 ## 0.6.11
 
