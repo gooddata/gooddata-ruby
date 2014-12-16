@@ -5,6 +5,7 @@
 - Ability to create a Data Warehouse (ADS) 
 - Retry all requests 3 times when SystemCallError, RestClient::InternalServerError or RestClient::RequestTimeout
 - Automatic 429/TooManyRequests Handler
+- Added Schedule#execute(:wait => true|false) option
 
 ## 0.6.11
 
