@@ -927,18 +927,38 @@ module GoodData
     # List of users in project
     #
     # @return [Array<GoodData::User>] List of users
-    def users
-      users_uri = users_link + '&status=ENABLED'
-      tmp = client.get users_uri
-      tmp['users'].map do |user|
-        client.factory.create(GoodData::Membership, user)
+    def users(opts = { :status => :all })
+      result = []
+
+      status = opts[:status]
+      
+      # TODO: @korczis, review this after WA-3953 get fixed
+      offset = 0 || opts[:offset]
+      uri = "#{users_link}?offset=#{offset}&limit=#{opts[:limit]}"
+      uri = "#{uri}&status=#{status.upcase}" unless status == :all
+      loop do
+        break unless uri
+        tmp = client(opts).get(uri)
+        tmp['users'].each do |user|
+          result << client.factory.create(GoodData::Membership, user)
+        end
+        offset += opts[:limit]
+        if tmp['users'].length == opts[:limit]
+          uri = "/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{opts[:limit]}"
+        else
+          uri = nil
+        end
       end
+
+      result
     end
 
     alias_method :members, :users
 
     def users_link
-      @json['project']['links']['users']
+      # DEPRECATED: @json['project']['links']['users']
+      # TODO: @korczis, review this after WA-3953 get fixed
+      '/gdc/projects/#{pid}/users'
     end
 
     def users_create(list, role_list = roles)

@@ -114,7 +114,7 @@ module GoodData
       response = GoodData.get(link, :process => false)
       while response.code == code
         sleep sleep_interval
-        GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+        GoodData::Rest::Client.retryable(:tries => 3) do
           sleep sleep_interval
           response = GoodData.get(link, :process => false)
         end
@@ -129,7 +129,7 @@ module GoodData
     # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
     # this is a helper that should help you with resources where the information about "Are we done"
     # is inside the response. It expects the URI as an input where it can poll and a block that should
-    # return either true -> 'meaning we are done' or false -> meaning sleep and repeat. It returns the
+    # return either false -> 'meaning we are done' or true -> meaning sleep and repeat. It returns the
     # value of last poll. In majority of cases these are the data that you need
     #
     # @param link [String] Link for polling
@@ -143,7 +143,7 @@ module GoodData
       response = get(link)
       while bl.call(response)
         sleep sleep_interval
-        GoodData::Rest::Client.retryable(:tries => 3, :on => RestClient::InternalServerError) do
+        GoodData::Rest::Client.retryable(:tries => 3) do
           sleep sleep_interval
           response = get(link)
         end

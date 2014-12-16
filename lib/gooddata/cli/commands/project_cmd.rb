@@ -7,7 +7,6 @@ require_relative '../shared'
 require_relative '../../commands/project'
 
 GoodData::CLI.module_eval do
-
   desc 'Manage your project'
   arg_name 'project_command'
   command :project do |c|
@@ -140,7 +139,6 @@ GoodData::CLI.module_eval do
     c.desc 'If you are in a gooddata project blueprint it will apply the changes. If you do not provide a project id it will build it from scratch and create a project for you.'
     c.command :update do |show|
       show.action do |global_options, options, _args|
-
         opts = options.merge(global_options)
         GoodData.connect(opts)
         spec, project_id = GoodData::Command::Project.get_spec_and_project_id('.')
