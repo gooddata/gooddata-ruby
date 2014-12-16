@@ -7,6 +7,7 @@
 - Automatic 429/TooManyRequests Handler
 - When creating user login and email can be different now
 - Fixed Domain#add_user (GH issue #354)
+- Support for GoodData.connect ENV['GD_GEM_USER'], ENV['GD_GEM_PASSWORD']
 
 ## 0.6.11
 
