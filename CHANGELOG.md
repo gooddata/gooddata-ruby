@@ -1,5 +1,9 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.12 (in progress)
+
+- When creating user login and email can be different now
+
 ## 0.6.11
 
 - Ability to download deployed process
