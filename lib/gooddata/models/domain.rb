@@ -32,12 +32,12 @@ module GoodData
       def add_user(opts = { :client => GoodData.connection })
         generated_pass = rand(10E10).to_s
         data = {
-          :login => opts[:login],
+          :login => opts[:login] || opts[:email],
           :firstName => opts[:first_name] || 'FirstName',
           :lastName => opts[:last_name] || 'LastName',
           :password => opts[:password] || generated_pass,
           :verifyPassword => opts[:password] || generated_pass,
-          :email => opts[:login]
+          :email => opts[:email] || opts[:login]
         }
 
         # Optional authentication modes
