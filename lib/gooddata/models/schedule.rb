@@ -193,7 +193,7 @@ module GoodData
     # @param [Hash] opts execution options.
     # @option opts [Boolean] :wait Wait for execution result
     # @return [Object] Raw Response
-    def execute(opts = {:wait => true})
+    def execute(opts = { :wait => true })
       data = {
         :execution => {}
       }
