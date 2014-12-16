@@ -2,6 +2,7 @@
 
 ## 0.6.12 (in progress)
 
+- Ability to create a Data Warehouse (ADS)
 - When creating user login and email can be different now
 
 ## 0.6.11
