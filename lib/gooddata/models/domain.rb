@@ -29,7 +29,7 @@ module GoodData
       # @param login [String] Login of user to be invited
       # @param password [String] Default preset password
       # @return [Object] Raw response
-      def add_user(opts)
+      def add_user(opts = { :client => GoodData.connection })
         generated_pass = rand(10E10).to_s
         data = {
           :login => opts[:login] || opts[:email],
@@ -97,7 +97,7 @@ module GoodData
       # @param domain [String] Domain name
       # @param login [String] User login
       # @return [GoodData::Profile] User profile
-      def find_user_by_login(domain, login, opts = {})
+      def find_user_by_login(domain, login, opts = { :client => GoodData.connection, :project => GoodData.project })
         c = client(opts)
         escaped_login = CGI.escape(login)
         url = "/gdc/account/domains/#{domain}/users?login=#{escaped_login}"
@@ -206,7 +206,7 @@ module GoodData
     #
     def add_user(opts)
       opts[:domain] = name
-      GoodData::Domain.add_user(opts)
+      GoodData::Domain.add_user({ :client => client }.merge(opts))
     end
 
     # Finds user in domain by login
@@ -214,7 +214,7 @@ module GoodData
     # @param login [String] User login
     # @return [GoodData::Profile] User account settings
     def find_user_by_login(login)
-      GoodData::Domain.find_user_by_login(name, login)
+      GoodData::Domain.find_user_by_login(name, login, :client => client)
     end
 
     # List users in domain

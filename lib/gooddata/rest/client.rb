@@ -69,6 +69,11 @@ module GoodData
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
         def connect(username, password, opts = { :verify_ssl => true })
+          if username.nil? && password.nil?
+            username = ENV['GD_GEM_USER']
+            password = ENV['GD_GEM_PASSWORD']
+          end
+
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
             new_opts[:sst_token] = username[:sst_token]

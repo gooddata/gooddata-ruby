@@ -12,7 +12,15 @@ describe GoodData::Domain do
   end
 
   describe '#add_user' do
-    it 'Should add user' do
+    before(:each) do
+      @user = nil
+    end
+
+    after(:each) do
+      @user.delete if @user
+    end
+
+    it 'Should add user using class method' do
       args = {
         :domain => ConnectionHelper::DEFAULT_DOMAIN,
         :login => "gemtest#{rand(1e6)}@gooddata.com",
@@ -20,9 +28,26 @@ describe GoodData::Domain do
         :client => @client
       }
 
-      user = GoodData::Domain.add_user(args)
+      @user = GoodData::Domain.add_user(args)
+      expect(@user).to be_an_instance_of(GoodData::Profile)
+    end
+
+    it 'Should add user using instance method' do
+      domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+
+      login = "gemtest#{rand(1e6)}@gooddata.com"
+      password = CryptoHelper.generate_password
+
+      @user = domain.add_user(:login => login, :password => password, :first_name => 'X', :last_name => 'X')
+      expect(@user).to be_an_instance_of(GoodData::Profile)
+    end
+  end
+
+  describe '#find_user_by_login' do
+    it 'Should find user by login' do
+      domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+      user = domain.find_user_by_login(ConnectionHelper::DEFAULT_USERNAME)
       expect(user).to be_an_instance_of(GoodData::Profile)
-      user.delete
     end
   end
 
