@@ -6,8 +6,11 @@
 - Retry all requests 3 times when SystemCallError, RestClient::InternalServerError or RestClient::RequestTimeout
 - Automatic 429/TooManyRequests Handler
 - When creating user login and email can be different now
+- Automatic client disconnect at_exit of ruby script
+- When creating user login and email can be different now
 - Fixed Domain#add_user (GH issue #354)
 - Support for GoodData.connect ENV['GD_GEM_USER'], ENV['GD_GEM_PASSWORD']
+- Added Schedule#execute(:wait => true|false) option
 - Merge GoodData::Rest::Connection and GoodData::Rest::Connection::RestClientConnection
 
 ## 0.6.11
@@ -16,7 +19,6 @@
 - Added locking objects capabilities
 - Added removing color mapping form a report definition
 - Report defintions are deleted along with a report
-- Added support for environment variables - GD_GEM_USER, GD_GEM_PASSWORD
 - Report definitions are deleted along with a report
 - Improved process deployment and schedules
 - Parameters in processes and schedules are now able to take complex parameters
@@ -31,6 +33,7 @@
 - GooddataMiddleware doesn't require username+password, when it has SST  
 
 ## 0.6.10
+
 - Fixed client default missing in ProjectMetadata
 - Listing schedules on processes is working
 - Scrubing params in logs is back
@@ -40,6 +43,7 @@
 - Added pselect helper function
 
 ## 0.6.9
+
 - Fixing issues with creating models.
 - Adding couple more helpers for report/metric computation
 - Rewriting several full_* specs to use the new syntax

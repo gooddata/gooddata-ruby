@@ -54,12 +54,20 @@ module GoodData
 
         # Initialize cookies
         reset_cookies!
+
+        @at_exit_handler_installed = nil
       end
 
       # Connect using username and password
       def connect(username, password, options = {})
         server = options[:server] || DEFAULT_URL
         @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD
+
+        # Install at_exit handler first
+        unless @at_exit_handler_installed
+          at_exit { disconnect if @user }
+          @at_exit_handler_installed = true
+        end
 
         # Reset old cookies first
         if options[:sst_token]
@@ -178,7 +186,6 @@ module GoodData
         end
       end
 
-
       # HTTP GET
       #
       # @param uri [String] Target URI
@@ -260,13 +267,13 @@ module GoodData
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           response = http.start { |client| client.request(req) }
           case response
-            when Net::HTTPSuccess then
-              true
-            when Net::HTTPUnauthorized
-              refresh_token
-              do_stream_file uri, filename, options
-            else
-              fail "Can't upload file to webdav. Path: #{uri}, response code: #{response.code}, response body: #{response.body}"
+          when Net::HTTPSuccess then
+            true
+          when Net::HTTPUnauthorized
+            refresh_token
+            do_stream_file uri, filename, options
+          else
+            fail "Can't upload file to webdav. Path: #{uri}, response code: #{response.code}, response body: #{response.body}"
           end
         end
 

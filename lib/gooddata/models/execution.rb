@@ -66,6 +66,17 @@ module GoodData
       @json['execution']['links']['self'] if @json && @json['execution'] && @json['execution']['links']
     end
 
+    # Wait for execution result, status different than RUNNING or SCHEDULED
+    #
+    # @return [GoodData::Execution] Execution result
+    def wait_for_result
+      res = client.poll_on_response(uri) do |body|
+        body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
+      end
+      @json = res
+      self
+    end
+
     # Compares two executions - based on their URI
     def ==(other)
       other.respond_to?(:uri) && other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
