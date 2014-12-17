@@ -8,6 +8,7 @@
 - When creating user login and email can be different now
 - Fixed Domain#add_user (GH issue #354)
 - Support for GoodData.connect ENV['GD_GEM_USER'], ENV['GD_GEM_PASSWORD']
+- Merge GoodData::Rest::Connection and GoodData::Rest::Connection::RestClientConnection
 
 ## 0.6.11
 
