@@ -4,7 +4,7 @@ require 'rest-client'
 
 require_relative '../helpers/auth_helpers'
 
-require_relative 'connections/connections'
+require_relative 'connection'
 require_relative 'object_factory'
 
 require_relative '../mixins/inspector'
@@ -19,7 +19,7 @@ module GoodData
       #################################
       # Constants
       #################################
-      DEFAULT_CONNECTION_IMPLEMENTATION = Connections::RestClientConnection
+      DEFAULT_CONNECTION_IMPLEMENTATION = GoodData::Rest::Connection
 
       RETRYABLE_ERRORS = [
         SystemCallError,
