@@ -88,17 +88,18 @@ module GoodData
       # Returns dataset specified. It can check even for a date dimension
       #
       # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @param obj [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
       # @param options [Hash] options
       # @return [GoodData::Model::DatasetBlueprint]
-      def self.find_dataset(project, name, options = {})
+      def self.find_dataset(project, obj, options = {})
         include_date_dimensions = options[:include_date_dimensions] || options[:dd]
-        return name.to_hash if DatasetBlueprint.dataset_blueprint?(name)
+        return obj.to_hash if DatasetBlueprint.dataset_blueprint?(obj)
         all_datasets = if include_date_dimensions
                          datasets(project) + date_dimensions(project)
                        else
                          datasets(project)
                        end
+        name = obj.respond_to?(:key?) ? obj[:name] : obj
         ds = all_datasets.find { |d| d[:name] == name }
         fail "Dataset #{name} could not be found" if ds.nil?
         ds
@@ -290,7 +291,7 @@ module GoodData
       # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
       # @return [Array<Hash>]
       def referenced_by(dataset)
-        find_dataset(dataset).references.map do |ref|
+        find_dataset(dataset, include_date_dimensions: true).references.map do |ref|
           find_dataset(ref[:dataset], include_date_dimensions: true)
         end
       end
@@ -360,7 +361,6 @@ module GoodData
             anchor_name: dataset.anchor[:name]
           }
         end
-
         date_facts = datasets.mapcat(&:date_facts)
         date_facts.each do |date_fact|
           errors << {

@@ -136,14 +136,14 @@ module GoodData
           if ref =~ /^dataset\./
             {
               :type => :reference,
-              :name => ref.gsub('dataset.', ''),
-              :dataset => ref.gsub('dataset.', '')
+              :name => ref.gsub(/^dataset\./, ''),
+              :dataset => ref.gsub(/^dataset\./, '')
             }
           else
             {
               :type => :date,
-              :name => ref.gsub('dataset.', ''),
-              :dataset => ref.gsub('dataset.', '')
+              :name => ref.gsub(/^dataset\./, ''),
+              :dataset => ref.gsub(/^dataset\./, '')
             }
           end
         end
