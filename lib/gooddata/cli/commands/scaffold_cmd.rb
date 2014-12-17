@@ -6,11 +6,9 @@ require_relative '../shared'
 require_relative '../../commands/scaffold'
 
 GoodData::CLI.module_eval do
-
   desc 'Scaffold things'
   arg_name 'show'
   command :scaffold do |c|
-
     c.desc 'Scaffold a gooddata project blueprint'
     c.command :project do |project|
       project.action do |_global_options, _options, args|
@@ -30,5 +28,4 @@ GoodData::CLI.module_eval do
       end
     end
   end
-
 end

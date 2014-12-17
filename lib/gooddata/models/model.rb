@@ -122,7 +122,7 @@ module GoodData
 
         if res['taskStatus'] == 'ERROR' # rubocop:disable Style/GuardClause
           s = StringIO.new
-          client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s)
+          client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s, :client => client, :project => project)
           js = MultiJson.load(s.string)
           fail "Load Failed with error #{JSON.pretty_generate(js)}"
         end
