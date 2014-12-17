@@ -204,6 +204,32 @@ describe GoodData::Schedule do
     end
   end
 
+  describe '#execute' do
+    before(:each) do
+      @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+      @process = @project.deploy_process('./spec/data/gooddata_version_process/gooddata_version.zip',
+                                       type: 'RUBY',
+                                       name: 'Test ETL zipped file GoodData Process')
+      @schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+    end
+
+    after(:each) do
+      @schedule.delete
+    end
+
+    it 'Waits for execution result by default' do
+      res = @schedule.execute
+      expect(res).to be_an_instance_of(GoodData::Execution)
+      expect([:ok, :error].include?(res.status)).to be_truthy
+    end
+
+    it 'can be overridden to do not wait for execution result' do
+      res = @schedule.execute(:wait => false)
+      expect(res).to be_an_instance_of(GoodData::Execution)
+      expect([:scheduled, :running].include?(res.status)).to be_truthy
+    end
+  end
+
   describe '#execution_url' do
     before(:each) do
       @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
@@ -222,6 +248,7 @@ describe GoodData::Schedule do
   end
 
   describe '#type' do
+
     before(:each) do
       @schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
     end

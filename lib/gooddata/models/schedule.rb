@@ -190,16 +190,18 @@ module GoodData
 
     # Executes schedule
     #
+    # @param [Hash] opts execution options.
+    # @option opts [Boolean] :wait Wait for execution result
     # @return [Object] Raw Response
-    def execute
+    def execute(opts = { :wait => true })
       data = {
         :execution => {}
       }
-      execution = client.post(execution_url, data)
-      res = client.poll_on_response(execution['execution']['links']['self']) do |body|
-        body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
-      end
-      client.create(GoodData::Execution, res, client: client, project: project)
+      res = client.post(execution_url, data)
+      execution = client.create(GoodData::Execution, res, client: client, project: project)
+
+      return execution unless opts[:wait]
+      execution.wait_for_result
     end
 
     # Returns execution URL
