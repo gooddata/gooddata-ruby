@@ -52,8 +52,8 @@ module GoodData
                 label: {
                   identifier: GoodData::Model.identifier_for(dataset, l, attribute),
                   title: GoodData::Model.title(l),
-                  type: l[:gd_type],
-                  dataType: l[:gd_data_type]
+                  type: l[:gd_type] || Model::DEFAULT_ATTRIBUTE_GD_TYPE,
+                  dataType: l[:gd_data_type] || Model::DEFAULT_ATTRIBUTE_DATATYPE
                 }
               }
             end,
@@ -139,7 +139,7 @@ module GoodData
             targetModel: {
               projectModel: {
                 datasets: what[:datasets].map { |d| dataset_to_wire(what, d) },
-                dateDimensions: what[:date_dimensions].map { |d| date_dimensions_to_wire(what, d) }
+                dateDimensions: what.key?(:date_dimensions) ? what[:date_dimensions].map { |d| date_dimensions_to_wire(what, d) } : []
               }
             }
           }

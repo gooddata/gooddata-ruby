@@ -36,11 +36,9 @@ module GoodData
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
       # @return [Hash] project with removed dataset
       def self.remove_dataset(project, dataset_name)
-        dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
-        index = project[:datasets].index(dataset)
-        dupped_project = project.deep_dup
-        dupped_project[:datasets].delete_at(index)
-        dupped_project
+        project.deep_dup.tap do |p|
+          remove_dataset!(p, dataset_name)
+        end
       end
 
       # Removes dataset from blueprint. Dataset can be given as either a name
@@ -185,7 +183,7 @@ module GoodData
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
       # @return [Hash] project with removed dataset
       def remove_dataset(dataset_name)
-        ProjectBlueprint.remove_dataset(to_hash, dataset_name)
+        ProjectBlueprint.new(ProjectBlueprint.remove_dataset(to_hash, dataset_name))
       end
 
       # Removes dataset from blueprint. Dataset can be given as either a name
@@ -194,7 +192,10 @@ module GoodData
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
       # @return [Hash] project with removed dataset
       def remove_dataset!(dataset_name)
-        ProjectBlueprint.remove_dataset!(to_hash, dataset_name)
+        tap do |d|
+          res = ProjectBlueprint.remove_dataset!(d.to_hash, dataset_name)
+          @data = res
+        end
       end
 
       # Is this a project blueprint?
@@ -474,7 +475,7 @@ module GoodData
             temp_blueprint.add_dataset(dataset.dup)
           end
         end
-        temp_blueprint
+        ProjectBlueprint.new(temp_blueprint.to_hash.merge(a_blueprint.to_hash.slice(:title, :name)))
       end
 
       # Duplicated blueprint
@@ -483,6 +484,13 @@ module GoodData
       # @return [GoodData::Model::DatasetBlueprint]
       def dup
         ProjectBlueprint.new(data.deep_dup)
+      end
+
+      # Returns title of a dataset. If not present it is generated from the name
+      #
+      # @return [String] a title
+      def name
+        to_hash[:name]
       end
 
       # Returns title of a dataset. If not present it is generated from the name
@@ -523,7 +531,11 @@ module GoodData
       #
       # @return [Hash] a title
       def to_hash
-        @data
+        x = @data.deep_dup
+        x.keys.each do |k|
+          x.delete(k) if x[k].is_a?(Array) && x[k].empty?
+        end
+        x
       end
     end
   end

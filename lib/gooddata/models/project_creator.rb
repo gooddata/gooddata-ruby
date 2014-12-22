@@ -75,16 +75,20 @@ module GoodData
 
           response = client.get(link)
 
-          chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
-          chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-            result = project.execute_maql(chunk)
-            fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
-          end
+          if response['projectModelDiff']['updateScripts'].empty?
+            puts 'Nothing to do'
+          else
+            chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
+            chunks['updateScript']['maqlDdlChunks'].each do |chunk|
+              result = project.execute_maql(chunk)
+              fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
+            end
 
-          bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
-            dataset = ds[0]
-            manifest = ds[1]
-            GoodData::ProjectMetadata["manifest_#{dataset.name}", :client => client, :project => project] = manifest.to_json
+            bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
+              dataset = ds[0]
+              manifest = ds[1]
+              GoodData::ProjectMetadata["manifest_#{dataset.name}", :client => client, :project => project] = manifest.to_json
+            end
           end
         end
 

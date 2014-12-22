@@ -47,10 +47,10 @@ module GoodData
           primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
           primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
           dl = primary_labels.map do |label|
-            parse_label(attribute, label, 'anchor', default_label)
+            parse_label(attribute, label, :anchor, default_label)
           end
           rl = regular_labels.map do |label|
-            parse_label(attribute, label, 'label', default_label)
+            parse_label(attribute, label, :label, default_label)
           end
           dl + rl
         end
@@ -72,10 +72,10 @@ module GoodData
           primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
           primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
           dl = primary_labels.map do |label|
-            parse_label(attribute, label, 'attribute', default_label)
+            parse_label(attribute, label, :attribute, default_label)
           end
           rl = regular_labels.map do |label|
-            parse_label(attribute, label, 'label', default_label)
+            parse_label(attribute, label, :label, default_label)
           end
           dl + rl
         end
@@ -105,7 +105,7 @@ module GoodData
             f[:type] = fact['fact']['identifier'] =~ /^dt\./ ? :date_fact : :fact
             f[:name] = fact['fact']['identifier'].split('.').last
             f[:title] = fact['fact']['title'] if fact['fact']['title'] != fact['fact']['identifier'].split('.').last.titleize
-            f[:gd_data_type] = fact['fact']['dataType'] if fact['fact'].key?('dataType')
+            f[:gd_data_type] = fact['fact']['dataType'] if fact['fact'].key?('dataType') && fact['fact']['dataType'] != Model::DEFAULT_FACT_DATATYPE
           end
         end
       end
@@ -120,8 +120,8 @@ module GoodData
           l[:reference] = attribute['identifier'].split('.').last if type == 'label'
           l[:name] = label['label']['identifier'].split('.').last
           l[:title] = label['label']['title'] if label['label']['title'] != label['label']['identifier'].split('.').last.titleize
-          l[:gd_data_type] = label['label']['dataType'] if label['label'].key?('dataType')
-          l[:gd_type] = label['label']['type'] if label['label'].key?('type')
+          l[:gd_data_type] = label['label']['dataType'] if label['label'].key?('dataType') && label['label']['dataType'] != Model::DEFAULT_ATTRIBUTE_DATATYPE
+          l[:gd_type] = label['label']['type'] if label['label'].key?('type') && label['label']['type'] != Model::DEFAULT_ATTRIBUTE_GD_TYPE
           l[:default_label] = true if default_label == label['label']['identifier']
         end
       end

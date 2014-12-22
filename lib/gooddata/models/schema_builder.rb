@@ -33,6 +33,12 @@ module GoodData
         self
       end
 
+      def remove_column(column_def)
+        item = column_def.is_a?(String) ? columns.find { |c| c[:name] == column_def } : column_def
+        columns.delete(item)
+        self
+      end
+
       def add_anchor(name, options = {})
         add_column({ :type => :anchor, :name => name }.merge(options))
         self

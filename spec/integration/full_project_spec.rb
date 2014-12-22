@@ -2,32 +2,48 @@ require 'gooddata'
 
 describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
-    @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
-    @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
+    @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
+    @invalid_spec = JSON.parse(File.read("./spec/data/blueprints/blueprint_invalid.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
     @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
   end
 
+  it 'should be able to change a data type' do
+    s = @spec.deep_dup
+
+    b = GoodData::Model::ProjectBlueprint.new(s)
+    expect(GoodData::Model.gd_data_type(b.find_dataset('commits').facts.first)).to eq 'INT'
+
+    s[:datasets][2][:columns].first[:gd_data_type] = 'DECIMAL(10,4)'
+    @project.update_from_blueprint(s)
+    b = GoodData::Model::ProjectBlueprint.new(s)
+    expect(GoodData::Model.gd_data_type(b.find_dataset('commits').facts.first)).to eq 'DECIMAL(10,4)'
+
+    s[:datasets][2][:columns].first[:gd_data_type] = 'INT'
+    @project.update_from_blueprint(s)
+    b = GoodData::Model::ProjectBlueprint.new(s)
+    expect(GoodData::Model.gd_data_type(b.find_dataset('commits').facts.first)).to eq 'INT'
+  end
+
   after(:all) do
     @project.delete unless @project.nil?
-
     @client.disconnect
   end
 
-  it "should not build an invalid model" do
+  it 'should not build an invalid model' do
     expect {
       @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
     }.to raise_error(GoodData::ValidationError)
   end
 
-  it "should contain datasets" do
+  it 'should contain datasets' do
     @project.blueprint.tap do |bp|
       expect(bp.datasets.count).to eq 3
       expect(bp.datasets(:include_date_dimensions => true).count).to eq 4
     end
   end
 
-  it "should be able to rename a project" do
+  it 'should be able to rename a project' do
     former_title = @project.title
     a_title = (0...8).map { (65 + rand(26)).chr }.join
     @project.title = a_title
@@ -37,7 +53,7 @@ describe "Full project implementation", :constraint => 'slow' do
     @project.save
   end
 
-  it "should be able to validate a project" do
+  it 'should be able to validate a project' do
     @project.validate
   end
 
@@ -412,4 +428,5 @@ describe "Full project implementation", :constraint => 'slow' do
     r.delete
     expect { def_uris.each {|uri| @client.get(uri)} }.to raise_error(RestClient::ResourceNotFound)
   end
+
 end
