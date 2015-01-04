@@ -5,6 +5,7 @@ require 'zip'
 require 'fileutils'
 require 'multi_json'
 require 'pmap'
+require 'uri'
 require 'zip'
 
 require_relative '../exceptions/no_project_error'
@@ -926,12 +927,15 @@ module GoodData
     # List of users in project
     #
     # @return [Array<GoodData::User>] List of users
-    def users(opts = { offset: 0, limit: 100 })
+    def users(opts = { :status => :all })
       result = []
 
+      status = opts[:status]
+      
       # TODO: @korczis, review this after WA-3953 get fixed
       offset = 0 || opts[:offset]
-      uri = "/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{opts[:limit]}"
+      uri = "#{users_link}?offset=#{offset}&limit=#{opts[:limit]}"
+      uri = "#{uri}&status=#{status.upcase}" unless status == :all
       loop do
         break unless uri
         tmp = client(opts).get(uri)
@@ -950,6 +954,12 @@ module GoodData
     end
 
     alias_method :members, :users
+
+    def users_link
+      # DEPRECATED: @json['project']['links']['users']
+      # TODO: @korczis, review this after WA-3953 get fixed
+      "/gdc/projects/#{pid}/users"
+    end
 
     def users_create(list, role_list = roles)
       domains = {}
