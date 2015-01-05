@@ -1107,5 +1107,21 @@ module GoodData
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
     end
+
+    # Get project specific webdav path
+    #
+    # @return [String] Project specific webdav path
+    def webdav_project_path
+      u = links['uploads']
+      URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{pid}/")
+    end
+
+    # Get user's webdav path
+    #
+    # @return [String] User specific webdav path
+    def webdav_user_path
+      u = links['uploads']
+      URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+    end
   end
 end

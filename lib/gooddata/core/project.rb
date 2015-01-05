@@ -19,7 +19,7 @@ module GoodData
     #     GoodData.use 'afawtv356b6usdfsdf34vt'
     #
     #     # Use project URL
-    #     GoodData.use '/gdc/projects/afawtv356b6usdfsdf34vt'
+    #     GoodData.use 'afawtv356b6usdfsdf34vt'
     #
     #     # Select project using indexer on GoodData::Project class
     #     GoodData.project = Project['afawtv356b6usdfsdf34vt']
