@@ -74,10 +74,15 @@ module GoodData
     end
 
     def get_project_webdav_path(_file, _options = {})
-      GoodData.project.webdav_project_path
+      u = URI(GoodData.project.links['uploads'])
+      URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{GoodData.project.pid}/")
     end
 
-    \
+    def upload_to_project_webdav(file, options = {})
+      webdav_filename = File.basename(file)
+      url = get_project_webdav_path(webdav_filename, options)
+      connection.upload(file, options.merge(:staging_url => url))
+    end
 
     def download_from_project_webdav(file, where, options = {})
       url = get_project_webdav_path(file, options)
@@ -85,7 +90,8 @@ module GoodData
     end
 
     def get_user_webdav_path(_file, _options = {})
-      GoodData.project.webdav_user_path
+      u = URI(GoodData.project.links['uploads'])
+      URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
     end
 
     def download_from_user_webdav(file, where, options = {})
