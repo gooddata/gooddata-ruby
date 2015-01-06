@@ -401,6 +401,13 @@ module GoodData
       GoodData::Attribute.find_element_value(uri, client: client, project: self)
     end
 
+    # Get WebDav directory for project data
+    # @return [String]
+    def get_project_webdav_path(_file)
+      u = URI(links['uploads'])
+      URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{pid}/")
+    end
+
     # Gets project role by its identifier
     #
     # @param [String] role_name Title of role to look for
@@ -469,6 +476,13 @@ module GoodData
                        user.email.downcase == name
       end
       nil
+    end
+
+    # Get WebDav directory for user data
+    # @return [String]
+    def get_user_webdav_path(_file)
+      u = URI(links['uploads'])
+      URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
     end
 
     # Exports project users to file
