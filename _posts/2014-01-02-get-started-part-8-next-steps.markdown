@@ -1,6 +1,6 @@
 ---
 layout: guides
-title:  "The end - Next Steps"
+title:  "The End"
 date:   2014-01-19 13:56:00
 categories: get-started
 prev_section: get-started/get-started-part-7-updating-model
