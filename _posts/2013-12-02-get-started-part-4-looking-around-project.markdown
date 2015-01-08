@@ -93,7 +93,7 @@ You may also look for other objects using the following commands. Right now, our
 {% highlight ruby %}
 dashboards = project.dashboards
 metrics = project.metrics
-reports = project.reporst
+reports = project.reports
 {% endhighlight %}
 
 We will start creating these in the next part.
