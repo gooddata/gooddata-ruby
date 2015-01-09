@@ -26,6 +26,7 @@ module GoodData
       RETRYABLE_ERRORS = [
         RestClient::InternalServerError,
         RestClient::RequestTimeout,
+        RestClient::MethodNotAllowed,
         SystemCallError,
         Timeout::Error
       ]
