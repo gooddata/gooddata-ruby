@@ -110,7 +110,7 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &block)
-          GoodData::Rest::Connection.retryable(options, &block)
+          GoodData::Rest::Connection.retryable(options.merge(:refresh_token => refresh_token), &block)
         end
 
         alias_method :client, :connection

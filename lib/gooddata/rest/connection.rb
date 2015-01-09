@@ -47,7 +47,7 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &_block)
-          opts = {:tries => 1, :on => RETRYABLE_ERRORS}.merge(options)
+          opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
 
           retry_exception, retries = opts[:on], opts[:tries]
 
@@ -58,6 +58,10 @@ module GoodData
           retry_time = 1
           begin
             return yield
+          rescue RestClient::Forbidden, RestClient::Unauthorized => e
+            raise e unless options[:refresh_token]
+            options[:refresh_token].call
+            retry
           rescue RestClient::TooManyRequests
             GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
             sleep retry_time
@@ -192,7 +196,7 @@ module GoodData
         end
 
         res = nil
-        GoodData::Rest::Connection.retryable(:tries => 2) do
+        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
           res = b.call
         end
         res
@@ -293,7 +297,7 @@ module GoodData
 
       # Uploads a file to GoodData server
       def upload(file, options = {})
-        def do_stream_file(uri, filename, options = {})
+        def do_stream_file(uri, filename, _options = {})
           puts "uploading the file #{uri}"
 
           to_upload = File.new(filename)
@@ -306,7 +310,7 @@ module GoodData
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
           response = nil
-          GoodData::Rest::Connection.retryable(:tries => 2) do
+          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
             response = http.start { |client| client.request(req) }
           end
           response
@@ -330,7 +334,7 @@ module GoodData
           end
 
           res = nil
-          GoodData::Rest::Connection.retryable(:tries => 2) do
+          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
             res = b.call
           end
           res
@@ -350,11 +354,9 @@ module GoodData
             RestClient::Request.execute(raw)
           end
 
-          res = nil
-          GoodData::Rest::Connection.retryable(:tries => 2) do
-            res = b.call
+          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+            b.call
           end
-          res
         end
 
         dir = options[:directory] || ''
@@ -375,15 +377,21 @@ module GoodData
       end
 
       def process_response(options = {}, &block)
-        begin
-          # Simply try again when ConnectionReset, ConnectionRefused etc.. (see e.g. MSF-7591)
-          response = GoodData::Rest::Connection.retryable(:tries => 2) do
-            block.call
-          end
-        rescue RestClient::Unauthorized
-          raise $ERROR_INFO if options[:dont_reauth]
-          refresh_token
-          response = block.call
+        # begin
+        #   # Simply try again when ConnectionReset, ConnectionRefused etc.. (see e.g. MSF-7591)
+        #   response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => Proc.new { refresh_token }) do
+        #     block.call
+        #   end
+        # rescue RestClient::Unauthorized
+        #   raise $ERROR_INFO if options[:dont_reauth]
+        #   GoodData::Rest::Connection.retryable(:tries => 2) do
+        #     refresh_token
+        #     response = block.call
+        #   end
+        # end
+
+        response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+          block.call
         end
 
         merge_cookies! response.cookies
