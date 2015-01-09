@@ -110,7 +110,7 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &block)
-          GoodData::Rest::Connection.retryable(options.merge(:refresh_token => refresh_token), &block)
+          GoodData::Rest::Connection.retryable(options, &block)
         end
 
         alias_method :client, :connection
@@ -248,7 +248,7 @@ module GoodData
 
         while response.code == code
           sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => 3) do
+          GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
             sleep sleep_interval
             response = get(link, :process => false)
           end
@@ -274,7 +274,7 @@ module GoodData
         response = get(link)
         while bl.call(response)
           sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => 3) do
+          GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
             sleep sleep_interval
             response = get(link)
           end

@@ -67,7 +67,8 @@ module GoodData
             sleep retry_time
             retry_time *= 1.5
             retry
-          rescue *retry_exception
+          rescue *retry_exception => e
+            GoodData.logger.warn e.inspect
             retry if (retries -= 1) > 0
           end
 
