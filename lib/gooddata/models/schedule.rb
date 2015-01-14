@@ -325,9 +325,9 @@ module GoodData
 
     # Assigns execution parameters
     #
-    # @param params [String] Params to be set
-    def params=(new_param)
-      @json['schedule']['params'].merge!(new_param)
+    # @param [Hash] new_params Params to be set
+    def params=(new_params)
+      @json['schedule']['params'].merge!(new_params)
       @dirty = true
     end
 

@@ -35,7 +35,7 @@ module GoodData
 
       # Initializes instance of factory
       #
-      # @param connection [GoodData::Rest::Connection] Connection used by factory
+      # @param [GoodData::Rest::Connection] client Connection used by factory
       # @return [GoodData::Rest::ObjectFactory] Factory instance
       def initialize(client)
         fail ArgumentError 'Invalid connection passed' if client.nil?

@@ -27,8 +27,7 @@ module GoodData
 
       # Finds a specific type of the object by title. Returns all matches. Returns full object.
       #
-      # @param title [String] title that has to match exactly
-      # @param title [Regexp] regular expression that has to match
+      # @param [String, Regexp] title title that has to match exactly or regular expression that has to match
       # @return [Array<GoodData::MdObject>] Array of MdObject
       def find_by_title(title, options = { :client => GoodData.connection, :project => GoodData.project })
         all = self[:all, options.merge(full: false)]

@@ -139,7 +139,7 @@ module GoodData
 
       # Returns fields from all datasets
       #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+      # @param [GoodData::Model::ProjectBlueprint | Hash] project Project blueprint
       # @return [Array<Hash>]
       def self.fields(project)
         datasets(project).mapcat { |d| DatasetBlueprint.fields(d) }
@@ -147,8 +147,8 @@ module GoodData
 
       # Returns a dataset of a given name. If a dataset is not found it throws an exeception
       #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param project [String] Dataset title
+      # @param [GoodData::Model::ProjectBlueprint] project Project blueprint
+      # @param [String] title Dataset title
       # @return [Array<Hash>]
       def find_dataset_by_title(project, title)
         ds = datasets(project).find { |d| Model.title(d) == title }
@@ -165,7 +165,7 @@ module GoodData
       # Returns datasets of blueprint. Those can be optionally including
       # date dimensions
       #
-      # @param options [Hash] options
+      # @param [Hash] options Options passed to ProjectBlueprint#datasets
       # @return [Array<GoodData::Model::DatasetBlueprint>]
       def datasets(options = {})
         ProjectBlueprint.datasets(to_hash, options).map { |d| DatasetBlueprint.new(d) }
@@ -182,7 +182,7 @@ module GoodData
       # Removes dataset from blueprint. Dataset can be given as either a name
       # or a DatasetBlueprint or a Hash representation.
       #
-      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @param [GoodData::Model::DatasetBlueprint | String | Hash] dataset_name Dataset to be removed
       # @return [Hash] project with removed dataset
       def remove_dataset(dataset_name)
         ProjectBlueprint.remove_dataset(to_hash, dataset_name)
@@ -191,7 +191,7 @@ module GoodData
       # Removes dataset from blueprint. Dataset can be given as either a name
       # or a DatasetBlueprint or a Hash representation.
       #
-      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @param [GoodData::Model::DatasetBlueprint | String | Hash] dataset_name Dataset to be removed
       # @return [Hash] project with removed dataset
       def remove_dataset!(dataset_name)
         ProjectBlueprint.remove_dataset!(to_hash, dataset_name)
@@ -213,7 +213,7 @@ module GoodData
 
       # Returns true if a dataset contains a particular dataset false otherwise
       #
-      # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @param [GoodData::Model::DatasetBlueprint | String | Hash] name Dataset
       # @return [Boolean]
       def dataset?(name)
         ProjectBlueprint.dataset?(to_hash, name)
@@ -288,7 +288,7 @@ module GoodData
       # Returns list of datasets which are referenced by given dataset. This can be
       # optionally switched to return even date dimensions
       #
-      # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
+      # @param [GoodData::Model::DatasetBlueprint | Hash | String] dataset Dataset blueprint
       # @return [Array<Hash>]
       def referenced_by(dataset)
         find_dataset(dataset, include_date_dimensions: true).references.map do |ref|
@@ -336,7 +336,7 @@ module GoodData
       # datasets that are references by given dataset. Currently does not
       # work transitively
       #
-      # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
+      # @param [GoodData::Model::DatasetBlueprint | Hash | String] dataset Dataset blueprint
       # @return [Array<Hash>]
       def can_break(dataset)
         dataset = find_dataset(dataset) if dataset.is_a?(String)
@@ -349,7 +349,7 @@ module GoodData
 
       # Experimental but a basis for automatic check of health of a project
       #
-      # @param project [GoodData::Model::DatasetBlueprint | Hash | String] Dataset blueprint
+      # @param [Boolean] full (false) Run full lint check
       # @return [Array<Hash>]
       def lint(full = false)
         errors = []
@@ -479,7 +479,6 @@ module GoodData
 
       # Duplicated blueprint
       #
-      # @param a_blueprint [GoodData::Model::DatasetBlueprint] Dataset blueprint to be merged
       # @return [GoodData::Model::DatasetBlueprint]
       def dup
         ProjectBlueprint.new(data.deep_dup)

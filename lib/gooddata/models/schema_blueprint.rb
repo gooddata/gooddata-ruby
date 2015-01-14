@@ -178,7 +178,7 @@ module GoodData
       # Changes the dataset through a builder. You provide a block with an istance of
       # GoodData::Model::SchemaBuilder and you
       #
-      # @param dataset [Hash] Dataset blueprint
+      # @yield [Hash] Dataset blueprint
       # @return [Array<Hash>] returns the labels or an empty array
       def change(&block)
         builder = SchemaBuilder.create_from_data(self)
@@ -226,7 +226,7 @@ module GoodData
       # Compares two blueprints. This is done by comapring the hash represenatation.
       # It has to be exacty identical including the order of the columns
       #
-      # @param name [GoodData::Model::DatasetBlueprint] Name of a field
+      # @param [GoodData::Model::DatasetBlueprint] other Name of a field
       # @return [Boolean] matching fields
       def eql?(other)
         to_hash == other.to_hash
@@ -241,8 +241,8 @@ module GoodData
 
       # Finds a specific column given a name
       #
-      # @param name [String] Name of a field
-      # @param all [Symbol] if :all is passed all mathching objects are returned
+      # @param [String] type Name of a field
+      # @param [Symbol] all if :all is passed all matching objects are returned
       # Otherwise only the first one is
       # @return [Array<Hash>] matching fields
       def find_column_by_name(type, all = :all)
@@ -269,15 +269,14 @@ module GoodData
 
       # Creates a DatasetBlueprint
       #
-      # @param dataset [Hash] Dataset blueprint
+      # @param [Hash] data Dataset blueprint
       # @return [DatasetBlueprint] returns the labels or an empty array
-      def initialize(init_data)
+      def initialize(data)
         @data = init_data
       end
 
       # Returns labels facts of a dataset
       #
-      # @param dataset [Hash] Dataset blueprint
       # @return [Array<Hash>] returns the label or an empty array
       def labels
         DatasetBlueprint.labels(to_hash)
@@ -374,7 +373,7 @@ module GoodData
       # Compares two blueprints. This is done by comapring the hash represenatation.
       # It has to be exacty identical including the order of the columns
       #
-      # @param name [GoodData::Model::DatasetBlueprint] Name of a field
+      # @param [GoodData::Model::DatasetBlueprint] other Name of a field
       # @return [Boolean] matching fields
       def ==(other)
         to_hash == other.to_hash

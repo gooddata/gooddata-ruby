@@ -98,7 +98,7 @@ module GoodData
 
     # Checks objects for equality
     #
-    # @param right [GoodData::User] Project to compare with
+    # @param [GoodData::User] other Project to compare with
     # @return [Boolean] True if same else false
     def ==(other)
       res = true
@@ -112,7 +112,7 @@ module GoodData
 
     # Checks objects for non-equality
     #
-    # @param right [GoodData::User] Project to compare with
+    # @param [GoodData::User] other Project to compare with
     # @return [Boolean] True if different else false
     def !=(other)
       !(self == other)

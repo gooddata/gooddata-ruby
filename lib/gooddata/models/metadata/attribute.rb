@@ -76,8 +76,7 @@ module GoodData
     end
 
     # Returns all values for all labels. This is for inspection purposes only since obviously there can be huge number of elements.
-    # @param [Hash] options the options to pass to the value list
-    # @option options [Number] :limit limits the number of values to certain number. Default is 100
+    #
     # @return [Array]
     def values
       results = labels.map(&:values)

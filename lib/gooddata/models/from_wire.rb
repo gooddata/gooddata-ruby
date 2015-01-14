@@ -112,7 +112,10 @@ module GoodData
 
       # Converts label from wire format into an internal blueprint representation
       #
-      # @param stuff [Hash] Whatever comes from wire
+      # @param [GoodData::Attribute] attribute Attribute
+      # @param [GoodData::Label] label Label
+      # @param [String] type
+      # @param [Boolean] default_label (nil) Is default label?
       # @return [Hash] Manifest for a particular reference
       def self.parse_label(attribute, label, type, default_label = nil)
         Hash.new.tap do |l|

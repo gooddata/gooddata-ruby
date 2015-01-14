@@ -5,8 +5,8 @@ module GoodData
     module MdObjectQuery
       # Method intended to get all objects of that type in a specified project
       #
-      # @param options [Hash] the options hash
-      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @param _options [Hash] the options hash
+      # @option _options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(_options = { :client => GoodData.connection, :project => GoodData.project })
         fail NotImplementedError, 'Method should be implemented in subclass. Currently there is no way how to get all metadata objects on API.'
