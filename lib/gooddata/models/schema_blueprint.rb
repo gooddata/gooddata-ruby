@@ -48,7 +48,7 @@ module GoodData
           ds[:columns] || []
         end
 
-        singleton_class.send(:alias_method, :fields, :columns)
+        alias_method :fields, :columns
 
         # Tells you if the object is a dataset. It consumes both Hash represenation
         # or the GoodData::Model::DatasetBlueprint
@@ -276,7 +276,7 @@ module GoodData
       # @param [Hash] data Dataset blueprint
       # @return [DatasetBlueprint] returns the labels or an empty array
       def initialize(data)
-        @data = init_data
+        @data = data
       end
 
       # Returns labels facts of a dataset
