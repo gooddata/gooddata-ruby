@@ -164,7 +164,7 @@ module GoodData
 
     # Creates new instance of report in context of project
     #
-    # @param [options] Optional report options
+    # @param [Hash] options Optional report options
     # @return [GoodData::Report] Instance of new report
     def add_report(options = {})
       rep = GoodData::Report.create(options.merge(client: client, project: self))
@@ -175,7 +175,7 @@ module GoodData
     # Creates new instance of report definition in context of project
     # This report definition can be used for creating of GoodData::Report
     #
-    # @param [json] Raw report definition json
+    # @param [Hash] json Raw report definition json
     # @return [GoodData::ReportDefinition] Instance of new report definition
     def add_report_definition(json)
       rd = GoodData::ReportDefinition.new(json)
@@ -194,7 +194,7 @@ module GoodData
 
     # Helper for getting attributes of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Attribute[id]
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::Attribute[id]
     # @return [GoodData::Attribute | Array<GoodData::Attribute>] fact instance or list
     def attributes(id = :all)
       GoodData::Attribute[id, project: self, client: client]
@@ -315,7 +315,7 @@ module GoodData
 
     # Helper for getting dashboards of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::Dashboard[id]
     # @return [GoodData::Dashboard | Array<GoodData::Dashboard>] dashboard instance or list
     def dashboards(id = :all)
       GoodData::Dashboard[id, project: self, client: client]
@@ -383,7 +383,7 @@ module GoodData
 
     # Helper for getting facts of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::Fact[id]
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
     def facts(id = :all)
       GoodData::Fact[id, project: self, client: client]
@@ -438,7 +438,8 @@ module GoodData
 
     # Gets project role
     #
-    # @param [String] role_title Title of role to look for
+    # @param [String] role_name Title of role to look for
+    # @param [Array<GoodData::ProjectRole>] role_list Optional list of cached roles used for lookup
     # @return [GoodData::ProjectRole] Project role if found
     def get_role(role_name, role_list = roles)
       return role_name if role_name.is_a? GoodData::ProjectRole
@@ -650,8 +651,8 @@ module GoodData
 
     # Helper for getting labels of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to
-    # GoodData::Label[id] + it supports :all as welll
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::Label[id] + it supports :all as well
+    # @param [Hash] opts Additional options passed to GoodData::Fact#[]
     # @return [GoodData::Fact | Array<GoodData::Fact>] fact instance or list
     def labels(id = :all, opts = {})
       if id == :all
@@ -681,7 +682,7 @@ module GoodData
 
     # Get data from project specific metadata storage
     #
-    # @param [Symbol | String] :all or nothing for all keys or a string for value of specific key
+    # @param [Symbol | String] key :all or nothing for all keys or a string for value of specific key
     # @return [Hash] key Hash of stored data
     def metadata(key = :all)
       GoodData::ProjectMetadata[key, client: client, project: self]
@@ -781,7 +782,7 @@ module GoodData
 
     # Helper for getting processes of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::Report[id]
     # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
     def processes(id = :all)
       GoodData::Process[id, project: self, client: client]
@@ -827,7 +828,7 @@ module GoodData
 
     # Helper for getting reports of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::Report[id]
     # @return [GoodData::Report | Array<GoodData::Report>] report instance or list
     def reports(id = :all)
       GoodData::Report[id, project: self, client: client]
@@ -835,7 +836,7 @@ module GoodData
 
     # Helper for getting report definitions of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::ReportDefinition[id]
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::ReportDefinition[id]
     # @return [GoodData::ReportDefinition | Array<GoodData::ReportDefinition>] report definition instance or list
     def report_definitions(id = :all, options = {})
       GoodData::ReportDefinition[id, options.merge(project: self, client: client)]
@@ -879,7 +880,7 @@ module GoodData
       !res
     end
 
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Schedule[id]
+    # @param [String | Number | Object] id Anything that you can pass to GoodData::Schedule[id]
     # @return [GoodData::Schedule | Array<GoodData::Schedule>] schedule instance or list
     def schedules(id = :all)
       GoodData::Schedule[id, project: self, client: client]
@@ -913,8 +914,9 @@ module GoodData
 
     # Uploads file to project
     #
-    # @param file File to be uploaded
-    # @param schema Schema to be used
+    # @param [String] file File to be uploaded
+    # @param [Hash] dataset_blueprint Blueprint to be used
+    # @param [String] mode ('FULL') Model to be used
     def upload(file, dataset_blueprint, mode = 'FULL')
       dataset_blueprint.upload file, self, mode
     end
@@ -996,8 +998,8 @@ module GoodData
     # CSV Format
     # TODO: Describe CSV Format here
     #
-    # @param path CSV file to be loaded
-    # @param opts Optional additional options
+    # @param [Array] new_users Array of users to add
+    # @param [GoodData::Domain, String] domain (nil) Domain to add user to
     def users_import(new_users, domain = nil)
       # Diff users
       diff = GoodData::Membership.diff_list(users, new_users)
@@ -1080,15 +1082,16 @@ module GoodData
 
     # Update list of users
     #
-    # @param list List of users to be updated
-    # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
-    def set_users_roles(list, _role_list = roles)
+    # @param [Array<Hash>] list List of users to be updated, must have :user and :role or :roles
+    # @param [Array] role_list Optional list of cached roles to prevent unnecessary server round-trips
+    # @return [Array] List of new users
+    def set_users_roles(list, role_list = roles)
       list.pmap do |user_hash|
         user = user_hash[:user]
         roles = user_hash[:role] || user_hash[:roles]
         {
           :user => user,
-          :result => set_user_roles(user, roles)
+          :result => set_user_roles(user, roles, role_list)
         }
       end
     end
