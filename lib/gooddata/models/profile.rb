@@ -166,7 +166,7 @@ module GoodData
 
     # Checks objects for equality
     #
-    # @param right [GoodData::Profile] Project to compare with
+    # @param [GoodData::Profile] other Project to compare with
     # @return [Boolean] True if same else false
     def ==(other)
       res = true
@@ -180,7 +180,7 @@ module GoodData
 
     # Checks objects for non-equality
     #
-    # @param right [GoodData::Profile] Project to compare with
+    # @param [GoodData::Profile] other Project to compare with
     # @return [Boolean] True if different else false
     def !=(other)
       !(self == other)
@@ -188,7 +188,7 @@ module GoodData
 
     # Apply changes to object.
     #
-    # @param changes [Hash] Hash with modifications
+    # @param [Hash] changes Hash with modifications
     # @return [GoodData::Profile] Modified object
     def apply(changes)
       GoodData::Profile.apply(self, changes)
@@ -203,7 +203,8 @@ module GoodData
 
     # Set the company name
     #
-    # @param val [String] Company name to be set
+    # @param [String] val Company name to be set
+    # @return [String] New company name
     def company=(val)
       @dirty ||= company != val
       @json['accountSetting']['companyName'] = val
@@ -218,7 +219,8 @@ module GoodData
 
     # Set the country
     #
-    # @param val [String] Country to be set
+    # @param [String] val Country to be set
+    # @return [String] New country
     def country=(val)
       @dirty ||= country != val
       @json['accountSetting']['country'] = val
@@ -238,7 +240,7 @@ module GoodData
 
     # Gets hash representing diff of profiles
     #
-    # @param user [GoodData::Profile] Another profile to compare with
+    # @param [GoodData::Profile] user Another profile to compare with
     # @return [Hash] Hash representing diff
     def diff(user)
       GoodData::Profile.diff(self, user)
@@ -253,7 +255,7 @@ module GoodData
 
     # Set the email
     #
-    # @param val [String] Email to be set
+    # @param [String] val Email to be set
     def email=(val)
       @dirty ||= email != val
       @json['accountSetting']['email'] = val
@@ -268,7 +270,8 @@ module GoodData
 
     # Set the first name
     #
-    # @param val [String] First name to be set
+    # @param [String] val First name to be set
+    # @return [String] New first name
     def first_name=(val)
       @dirty ||= first_name != val
       @json['accountSetting']['firstName'] = val
@@ -292,7 +295,8 @@ module GoodData
 
     # Set the last name
     #
-    # @param val [String] Last name to be set
+    # @param [String] val Last name to be set
+    # @return [String] New last name
     def last_name=(val)
       @dirty ||= last_name != val
       @json['accountSetting']['lastName'] = val
@@ -307,7 +311,8 @@ module GoodData
 
     # Set the login
     #
-    # @param val [String] Login to be set
+    # @param [String] val Login to be set
+    # @return [String] New login
     def login=(val)
       @dirty ||= login != val
       @json['accountSetting']['login'] = val
@@ -333,7 +338,8 @@ module GoodData
 
     # Set the phone
     #
-    # @param val [String] Phone to be set
+    # @param [String] val Phone number to be set
+    # @return [String] New phone number
     def phone=(val)
       @dirty ||= phone != val
       @json['accountSetting']['phoneNumber'] = val
@@ -350,7 +356,8 @@ module GoodData
 
     # Set the position
     #
-    # @param val [String] Position to be set
+    # @param [String] val Position to be set
+    # @return [String] New position
     def position=(val)
       @dirty ||= position != val
       @json['accountSetting']['position'] = val
@@ -367,17 +374,19 @@ module GoodData
     end
 
     # Saves object if dirty, clears dirty flag
+    #
+    # @return [Boolean] True if saved, false if already up to date
     def save!
-      if @dirty # rubocop:disable Style/GuardClause
-        raw = @json.dup
-        raw['accountSetting'].delete('login')
+      return false unless @dirty
+      raw = @json.dup
+      raw['accountSetting'].delete('login')
 
-        if uri && !uri.empty?
-          url = "/gdc/account/profile/#{obj_id}"
-          @json = GoodData.put url, raw
-          @dirty = false
-        end
+      if uri && !uri.empty?
+        url = "/gdc/account/profile/#{obj_id}"
+        @json = GoodData.put url, raw
+        @dirty = false
       end
+      true
     end
 
     # Gets the preferred timezone
@@ -389,7 +398,8 @@ module GoodData
 
     # Set the timezone
     #
-    # @param val [String] Timezone to be set
+    # @param [String] val Timezone to be set
+    # @return [String] New timezone
     def timezone=(val)
       @dirty ||= timezone != val
       @json['accountSetting']['timezone'] = val
@@ -411,9 +421,12 @@ module GoodData
 
     private
 
+    # Initialize object from wire JSON
+    # @return [GoodData::Profile] New profile instance
     def initialize(json)
       @json = json
       @user = @json['accountSetting']['firstName'] + ' ' + @json['accountSetting']['lastName']
+      self
     end
   end
 end
