@@ -25,9 +25,20 @@ module GoodData
 
       # Adds user to domain
       #
-      # @param domain [String] Domain name
-      # @param login [String] Login of user to be invited
-      # @param password [String] Default preset password
+      # @param [Hash] opts Additional options
+      # @option opts [GoodData::Rest::Client] :client (GoodData.connection) Client to be used for communication with API
+      # @option opts [String] :login (opts[:email]) Login of user to added to domain
+      # @option opts [String] :first_name ('FirstName') First name of user
+      # @option opts [String] :last_name ('LastName') Last name of user
+      # @option opts [String] :password (generated_pass) Default preset password
+      # @option opts [String,Array] :authentication_modes Available authentication modes
+      # @option opts [String] :email (opts[:login]) Email of user
+      # @option opts [String] :company_name User's company (optional)
+      # @option opts [String] :country User's country (optional)
+      # @option opts [String] :phone User's phone number (optional)
+      # @option opts [String] :position User's position (optional)
+      # @option opts [String] :sso_provider User's SSO provider (optional)
+      # @option opts [String] :timezone User's timezone (optional)
       # @return [Object] Raw response
       def add_user(opts = { :client => GoodData.connection })
         generated_pass = rand(10E10).to_s
@@ -131,7 +142,7 @@ module GoodData
 
       # Create users specified in list
       # @param [Array<GoodData::Membership>] list List of users
-      # @param [String] default_domain_name Default domain name used when no specified in user
+      # @param [String,GoodData::Domain] default_domain Default domain name used when no specified in user
       # @return [Array<GoodData::User>] List of users created
       def users_create(list, default_domain = nil, opts = { :client => GoodData.connection, :project => GoodData.project })
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
@@ -194,17 +205,21 @@ module GoodData
 
     # Adds user to domain
     #
-    # @param login [String] Login of user to be invited
-    # @param password [String] Default preset password
+    # @param [Hash] opts Additional options
+    # @option opts [String] :login (opts[:email]) Login of user to added to domain
+    # @option opts [String] :first_name ('FirstName') First name of user
+    # @option opts [String] :last_name ('LastName') Last name of user
+    # @option opts [String] :password (generated_pass) Default preset password
+    # @option opts [String,Array] :authentication_modes Available authentication modes
+    # @option opts [String] :email (opts[:login]) Email of user
+    # @option opts [String] :company_name User's company (optional)
+    # @option opts [String] :country User's country (optional)
+    # @option opts [String] :phone User's phone number (optional)
+    # @option opts [String] :position User's position (optional)
+    # @option opts [String] :sso_provider User's SSO provider (optional)
+    # @option opts [String] :timezone User's timezone (optional)
     # @return [Object] Raw response
-    #
-    # Example
-    #
-    # GoodData.connect 'tomas.korcak@gooddata.com' 'your-password'
-    # domain = GoodData::Domain['gooddata-tomas-korcak']
-    # domain.add_user 'joe.doe@example', 'sup3rS3cr3tP4ssW0rtH'
-    #
-    def add_user(opts)
+    def add_user(opts = {})
       opts[:domain] = name
       GoodData::Domain.add_user({ :client => client }.merge(opts))
     end
