@@ -11,6 +11,11 @@ module GoodData
       # @param spec [String | Hash] value of an label you are looking for
       # @return [GoodData::Model::ProjectBlueprint]
       class << self
+        def build(title, &block)
+          pb = ProjectBuilder.create(title, &block)
+          pb.to_blueprint
+        end
+
         def from_json(spec)
           if spec.is_a?(String)
             if File.file?(spec)
@@ -23,127 +28,123 @@ module GoodData
           end
         end
 
-        def build(title, &block)
-          pb = ProjectBuilder.create(title, &block)
-          pb.to_blueprint
+        # Returns datasets of blueprint. Those can be optionally including
+        # date dimensions
+        #
+        # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+        # @param options [Hash] options
+        # @return [Array<Hash>]
+        def datasets(project, options = {})
+          include_date_dimensions = options[:include_date_dimensions] || options[:dd]
+          ds = (project.to_hash[:datasets] || [])
+          if include_date_dimensions
+            ds + date_dimensions(project)
+          else
+            ds
+          end
         end
-      end
 
-      # Removes dataset from blueprint. Dataset can be given as either a name
-      # or a DatasetBlueprint or a Hash representation.
-      #
-      # @param project [Hash] Project blueprint
-      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
-      # @return [Hash] project with removed dataset
-      def self.remove_dataset(project, dataset_name)
-        dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
-        index = project[:datasets].index(dataset)
-        dupped_project = project.deep_dup
-        dupped_project[:datasets].delete_at(index)
-        dupped_project
-      end
+        # Returns true if a dataset contains a particular dataset false otherwise
+        #
+        # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+        # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+        # @return [Boolean]
+        def dataset?(project, name)
+          find_dataset(project, name)
+          true
+        rescue
+          false
+        end
 
-      # Removes dataset from blueprint. Dataset can be given as either a name
-      # or a DatasetBlueprint or a Hash representation. This version mutates
-      # the dataset in place
-      #
-      # @param project [Hash] Project blueprint
-      # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
-      # @return [Hash] project with removed dataset
-      def self.remove_dataset!(project, dataset_name)
-        dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
-        index = project[:datasets].index(dataset)
-        project[:datasets].delete_at(index)
-        project
-      end
+        # Returns list of date dimensions
+        #
+        # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+        # @return [Array<Hash>]
+        def date_dimensions(project)
+          project.to_hash[:date_dimensions] || []
+        end
 
-      # Returns datasets of blueprint. Those can be optionally including
-      # date dimensions
-      #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param options [Hash] options
-      # @return [Array<Hash>]
-      def self.datasets(project, options = {})
-        include_date_dimensions = options[:include_date_dimensions] || options[:dd]
-        ds = (project.to_hash[:datasets] || [])
-        if include_date_dimensions
-          ds + date_dimensions(project)
-        else
+        # Returns true if a date dimension of a given name exists in a bleuprint
+        #
+        # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+        # @param name [string] Date dimension
+        # @return [Boolean]
+        def date_dimension?(project, name)
+          find_date_dimension(project, name)
+          true
+        rescue
+          false
+        end
+
+        # Returns fields from all datasets
+        #
+        # @param [GoodData::Model::ProjectBlueprint | Hash] project Project blueprint
+        # @return [Array<Hash>]
+        def fields(project)
+          datasets(project).mapcat { |d| DatasetBlueprint.fields(d) }
+        end
+
+        # Returns dataset specified. It can check even for a date dimension
+        #
+        # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+        # @param obj [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+        # @param options [Hash] options
+        # @return [GoodData::Model::DatasetBlueprint]
+        def find_dataset(project, obj, options = {})
+          include_date_dimensions = options[:include_date_dimensions] || options[:dd]
+          return obj.to_hash if DatasetBlueprint.dataset_blueprint?(obj)
+          all_datasets = if include_date_dimensions
+                           datasets(project) + date_dimensions(project)
+                         else
+                           datasets(project)
+                         end
+          name = obj.respond_to?(:key?) ? obj[:name] : obj
+          ds = all_datasets.find { |d| d[:name] == name }
+          fail "Dataset #{name} could not be found" if ds.nil?
           ds
         end
+
+        # Finds a date dimension of a given name in a bleuprint. If a dataset is
+        # not found it throws an exeception
+        #
+        # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
+        # @param name [string] Date dimension
+        # @return [Hash]
+        def find_date_dimension(project, name)
+          ds = date_dimensions(project).find { |d| d[:name] == name }
+          fail "Date dimension #{name} could not be found" if ds.nil?
+          ds
+        end
+
+        # Removes dataset from blueprint. Dataset can be given as either a name
+        # or a DatasetBlueprint or a Hash representation.
+        #
+        # @param project [Hash] Project blueprint
+        # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+        # @return [Hash] project with removed dataset
+        def remove_dataset(project, dataset_name)
+          dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
+          index = project[:datasets].index(dataset)
+          dupped_project = project.deep_dup
+          dupped_project[:datasets].delete_at(index)
+          dupped_project
+        end
+
+        # Removes dataset from blueprint. Dataset can be given as either a name
+        # or a DatasetBlueprint or a Hash representation. This version mutates
+        # the dataset in place
+        #
+        # @param project [Hash] Project blueprint
+        # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+        # @return [Hash] project with removed dataset
+        def remove_dataset!(project, dataset_name)
+          dataset = dataset_name.is_a?(String) ? find_dataset(project, dataset_name) : dataset_name
+          index = project[:datasets].index(dataset)
+          project[:datasets].delete_at(index)
+          project
+        end
       end
 
-      # Returns true if a dataset contains a particular dataset false otherwise
-      #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
-      # @return [Boolean]
-      def self.dataset?(project, name)
-        find_dataset(project, name)
-        true
-      rescue
-        false
-      end
-
-      # Returns dataset specified. It can check even for a date dimension
-      #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param obj [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
-      # @param options [Hash] options
-      # @return [GoodData::Model::DatasetBlueprint]
-      def self.find_dataset(project, obj, options = {})
-        include_date_dimensions = options[:include_date_dimensions] || options[:dd]
-        return obj.to_hash if DatasetBlueprint.dataset_blueprint?(obj)
-        all_datasets = if include_date_dimensions
-                         datasets(project) + date_dimensions(project)
-                       else
-                         datasets(project)
-                       end
-        name = obj.respond_to?(:key?) ? obj[:name] : obj
-        ds = all_datasets.find { |d| d[:name] == name }
-        fail "Dataset #{name} could not be found" if ds.nil?
-        ds
-      end
-
-      # Returns list of date dimensions
-      #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @return [Array<Hash>]
-      def self.date_dimensions(project)
-        project.to_hash[:date_dimensions] || []
-      end
-
-      # Returns true if a date dimension of a given name exists in a bleuprint
-      #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param name [string] Date dimension
-      # @return [Boolean]
-      def self.date_dimension?(project, name)
-        find_date_dimension(project, name)
-        true
-      rescue
-        false
-      end
-
-      # Finds a date dimension of a given name in a bleuprint. If a dataset is
-      # not found it throws an exeception
-      #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param name [string] Date dimension
-      # @return [Hash]
-      def self.find_date_dimension(project, name)
-        ds = date_dimensions(project).find { |d| d[:name] == name }
-        fail "Date dimension #{name} could not be found" if ds.nil?
-        ds
-      end
-
-      # Returns fields from all datasets
-      #
-      # @param [GoodData::Model::ProjectBlueprint | Hash] project Project blueprint
-      # @return [Array<Hash>]
-      def self.fields(project)
-        datasets(project).mapcat { |d| DatasetBlueprint.fields(d) }
-      end
 
       # Returns a dataset of a given name. If a dataset is not found it throws an exeception
       #

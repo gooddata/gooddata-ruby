@@ -8,17 +8,19 @@ require_relative 'middleware/middleware'
 module GoodData
   module Bricks
     class Pipeline
-      # Pipeline preparation code
-      def self.prepare(pipeline)
-        pipeline.reverse.reduce(nil) do |memo, app|
-          if memo.nil?
-            app.respond_to?(:new) ? (app.new) : app
-          else
-            if app.respond_to?(:new)
-              app.new(:app => memo)
+      class << self
+        # Pipeline preparation code
+        def prepare(pipeline)
+          pipeline.reverse.reduce(nil) do |memo, app|
+            if memo.nil?
+              app.respond_to?(:new) ? (app.new) : app
             else
-              app.app = memo
-              app
+              if app.respond_to?(:new)
+                app.new(:app => memo)
+              else
+                app.app = memo
+                app
+              end
             end
           end
         end
