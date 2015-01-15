@@ -61,7 +61,7 @@ module GoodData
           rescue RestClient::Forbidden => e # , RestClient::Unauthorized => e
             raise e unless options[:refresh_token]
             options[:refresh_token].call
-            retry
+            retry if (retries -= 1) > 0
           rescue RestClient::TooManyRequests
             GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
             sleep retry_time
