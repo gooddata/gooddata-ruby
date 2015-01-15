@@ -475,7 +475,7 @@ module GoodData
             temp_blueprint.add_dataset(dataset.dup)
           end
         end
-        ProjectBlueprint.new(temp_blueprint.to_hash.merge(a_blueprint.to_hash.slice(:title, :name)))
+        ProjectBlueprint.new(temp_blueprint.to_hash.merge(a_blueprint.to_hash.slice(:title, :name, :reports_master)))
       end
 
       # Duplicated blueprint
