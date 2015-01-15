@@ -58,7 +58,7 @@ module GoodData
           retry_time = 1
           begin
             return yield
-          rescue RestClient::Forbidden, RestClient::Unauthorized => e
+          rescue RestClient::Forbidden => e # , RestClient::Unauthorized => e
             raise e unless options[:refresh_token]
             options[:refresh_token].call
             retry
