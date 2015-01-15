@@ -119,8 +119,8 @@ module GoodData
           credentials = Connection.construct_login_payload(username, password)
           @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
-          @user = get(@auth['profile'])
           refresh_token :dont_reauth => true
+          @user = get(@auth['profile'])
         end
       end
 
