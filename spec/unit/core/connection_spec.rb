@@ -32,23 +32,4 @@ describe GoodData::Rest::Connection do
       c.disconnect
     end
   end
-
-  describe '#connect_with_sst' do
-    it 'Connects using SST' do
-      pending('Get SST')
-    end
-  end
-
-  describe '#create_authenticated_connection' do
-    it "Creates authenticated connection" do
-      pending('Investigate how the credentials should be passed')
-      GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
-      opts = {
-        :username => ConnectionHelper::DEFAULT_USERNAME,
-        :password => ConnectionHelper::DEFAULT_PASSWORD
-      }
-      GoodData.create_authenticated_connection(opts)
-      ConnectionHelper.disconnect
-    end
-  end
 end

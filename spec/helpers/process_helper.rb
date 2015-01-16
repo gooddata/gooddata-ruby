@@ -8,8 +8,8 @@ require 'pmap'
 require 'gooddata/models/models'
 
 module ProcessHelper
-  PROCESS_ID = 'dc143d80-58a1-4acd-96b6-8d11fc4571de'
-  DEPLOY_NAME = 'graph'
+  PROCESS_ID = '81fa71a4-69fd-4c58-aa09-66e7f53f4647'
+  DEPLOY_NAME = 'graph.grf'
 
   class << self
     def remove_old_processes(project)

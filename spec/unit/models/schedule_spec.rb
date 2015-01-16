@@ -20,7 +20,7 @@ describe GoodData::Schedule do
 
     @project = ProjectHelper.get_default_project(:client => @client)
 
-    @project_executable = './graph/graph.grf'
+    @project_executable = 'graph/graph.grf'
 
     @test_data = {
       :timezone => 'UTC',
