@@ -137,7 +137,7 @@ module GoodData
         begin
           delete url if url
         rescue RestClient::Unauthorized
-          url = nil
+          GoodData.logger.info 'Already disconnected'
         end
 
         @auth = nil
