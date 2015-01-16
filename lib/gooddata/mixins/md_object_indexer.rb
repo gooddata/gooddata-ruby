@@ -37,7 +37,19 @@ module GoodData
         # new(GoodData.get uri) unless uri.nil?
         if uri # rubocop:disable Style/GuardClause
           raw = client.get(uri)
-          client.create(self, raw, client: client, project: project)
+          md_class = self
+          case raw.keys.first
+          when 'attribute'
+              md_class = GoodData::Attribute
+          when 'report'
+            md_class = GoodData::Report
+          when 'reportDefinition'
+            md_class = GoodData::ReportDefinition
+          else
+              md_class = self
+          end
+
+          client.create(md_class, raw, client: client, project: project)
         end
       end
 
