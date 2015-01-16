@@ -133,7 +133,12 @@ module GoodData
       def disconnect
         # TODO: Wrap somehow
         url = @auth['state']
-        delete url if url
+
+        begin
+          delete url if url
+        rescue RestClient::Unauthorized
+          url = nil
+        end
 
         @auth = nil
         @server = nil
