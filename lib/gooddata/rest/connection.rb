@@ -105,8 +105,13 @@ module GoodData
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
-          at_exit { disconnect if @user }
-          @at_exit_handler_installed = true
+          begin
+            at_exit { disconnect if @user }
+          rescue RestClient::Unauthorized
+            GoodData.logger.info 'Already logged out'
+          ensure
+            @at_exit_handler_installed = true
+          end
         end
 
         # Reset old cookies first

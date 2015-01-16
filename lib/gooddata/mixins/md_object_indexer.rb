@@ -40,13 +40,13 @@ module GoodData
           md_class = self
           case raw.keys.first
           when 'attribute'
-              md_class = GoodData::Attribute
+            md_class = GoodData::Attribute
           when 'report'
             md_class = GoodData::Report
           when 'reportDefinition'
             md_class = GoodData::ReportDefinition
           else
-              md_class = self
+            md_class = self
           end
 
           client.create(md_class, raw, client: client, project: project)
