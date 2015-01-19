@@ -23,6 +23,16 @@ module GoodData
         :headers => DEFAULT_HEADERS
       }
 
+      RETRYABLE_ERRORS = [
+        RestClient::InternalServerError,
+        RestClient::RequestTimeout,
+        RestClient::MethodNotAllowed,
+        SystemCallError,
+        Timeout::Error
+      ]
+
+      RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
+
       class << self
         def construct_login_payload(username, password)
           res = {
@@ -33,6 +43,36 @@ module GoodData
             }
           }
           res
+        end
+
+        # Retry block if exception thrown
+        def retryable(options = {}, &_block)
+          opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
+
+          retry_exception, retries = opts[:on], opts[:tries]
+
+          unless retry_exception.is_a?(Array)
+            retry_exception = [retry_exception]
+          end
+
+          retry_time = 1
+          begin
+            return yield
+          rescue RestClient::Forbidden => e # , RestClient::Unauthorized => e
+            raise e unless options[:refresh_token]
+            options[:refresh_token].call
+            retry if (retries -= 1) > 0
+          rescue RestClient::TooManyRequests
+            GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
+            sleep retry_time
+            retry_time *= 1.5
+            retry
+          rescue *retry_exception => e
+            GoodData.logger.warn e.inspect
+            retry if (retries -= 1) > 0
+          end
+
+          yield
         end
       end
 
@@ -65,8 +105,13 @@ module GoodData
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
-          at_exit { disconnect if @user }
-          @at_exit_handler_installed = true
+          begin
+            at_exit { disconnect if @user }
+          rescue RestClient::Unauthorized
+            GoodData.logger.info 'Already logged out'
+          ensure
+            @at_exit_handler_installed = true
+          end
         end
 
         # Reset old cookies first
@@ -79,8 +124,8 @@ module GoodData
           credentials = Connection.construct_login_payload(username, password)
           @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
-          @user = get(@auth['profile'])
           refresh_token :dont_reauth => true
+          @user = get(@auth['profile'])
         end
       end
 
@@ -88,7 +133,12 @@ module GoodData
       def disconnect
         # TODO: Wrap somehow
         url = @auth['state']
-        delete url if url
+
+        begin
+          delete url if url
+        rescue RestClient::Unauthorized
+          GoodData.logger.info 'Already disconnected'
+        end
 
         @auth = nil
         @server = nil
@@ -156,7 +206,11 @@ module GoodData
           end
         end
 
-        process_with_tt_refresh(&b)
+        res = nil
+        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+          res = b.call
+        end
+        res
       end
 
       def refresh_token(_options = {})
@@ -254,7 +308,7 @@ module GoodData
 
       # Uploads a file to GoodData server
       def upload(file, options = {})
-        def do_stream_file(uri, filename, options = {})
+        def do_stream_file(uri, filename, _options = {})
           puts "uploading the file #{uri}"
 
           to_upload = File.new(filename)
@@ -265,16 +319,12 @@ module GoodData
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          response = http.start { |client| client.request(req) }
-          case response
-          when Net::HTTPSuccess then
-            true
-          when Net::HTTPUnauthorized
-            refresh_token
-            do_stream_file uri, filename, options
-          else
-            fail "Can't upload file to webdav. Path: #{uri}, response code: #{response.code}, response body: #{response.body}"
+
+          response = nil
+          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+            response = http.start { |client| client.request(req) }
           end
+          response
         end
 
         def webdav_dir_exists?(url)
@@ -294,7 +344,11 @@ module GoodData
             end
           end
 
-          process_with_tt_refresh(&b)
+          res = nil
+          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+            res = b.call
+          end
+          res
         end
 
         def create_webdav_dir_if_needed(url)
@@ -311,7 +365,9 @@ module GoodData
             RestClient::Request.execute(raw)
           end
 
-          process_with_tt_refresh(&b)
+          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+            b.call
+          end
         end
 
         dir = options[:directory] || ''
@@ -331,23 +387,22 @@ module GoodData
         @cookies[:cookies].merge! cookies
       end
 
-      def process_with_tt_refresh(&block)
-        block.call
-      rescue RestClient::Unauthorized
-        refresh_token
-        block.call
-      end
-
       def process_response(options = {}, &block)
-        begin
-          # Simply try again when ConnectionReset, ConnectionRefused etc.. (see e.g. MSF-7591)
-          response = GoodData::Rest::Client.retryable(:tries => 2) do
-            block.call
-          end
-        rescue RestClient::Unauthorized
-          raise $ERROR_INFO if options[:dont_reauth]
-          refresh_token
-          response = block.call
+        # begin
+        #   # Simply try again when ConnectionReset, ConnectionRefused etc.. (see e.g. MSF-7591)
+        #   response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => Proc.new { refresh_token }) do
+        #     block.call
+        #   end
+        # rescue RestClient::Unauthorized
+        #   raise $ERROR_INFO if options[:dont_reauth]
+        #   GoodData::Rest::Connection.retryable(:tries => 2) do
+        #     refresh_token
+        #     response = block.call
+        #   end
+        # end
+
+        response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+          block.call
         end
 
         merge_cookies! response.cookies

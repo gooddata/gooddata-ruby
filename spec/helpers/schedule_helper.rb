@@ -5,7 +5,7 @@ require 'pmap'
 require_relative 'process_helper'
 
 module ScheduleHelper
-  SCHEDULE_ID = '53e029bde4b035034ad4abb6'
+  SCHEDULE_ID = '54b90771e4b067429a27a549'
 
   class << self
     def remove_old_schedules(project)

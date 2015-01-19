@@ -134,6 +134,7 @@ module GoodData
           tmp['accountSettings']['items'].each do |account|
             result << client(opts).create(GoodData::Profile, account)
           end
+          break if opts[:limit] && result.length >= opts[:limit]
           uri = tmp['accountSettings']['paging']['next']
         end
 

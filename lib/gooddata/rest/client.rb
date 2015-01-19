@@ -21,15 +21,6 @@ module GoodData
       #################################
       DEFAULT_CONNECTION_IMPLEMENTATION = GoodData::Rest::Connection
 
-      RETRYABLE_ERRORS = [
-        RestClient::InternalServerError,
-        RestClient::RequestTimeout,
-        SystemCallError,
-        Timeout::Error
-      ]
-
-      RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
-
       #################################
       # Class variables
       #################################
@@ -118,28 +109,8 @@ module GoodData
         end
 
         # Retry block if exception thrown
-        def retryable(options = {}, &_block)
-          opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
-
-          retry_exception, retries = opts[:on], opts[:tries]
-
-          unless retry_exception.is_a?(Array)
-            retry_exception = [retry_exception]
-          end
-
-          retry_time = 1
-          begin
-            return yield
-          rescue RestClient::TooManyRequests
-            GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
-            sleep retry_time
-            retry_time *= 1.5
-            retry
-          rescue *retry_exception
-            retry if (retries -= 1) > 0
-          end
-
-          yield
+        def retryable(options = {}, &block)
+          GoodData::Rest::Connection.retryable(options, &block)
         end
 
         alias_method :client, :connection
@@ -277,7 +248,7 @@ module GoodData
 
         while response.code == code
           sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => 3) do
+          GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
             sleep sleep_interval
             response = get(link, :process => false)
           end
@@ -303,7 +274,7 @@ module GoodData
         response = get(link)
         while bl.call(response)
           sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => 3) do
+          GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
             sleep sleep_interval
             response = get(link)
           end
