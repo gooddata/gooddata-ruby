@@ -45,7 +45,7 @@ module GoodData
             default_label = attribute['defaultLabel']
             primary_label_name = attribute['identifier'].split('.').last
             dataset_name = attribute['identifier'].split('.')[1]
-            primary_label_identifier = GoodData::Model.identifier_for({name: dataset_name}, type: :primary_label, name: primary_label_name)
+            primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
             primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
             dl = primary_labels.map do |label|
               parse_label(attribute, label, 'anchor', default_label)
@@ -70,7 +70,7 @@ module GoodData
             default_label = attribute['defaultLabel']
             primary_label_name = attribute['identifier'].split('.').last
             dataset_name = attribute['identifier'].split('.')[1]
-            primary_label_identifier = GoodData::Model.identifier_for({name: dataset_name}, type: :primary_label, name: primary_label_name)
+            primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
             primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
             dl = primary_labels.map do |label|
               parse_label(attribute, label, 'attribute', default_label)

@@ -145,7 +145,6 @@ module GoodData
         end
       end
 
-
       # Returns a dataset of a given name. If a dataset is not found it throws an exeception
       #
       # @param [GoodData::Model::ProjectBlueprint] project Project blueprint

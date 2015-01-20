@@ -72,6 +72,5 @@ module GoodData
         metric
       end
     end
-
   end
 end

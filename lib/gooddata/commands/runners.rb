@@ -44,7 +44,6 @@ module GoodData
           end
         end
       end
-
     end
   end
 end

@@ -49,7 +49,7 @@ module GoodData
           params.merge('salesforce_client' => client)
         end
       end
-      
+
       def call(params)
         params = self.class.create_client(params)
         @app.call(params)
