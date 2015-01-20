@@ -88,7 +88,7 @@ module GoodData
 
           if client
             at_exit do
-              # puts client.connection.stats_table if client && client.connection
+              puts client.connection.stats_table if client && client.connection
             end
           end
 
@@ -140,7 +140,7 @@ module GoodData
       end
 
       def create_project(options = { title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN'] })
-        GoodData::Project.create(options.merge(client: self))
+        GoodData::Project.create({ client: self }.merge(options))
       end
 
       def create_project_from_blueprint(blueprint, options = {})
@@ -187,8 +187,12 @@ module GoodData
         nil
       end
 
-      def user
-        create(GoodData::Profile, @connection.user)
+      def user(id = nil)
+        if id
+          create(GoodData::Profile, get(id))
+        else
+          create(GoodData::Profile, @connection.user)
+        end
       end
 
       #######################

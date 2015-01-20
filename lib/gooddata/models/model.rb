@@ -6,6 +6,7 @@ require_relative 'metadata/metadata'
 
 require_relative 'links'
 require_relative 'module_constants'
+require_relative 'user_filters/user_filters'
 
 require 'fileutils'
 require 'multi_json'

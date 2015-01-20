@@ -463,6 +463,7 @@ module GoodData
       # @return [GoodData::Model::ProjectBlueprint]
       def merge(a_blueprint)
         temp_blueprint = dup
+        return temp_blueprint unless a_blueprint
         a_blueprint.datasets.each do |dataset|
           if temp_blueprint.dataset?(dataset.name)
             local_dataset = temp_blueprint.find_dataset(dataset.name)
@@ -523,6 +524,14 @@ module GoodData
       # @return [Hash] a title
       def to_hash
         @data
+      end
+
+      def ==(other)
+        to_hash == other.to_hash
+      end
+
+      def eql?(other)
+        to_hash == other.to_hash
       end
     end
   end

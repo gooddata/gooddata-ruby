@@ -59,7 +59,7 @@ module GoodData
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         tmp = c.get "/gdc/projects/#{project.pid}/schedules"
-        tmp['schedules']['items'].map { |schedule| c.create(GoodData::Schedule, schedule) }
+        tmp['schedules']['items'].map { |schedule| c.create(GoodData::Schedule, schedule, project: project) }
       end
 
       # Creates new schedules from parameters passed
@@ -362,7 +362,7 @@ module GoodData
             'reschedule' => @json['schedule']['reschedule'] || 0
           }
         }
-        res = GoodData.put uri, update_json
+        res = client.put(uri, update_json)
         @json = res
         @dirty = false
         return true

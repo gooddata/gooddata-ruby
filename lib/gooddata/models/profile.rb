@@ -68,26 +68,13 @@ module GoodData
         c.factory.create(Profile, response)
       end
 
-      # Apply changes to object.
-      #
-      # @param obj [GoodData::Profile] Object to be modified
-      # @param changes [Hash] Hash with modifications
-      # @return [GoodData::Profile] Modified object
-      def apply(obj, changes)
-        changes.each do |param, val|
-          next unless ASSIGNABLE_MEMBERS.include? param
-          obj.send("#{param}=", val)
-        end
-        obj
-      end
-
       # Creates new instance from hash with attributes
       #
       # @param attributes [Hash] Hash with initial attributes
       # @return [GoodData::Profile] New profile instance
       def create(attributes)
         json = EMPTY_OBJECT.dup
-        res = GoodData::Profile.new(json)
+        res = client.create(GoodData::Profile, json)
 
         attributes.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
@@ -97,62 +84,20 @@ module GoodData
         res
       end
 
+      def diff(item_1, item_2)
+        x = diff_list([item_1], [item_2])
+        return {} if x[:changed].empty?
+        x[:changed].first[:diff]
+      end
+
+      def diff_list(list_1, list_2)
+        GoodData::Helpers.diff(list_1, list_2, key: :login)
+      end
+
       # Gets user currently logged in
       # @return [GoodData::Profile] User currently logged-in
       def current
-        GoodData.connection.user
-      end
-
-      # Gets hash representing diff of profiles
-      #
-      # @param user1 [GoodData::Profile] Original user
-      # @param user2 [GoodData::Profile] User to compare with
-      # @return [Hash] Hash representing diff
-      def diff(user1, user2)
-        res = {}
-        ASSIGNABLE_MEMBERS.each do |k|
-          l_value = user1.send("#{k}")
-          r_value = user2.send("#{k}")
-          res[k] = r_value if l_value != r_value
-        end
-        res
-      end
-
-      def diff_list(list1, list2)
-        tmp = Hash[list1.map { |v| [v.email, v] }]
-
-        res = {
-          :added => [],
-          :removed => [],
-          :changed => []
-        }
-
-        list2.each do |user_new|
-          user_existing = tmp[user_new.email]
-          if user_existing.nil?
-            res[:added] << user_new
-            next
-          end
-
-          next if user_existing == user_new
-
-          diff = self.diff(user_existing, user_new)
-          res[:changed] << {
-            :user => user_existing,
-            :diff => diff
-          }
-        end
-
-        tmp = Hash[list2.map { |v| [v.email, v] }]
-        list1.each do |user_existing|
-          user_new = tmp[user_existing.email]
-          if user_new.nil?
-            res[:removed] << user_existing
-            next
-          end
-        end
-
-        res
+        client.user
       end
     end
 
@@ -169,13 +114,8 @@ module GoodData
     # @param [GoodData::Profile] other Project to compare with
     # @return [Boolean] True if same else false
     def ==(other)
-      res = true
-      ASSIGNABLE_MEMBERS.each do |k|
-        l_val = send("#{k}")
-        r_val = other.send("#{k}")
-        res = false if l_val != r_val
-      end
-      res
+      return false unless other.respond_to?(:to_hash)
+      to_hash == other.to_hash
     end
 
     # Checks objects for non-equality
@@ -190,9 +130,9 @@ module GoodData
     #
     # @param [Hash] changes Hash with modifications
     # @return [GoodData::Profile] Modified object
-    def apply(changes)
-      GoodData::Profile.apply(self, changes)
-    end
+    # def apply(changes)
+    #   GoodData::Profile.apply(self, changes)
+    # end
 
     # Gets the company name
     #
@@ -381,10 +321,11 @@ module GoodData
       raw = @json.dup
       raw['accountSetting'].delete('login')
 
-      if uri && !uri.empty?
-        url = "/gdc/account/profile/#{obj_id}"
-        @json = GoodData.put url, raw
-        @dirty = false
+        if uri && !uri.empty?
+          url = "/gdc/account/profile/#{obj_id}"
+          @json = client.put url, raw
+          @dirty = false
+        end
       end
       true
     end
@@ -416,17 +357,42 @@ module GoodData
     #
     # @return [String] Resource URI
     def uri
-      @json['accountSetting']['links']['self']
+      GoodData::Helpers.get_path(@json, %w(accountSetting links self))
+      # @json['accountSetting']['links']['self']
     end
 
-    private
+    def data
+      data = @json || {}
+      data['accountSetting'] || {}
+    end
 
-    # Initialize object from wire JSON
-    # @return [GoodData::Profile] New profile instance
-    def initialize(json)
-      @json = json
-      @user = @json['accountSetting']['firstName'] + ' ' + @json['accountSetting']['lastName']
-      self
+    def links
+      data['links'] || {}
+    end
+
+    def content
+      keys = (data.keys - ['links'])
+      data.slice(*keys)
+    end
+
+    def name
+      (first_name || '') + (last_name || '')
+    end
+
+    def to_hash
+      tmp = content.merge(uri: uri).symbolize_keys
+      [
+        [:companyName, :company],
+        [:phoneNumber, :phone],
+        [:firstName, :first_name],
+        [:lastName, :last_name],
+        [:authenticationModes, :authentication_modes]
+      ].each do |vals|
+        wire, rb = vals
+        tmp[rb] = tmp[wire]
+        tmp.delete(wire)
+      end
+      tmp
     end
   end
 end

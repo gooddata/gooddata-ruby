@@ -44,6 +44,12 @@ module GoodData
         }
       end
 
+      def create_filters_part(filters)
+        filters.select { |f| f.class == GoodData::Variable }.map do |v|
+          { expression: "[#{v.uri}]" }
+        end
+      end
+
       def create_part(stuff)
         stuff = Array(stuff)
         parts = stuff.reduce([]) do |memo, item|
@@ -146,7 +152,6 @@ module GoodData
           }
         }
         uri = "/gdc/app/projects/#{project.pid}/execute"
-
         client.post(uri, data)
       end
 
@@ -170,6 +175,13 @@ module GoodData
         end
       end
 
+      # Return true if the report definition is a chart
+      #
+      # @return [Boolean] Return true if report definition is a chart
+      def chart?
+        !table?
+      end
+
       def create(options = { :client => GoodData.connection, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
@@ -182,6 +194,7 @@ module GoodData
 
         left = Array(options[:left])
         top = Array(options[:top])
+        filters = options[:filters] || []
 
         left = ReportDefinition.find(left, options)
         top = ReportDefinition.find(top, options)
@@ -204,7 +217,7 @@ module GoodData
                 'rows' => ReportDefinition.create_part(left)
               },
               'format' => 'grid',
-              'filters' => []
+              'filters' => ReportDefinition.create_filters_part(filters)
             },
             'meta' => {
               'tags' => '',
@@ -372,6 +385,13 @@ module GoodData
         content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub(uri_what, uri_for_what) } }
       end
       self
+    end
+
+    # Return true if the report definition is a table
+    #
+    # @return [Boolean] Return true if report definition is a table
+    def table?
+      content['format'] == 'grid'
     end
   end
 end

@@ -28,7 +28,7 @@ GoodData::CLI.module_eval do
 
     c.desc 'Params file path. Inside should be hash of key values. These params override any defaults given in bricks.'
     c.default_value nil
-    c.flag [:params]
+    c.flag [:params, :paramfile]
 
     c.desc 'Remote system credentials file path. Inside should be hash of key values.'
     c.default_value nil
@@ -53,6 +53,7 @@ GoodData::CLI.module_eval do
                                   else
                                     { 'config' => {} }
                                   end
+
       # if there are some GDC_* params in config, put them on the level above
       gdc_params = options[:expanded_params]['config'].select { |k, _| k =~ /GDC_.*/ }
       options[:expanded_params].merge!(gdc_params)

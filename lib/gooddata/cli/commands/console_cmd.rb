@@ -27,7 +27,7 @@ GoodData::CLI.module_eval do
         puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
         binding.pry(:quiet => true,
                     :prompt => [proc do |_target_self, _nest_level, _pry|
-                      'sdk_live_sesion: '
+                      'sdk_live_session: '
                     end])
       end
       client.disconnect

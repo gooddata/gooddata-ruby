@@ -9,7 +9,7 @@ module GoodData
   module Model
     class ProjectCreator
       class << self
-        def migrate(opts = { :client => GoodData.connection, :project => GoodData.project })
+        def migrate(opts = { client: GoodData.connection, project: GoodData.project })
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
