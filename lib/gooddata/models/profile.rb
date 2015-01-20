@@ -52,7 +52,7 @@ module GoodData
       # @param [Hash] opts Additional optional options
       # @option opts [GoodData::Rest::Client] :client Client used for communication with server
       # @return GoodData::Profile User Profile
-      def [](id, opts = { client: GoodData.connection })
+      def [](id, opts = {client: GoodData.connection})
         return id if id.instance_of?(GoodData::Profile) || id.respond_to?(:profile?) && id.profile?
 
         if id.to_s !~ %r{^(\/gdc\/account\/profile\/)?[a-zA-Z\d]+$}
@@ -321,78 +321,78 @@ module GoodData
       raw = @json.dup
       raw['accountSetting'].delete('login')
 
-        if uri && !uri.empty?
-          url = "/gdc/account/profile/#{obj_id}"
-          @json = client.put url, raw
-          @dirty = false
-        end
+      if uri && !uri.empty?
+        url = "/gdc/account/profile/#{obj_id}"
+        @json = client.put url, raw
+        @dirty = false
       end
-      true
     end
 
-    # Gets the preferred timezone
-    #
-    # @return [String] Preferred timezone
-    def timezone
-      @json['accountSetting']['timezone'] || ''
-    end
+    true
+  end
 
-    # Set the timezone
-    #
-    # @param [String] val Timezone to be set
-    # @return [String] New timezone
-    def timezone=(val)
-      @dirty ||= timezone != val
-      @json['accountSetting']['timezone'] = val
-    end
+  # Gets the preferred timezone
+  #
+  # @return [String] Preferred timezone
+  def timezone
+    @json['accountSetting']['timezone'] || ''
+  end
 
-    # Gets the date when updated
-    #
-    # @return [DateTime] Updated date
-    def updated
-      DateTime.parse(@json['accountSetting']['updated'])
-    end
+  # Set the timezone
+  #
+  # @param [String] val Timezone to be set
+  # @return [String] New timezone
+  def timezone=(val)
+    @dirty ||= timezone != val
+    @json['accountSetting']['timezone'] = val
+  end
 
-    # Gets the resource REST URI
-    #
-    # @return [String] Resource URI
-    def uri
-      GoodData::Helpers.get_path(@json, %w(accountSetting links self))
-      # @json['accountSetting']['links']['self']
-    end
+  # Gets the date when updated
+  #
+  # @return [DateTime] Updated date
+  def updated
+    DateTime.parse(@json['accountSetting']['updated'])
+  end
 
-    def data
-      data = @json || {}
-      data['accountSetting'] || {}
-    end
+  # Gets the resource REST URI
+  #
+  # @return [String] Resource URI
+  def uri
+    GoodData::Helpers.get_path(@json, %w(accountSetting links self))
+    # @json['accountSetting']['links']['self']
+  end
 
-    def links
-      data['links'] || {}
-    end
+  def data
+    data = @json || {}
+    data['accountSetting'] || {}
+  end
 
-    def content
-      keys = (data.keys - ['links'])
-      data.slice(*keys)
-    end
+  def links
+    data['links'] || {}
+  end
 
-    def name
-      (first_name || '') + (last_name || '')
-    end
+  def content
+    keys = (data.keys - ['links'])
+    data.slice(*keys)
+  end
 
-    def to_hash
-      tmp = content.merge(uri: uri).symbolize_keys
-      [
-        [:companyName, :company],
-        [:phoneNumber, :phone],
-        [:firstName, :first_name],
-        [:lastName, :last_name],
-        [:authenticationModes, :authentication_modes]
-      ].each do |vals|
-        wire, rb = vals
-        tmp[rb] = tmp[wire]
-        tmp.delete(wire)
-      end
-      tmp
+  def name
+    (first_name || '') + (last_name || '')
+  end
+
+  def to_hash
+    tmp = content.merge(uri: uri).symbolize_keys
+    [
+      [:companyName, :company],
+      [:phoneNumber, :phone],
+      [:firstName, :first_name],
+      [:lastName, :last_name],
+      [:authenticationModes, :authentication_modes]
+    ].each do |vals|
+      wire, rb = vals
+      tmp[rb] = tmp[wire]
+      tmp.delete(wire)
     end
+    tmp
   end
 end
