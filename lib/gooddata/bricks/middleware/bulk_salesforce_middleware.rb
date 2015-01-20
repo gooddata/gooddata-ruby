@@ -9,18 +9,20 @@ module GoodData
     class BulkSalesforceMiddleware < Bricks::Middleware
       DEFAULT_VERSION = '29.0'
 
-      def self.create_client(params)
-        salesforce = nil
-        if params['salesforce_client']
+      class << self
+        def create_client(params)
+          salesforce = nil
+          if params['salesforce_client']
 
-          client = params['salesforce_client']
-          client.authenticate!
+            client = params['salesforce_client']
+            client.authenticate!
 
-          salesforce = SalesforceBulkQuery::Api.new(client, :logger => params['GDC_LOGGER'])
-          # SalesforceBulkQuery adds its own Restforce logging so turn it off
-          Restforce.log = false if params['GDC_LOGGER']
+            salesforce = SalesforceBulkQuery::Api.new(client, :logger => params['GDC_LOGGER'])
+            # SalesforceBulkQuery adds its own Restforce logging so turn it off
+            Restforce.log = false if params['GDC_LOGGER']
+          end
+          params.merge('salesforce_bulk_client' => salesforce)
         end
-        params.merge('salesforce_bulk_client' => salesforce)
       end
 
       def call(params)

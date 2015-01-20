@@ -277,7 +277,7 @@ module GoodData
 
       # Reader method for SST token
       #
-      # @return uri [String] SST token
+      # @return [String] SST token
       def sst_token
         cookies[:cookies]['GDCAuthSST']
       end
@@ -301,7 +301,7 @@ module GoodData
 
       # Reader method for TT token
       #
-      # @return uri [String] TT token
+      # @return [String] TT token
       def tt_token
         cookies[:cookies]['GDCAuthTT']
       end

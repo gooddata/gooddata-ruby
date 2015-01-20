@@ -6,148 +6,152 @@ module GoodData
   module Model
     class DatasetBlueprint
       attr_accessor :data
-      # Checks if a dataset has an anchor.
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Boolean] returns true if dataset has an anchor
-      def self.anchor?(dataset)
-        columns(dataset).any? { |c| c[:type].to_s == 'anchor' }
-      end
 
-      # Returns anchor of a dataset
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Hash] returns the anchor or nil
-      def self.anchor(dataset)
-        find_column_by_type(dataset, :anchor, :first)
-      end
-
-      # Returns attributes of a dataset
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Array<Hash>] returns the attribute or an empty array
-      def self.attributes(dataset)
-        find_column_by_type(dataset, :attribute, :all)
-      end
-
-      # Returns all labels that is referenced by a label
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Array<Hash>] returns the labels or an empty array
-      def self.attribute_for_label(dataset, label)
-        find_column_by_type(dataset, [:attribute, :anchor], :all).find { |a| label[:reference] == a[:name] }
-      end
-
-      # Returns all the fields of a dataset. This means facts, attributes, references
-      #
-      # @param ds [Hash] Dataset blueprint
-      # @return [Boolean]
-      def self.columns(ds)
-        ds[:columns] || []
-      end
-      singleton_class.send(:alias_method, :fields, :columns)
-
-      # Tells you if the object is a dataset. It consumes both Hash represenation
-      # or the GoodData::Model::DatasetBlueprint
-      #
-      # @param ds [Object] Value to be tested
-      # @return [Boolean]
-      def self.dataset_blueprint?(ds)
-        if ds.is_a?(DatasetBlueprint)
-          true
-        elsif ds.respond_to?(:[]) && ds.is_a?(Hash) && ds[:type].to_sym == :dataset
-          true
-        else
-          false
+      class << self
+        # Checks if a dataset has an anchor.
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Boolean] returns true if dataset has an anchor
+        def anchor?(dataset)
+          columns(dataset).any? { |c| c[:type].to_s == 'anchor' }
         end
-      end
 
-      # Returns date facts of a dataset
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Array<Hash>] returns the attribute or an empty array
-      def self.date_facts(dataset)
-        find_column_by_type(dataset, :date_fact, :all)
-      end
-
-      # Returns label that is marked as default for a particular attribtue.
-      # This does not necessarily need to be the first one. This is a default label
-      # in terms of what is displayed on the UI
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Array<Hash>] returns the labels or an empty array
-      def self.default_label_for_attribute(dataset, attribute)
-        default_label = labels_for_attribute(dataset, attribute).find { |l| l[:default_label] == true }
-        default_label || attribute
-      end
-
-      # Returns facts of a dataset
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Array<Hash>] returns the attribute or an empty array
-      def self.facts(dataset)
-        find_column_by_type(dataset, [:fact, :date_fact], :all)
-      end
-
-      # Finds a specific column given a name
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @param name [String] Name of a field
-      # @param all [Symbol] if :all is passed all mathching objects are returned
-      # Otherwise only the first one is
-      # @return [Array<Hash>] matching fields
-      def self.find_column_by_name(dataset, name, all = nil)
-        if all == :all
-          columns(dataset).select { |c| c[:name].to_s == name }
-        else
-          columns(dataset).find { |c| c[:name].to_s == name }
+        # Returns anchor of a dataset
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Hash] returns the anchor or nil
+        def anchor(dataset)
+          find_column_by_type(dataset, :anchor, :first)
         end
-      end
 
-      # Returns all the fields of a specified type. You can specify more types
-      # as an array if you need more than one type.
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @param type [String | Symbol | Array[Symmbol] | Array[String]] Type or types you would like to get
-      # @param all [Symbol] if :all is passed
-      # as third parameter it return all object otherwise it returns the first one
-      # @return [Array<Hash>] matching fields
-      def self.find_column_by_type(dataset, type, all = nil)
-        types = if type.is_a?(Enumerable)
-                  type
-                else
-                  [type]
-                end
-        if all == :all
-          columns(dataset).select { |c| types.any? { |t| t.to_s == c[:type].to_s } }
-        else
-          columns(dataset).find { |c| types.any? { |t| t.to_s == c[:type].to_s } }
+        # Returns attributes of a dataset
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Array<Hash>] returns the attribute or an empty array
+        def attributes(dataset)
+          find_column_by_type(dataset, :attribute, :all)
         end
-      end
 
-      # Returns labels facts of a dataset
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Array<Hash>] returns the label or an empty array
-      def self.labels(dataset)
-        find_column_by_type(dataset, :label, :all)
-      end
+        # Returns all labels that is referenced by a label
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Array<Hash>] returns the labels or an empty array
+        def attribute_for_label(dataset, label)
+          find_column_by_type(dataset, [:attribute, :anchor], :all).find { |a| label[:reference] == a[:name] }
+        end
 
-      # Returns labels for a particular attribute
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @param attribute [Hash] Attribute
-      # @return [Array<Hash>] returns the labels or an empty array
-      def self.labels_for_attribute(dataset, attribute)
-        labels(dataset).select { |l| l[:reference] == attribute[:name] }
-      end
+        # Returns all the fields of a dataset. This means facts, attributes, references
+        #
+        # @param ds [Hash] Dataset blueprint
+        # @return [Boolean]
+        def columns(ds)
+          ds[:columns] || []
+        end
 
-      # Returns references of a dataset
-      #
-      # @param dataset [Hash] Dataset blueprint
-      # @return [Array<Hash>] returns the references or an empty array
-      def self.references(dataset)
-        find_column_by_type(dataset, [:reference, :date], :all)
+        alias_method :fields, :columns
+
+        # Tells you if the object is a dataset. It consumes both Hash represenation
+        # or the GoodData::Model::DatasetBlueprint
+        #
+        # @param ds [Object] Value to be tested
+        # @return [Boolean]
+        def dataset_blueprint?(ds)
+          if ds.is_a?(DatasetBlueprint)
+            true
+          elsif ds.respond_to?(:[]) && ds.is_a?(Hash) && ds[:type].to_sym == :dataset
+            true
+          else
+            false
+          end
+        end
+
+        # Returns date facts of a dataset
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Array<Hash>] returns the attribute or an empty array
+        def date_facts(dataset)
+          find_column_by_type(dataset, :date_fact, :all)
+        end
+
+        # Returns label that is marked as default for a particular attribtue.
+        # This does not necessarily need to be the first one. This is a default label
+        # in terms of what is displayed on the UI
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Array<Hash>] returns the labels or an empty array
+        def default_label_for_attribute(dataset, attribute)
+          default_label = labels_for_attribute(dataset, attribute).find { |l| l[:default_label] == true }
+          default_label || attribute
+        end
+
+        # Returns facts of a dataset
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Array<Hash>] returns the attribute or an empty array
+        def facts(dataset)
+          find_column_by_type(dataset, [:fact, :date_fact], :all)
+        end
+
+        # Finds a specific column given a name
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @param name [String] Name of a field
+        # @param all [Symbol] if :all is passed all mathching objects are returned
+        # Otherwise only the first one is
+        # @return [Array<Hash>] matching fields
+        def find_column_by_name(dataset, name, all = nil)
+          if all == :all
+            columns(dataset).select { |c| c[:name].to_s == name }
+          else
+            columns(dataset).find { |c| c[:name].to_s == name }
+          end
+        end
+
+        # Returns all the fields of a specified type. You can specify more types
+        # as an array if you need more than one type.
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @param type [String | Symbol | Array[Symmbol] | Array[String]] Type or types you would like to get
+        # @param all [Symbol] if :all is passed
+        # as third parameter it return all object otherwise it returns the first one
+        # @return [Array<Hash>] matching fields
+        def find_column_by_type(dataset, type, all = nil)
+          types = if type.is_a?(Enumerable)
+                    type
+                  else
+                    [type]
+                  end
+          if all == :all
+            columns(dataset).select { |c| types.any? { |t| t.to_s == c[:type].to_s } }
+          else
+            columns(dataset).find { |c| types.any? { |t| t.to_s == c[:type].to_s } }
+          end
+        end
+
+        # Returns labels facts of a dataset
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Array<Hash>] returns the label or an empty array
+        def labels(dataset)
+          find_column_by_type(dataset, :label, :all)
+        end
+
+        # Returns labels for a particular attribute
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @param attribute [Hash] Attribute
+        # @return [Array<Hash>] returns the labels or an empty array
+        def labels_for_attribute(dataset, attribute)
+          labels(dataset).select { |l| l[:reference] == attribute[:name] }
+        end
+
+        # Returns references of a dataset
+        #
+        # @param dataset [Hash] Dataset blueprint
+        # @return [Array<Hash>] returns the references or an empty array
+        def references(dataset)
+          find_column_by_type(dataset, [:reference, :date], :all)
+        end
       end
 
       # Returns anchor of a dataset
@@ -178,7 +182,7 @@ module GoodData
       # Changes the dataset through a builder. You provide a block with an istance of
       # GoodData::Model::SchemaBuilder and you
       #
-      # @param dataset [Hash] Dataset blueprint
+      # @yield [Hash] Dataset blueprint
       # @return [Array<Hash>] returns the labels or an empty array
       def change(&block)
         builder = SchemaBuilder.create_from_data(self)
@@ -226,7 +230,7 @@ module GoodData
       # Compares two blueprints. This is done by comapring the hash represenatation.
       # It has to be exacty identical including the order of the columns
       #
-      # @param name [GoodData::Model::DatasetBlueprint] Name of a field
+      # @param [GoodData::Model::DatasetBlueprint] other Name of a field
       # @return [Boolean] matching fields
       def eql?(other)
         to_hash == other.to_hash
@@ -241,8 +245,8 @@ module GoodData
 
       # Finds a specific column given a name
       #
-      # @param name [String] Name of a field
-      # @param all [Symbol] if :all is passed all mathching objects are returned
+      # @param [String] type Name of a field
+      # @param [Symbol] all if :all is passed all matching objects are returned
       # Otherwise only the first one is
       # @return [Array<Hash>] matching fields
       def find_column_by_name(type, all = :all)
@@ -269,15 +273,14 @@ module GoodData
 
       # Creates a DatasetBlueprint
       #
-      # @param dataset [Hash] Dataset blueprint
+      # @param [Hash] data Dataset blueprint
       # @return [DatasetBlueprint] returns the labels or an empty array
-      def initialize(init_data)
-        @data = init_data
+      def initialize(data)
+        @data = data
       end
 
       # Returns labels facts of a dataset
       #
-      # @param dataset [Hash] Dataset blueprint
       # @return [Array<Hash>] returns the label or an empty array
       def labels
         DatasetBlueprint.labels(to_hash)
@@ -374,7 +377,7 @@ module GoodData
       # Compares two blueprints. This is done by comapring the hash represenatation.
       # It has to be exacty identical including the order of the columns
       #
-      # @param name [GoodData::Model::DatasetBlueprint] Name of a field
+      # @param [GoodData::Model::DatasetBlueprint] other Name of a field
       # @return [Boolean] matching fields
       def ==(other)
         to_hash == other.to_hash

@@ -1,0 +1,22 @@
+--template-path doc/templates
+--plugin rspec
+--template default
+--protected
+--no-private
+--verbose
+--markup markdown
+--markup-provider redcarpet
+--asset doc/css:css
+--asset doc/images:images
+--asset doc/js:js
+--readme doc/pages/HOMEPAGE.md
+--hide-void-return
+--exclude LICENSE
+--no-cache
+--output-dir doc/html
+lib/**/*.rb
+ext/**/*{.m,.c}
+spec/**/*_spec.rb
+-
+README.md
+doc/pages/**/*.md
