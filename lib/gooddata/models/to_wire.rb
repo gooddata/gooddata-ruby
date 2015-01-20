@@ -138,8 +138,8 @@ module GoodData
           diffRequest: {
             targetModel: {
               projectModel: {
-                datasets: what[:datasets].map { |d| dataset_to_wire(what, d) },
-                dateDimensions: what[:date_dimensions].map { |d| date_dimensions_to_wire(what, d) }
+                datasets: (what[:datasets] || []).map { |d| dataset_to_wire(what, d) },
+                dateDimensions: (what[:date_dimensions] || []).map { |d| date_dimensions_to_wire(what, d) }
               }
             }
           }

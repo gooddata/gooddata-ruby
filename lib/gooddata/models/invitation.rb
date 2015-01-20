@@ -8,11 +8,6 @@ module GoodData
       @json = json
     end
 
-    def author
-      data = client.get @json['invitation']['meta']['author']
-      client.create GoodData::AccountSettings, data
-    end
-
     def contributor
       data = client.get @json['invitation']['meta']['contributor']
       client.create GoodData::AccountSettings, data

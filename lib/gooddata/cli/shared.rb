@@ -5,6 +5,7 @@ require 'gli'
 require_relative '../version'
 require_relative '../core/core'
 require_relative '../extensions/extensions'
+require_relative '../exceptions/exceptions'
 
 include GLI::App
 

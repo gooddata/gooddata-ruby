@@ -27,7 +27,7 @@ module GoodData
     #
     # ### Examples
     #
-    #     GoodData.post '/gdc/projects', { ... }
+    #     client.post '/gdc/projects', { ... }
     #
     def post(path, data = {}, options = {})
       connection.post path, data, options
@@ -44,7 +44,7 @@ module GoodData
     #
     # ### Examples
     #
-    #     GoodData.put '/gdc/projects', { ... }
+    #     client.put '/gdc/projects', { ... }
     #
     def put(path, data, options = {})
       connection.put path, data, options
