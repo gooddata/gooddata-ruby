@@ -14,7 +14,7 @@ module GoodData
 
       # Returns which objects uses this MD resource
       def usedby(key = nil, opts = { :client => client, :project => project })
-        dependency("#{project.md['usedby2']}/#{obj_id}", key, opts)
+        dependency("#{project.md['usedby2']}/#{obj_id}", key, {:client => client, :project => project}.merge(opts))
       end
 
       alias_method :used_by, :usedby
