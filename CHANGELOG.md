@@ -1,6 +1,6 @@
 # GoodData Ruby SDK Changelog
 
-## 0.6.12 (in progress)
+## 0.6.12
 
 - Ability to create a Data Warehouse (ADS) 
 - Retry all requests 3 times when SystemCallError, RestClient::InternalServerError or RestClient::RequestTimeout
