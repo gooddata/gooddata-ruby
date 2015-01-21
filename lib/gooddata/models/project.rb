@@ -256,7 +256,7 @@ module GoodData
       end
     end
 
-    def dimensions(id: :all)
+    def dimensions(id = :all)
       GoodData::Dimension[id, client: client, project: self]
     end
 

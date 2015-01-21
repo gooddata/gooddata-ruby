@@ -203,7 +203,7 @@ module GoodData
         @stats = true
       end
 
-      def stats_on?
+      def stats_on? # rubocop:disable Style/TrivialAccessors
         @stats
       end
 

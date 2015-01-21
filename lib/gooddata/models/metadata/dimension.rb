@@ -16,7 +16,7 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {:client => GoodData.connection, :project => GoodData.project})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('dimensions', Dimension, options)
       end
 
@@ -26,11 +26,11 @@ module GoodData
       #  - /gdc/projects/<id>
       #  - <id>
       #
-      def [](id, opts = {client: GoodData.connection})
+      def [](id, opts = { client: GoodData.connection })
         return id if id.instance_of?(GoodData::Dimension) || id.respond_to?(:dimension?) && id.dimension?
 
         if id == :all
-          Dimension.all({client: GoodData.connection}.merge(opts))
+          Dimension.all({ client: GoodData.connection }.merge(opts))
         else
           uri = id
 
@@ -45,7 +45,7 @@ module GoodData
 
     def attributes
       content['attributes'].map do |attribute|
-        client.create(Attribute, { 'attribute' => attribute}, project: project)
+        client.create(Attribute, { 'attribute' => attribute }, project: project)
       end
     end
   end
