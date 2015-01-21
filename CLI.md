@@ -259,7 +259,7 @@ Shows basic info about a project
 tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb project show
 {"content"=>
   {"cluster"=>"",
-   "authorizationToken"=>"INTNA000000SRVS",
+   "authorizationToken"=>"IOUYYUY8786",
    "guidedNavigation"=>"1",
    "isPublic"=>"0",
    "driver"=>"Pg",

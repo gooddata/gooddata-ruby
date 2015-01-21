@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
 require_relative '../extensions/big_decimal'
-
 require_relative '../rest/object'
 
 module GoodData

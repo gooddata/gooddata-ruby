@@ -28,67 +28,36 @@ module GoodData
       # @param obj [GoodData::User] Object to be modified
       # @param changes [Hash] Hash with modifications
       # @return [GoodData::User] Modified object
-      def apply(obj, changes)
-        changes.each do |param, val|
-          next unless ASSIGNABLE_MEMBERS.include? param
-          obj.send("#{param}=", val)
-        end
-        obj
-      end
-
-      # Gets hash representing diff of users
-      #
-      # @param user1 [GoodData::User] Original user
-      # @param user2 [GoodData::User] User to compare with
-      # @return [Hash] Hash representing diff
-      def diff(user1, user2)
-        res = {}
-        ASSIGNABLE_MEMBERS.each do |k|
-          l_value = user1.send("#{k}")
-          r_value = user2.send("#{k}")
-          res[k] = r_value if l_value != r_value
-        end
-        res
-      end
-
-      def diff_list(list1, list2)
-        tmp = Hash[list1.map { |v| [v.email, v] }]
-
-        res = {
-          :added => [],
-          :removed => [],
-          :changed => [],
-          :same => []
+      # def apply(obj, changes)
+      #   changes.each do |param, val|
+      #     next unless ASSIGNABLE_MEMBERS.include? param
+      #     obj.send("#{param}=", val)
+      #   end
+      #   obj
+      # end
+      def create(data, options = { client: GoodData.connection })
+        c = client(options)
+        json = {
+          'user' => {
+            'content' => {
+              'email' => data[:email] || data[:login],
+              'login' => data[:login],
+              'firstname' => data[:first_name],
+              'lastname' => data[:last_name],
+              'userRoles' => ['editor'],
+              'password' => data[:password],
+              'domain' => data[:domain],
+              # And following lines are even much more ugly hack
+              # 'authentication_modes' => ['sso', 'password']
+            },
+            'meta' => {}
+          }
         }
+        c.create(self, json)
+      end
 
-        list2.each do |user_new|
-          user_existing = tmp[user_new.email]
-          if user_existing.nil?
-            res[:added] << user_new
-            next
-          end
-
-          if user_existing != user_new
-            diff = self.diff(user_existing, user_new)
-            res[:changed] << {
-              :user => user_existing,
-              :diff => diff
-            }
-          else
-            res[:same] << user_existing
-          end
-        end
-
-        tmp = Hash[list2.map { |v| [v.email, v] }]
-        list1.each do |user_existing|
-          user_new = tmp[user_existing.email]
-          if user_new.nil?
-            res[:removed] << user_existing
-            next
-          end
-        end
-
-        res
+      def diff_list(list_1, list_2)
+        GoodData::Helpers.diff(list_1, list_2, key: :login)
       end
     end
 
@@ -101,13 +70,15 @@ module GoodData
     # @param right [GoodData::User] Project to compare with
     # @return [Boolean] True if same else false
     def ==(other)
-      res = true
-      ASSIGNABLE_MEMBERS.each do |k|
-        l_val = send("#{k}")
-        r_val = other.send("#{k}")
-        res = false if l_val != r_val
-      end
-      res
+      return false unless other.respond_to?(:to_hash)
+      to_hash == other.to_hash
+      # res = true
+      # ASSIGNABLE_MEMBERS.each do |k|
+      #   l_val = send("#{k}")
+      #   r_val = other.send("#{k}")
+      #   res = false if l_val != r_val
+      # end
+      # res
     end
 
     # Checks objects for non-equality
@@ -122,18 +93,9 @@ module GoodData
     #
     # @param changes [Hash] Hash with modifications
     # @return [GoodData::User] Modified object
-    def apply(changes)
-      GoodData::User.apply(self, changes)
-    end
-
-    # Gets author (person who created)  of this object
-    #
-    # @return [String] Author
-    def author
-      url = @json['user']['meta']['author']
-      data = client.get url
-      client.factory.create(GoodData::Membership, data)
-    end
+    # def apply(changes)
+    #   GoodData::User.apply(self, changes)
+    # end
 
     # Gets the contributor
     #
@@ -149,6 +111,13 @@ module GoodData
     # @return [DateTime] Created date
     def created
       Time.parse(@json['user']['meta']['created'])
+    end
+
+    # Is the member deleted?
+    #
+    # @return [Boolean] true if he is deleted
+    def deleted?
+      !(login =~ /^deleted-/).nil?
     end
 
     # Gets hash representing diff of users
@@ -275,11 +244,11 @@ module GoodData
       @json['user']['links']['self']
     end
 
-    # Gets project which this membership relates to
-    def project
-      raw = client.get project_url
-      client.factory.create(GoodData::Project, raw)
-    end
+    # # Gets project which this membership relates to
+    # def project
+    #   raw = client.get project_url
+    #   client.factory.create(GoodData::Project, raw)
+    # end
 
     # Gets project id
     def project_id
@@ -304,15 +273,19 @@ module GoodData
     end
 
     # Gets first role
+    #
+    # @return [GoodData::ProjectRole] Array of project roles
     def role
-      roles.first
+      roles && roles.first
     end
 
     # Gets the project roles of user
     #
     # @return [Array<GoodData::ProjectRole>] Array of project roles
     def roles
-      tmp = client.get @json['user']['links']['roles']
+      roles_link = GoodData::Helpers.get_path(@json, %w(user links roles))
+      return unless roles_link
+      tmp = client.get roles_link
       tmp['associatedRoles']['roles'].pmap do |role_uri|
         role = client.get role_uri
         client.factory.create(GoodData::ProjectRole, role)
@@ -358,21 +331,75 @@ module GoodData
     #
     # @return [String] Object URI
     def uri
-      @json['user']['links']['self']
+      links['self']
     end
 
     # Enables membership
     #
-    # @return result from post execution
+    # @return [GoodData::Membership] returns self
     def enable
-      self.status = 'enabled'
+      self.status = 'ENABLED'
+      self
+    end
+
+    # Is the member enabled?
+    #
+    # @return [Boolean] true if it is enabled
+    def enabled?
+      status == 'ENABLED'
     end
 
     # Disables membership
     #
-    # @return result from post execution
+    # @return [GoodData::Membership] returns self
     def disable
-      self.status = 'disabled'
+      self.status = 'DISABLED'
+      self
+    end
+
+    # Is the member enabled?
+    #
+    # @return [Boolean] true if it is disabled
+    def disabled?
+      !enabled?
+    end
+
+    def data
+      data = @json || {}
+      data['user'] || {}
+    end
+
+    def name
+      (first_name || '') + (last_name || '')
+    end
+
+    def meta
+      data['meta'] || {}
+    end
+
+    def links
+      data['links'] || {}
+    end
+
+    def content
+      data['content'] || {}
+    end
+
+    def to_hash
+      tmp = content.merge(meta).merge('uri' => uri).symbolize_keys
+      [
+        [:userRoles, :role],
+        [:companyName, :company_name],
+        [:phoneNumber, :phone_number],
+        [:firstname, :first_name],
+        [:lastname, :last_name],
+        [:authenticationModes, :authentication_modes]
+      ].each do |vals|
+        wire, rb = vals
+        tmp[rb] = tmp[wire]
+        tmp.delete(wire)
+      end
+      tmp
     end
 
     private
@@ -391,7 +418,10 @@ module GoodData
         }
       }
 
-      @json = client.post("/gdc/projects/#{project_id}/users", payload)
+      res = client.post("/gdc/projects/#{project_id}/users", payload)
+      fail 'Update failed' unless res['projectUsersUpdateResult']['failed'].empty?
+      @json['user']['content']['status'] = new_status.to_s.upcase
+      self
     end
   end
 end

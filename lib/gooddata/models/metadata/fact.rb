@@ -13,7 +13,7 @@ module GoodData
     include GoodData::Mixin::IsFact
 
     # TODO: verify that we have all (which we do not right now)
-    FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median]
+    FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median, :runsum, :runmin, :runmax, :runavg, :runstdev, :runstdevp, :runvar, :runvarp, :stdev, :stdevp, :var, :varp]
 
     class << self
       # Method intended to get all objects of that type in a specified project

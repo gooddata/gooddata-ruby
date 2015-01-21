@@ -147,6 +147,7 @@ describe "Full project implementation", :constraint => 'slow' do
     r = @project.create_report(top: [m], title: 'xy')
     rd = r.latest_report_definition
     rd.content['chart'] = { 'styles' => { 'global' => { 'colorMapping' => 1 } } }
+
     expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
     rd.reset_color_mapping!
     expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
@@ -237,7 +238,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should try setting and getting by tags" do
     fact = @project.fact_by_title('Lines Changed')
-    expect(fact.tags.empty?).to be_true
+    expect(fact.tags.empty?).to be_truthy
 
     fact.tags = "tag1,tag2,tag3"
     fact.save

@@ -26,6 +26,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     @process = @project.deploy_process('./spec/data/ruby_process',
                                   type: 'RUBY',
                                   name: 'Test ETL Process')
+
   end
 
   after(:all) do
@@ -109,14 +110,14 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       expect(result.status).to eq :ok
       log = result.log
       expect(log.index('HELLO WORLD')).not_to eq nil
-      expect(schedule.enabled?).to be_true
+      expect(schedule.enabled?).to be_truthy
       schedule.disable
       schedule.save
-      expect(schedule.enabled?).to be_false
-      expect(schedule.disabled?).to be_true
+      expect(schedule.enabled?).to be_falsey
+      expect(schedule.disabled?).to be_truthy
       schedule.enable
       schedule.save
-      expect(schedule.enabled?).to be_true
+      expect(schedule.enabled?).to be_truthy
     ensure
       schedule && schedule.delete
       process && process.delete
@@ -209,5 +210,12 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     ensure
       process && process.delete
     end
+  end
+
+  it "should be able to redeploy via project" do
+    process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
+                                  type: 'RUBY',
+                                  name: 'Test ETL zipped file Process',
+                                  process_id: @process.obj_id)
   end
 end

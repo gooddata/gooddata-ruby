@@ -89,7 +89,7 @@ module GoodData
       tab = options[:tab] || ''
 
       req_uri = "/gdc/projects/#{GoodData.project.pid}/clientexport"
-      x = GoodData.post(req_uri, 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title })
+      x = client.post(req_uri, 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title })
       GoodData.poll_on_code(x['asyncTask']['link']['poll'], process: false)
     end
 
