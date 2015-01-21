@@ -41,6 +41,13 @@ module GoodData
     end
     alias_method :labels, :display_forms
 
+    def dimension
+      uri = content['dimension']
+      return nil if uri.nil?
+
+      GoodData::Dimension[uri, client: client, project: project]
+    end
+
     # Returns the first display form which is the primary one
     # @return [GoodData::Label] Primary label
     def primary_display_form

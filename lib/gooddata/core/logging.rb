@@ -5,6 +5,7 @@ require_relative 'nil_logger'
 module GoodData
   class << self
     attr_writer :logger
+    attr_writer :stats
 
     # Turn logging on
     #
@@ -42,6 +43,18 @@ module GoodData
     #
     def logger
       @logger ||= NilLogger.new
+    end
+
+    def stats_on
+      @stats = true
+    end
+
+    def stats_on? # rubocop:disable Style/TrivialAccessors
+      @stats
+    end
+
+    def stats_off
+      @stats = false
     end
   end
 end

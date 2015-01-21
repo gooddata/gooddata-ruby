@@ -67,7 +67,7 @@ module GoodData
     end
 
     def project
-      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, ''), :client => client, :project => project]
+      @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, ''), :client => client]
     end
 
     def saved?

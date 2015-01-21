@@ -41,6 +41,10 @@ module GoodData
           case raw.keys.first
           when 'attribute'
             md_class = GoodData::Attribute
+          when 'metric'
+            md_class = GoodData::Metric
+          when 'projectDashboard'
+            md_class = GoodData::Dashboard
           when 'report'
             md_class = GoodData::Report
           when 'reportDefinition'

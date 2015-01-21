@@ -13,6 +13,11 @@
 - Added Schedule#execute(:wait => true|false) option
 - Merge GoodData::Rest::Connection and GoodData::Rest::Connection::RestClientConnection
 - Unified expection handler for REST API and WebDav Access (using GoodData::Rest::Connection.retryable)
+- GoodData#stats_on, GoodData#stats_off, GoodData::Rest::Client#stats_on, GoodData#stats_off
+- GoodData::Mixin::MdObjectQuery#using now accepts :full => true|false option
+- GoodData::MdObject#[] automatically returns proper type (ie. GoodData::Report)
+- Improved user management
+- Added simple GoodData::Dimension
 
 ## 0.6.11
 
