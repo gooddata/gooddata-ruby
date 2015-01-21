@@ -88,7 +88,7 @@ module GoodData
 
           if client
             at_exit do
-              puts client.connection.stats_table if client && client.connection
+              puts client.connection.stats_table if client && client.connection && (GoodData.stats_on? || client.stats_on?)
             end
           end
 
@@ -193,6 +193,18 @@ module GoodData
         else
           create(GoodData::Profile, @connection.user)
         end
+      end
+
+      def stats_off
+        @stats = false
+      end
+
+      def stats_on
+        @stats = true
+      end
+
+      def stats_on?
+        @stats
       end
 
       #######################
