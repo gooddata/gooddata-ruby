@@ -45,10 +45,18 @@ module GoodData
         if key.nil?
           result
         elsif key.respond_to?(:category)
-          result.select { |item| item['category'] == key.category }
+          result = result.select { |item| item['category'] == key.category }
         else
-          result.select { |item| item['category'] == key }
+          result = result.select { |item| item['category'] == key }
         end
+
+        if opts[:full]
+          result = result.map do |res|
+            GoodData::MdObject[res['link'], :client => c, :project => opts[:project]]
+          end
+        end
+
+        result
       end
 
       # Checks for dependency

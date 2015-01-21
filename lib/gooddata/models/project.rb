@@ -256,6 +256,10 @@ module GoodData
       end
     end
 
+    def dimensions(id: :all)
+      GoodData::Dimension[id, client: client, project: self]
+    end
+
     # Export a clone from a project to be later imported.
     # If you do not want to do anything special and you do not need fine grained
     # controle use clone method which does all the heavy lifting for you.

@@ -21,7 +21,7 @@ module GoodData
 
       # Returns which objects this MD resource uses
       def using(key = nil, opts = { :client => client, :project => project })
-        dependency("#{project.md['using2']}/#{obj_id}", key, opts)
+        dependency("#{project.md['using2']}/#{obj_id}", key, {:client => client, :project => project}.merge(opts))
       end
 
       def usedby?(obj, opts = { :client => client, :project => project })
