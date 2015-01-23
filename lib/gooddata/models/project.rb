@@ -256,6 +256,15 @@ module GoodData
       end
     end
 
+    # Gives you list of datasets. These are not blueprint datasets but model datasets coming from meta
+    # data server.
+    #
+    # @param id [Symbol | String | GoodData::MdObject] Export options
+    # @return [Array<GoodData::Dataset> | GoodData::Dataset] Dataset or list of datasets in the project
+    def datasets(id = :all)
+      GoodData::Dataset[id, project: self, client: client]
+    end
+
     def dimensions(id = :all)
       GoodData::Dimension[id, client: client, project: self]
     end
@@ -326,14 +335,10 @@ module GoodData
     end
     # Helper for getting dashboards of a project
     #
-    # @param [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
+    # @param id [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
     # @return [GoodData::Dashboard | Array<GoodData::Dashboard>] dashboard instance or list
     def dashboards(id = :all)
       GoodData::Dashboard[id, project: self, client: client]
-    end
-
-    def datasets
-      blueprint.datasets
     end
 
     def data_permissions
@@ -352,9 +357,7 @@ module GoodData
     # @return [Array] Result of executing MAQLs
     def delete_all_data(options = {})
       return false unless options[:force]
-      datasets.pmap do |dataset|
-        execute_maql("SYNCHRONIZE {#{dataset.identifier}}")
-      end
+      datasets.pmap(&:delete_data)
     end
 
     # Deletes dashboards for project

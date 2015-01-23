@@ -178,10 +178,22 @@ module GoodData
     # @param [GoodData::MdObject] what Object that should be replaced
     # @param [GoodData::MdObject] for_what Object it is replaced with
     # @return [GoodData::Metric]
-    def replace(what, for_what)
-      uri_what = what.respond_to?(:uri) ? what.uri : what
-      uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
-      self.expression = expression.gsub(uri_what, uri_for_what)
+    def replace(what, for_what = nil)
+      pairs = if what.is_a?(Hash)
+                whats = what.keys
+                to_whats = what.values
+                whats.zip(to_whats)
+              elsif what.is_a?(Array) && for_what.is_a?(Array)
+                whats.zip(to_whats)
+              else
+                [[what, for_what]]
+              end
+
+      pairs.each do |a, b|
+        uri_what = a.respond_to?(:uri) ? a.uri : a
+        uri_for_what = b.respond_to?(:uri) ? b.uri : b
+        self.expression = expression.gsub(uri_what, uri_for_what)
+      end
       self
     end
 
