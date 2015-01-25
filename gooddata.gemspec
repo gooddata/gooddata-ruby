@@ -37,8 +37,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.11.0'
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
 
-  s.add_development_dependency 'debase' unless ENV['TRAVIS_BUILD']
-  s.add_development_dependency 'ruby-debug-base' unless ENV['TRAVIS_BUILD']
+  # s.add_development_dependency 'debase' unless ENV['TRAVIS_BUILD']
+  # s.add_development_dependency 'ruby-debug-base' unless ENV['TRAVIS_BUILD']
 
   s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
   s.add_dependency 'bundler', '~> 1.7', '>= 1.7.3'
