@@ -25,19 +25,20 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
   s.require_paths = ["lib"]
 
-  # s.add_development_dependency "debase" if RUBY_VERSION >= '2.1'
+
   s.add_development_dependency 'rake', '~> 10.3', '>= 10.3.1'
   s.add_development_dependency 'rake-notes', '~> 0.2', '>= 0.2.0'
   s.add_development_dependency 'redcarpet', '~> 3.1', '>= 3.1.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 2.14', '>= 2.14.1'
-  # s.add_development_dependency "ruby-debug-base"
-  # s.add_development_dependency "ruby-debug-ide" if RUBY_VERSION >= '2.1'
   s.add_development_dependency 'rubocop', '~> 0.27', '>= 0.27.0'
   s.add_development_dependency 'simplecov', '~> 0.9', '>= 0.9.1'
   s.add_development_dependency 'yard', '~> 0.8.7.3'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.11.0'
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
+
+  s.add_development_dependency 'debase' unless ENV['TRAVIS_BUILD']
+  s.add_development_dependency 'ruby-debug-base' unless ENV['TRAVIS_BUILD']
 
   s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
   s.add_dependency 'bundler', '~> 1.7', '>= 1.7.3'
