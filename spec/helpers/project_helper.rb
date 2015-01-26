@@ -31,7 +31,7 @@ module ProjectHelper
   end
 
   def self.create_random_user(client)
-    num = rand(1e6)
+    num = rand(1e7)
     login = "gemtest#{num}@gooddata.com"
 
     GoodData::Membership.create({
