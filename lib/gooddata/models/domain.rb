@@ -10,7 +10,7 @@ module GoodData
   class Domain < GoodData::Rest::Object
     attr_reader :name
 
-    USERS_OPTIONS = { :offset => 0, :limit => 1000 }
+    USERS_OPTIONS = { :offset => 0, :limit => 10_000 }
 
     class << self
       # Looks for domain
