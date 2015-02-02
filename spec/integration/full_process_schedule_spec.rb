@@ -24,14 +24,22 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     @client = ConnectionHelper::create_default_connection
     @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
     @process = @project.deploy_process('./spec/data/ruby_process',
-                                  type: 'RUBY',
-                                  name: 'Test ETL Process')
+                                       type: 'RUBY',
+                                       name: 'Test ETL Process (Ruby)')
+
+    @process_cc = @project.deploy_process('./spec/data/cc',
+                                          type: 'graph',
+                                          name: 'Test ETL Process (CC)')
 
   end
 
   after(:all) do
-    @process.delete if @process
-    @project.delete if @project
+    ScheduleHelper.remove_old_schedules(@project)
+    ProcessHelper.remove_old_processes(@project)
+
+    # @process.delete if @process
+    # @project.delete if @project
+
     @client.disconnect
   end
 
@@ -58,52 +66,68 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it "should be able to create schedule triggered by another schedule" do
-    schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
-    schedule = @process.create_schedule(schedule_first, @process.executables.first)
-    res = @process.schedules
-    expect(res.count).to eq 2
-    expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
-    schedule.delete
-    schedule_first.delete
+    begin
+      schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+      schedule = @process.create_schedule(schedule_first, @process.executables.first)
+      res = @process.schedules
+      expect(res.count).to eq 2
+      expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
+    ensure
+      schedule && schedule.delete
+      schedule_first && schedule_first.delete
+    end
   end
 
   it "should be able to create schedule triggered by another schedule specified by ID" do
-    schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
-    schedule = @process.create_schedule(schedule_first.obj_id, @process.executables.first)
-    res = @process.schedules
-    expect(res.count).to eq 2
-    expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
-    schedule.delete
-    schedule_first.delete
+    begin
+      schedule_first = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+      schedule = @process.create_schedule(schedule_first.obj_id, @process.executables.first)
+      res = @process.schedules
+      expect(res.count).to eq 2
+      expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
+    ensure
+      schedule && schedule.delete
+      schedule_first && schedule_first.delete
+    end
   end
 
   it "should be able to delete schedule" do
-    schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
-    res = @process.schedules
-    expect(res.count).to eq 1
-    expect(@process.schedules).to eq [schedule]
-    schedule.delete
+    begin
+      schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+      res = @process.schedules
+      expect(res.count).to eq 1
+      expect(@process.schedules).to eq [schedule]
+    ensure
+      schedule && schedule.delete
+    end
   end
 
   it "should be possible to read status of schedule" do
-    schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
-    expect(schedule.state).to eq 'ENABLED'
-    schedule.delete
+    begin
+      schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+      expect(schedule.state).to eq 'ENABLED'
+    ensure
+      schedule && schedule.delete
+    end
   end
 
   it "should be possible to execute schedule" do
-    schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
-    result = schedule.execute
-    expect(result.status).to eq :ok
-    log = result.log
-    expect(log.index('Hello Ruby executors')).not_to eq nil
-    expect(log.index('Hello Ruby from the deep')).not_to eq nil
+    begin
+      schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+      result = schedule.execute
+      expect(result.status).to eq :ok
+      log = result.log
+      expect(log.index('Hello Ruby executors')).not_to eq nil
+      expect(log.index('Hello Ruby from the deep')).not_to eq nil
+    ensure
+      schedule && schedule.delete
+    end
   end
 
   it "should be possible to deploy only a single file" do
     process = @project.deploy_process('./spec/data/hello_world_process/hello_world.rb',
-                                  type: 'RUBY',
-                                  name: 'Test ETL one file Process')
+                                      type: 'RUBY',
+                                      name: 'Test ETL one file Process')
     begin
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
       result = schedule.execute
@@ -126,8 +150,8 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
   it "should be possible to deploy already zipped file" do
     process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
-                                  type: 'RUBY',
-                                  name: 'Test ETL zipped file Process')
+                                      type: 'RUBY',
+                                      name: 'Test ETL zipped file Process')
     begin
       expect(process.schedules.count).to eq 0
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
@@ -199,8 +223,8 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it "should be possible to download deployed process" do
     size = File.size('./spec/data/hello_world_process/hello_world.zip')
     process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
-                                  type: 'RUBY',
-                                  name: 'Test ETL zipped file Process')
+                                      type: 'RUBY',
+                                      name: 'Test ETL zipped file Process')
     begin
       Tempfile.open('downloaded-process') do |temp|
         temp << process.download
@@ -213,9 +237,13 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it "should be able to redeploy via project" do
-    process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
-                                  type: 'RUBY',
-                                  name: 'Test ETL zipped file Process',
-                                  process_id: @process.obj_id)
+    begin
+      process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
+                                        type: 'RUBY',
+                                        name: 'Test ETL zipped file Process',
+                                        process_id: @process.obj_id)
+    ensure
+      process && process.delete
+    end
   end
 end

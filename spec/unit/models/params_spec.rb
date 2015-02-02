@@ -28,9 +28,12 @@ describe 'GoodData::Schedule::Params' do
         :test => '1234'
       }
 
-      res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
-      expect(res).to be_truthy
-      res.delete
+      begin
+        schedule = @process.create_schedule("0 12 * * *", @graph_path, params: params)
+        expect(schedule).to be_truthy
+      ensure
+        schedule && schedule.delete
+      end
     end
 
     it 'Works with nested params' do
@@ -41,9 +44,12 @@ describe 'GoodData::Schedule::Params' do
         }
       }
 
-      res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
-      expect(res).to be_truthy
-      res.delete
+      begin
+        schedule = @process.create_schedule("0 12 * * *", @graph_path, params: params)
+        expect(schedule).to be_truthy
+      ensure
+        schedule && schedule.delete
+      end
     end
 
     it 'Works with array in params' do
@@ -52,9 +58,12 @@ describe 'GoodData::Schedule::Params' do
         :array => [1, 2, 3, 4, 5]
       }
 
-      res = @process.create_schedule("0 12 * * *", @graph_path, params: params)
-      expect(res).to be_truthy
-      res.delete
+      begin
+        schedule = @process.create_schedule("0 12 * * *", @graph_path, params: params)
+        expect(schedule).to be_truthy
+      ensure
+        schedule && schedule.delete
+      end
     end
   end
 
@@ -64,9 +73,12 @@ describe 'GoodData::Schedule::Params' do
         :test => '1234'
       }
 
-      res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
-      expect(res).to be_truthy
-      res.delete
+      begin
+        schedule = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
+        expect(schedule).to be_truthy
+      ensure
+        schedule && schedule.delete
+      end
     end
 
     it 'Works with nested hiddenParams' do
@@ -77,9 +89,12 @@ describe 'GoodData::Schedule::Params' do
         }
       }
 
-      res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
-      expect(res).to be_truthy
-      res.delete
+      begin
+        schedule = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
+        expect(schedule).to be_truthy
+      ensure
+        schedule && schedule.delete
+      end
     end
 
     it 'Works with array in hiddenParams' do
@@ -88,9 +103,12 @@ describe 'GoodData::Schedule::Params' do
         :array => [1, 2, 3, 4, 5]
       }
 
-      res = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
-      expect(res).to be_truthy
-      res.delete
+      begin
+        schedule = @process.create_schedule("0 12 * * *", @graph_path, hiddenParams: params)
+        expect(schedule).to be_truthy
+      ensure
+        schedule && schedule.delete
+      end
     end
   end
 end
