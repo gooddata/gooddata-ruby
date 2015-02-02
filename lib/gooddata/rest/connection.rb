@@ -58,9 +58,10 @@ module GoodData
           retry_time = 1
           begin
             return yield
-          rescue   RestClient::Unauthorized, RestClient::Forbidden => e # , RestClient::Unauthorized => e
+          rescue RestClient::Unauthorized, RestClient::Forbidden => e # , RestClient::Unauthorized => e
             raise e unless options[:refresh_token]
-            options[:refresh_token].call
+            raise e if options[:dont_reauth]
+            options[:refresh_token].call(dont_reauth: true)
             retry if (retries -= 1) > 0
           rescue RestClient::TooManyRequests
             GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
@@ -401,7 +402,7 @@ module GoodData
         #   end
         # end
 
-        response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+        response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token unless options[:dont_reauth] }) do
           block.call
         end
 
