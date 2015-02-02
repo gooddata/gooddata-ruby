@@ -82,11 +82,12 @@ describe GoodData::Domain do
 
   describe '#create_users' do
     it 'Creates new users from list' do
-      list = (0...10).to_a.map { |i| ProjectHelper.create_random_user(@client) }
+      list = (0..1).to_a.map { |i| ProjectHelper.create_random_user(@client) }
       res = @domain.create_users(list)
 
       # no errors
       expect(res.select { |x| x[:type] == :user_added_to_domain }.count).to eq res.count
+
       expect(@domain.members?(list.map(&:login)).all?).to be_truthy
 
       res.map { |r| r[:user] }.each do |r|
