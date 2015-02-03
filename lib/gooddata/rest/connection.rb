@@ -20,7 +20,8 @@ module GoodData
       }
 
       DEFAULT_LOGIN_PAYLOAD = {
-        :headers => DEFAULT_HEADERS
+        :headers => DEFAULT_HEADERS,
+        :verify_ssl => OpenSSL::SSL::VERIFY_NONE
       }
 
       RETRYABLE_ERRORS = [
