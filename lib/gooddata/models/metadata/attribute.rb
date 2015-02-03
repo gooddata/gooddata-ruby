@@ -44,8 +44,36 @@ module GoodData
     def dimension
       uri = content['dimension']
       return nil if uri.nil?
-
       GoodData::Dimension[uri, client: client, project: project]
+    end
+
+    # Tells you if an attribute is a date dimension. This happens by inspecting
+    # an identifier if it conforms to a particular scheme.
+    #
+    # @return [Boolean] Is the attribute a date attribute?
+    def date_attribute?
+      things = [
+        'week',
+        'euweek.in.year',
+        'day.in.week',
+        'day.in.month',
+        'day.in.quarter',
+        'day.in.euweek',
+        'date',
+        'quarter.in.year',
+        'week.in.year',
+        'day.in.year',
+        'month',
+        'quarter',
+        'month.in.quarter',
+        'week.in.quarter',
+        'year',
+        'euweek',
+        'euweek.in.quarter',
+        'month.in.year'
+      ]
+      potential_id = identifier.split('.')[1..-1].join('.')
+      things.include?(potential_id) ? true : false
     end
 
     # Returns the first display form which is the primary one

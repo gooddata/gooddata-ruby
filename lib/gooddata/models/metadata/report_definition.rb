@@ -301,6 +301,8 @@ module GoodData
                 whats = what.keys
                 to_whats = what.values
                 whats.zip(to_whats)
+              elsif what.is_a?(Array) && for_what.is_a?(Array)
+                whats.zip(to_whats)
               else
                 [[what, for_what]]
               end

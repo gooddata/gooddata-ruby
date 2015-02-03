@@ -27,6 +27,11 @@ describe "Full project implementation", :constraint => 'slow' do
     end
   end
 
+  it "should contain metadata datasets" do
+    expect(@project.datasets.count).to eq 4
+    expect(@project.datasets.select(&:date_dimension?).count).to eq 1
+  end
+
   it "should be able to rename a project" do
     former_title = @project.title
     a_title = (0...8).map { (65 + rand(26)).chr }.join
@@ -412,5 +417,12 @@ describe "Full project implementation", :constraint => 'slow' do
     def_uris = r.definition_uris
     r.delete
     expect { def_uris.each {|uri| @client.get(uri)} }.to raise_error(RestClient::ResourceNotFound)
+  end
+
+  it 'should be apossible to delete data from a dataset' do
+    dataset = @project.datasets('dataset.devs')
+    expect(dataset.attributes.first.create_metric.execute).to be > 0
+    dataset.delete_data
+    expect(dataset.attributes.first.create_metric.execute).to be_nil
   end
 end
