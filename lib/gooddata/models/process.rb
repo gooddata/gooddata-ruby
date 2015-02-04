@@ -196,7 +196,7 @@ module GoodData
     # @option options [String] :name Readable name of the process
     # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
     def deploy(path, options = {})
-      Process.deploy(path, client: client, process_id: process_id, :project => project).merge(options)
+      Process.deploy(path, { client: client, process_id: process_id, :project => project, :name => name, :type => type }.merge(options))
     end
 
     # Downloads the process from S3 in a zipped form.

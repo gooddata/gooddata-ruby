@@ -246,4 +246,8 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       process && process.delete
     end
   end
+
+  it "should be able to redeploy directly" do
+    process = @project.processes.first.deploy('./spec/data/hello_world_process/hello_world.zip')
+  end
 end
