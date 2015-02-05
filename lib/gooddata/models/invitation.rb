@@ -25,10 +25,6 @@ module GoodData
       @json['invitation']['content']['firstname']
     end
 
-    def first_name
-      @json['invitation']['content']['firstname']
-    end
-
     def phone
       @json['invitation']['content']['phone']
     end

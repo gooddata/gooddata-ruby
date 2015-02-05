@@ -299,13 +299,6 @@ module GoodData
       @json['user']['content']['status'] || ''
     end
 
-    # Sets the status
-    #
-    # @param new_status [String] New phone number to be assigned
-    def status=(new_status)
-      @json['user']['content']['status'] = new_status
-    end
-
     # Gets the title
     #
     # @return [String] User title
