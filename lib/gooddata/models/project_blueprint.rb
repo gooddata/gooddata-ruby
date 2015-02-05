@@ -145,16 +145,6 @@ module GoodData
         datasets(project).mapcat { |d| DatasetBlueprint.fields(d) }
       end
 
-      # Returns a dataset of a given name. If a dataset is not found it throws an exeception
-      #
-      # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
-      # @param project [String] Dataset title
-      # @return [Array<Hash>]
-      def find_dataset_by_title(project, title)
-        ds = datasets(project).find { |d| Model.title(d) == title }
-        fail "Dataset #{title} could not be found" if ds.nil?
-      end
-
       def change(&block)
         builder = ProjectBuilder.create_from_data(self)
         block.call(builder)
@@ -425,10 +415,9 @@ module GoodData
             attrs, metric = e
 
             attrs.each do |attr|
-              a << GoodData::Report.create(
-                    :title => 'Fantastic report',
-                    :top => [attr],
-                    :left => metric)
+              a << GoodData::Report.create(:title => 'Fantastic report',
+                                           :top => [attr],
+                                           :left => metric)
             end
             a
           end

@@ -72,9 +72,7 @@ module GoodData
       u = URI(project.links['uploads'])
       url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
 
-      connection.upload(file, options.merge(
-        :staging_url => url
-      ))
+      connection.upload(file, options.merge(staging_url: url))
     end
 
     # Get WebDav directory for project data

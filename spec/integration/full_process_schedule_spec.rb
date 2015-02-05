@@ -248,6 +248,16 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it "should be able to redeploy directly" do
-    process = @project.processes.first.deploy('./spec/data/hello_world_process/hello_world.zip')
+    begin
+      process1 = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
+                                        type: 'RUBY',
+                                        name: 'Test ETL zipped file Process',
+                                        process_id: @process.obj_id)
+
+      process2 = process1.deploy('./spec/data/ruby_process/process.rb')
+      expect(process1.executables).not_to eq process2.executables
+    ensure
+      process1 && process1.delete
+    end
   end
 end

@@ -8,7 +8,7 @@ module GoodData
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
       def self.dataset_from_wire(stuff)
-        Hash.new.tap do |d|
+        {}.tap do |d|
           d[:type] = :dataset
           d[:title] = stuff['dataset']['title'] if stuff['dataset']['title'] != stuff['dataset']['identifier'].split('.').last.titleize
           d[:name] = stuff['dataset']['identifier'].split('.').last
@@ -86,7 +86,7 @@ module GoodData
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
       def self.parse_date_dimensions(stuff)
-        Hash.new.tap do |d|
+        {}.tap do |d|
           d[:type] = :date_dimension
           # d[:urn] = :date_dimension
           d[:name] = stuff['dateDimension']['name']
@@ -101,7 +101,7 @@ module GoodData
       def self.parse_facts(stuff)
         facts = stuff['dataset']['facts'] || []
         facts.map do |fact|
-          Hash.new.tap do |f|
+          {}.tap do |f|
             f[:type] = fact['fact']['identifier'] =~ /^dt\./ ? :date_fact : :fact
             f[:name] = fact['fact']['identifier'].split('.').last
             f[:title] = fact['fact']['title'] if fact['fact']['title'] != fact['fact']['identifier'].split('.').last.titleize
@@ -115,7 +115,7 @@ module GoodData
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
       def self.parse_label(attribute, label, type, default_label = nil)
-        Hash.new.tap do |l|
+        {}.tap do |l|
           l[:type] = type
           l[:reference] = attribute['identifier'].split('.').last if type == 'label'
           l[:name] = label['label']['identifier'].split('.').last

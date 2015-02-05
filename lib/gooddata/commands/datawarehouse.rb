@@ -11,12 +11,10 @@ module GoodData
           description = options[:summary] || options[:description]
           token = options[:token] || options[:auth_token]
           client = options[:client]
-          GoodData::DataWarehouse.create(
-                                    :title => title,
-                                    :description => description,
-                                    :auth_token => token,
-                                    :client => client
-                                  )
+          GoodData::DataWarehouse.create(:title => title,
+                                         :description => description,
+                                         :auth_token => token,
+                                         :client => client)
         end
       end
     end

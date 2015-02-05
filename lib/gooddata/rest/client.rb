@@ -330,17 +330,13 @@ module GoodData
       end
 
       def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client, :project => project })
-        download(source_relative_path, target_file_path, options.merge(
-            :directory => options[:directory],
-            :staging_url => get_user_webdav_url(options)
-        ))
+        download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
+                                                                       :staging_url => get_user_webdav_url(options)))
       end
 
       def upload_to_user_webdav(file, options = {})
-        upload(file, options.merge(
-          :directory => options[:directory],
-          :staging_url => get_user_webdav_url(options)
-        ))
+        upload(file, options.merge(:directory => options[:directory],
+                                   :staging_url => get_user_webdav_url(options)))
       end
 
       def with_project(pid, &block)
