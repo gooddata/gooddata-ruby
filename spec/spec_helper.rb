@@ -28,6 +28,8 @@ RSpec.configure do |config|
 
   config.filter_run_excluding :broken => true
 
+  config.fail_fast = true
+
   config.before(:all) do
     # TODO: Move this to some method.
     # TODO Make more intelligent so two test suites can run at the same time.
