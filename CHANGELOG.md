@@ -1,5 +1,14 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.13
+
+- Fixed TT problems
+- Fixed process redeployment helpers
+- Rubocop compliance with the latest version
+- MD datasets are now available
+- SSL set to verify none for now. We will make it more secure in next version.
+- Changed limit on users pulled from domain. Will change it in the future so there is no fixed limit.
+
 ## 0.6.12
 
 - Ability to create a Data Warehouse (ADS) 
