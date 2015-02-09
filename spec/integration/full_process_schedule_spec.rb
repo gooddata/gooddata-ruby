@@ -251,8 +251,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     begin
       process1 = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
                                         type: 'RUBY',
-                                        name: 'Test ETL zipped file Process',
-                                        process_id: @process.obj_id)
+                                        name: 'Test ETL zipped file Process')
 
       process2 = process1.deploy('./spec/data/ruby_process/process.rb')
       expect(process1.executables).not_to eq process2.executables
