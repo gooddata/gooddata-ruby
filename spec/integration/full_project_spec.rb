@@ -20,6 +20,32 @@ describe "Full project implementation", :constraint => 'slow' do
     }.to raise_error(GoodData::ValidationError)
   end
 
+  it "should do nothing if the project is updated with the same blueprint" do
+    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
+    expect(results).to be_nil
+  end
+
+  it 'should try to rename a dataset back' do
+    dataset = @project.datasets('dataset.repos')
+    dataset.title = "Some title"
+    dataset.save
+
+    # Now the update of project using the original blueprint should offer update of the title. Nothing else.
+    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
+    expect(results['updateScript']['maqlDdl']).to eq "ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repos\", DESCRIPTION \"\");\n"
+
+    # Update using a freshly gained blueprint should offer no changes.
+    new_blueprint = @project.blueprint
+    results = GoodData::Model::ProjectCreator.migrate_datasets(new_blueprint, project: @project, client: @client, dry_run: true)
+    expect(results).to be_nil
+
+    # When we change the model using the original blueprint. Basically change the title back.
+    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client)
+    # It should offer no changes using the original blueprint
+    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
+    expect(results).to be_nil
+  end
+
   it "should contain datasets" do
     @project.blueprint.tap do |bp|
       expect(bp.datasets.count).to eq 3

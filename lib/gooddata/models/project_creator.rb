@@ -9,7 +9,8 @@ module GoodData
   module Model
     class ProjectCreator
       class << self
-        def migrate(opts = { client: GoodData.connection, project: GoodData.project })
+        def migrate(opts = {})
+          opts = { client: GoodData.connection, project: GoodData.project }.merge(opts)
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -25,27 +26,21 @@ module GoodData
 
           begin
             GoodData.with_project(project, opts) do |p|
-              # migrate_date_dimensions(p, spec[:date_dimensions] || [])
-              migrate_datasets(spec, :project => p, :client => client)
+              migrate_datasets(spec, opts.merge(project: p, client: client))
               load(p, spec)
               migrate_metrics(p, spec[:metrics] || [])
               migrate_reports(p, spec[:reports] || [])
               migrate_dashboards(p, spec[:dashboards] || [])
-              migrate_users(p, spec[:users] || [])
               execute_tests(p, spec[:assert_tests] || [])
               p
             end
           end
         end
 
-        def migrate_date_dimensions(project, spec)
-          spec.each do |dd|
-            Model.add_schema(DateDimension.new(dd), project)
-          end
-        end
-
-        def migrate_datasets(spec, opts = { :client => GoodData.connection })
+        def migrate_datasets(spec, opts = {})
+          opts = { client: GoodData.connection }.merge(opts)
           client = opts[:client]
+          dry_run = opts[:dry_run]
           fail ArgumentError, 'No :client specified' if client.nil?
 
           p = opts[:project]
@@ -63,29 +58,29 @@ module GoodData
           link = result['asyncTask']['link']['poll']
           response = client.get(link, :process => false)
 
-          # pp response
           while response.code != 200
             sleep 1
             GoodData::Rest::Client.retryable(:tries => 3) do
               sleep 1
               response = client.get(link, :process => false)
-              # pp response
             end
           end
 
           response = client.get(link)
 
           chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
-          chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-            result = project.execute_maql(chunk)
-            fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
+          if !chunks.nil? && !dry_run
+            chunks['updateScript']['maqlDdlChunks'].each do |chunk|
+              result = project.execute_maql(chunk)
+              fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
+            end
+            bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
+              dataset = ds[0]
+              manifest = ds[1]
+              GoodData::ProjectMetadata["manifest_#{dataset.name}", :client => client, :project => project] = manifest.to_json
+            end
           end
-
-          bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
-            dataset = ds[0]
-            manifest = ds[1]
-            GoodData::ProjectMetadata["manifest_#{dataset.name}", :client => client, :project => project] = manifest.to_json
-          end
+          chunks
         end
 
         def migrate_reports(project, spec)
@@ -103,13 +98,6 @@ module GoodData
         def migrate_metrics(project, spec)
           spec.each do |metric|
             project.add_metric(metric)
-          end
-        end
-
-        def migrate_users(_project, spec)
-          spec.each do |user|
-            puts "Would migrate user #{user}"
-            # project.add_user(user)
           end
         end
 

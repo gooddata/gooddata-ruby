@@ -29,7 +29,7 @@ module GoodData
         item[:title] || item[:name].titleize
       end
 
-      def identifier_for(dataset, column = nil, column2 = nil)
+      def identifier_for(dataset, column = nil, column2 = nil) # rubocop:disable UnusedMethodArgument
         return "dataset.#{dataset[:name]}" if column.nil?
         column = DatasetBlueprint.find_column_by_name(dataset, column) if column.is_a?(String)
         case column[:type].to_sym
@@ -46,11 +46,15 @@ module GoodData
         when :primary_label
           "label.#{dataset[:name]}.#{column[:name]}"
         when :label
-          "label.#{dataset[:name]}.#{column2[:name]}.#{column[:name]}"
+          "label.#{dataset[:name]}.#{column[:reference]}.#{column[:name]}"
         when :date_ref
           "#{dataset[:name]}.date.mdyy"
         when :dataset
           "dataset.#{dataset[:name]}"
+        when :date
+          'DATE'
+        when :reference
+          'REF'
         else
           fail "Unknown type #{column[:type].to_sym}"
         end
