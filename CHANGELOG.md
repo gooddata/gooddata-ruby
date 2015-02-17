@@ -1,5 +1,11 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.14
+
+- Project update from blueprint does not fail when MAQL chunks are empty.
+- You can call migrate_datasets with dry_run to obtain MAQL chunks.
+- Fix of title generation in blueprint from wire.
+
 ## 0.6.13
 
 - Fixed TT problems
