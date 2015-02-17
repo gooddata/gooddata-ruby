@@ -90,7 +90,7 @@ module GoodData
           d[:type] = :date_dimension
           # d[:urn] = :date_dimension
           d[:name] = stuff['dateDimension']['name']
-          d[:title] = stuff['dateDimension']['title'] if stuff['dateDimension']['title'] != stuff['dateDimension']['title'].titleize
+          d[:title] = stuff['dateDimension']['title'] if stuff['dateDimension']['title'] != d[:name].titleize
         end
       end
 
