@@ -158,7 +158,7 @@ module GoodData
     # @param definition [String | GoodData::ReportDefinition] Report defintion to remove
     # @return [GoodData::Report] Returns report with removed definition
     def remove_definition(definition)
-      a_def = GoodData::ReportDefinition(definition, project: project, client: client)
+      a_def = GoodData::ReportDefinition[definition, project: project, client: client]
       def_uri = a_def.uri
       content['definitions'] = definition_uris.reject { |x| x == def_uri }
       self
