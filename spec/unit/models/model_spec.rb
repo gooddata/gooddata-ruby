@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require 'pry'
+# require 'pry'
 require 'gooddata/models/model'
 
 describe GoodData::Model do

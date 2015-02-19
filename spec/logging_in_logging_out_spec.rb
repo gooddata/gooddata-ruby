@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 require 'gooddata'
-require 'pry'
+# require 'pry'
 
 describe GoodData::Rest::Connection, :constraint => 'slow' do
 

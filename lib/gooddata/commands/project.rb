@@ -124,10 +124,10 @@ module GoodData
                 fail ArgumentError, 'Wrong project specified' if project.nil?
 
                 puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-                binding.pry(:quiet => true,
-                            :prompt => [proc do |_target_self, _nest_level, _pry|
-                              'project_live_session: '
-                            end])
+                # binding.pry(:quiet => true,
+                            # :prompt => [proc do |_target_self, _nest_level, _pry|
+                            #   'project_live_session: '
+                            # end])
               end
             rescue GoodData::ProjectNotFound
               puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."

@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require 'pry'
+# require 'pry'
 require 'zip'
 
 require_relative '../helpers/global_helpers'

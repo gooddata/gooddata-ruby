@@ -3,7 +3,7 @@
 require 'gooddata/bricks/brick'
 require 'gooddata/bricks/bricks'
 require 'gooddata/bricks/middleware/base_middleware'
-require 'pry'
+# require 'pry'
 
 describe GoodData::Bricks do
   it "Has GoodData::Bricks::Brick class" do
