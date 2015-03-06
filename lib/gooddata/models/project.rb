@@ -421,7 +421,7 @@ module GoodData
 
     # Get WebDav directory for project data
     # @return [String]
-    def get_project_webdav_path(_file)
+    def get_project_webdav_path
       u = URI(links['uploads'])
       URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{pid}/")
     end
@@ -503,9 +503,17 @@ module GoodData
 
     # Get WebDav directory for user data
     # @return [String]
-    def get_user_webdav_path(_file)
+    def get_user_webdav_path
       u = URI(links['uploads'])
       URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+    end
+
+    def upload_file(file)
+      GoodData.upload_to_project_webdav(file, project: self)
+    end
+
+    def download_file(file, where)
+      GoodData.download_from_project_webdav(file, where, project: self)
     end
 
     # Gets user by its email, full_name, login or uri
@@ -913,33 +921,34 @@ module GoodData
     # Imports users
     def import_users(new_users, options = {})
       domain = options[:domain]
+      role_list = roles
       users_list = users.map(&:to_hash)
       new_users = new_users.map { |x| (x.is_a?(Hash) && x[:user] && x[:user].to_hash.merge(role: x[:role])) || x.to_hash }
 
       whitelisted_new_users, whitelisted_users = whitelist_users(new_users.map(&:to_hash), users_list, options[:whitelists])
 
-      # Diff users
-      diff = GoodData::Helpers.diff(whitelisted_users, whitelisted_new_users, key: :login)
+      # conform the role on list of new users so we can diff them with the users coming from the project
+      diffable_new = whitelisted_new_users
+        .map { |u| u[:role] = Array(u[:role] || u[:roles] || 'readOnlyUser'); u }
+        .map { |u| u[:role] = u[:role].map {|r| role = get_role(r, role_list); role && role.uri}; u }
+
+      # Diff users. Only login and role is important for the diff
+      diff = GoodData::Helpers.diff(whitelisted_users, diffable_new, key: :login, fields: [:login, :role])
+      
       results = []
-      # Create domain users
-      results.concat domain.create_users(diff[:added])
-
-      # Update domain users
-      domain.create_users(diff[:changed].map { |u| u[:new_obj] })
-
       # Create new users
-      role_list = roles
       u = diff[:added].map do |x|
         {
           user: x,
-          role: x[:role] || x[:roles]
+          role: x[:role]
         }
       end
-      results.concat create_users(u, roles: role_list, domain: domain)
+      
+      results.concat create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users)
 
       # # Update existing users
       list = diff[:changed].map { |x| { user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles] } }
-      results.concat set_users_roles(list, roles: role_list)
+      results.concat(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
 
       # Remove old users
       results.concat(disable_users(diff[:removed]))
@@ -947,16 +956,19 @@ module GoodData
     end
 
     def disable_users(list, options = {})
-      project_users = options[:project_users] || users
-      list.map { |u| get_user(u, project_users) }.pmap(&:disable)
+      list = list.map(&:to_hash)
+      url = "#{uri}/users"
+      payloads = list.map do |u|
+        generate_user_payload(u[:uri], 'DISABLED')
+      end
+      payloads.each_slice(100).mapcat do |payload|
+        client.post(url, {
+          'users' => payload
+        })
+      end
     end
 
-    # Update user
-    #
-    # @param user User to be updated
-    # @param desired_roles Roles to be assigned to user
-    # @param role_list Optional cached list of roles used for lookups
-    def set_user_roles(login, desired_roles, options = {})
+    def verify_user_to_add(login, desired_roles, options = {})
       role_list = options[:roles] || roles
       domain = client.domain(options[:domain]) if options[:domain]
       project_users = options[:project_users] || users
@@ -973,20 +985,18 @@ module GoodData
         fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
         role.uri
       end
+      [user.uri, roles]
+    end
 
+    # Update user
+    #
+    # @param user User to be updated
+    # @param desired_roles Roles to be assigned to user
+    # @param role_list Optional cached list of roles used for lookups
+    def set_user_roles(login, desired_roles, options = {})
+      user_uri, roles = verify_user_to_add(login, desired_roles, options)
       url = "#{uri}/users"
-      payload = {
-        'user' => {
-          'content' => {
-            'status' => 'ENABLED',
-            'userRoles' => roles
-          },
-          'links' => {
-            'self' => user.uri
-          }
-        }
-      }
-
+      payload = generate_user_payload(user_uri, 'ENABLED', roles)
       client.post(url, payload)
     end
 
@@ -997,28 +1007,29 @@ module GoodData
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
     def set_users_roles(list, options = {})
+      return [] if list.empty?
       role_list = options[:roles] || roles
       project_users = options[:project_users] || users
       domain = options[:domain] && client.domain(options[:domain])
       domain_users = domain.nil? ? nil : domain.users
 
-      list.pmap do |user_hash|
+      users_to_add = list.pmapcat do |user_hash|
+        user = user_hash[:user] || user_hash[:login]
+        desired_roles = user_hash[:role] || user_hash[:roles] || 'readOnlyUser'
         begin
-          user = user_hash[:user]
-          desired_roles = user_hash[:role] || user_hash[:roles] || 'readOnlyUser'
-          result = add_user(user, desired_roles, options.merge(domain: domain,
-                                                               domain_users: domain_users,
-                                                               roles: role_list,
-                                                               project_users: project_users))
-
-          {
-            type: :role_set,
-            user: user,
-            result: result
-          }
-        rescue ArgumentError, RuntimeError => e
-          { type: :error, reason: e }
+          login, roles = verify_user_to_add(user, desired_roles, options.merge(domain_users: domain_users, project_users: project_users, roles: role_list))
+          [{ login: login, roles: roles }]
+        rescue
+          []
         end
+      end
+      
+      payloads = users_to_add.map {|u| generate_user_payload(u[:login], 'ENABLED', u[:roles]) }
+      url = "#{uri}/users"
+      payloads.each_slice(100).map do |payload|
+        client.post(url, {
+          'users' => payload
+        })
       end
     end
 
@@ -1050,6 +1061,22 @@ module GoodData
 
     def variables(id = :all, options = { client: client, project: self })
       GoodData::Variable[id, options]
+    end
+
+    private
+    def generate_user_payload(user_uri, status = 'ENABLED', roles_uri = nil)
+      payload = {
+        'user' => {
+          'content' => {
+            'status' => status
+          },
+          'links' => {
+            'self' => user_uri
+          }
+        }
+      }
+      payload['user']['content']['userRoles'] = roles_uri if roles_uri
+      payload
     end
   end
 end

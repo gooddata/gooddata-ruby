@@ -10,7 +10,7 @@ module GoodData
   class Domain < GoodData::Rest::Object
     attr_reader :name
 
-    USERS_OPTIONS = { :offset => 0, :limit => 10_000 }
+    USERS_OPTIONS = { :offset => 0, :limit => 200_000 }
 
     class << self
       # Looks for domain
@@ -205,51 +205,26 @@ module GoodData
       # @param [String] default_domain_name Default domain name used when no specified in user
       # @return [Array<GoodData::User>] List of users created
       def create_users(list, default_domain = nil, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = client(opts)
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
-        domain_obj = client.domain(default_domain_name)
-        domains = {}
-        list.map do |user|
+        domain = client.domain(default_domain_name)
+
+        domain_users_cache = Hash[domain.users.map { |u| [u.login, u] }]
+        list.pmapcat do |user|
           begin
             user_data = user.to_hash
-            # TODO: Add user here
-            domain_name = user_data[:domain] || default_domain_name
-
-            # Lookup for domain in cache'
-            domain = domains[domain_name]
-
-            # Get domain info from REST, add to cache
-            if domain.nil?
-              domain = {
-                :domain => domain_obj,
-                :users => domain_obj.users
-              }
-
-              domain[:users_map] = Hash[domain[:users].map { |u| [u.login, u] }]
-              domains[domain_name] = domain
-            end
-
-            # Check if user exists in domain
-            domain_user = domain[:users_map][user_data[:login]]
-
-            # Create domain user if needed
+            domain_user = domain_users_cache[user_data[:login]]
             if !domain_user
-              # Add created user to cache
-              domain_user = domain[:domain].add_user(user_data, opts)
-              domain[:users] << domain_user
-              domain[:users_map][domain_user.login] = domain_user
-              { type: :user_added_to_domain, user: domain_user }
+              added_user = domain.add_user(user_data, opts)
+              [{ type: :user_added_to_domain, user: added_user }]
             else
-              # fields = [:firstName, :email]
-              diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login)
-              next if diff[:changed].empty?
-
-              domain_user = domain[:domain].update_user(domain_user.to_hash.merge(user_data.compact), opts)
-              domain[:users_map][domain_user.login] = domain_user
-              { type: :user_changed_in_domain, user: domain_user }
+              fields_to_check = opts[:fields_to_check] || user_data.keys
+              diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login, fields: fields_to_check)
+              next [] if diff[:changed].empty?
+              updated_user = domain.update_user(domain_user.to_hash.merge(user_data.compact), opts)
+              [{ type: :user_changed_in_domain, user: updated_user }]
             end
           rescue RuntimeError => e
-            { type: :error, reason: e }
+            [{ type: :error, reason: e }]
           end
         end
       end

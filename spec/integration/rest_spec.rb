@@ -17,7 +17,7 @@ describe GoodData do
 
   describe '#get_project_webdav_path' do
     it 'Returns path' do
-      @client.get_project_webdav_path('test-file.csv', :project => @project)
+      @client.get_project_webdav_path(:project => @project)
     end
   end
 
@@ -203,7 +203,7 @@ describe GoodData do
 
   describe '#get_user_webdav_path' do
     it 'Gets the path' do
-      @client.get_user_webdav_path('test.csv', :project => @project)
+      @client.get_user_webdav_path(:project => @project)
     end
   end
 end

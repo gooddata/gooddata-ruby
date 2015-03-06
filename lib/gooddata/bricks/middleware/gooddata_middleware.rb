@@ -1,8 +1,4 @@
 # encoding: UTF-8
-
-# TODO: REmove this
-# require 'gooddata'
-
 require_relative 'base_middleware'
 
 module GoodData
@@ -11,25 +7,29 @@ module GoodData
       def call(params)
         logger = params['GDC_LOGGER']
         token_name = 'GDC_SST'
-        protocol_name = 'GDC_PROTOCOL'
-        server_name = 'GDC_HOSTNAME'
+        protocol_name = 'CLIENT_GDC_PROTOCOL'
+        server_name = 'CLIENT_GDC_HOSTNAME'
         project_id = params['GDC_PROJECT_ID']
 
-        fail 'SST (SuperSecureToken) not present in params' if params[token_name].nil?
-
-        server = if !params[protocol_name].empty? && !params[server_name].empty?
+        server = if params[protocol_name] && params[server_name]
                    "#{params[protocol_name]}://#{params[server_name]}"
                  end
 
         client = if params['GDC_USERNAME'].nil? || params['GDC_PASSWORD'].nil?
-                   GoodData.connect(sst_token: params['GDC_SST'], server: server)
+                  puts "Connecting with SST to server #{server}"
+                  fail 'SST (SuperSecureToken) not present in params' if params[token_name].nil?
+                   GoodData.connect(sst_token: params[token_name], server: server)
                  else
+                   puts "Connecting as #{params['GDC_USERNAME']} to server #{server}"
                    GoodData.connect(params['GDC_USERNAME'], params['GDC_PASSWORD'], server: server)
                  end
+        project = client.projects(project_id)
+        GoodData.project = project
         GoodData.logger = logger
-        GoodData.with_project(project_id, :client => client) do |_p|
-          @app.call(params)
-        end
+        @app.call(params.merge({
+          'GDC_GD_CLIENT' => client,
+          'gdc_project' => project
+        }))
       end
     end
   end

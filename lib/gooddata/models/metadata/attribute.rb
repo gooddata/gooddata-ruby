@@ -123,7 +123,7 @@ module GoodData
     # @param name [String] name used as a basis for regular expression
     # @return [GoodData::Label]
     def label_by_name(name)
-      labels.find { |label| label.title.downcase =~ /#{name}/ || label.identifier.downcase =~ /#{name}/ }
+      labels.find { |label| label.title =~ /#{name}/ || label.identifier =~ /#{name}/ }
     end
   end
 end

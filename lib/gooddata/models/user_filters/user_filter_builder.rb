@@ -33,6 +33,7 @@ module GoodData
     def self.read_file(file, options = {})
       memo = {}
       params = row_based?(options) ? { headers: false } : { headers: true }
+
       CSV.foreach(file, params.merge(return_headers: false)) do |e|
         key, data = process_line(e, options)
         memo[key] = [] unless memo.key?(key)
@@ -166,7 +167,7 @@ module GoodData
             label.find_value_uri(v)
           end
         rescue
-          errors << [label, v]
+          errors << [label.title, v]
           nil
         end
       end
@@ -289,7 +290,7 @@ module GoodData
       to_create, to_delete = execute(filters, project.data_permissions, MandatoryUserFilter, options.merge(type: :muf))
       return [to_create, to_delete] if dry_run
 
-      to_create.each_pair do |related_uri, group|
+      to_create.peach do |related_uri, group|
         group.each(&:save)
 
         res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
@@ -306,7 +307,7 @@ module GoodData
         client.post("/gdc/md/#{project.pid}/userfilters", payload)
       end
       unless options[:do_not_touch_filters_that_are_not_mentioned]
-        to_delete.each do |related_uri, group|
+        to_delete.peach do |related_uri, group|
           if related_uri
             res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
             items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']

@@ -167,9 +167,10 @@ module GoodData
           path
         else
           with_zip(opts) do |zipfile|
-            Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }.each do |file|
+            files_to_upload = Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }
+            puts "Uploading #{files_to_upload.count} files."
+            files_to_upload.each do |file|
               file_pathname = Pathname.new(file)
-              puts "Including item #{file_pathname}"
               file_relative_pathname = file_pathname.relative_path_from(Pathname.new(path))
               zipfile.add(file_relative_pathname, file)
             end
