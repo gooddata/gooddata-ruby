@@ -290,8 +290,8 @@ module GoodData
     # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
-      return member(name) if name.instance_of?(GoodData::Membership)
-      return member(name) if name.instance_of?(GoodData::Profile)
+      return member(name, user_list) if name.instance_of?(GoodData::Membership)
+      return member(name, user_list) if name.instance_of?(GoodData::Profile)
       name = name.is_a?(Hash) ? name[:login] || name[:uri] : name
       return nil unless name
       name.downcase!
