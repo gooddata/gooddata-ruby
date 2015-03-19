@@ -192,7 +192,7 @@ module GoodData
       pairs.each do |a, b|
         uri_what = a.respond_to?(:uri) ? a.uri : a
         uri_for_what = b.respond_to?(:uri) ? b.uri : b
-        self.expression = expression.gsub(uri_what, uri_for_what)
+        self.expression = expression.gsub("[#{uri_what}]", "[#{uri_for_what}]")
       end
       self
     end
