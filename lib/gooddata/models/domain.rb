@@ -10,8 +10,6 @@ module GoodData
   class Domain < GoodData::Rest::Object
     attr_reader :name
 
-    USERS_OPTIONS = { :offset => 0, :limit => 200_000 }
-
     class << self
       # Looks for domain
       #
@@ -182,21 +180,22 @@ module GoodData
       # @option opts [Number] :offset The subject
       # @option opts [Number] :limit From address
       # TODO: Review opts[:limit] functionality
-      def users(domain, opts = USERS_OPTIONS.merge(:client => GoodData.connection))
+      def users(domain, opts = {})
         result = []
-
-        offset = 0 || opts[:offset]
-        uri = "/gdc/account/domains/#{domain}/users?offset=#{offset}&limit=#{opts[:limit]}"
+        page_limit = opts[:page_limit] || 1000
+        limit = opts[:limit] || Float::INFINITY
+        offset = opts[:offset]
+        uri = "/gdc/account/domains/#{domain}/users?offset=#{offset}&limit=#{page_limit}"
         loop do
-          break unless uri
           tmp = client(opts).get(uri)
           tmp['accountSettings']['items'].each do |account|
             result << client(opts).create(GoodData::Profile, account)
           end
-          break if opts[:limit] && result.length >= opts[:limit]
-          uri = tmp['accountSettings']['paging']['next']
-        end
+          break if result.length >= limit
 
+          uri = tmp['accountSettings']['paging']['next']
+          break unless uri
+        end
         result
       end
 
@@ -333,7 +332,7 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.users
     #
-    def users(opts = USERS_OPTIONS)
+    def users(opts = {})
       GoodData::Domain.users(name, opts.merge(client: client))
     end
 
