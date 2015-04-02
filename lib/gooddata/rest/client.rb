@@ -224,8 +224,7 @@ module GoodData
         @connection.get uri, opts, & block
       end
 
-      # FIXME: Invstigate _file argument
-      def get_project_webdav_path(_file, opts = { :project => GoodData.project })
+      def project_webdav_path(opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -236,8 +235,7 @@ module GoodData
         URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{project.pid}/")
       end
 
-      # FIXME: Invstigate _file argument
-      def get_user_webdav_path(_file, opts = { :project => GoodData.project })
+      def user_webdav_path(opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 

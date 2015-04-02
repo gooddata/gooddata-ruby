@@ -52,15 +52,15 @@ describe GoodData::Project, :constraint => 'slow' do
       end
       @domain.create_users(users.map {|u| u[:user]})
       res = @project.add_users(users, domain: @domain)
-      links = res.map {|i| i[:result]['projectUsersUpdateResult']['successful'].first}
+      links = res.map {|i| i[:uri]}
       expect(@project.members?(links).all?).to be_truthy
-      # users.map { |r| r[:user] }.each { |u| u.delete }
     end
   end
 
   describe '#import_users' do
     it "Updates user's name and surname and removes the users" do
       users = (1..2).to_a.map { |x| ProjectHelper.create_random_user(@client) }
+      @domain.create_users(users)
       @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
       expect(@domain.members?(users)).to be_truthy
       expect(@project.members?(users)).to be_truthy
@@ -70,6 +70,7 @@ describe GoodData::Project, :constraint => 'slow' do
       bill.first_name = 'buffalo'
       bill.last_name = 'bill'
       # import
+      @domain.create_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
       @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
       # it should be updated
       bill_changed = @domain.get_user(bill)
@@ -88,16 +89,19 @@ describe GoodData::Project, :constraint => 'slow' do
       # Add additional user while changing Buffalos surname and role.
       bill.last_name = 'Billie'
       other_guy = ProjectHelper.create_random_user(@client)
+      additional_batch = [bill, other_guy]
 
-      additional_batch = [bill, other_guy].map { |u| {user: u, role: u.role} }
-      @project.import_users(additional_batch, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @domain.create_users(additional_batch, domain: @domain)
+      @project.import_users(additional_batch.map { |u| {user: u, role: u.role} }, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+
       expect(@project.members.count).to eq 3
       expect(@project.member?(bill)).to be_truthy
-      expect(@project.members?(users - additional_batch.map {|x| x[:user]}).any?).to be_falsey
+      expect(@project.members?(users - additional_batch).any?).to be_falsey
     end
 
     it "Updates user's role in a project" do
       users = (1..5).to_a.map { |x| ProjectHelper.create_random_user(@client).to_hash }
+      @domain.create_users(users, domain: @domain)
       @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
 
       expect(@project.members?(users)).to be_truthy
@@ -115,6 +119,7 @@ describe GoodData::Project, :constraint => 'slow' do
       uh[:role] = 'editor'
 
       users = (1..5).to_a.map { |x| ProjectHelper.create_random_user(@client).to_hash } + [uh]
+      @domain.create_users(users, domain: @domain)
       expect(@project.member?(u)).to be_truthy
       expect(u.role.title).to eq 'Admin'
       @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])

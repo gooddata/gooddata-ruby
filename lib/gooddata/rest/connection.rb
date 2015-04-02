@@ -12,6 +12,7 @@ module GoodData
       DEFAULT_URL = 'https://secure.gooddata.com'
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
+      KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
 
       DEFAULT_HEADERS = {
         :content_type => :json,
@@ -258,7 +259,7 @@ module GoodData
       # @param uri [String] Target URI
       def put(uri, data, options = {})
         payload = data.is_a?(Hash) ? data.to_json : data
-        GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, [:password, :login, :authorizationToken])}"
+        GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
           b = proc { @server[uri].put payload, cookies }
           process_response(options, &b)
@@ -269,7 +270,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def post(uri, data, options = {})
-        GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, [:password, :login, :authorizationToken])}"
+        GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
           b = proc { @server[uri].post payload, cookies }

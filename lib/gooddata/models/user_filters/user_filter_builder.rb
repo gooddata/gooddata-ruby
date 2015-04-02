@@ -33,6 +33,7 @@ module GoodData
     def self.read_file(file, options = {})
       memo = {}
       params = row_based?(options) ? { headers: false } : { headers: true }
+
       CSV.foreach(file, params.merge(return_headers: false)) do |e|
         key, data = process_line(e, options)
         memo[key] = [] unless memo.key?(key)
@@ -105,7 +106,7 @@ module GoodData
       end
     end
 
-    def self.verify_existing_users(filters, options = { project: GoodData.project, client: GoodData.connection })
+    def self.verify_existing_users(filters, options = {})
       project = options[:project]
 
       users_must_exist = options[:users_must_exist] == false ? false : true
@@ -118,7 +119,7 @@ module GoodData
       end
     end
 
-    def self.create_label_cache(result, options = { project: GoodData.project, client: GoodData.connection })
+    def self.create_label_cache(result, options = {})
       project = options[:project]
 
       result.reduce({}) do |a, e|
@@ -166,7 +167,7 @@ module GoodData
             label.find_value_uri(v)
           end
         rescue
-          errors << [label, v]
+          errors << [label.title, v]
           nil
         end
       end
@@ -204,7 +205,7 @@ module GoodData
     #
     # @param filters [Array<Hash>] Filters definition
     # @return [Array] first is list of MAQL statements
-    def self.maqlify_filters(filters, options = { project: GoodData.project, client: GoodData.connection })
+    def self.maqlify_filters(filters, options = {})
       project = options[:project]
       users_cache = options[:users_cache] || create_cache(project.users, :login)
       labels_cache = create_label_cache(filters, options)
@@ -262,7 +263,7 @@ module GoodData
     # @param options [Hash]
     # @option options [Boolean] :dry_run If dry run is true. No changes to he proejct are made but list of changes is provided
     # @return [Array] list of filters that needs to be created and deleted
-    def self.execute_variables(filters, var, options = { client: GoodData.connection, project: GoodData.project })
+    def self.execute_variables(filters, var, options = {})
       client = options[:client]
       project = options[:project]
       dry_run = options[:dry_run]
@@ -281,7 +282,7 @@ module GoodData
       [to_create, to_delete]
     end
 
-    def self.execute_mufs(filters, options = { client: GoodData.connection, project: GoodData.project })
+    def self.execute_mufs(filters, options = {})
       client = options[:client]
       project = options[:project]
 
@@ -289,7 +290,7 @@ module GoodData
       to_create, to_delete = execute(filters, project.data_permissions, MandatoryUserFilter, options.merge(type: :muf))
       return [to_create, to_delete] if dry_run
 
-      to_create.each_pair do |related_uri, group|
+      to_create.peach do |related_uri, group|
         group.each(&:save)
 
         res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
@@ -306,7 +307,7 @@ module GoodData
         client.post("/gdc/md/#{project.pid}/userfilters", payload)
       end
       unless options[:do_not_touch_filters_that_are_not_mentioned]
-        to_delete.each do |related_uri, group|
+        to_delete.peach do |related_uri, group|
           if related_uri
             res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
             items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
@@ -365,7 +366,7 @@ module GoodData
     # @param klass [Class] Class can be aither UserFilter or VariableFilter
     # @param options [Hash] Filter definitions
     # @return [Array<Hash>]
-    def self.execute(user_filters, project_filters, klass, options = { client: GoodData.connection, project: GoodData.project })
+    def self.execute(user_filters, project_filters, klass, options = {})
       client = options[:client]
       project = options[:project]
 

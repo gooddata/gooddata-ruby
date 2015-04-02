@@ -316,7 +316,7 @@ module GoodData
 
         content['grid']['metrics'] = metric_parts.map do |item|
           item.deep_dup.tap do |i|
-            i['uri'].gsub!(uri_what, uri_for_what)
+            i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
           end
         end
 
@@ -324,7 +324,7 @@ module GoodData
         content['grid']['columns'] = cols.map do |item|
           if item.is_a?(Hash)
             item.deep_dup.tap do |i|
-              i['attribute']['uri'].gsub!(uri_what, uri_for_what)
+              i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
             end
           else
             item
@@ -335,7 +335,7 @@ module GoodData
         content['grid']['rows'] = rows.map do |item|
           if item.is_a?(Hash)
             item.deep_dup.tap do |i|
-              i['attribute']['uri'].gsub!(uri_what, uri_for_what)
+              i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
             end
           else
             item
@@ -347,7 +347,7 @@ module GoodData
           if item.is_a?(Hash)
             item.deep_dup.tap do |i|
               if i['locator'][0].key?('attributeHeaderLocator')
-                i['locator'][0]['attributeHeaderLocator']['uri'].gsub!(uri_what, uri_for_what)
+                i['locator'][0]['attributeHeaderLocator']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
               end
             end
           else
@@ -362,8 +362,8 @@ module GoodData
               next unless i.key?('metricSort')
               next unless i['metricSort'].key?('locators')
               next unless i['metricSort']['locators'][0].key?('attributeLocator2')
-              i['metricSort']['locators'][0]['attributeLocator2']['uri'].gsub!(uri_what, uri_for_what)
-              i['metricSort']['locators'][0]['attributeLocator2']['element'].gsub!(uri_what, uri_for_what)
+              i['metricSort']['locators'][0]['attributeLocator2']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
+              i['metricSort']['locators'][0]['attributeLocator2']['element'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
             end
           else
             item
@@ -374,17 +374,16 @@ module GoodData
           content['chart']['buckets'] = content['chart']['buckets'].reduce({}) do |a, e|
             key = e[0]
             val = e[1]
-            # binding.pry
             a[key] = val.map do |item|
               item.deep_dup.tap do |i|
-                i['uri'].gsub!(uri_what, uri_for_what)
+                i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
               end
             end
             a
           end
         end
 
-        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub(uri_what, uri_for_what) } }
+        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub("[#{uri_what}]", "[#{uri_for_what}]") } }
       end
       self
     end

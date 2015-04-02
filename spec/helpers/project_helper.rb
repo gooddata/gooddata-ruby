@@ -16,7 +16,7 @@ module ProjectHelper
     GoodData::Project[PROJECT_ID, opts]
   end
 
-  def self.delete_old_projects(opts = {:client => GoodData.connection})
+  def self.delete_old_projects(opts = { :client => GoodData.connection })
     projects = opts[:client].projects
     projects.each do |project|
       next if project.json['project']['meta']['author'] != client.user.uri

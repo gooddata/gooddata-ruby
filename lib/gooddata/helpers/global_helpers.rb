@@ -120,7 +120,7 @@ module GoodData
             nested[k] = v
           end
         end
-        key = hidden ? ENCODED_PARAMS_KEY : ENCODED_HIDDEN_PARAMS_KEY
+        key = hidden ? ENCODED_HIDDEN_PARAMS_KEY : ENCODED_PARAMS_KEY
         res[key] = nested.to_json unless nested.empty?
         res
       end
