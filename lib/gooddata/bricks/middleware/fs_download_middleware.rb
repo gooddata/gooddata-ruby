@@ -22,11 +22,11 @@ module GoodData
               end
             end
           when 'staging'
-            webdav_uri = GoodData.get_project_webdav_path
+            webdav_uri = GoodData.project_webdav_path
             dav = Net::DAV.new(webdav_uri, :curl => false)
             dav.verify_server = false
             dav.credentials(params['GDC_USERNAME'], params['GDC_PASSWORD'])
-            dav.find(path, recursive: true, suppress_errors: true) do | item |
+            dav.find(path, recursive: true, suppress_errors: true) do |item|
               puts 'Checking: ' + item.url.to_s
               name = (item.uri - webdav_uri).to_s
               File.open(name, 'w') do |f|

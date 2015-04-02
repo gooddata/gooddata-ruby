@@ -16,8 +16,8 @@ module GoodData
                  end
 
         client = if params['GDC_USERNAME'].nil? || params['GDC_PASSWORD'].nil?
-                  puts "Connecting with SST to server #{server}"
-                  fail 'SST (SuperSecureToken) not present in params' if params[token_name].nil?
+                   puts "Connecting with SST to server #{server}"
+                   fail 'SST (SuperSecureToken) not present in params' if params[token_name].nil?
                    GoodData.connect(sst_token: params[token_name], server: server)
                  else
                    puts "Connecting as #{params['GDC_USERNAME']} to server #{server}"
@@ -26,10 +26,7 @@ module GoodData
         project = client.projects(project_id)
         GoodData.project = project
         GoodData.logger = logger
-        @app.call(params.merge({
-          'GDC_GD_CLIENT' => client,
-          'gdc_project' => project
-        }))
+        @app.call(params.merge('GDC_GD_CLIENT' => client, 'gdc_project' => project))
       end
     end
   end
