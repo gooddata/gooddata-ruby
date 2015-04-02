@@ -15,9 +15,9 @@ describe GoodData do
     @client.disconnect
   end
 
-  describe '#get_project_webdav_path' do
+  describe '#project_webdav_path' do
     it 'Returns path' do
-      @client.get_project_webdav_path(:project => @project)
+      @client.project_webdav_path(:project => @project)
     end
   end
 
@@ -201,9 +201,9 @@ describe GoodData do
   end
 
 
-  describe '#get_user_webdav_path' do
+  describe '#user_webdav_path' do
     it 'Gets the path' do
-      @client.get_user_webdav_path(:project => @project)
+      @client.user_webdav_path(:project => @project)
     end
   end
 end

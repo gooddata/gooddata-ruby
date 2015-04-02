@@ -224,7 +224,7 @@ module GoodData
         @connection.get uri, opts, & block
       end
 
-      def get_project_webdav_path(opts = { :project => GoodData.project })
+      def project_webdav_path(opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -235,7 +235,7 @@ module GoodData
         URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{project.pid}/")
       end
 
-      def get_user_webdav_path(opts = { :project => GoodData.project })
+      def user_webdav_path(opts = { :project => GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
