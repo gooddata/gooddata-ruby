@@ -73,14 +73,19 @@ module GoodData
       # @param attributes [Hash] Hash with initial attributes
       # @return [GoodData::Profile] New profile instance
       def create(attributes)
-        json = EMPTY_OBJECT.dup
+        res = create_object(attributes)
+        res.save!
+        res
+      end
+
+      def create_object(attributes)
+        json = EMPTY_OBJECT.deep_dup
+        json['accountSetting']['links']['self'] = attributes[:uri] if attributes[:uri]
         res = client.create(GoodData::Profile, json)
 
         attributes.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
         end
-
-        res.save!
         res
       end
 
@@ -347,7 +352,6 @@ module GoodData
     # @return [String] Resource URI
     def uri
       GoodData::Helpers.get_path(@json, %w(accountSetting links self))
-      # @json['accountSetting']['links']['self']
     end
 
     def data
