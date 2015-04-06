@@ -60,4 +60,11 @@ describe GoodData::Model::ProjectBlueprint do
        [{:type=>"date", :name=>"committed_on", :dataset=>"committed_on"}]}
     expect(ToWire.references_to_wire(@spec, fact_table)).to eq ["committed_on"]
   end
+
+  it 'should generate descriptions' do
+    res = ToWire.to_wire(@spec)
+    payload_datasets = res[:diffRequest][:targetModel][:projectModel][:datasets]
+    repos = payload_datasets.find { |d| d[:dataset][:identifier] == 'dataset.repos' }
+    expect(repos[:dataset][:anchor][:attribute][:description]).to eq 'This is anchor description'
+  end
 end

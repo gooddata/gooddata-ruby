@@ -105,6 +105,7 @@ module GoodData
             f[:type] = fact['fact']['identifier'] =~ /^dt\./ ? :date_fact : :fact
             f[:name] = fact['fact']['identifier'].split('.').last
             f[:title] = fact['fact']['title'] if fact['fact']['title'] != fact['fact']['identifier'].split('.').last.titleize
+            f[:description] = fact['fact']['description'] if fact['fact']['description']
             f[:gd_data_type] = fact['fact']['dataType'] if fact['fact'].key?('dataType')
           end
         end
@@ -120,6 +121,7 @@ module GoodData
           l[:reference] = attribute['identifier'].split('.').last if type == 'label'
           l[:name] = label['label']['identifier'].split('.').last
           l[:title] = label['label']['title'] if label['label']['title'] != label['label']['identifier'].split('.').last.titleize
+          l[:description] = attribute['description'] if %w(attribute anchor).include?(type) && attribute['description']
           l[:gd_data_type] = label['label']['dataType'] if label['label'].key?('dataType')
           l[:gd_type] = label['label']['type'] if label['label'].key?('type')
           l[:default_label] = true if default_label == label['label']['identifier']
