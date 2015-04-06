@@ -174,7 +174,7 @@ describe GoodData::Model::ProjectBlueprint do
     end
     dataset = builder.to_blueprint
     @blueprint.datasets.count.should == 3
-    @blueprint.add_dataset(dataset)
+    @blueprint.add_dataset!(dataset)
     @blueprint.datasets.count.should == 4
   end
 

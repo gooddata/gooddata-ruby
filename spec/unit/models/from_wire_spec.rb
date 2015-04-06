@@ -117,6 +117,12 @@ describe GoodData::Model::FromWire do
       }]
   end
 
+  it "should be able to parse description from both attributes and facts" do
+    expect(@blueprint.find_dataset('opportunity').anchor[:description]).to eq 'This is opportunity attribute description'
+    expect(@blueprint.find_dataset('stage_history').facts.find {|f| f[:name] == 'stage_velocity'}[:description]).to eq 'Velocity description'
+    expect(@blueprint.find_dataset('opp_owner').attributes.find {|f| f[:name] == 'region'}[:description]).to eq 'Owner Region description'
+  end
+
   it "should be able to deal with fiscal dimensions with weird names" do
     model_view = MultiJson.load(File.read('./spec/data/wire_models/nu_model.json'))
     blueprint = FromWire.from_wire(model_view)

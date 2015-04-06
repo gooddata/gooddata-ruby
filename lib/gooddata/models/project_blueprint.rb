@@ -161,7 +161,7 @@ module GoodData
         ProjectBlueprint.datasets(to_hash, options).map { |d| DatasetBlueprint.new(d) }
       end
 
-      def add_dataset(a_dataset, index = nil)
+      def add_dataset!(a_dataset, index = nil)
         if index.nil? || index > datasets.length
           data[:datasets] << a_dataset.to_hash
         else
@@ -458,10 +458,10 @@ module GoodData
             local_dataset = temp_blueprint.find_dataset(dataset.name)
             index = temp_blueprint.datasets.index(local_dataset)
             local_dataset.merge!(dataset)
-            temp_blueprint.remove_dataset(local_dataset.name)
-            temp_blueprint.add_dataset(local_dataset, index)
+            temp_blueprint.remove_dataset!(local_dataset.name)
+            temp_blueprint.add_dataset!(local_dataset, index)
           else
-            temp_blueprint.add_dataset(dataset.dup)
+            temp_blueprint.add_dataset!(dataset.dup)
           end
         end
         temp_blueprint
