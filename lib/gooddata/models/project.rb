@@ -73,7 +73,7 @@ module GoodData
             fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
           end
 
-          id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}Use %r around regular expression.
+          id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}
 
           c = client(opts)
           fail ArgumentError, 'No :client specified' if c.nil?
