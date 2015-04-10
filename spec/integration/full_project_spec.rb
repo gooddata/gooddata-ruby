@@ -40,7 +40,7 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(results).to be_nil
 
     # When we change the model using the original blueprint. Basically change the title back.
-    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client)
+    results = @project.update_from_blueprint(@spec)
     # It should offer no changes using the original blueprint
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
     expect(results).to be_nil
