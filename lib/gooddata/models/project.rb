@@ -1082,6 +1082,10 @@ module GoodData
       GoodData::Variable[id, options]
     end
 
+    def update_from_blueprint(blueprint, options = {})
+      GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
+    end
+
     private
 
     def generate_user_payload(user_uri, status = 'ENABLED', roles_uri = nil)
