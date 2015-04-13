@@ -59,32 +59,32 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password, opts = { :verify_ssl => true })
-          if username.nil? && password.nil?
-            username = ENV['GD_GEM_USER']
-            password = ENV['GD_GEM_PASSWORD']
+        def connect(username = nil, password = nil, opts = { :verify_ssl => true })
+          if username.is_a?(Hash)
+            opts = opts.merge(username.symbolize_keys)
+          else
+            opts[:username] = username
+            opts[:password] = password
           end
 
-          new_opts = opts.dup
-          if username.is_a?(Hash) && username.key?(:sst_token)
-            new_opts[:sst_token] = username[:sst_token]
-          elsif username.is_a? Hash
-            new_opts[:username] = username[:login] || username[:user] || username[:username]
-            new_opts[:password] = username[:password]
-          elsif username.nil? && password.nil? && (opts.nil? || opts.empty?)
-            new_opts = Helpers::AuthHelper.read_credentials
-          else
-            new_opts[:username] = username
-            new_opts[:password] = password
+          # if username/password not set, try load ENV variables
+          if opts[:username].nil? && opts[:password].nil?
+            opts[:username] = ENV['GD_GEM_USER']
+            opts[:password] = ENV['GD_GEM_PASSWORD']
           end
-          unless new_opts[:sst_token]
-            fail ArgumentError, 'No username specified' if new_opts[:username].nil?
-            fail ArgumentError, 'No password specified' if new_opts[:password].nil?
+
+          # if username/password still not set, try load .gooddata file
+          if opts[:username].nil? && opts[:password].nil?
+            tmp_opts = Helpers::AuthHelper.read_credentials
+            opts = opts.merge(tmp_opts)
           end
-          if username.is_a?(Hash) && username.key?(:server)
-            new_opts[:server] = username[:server]
+
+          unless opts[:sst_token]
+            fail ArgumentError, 'No username specified' if opts[:username].nil?
+            fail ArgumentError, 'No password specified' if opts[:password].nil?
           end
-          client = Client.new(new_opts)
+
+          client = Client.new(opts)
 
           if client
             at_exit do
