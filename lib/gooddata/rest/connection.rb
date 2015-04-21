@@ -80,12 +80,13 @@ module GoodData
       end
 
       attr_reader :cookies
+      attr_reader :opts
+      attr_reader :server
       attr_reader :stats
       attr_reader :user
 
       def initialize(opts)
         @stats = {}
-        @opts = opts
 
         @headers = DEFAULT_HEADERS.dup
         @user = nil
