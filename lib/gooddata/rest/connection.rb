@@ -22,7 +22,7 @@ module GoodData
 
       DEFAULT_LOGIN_PAYLOAD = {
         :headers => DEFAULT_HEADERS,
-        :verify_ssl => OpenSSL::SSL::VERIFY_NONE
+        :verify_ssl => true
       }
 
       RETRYABLE_ERRORS = [
@@ -104,7 +104,8 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         server = options[:server] || DEFAULT_URL
-        @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD
+        options = DEFAULT_LOGIN_PAYLOAD.merge(options)
+        @server = RestClient::Resource.new server, options
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
