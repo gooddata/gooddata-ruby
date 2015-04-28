@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'terminal-table'
+require 'securerandom'
 
 require_relative '../version'
 require_relative '../exceptions/exceptions'
@@ -17,6 +18,10 @@ module GoodData
       DEFAULT_HEADERS = {
         :content_type => :json,
         :accept => [:json, :zip],
+        :user_agent => GoodData.gem_version_string
+      }
+
+      DEFAULT_WEBDAV_HEADERS = {
         :user_agent => GoodData.gem_version_string
       }
 
@@ -79,7 +84,10 @@ module GoodData
         end
       end
 
-      attr_reader :cookies
+      attr_reader :request_params
+
+      # backward compatibility
+      alias_method :cookies, :request_params
       attr_reader :stats
       attr_reader :user
 
@@ -87,13 +95,12 @@ module GoodData
         @stats = {}
         @opts = opts
 
-        @headers = DEFAULT_HEADERS.dup
+        headers = opts[:headers] || {}
+        @webdav_headers = DEFAULT_WEBDAV_HEADERS.merge(headers)
+
         @user = nil
         @server = nil
-
         @opts = opts
-        headers = opts[:headers] || {}
-        @headers.merge! headers
 
         # Initialize cookies
         reset_cookies!
@@ -104,7 +111,9 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         server = options[:server] || DEFAULT_URL
-        @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD
+        headers = options[:headers] || {}
+
+        @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD.merge(headers)
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
@@ -125,6 +134,7 @@ module GoodData
           refresh_token :dont_reauth => true
         else
           credentials = Connection.construct_login_payload(username, password)
+          generate_session_id
           @auth = post(LOGIN_PATH, credentials)['userLogin']
 
           refresh_token :dont_reauth => true
@@ -138,6 +148,7 @@ module GoodData
         url = @auth['state']
 
         begin
+          clear_session_id
           delete url if url
         rescue RestClient::Unauthorized
           GoodData.logger.info 'Already disconnected'
@@ -238,7 +249,7 @@ module GoodData
       def delete(uri, options = {})
         GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
-          b = proc { @server[uri].delete cookies }
+          b = proc { @server[uri].delete fresh_request_params(options[:request_id]) }
           process_response(options, &b)
         end
       end
@@ -249,7 +260,7 @@ module GoodData
       def get(uri, options = {}, &user_block)
         GoodData.logger.debug "GET: #{@server.url}#{uri}"
         profile "GET #{uri}" do
-          b = proc { @server[uri].get(cookies, &user_block) }
+          b = proc { @server[uri].get(fresh_request_params(options[:request_id]), &user_block) }
           process_response(options, &b)
         end
       end
@@ -261,7 +272,7 @@ module GoodData
         payload = data.is_a?(Hash) ? data.to_json : data
         GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
-          b = proc { @server[uri].put payload, cookies }
+          b = proc { @server[uri].put payload, fresh_request_params(options[:request_id]) }
           process_response(options, &b)
         end
       end
@@ -273,7 +284,7 @@ module GoodData
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
-          b = proc { @server[uri].post payload, cookies }
+          b = proc { @server[uri].post payload, fresh_request_params(options[:request_id]) }
           process_response(options, &b)
         end
       end
@@ -282,7 +293,7 @@ module GoodData
       #
       # @return uri [String] SST token
       def sst_token
-        cookies[:cookies]['GDCAuthSST']
+        request_params[:cookies]['GDCAuthSST']
       end
 
       def stats_table(values = stats)
@@ -306,7 +317,7 @@ module GoodData
       #
       # @return uri [String] TT token
       def tt_token
-        cookies[:cookies]['GDCAuthTT']
+        request_params[:cookies]['GDCAuthTT']
       end
 
       # Uploads a file to GoodData server
@@ -315,7 +326,7 @@ module GoodData
           puts "uploading the file #{uri}"
 
           to_upload = File.new(filename)
-          cookies_str = cookies[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
+          cookies_str = request_params[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
           req = Net::HTTP::Put.new(uri.path, 'User-Agent' => GoodData.gem_version_string, 'Cookie' => cookies_str)
           req.content_length = to_upload.size
           req.body_stream = to_upload
@@ -338,10 +349,10 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @headers
-            }
+              :headers => @webdav_headers
+            }.merge(cookies)
             begin
-              RestClient::Request.execute(raw.merge(cookies))
+              RestClient::Request.execute(raw)
             rescue RestClient::Exception => e
               false if e.http_code == 404
             end
@@ -363,7 +374,7 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @headers
+              :headers => @webdav_headers
             }.merge(cookies)
             RestClient::Request.execute(raw)
           end
@@ -384,10 +395,43 @@ module GoodData
         do_stream_file URI.join(url, CGI.escape(webdav_filename)), file
       end
 
+      def generate_request_id
+        "#{session_id}:#{call_id}"
+      end
+
       private
 
+      ID_LENGTH = 16
+
+      def generate_string
+        SecureRandom.urlsafe_base64(ID_LENGTH)
+      end
+
+      # generate session id to be passed as the first part to
+      # x_gdc_request header
+      def session_id
+        @session_id ||= generate_string
+      end
+
+      def call_id
+        generate_string
+      end
+
+      def generate_session_id
+        @session_id = generate_string
+      end
+
+      def clear_session_id
+        @session_id = nil
+      end
+
+      # request heders with freshly generated request id
+      def fresh_request_params(request_id=nil)
+        @request_params.merge(:x_gdc_request => request_id || generate_request_id)
+      end
+
       def merge_cookies!(cookies)
-        @cookies[:cookies].merge! cookies
+        @request_params[:cookies].merge! cookies
       end
 
       def process_response(options = {}, &block)
@@ -447,7 +491,7 @@ module GoodData
       end
 
       def reset_cookies!
-        @cookies = { :cookies => {} }
+        @request_params = { :cookies => {} }
       end
 
       def scrub_params(params, keys)
