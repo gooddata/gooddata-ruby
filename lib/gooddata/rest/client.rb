@@ -207,6 +207,10 @@ module GoodData
         @stats
       end
 
+      def generate_request_id
+        @connection.generate_request_id
+      end
+
       #######################
       # Rest
       #######################
