@@ -460,7 +460,7 @@ module GoodData
       end
 
       # request heders with freshly generated request id
-      def fresh_request_params(request_id=nil)
+      def fresh_request_params(request_id = nil)
         @request_params.merge(:x_gdc_request => request_id || generate_request_id)
       end
 
