@@ -87,14 +87,28 @@ module GoodData
     def upload_to_project_webdav(file, options = { :project => GoodData.project })
       options = merge_options(options)
       url = project_webdav_path(options)
-      connection.upload(file, options.merge(:staging_url => url)) if url
+
+      unless url
+        msg = 'Project WebDAV not supported in this Data Center'
+        GoodData.logger.error msg
+        raise msg
+      end
+
+      connection.upload(file, options.merge(:staging_url => url))
     end
 
     # Download from project directory
     def download_from_project_webdav(file, where, options = { :project => GoodData.project })
       options = merge_options(options)
       url = project_webdav_path(options)
-      connection.download(file, where, options.merge(:staging_url => url)) if url
+
+      unless url
+        msg = 'Project WebDAV not supported in this Data Center'
+        GoodData.logger.error msg
+        raise msg
+      end
+
+      connection.download(file, where, options.merge(:staging_url => url))
     end
 
     # Get WebDav directory for user data
