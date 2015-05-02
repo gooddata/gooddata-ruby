@@ -200,7 +200,7 @@ module GoodData
             :url => url
           }.merge(cookies)
 
-          if where.is_a?(IO)
+          if where.is_a?(IO) || where.is_a?(StringIO)
             RestClient::Request.execute(raw) do |chunk, _x, response|
               if response.code.to_s != '200'
                 fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
