@@ -5,8 +5,8 @@ describe GoodData::Command::Project, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 
-    @blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/test_project_model_spec.json")
-    @module_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/additional_dataset_module.json")
+    @blueprint = GoodData::Model::ProjectBlueprint.from_json(File.expand_path("../../data/test_project_model_spec.json", __FILE__))
+    @module_blueprint = GoodData::Model::ProjectBlueprint.from_json(File.expand_path("../../data/additional_dataset_module.json", __FILE__))
 
     @project = GoodData::Command::Project.build({:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
   end
