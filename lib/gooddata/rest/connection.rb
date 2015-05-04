@@ -239,7 +239,15 @@ module GoodData
       def delete(uri, options = {})
         GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
-          b = proc { @server[uri].delete cookies }
+          b = proc do
+            begin
+              @server[uri].delete(cookies)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end
@@ -250,7 +258,15 @@ module GoodData
       def get(uri, options = {}, &user_block)
         GoodData.logger.debug "GET: #{@server.url}#{uri}"
         profile "GET #{uri}" do
-          b = proc { @server[uri].get(cookies, &user_block) }
+          b = proc do
+            begin
+              @server[uri].get(cookies, &user_block)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end
@@ -262,7 +278,15 @@ module GoodData
         payload = data.is_a?(Hash) ? data.to_json : data
         GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
-          b = proc { @server[uri].put payload, cookies }
+          b = proc do
+            begin
+              @server[uri].put(payload, cookies)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end
@@ -274,7 +298,15 @@ module GoodData
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
-          b = proc { @server[uri].post payload, cookies }
+          b = proc do
+            begin
+              @server[uri].post(payload, cookies)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end
