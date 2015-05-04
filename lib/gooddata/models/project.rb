@@ -431,8 +431,7 @@ module GoodData
     # Get WebDav directory for project data
     # @return [String]
     def project_webdav_path
-      u = URI(links['uploads'])
-      URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{pid}/")
+      client.project_webdav_path(:project => self)
     end
 
     # Gets project role by its identifier
