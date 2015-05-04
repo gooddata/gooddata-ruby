@@ -9,7 +9,7 @@ module GoodData
   module Rest
     # Wrapper of low-level HTTP/REST client/library
     class Connection
-      DEFAULT_URL = 'https://secure.gooddata.com'
+      DEFAULT_URL = ENV['GD_SERVER'] || 'https://secure.gooddata.com'
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
       KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
