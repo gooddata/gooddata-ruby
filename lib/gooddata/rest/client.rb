@@ -238,7 +238,14 @@ module GoodData
 
       def user_webdav_path
         res = get '/gdc'
-        res['about']['links'].select { |l| l['title'] == 'user-uploads' }.first
+        url = res['about']['links'].select { |l| l['title'] == 'user-uploads' }.first
+        url = url['link'] if url
+
+        if(url.start_with?('/'))
+          url = URI.join(self.connection.server.url, url)
+        end
+
+        url
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
