@@ -236,15 +236,9 @@ module GoodData
         url
       end
 
-      def user_webdav_path(opts = { :project => GoodData.project })
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-        u = URI(project.links['uploads'])
-        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+      def user_webdav_path
+        res = get '/gdc'
+        res['about']['links'].select { |l| l['title'] == 'user-uploads' }.first
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
@@ -330,12 +324,12 @@ module GoodData
 
       def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client, :project => project })
         download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
-                                                                       :staging_url => get_user_webdav_url(options)))
+                                                                       :staging_url => user_webdav_path))
       end
 
       def upload_to_user_webdav(file, options = {})
         upload(file, options.merge(:directory => options[:directory],
-                                   :staging_url => get_user_webdav_url(options)))
+                                   :staging_url => user_webdav_path))
       end
 
       def with_project(pid, &block)
