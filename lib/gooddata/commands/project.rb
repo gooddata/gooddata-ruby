@@ -13,7 +13,8 @@ module GoodData
           template = options[:template]
           token = options[:token]
           client = options[:client]
-          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token, :client => client)
+          driver = options[:driver] || 'Pg'
+          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token, :client => client, :driver => driver)
         end
 
         # Show existing project
