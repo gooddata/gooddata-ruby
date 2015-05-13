@@ -1,8 +1,6 @@
 # encoding: UTF-8
 
 module GoodData
-  DEFAULT_SLEEP_INTERVAL = 10
-
   class << self
     # Performs a HTTP GET request.
     #
@@ -122,21 +120,9 @@ module GoodData
     # @param options [Hash] Options
     # @return [Hash] Result of polling
     def poll_on_code(link, options = {})
-      code = options[:code] || 202
-      sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
-      response = GoodData.get(link, :process => false)
-      while response.code == code
-        sleep sleep_interval
-        GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
-          sleep sleep_interval
-          response = GoodData.get(link, :process => false)
-        end
-      end
-      if options[:process] == false
-        response
-      else
-        GoodData.get(link)
-      end
+      client = options[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+      client.poll_on_code(link, options)
     end
 
     # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
@@ -151,17 +137,7 @@ module GoodData
     def poll_on_response(link, options = {}, &bl)
       client = options[:client]
       fail ArgumentError, 'No :client specified' if client.nil?
-
-      sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
-      response = get(link)
-      while bl.call(response)
-        sleep sleep_interval
-        GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { client.connection.refresh_token }) do
-          sleep sleep_interval
-          response = get(link)
-        end
-      end
-      response
+      client.poll_on_response(link, options, &bl)
     end
 
     private
