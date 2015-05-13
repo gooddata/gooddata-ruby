@@ -15,7 +15,7 @@ module GoodData
     # @return [String]
     def find_value_uri(value)
       escaped_value = CGI.escape(value)
-      results = client.post("#{uri}/validElements?limit=30&offset=0&order=asc&filter=#{escaped_value}", {})
+      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc&filter=#{escaped_value}", {})
       items = results['validElements']['items']
       if items.empty?
         fail(AttributeElementNotFound, value)
@@ -55,27 +55,28 @@ module GoodData
     # @return [Array]
     def values(options = {})
       limit = options[:limit] || 100
+      page_limit = 100
       offset = 0
       vals = []
       loop do
-        results = GoodData.post("#{uri}/validElements?limit=#{limit}&offset=#{offset}&order=asc", {})
-        x = results['validElements']['items'].map do |el|
+        results = GoodData.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", {})
+        elements = results['validElements']
+        items = elements['items'].map do |el|
           v = el['element']
           {
             :value => v['title'],
             :uri => v['uri']
           }
         end
-        vals.concat(x)
-        break if vals.length < offset
-        offset += limit
+        vals.concat(items)
+        break if vals.length > limit || vals.length == elements['paging']['total'].to_i
+        offset += page_limit
       end
-      vals
+      vals.take(limit)
     end
 
     def values_count(options = {})
-      limit = options[:limit] || 100
-      results = client.post("#{uri}/validElements?limit=#{limit}&offset=0&order=asc", {})
+      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc", {})
       results['validElements']['paging']['total'].to_i
     end
 
