@@ -243,14 +243,15 @@ module GoodData
       end
 
       def user_webdav_path(opts = { :project => GoodData.project })
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
+        res = get '/gdc'
+        url = res['about']['links'].select { |l| l['title'] == 'user-uploads' }.first
+        url = url['link'] if url
 
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        if (url.start_with?('/'))
+          url = URI.join(self.connection.server.url, url)
+        end
 
-        u = URI(project.links['uploads'])
-        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+        url.to_s + '/'
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
@@ -341,7 +342,7 @@ module GoodData
         @connection.download source_relative_path, target_file_path, options
       end
 
-      def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client, :project => project })
+      def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client })
         download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
                                                                        :staging_url => get_user_webdav_url(options)))
       end
@@ -360,20 +361,7 @@ module GoodData
       private
 
       def get_user_webdav_url(options = {})
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = options[:project] || GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-        u = URI(project.links['uploads'])
-        us = u.to_s
-        ws = options[:client].opts[:webdav_server]
-        if !us.empty? && !us.downcase.start_with?('http') && !ws.empty?
-          u = URI.join(ws, us)
-        end
-
-        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+        user_webdav_path
       end
     end
   end
