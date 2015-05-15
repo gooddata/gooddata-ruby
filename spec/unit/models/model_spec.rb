@@ -10,28 +10,38 @@ describe GoodData::Model do
     @additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/model_module.json")
 
     @blueprint_with_duplicate = GoodData::Model::ProjectBlueprint.new(
-        {
-            :title => "x",
-            :datasets => [
-                {
-                    :name => "commits",
-                    :columns => [
-                        {:type => "fact", :name => "lines_changed"}
-                    ]
-                }
-            ]})
+      {
+        title: "x",
+        datasets: [
+          {
+            name: "commits",
+            columns: [
+              {
+                name: "lines_changed",
+                type: "fact",
+              }
+            ]
+          }
+        ]
+      }
+    )
 
     @conflicting_blueprint = GoodData::Model::ProjectBlueprint.new(
-        {
-            :title => "x",
-            :datasets => [
-                {
-                    :name => "commits",
-                    :columns => [
-                        {:type => "attribute", :name => "lines_changed"}
-                    ]
-                }
-            ]})
+      {
+        title: "x",
+        datasets: [
+          {
+            name: "commits",
+            columns: [
+              {
+                name: "lines_changed",
+                type: "attribute",
+              }
+            ]
+          }
+        ]
+      }
+    )
   end
 
   it "should be possible to merge Schema blueprints" do
