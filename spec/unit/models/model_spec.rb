@@ -44,6 +44,20 @@ describe GoodData::Model do
     )
   end
 
+  describe ".title" do
+
+    it "returns title" do
+      expect(GoodData::Model.title(@base_blueprint.to_hash)).to eq "RubyGem Dev Week test"
+    end
+    
+    it "returns titleized name when title is not present" do
+      hash = @base_blueprint.to_hash
+      hash.delete(:title)
+      hash[:name] = "ruby test"
+      expect(GoodData::Model.title(hash)).to eq "Ruby Test"
+    end
+  end
+
   describe ".has_gd_type?" do
 
     it "returns true for supported gd_type" do
