@@ -44,6 +44,10 @@ describe GoodData::Model do
     )
   end
 
+  it "has default fact datatype" do
+    expect(GoodData::Model::DEFAULT_FACT_DATATYPE).to eq "INT"
+  end
+  
   describe ".title" do
 
     it "returns title" do
