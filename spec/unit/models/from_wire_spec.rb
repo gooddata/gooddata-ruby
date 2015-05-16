@@ -27,12 +27,6 @@ describe GoodData::Model::FromWire do
     expect(col[:gd_type]).to eq 'GDC.text'
   end
 
-  it "should validate a gd_datatype" do
-    expect(GoodData::Model.check_gd_datatype("GDC.time")).to eq true
-    expect(GoodData::Model.check_gd_datatype("gdc.time")).to eq false
-    expect(GoodData::Model.check_gd_datatype("gdc.time3")).to eq false
-  end
-
   it "should be able to omit titles if they are superfluous" do
     view = MultiJson.load(File.read('./spec/data/superfluous_titles_view.json'))
     blueprint = FromWire.from_wire(view)

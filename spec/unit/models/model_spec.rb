@@ -44,6 +44,36 @@ describe GoodData::Model do
     )
   end
 
+  describe ".has_gd_type?" do
+
+    it "returns true for supported gd_type" do
+      expect(GoodData::Model.has_gd_type?("GDC.link")).to eq true
+      expect(GoodData::Model.has_gd_type?("GDC.text")).to eq true
+      expect(GoodData::Model.has_gd_type?("GDC.geo")).to eq true
+      expect(GoodData::Model.has_gd_type?("GDC.time")).to eq true
+    end
+    
+    it "returns false for not supported gd_type" do
+      expect(GoodData::Model.has_gd_type?("gdc.time")).to eq false
+      expect(GoodData::Model.has_gd_type?("GDC.time3")).to eq false
+    end
+  end
+  
+  describe ".has_gd_datatype?" do
+
+    it "returns true for supported gd_datatype" do
+      expect(GoodData::Model.has_gd_datatype?("INT")).to eq true
+      expect(GoodData::Model.has_gd_datatype?("VARCHAR")).to eq true
+      expect(GoodData::Model.has_gd_datatype?("DECIMAL")).to eq true
+    end
+    
+    it "returns false for not supported gd_datatype" do
+      expect(GoodData::Model.has_gd_datatype?("int")).to eq false
+      expect(GoodData::Model.has_gd_datatype?("FLOAT")).to eq false
+      expect(GoodData::Model.has_gd_datatype?("CHAR")).to eq false
+    end
+  end
+
   describe ".merge_dataset_columns" do
     
     it "should be possible to merge Schema blueprints" do
