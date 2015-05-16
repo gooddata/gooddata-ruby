@@ -60,8 +60,12 @@ module GoodData
         end
       end
 
-      def check_gd_datatype(value)
-        GD_TYPES.any? { |v| v == value }
+      def has_gd_type?(value)
+        GD_TYPES.include? value
+      end
+      
+      def has_gd_datatype?(value)
+        GD_DATA_TYPES.include? value
       end
 
       # Load given file into a data set described by the given schema
