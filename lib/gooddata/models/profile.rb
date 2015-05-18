@@ -372,6 +372,15 @@ module GoodData
       (first_name || '') + (last_name || '')
     end
 
+    def sso_provider
+      @json['accountSetting']['ssoProvider']
+    end
+
+    def sso_provider=(an_sso_provider)
+      @dirty = true
+      @json['accountSetting']['ssoProvider'] = an_sso_provider
+    end
+
     def to_hash
       tmp = content.merge(uri: uri).symbolize_keys
       [
@@ -379,7 +388,8 @@ module GoodData
         [:phoneNumber, :phone],
         [:firstName, :first_name],
         [:lastName, :last_name],
-        [:authenticationModes, :authentication_modes]
+        [:authenticationModes, :authentication_modes],
+        [:ssoProvider, :sso_provider]
       ].each do |vals|
         wire, rb = vals
         tmp[rb] = tmp[wire]
