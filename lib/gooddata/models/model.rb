@@ -72,12 +72,12 @@ module GoodData
           fail "Unknown type #{column[:type]}"
         end
       end
-
-      def check_gd_type(value)
-        GD_TYPES.any? { |v| v == value }
+      
+      def has_gd_type?(value)
+        GD_TYPES.include? value
       end
-
-      def check_gd_data_type(value)
+      
+      def has_gd_datatype?(value)
         GD_DATA_TYPES.any? do |v|
           case v
           when Regexp
@@ -89,7 +89,7 @@ module GoodData
           end
         end
       end
-
+      
       def normalize_gd_data_type(type)
         if type && type.upcase == 'INTEGER'
           'INT'
