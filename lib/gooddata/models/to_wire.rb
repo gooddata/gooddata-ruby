@@ -43,7 +43,7 @@ module GoodData
       def self.attribute_to_wire(dataset, attribute)
         default_label = DatasetBlueprint.default_label_for_attribute(dataset, attribute)
         label = default_label[:type].to_sym == :label ? default_label : default_label.merge(type: :primary_label)
-        {
+        payload = {
           attribute: {
             identifier: GoodData::Model.identifier_for(dataset, attribute),
             title: GoodData::Model.title(attribute),
@@ -60,6 +60,9 @@ module GoodData
             defaultLabel: GoodData::Model.identifier_for(dataset, label, attribute)
           }
         }
+        payload.tap do |p|
+          p[:attribute][:description] = GoodData::Model.description(attribute) if GoodData::Model.description(attribute)
+        end
       end
 
       # Converts dataset to wire format.
@@ -100,13 +103,16 @@ module GoodData
       # @param fact [Hash] Fact blueprint
       # @return [Hash] Manifest for a particular reference
       def self.fact_to_wire(dataset, fact)
-        {
+        payload = {
           fact: {
             identifier: GoodData::Model.identifier_for(dataset, fact),
             title: GoodData::Model.title(fact),
             dataType: fact[:gd_data_type] || DEFAULT_FACT_DATATYPE
           }
         }
+        payload.tap do |p|
+          p[:fact][:description] = GoodData::Model.description(fact) if GoodData::Model.description(fact)
+        end
       end
 
       # Converts references to wire format.
