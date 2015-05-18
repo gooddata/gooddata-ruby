@@ -18,7 +18,8 @@ module GoodData
           {
             attribute: {
               identifier: GoodData::Model.identifier_for(dataset, type: :anchor_no_label),
-              title: "Records of #{ GoodData::Model.title(dataset) }"
+              title: "Records of #{ GoodData::Model.title(dataset) }",
+              folder: dataset[:folder] || GoodData::Model.title(dataset)
             }
           }
         end
@@ -47,6 +48,7 @@ module GoodData
           attribute: {
             identifier: GoodData::Model.identifier_for(dataset, attribute),
             title: GoodData::Model.title(attribute),
+            folder: attribute[:folder] || dataset[:folder] || GoodData::Model.title(dataset),
             labels: ([attribute.merge(type: :primary_label)] + DatasetBlueprint.labels_for_attribute(dataset, attribute)).map do |l|
               {
                 label: {
@@ -104,6 +106,7 @@ module GoodData
           fact: {
             identifier: GoodData::Model.identifier_for(dataset, fact),
             title: GoodData::Model.title(fact),
+            folder: fact[:folder] || dataset[:folder] || GoodData::Model.title(dataset),
             dataType: fact[:gd_data_type] || DEFAULT_FACT_DATATYPE
           }
         }
