@@ -116,6 +116,18 @@ module GoodData
           h
         end
       end
+
+      def stringify_keys_deep!(h)
+        if Hash == h.class
+          Hash[
+            h.map do |k, v|
+              [k.respond_to?(:to_s) ? k.to_s : k, stringify_keys_deep!(v)]
+            end
+          ]
+        else
+          h
+        end
+      end
     end
   end
 end
