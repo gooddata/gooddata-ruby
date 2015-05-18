@@ -75,7 +75,7 @@ module GoodData
       vals.take(limit)
     end
 
-    def values_count(options = {})
+    def values_count(_options = {})
       results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc", {})
       results['validElements']['paging']['total'].to_i
     end

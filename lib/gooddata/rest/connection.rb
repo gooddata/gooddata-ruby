@@ -56,7 +56,8 @@ module GoodData
         def retryable(options = {}, &_block)
           opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
 
-          retry_exception, retries = opts[:on], opts[:tries]
+          retry_exception = opts[:on]
+          retries = opts[:tries]
 
           unless retry_exception.is_a?(Array)
             retry_exception = [retry_exception]
