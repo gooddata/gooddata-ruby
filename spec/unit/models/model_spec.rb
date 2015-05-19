@@ -16,7 +16,7 @@ describe GoodData::Model do
                 {
                     :name => "commits",
                     :columns => [
-                        {:type => "fact", :name => "lines_changed"}
+                        {:type => "fact", :name => "lines_changed", :description=>"Fact description"}
                     ]
                 }
             ]})
@@ -49,7 +49,7 @@ describe GoodData::Model do
     stuff = GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
 
     stuff[:columns].count.should == 4
-    stuff[:columns].include?({:type => "fact", :name => "lines_changed"}).should == true
+    stuff[:columns].include?({:type => "fact", :name => "lines_changed", :description=>"Fact description"}).should == true
     stuff[:columns].group_by { |col| col[:name] }["lines_changed"].count.should == 1
   end
 
