@@ -350,8 +350,8 @@ module GoodData
       GoodData::Dashboard[id, project: self, client: client]
     end
 
-    def data_permissions
-      GoodData::MandatoryUserFilter.all(client: client, project: self)
+    def data_permissions(id = :all)
+      GoodData::MandatoryUserFilter[id, client: client, project: self]
     end
 
     # Deletes project
@@ -890,7 +890,7 @@ module GoodData
     # List of users in project
     #
     # @return [Array<GoodData::User>] List of users
-    def users(opts = { offset: 0, limit: 10_000 })
+    def users(opts = { offset: 0, limit: 1_000 })
       result = []
 
       # TODO: @korczis, review this after WA-3953 get fixed
@@ -933,8 +933,10 @@ module GoodData
     def import_users(new_users, options = {})
       domain = options[:domain]
       role_list = roles
-      users_list = users
+      users_list = users(all: true, offset: 0, limit: 1_000)
       new_users = new_users.map { |x| (x.is_a?(Hash) && x[:user] && x[:user].to_hash.merge(role: x[:role])) || x.to_hash }
+
+      GoodData.logger.warn("Importing users to project (#{pid})")
 
       whitelisted_new_users, whitelisted_users = whitelist_users(new_users.map(&:to_hash), users_list, options[:whitelists])
 
@@ -949,11 +951,12 @@ module GoodData
           role = get_role(r, role_list)
           role && role.uri
         end
+        u[:status] = "ENABLED"
         u
       end
 
       # Diff users. Only login and role is important for the diff
-      diff = GoodData::Helpers.diff(whitelisted_users, diffable_new, key: :login, fields: [:login, :role])
+      diff = GoodData::Helpers.diff(whitelisted_users, diffable_new, key: :login, fields: [:login, :role, :status])
 
       results = []
       # Create new users
@@ -963,15 +966,19 @@ module GoodData
           role: x[:role]
         }
       end
-
-      results.concat create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users)
+      # This is only creating users that were not in the proejcts so far. This means this will reach into domain
+      GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
+      results.concat create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users, only_domain: true )
 
       # # Update existing users
+      GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
       list = diff[:changed].map { |x| { user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles] } }
       results.concat(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
 
       # Remove old users
-      results.concat(disable_users(diff[:removed]))
+      to_remove = diff[:removed].reject {|u| u[:status] == 'DISABLED' || u[:status] == :disabled }
+      GoodData.logger.warn("Removing #{to_remove.count} users in project (#{pid})")
+      results.concat(disable_users(to_remove))
       results
     end
 
@@ -982,7 +989,8 @@ module GoodData
         generate_user_payload(u[:uri], 'DISABLED')
       end
       payloads.each_slice(100).mapcat do |payload|
-        client.post(url, 'users' => payload)
+        result = client.post(url, 'users' => payload)
+        result['projectUsersUpdateResult'].mapcat {|k, v| v.map {|x| {type: k.to_sym, uri: x}}}
       end
     end
 
@@ -1033,7 +1041,16 @@ module GoodData
       role_list = options[:roles] || roles
       project_users = options[:project_users] || users
       domain = options[:domain] && client.domain(options[:domain])
-      domain_users = domain.nil? ? nil : domain.users
+      domain_users = if domain.nil?
+        options[:domain_users]
+      else
+        if options[:only_domain] && list.count < 100
+          list.map {|l| domain.find_user_by_login(l[:user][:login])}
+        else
+          domain.users
+        end
+      end
+      
       users_to_add = list.flat_map do |user_hash|
         user = user_hash[:user] || user_hash[:login]
         desired_roles = user_hash[:role] || user_hash[:roles] || 'readOnlyUser'
@@ -1049,7 +1066,7 @@ module GoodData
       results = payloads.each_slice(100).map do |payload|
         client.post(url, 'users' => payload)
       end
-      results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| { status: k.to_sym, uri: v_2 } } } }
+      results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| { type: k.to_sym, uri: v_2 } } } }
     end
 
     alias_method :add_users, :set_users_roles

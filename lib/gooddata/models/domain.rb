@@ -168,7 +168,8 @@ module GoodData
         c = client(opts)
         escaped_login = CGI.escape(login)
         domain = c.domain(domain)
-        url = "/gdc/account/domains/#{domain.name}/users?login=#{escaped_login}"
+        GoodData.logger.warn("Retrieving particular user \"#{login.inspect}\" from domain #{domain.name}")
+        url = "#{domain.uri}/users?login=#{escaped_login}"
         tmp = c.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
         items && items.length > 0 ? c.factory.create(GoodData::Profile, items.first) : nil
@@ -180,23 +181,30 @@ module GoodData
       # @option opts [Number] :offset The subject
       # @option opts [Number] :limit From address
       # TODO: Review opts[:limit] functionality
-      def users(domain, opts = {})
-        result = []
-        page_limit = opts[:page_limit] || 1000
-        limit = opts[:limit] || Float::INFINITY
-        offset = opts[:offset]
-        uri = "/gdc/account/domains/#{domain}/users?offset=#{offset}&limit=#{page_limit}"
-        loop do
-          tmp = client(opts).get(uri)
-          tmp['accountSettings']['items'].each do |account|
-            result << client(opts).create(GoodData::Profile, account)
-          end
-          break if result.length >= limit
+      def users(domain, id = :all, opts = {})
+        c = client(opts)
+        domain = c.domain(domain)
+        if id == :all
+          GoodData.logger.warn("Retrieving all users from domain #{domain.name}")
+          result = []
+          page_limit = opts[:page_limit] || 1000
+          limit = opts[:limit] || Float::INFINITY
+          offset = opts[:offset]
+          uri = "#{domain.uri}/users?offset=#{offset}&limit=#{page_limit}"
+          loop do
+            tmp = client(opts).get(uri)
+            tmp['accountSettings']['items'].each do |account|
+              result << client(opts).create(GoodData::Profile, account)
+            end
+            break if result.length >= limit
 
-          uri = tmp['accountSettings']['paging']['next']
-          break unless uri
+            uri = tmp['accountSettings']['paging']['next']
+            break unless uri
+          end
+          result
+        else
+          find_user_by_login(domain, id)
         end
-        result
       end
 
       # Create users specified in list
@@ -264,8 +272,8 @@ module GoodData
     # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
-      return member(name) if name.instance_of?(GoodData::Membership)
-      return member(name) if name.instance_of?(GoodData::Profile)
+      return member(name, user_list) if name.instance_of?(GoodData::Membership)
+      return member(name, user_list) if name.instance_of?(GoodData::Profile)
       name = name.is_a?(Hash) ? name[:login] || name[:uri] : name
       return nil unless name
       name.downcase!
@@ -332,11 +340,15 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.users
     #
-    def users(opts = {})
-      GoodData::Domain.users(name, opts.merge(client: client))
+    def users(id = :all, opts = {})
+      GoodData::Domain.users(name, id, opts.merge(client: client))
     end
 
     alias_method :members, :users
+
+    def uri()
+      "/gdc/account/domains/#{name}"
+    end
 
     private
 

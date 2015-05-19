@@ -205,6 +205,7 @@ module GoodData
     # @return [IO] The stream of data that represents a zipped deployed process.
     def download
       link = links['source']
+      client.connection.refresh_token
       client.get(link, process: false) { |_, _, result| RestClient.get(result.to_hash['location'].first) }
     end
 
