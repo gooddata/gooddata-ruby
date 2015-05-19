@@ -121,10 +121,6 @@ describe GoodData::Domain do
     end
 
     it 'updates properties of a profile' do
-      logger = Logger.new(STDOUT)
-      logger.level = Logger::DEBUG
-      GoodData.logger = logger
-
       user = @domain.users
         .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.sample
 
