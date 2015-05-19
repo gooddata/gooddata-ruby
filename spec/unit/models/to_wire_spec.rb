@@ -27,12 +27,13 @@ describe GoodData::Model::ProjectBlueprint do
       columns: [{ type: "attribute", name: "repo_id"}]}
 
     res = ToWire.anchor_to_wire(@spec, dataset_without_anchor)
-    expect(res).to eq({ attribute: { identifier: "attr.repos.factsof", title: "Records of Repos"}})
+    expect(res).to eq({ attribute: { identifier: 'attr.repos.factsof', title: 'Records of Repos', folder: 'Repos' }})
 
     res = ToWire.anchor_to_wire(@spec, dataset_with_anchor)
     expect(res).to eq({:attribute=>
       {:identifier=>"attr.repos.repo_id",
        :title=>"Repo",
+       :folder => 'Repos',
        :labels=>
         [{:label=>
            {:identifier=>"label.repos.repo_id",
