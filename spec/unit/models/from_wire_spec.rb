@@ -42,11 +42,11 @@ describe GoodData::Model::FromWire do
   end
 
   it "should enable sorting" do
-    pending("UAAA")
+    skip("UAAA")
   end
 
   it "should allow defining date dimensions" do
-    pending('UAAA')
+    skip('UAAA')
   end
 
   it "should generate the same thing it parsed" do
@@ -61,6 +61,7 @@ describe GoodData::Model::FromWire do
       {
         type: 'anchor',
         name: "techoppanalysis",
+        folder: "Opportunity Benchmark",
         title: "Tech Opp. Analysis",
         gd_data_type: "VARCHAR(128)",
         gd_type: "GDC.text",
@@ -73,6 +74,7 @@ describe GoodData::Model::FromWire do
     expect(x).to eq [
       {
         :type=>'attribute',
+        :folder => "Opportunity Benchmark",
         :name=>"month",
         :gd_data_type=>"VARCHAR(128)",
         :gd_type=>"GDC.text",
@@ -88,6 +90,7 @@ describe GoodData::Model::FromWire do
       },
      {
        :type=>'attribute',
+       :folder => "Opportunity Benchmark",
        :name=>"cohorttype",
        :title=>"Cohort Type",
        :gd_data_type=>"VARCHAR(128)",
