@@ -1,8 +1,5 @@
 # encoding: UTF-8
 
-require_relative 'user_filter_builder_create'
-require_relative 'user_filter_builder_execute'
-
 module GoodData
   module UserFilterBuilder
     # Main Entry function. Gets values and processes them to get filters
@@ -109,17 +106,166 @@ module GoodData
       end
     end
 
-    def self.verify_existing_users(filters, options = {})
-      project = options[:project]
+    def self.get_missing_users(filters, options = {})
+      users_cache = options[:users_cache]
+      filters.reject { |u| users_cache.key?(u[:login]) }
+    end
 
+    def self.verify_existing_users(filters, options = {})
       users_must_exist = options[:users_must_exist] == false ? false : true
-      users_cache = options[:users_cache] || create_cache(project.users, :login)
+      users_cache = options[:users_cache]
+      domain = options[:domain]
 
       if users_must_exist
-        list = users_cache.values
-        missing_users = filters.map { |x| x[:login] }.reject { |u| project.member?(u, list) }
+        missing_users = filters.reject do |u|
+          next true if users_cache.key?(u[:login])
+          domain_user = (domain && domain.find_user_by_login(u[:login]))
+          users_cache[domain_user.login] = domain_user if domain_user
+          next true if domain_user
+          false
+        end
         fail "#{missing_users.count} users are not part of the project and variable cannot be resolved since :users_must_exist is set to true (#{missing_users.join(', ')})" unless missing_users.empty?
       end
+    end
+
+    def self.create_label_cache(result, options = {})
+      project = options[:project]
+
+      result.reduce({}) do |a, e|
+        e[:filters].map do |filter|
+          a[filter[:label]] = project.labels(filter[:label]) unless a.key?(filter[:label])
+        end
+        a
+      end
+    end
+
+    def self.create_lookups_cache(small_labels)
+      small_labels.reduce({}) do |a, e|
+        lookup = e.values(:limit => 1_000_000).reduce({}) do |a1, e1|
+          a1[e1[:value]] = e1[:uri]
+          a1
+        end
+        a[e.uri] = lookup
+        a
+      end
+    end
+
+    def self.create_attrs_cache(filters, options = {})
+      project = options[:project]
+
+      labels = filters.flat_map do |f|
+        f[:filters]
+      end
+
+      over_cache = labels.reduce({}) do |a, e|
+        a[e[:over]] = e[:over]
+        a
+      end
+      to_cache = labels.reduce({}) do |a, e|
+        a[e[:to]] = e[:to]
+        a
+      end
+      cache = over_cache.merge(to_cache)
+      attr_cache = {}
+      cache.each_pair do |k, v|
+        begin
+          attr_cache[k] = project.attributes(v)
+        rescue
+          nil
+        end
+      end
+      attr_cache
+    end
+
+    # Walks over provided labels and picks those that have fewer than certain amount of values
+    # This tries to balance for speed when working with small datasets (like users)
+    # so it precaches the values and still be able to function for larger ones even
+    # though that would mean tons of requests
+    def self.get_small_labels(labels_cache)
+      labels_cache.values.select { |label| label.values_count < 100_000 }
+    end
+
+    # Creates a MAQL expression(s) based on the filter defintion.
+    # Takes the filter definition looks up any necessary values and provides API executable MAQL
+    def self.create_expression(filter, labels_cache, lookups_cache, attr_cache, options = {})
+      errors = []
+      values = filter[:values]
+      label = labels_cache[filter[:label]]
+      element_uris = values.map do |v|
+        begin
+          if lookups_cache.key?(label.uri)
+            if lookups_cache[label.uri].key?(v)
+              lookups_cache[label.uri][v]
+            else
+              fail
+            end
+          else
+            label.find_value_uri(v)
+          end
+        rescue
+          errors << [label.title, v]
+          nil
+        end
+      end
+      expression = if element_uris.compact.empty? && options[:restrict_if_missing_all_values] && options[:type] == :muf
+                     '1 <> 1'
+                   elsif element_uris.compact.empty? && options[:restrict_if_missing_all_values] && options[:type] == :variable
+                     nil
+                   elsif element_uris.compact.empty?
+                     'TRUE'
+                   elsif filter[:over] && filter[:to]
+                     over = attr_cache[filter[:over]]
+                     to = attr_cache[filter[:to]]
+                     "([#{label.attribute_uri}] IN (#{ element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ') })) OVER [#{over && over.uri}] TO [#{to && to.uri}]"
+                   else
+                     "[#{label.attribute_uri}] IN (#{ element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ') })"
+                   end
+      [expression, errors]
+    end
+
+    # Encapuslates the creation of filter
+    def self.create_user_filter(expression, related)
+      {
+        'related' => related,
+        'level' => :user,
+        'expression' => expression,
+        'type' => :filter
+      }
+    end
+
+    # Resolves and creates maql statements from filter definitions.
+    # This method does not perform any modifications on API but
+    # collects all the information that is needed to do so.
+    # Method collects all info from the user and current state in project and compares.
+    # Returns suggestion of what should be deleted and what should be created
+    # If there is some discrepancies in the data (missing values, nonexistent users) it
+    # finishes and collects all the errors at once
+    #
+    # @param filters [Array<Hash>] Filters definition
+    # @return [Array] first is list of MAQL statements
+    def self.maqlify_filters(filters, options = {})
+      # project = options[:project]
+      users_cache = options[:users_cache] # || create_cache(project.users, :login)
+      labels_cache = create_label_cache(filters, options)
+      small_labels = get_small_labels(labels_cache)
+      lookups_cache = create_lookups_cache(small_labels)
+      attrs_cache = create_attrs_cache(filters, options)
+
+      errors = []
+      results = filters.pmapcat do |filter|
+        login = filter[:login]
+        filter[:filters].pmapcat do |f|
+          expression, error = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
+          errors << error unless error.empty?
+          profiles_uri = (users_cache[login] && users_cache[login].uri)
+          if profiles_uri && expression
+            [create_user_filter(expression, profiles_uri)]
+          else
+            []
+          end
+        end
+      end
+      [results, errors]
     end
 
     def self.resolve_user_filter(user = [], project = [])
@@ -150,6 +296,83 @@ module GoodData
       [to_create, to_delete]
     end
 
+    # Executes the update for variables. It resolves what is new and needed to update.
+    # @param filters [Array<Hash>] Filter Definitions
+    # @param filters [Variable] Variable instance to be updated
+    # @param options [Hash]
+    # @option options [Boolean] :dry_run If dry run is true. No changes to he proejct are made but list of changes is provided
+    # @return [Array] list of filters that needs to be created and deleted
+    def self.execute_variables(filters, var, options = {})
+      client = options[:client]
+      project = options[:project]
+      dry_run = options[:dry_run]
+      to_create, to_delete = execute(filters, var.user_values, VariableUserFilter, options.merge(type: :variable))
+      return [to_create, to_delete] if dry_run
+
+      # TODO: get values that are about to be deleted and created and update them.
+      # This will make sure there is no downitme in filter existence
+      unless options[:do_not_touch_filters_that_are_not_mentioned]
+        to_delete.each { |_, group| group.each(&:delete) }
+      end
+      data = to_create.values.flatten.map(&:to_hash).map { |var_val| var_val.merge(prompt: var.uri) }
+      data.each_slice(200) do |slice|
+        client.post("/gdc/md/#{project.obj_id}/variables/user", :variables => slice)
+      end
+      [to_create, to_delete]
+    end
+
+    def self.execute_mufs(filters, options = {})
+      client = options[:client]
+      project = options[:project]
+
+      dry_run = options[:dry_run]
+      to_create, to_delete = execute(filters, project.data_permissions, MandatoryUserFilter, options.merge(type: :muf))
+      GoodData.logger.warn("Data permissions computed: #{to_create.count} to create and #{to_delete.count} to delete")
+      return [to_create, to_delete] if dry_run
+
+      to_create.each_slice(100).flat_map do |batch|
+        batch.peach do |related_uri, group|
+          group.each(&:save)
+
+          res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
+          items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
+
+          payload = {
+            'userFilters' => {
+              'items' => [{
+                'user' => related_uri,
+                'userFilters' => items.concat(group.map(&:uri))
+              }]
+            }
+          }
+          client.post("/gdc/md/#{project.pid}/userfilters", payload)
+        end
+      end
+      unless options[:do_not_touch_filters_that_are_not_mentioned]
+        to_delete.each_slice(100).flat_map do |batch|
+          batch.peach do |related_uri, group|
+            if related_uri
+              res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
+              items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
+              payload = {
+                'userFilters' => {
+                  'items' => [
+                    {
+                      'user' => related_uri,
+                      'userFilters' => items - group.map(&:uri)
+                    }
+                  ]
+                }
+              }
+              client.post("/gdc/md/#{project.pid}/userfilters", payload)
+            end
+            group.peach(&:delete)
+          end
+        end
+      end
+      [to_create, to_delete]
+    end
+
     private
 
     # Reads values from File/Array. Abstracts away the fact if it is column based,
@@ -174,6 +397,71 @@ module GoodData
         memo[key].concat(data)
       end
       memo
+    end
+
+    # Executes the procedure necessary for loading user filters. This method has what
+    # is common for both implementations. Funcion
+    #   * makes sure that filters are in normalized form.
+    #   * verifies that users are in the project (and domain)
+    #   * creates maql expressions of the filters provided
+    #   * resolves the filters against current values in the project
+    # @param user_filters [Array] Filters that user is trying to set up
+    # @param project_filters [Array] List of filters currently in the project
+    # @param klass [Class] Class can be aither UserFilter or VariableFilter
+    # @param options [Hash] Filter definitions
+    # @return [Array<Hash>]
+    def self.execute(user_filters, project_filters, klass, options = {})
+      client = options[:client]
+      project = options[:project]
+
+      ignore_missing_values = options[:ignore_missing_values]
+      users_must_exist = options[:users_must_exist] == false ? false : true
+      filters = normalize_filters(user_filters)
+      domain = options[:domain]
+      users = project.users
+      # users = domain ? project.users : project.users
+      users_cache = create_cache(users, :login)
+      missing_users = get_missing_users(filters, options.merge(users_cache: users_cache))
+      user_filters, errors = if missing_users.empty?
+                               verify_existing_users(filters, project: project, users_must_exist: users_must_exist, users_cache: users_cache)
+                               maqlify_filters(filters, options.merge(users_cache: users_cache, users_must_exist: users_must_exist))
+                             elsif missing_users.count < 100
+                               verify_existing_users(filters, project: project, users_must_exist: users_must_exist, users_cache: users_cache,  domain: domain)
+                               maqlify_filters(filters, options.merge(users_cache: users_cache, users_must_exist: users_must_exist, domain: domain))
+                             else
+                               users += domain.users
+                               users_cache = create_cache(users, :login)
+                               verify_existing_users(filters, project: project, users_must_exist: users_must_exist, users_cache: users_cache,  domain: domain)
+                               maqlify_filters(filters, options.merge(users_cache: users_cache, users_must_exist: users_must_exist, domain: domain))
+                             end
+
+      fail "Validation failed #{errors}" if !ignore_missing_values && !errors.empty?
+
+      filters = user_filters.map { |data| client.create(klass, data, project: project) }
+      resolve_user_filters(filters, project_filters)
+    end
+
+    # Gets definition of filters from user. They might either come in the full definition
+    # as hash or a simplified version. The simplified version do not cover all the possible
+    # features but it is much simpler to remember and suitable for quick hacking around
+    # @param filters [Array<Array | Hash>]
+    # @return [Array<Hash>]
+    def self.normalize_filters(filters)
+      filters.map do |filter|
+        if filter.is_a?(Hash)
+          filter
+        else
+          {
+            :login => filter.first,
+            :filters => [
+              {
+                :label => filter[1],
+                :values => filter[2..-1]
+              }
+            ]
+          }
+        end
+      end
     end
   end
 end

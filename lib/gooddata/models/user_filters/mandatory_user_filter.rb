@@ -30,18 +30,26 @@ module GoodData
           break if result['userFilters']['length'] < offset
           offset += count
         end
-        vars.map do |a|
-          uri = a['link']
-          data = c.get(uri)
-          payload = {
-            'expression' => data['userFilter']['content']['expression'],
-            'related' => user_lookup[a['link']],
-            'level' => :user,
-            'type'  => :filter,
-            'uri'   => a['link']
-          }
-          c.create(GoodData::MandatoryUserFilter, payload, project: project)
+        vars.each_slice(100).mapcat do |batch|
+          batch.pmap do |a|
+            uri = a['link']
+            data = c.get(uri)
+            payload = {
+              'expression' => data['userFilter']['content']['expression'],
+              'related' => user_lookup[a['link']],
+              'level' => :user,
+              'type'  => :filter,
+              'uri'   => a['link']
+            }
+            c.create(GoodData::MandatoryUserFilter, payload, project: project)
+          end
         end
+      end
+
+      def count(options = { client: GoodData.connection, project: GoodData.project })
+        c = client(options)
+        project = options[:project]
+        c.get(project.md['query'] + '/userfilters/')['query']['entries'].count
       end
     end
 
