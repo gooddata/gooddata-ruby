@@ -13,10 +13,19 @@ module GoodData
 
     alias_method :data, :json
     alias_method :raw_data, :json
-    alias_method :to_hash, :json
 
     include GoodData::Mixin::RestResource
     root_key :schedule
+
+    SCHEDULE_TEMPLATE = {
+      :schedule => {
+        :type => nil,
+        :timezone => nil,
+        :params => {},
+        :hiddenParams => {},
+        :reschedule => nil
+      }
+    }
 
     class << self
       # Looks for schedule
@@ -79,66 +88,28 @@ module GoodData
         project = GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
+        fail 'Process ID has to be provided' if process_id.blank?
+        fail 'Executable has to be provided' if executable.blank?
+
         default_opts = {
           :type => 'MSETL',
           :timezone => 'UTC',
           :params => {
-            :PROCESS_ID => process_id,
-            :EXECUTABLE => executable
+            'PROCESS_ID' => process_id,
+            'EXECUTABLE' => executable
           },
-          :hiddenParams => {},
-          :reschedule => options[:reschedule] || 0
+          :reschedule => 0
         }
 
-        if trigger =~ /[a-fA-Z0-9]{24}/
-          default_opts[:triggerScheduleId] = trigger
-        elsif trigger.is_a?(GoodData::Schedule)
-          default_opts[:triggerScheduleId] = trigger.obj_id
-        else
-          default_opts[:cron] = trigger
-        end
+        schedule = c.create(GoodData::Schedule, GoodData::Helpers.stringify_keys_deep!(SCHEDULE_TEMPLATE.deep_dup), client: c, project: p)
 
-        if options.key?(:hidden_params)
-          options[:hiddenParams] = options[:hidden_params]
-          options.delete :hidden_params
-        end
-
-        json = {
-          'schedule' => default_opts.deep_merge(options.except(:project, :client))
-        }
-
-        tmp = json['schedule'][:params][:PROCESS_ID]
-        fail 'Process ID has to be provided' if tmp.nil? || tmp.empty?
-
-        tmp = json['schedule'][:params][:EXECUTABLE]
-        fail 'Executable has to be provided' if tmp.nil? || tmp.empty?
-
-        tmp = json['schedule'][:cron] || json['schedule'][:triggerScheduleId]
-        fail 'trigger schedule has to be provided' if !tmp || tmp.nil? || tmp.empty?
-
-        tmp = json['schedule'][:timezone]
-        fail 'A timezone has to be provided' if tmp.nil? || tmp.empty?
-
-        tmp = json['schedule'][:type]
-        fail 'Schedule type has to be provided' if tmp.nil? || tmp.empty?
-
-        params = json['schedule'][:params]
-        params = GoodData::Helpers.encode_params(params, false)
-        json['schedule'][:params] = params
-
-        hidden_params = json['schedule'][:hiddenParams]
-        if hidden_params && !hidden_params.empty?
-          hidden_params = GoodData::Helpers.encode_params(json['schedule'][:hiddenParams], true)
-          json['schedule'][:hiddenParams] = hidden_params
-        end
-
-        url = "/gdc/projects/#{project.pid}/schedules"
-        res = c.post url, json
-
-        fail 'Unable to create new schedule' if res.nil?
-
-        new_obj_json = c.get res['schedule']['links']['self']
-        c.create(GoodData::Schedule, new_obj_json, client: c, project: p)
+        schedule.hidden_params = options[:hidden_params]
+        schedule.set_trigger(trigger)
+        schedule.params = default_opts[:params].merge(options[:params] || {})
+        schedule.timezone = options[:timezone] || default_opts[:timezone]
+        schedule.schedule_type = options[:type] || default_opts[:type]
+        schedule.reschedule = options[:reschedule] || default_opts[:reschedule]
+        schedule.save
       end
     end
 
@@ -147,8 +118,22 @@ module GoodData
     # @param json [Object] Raw JSON
     # @return [GoodData::Schedule] New GoodData::Schedule instance
     def initialize(json)
+      json = GoodData::Helpers.stringify_keys_deep!(json)
       super
+      GoodData::Helpers.decode_params(json['schedule']['params'] || {})
+      GoodData::Helpers.decode_params(json['schedule']['hiddenParams'] || {})
       @json = json
+    end
+
+    def after
+      schedules.find { |s| s.obj_id == trigger_id }
+    end
+
+    def after=(schedule)
+      fail 'After trigger has to be a schedule object' unless schedule.is_a?(Schedule)
+      json['schedule']['triggerScheduleId'] = schedule.obj_id
+      @json['schedule']['cron'] = nil
+      @dirty = true
     end
 
     # Deletes schedule
@@ -260,6 +245,7 @@ module GoodData
     # @param new_cron [String] Cron settings to be set
     def cron=(new_cron)
       @json['schedule']['cron'] = new_cron
+      @json['schedule']['triggerScheduleId'] = nil
       @dirty = true
     end
 
@@ -312,7 +298,9 @@ module GoodData
       if @json # rubocop:disable Style/GuardClause
         url = @json['schedule']['links']['executions']
         res = client.get url
-        res['executions']['items']
+        res['executions']['items'].map do |e|
+          client.create(Execution, e, :project => project)
+        end
       end
     end
 
@@ -326,8 +314,12 @@ module GoodData
     # Assigns execution parameters
     #
     # @param params [String] Params to be set
-    def params=(new_param)
-      @json['schedule']['params'].merge!(new_param)
+    def params=(new_params = {})
+      default_params = {
+        'PROCESS_ID' => process_id,
+        'EXECUTABLE' => executable
+      }
+      @json['schedule']['params'] = default_params.merge(new_params || {})
       @dirty = true
     end
 
@@ -341,8 +333,8 @@ module GoodData
     # Assigns hidden parameters
     #
     # @param new_hidden_param [String] Hidden parameters to be set
-    def hidden_params=(new_hidden_param)
-      @json['schedule']['hiddenParams'] = hidden_params.merge(new_hidden_param)
+    def hidden_params=(new_hidden_params = {})
+      @json['schedule']['hiddenParams'] = new_hidden_params || {}
       @dirty = true
     end
 
@@ -350,24 +342,87 @@ module GoodData
     #
     # @return [Boolean] True if saved
     def save
+      fail 'trigger schedule has to be provided' if cron.blank? && trigger_id.blank?
+      fail 'A timezone has to be provided' if timezone.blank?
+      fail 'Schedule type has to be provided' if schedule_type.blank?
       if @dirty
         update_json = {
           'schedule' => {
+            'name' => @json['schedule']['name'],
             'type' => @json['schedule']['type'],
             'state' => @json['schedule']['state'],
             'timezone' => @json['schedule']['timezone'],
+            'reschedule' => @json['schedule']['reschedule'],
             'cron' => @json['schedule']['cron'],
-            'params' => @json['schedule']['params'],
-            'hiddenParams' => @json['schedule']['hiddenParams'],
-            'reschedule' => @json['schedule']['reschedule'] || 0
-          }
+            'triggerScheduleId' => trigger_id,
+            'params' => GoodData::Helpers.encode_params(params, false),
+            'hiddenParams' => GoodData::Helpers.encode_params(hidden_params, true)
+          }.compact
         }
-        res = client.put(uri, update_json)
-        @json = res
+        if uri
+          res = client.put(uri, update_json)
+          @json = res
+        else
+          res = client.post "/gdc/projects/#{project.pid}/schedules", update_json
+          fail 'Unable to create new schedule' if res.nil?
+          new_obj_json = client.get res['schedule']['links']['self']
+          @json = new_obj_json
+        end
         @dirty = false
-        return true
       end
-      false
+      self
+    end
+
+    def time_based?
+      cron != nil
+    end
+
+    def to_hash
+      {
+        name: name,
+        type: type,
+        state: state,
+        params: params,
+        hidden_params: hidden_params,
+        cron: cron,
+        trigger_id: trigger_id,
+        timezone: timezone,
+        uri: uri
+      }.compact
+    end
+
+    def schedule_type
+      json['schedule']['type']
+    end
+
+    def schedule_type=(type)
+      json['schedule']['type'] = type
+    end
+
+    def trigger_id
+      json['schedule']['triggerScheduleId']
+    end
+
+    def trigger_id=(a_trigger)
+      json['schedule']['triggerScheduleId'] = a_trigger
+    end
+
+    def name
+      json['schedule']['name']
+    end
+
+    def name=(name)
+      json['schedule']['name'] = name
+    end
+
+    def set_trigger(trigger) # rubocop:disable Style/AccessorMethodName
+      if trigger.is_a?(String) && trigger =~ /[a-fA-Z0-9]{24}/
+        self.trigger_id = trigger
+      elsif trigger.is_a?(GoodData::Schedule)
+        self.trigger_id = trigger.obj_id
+      else
+        self.cron = trigger
+      end
     end
 
     # Returns URL

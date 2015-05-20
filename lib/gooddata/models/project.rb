@@ -73,7 +73,7 @@ module GoodData
             fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
           end
 
-          id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
+          id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}
 
           c = client(opts)
           fail ArgumentError, 'No :client specified' if c.nil?
@@ -1080,6 +1080,10 @@ module GoodData
 
     def variables(id = :all, options = { client: client, project: self })
       GoodData::Variable[id, options]
+    end
+
+    def update_from_blueprint(blueprint, options = {})
+      GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
     end
 
     private

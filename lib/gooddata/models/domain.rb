@@ -142,7 +142,7 @@ module GoodData
 
         # Optional sso provider
         tmp = user_data[:sso_provider]
-        data['ssoProvider'] = tmp if tmp && !tmp.empty?
+        data['ssoProvider'] = tmp if tmp
 
         # Optional timezone
         tmp = user_data[:timezone]
