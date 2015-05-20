@@ -346,7 +346,7 @@ module GoodData
 
     alias_method :members, :users
 
-    def uri()
+    def uri
       "/gdc/account/domains/#{name}"
     end
 

@@ -951,7 +951,7 @@ module GoodData
           role = get_role(r, role_list)
           role && role.uri
         end
-        u[:status] = "ENABLED"
+        u[:status] = 'ENABLED'
         u
       end
 
@@ -968,7 +968,7 @@ module GoodData
       end
       # This is only creating users that were not in the proejcts so far. This means this will reach into domain
       GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
-      results.concat create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users, only_domain: true )
+      results.concat create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users, only_domain: true)
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
@@ -976,7 +976,7 @@ module GoodData
       results.concat(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
 
       # Remove old users
-      to_remove = diff[:removed].reject {|u| u[:status] == 'DISABLED' || u[:status] == :disabled }
+      to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
       GoodData.logger.warn("Removing #{to_remove.count} users in project (#{pid})")
       results.concat(disable_users(to_remove))
       results
@@ -990,7 +990,7 @@ module GoodData
       end
       payloads.each_slice(100).mapcat do |payload|
         result = client.post(url, 'users' => payload)
-        result['projectUsersUpdateResult'].mapcat {|k, v| v.map {|x| {type: k.to_sym, uri: x}}}
+        result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, uri: x } } }
       end
     end
 
@@ -1042,15 +1042,15 @@ module GoodData
       project_users = options[:project_users] || users
       domain = options[:domain] && client.domain(options[:domain])
       domain_users = if domain.nil?
-        options[:domain_users]
-      else
-        if options[:only_domain] && list.count < 100
-          list.map {|l| domain.find_user_by_login(l[:user][:login])}
-        else
-          domain.users
-        end
-      end
-      
+                       options[:domain_users]
+                     else
+                       if options[:only_domain] && list.count < 100
+                         list.map { |l| domain.find_user_by_login(l[:user][:login]) }
+                       else
+                         domain.users
+                       end
+                     end
+
       users_to_add = list.flat_map do |user_hash|
         user = user_hash[:user] || user_hash[:login]
         desired_roles = user_hash[:role] || user_hash[:roles] || 'readOnlyUser'
