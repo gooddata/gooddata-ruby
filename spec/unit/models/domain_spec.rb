@@ -63,7 +63,7 @@ describe GoodData::Domain do
     end
 
     it 'Accepts pagination options - limit' do
-      users = @domain.users(limit: 10)
+      users = @domain.users(:all, limit: 10)
       expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::Profile)

@@ -153,6 +153,10 @@ module GoodData
         GoodData::Domain[domain_name, :client => self]
       end
 
+      def project_is_accessible?(id)
+        projects(id) && true rescue false
+      end
+
       def projects(id = :all)
         GoodData::Project[id, client: self]
       end
