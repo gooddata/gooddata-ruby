@@ -10,7 +10,7 @@ module GoodData
   module Rest
     # Wrapper of low-level HTTP/REST client/library
     class Connection
-      DEFAULT_URL = 'https://secure.gooddata.com'
+      DEFAULT_URL = ENV['GD_SERVER'] || 'https://secure.gooddata.com'
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
       KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
@@ -27,7 +27,7 @@ module GoodData
 
       DEFAULT_LOGIN_PAYLOAD = {
         :headers => DEFAULT_HEADERS,
-        :verify_ssl => OpenSSL::SSL::VERIFY_NONE
+        :verify_ssl => true
       }
 
       RETRYABLE_ERRORS = [
@@ -111,6 +111,8 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         server = options[:server] || DEFAULT_URL
+
+        options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
 
         @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD.merge(headers)
@@ -200,7 +202,7 @@ module GoodData
             :url => url
           }.merge(cookies)
 
-          if where.is_a?(IO)
+          if where.is_a?(IO) || where.is_a?(StringIO)
             RestClient::Request.execute(raw) do |chunk, _x, response|
               if response.code.to_s != '200'
                 fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
@@ -249,7 +251,15 @@ module GoodData
       def delete(uri, options = {})
         GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
-          b = proc { @server[uri].delete fresh_request_params(options[:request_id]) }
+          b = proc do
+            begin
+              @server[uri].delete(cookies)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end
@@ -260,7 +270,15 @@ module GoodData
       def get(uri, options = {}, &user_block)
         GoodData.logger.debug "GET: #{@server.url}#{uri}"
         profile "GET #{uri}" do
-          b = proc { @server[uri].get(fresh_request_params(options[:request_id]), &user_block) }
+          b = proc do
+            begin
+              @server[uri].get(cookies, &user_block)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end
@@ -272,7 +290,15 @@ module GoodData
         payload = data.is_a?(Hash) ? data.to_json : data
         GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
-          b = proc { @server[uri].put payload, fresh_request_params(options[:request_id]) }
+          b = proc do
+            begin
+              @server[uri].put(payload, cookies)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end
@@ -284,7 +310,15 @@ module GoodData
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
-          b = proc { @server[uri].post payload, fresh_request_params(options[:request_id]) }
+          b = proc do
+            begin
+              @server[uri].post(payload, cookies)
+            rescue RestClient::Exception => e
+              # log the error if it happens
+              GoodData.logger.error(e.inspect)
+              raise e
+            end
+          end
           process_response(options, &b)
         end
       end

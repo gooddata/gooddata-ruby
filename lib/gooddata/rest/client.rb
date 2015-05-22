@@ -235,8 +235,9 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        u = URI(project.links['uploads'])
-        URI.join(u.to_s.chomp(u.path.to_s), '/project-uploads/', "#{project.pid}/")
+        url = project.links['uploads']
+        raise 'Project WebDAV not supported in this Data Center' unless url
+        url
       end
 
       def user_webdav_path(opts = { :project => GoodData.project })
