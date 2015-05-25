@@ -27,7 +27,10 @@ task :ci do
     Rake::Task['test:integration'].invoke
   end
   Rake::Task['test:cop'].invoke if RUBY_VERSION.start_with?('2.2') == false
-  Rake::Task['coveralls:push'].invoke
+
+  if ENV['TRAVIS']
+    Rake::Task['coveralls:push'].invoke
+  end
 end
 
 namespace :hook do
