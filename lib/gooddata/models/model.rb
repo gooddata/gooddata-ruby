@@ -123,9 +123,9 @@ module GoodData
         # kick the load
         pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull']
-        task = client.post link, pull
+        task = client.post(link, pull, :info_message => "Starting the data load from user storage to dataset '#{dataset}'.")
 
-        res = client.poll_on_response(task['pullTask']['uri']) do |body|
+        res = client.poll_on_response(task['pullTask']['uri'], :info_message => "Getting status of the dataload task.") do |body|
           body['taskStatus'] == 'RUNNING' || body['taskStatus'] == 'PREPARED'
         end
 
