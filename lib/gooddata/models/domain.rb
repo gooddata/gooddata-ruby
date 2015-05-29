@@ -97,6 +97,10 @@ module GoodData
       end
 
       def update_user(user_data, options = { client: GoodData.connection })
+        if(user_data.is_a?(GoodData::Profile))
+          user_data = user_data.to_hash
+        end
+
         client = client(options)
         user_data = user_data.to_hash
         # generated_pass = rand(10E10).to_s
