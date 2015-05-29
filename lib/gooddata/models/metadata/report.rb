@@ -122,7 +122,7 @@ module GoodData
     def export(format)
       result = client.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
       result1 = client.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
-      GoodData.poll_on_code(result1['uri'], process: false)
+      client.poll_on_code(result1['uri'], process: false)
     end
 
     # Returns the newest (current version) report definition uri
