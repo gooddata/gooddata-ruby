@@ -15,6 +15,8 @@ Dir.glob(base + 'helpers/*_helper.rb').each do |file|
   require file
 end
 
+include GoodData::Helpers
+
 RSpec.configure do |config|
   config.include BlueprintHelper
   config.include CliHelper

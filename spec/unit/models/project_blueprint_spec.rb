@@ -117,7 +117,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'commits should have one fact' do
-    pending('Wrap into object')
+    # pending('Wrap into object')
     @commits.facts.size.should == 1
   end
 
@@ -127,7 +127,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'should not have a label for a dataset without anchor with label' do
-    pending('Wrap into object')
+    # pending('Wrap into object')
     @commits.anchor.should == nil
     # @commits.to_schema.anchor.labels.empty?.should == true
   end
