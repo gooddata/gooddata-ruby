@@ -10,6 +10,10 @@ Coveralls.wear_merged!
 
 # Automagically include all helpers/*_helper.rb
 
+require_relative 'environment/environment'
+
+GoodData::Environment.load
+
 base = Pathname(__FILE__).dirname.expand_path
 Dir.glob(base + 'helpers/*_helper.rb').each do |file|
   require file
@@ -30,7 +34,7 @@ RSpec.configure do |config|
 
   config.filter_run_excluding :broken => true
 
-  config.fail_fast = true
+  config.fail_fast = false
 
   config.before(:all) do
     # TODO: Move this to some method.

@@ -193,7 +193,7 @@ module GoodData
           result = []
           page_limit = opts[:page_limit] || 1000
           limit = opts[:limit] || Float::INFINITY
-          offset = opts[:offset]
+          offset = opts[:offset] || 0
           uri = "#{domain.uri}/users?offset=#{offset}&limit=#{page_limit}"
           loop do
             tmp = client(opts).get(uri)

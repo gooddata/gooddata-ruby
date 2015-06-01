@@ -5,10 +5,12 @@ module GoodData
     module ConnectionHelper
       GD_PROJECT_TOKEN = ENV["GD_PROJECT_TOKEN"]
 
-      DEFAULT_USERNAME = "svarovsky+gem_tester@gooddata.com"
+
+      DEFAULT_USERNAME = "tomas.korcak+gem_tester@gooddata.com"
       DEFAULT_PASSWORD = "jindrisska"
-      DEFAULT_DOMAIN = 'gooddata-tomas-svarovsky'
+      DEFAULT_DOMAIN = 'gooddata-tomas-korcak-gem-tester'
       DEFAULT_USER_URL = '/gdc/account/profile/3cea1102d5584813506352a2a2a00d95'
+      DEFAULT_SERVER = 'https://secure.gooddata.com'
     end
 
     module ProcessHelper
