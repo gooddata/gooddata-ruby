@@ -7,6 +7,7 @@ module GoodData
 
 
       DEFAULT_USERNAME = "tomas.korcak+gem_tester@gooddata.com"
+      TEST_USERNAME = "john.doe@gooddata.com"
       DEFAULT_PASSWORD = "jindrisska"
       DEFAULT_DOMAIN = 'gooddata-tomas-korcak-gem-tester'
       DEFAULT_USER_URL = '/gdc/account/profile/3cea1102d5584813506352a2a2a00d95'
