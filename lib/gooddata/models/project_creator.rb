@@ -10,7 +10,7 @@ module GoodData
     class ProjectCreator
       class << self
         def migrate(opts = {})
-          opts = { client: GoodData.connection, project: GoodData.project }.merge(opts)
+          opts = { client: GoodData.connection }.merge(opts)
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 

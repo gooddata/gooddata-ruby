@@ -475,6 +475,15 @@ module GoodData
         ProjectBlueprint.new(data.deep_dup)
       end
 
+      # Helper for storing the project blueprint into a file as JSON.
+      #
+      # @param filename [String] Name of the file where the blueprint should be stored
+      def store_to_file(filename)
+        File.open(filename, 'w') do |f|
+          f << JSON.pretty_generate(to_hash)
+        end
+      end
+
       # Returns title of a dataset. If not present it is generated from the name
       #
       # @return [String] a title
