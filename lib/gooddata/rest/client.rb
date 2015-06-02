@@ -299,12 +299,13 @@ module GoodData
         poll_start = Time.now
 
         while bl.call(response)
-          if time_limit && (Time.now - poll_start > time_limit)
+          limit_breached = time_limit && (Time.now - poll_start > time_limit)
+          puts "TIME LIMIT: #{time_limit}:#{limit_breached}"
+          if limit_breached
             fail "The time limit #{time_limit} secs for polling on #{link} is over"
           end
           sleep sleep_interval
           GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
-            sleep sleep_interval
             response = get(link, options)
           end
         end
