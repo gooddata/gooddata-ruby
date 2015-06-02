@@ -116,7 +116,9 @@ module GoodData
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
 
-        @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD.merge(headers)
+        options = options.merge(headers)
+
+        @server = RestClient::Resource.new server, options
 
         # Install at_exit handler first
         unless @at_exit_handler_installed

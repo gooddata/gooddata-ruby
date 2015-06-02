@@ -97,6 +97,10 @@ module GoodData
       end
 
       def update_user(user_data, options = { client: GoodData.connection })
+        if(user_data.is_a?(GoodData::Profile))
+          user_data = user_data.to_hash
+        end
+
         client = client(options)
         user_data = user_data.to_hash
         # generated_pass = rand(10E10).to_s
@@ -189,7 +193,7 @@ module GoodData
           result = []
           page_limit = opts[:page_limit] || 1000
           limit = opts[:limit] || Float::INFINITY
-          offset = opts[:offset]
+          offset = opts[:offset] || 0
           uri = "#{domain.uri}/users?offset=#{offset}&limit=#{page_limit}"
           loop do
             tmp = client(opts).get(uri)

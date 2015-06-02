@@ -5,7 +5,15 @@ describe "Full project implementation", :constraint => 'slow' do
     @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
-    @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+
+    GoodData.logging_on
+    GoodData.logger.level = Logger::DEBUG
+
+    begin
+      @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    rescue => e
+      puts e.inspect
+    end
   end
 
   after(:all) do
