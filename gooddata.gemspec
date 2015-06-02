@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.11.0'
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
+  s.add_development_dependency 'webmock', '~> 1.21.0'
 
   s.add_development_dependency 'debase' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'ruby-debug-ide' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'

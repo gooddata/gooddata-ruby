@@ -89,8 +89,8 @@ module GoodData
     # Wait for execution result, status different than RUNNING or SCHEDULED
     #
     # @return [GoodData::Execution] Execution result
-    def wait_for_result
-      res = client.poll_on_response(uri) do |body|
+    def wait_for_result(options = {})
+      res = client.poll_on_response(uri, options) do |body|
         body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
       end
       @json = res

@@ -26,7 +26,7 @@ module GoodData
         p = options[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
-        project = GoodData::Project[p, options]
+        project = client.projects(p)
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         title = options[:title]
@@ -71,6 +71,7 @@ module GoodData
     def definitions
       content['definitions'].pmap { |uri| project.report_definitions(uri) }
     end
+    alias_method :report_definitions, :definitions
 
     # Gets list of uris of report definitions (versions) of this report.
     #
@@ -92,12 +93,12 @@ module GoodData
     # Computes the report and returns the result. If it is not computable returns nil.
     #
     # @return [GoodData::DataResult] Returns the result
-    def execute
+    def execute(options = {})
       fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
       result = client.post '/gdc/xtab2/executor3', 'report_req' => { 'report' => uri }
       data_result_uri = result['execResult']['dataResult']
 
-      result = client.poll_on_response(data_result_uri) do |body|
+      result = client.poll_on_response(data_result_uri, options) do |body|
         body && body['taskState'] && body['taskState']['status'] == 'WAIT'
       end
 
@@ -119,10 +120,10 @@ module GoodData
     # either 'csv', 'xls', 'xlsx' or 'pdf'.
     #
     # @return [String] Returns data
-    def export(format)
+    def export(format, options = {})
       result = client.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
       result1 = client.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
-      GoodData.poll_on_code(result1['uri'], process: false)
+      client.poll_on_code(result1['uri'], options.merge(process: false))
     end
 
     # Returns the newest (current version) report definition uri
