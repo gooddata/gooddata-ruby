@@ -250,6 +250,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def delete(uri, options = {})
+        options = log_info(options)
         GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
           b = proc do
@@ -269,6 +270,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def get(uri, options = {}, &user_block)
+        options = log_info(options)
         GoodData.logger.debug "GET: #{@server.url}#{uri}"
         profile "GET #{uri}" do
           b = proc do
@@ -288,6 +290,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def put(uri, data, options = {})
+        options = log_info(options)
         payload = data.is_a?(Hash) ? data.to_json : data
         GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
@@ -308,6 +311,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def post(uri, data, options = {})
+        options = log_info(options)
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
@@ -358,7 +362,7 @@ module GoodData
       # Uploads a file to GoodData server
       def upload(file, options = {})
         def do_stream_file(uri, filename, _options = {})
-          puts "uploading the file #{uri}"
+          GoodData.logger.info "Uploading file user storage #{uri}"
 
           to_upload = File.new(filename)
           cookies_str = request_params[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
@@ -458,6 +462,16 @@ module GoodData
 
       def clear_session_id
         @session_id = nil
+      end
+
+      # log info_message given in options and make sure request_id is there
+      def log_info(options)
+        # if info_message given, log it with request_id (given or generated)
+        if options[:info_message]
+          request_id = options[:request_id] || generate_request_id
+          GoodData.logger.info "#{options[:info_message]} Request id: #{request_id}"
+        end
+        options
       end
 
       # request heders with freshly generated request id
