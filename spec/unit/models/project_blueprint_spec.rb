@@ -39,6 +39,38 @@ describe GoodData::Model::ProjectBlueprint do
     expect(errors.count).to eq 1
   end
 
+  it 'model should be invalid if it invalid gd data type' do
+    builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id", gd_data_type: "INTEGERX")
+        d.add_attribute("attr1")
+        d.add_attribute("name")
+      end
+    end
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
+    bp.valid?.should == false
+    errors = bp.validate
+    errors.count.should == 1
+  end
+
+  it 'model should be valid if it has int specified as integer and default should be decimal' do
+    builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id")
+        d.add_fact("fact1", gd_data_type: "integer")
+        d.add_fact("fact")
+        d.add_attribute("name")
+      end
+    end
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
+    bp.valid?.should == true
+    errors = bp.validate
+    errors.count.should == 0
+    facts = bp.to_wire[:diffRequest][:targetModel][:projectModel][:datasets].first[:dataset][:facts]
+    expect(facts[0][:fact][:dataType]).to eq 'INT'
+    expect(facts[1][:fact][:dataType]).to eq 'DECIMAL(12,2)'
+  end
+
   it 'invalid blueprint should be marked as invalid' do
     expect(@invalid_blueprint.valid?).to eq false
   end
@@ -61,8 +93,8 @@ describe GoodData::Model::ProjectBlueprint do
 
   it "should be possible to create from ProjectBlueprint from ProjectBuilder in several ways" do
     builder = GoodData::Model::SchemaBuilder.new("stuff") do |d|
-      d.add_attribute("id", :title => "My Id")
-      d.add_fact("amount", :title => "Amount")
+      d.add_attribute("id", title: "My Id")
+      d.add_fact("amount", title: "Amount")
     end
     bp1 = GoodData::Model::ProjectBlueprint.new(builder)
     expect(bp1.valid?).to eq true
@@ -101,13 +133,14 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'should be able to grab attribute' do
-    skip('Wrap into object')
     expect(@repos.labels.size).to eq 1
-    expect(@repos.labels.first.attribute.name).to eq 'repo_id'
+    expect(@repos.labels.first[:reference]).to eq 'repo_id'
+    # TODO: this would be nice
+    # expect(@repos.labels.first.attribute.name).to eq 'repo_id'
   end
 
   it 'anchor should have labels' do
-    skip('Wrap into object')
+    skip('Wrap into objects')
     expect(@repos.anchor.labels.first.identifier).to eq 'label.repos.repo_id'
   end
 
@@ -121,7 +154,7 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'Anchor on repos should have a label' do
-    skip('Wrap into object')
+    skip('wrap into objects')
     expect(@repos.anchor.labels.size).to eq 2
   end
 
@@ -139,7 +172,7 @@ describe GoodData::Model::ProjectBlueprint do
 
       p.add_dataset("repos") do |d|
         d.add_anchor("repo_id")
-        d.add_label("name", :reference => "invalid_ref")
+        d.add_label("name", reference: "invalid_ref")
       end
     end
     bp = GoodData::Model::ProjectBlueprint.new(builder)
@@ -166,8 +199,8 @@ describe GoodData::Model::ProjectBlueprint do
 
   it "should be able to add datasets on the fly" do
     builder = GoodData::Model::SchemaBuilder.new("stuff") do |d|
-      d.add_attribute("id", :title => "My Id")
-      d.add_fact("amount", :title => "Amount")
+      d.add_attribute("id", title: "My Id")
+      d.add_fact("amount", title: "Amount")
     end
     dataset = builder.to_blueprint
     expect(@blueprint.datasets.count).to eq 3
@@ -224,8 +257,8 @@ describe GoodData::Model::ProjectBlueprint do
     builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
       p.add_date_dimension("created_on")
       p.add_dataset("stuff") do |d|
-        d.add_anchor("repo_id")
-        d.add_label("name", :reference => "invalid_ref")
+        d.add_anchor('repo_id')
+        d.add_label('name', reference: 'invalid_ref')
       end
     end
     dataset = builder.to_blueprint
