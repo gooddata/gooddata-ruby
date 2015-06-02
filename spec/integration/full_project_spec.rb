@@ -106,6 +106,58 @@ describe "Full project implementation", :constraint => 'slow' do
       # blueprint.find_dataset('devs').upload(devs_data)
     end
   end
+  it "it silently ignores extra columns" do
+    GoodData.with_project(@project) do |p|
+      blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      commits_data = [
+        ["lines_changed","committed_on","dev_id","repo_id", "extra_column"],
+        [1,"01/01/2014",1,1,"something"],
+        [3,"01/02/2014",2,2,"something"],
+        [5,"05/02/2014",3,1,"something else"]
+      ]
+      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
+    end
+  end
+
+  context "it should give you a reasonable error message" do
+    it "if you omit a column" do
+      GoodData.with_project(@project) do |p|
+        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+        commits_data = [
+          ["lines_changed","committed_on","dev_id"],
+          [1,"01/01/2014",1],
+          [3,"01/02/2014",2],
+          [5,"05/02/2014",3]
+        ]
+        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(/repo_id/)
+      end
+    end
+    it "if you give it a malformed CSV" do
+      GoodData.with_project(@project) do |p|
+        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+        # it's in the header but not in the data
+        commits_data = [
+          ["lines_changed","committed_on","dev_id","repo_id"],
+          [1,"01/01/2014",1],
+          [3,"01/02/2014",2],
+          [5,"05/02/2014",3]
+        ]
+        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(/Number of columns/)
+      end
+    end
+    it "if you give it wrong date format" do
+      GoodData.with_project(@project) do |p|
+        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+        commits_data = [
+          ["lines_changed","committed_on","dev_id","repo_id"],
+          [1,"01/01/2014",1,1],
+          [3,"45/50/2014",2,2],
+          [5,"05/02/2014",3,1]
+        ]
+        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(%r{45/50/2014})
+      end
+    end
+  end
 
   it "should compute a metric" do
     f = @project.fact_by_title('Lines Changed')
