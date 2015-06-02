@@ -55,6 +55,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     # TODO: Setup test project
+    GoodData.logging_on
   end
 
   config.after(:suite) do
