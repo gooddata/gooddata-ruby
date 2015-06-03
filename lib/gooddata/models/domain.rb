@@ -97,9 +97,7 @@ module GoodData
       end
 
       def update_user(user_data, options = { client: GoodData.connection })
-        if(user_data.is_a?(GoodData::Profile))
-          user_data = user_data.to_hash
-        end
+        user_data = user_data.to_hash if user_data.is_a?(GoodData::Profile)
 
         client = client(options)
         user_data = user_data.to_hash
