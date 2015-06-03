@@ -33,7 +33,7 @@ module GoodData
       result = client.get(uri + "/?id=#{element_id}")
       items = result['attributeElements']['elements']
       if items.empty?
-        fail "Element id #{element_id} was not found"
+        fail(AttributeElementNotFound, element_id)
       else
         items.first['title']
       end
