@@ -29,7 +29,7 @@ module GoodData
       # @param uri [String] Uri of the element. in the form of /gdc/md/PID/obj/OBJ_ID/elements?id=21
       # @return [String] Textual representation of a particular attribute element
       def find_element_value(uri, opts = { :client => @client, :project => @project })
-        matches = uri.match(/(.*)\/elements\?id=(\d+)$/)
+        matches = uri.match(%r{(.*)/elements\?id=(\d+)$})
         opts[:project].attributes(matches[1]).primary_label.find_element_value(uri)
       end
     end
