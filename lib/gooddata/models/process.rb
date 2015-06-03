@@ -67,6 +67,8 @@ module GoodData
             begin
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
+            rescue => e
+              puts e.inspect
             ensure
               res.delete if res
             end
@@ -205,6 +207,7 @@ module GoodData
     # @return [IO] The stream of data that represents a zipped deployed process.
     def download
       link = links['source']
+      client.connection.refresh_token
       client.get(link, process: false) { |_, _, result| RestClient.get(result.to_hash['location'].first) }
     end
 

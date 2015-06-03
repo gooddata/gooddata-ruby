@@ -8,7 +8,14 @@ describe GoodData::Command::Project, :constraint => 'slow' do
     @blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/test_project_model_spec.json")
     @module_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/additional_dataset_module.json")
 
-    @project = GoodData::Command::Project.build({:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
+    GoodData.logging_on
+    GoodData.logger.level = Logger::DEBUG
+
+    begin
+      @project = GoodData::Command::Project.build({:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
+    rescue => e
+      puts e.inspect
+    end
   end
 
   after(:all) do

@@ -56,7 +56,8 @@ module GoodData
         def retryable(options = {}, &_block)
           opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
 
-          retry_exception, retries = opts[:on], opts[:tries]
+          retry_exception = opts[:on]
+          retries = opts[:tries]
 
           unless retry_exception.is_a?(Array)
             retry_exception = [retry_exception]
@@ -111,11 +112,12 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         server = options[:server] || DEFAULT_URL
-
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
 
-        @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD.merge(headers)
+        options = options.merge(headers)
+
+        @server = RestClient::Resource.new server, options
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
@@ -199,7 +201,8 @@ module GoodData
               :user_agent => GoodData.gem_version_string
             },
             :method => :get,
-            :url => url
+            :url => url,
+            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
           }.merge(cookies)
 
           if where.is_a?(IO) || where.is_a?(StringIO)
@@ -249,11 +252,12 @@ module GoodData
       #
       # @param uri [String] Target URI
       def delete(uri, options = {})
+        options = log_info(options)
         GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
           b = proc do
             begin
-              @server[uri].delete(cookies)
+              @server[uri].delete(fresh_request_params(options[:request_id]))
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)
@@ -268,11 +272,12 @@ module GoodData
       #
       # @param uri [String] Target URI
       def get(uri, options = {}, &user_block)
+        options = log_info(options)
         GoodData.logger.debug "GET: #{@server.url}#{uri}"
         profile "GET #{uri}" do
           b = proc do
             begin
-              @server[uri].get(cookies, &user_block)
+              @server[uri].get(fresh_request_params(options[:request_id]), &user_block)
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)
@@ -287,12 +292,13 @@ module GoodData
       #
       # @param uri [String] Target URI
       def put(uri, data, options = {})
+        options = log_info(options)
         payload = data.is_a?(Hash) ? data.to_json : data
         GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
           b = proc do
             begin
-              @server[uri].put(payload, cookies)
+              @server[uri].put(payload, fresh_request_params(options[:request_id]))
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)
@@ -307,12 +313,13 @@ module GoodData
       #
       # @param uri [String] Target URI
       def post(uri, data, options = {})
+        options = log_info(options)
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
           b = proc do
             begin
-              @server[uri].post(payload, cookies)
+              @server[uri].post(payload, fresh_request_params(options[:request_id]))
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)
@@ -357,7 +364,7 @@ module GoodData
       # Uploads a file to GoodData server
       def upload(file, options = {})
         def do_stream_file(uri, filename, _options = {})
-          puts "uploading the file #{uri}"
+          GoodData.logger.info "Uploading file user storage #{uri}"
 
           to_upload = File.new(filename)
           cookies_str = request_params[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
@@ -366,7 +373,7 @@ module GoodData
           req.body_stream = to_upload
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          http.verify_mode = (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
 
           response = nil
           GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
@@ -383,7 +390,8 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @webdav_headers
+              :headers => @webdav_headers,
+              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
             }.merge(cookies)
             begin
               RestClient::Request.execute(raw)
@@ -408,7 +416,8 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @webdav_headers
+              :headers => @webdav_headers,
+              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
             }.merge(cookies)
             RestClient::Request.execute(raw)
           end
@@ -457,6 +466,16 @@ module GoodData
 
       def clear_session_id
         @session_id = nil
+      end
+
+      # log info_message given in options and make sure request_id is there
+      def log_info(options)
+        # if info_message given, log it with request_id (given or generated)
+        if options[:info_message]
+          request_id = options[:request_id] || generate_request_id
+          GoodData.logger.info "#{options[:info_message]} Request id: #{request_id}"
+        end
+        options
       end
 
       # request heders with freshly generated request id

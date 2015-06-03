@@ -18,7 +18,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
     regular_client = ConnectionHelper::create_default_connection
     sst = regular_client.connection.sst_token
 
-    sst_client = GoodData.connect(sst_token: sst)
+    sst_client = GoodData.connect(sst_token: sst, verify_ssl: false)
     expect(sst_client.projects.count).to be > 0
     sst_client.disconnect
 
