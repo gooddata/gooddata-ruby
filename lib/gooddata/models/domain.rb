@@ -252,7 +252,7 @@ module GoodData
     # Example
     #
     # GoodData.connect 'tomas.korcak@gooddata.com' 'your-password'
-    # domain = GoodData::Domain['gooddata-tomas-korcak']
+    # domain = project.domain('domain-name')
     # domain.add_user 'joe.doe@example', 'sup3rS3cr3tP4ssW0rtH'
     #
     def add_user(data, opts = {})

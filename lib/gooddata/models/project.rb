@@ -879,8 +879,8 @@ module GoodData
     #
     # @param file File to be uploaded
     # @param schema Schema to be used
-    def upload(file, dataset_blueprint, mode = 'FULL')
-      dataset_blueprint.upload file, self, mode
+    def upload(data, blueprint, dataset_name, options = {})
+      GoodData::Model.upload_data(data, blueprint, dataset_name, options.merge(client: client, project: self))
     end
 
     def uri

@@ -23,6 +23,7 @@ module GoodData
     GD_DATA_TYPES = %w(INT VARCHAR DECIMAL)
 
     DEFAULT_FACT_DATATYPE = 'INT'
+    DEFAULT_DATE_FORMAT = 'MM/dd/yyyy'
 
     class << self
       def title(item)

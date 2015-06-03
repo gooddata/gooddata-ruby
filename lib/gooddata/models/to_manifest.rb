@@ -71,12 +71,15 @@ module GoodData
       # @param reference [Hash] Reference
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular date reference
-      def self.date_ref_to_manifest(project, _dataset, reference, mode)
+      def self.date_ref_to_manifest(project, dataset, reference, mode)
         referenced_dataset = ProjectBlueprint.find_date_dimension(project, reference[:dataset])
+        ref = GoodData::Model.identifier_for(referenced_dataset, type: :date_ref)
+        format = reference[:format] || GoodData::Model::DEFAULT_DATE_FORMAT
+        GoodData.logger.info("Using date format \"#{format}\" for referencing attribute \"#{ref}\" of date dimension \"#{GoodData::Model.identifier_for(dataset)}\"")
         [{
-          'populates' => [GoodData::Model.identifier_for(referenced_dataset, type: :date_ref)],
+          'populates' => [ref],
           'mode' => mode,
-          'constraints' => { 'date' => 'dd/MM/yyyy' },
+          'constraints' => { 'date' => format },
           'columnName' => reference[:name],
           'referenceKey' => 1
         }]
