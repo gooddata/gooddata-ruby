@@ -89,6 +89,7 @@ module GoodData
 
       # backward compatibility
       alias_method :cookies, :request_params
+      attr_reader :server
       attr_reader :stats
       attr_reader :user
 
