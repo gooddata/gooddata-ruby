@@ -84,7 +84,7 @@ module GoodData
           yield
         end
       end
-
+      
       attr_reader :request_params
 
       # backward compatibility

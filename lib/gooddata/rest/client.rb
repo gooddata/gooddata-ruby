@@ -61,7 +61,7 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password, opts = { :verify_ssl => true })
+        def connect(username, password, opts = {:verify_ssl => true})
           if username.nil? && password.nil?
             username = ENV['GD_GEM_USER']
             password = ENV['GD_GEM_PASSWORD']
@@ -141,8 +141,8 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
-      def create_project(options = { title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN'] })
-        GoodData::Project.create({ client: self }.merge(options))
+      def create_project(options = {title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN']})
+        GoodData::Project.create({client: self}.merge(options))
       end
 
       def create_project_from_blueprint(blueprint, options = {})
@@ -234,7 +234,7 @@ module GoodData
         @connection.get uri, opts, & block
       end
 
-      def project_webdav_path(opts = { :project => GoodData.project })
+      def project_webdav_path(opts = {:project => GoodData.project})
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -246,16 +246,15 @@ module GoodData
         url
       end
 
-      def user_webdav_path
-        res = get '/gdc'
-        url = res['about']['links'].select { |l| l['title'] == 'user-uploads' }.first
-        url = url['link'] if url
+      def user_webdav_path(opts = {:project => GoodData.project})
+        p = opts[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
 
-        if(url.start_with?('/'))
-          url = URI.join(self.connection.server.url, url)
-        end
+        project = GoodData::Project[p, opts]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        url
+        u = URI(project.links['uploads'])
+        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
@@ -343,14 +342,14 @@ module GoodData
         @connection.download source_relative_path, target_file_path, options
       end
 
-      def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client, :project => project })
+      def download_from_user_webdav(source_relative_path, target_file_path, options = {:client => GoodData.client, :project => project})
         download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
-                                                                       :staging_url => user_webdav_path))
+                                                                       :staging_url => get_user_webdav_url(options)))
       end
 
       def upload_to_user_webdav(file, options = {})
         upload(file, options.merge(:directory => options[:directory],
-                                   :staging_url => user_webdav_path))
+                                   :staging_url => get_user_webdav_url(options)))
       end
 
       def with_project(pid, &block)
