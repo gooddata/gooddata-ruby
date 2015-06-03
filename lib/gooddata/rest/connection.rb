@@ -112,7 +112,6 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         server = options[:server] || DEFAULT_URL
-
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
 
@@ -202,7 +201,8 @@ module GoodData
               :user_agent => GoodData.gem_version_string
             },
             :method => :get,
-            :url => url
+            :url => url,
+            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
           }.merge(cookies)
 
           if where.is_a?(IO) || where.is_a?(StringIO)
@@ -373,7 +373,7 @@ module GoodData
           req.body_stream = to_upload
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          http.verify_mode = (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
 
           response = nil
           GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
@@ -390,7 +390,8 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @webdav_headers
+              :headers => @webdav_headers,
+              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
             }.merge(cookies)
             begin
               RestClient::Request.execute(raw)
@@ -415,7 +416,8 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @webdav_headers
+              :headers => @webdav_headers,
+              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
             }.merge(cookies)
             RestClient::Request.execute(raw)
           end

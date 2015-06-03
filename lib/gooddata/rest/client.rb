@@ -69,7 +69,7 @@ module GoodData
 
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
-            new_opts[:sst_token] = username[:sst_token]
+            new_opts = username
           elsif username.is_a? Hash
             new_opts[:username] = username[:login] || username[:user] || username[:username]
             new_opts[:password] = username[:password]
