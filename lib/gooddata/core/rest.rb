@@ -97,17 +97,13 @@ module GoodData
 
     # Get WebDav directory for user data
     # @return [String]
-    def user_webdav_path(options = { :project => GoodData.project })
-      options = merge_options(options)
-      project = options[:project]
-      project.user_webdav_path
+    def user_webdav_path
+      client.user_webdav_path
     end
 
     # Download from user directory
-    def download_from_user_webdav(file, where, options = { :project => GoodData.project })
-      options = merge_options(options)
-      url = user_webdav_path(options)
-      connection.download(file, where, options.merge(:staging_url => url))
+    def download_from_user_webdav(file, where, options = {:client => GoodData.client})
+      client.download_from_user_webdav(file, where, options)
     end
 
     # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
