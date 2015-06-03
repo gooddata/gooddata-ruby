@@ -68,7 +68,7 @@ module GoodData
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
             rescue => e
-                puts e.inspect
+              puts e.inspect
             ensure
               res.delete if res
             end
