@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
   s.add_development_dependency 'guard', '~> 2'
   s.add_development_dependency 'guard-rspec', '~> 4'
-
+  s.add_development_dependency 'webmock', '~> 1.21.0'
   s.add_development_dependency 'debase' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'ruby-debug-ide' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
 

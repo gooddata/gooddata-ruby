@@ -38,6 +38,9 @@ module GoodData
         Timeout::Error
       ]
 
+      RETRIES_ON_TOO_MANY_REQUESTS_ERROR = 10
+      RETRY_TIME_INITIAL_VALUE = 1
+      RETRY_TIME_COEFFICIENT = 1.5
       RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
 
       class << self
@@ -58,12 +61,13 @@ module GoodData
 
           retry_exception = opts[:on]
           retries = opts[:tries]
+          too_many_requests_tries = RETRIES_ON_TOO_MANY_REQUESTS_ERROR
 
           unless retry_exception.is_a?(Array)
             retry_exception = [retry_exception]
           end
 
-          retry_time = 1
+          retry_time = RETRY_TIME_INITIAL_VALUE
           begin
             return yield
           rescue RestClient::Unauthorized, RestClient::Forbidden => e # , RestClient::Unauthorized => e
@@ -71,16 +75,16 @@ module GoodData
             raise e if options[:dont_reauth]
             options[:refresh_token].call # (dont_reauth: true)
             retry if (retries -= 1) > 0
-          rescue RestClient::TooManyRequests
+          rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable
             GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
             sleep retry_time
-            retry_time *= 1.5
-            retry
+            retry_time *= RETRY_TIME_COEFFICIENT
+            # 10 requests with 1.5 coefficent should take ~ 3 mins to finish
+            retry if (too_many_requests_tries -= 1) > 1
           rescue *retry_exception => e
             GoodData.logger.warn e.inspect
-            retry if (retries -= 1) > 0
+            retry if (retries -= 1) > 1
           end
-
           yield
         end
       end
@@ -95,7 +99,6 @@ module GoodData
 
       def initialize(opts)
         @stats = {}
-        @opts = opts
 
         headers = opts[:headers] || {}
         @webdav_headers = DEFAULT_WEBDAV_HEADERS.merge(headers)
@@ -489,20 +492,9 @@ module GoodData
       end
 
       def process_response(options = {}, &block)
-        # begin
-        #   # Simply try again when ConnectionReset, ConnectionRefused etc.. (see e.g. MSF-7591)
-        #   response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => Proc.new { refresh_token }) do
-        #     block.call
-        #   end
-        # rescue RestClient::Unauthorized
-        #   raise $ERROR_INFO if options[:dont_reauth]
-        #   GoodData::Rest::Connection.retryable(:tries => 2) do
-        #     refresh_token
-        #     response = block.call
-        #   end
-        # end
+        retries = options[:tries] || 3
 
-        response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token unless options[:dont_reauth] }) do
+        response = GoodData::Rest::Connection.retryable(:tries => retries, :refresh_token => proc { refresh_token unless options[:dont_reauth] }) do
           block.call
         end
 
