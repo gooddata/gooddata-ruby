@@ -5,12 +5,10 @@ It has a CLI client and it is a library which you can integrate into your applic
 
 The best documentation for the GoodData API can be found using these resources:
 
- * http://sdk.gooddata.com/gooddata-ruby/
- * http://docs.gooddata.apiary.io/
+ * http://sdk.gooddata.com/gooddata-ruby-examples/
  * http://developer.gooddata.com/api
  * https://secure.gooddata.com/gdc
  * http://rubydoc.info/gems/gooddata/frames
- * http://developer.gooddata.com/ruby-cookbook
 
 ## Status
 
