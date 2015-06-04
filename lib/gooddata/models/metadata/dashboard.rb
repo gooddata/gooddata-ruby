@@ -88,9 +88,9 @@ module GoodData
       fail "Wrong format provied \"#{format}\". Only supports formats #{supported_formats.join(', ')}" unless supported_formats.include?(format)
       tab = options[:tab] || ''
 
-      req_uri = "/gdc/projects/#{GoodData.project.pid}/clientexport"
+      req_uri = "/gdc/projects/#{project.pid}/clientexport"
       x = client.post(req_uri, 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title })
-      GoodData.poll_on_code(x['asyncTask']['link']['poll'], process: false)
+      client.poll_on_code(x['asyncTask']['link']['poll'], options.merge(process: false))
     end
 
     def tabs

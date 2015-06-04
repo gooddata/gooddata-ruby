@@ -34,7 +34,7 @@ module GoodData
         res = c.post(CREATE_URL, json)
 
         # wait until the instance is created
-        final_res = c.poll_on_response(res['asyncTask']['links']['poll'], :sleep_interval => 3) do |r|
+        final_res = c.poll_on_response(res['asyncTask']['links']['poll'], opts.merge(sleep_interval: 3)) do |r|
           r['asyncTask']['links']['instance'].nil?
         end
 
