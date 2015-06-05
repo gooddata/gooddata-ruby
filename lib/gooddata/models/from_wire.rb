@@ -150,7 +150,8 @@ module GoodData
           if ref =~ /^dataset\./
             {
               :type => :reference,
-              :name => anchor_hash[dataset_name],
+              # in case the dataset isn't in the model, take the name
+              :name => anchor_hash[dataset_name] || dataset_name,
               :dataset => dataset_name
             }
           else
