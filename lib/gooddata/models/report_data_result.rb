@@ -15,6 +15,8 @@ module GoodData
       @column_headers = []
       @table = []
 
+      binding.pry
+
       @row_headers, @headers_width = tabularize_rows
       @column_headers, @headers_height = tabularize_columns
 
