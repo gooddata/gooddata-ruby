@@ -20,9 +20,9 @@ require 'zip'
 module GoodData
   module Model
     GD_TYPES = %w(GDC.link GDC.text GDC.geo GDC.time)
-    GD_DATA_TYPES = %w(INT VARCHAR DECIMAL)
+    GD_DATA_TYPES = ['BIGINT', 'DOUBLE', 'INTEGER', 'INT', /^VARCHAR\(\d{1,3}\)$/i, /^DECIMAL\(\d{1,3},\s*\d{1,3}\)$/i]
 
-    DEFAULT_FACT_DATATYPE = 'INT'
+    DEFAULT_FACT_DATATYPE = 'DECIMAL(12,2)'
     DEFAULT_DATE_FORMAT = 'MM/dd/yyyy'
 
     class << self
@@ -65,8 +65,29 @@ module GoodData
         end
       end
 
-      def check_gd_datatype(value)
+      def check_gd_type(value)
         GD_TYPES.any? { |v| v == value }
+      end
+
+      def check_gd_data_type(value)
+        GD_DATA_TYPES.any? do |v|
+          case v
+          when Regexp
+            v =~ value
+          when String
+            v == (value && value.upcase)
+          else
+            fail 'Unkown predicate'
+          end
+        end
+      end
+
+      def normalize_gd_data_type(type)
+        if type && type.upcase == 'INTEGER'
+          'INT'
+        else
+          type
+        end
       end
 
       # Load given file into a data set described by the given schema

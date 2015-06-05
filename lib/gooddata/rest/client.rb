@@ -300,7 +300,6 @@ module GoodData
 
         while bl.call(response)
           limit_breached = time_limit && (Time.now - poll_start > time_limit)
-          puts "TIME LIMIT: #{time_limit}:#{limit_breached}"
           if limit_breached
             fail ExecutionLimitExceeded, "The time limit #{time_limit} secs for polling on #{link} is over"
           end

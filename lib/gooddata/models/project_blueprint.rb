@@ -263,9 +263,11 @@ module GoodData
       #
       # @return [Array] array of errors
       def validate
-        refs_errors = validate_references
-        labels_errors = datasets.reduce([]) { |a, e| a.concat(e.validate) }
-        refs_errors.concat(labels_errors)
+        errors = []
+        errors.concat validate_references
+        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate) }
+        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate_gd_data_type_errors) }
+        errors
       end
 
       # Validate the blueprint and all its datasets and return true if model is valid. False otherwise.
