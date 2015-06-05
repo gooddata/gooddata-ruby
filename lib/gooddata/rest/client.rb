@@ -67,7 +67,7 @@ module GoodData
             password = ENV['GD_GEM_PASSWORD']
           end
 
-          username.symbolize_keys! if username.is_a?(Hash)
+          username = username.symbolize_keys if username.is_a?(Hash)
 
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
@@ -75,6 +75,7 @@ module GoodData
           elsif username.is_a? Hash
             new_opts[:username] = username[:login] || username[:user] || username[:username]
             new_opts[:password] = username[:password]
+            new_opts[:verify_ssl] = username[:verify_ssl] if username[:verify_ssl] == false || !username[:verify_ssl].blank?
           elsif username.nil? && password.nil? && (opts.nil? || opts.empty?)
             new_opts = Helpers::AuthHelper.read_credentials
           else

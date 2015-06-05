@@ -20,8 +20,14 @@ GoodData::CLI.module_eval do
     token = creds[:auth_token] if token.nil?
 
     global[:token] = token if global[:token].nil?
-    global[:login] = username if global[:login].nil?
-    global[:password] = password if global[:password].nil?
+    if global[:login].nil?
+      global[:login] = username
+      global['login'] = username
+    end
+    if global[:password].nil?
+      global[:password] = password
+      global['password'] = password
+    end
     # Pre logic here
     # Return true to proceed; false to abort and not call the
     # chosen command
