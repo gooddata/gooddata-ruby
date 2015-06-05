@@ -1,38 +1,8 @@
 # encoding: UTF-8
 
-require_relative 'from_wire_parse'
-
 module GoodData
   module Model
     module FromWire
-      # Converts dataset from wire format into an internal blueprint representation
-      #
-      # @param stuff [Hash] Whatever comes from wire
-      # @return [Hash] Manifest for a particular reference
-      def self.dataset_from_wire(stuff)
-        {}.tap do |d|
-          d[:type] = :dataset
-          d[:title] = stuff['dataset']['title'] if stuff['dataset']['title'] != stuff['dataset']['identifier'].split('.').last.titleize
-          d[:name] = stuff['dataset']['identifier'].split('.').last
-          d[:columns] = (parse_anchor(stuff) + parse_attributes(stuff) + parse_facts(stuff) + parse_references(stuff))
-        end
-      end
-
-      # Entry method for converting information about project mode from wire
-      # format into an internal blueprint representation
-      #
-      # @param stuff [Hash] Whatever comes from wire
-      # @return [GoodData::Model::ProjectBlueprint] Manifest for a particular reference
-      def self.from_wire(stuff)
-        model = stuff['projectModelView']['model']['projectModel']
-        datasets = model['datasets'] || []
-        dims = model['dateDimensions'] || []
-        ProjectBlueprint.new(
-          datasets: datasets.map { |ds| dataset_from_wire(ds) },
-          date_dimensions: dims.map { |dd| parse_date_dimensions(dd) }
-        )
-      end
-
       # Converts anchor from wire format into an internal blueprint representation
       #
       # @param stuff [Hash] Whatever comes from wire
@@ -107,8 +77,6 @@ module GoodData
             f[:type] = fact['fact']['identifier'] =~ /^dt\./ ? :date_fact : :fact
             f[:name] = fact['fact']['identifier'].split('.').last
             f[:title] = fact['fact']['title'] if fact['fact']['title'] != fact['fact']['identifier'].split('.').last.titleize
-            f[:description] = fact['fact']['description'] if fact['fact']['description']
-            f[:folder] = fact['fact']['folder'] if fact['fact']['folder']
             f[:gd_data_type] = fact['fact']['dataType'] if fact['fact'].key?('dataType')
           end
         end
@@ -124,8 +92,6 @@ module GoodData
           l[:reference] = attribute['identifier'].split('.').last if type == 'label'
           l[:name] = label['label']['identifier'].split('.').last
           l[:title] = label['label']['title'] if label['label']['title'] != label['label']['identifier'].split('.').last.titleize
-          l[:description] = attribute['description'] if %w(attribute anchor).include?(type) && attribute['description']
-          l[:folder] = attribute['folder'] if attribute['folder'] && (type == 'attribute' || type == 'anchor')
           l[:gd_data_type] = label['label']['dataType'] if label['label'].key?('dataType')
           l[:gd_type] = label['label']['type'] if label['label'].key?('type')
           l[:default_label] = true if default_label == label['label']['identifier']

@@ -20,6 +20,8 @@ module GoodData
       # Constants
       #################################
       DEFAULT_CONNECTION_IMPLEMENTATION = GoodData::Rest::Connection
+      DEFAULT_SLEEP_INTERVAL = 10
+      DEFAULT_POLL_TIME_LIMIT = 5 * 60 * 60 # 5 hours
 
       #################################
       # Class variables
@@ -153,6 +155,10 @@ module GoodData
         GoodData::Domain[domain_name, :client => self]
       end
 
+      def project_is_accessible?(id)
+        projects(id) && true rescue false
+      end
+
       def projects(id = :all)
         GoodData::Project[id, client: self]
       end
@@ -238,7 +244,7 @@ module GoodData
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
         url = project.links['uploads']
-        raise 'Project WebDAV not supported in this Data Center' unless url
+        fail 'Project WebDAV not supported in this Data Center' unless url
         url
       end
 
@@ -264,17 +270,13 @@ module GoodData
       # @return [Hash] Result of polling
       def poll_on_code(link, options = {})
         code = options[:code] || 202
-        sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
-        response = get(link, :process => false)
+        process = options[:process]
 
-        while response.code == code
-          sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
-            sleep sleep_interval
-            response = get(link, :process => false)
-          end
+        response = poll_on_response(link, options.merge(:process => false)) do |resp|
+          resp.code == code
         end
-        if options[:process] == false
+
+        if process == false
           response
         else
           get(link)
@@ -292,12 +294,23 @@ module GoodData
       # @return [Hash] Result of polling
       def poll_on_response(link, options = {}, &bl)
         sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
-        response = get(link)
+        time_limit = options[:time_limit] || DEFAULT_POLL_TIME_LIMIT
+
+        # by default the response is processed
+        process = options[:process]
+
+        # get the first status and start the timer
+        response = get(link, :process => process)
+        poll_start = Time.now
+
         while bl.call(response)
+          if time_limit && (Time.now - poll_start > time_limit)
+            fail "The time limit #{time_limit} secs for polling on #{link} is over"
+          end
           sleep sleep_interval
           GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
             sleep sleep_interval
-            response = get(link)
+            response = get(link, :process => process)
           end
         end
         response

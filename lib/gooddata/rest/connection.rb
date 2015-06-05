@@ -56,7 +56,8 @@ module GoodData
         def retryable(options = {}, &_block)
           opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
 
-          retry_exception, retries = opts[:on], opts[:tries]
+          retry_exception = opts[:on]
+          retries = opts[:tries]
 
           unless retry_exception.is_a?(Array)
             retry_exception = [retry_exception]
@@ -253,7 +254,7 @@ module GoodData
         profile "DELETE #{uri}" do
           b = proc do
             begin
-              @server[uri].delete(cookies)
+              @server[uri].delete(fresh_request_params(options[:request_id]))
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)
@@ -272,7 +273,7 @@ module GoodData
         profile "GET #{uri}" do
           b = proc do
             begin
-              @server[uri].get(cookies, &user_block)
+              @server[uri].get(fresh_request_params(options[:request_id]), &user_block)
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)
@@ -292,7 +293,7 @@ module GoodData
         profile "PUT #{uri}" do
           b = proc do
             begin
-              @server[uri].put(payload, cookies)
+              @server[uri].put(payload, fresh_request_params(options[:request_id]))
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)
@@ -312,7 +313,7 @@ module GoodData
           payload = data.is_a?(Hash) ? data.to_json : data
           b = proc do
             begin
-              @server[uri].post(payload, cookies)
+              @server[uri].post(payload, fresh_request_params(options[:request_id]))
             rescue RestClient::Exception => e
               # log the error if it happens
               GoodData.logger.error(e.inspect)

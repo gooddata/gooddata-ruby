@@ -29,6 +29,10 @@ module GoodData
         item[:title] || item[:name].titleize
       end
 
+      def description(item)
+        item[:description]
+      end
+
       def identifier_for(dataset, column = nil, column2 = nil) # rubocop:disable UnusedMethodArgument
         return "dataset.#{dataset[:name]}" if column.nil?
         column = DatasetBlueprint.find_column_by_name(dataset, column) if column.is_a?(String)

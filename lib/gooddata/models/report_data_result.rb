@@ -118,7 +118,8 @@ module GoodData
       kids = rows['tree']['children']
 
       if kids.empty? || (kids.size == 1 && kids.first['type'] == 'metric')
-        headers, size = [[nil]], 0
+        headers = [[nil]]
+        size = 0
       else
         headers = []
         size = each_level(headers, 0, rows['tree']['children'], rows['lookups'])
@@ -131,7 +132,8 @@ module GoodData
       kids = columns['tree']['children']
 
       if kids.empty? || (kids.size == 1 && kids.first['type'] == 'metric')
-        headers, size = [[nil]], 0
+        headers = [[nil]]
+        size = 0
       else
         headers = []
         size = each_level(headers, 0, columns['tree']['children'], columns['lookups'])
