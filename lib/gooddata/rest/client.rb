@@ -67,6 +67,8 @@ module GoodData
             password = ENV['GD_GEM_PASSWORD']
           end
 
+          username.symbolize_keys! if username.is_a?(Hash)
+
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
             new_opts = username
