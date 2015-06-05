@@ -24,6 +24,11 @@ module GoodData
       Time.parse(json['executionDetail']['created'])
     end
 
+    # Has execution failed?
+    def error?
+      status == :error
+    end
+
     # Timestamp when execution was finished
     def finished
       Time.parse(json['executionDetail']['finished'])
@@ -41,7 +46,7 @@ module GoodData
 
     # Is execution ok?
     def ok?
-      status.downcase == 'ok'
+      status == :ok
     end
 
     # Timestamp when execution was started
@@ -51,7 +56,7 @@ module GoodData
 
     # Status of execution
     def status
-      json['executionDetail']['status']
+      json['executionDetail']['status'].downcase.to_sym
     end
 
     # Timestamp when execution was updated
