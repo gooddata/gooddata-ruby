@@ -357,10 +357,20 @@ module GoodData
     end
 
     private
+
     def data_result(result, options = {})
       data_result_uri = result['execResult']['dataResult']
-      result = client.poll_on_response(data_result_uri, options) do |body|
-        body && body['taskState'] && body['taskState']['status'] == 'WAIT'
+      begin
+        result = client.poll_on_response(data_result_uri, options) do |body|
+          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
+        end
+      rescue RestClient::BadRequest => e
+        resp = JSON.parse(e.response)
+        if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
+          raise GoodData::UncomputableReport
+        else
+          raise e
+        end
       end
 
       if result.empty?
