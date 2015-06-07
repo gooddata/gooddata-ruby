@@ -374,8 +374,8 @@ module GoodData
         end
       rescue RestClient::BadRequest => e
         resp = JSON.parse(e.response)
-        if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
-          raise GoodData::UncomputableReport
+        if GoodData::Helpers.get_path(resp, ['error', 'component']) == 'MD::DataResult'
+          fail GoodData::UncomputableReport
         else
           raise e
         end
