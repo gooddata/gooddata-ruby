@@ -74,54 +74,41 @@ module GoodData
 
       def find(stuff, opts = { :client => GoodData.connection, :project => GoodData.project })
         client = opts[:client]
+        project = opts[:project]
         fail ArgumentError, 'No :client specified' if client.nil?
+        fail ArgumentError, 'No :project specified' if project.nil?
 
         stuff.map do |item|
-          if item.respond_to?(:attribute?) && item.attribute?
-            item.display_forms.first
-          elsif item.is_a?(String)
-            x = GoodData::MdObject.get_by_id(item, opts)
-            fail "Object given by id \"#{item}\" could not be found" if x.nil?
-            case x.raw_data.keys.first.to_s
-            when 'attribute'
-              attr = GoodData::Attribute.new(x.json)
-              attr.client = client
-              attr.project = opts[:project]
-              attr.display_forms.first
-            when 'attributeDisplayForm'
-              GoodData::Label.new(x.json)
-            when 'metric'
-              GoodData::Metric.new(x.json)
-            end
-          elsif item.is_a?(Hash) && item.keys.include?(:title)
-            case item[:type].to_s
-            when 'metric'
-              GoodData::Metric.find_first_by_title(item[:title])
-            when 'attribute'
-              result = GoodData::Attribute.find_first_by_title(item[:title])
-              result.display_forms.first
-            end
-          elsif item.is_a?(Hash) && (item.keys.include?(:id))
-            case item[:type].to_s
-            when 'metric'
-              GoodData::Metric.get_by_id(item[:id])
-            when 'attribute'
-              GoodData::Attribute.get_by_id(item[:id]).display_forms.first
-            when 'label'
-              GoodData::Label.get_by_id(item[:id])
-          end
-          elsif item.is_a?(Hash) && (item.keys.include?(:identifier))
-            case item[:type].to_s
-            when 'metric'
-              GoodData::Metric.get_by_id(item[:identifier])
-            when 'attribute'
-              result = GoodData::Attribute.get_by_id(item[:identifier])
-              result.display_forms.first
-            when 'label'
-              GoodData::Label.get_by_id(item[:identifier])
-            end
+          obj = if item.is_a?(String)
+                  begin
+                    project.objects(item)
+                  rescue RestClient::ResourceNotFound
+                    raise "Object given by id \"#{item}\" could not be found"
+                  end
+                elsif item.is_a?(Hash) && item.keys.include?(:title)
+                  case item[:type].to_s
+                  when 'metric'
+                    GoodData::Metric.find_first_by_title(item[:title], opts)
+                  when 'attribute'
+                    GoodData::Attribute.find_first_by_title(item[:title], opts)
+                  end
+                elsif item.is_a?(Hash) && (item.keys.include?(:id) || item.keys.include?(:identifier))
+                  id = item[:id] || item[:identifier]
+                  case item[:type].to_s
+                  when 'metric'
+                    project.metrics(id)
+                  when 'attribute'
+                    project.attributes(id)
+                  when 'label'
+                    projects.labels(id)
+                  end
+                else
+                  item
+                end
+          if obj.respond_to?(:attribute?) && obj.attribute?
+            obj.display_forms.first
           else
-            item
+            obj
           end
         end
       end
@@ -374,17 +361,17 @@ module GoodData
         end
       rescue RestClient::BadRequest => e
         resp = JSON.parse(e.response)
-        if GoodData::Helpers.get_path(resp, ['error', 'component']) == 'MD::DataResult'
-          fail GoodData::UncomputableReport
+        if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
+          raise GoodData::UncomputableReport
         else
           raise e
         end
       end
 
       if result.empty?
-        client.create(EmptyResult, result)
+        client.create(ReportDataResult, data: [], top: 0, left: 0, project: project)
       else
-        client.create(ReportDataResult, result)
+        ReportDataResult.from_xtab(result, client: client, project: project)
       end
     end
   end
