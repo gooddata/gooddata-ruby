@@ -11,11 +11,12 @@ module GoodData
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular reference
       def self.attribute_to_manifest(_project, dataset, a, mode)
+        labels = DatasetBlueprint.labels_for_attribute(dataset, a)
         [{
           'referenceKey' => 1,
-          'populates' => [GoodData::Model.identifier_for(dataset, a.merge(type: :primary_label))],
+          'populates' => [labels.first[:id]],
           'mode' => mode,
-          'columnName' => a[:name]
+          'columnName' => labels.first[:column_name] || labels.first[:id]
         }]
       end
 
@@ -29,12 +30,8 @@ module GoodData
       #
       def self.column_to_manifest(project, dataset, c, mode)
         case c[:type].to_sym
-        when :attribute
-          attribute_to_manifest(project, dataset, c, mode)
         when :label
           label_to_manifest(project, dataset, c, mode)
-        when :anchor
-          attribute_to_manifest(project, dataset, c, mode)
         when :fact
           fact_to_manifest(project, dataset, c, mode)
         when :reference
@@ -71,16 +68,16 @@ module GoodData
       # @param reference [Hash] Reference
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular date reference
-      def self.date_ref_to_manifest(project, dataset, reference, mode)
+      def self.date_ref_to_manifest(project, _dataset, reference, mode)
         referenced_dataset = ProjectBlueprint.find_date_dimension(project, reference[:dataset])
-        ref = GoodData::Model.identifier_for(referenced_dataset, type: :date_ref)
+        ref = "#{referenced_dataset[:id]}.date.mdyy"
         format = reference[:format] || GoodData::Model::DEFAULT_DATE_FORMAT
-        GoodData.logger.info("Using date format \"#{format}\" for referencing attribute \"#{ref}\" of date dimension \"#{GoodData::Model.identifier_for(dataset)}\"")
+        GoodData.logger.info("Using date format \"#{format}\" for referencing attribute \"#{ref}\" of date dimension \"#{referenced_dataset[:id]}\"")
         [{
           'populates' => [ref],
           'mode' => mode,
           'constraints' => { 'date' => format },
-          'columnName' => reference[:name],
+          'columnName' => reference[:column_name] || reference[:dataset],
           'referenceKey' => 1
         }]
       end
@@ -92,11 +89,11 @@ module GoodData
       # @param fact [Hash] Fact
       # @param mode [String] Mode of the load. Either FULL or INCREMENTAL
       # @return [Hash] Manifest for a particular fact
-      def self.fact_to_manifest(_project, dataset, fact, mode)
+      def self.fact_to_manifest(_project, _dataset, fact, mode)
         [{
-          'populates' => [GoodData::Model.identifier_for(dataset, fact)],
+          'populates' => [fact[:id]],
           'mode' => mode,
-          'columnName' => fact[:name]
+          'columnName' => fact[:column_name] || fact[:id]
         }]
       end
 
@@ -109,11 +106,15 @@ module GoodData
       # @return [Hash] Manifest for a particular label
       def self.label_to_manifest(_project, dataset, label, mode)
         a = DatasetBlueprint.attribute_for_label(dataset, label)
-        [{
-          'populates' => [GoodData::Model.identifier_for(dataset, label, a)],
-          'mode' => mode,
-          'columnName' => label[:name]
-        }]
+        labels = DatasetBlueprint.labels_for_attribute(dataset, a)
+
+        label = {}.tap do |l|
+          l['referenceKey'] = 1 if labels.first == label
+          l['populates'] = [label[:id]]
+          l['mode'] = mode
+          l['columnName'] = label[:column_name] || label[:id]
+        end
+        [label]
       end
 
       # The entry function of the module. Converts the ProjectBlueprint to manifest
@@ -128,7 +129,7 @@ module GoodData
           {
             'dataSetSLIManifest' => {
               'parts' => columns.mapcat { |c| column_to_manifest(project, dataset, c, mode) },
-              'dataSet' => GoodData::Model.identifier_for(dataset),
+              'dataSet' => dataset[:id],
               'file' => 'data.csv', # should be configurable
               'csvParams' => {
                 'quoteChar' => '"',
@@ -151,10 +152,11 @@ module GoodData
       def self.reference_to_manifest(project, _dataset, reference, mode)
         referenced_dataset = ProjectBlueprint.find_dataset(project, reference[:dataset])
         anchor = DatasetBlueprint.anchor(referenced_dataset)
+        label = DatasetBlueprint.labels_for_attribute(referenced_dataset, anchor).first
         [{
-          'populates' => [GoodData::Model.identifier_for(referenced_dataset, anchor.merge(type: :primary_label))],
+          'populates' => [label[:id]],
           'mode' => mode,
-          'columnName' => reference[:name],
+          'columnName' => reference[:column_name] || reference[:dataset],
           'referenceKey' => 1
         }]
       end

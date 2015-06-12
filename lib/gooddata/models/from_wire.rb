@@ -9,12 +9,14 @@ module GoodData
       #
       # @param dataset [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.dataset_from_wire(dataset, anchor_hash)
+      def self.dataset_from_wire(dataset)
         {}.tap do |d|
+          id = dataset['dataset']['identifier']
+
           d[:type] = :dataset
-          d[:title] = dataset['dataset']['title'] if dataset['dataset']['title'] != dataset['dataset']['identifier'].split('.').last.titleize
-          d[:name] = dataset['dataset']['identifier'].split('.').last
-          d[:columns] = (parse_anchor(dataset) + parse_attributes(dataset) + parse_facts(dataset) + parse_references(dataset, anchor_hash))
+          d[:title] = dataset['dataset']['title']
+          d[:id] = id
+          d[:columns] = (parse_anchor(dataset) + parse_attributes(dataset) + parse_facts(dataset) + parse_references(dataset))
         end
       end
 
@@ -27,41 +29,11 @@ module GoodData
         model = wire_model['projectModelView']['model']['projectModel']
         datasets = model['datasets'] || []
         dims = model['dateDimensions'] || []
-        anchor_hash = Hash[model['datasets'].map do |d|
-          [
-            d['dataset']['identifier'].split('.').last,
-            d['dataset']['anchor']['attribute']['identifier'].split('.').last
-          ]
-        end]
+
         ProjectBlueprint.new(
-          datasets: datasets.map { |ds| dataset_from_wire(ds, anchor_hash) },
+          datasets: datasets.map { |ds| dataset_from_wire(ds) },
           date_dimensions: dims.map { |dd| parse_date_dimensions(dd) }
         )
-      end
-
-      # Converts anchor from wire format into an internal blueprint representation
-      #
-      # @param stuff [Hash] Whatever comes from wire
-      # @return [Hash] Manifest for a particular reference
-      def self.parse_anchor(stuff)
-        attribute = stuff['dataset']['anchor']['attribute']
-        if !attribute.key?('labels')
-          []
-        else
-          labels = attribute['labels'] || []
-          default_label = attribute['defaultLabel']
-          primary_label_name = attribute['identifier'].split('.').last
-          dataset_name = attribute['identifier'].split('.')[1]
-          primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
-          primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
-          dl = primary_labels.map do |label|
-            parse_label(attribute, label, 'anchor', default_label)
-          end
-          rl = regular_labels.map do |label|
-            parse_label(attribute, label, 'label', default_label)
-          end
-          dl + rl
-        end
       end
 
       # Converts attrbutes from wire format into an internal blueprint representation
@@ -72,21 +44,36 @@ module GoodData
         dataset = stuff['dataset']
         attributes = dataset['attributes'] || []
         attributes.mapcat do |a|
-          attribute = a['attribute']
-          labels = attribute['labels'] || []
-          default_label = attribute['defaultLabel']
-          primary_label_name = attribute['identifier'].split('.').last
-          dataset_name = attribute['identifier'].split('.')[1]
-          primary_label_identifier = GoodData::Model.identifier_for({ name: dataset_name }, type: :primary_label, name: primary_label_name)
-          primary_labels, regular_labels = labels.partition { |x| x['label']['identifier'] == primary_label_identifier }
-          dl = primary_labels.map do |label|
-            parse_label(attribute, label, 'attribute', default_label)
-          end
-          rl = regular_labels.map do |label|
-            parse_label(attribute, label, 'label', default_label)
-          end
-          dl + rl
+          parse_attribute(a['attribute'])
         end
+      end
+
+      # Converts anchor from wire format into an internal blueprint representation
+      #
+      # @param stuff [Hash] Whatever comes from wire
+      # @return [Hash] Manifest for a particular reference
+      def self.parse_anchor(stuff)
+        anchor = stuff['dataset']['anchor']['attribute']
+        parse_attribute(anchor, :anchor)
+      end
+
+      def self.parse_attribute(attribute, type = :attribute)
+        labels = attribute['labels'] || []
+        default_label_id = attribute['defaultLabel']
+        default_label = labels.find { |l| l['label']['identifier'] == default_label_id } || labels.first
+        regular_labels = labels - [default_label]
+        pl = default_label.nil? ? [] : [parse_label(attribute, default_label, :default_label)]
+        rl = regular_labels.map do |label|
+          parse_label(attribute, label, :label)
+        end
+        attribute = {}.tap do |a|
+          a[:type] = type
+          a[:id] = attribute['identifier']
+          a[:title] = attribute['title']
+          a[:description] = attribute['description']
+          a[:folder] = attribute['folder']
+        end
+        [attribute] + pl + rl
       end
 
       # Converts date dimensions from wire format into an internal blueprint representation
@@ -96,9 +83,8 @@ module GoodData
       def self.parse_date_dimensions(date_dim)
         {}.tap do |d|
           d[:type] = :date_dimension
-          # d[:urn] = :date_dimension
-          d[:name] = date_dim['dateDimension']['name']
-          d[:title] = date_dim['dateDimension']['title'] if date_dim['dateDimension']['title'] != d[:name].titleize
+          d[:id] = date_dim['dateDimension']['name']
+          d[:title] = date_dim['dateDimension']['title']
         end
       end
 
@@ -111,11 +97,11 @@ module GoodData
         facts.map do |fact|
           {}.tap do |f|
             f[:type] = fact['fact']['identifier'] =~ /^dt\./ ? :date_fact : :fact
-            f[:name] = fact['fact']['identifier'].split('.').last
-            f[:title] = fact['fact']['title'] if fact['fact']['title'] != fact['fact']['identifier'].split('.').last.titleize
+            f[:id] = fact['fact']['identifier']
+            f[:title] = fact['fact']['title']
             f[:description] = fact['fact']['description'] if fact['fact']['description']
-            f[:folder] = fact['fact']['folder'] if fact['fact']['folder']
-            f[:gd_data_type] = fact['fact']['dataType'] if fact['fact'].key?('dataType')
+            f[:folder] = fact['fact']['folder']
+            f[:gd_data_type] = fact['fact']['dataType'] || GoodData::Model::DEFAULT_FACT_DATATYPE
           end
         end
       end
@@ -124,17 +110,15 @@ module GoodData
       #
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.parse_label(attribute, label, type, default_label = nil)
+      def self.parse_label(attribute, label, type)
         {}.tap do |l|
-          l[:type] = type
-          l[:reference] = attribute['identifier'].split('.').last if type == 'label'
-          l[:name] = label['label']['identifier'].split('.').last
-          l[:title] = label['label']['title'] if label['label']['title'] != label['label']['identifier'].split('.').last.titleize
-          l[:description] = attribute['description'] if %w(attribute anchor).include?(type) && attribute['description']
-          l[:folder] = attribute['folder'] if attribute['folder'] && (type == 'attribute' || type == 'anchor')
-          l[:gd_data_type] = label['label']['dataType'] if label['label'].key?('dataType')
-          l[:gd_type] = label['label']['type'] if label['label'].key?('type')
-          l[:default_label] = true if default_label == label['label']['identifier']
+          l[:type] = :label
+          l[:id] = label['label']['identifier']
+          l[:reference] = attribute['identifier']
+          l[:title] = label['label']['title']
+          l[:gd_data_type] = label['label']['dataType'] || GoodData::Model::DEFAULT_ATTRIBUTE_DATATYPE
+          l[:gd_type] = label['label']['type'] || GoodData::Model::DEFAULT_TYPE
+          l[:default_label] = true if type == :default_label
         end
       end
 
@@ -143,22 +127,18 @@ module GoodData
       # @param dataset [Hash] Whatever comes from wire
       # @param anchor_hash [Hash] dataset id -> anchor id hash
       # @return [Hash] Manifest for a particular reference
-      def self.parse_references(dataset, anchor_hash)
+      def self.parse_references(dataset)
         references = dataset['dataset']['references'] || []
         references.map do |ref|
-          dataset_name = ref.gsub(/^dataset\./, '')
           if ref =~ /^dataset\./
             {
               :type => :reference,
-              # in case the dataset isn't in the model, take the name
-              :name => anchor_hash[dataset_name] || dataset_name,
-              :dataset => dataset_name
+              :dataset => ref
             }
           else
             {
               :type => :date,
-              :name => dataset_name,
-              :dataset => dataset_name
+              :dataset => ref
             }
           end
         end

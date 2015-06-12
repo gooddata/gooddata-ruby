@@ -12,17 +12,7 @@ module GoodData
       # @param dataset [Hash] Dataset blueprint hash represenation
       # @return [Hash] Manifest for a particular reference
       def self.anchor_to_wire(_project, dataset)
-        if DatasetBlueprint.anchor(dataset)
-          attribute_to_wire(dataset, DatasetBlueprint.anchor(dataset))
-        else
-          {
-            attribute: {
-              identifier: GoodData::Model.identifier_for(dataset, type: :anchor_no_label),
-              title: "Records of #{GoodData::Model.title(dataset)}",
-              folder: dataset[:folder] || GoodData::Model.title(dataset)
-            }
-          }
-        end
+        attribute_to_wire(dataset, DatasetBlueprint.anchor(dataset))
       end
 
       # Converts atttribute to wire format.
@@ -42,28 +32,26 @@ module GoodData
       # @param attribute [Hash] Attribute
       # @return [Hash] Manifest for a particular reference
       def self.attribute_to_wire(dataset, attribute)
-        default_label = DatasetBlueprint.default_label_for_attribute(dataset, attribute)
-        label = default_label[:type].to_sym == :label ? default_label : default_label.merge(type: :primary_label)
-        payload = {
-          attribute: {
-            identifier: GoodData::Model.identifier_for(dataset, attribute),
-            title: GoodData::Model.title(attribute),
-            folder: attribute[:folder] || dataset[:folder] || GoodData::Model.title(dataset),
-            labels: ([attribute.merge(type: :primary_label)] + DatasetBlueprint.labels_for_attribute(dataset, attribute)).map do |l|
-              {
-                label: {
-                  identifier: GoodData::Model.identifier_for(dataset, l, attribute),
-                  title: GoodData::Model.title(l),
-                  type: l[:gd_type],
-                  dataType: GoodData::Model.normalize_gd_data_type(l[:gd_data_type])
-                }
-              }
-            end,
-            defaultLabel: GoodData::Model.identifier_for(dataset, label, attribute)
+        ls = DatasetBlueprint.labels_for_attribute(dataset, attribute)
+        labels = ls.map do |l|
+          {
+            label: {
+              identifier: l[:id],
+              title: GoodData::Model.title(l),
+              type: l[:gd_type] || Model::DEFAULT_TYPE,
+              dataType: GoodData::Model.normalize_gd_data_type(l[:gd_data_type]) || Model::DEFAULT_ATTRIBUTE_DATATYPE
+            }
           }
-        }
-        payload.tap do |p|
-          p[:attribute][:description] = GoodData::Model.description(attribute) if GoodData::Model.description(attribute)
+        end
+        {}.tap do |a|
+          a[:attribute] = {}
+          a[:attribute][:identifier] = attribute[:id]
+          a[:attribute][:title] = Model.title(attribute)
+          a[:attribute][:folder] = attribute[:folder] || dataset[:folder] || GoodData::Model.title(dataset)
+          a[:attribute][:labels] = labels unless labels.empty?
+          a[:attribute][:description] = GoodData::Model.description(attribute) if GoodData::Model.description(attribute)
+          default = ls.find { |l| l[:default_label] }
+          a[:attribute][:defaultLabel] = (default && default[:id]) || ls.first[:id] unless ls.empty?
         end
       end
 
@@ -75,7 +63,7 @@ module GoodData
       def self.dataset_to_wire(project, dataset)
         {
           dataset: {
-            identifier: GoodData::Model.identifier_for(dataset),
+            identifier: dataset[:id],
             title: GoodData::Model.title(dataset),
             anchor: anchor_to_wire(project, dataset),
             attributes: attributes_to_wire(project, dataset),
@@ -90,13 +78,13 @@ module GoodData
       # @param project [Hash] Project blueprint hash represenation
       # @param dataset [Hash] Dataset blueprint hash represenation
       # @return [Hash] Manifest for a particular reference
-      def self.date_dimensions_to_wire(_project, dataset)
-        {
-          dateDimension: {
-            name: dataset[:name],
-            title: GoodData::Model.title(dataset)
-          }
-        }
+      def self.date_dimension_to_wire(_project, dataset)
+        payload = {}.tap do |dd|
+          dd[:name] = dataset[:id]
+          dd[:urn] = dataset[:urn] if dataset[:urn]
+          dd[:title] = GoodData::Model.title(dataset)
+        end
+        { dateDimension: payload }
       end
 
       # Converts fact to wire format.
@@ -107,7 +95,7 @@ module GoodData
       def self.fact_to_wire(dataset, fact)
         payload = {
           fact: {
-            identifier: GoodData::Model.identifier_for(dataset, fact),
+            identifier: fact[:id],
             title: GoodData::Model.title(fact),
             folder: fact[:folder] || dataset[:folder] || GoodData::Model.title(dataset),
             dataType: GoodData::Model.normalize_gd_data_type(fact[:gd_data_type]) || DEFAULT_FACT_DATATYPE
@@ -123,16 +111,9 @@ module GoodData
       # @param fact [Hash] Project blueprint hash represenation
       # @param dataset [Hash] Dataset blueprint hash represenation
       # @return [Hash] Manifest for a particular reference
-      def self.references_to_wire(project, dataset)
+      def self.references_to_wire(_project, dataset)
         DatasetBlueprint.references(dataset).map do |r|
-          if ProjectBlueprint.date_dimension?(project, r[:dataset])
-            ProjectBlueprint.find_date_dimension(project, r[:dataset])[:name]
-          elsif ProjectBlueprint.dataset?(project, r[:dataset])
-            ds = ProjectBlueprint.find_dataset(project, r[:dataset])
-            'dataset.' + ds[:name]
-          else
-            fail 'This dataset does not exist'
-          end
+          r[:dataset]
         end
       end
 
@@ -148,7 +129,7 @@ module GoodData
             targetModel: {
               projectModel: {
                 datasets: (what[:datasets] || []).map { |d| dataset_to_wire(what, d) },
-                dateDimensions: (what[:date_dimensions] || []).map { |d| date_dimensions_to_wire(what, d) }
+                dateDimensions: (what[:date_dimensions] || []).map { |d| date_dimension_to_wire(what, d) }
               }
             }
           }

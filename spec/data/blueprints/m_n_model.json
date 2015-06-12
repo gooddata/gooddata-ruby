@@ -1,0 +1,104 @@
+{
+  "title": "GD M:N project testing",
+  "datasets": [
+    {
+      "type": "dataset",
+      "id": "dataset.visibility",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.visibility.id"
+        },
+        {
+          "type": "label",
+          "name": "visibility_id",
+          "id": "label.visibility.id",
+          "reference": "attr.visibility.id"
+        },
+        {
+          "type": "reference",
+          "name": "perm_user_id",
+          "dataset": "dataset.permission_users"
+        },
+        {
+          "type": "reference",
+          "name": "commit_id",
+          "dataset": "dataset.commits"
+        }
+      ]
+    },
+    {
+      "type": "dataset",
+      "id": "dataset.users",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.users.id"
+        },
+        {
+          "type": "label",
+          "name": "user_id",
+          "id": "label.users.id",
+          "reference": "attr.users.id"
+        },
+        {
+          "type": "label",
+          "id": "label.users.id.email",
+          "name": "email",
+          "reference": "attr.users.id",
+          "default_label" : true
+        }
+      ]
+    },
+    {
+      "type": "dataset",
+      "id": "dataset.permission_users",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.permission.id"
+        },
+        {
+          "type": "label",
+          "name": "perm_user_id",
+          "id": "label.permission.id",
+          "reference": "attr.permission.id"
+        },
+        {
+          "type": "label",
+          "id": "label.permission.id.email",
+          "name": "email",
+          "reference": "attr.permission.id",
+          "default_label" : true
+        }
+      ]
+    },
+    {
+      "type": "dataset",
+      "id": "dataset.commits",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.commits.id"
+        },
+        {
+          "type": "label",
+          "id": "label.commits.id",
+          "name": "commit_id",
+          "reference": "attr.commits.id",
+          "default_label" : true
+        },
+        {
+          "type": "fact",
+          "id": "fact.commits.lines_changed",
+          "name": "lines_changed"
+        },
+        {
+          "type": "reference",
+          "name": "user_id",
+          "dataset": "dataset.users"
+        }
+      ]
+    }
+  ]
+}
