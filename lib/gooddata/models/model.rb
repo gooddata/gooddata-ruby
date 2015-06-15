@@ -147,11 +147,11 @@ module GoodData
 
         # kick the load
         pull = { 'pullIntegration' => File.basename(dir) }
-        link = project.md.links('etl')['pull']
+        link = project.md.links('etl')['pull2']
         task = client.post(link, pull, :info_message => "Starting the data load from user storage to dataset '#{dataset}'.")
 
-        res = client.poll_on_response(task['pullTask']['uri'], :info_message => 'Getting status of the dataload task.') do |body|
-          body['taskStatus'] == 'RUNNING' || body['taskStatus'] == 'PREPARED'
+        res = client.poll_on_response(task['pull2Task']['links']['poll'], :info_message => 'Getting status of the dataload task.') do |body|
+          body['wTaskStatus'] == 'RUNNING' || body['wTaskStatus'] == 'PREPARED'
         end
 
         if res['taskStatus'] == 'ERROR' # rubocop:disable Style/GuardClause
