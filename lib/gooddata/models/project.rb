@@ -216,6 +216,14 @@ module GoodData
       GoodData::Attribute[id, project: self, client: client]
     end
 
+    def attribute_by_identifier(identifier)
+      GoodData::Attribute.find_first_by_identifier(identifier, project: self, client: client)
+    end
+
+    def attributes_by_identifier(identifier)
+      GoodData::Attribute.find_by_identifier(identifier, project: self, client: client)
+    end
+
     def attribute_by_title(title)
       GoodData::Attribute.find_first_by_title(title, project: self, client: client)
     end
@@ -797,7 +805,8 @@ module GoodData
       :old => nil,
       :new => nil,
       :purge => false,
-      :dry_run => true
+      :dry_run => true,
+      :mapping => {}
     }
 
     def replace_date_dimension(opts)
@@ -806,6 +815,36 @@ module GoodData
 
       # Merge with default options
       opts = DEFAULT_REPLACE_DATE_DIMENSION_OPTIONS.merge(opts)
+
+      get_attribute = lambda do |attr|
+        if attr.is_a?(GoodData::Attribute)
+          return attr
+        end
+
+        res = attribute_by_identifier(attr)
+        if res
+          return res
+        end
+
+        attribute_by_title(attr)
+      end
+
+      if opts[:old] && opts[:new]
+        fail ArgumentError, 'You specified both :old => :new and :mapping' if opts[:mapping] && !opts[:mapping].empty?
+
+        attrs = attributes_by_title(/\(#{opts[:old]}\)$/)
+
+        attrs.each do |old_attr|
+          new_attr_title = old_attr.title.sub("(#{opts[:old]})", "(#{opts[:new]})")
+          new_attr = attribute_by_title(new_attr_title)
+
+          fail RuntimeError, "Unable to find attribute '#{new_attr_title}' in date dimension '#{opts[:new]}'" if new_attr.nil?
+
+          opts[:mapping][old_attr] = new_attr
+        end
+      end
+
+      mufs = user_filters
 
      # Replaces string anywhere in JSON with another string and returns back new JSON
       json_replace = lambda do |json_object, old_uri, new_uri|
@@ -817,24 +856,31 @@ module GoodData
 
       # delete old report definitions (only the last version of each report is kept)
       if opts[:purge]
-        puts 'Purging old project definitions'
+        GoodData.logger.info 'Purging old project definitions'
         reports.peach do |report|
           report.purge_report_of_unused_definitions!
         end
       end
 
-      puts("Replacing date dimension '#{opts[:old]}' with date dimension '#{opts[:new]}' in project '(#{pid}): #{title}")
 
-      # get all attributes of the old date dim
-      old_dim = attributes_by_title(/\(#{opts[:old]}\)$/)
+      fail ArgumentError, 'No :mapping specified' if opts[:mapping].nil? or opts[:mapping].empty?
+
+      # Preprocess mapping, do necessary lookup
+      mapping = {}
+      opts[:mapping].each do |k, v|
+        attr_src = get_attribute.call(k)
+        attr_dest = get_attribute.call(v)
+
+        fail ArgumentError, "Unable to find attribute with identifier '#{k}'" if attr_src.nil?
+        fail ArgumentError, "Unable to find attribute with identifier '#{v}'" if attr_dest.nil?
+
+        mapping[attr_src] = attr_dest
+      end
+
 
       #iterate over all date attributes
-      old_dim.each do |old_date|
-        new_date_title = old_date.title.sub("(#{opts[:old]})", "(#{opts[:new]})")
-        new_date = attribute_by_title(new_date_title)
-        fail RuntimeError, "Unable to find attribute '#{new_date_title}' in date dimension '#{opts[:new]}'" if new_date.nil?
-
-        puts "  replacing date attribute '#{old_date.title}' (#{old_date.uri}) with '#{new_date.title}' (#{new_date.uri})"
+      mapping.each do |old_date, new_date|
+        GoodData.logger.info "  replacing date attribute '#{old_date.title}' (#{old_date.uri}) with '#{new_date.title}' (#{new_date.uri})"
 
         # For each attribute prepare list of labels to replace
         labels_mapping = {}
@@ -855,13 +901,13 @@ module GoodData
 
         #first fix all affected metrics that are using this attribute
         dependent = old_date.usedby
-        puts 'Fixing metrics...'
+        GoodData.logger.info 'Fixing metrics...'
         dependent.each do |dependent_object|
           cat = dependent_object['category']
           if cat == 'metric'
             affected_metric = metrics(dependent_object['link'])
 
-            puts "Metric '#{dependent_object['title']}' (#{affected_metric.uri}) contains old date attribute '#{old_date.title}' ...replacing"
+            GoodData.logger.info "Metric '#{dependent_object['title']}' (#{affected_metric.uri}) contains old date attribute '#{old_date.title}' ...replacing"
             affected_metric.replace(old_date.uri, new_date.uri)
             affected_metric.save unless opts[:dry_run]
           end
@@ -869,14 +915,14 @@ module GoodData
 
         # Then search which reports are still using this attribute after replacement in metric...
         dependent = old_date.usedby()
-        puts 'Fixing reports (standard)...'
+        GoodData.logger.info 'Fixing reports (standard)...'
         dependent.each do |dependent_object|
           cat = dependent_object['category']
           # This does not seem to work every time... some references are kept...
           if cat == 'reportDefinition'
             affected_rd = report_definitions(dependent_object['link'])
 
-            puts "reportDefinition (#{affected_rd.uri}) contains old date attribute '#{old_date.title}' ...replacing"
+            GoodData.logger.info "reportDefinition (#{affected_rd.uri}) contains old date attribute '#{old_date.title}' ...replacing"
             affected_rd.replace(old_date.uri, new_date.uri)
 
             # Affected_rd.replace(labels_mapping) #not sure if this is working correctly, try to do it one by one
@@ -890,7 +936,7 @@ module GoodData
 
         # Then search which dashboards and reports are still using this attribute after standard replacement in reports...
         dependent = old_date.usedby
-        puts 'Fixing reports (force) & dashboards...'
+        GoodData.logger.info 'Fixing reports (force) & dashboards...'
 
         dependent.each do |dependent_object|
           cat = dependent_object['category']
@@ -899,7 +945,7 @@ module GoodData
           if cat == 'reportDefinition'
             affected_rd = report_definitions(dependent_object['link'])
 
-            puts "reportDefinition '#{affected_rd.title}' (#{affected_rd.uri}) still contains old date attribute '#{old_date.title}' ...replacing by force"
+            GoodData.logger.info "reportDefinition '#{affected_rd.title}' (#{affected_rd.uri}) still contains old date attribute '#{old_date.title}' ...replacing by force"
             affected_rd.json['reportDefinition'] = json_replace.call(affected_rd.json, old_date.uri, new_date.uri)['reportDefinition']
             #iterate over all labels
             labels_mapping.each_pair do |old_label, new_label|
@@ -912,7 +958,7 @@ module GoodData
           if cat == 'projectDashboard'
             affected_dashboard = dashboards(dependent_object['link'])
 
-            puts "    dashboard '#{affected_dashboard.title}' (#{affected_dashboard.uri}) contains old date attribute '#{old_date.title}' ...replacing by force"
+            GoodData.logger.info "    dashboard '#{affected_dashboard.title}' (#{affected_dashboard.uri}) contains old date attribute '#{old_date.title}' ...replacing by force"
             affected_dashboard.json['projectDashboard'] = json_replace.call(affected_dashboard.json, old_date.uri, new_date.uri)['projectDashboard']
 
             # Iterate over all labels
@@ -924,8 +970,6 @@ module GoodData
           end
 
           ## TODO: Replace Filters here!
-
-          ## TODO: Replace MUFs here! - https://secure.gooddata.com/gdc/md/rl6s5ytdeg422n6a0ess0lb0qqdc2ssu/userfilters
         end
       end
     end
@@ -1032,6 +1076,12 @@ module GoodData
     #
     # @return [Array<GoodData::MandatoryUserFilter>] List of mandatory user
     def user_filters
+      url = "/gdc/md/#{pid}/userfilters"
+
+      tmp = client.get(url)
+      tmp['userFilters']['items'].pmap do |filter|
+        client.create(GoodData::MandatoryUserFilter, filter, project: self)
+      end
     end
 
     # List of users in project
