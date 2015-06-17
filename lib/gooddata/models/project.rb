@@ -847,11 +847,16 @@ module GoodData
       mufs = user_filters
 
      # Replaces string anywhere in JSON with another string and returns back new JSON
-      json_replace = lambda do |json_object, old_uri, new_uri|
-        data_string = JSON.generate(json_object)
-        regexp_replace = Regexp.new(old_uri+'([^0-9])')
-        json_result = data_string.gsub(regexp_replace, "#{new_uri}\\1")
-        JSON.parse(json_result)
+      json_replace = lambda do |object, old_uri, new_uri|
+        old_json = JSON.generate(object.json)
+        regexp_replace = Regexp.new(old_uri + '([^0-9])')
+
+        new_json = old_json.gsub(regexp_replace, "#{new_uri}\\1")
+        if old_json != new_json
+          object.json = JSON.parse(new_json)
+          object.save
+        end
+        object
       end
 
       # delete old report definitions (only the last version of each report is kept)
@@ -914,7 +919,7 @@ module GoodData
         end
 
         # Then search which reports are still using this attribute after replacement in metric...
-        dependent = old_date.usedby()
+        dependent = old_date.usedby
         GoodData.logger.info 'Fixing reports (standard)...'
         dependent.each do |dependent_object|
           cat = dependent_object['category']
@@ -946,10 +951,11 @@ module GoodData
             affected_rd = report_definitions(dependent_object['link'])
 
             GoodData.logger.info "reportDefinition '#{affected_rd.title}' (#{affected_rd.uri}) still contains old date attribute '#{old_date.title}' ...replacing by force"
-            affected_rd.json['reportDefinition'] = json_replace.call(affected_rd.json, old_date.uri, new_date.uri)['reportDefinition']
+            json_replace.call(affected_rd, old_date.uri, new_date.uri)
+
             #iterate over all labels
             labels_mapping.each_pair do |old_label, new_label|
-              affected_rd.json['reportDefinition'] = json_replace(affected_rd.json, old_label.uri, new_label.uri)['reportDefinition']
+              json_replace.call(affected_rd, old_label.uri, new_label.uri)
             end
 
             affected_rd.save unless opts[:dry_run]
@@ -958,18 +964,20 @@ module GoodData
           if cat == 'projectDashboard'
             affected_dashboard = dashboards(dependent_object['link'])
 
-            GoodData.logger.info "    dashboard '#{affected_dashboard.title}' (#{affected_dashboard.uri}) contains old date attribute '#{old_date.title}' ...replacing by force"
-            affected_dashboard.json['projectDashboard'] = json_replace.call(affected_dashboard.json, old_date.uri, new_date.uri)['projectDashboard']
+            GoodData.logger.info "Dashboard '#{affected_dashboard.title}' (#{affected_dashboard.uri}) contains old date attribute '#{old_date.title}' ...replacing by force"
+            json_replace.call(affected_dashboard, old_date.uri, new_date.uri)
 
             # Iterate over all labels
             labels_mapping.each_pair do |old_label, new_label|
-              affected_dashboard.json['projectDashboard'] = json_replace.call(affected_dashboard.json, old_label.uri, new_label.uri)['projectDashboard']
+              json_replace.call(affected_dashboard, old_label.uri, new_label.uri)
             end
 
             affected_dashboard.save unless opts[:dry_run]
           end
+        end
 
-          ## TODO: Replace Filters here!
+        mufs.each do |muf|
+          json_replace.call(muf, old_date.uri, new_date.uri)
         end
       end
     end
@@ -1085,6 +1093,7 @@ module GoodData
     end
 
     # List of users in project
+    #
     #
     # @return [Array<GoodData::User>] List of users
     def users(opts = {offset: 0, limit: 1_000})
