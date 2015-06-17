@@ -15,9 +15,7 @@ module GoodData
     #
     def logging_on(level = nil)
       @logger = default_logger if logger.is_a? NilLogger
-      if level
-        @logger.level = level
-      end
+      @logger.level = level if level
       @logger
     end
 
