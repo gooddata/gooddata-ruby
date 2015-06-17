@@ -8,7 +8,7 @@ module GoodData
       # @param title [String] identifier that has to match exactly
       # @param title [Regexp] regular expression that has to match
       # @return [Array<GoodData::MdObject>] Array of MdObject
-      def find_first_by_identifier(identifier, options = {:client => GoodData.connection, :project => GoodData.project})
+      def find_first_by_identifier(identifier, options = { :client => GoodData.connection, :project => GoodData.project })
         all = self[:all, options.merge(full: false)]
         item = if identifier.is_a?(Regexp)
                  all.find { |r| r['identifier'] =~ identifier }
@@ -23,7 +23,7 @@ module GoodData
       # @param title [String] identifier that has to match exactly
       # @param title [Regexp] regular expression that has to match
       # @return [Array<GoodData::MdObject>] Array of MdObject
-      def find_by_identifier(identifier, options = {:client => GoodData.connection, :project => GoodData.project})
+      def find_by_identifier(identifier, options = { :client => GoodData.connection, :project => GoodData.project })
         all = self[:all, options.merge(full: false)]
         items = if identifier.is_a?(Regexp)
                   all.select { |r| r['title'] =~ identifier }
