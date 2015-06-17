@@ -27,12 +27,13 @@ describe GoodData::Model::ProjectBlueprint do
       columns: [{ type: "attribute", name: "repo_id"}]}
 
     res = ToWire.anchor_to_wire(@spec, dataset_without_anchor)
-    expect(res).to eq({ attribute: { identifier: "attr.repos.factsof", title: "Records of Repos"}})
+    expect(res).to eq({ attribute: { identifier: 'attr.repos.factsof', title: 'Records of Repos', folder: 'Repos' }})
 
     res = ToWire.anchor_to_wire(@spec, dataset_with_anchor)
     expect(res).to eq({:attribute=>
       {:identifier=>"attr.repos.repo_id",
        :title=>"Repo",
+       :folder => 'Repos',
        :labels=>
         [{:label=>
            {:identifier=>"label.repos.repo_id",
@@ -59,5 +60,12 @@ describe GoodData::Model::ProjectBlueprint do
       :columns=>
        [{:type=>"date", :name=>"committed_on", :dataset=>"committed_on"}]}
     expect(ToWire.references_to_wire(@spec, fact_table)).to eq ["committed_on"]
+  end
+
+  it 'should generate descriptions' do
+    res = ToWire.to_wire(@spec)
+    payload_datasets = res[:diffRequest][:targetModel][:projectModel][:datasets]
+    repos = payload_datasets.find { |d| d[:dataset][:identifier] == 'dataset.repos' }
+    expect(repos[:dataset][:anchor][:attribute][:description]).to eq 'This is anchor description'
   end
 end

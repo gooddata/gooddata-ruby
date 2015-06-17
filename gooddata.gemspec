@@ -35,7 +35,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.11.0'
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
-
+  s.add_development_dependency 'guard', '~> 2'
+  s.add_development_dependency 'guard-rspec', '~> 4'
+  s.add_development_dependency 'webmock', '~> 1.21.0'
   s.add_development_dependency 'debase' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'ruby-debug-ide' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
 
@@ -52,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'pmap', '~> 1.0', '>= 1.0.1'
   s.add_dependency 'pry', '~> 0.9.12.6' # '~> 0.10', '>= 0.10.1'
   s.add_dependency 'restforce', '~> 1.5', '>= 1.5.0'
-  s.add_dependency 'rest-client', '~> 1.7', '>= 1.7.2'
+  s.add_dependency 'rest-client', '~> 1.7.2', '>= 1.7.2'
   s.add_dependency 'rubyzip', '~> 1.1', '>= 1.1.0'
   s.add_dependency 'terminal-table', '~> 1.4', '>= 1.4.5'
   s.add_dependency 'salesforce_bulk_query', '~> 0.0'

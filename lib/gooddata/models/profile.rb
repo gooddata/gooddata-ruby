@@ -59,7 +59,7 @@ module GoodData
           fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
         end
 
-        id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ /\//
+        id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}
 
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?
@@ -372,6 +372,15 @@ module GoodData
       (first_name || '') + (last_name || '')
     end
 
+    def sso_provider
+      @json['accountSetting']['ssoProvider']
+    end
+
+    def sso_provider=(an_sso_provider)
+      @dirty = true
+      @json['accountSetting']['ssoProvider'] = an_sso_provider
+    end
+
     def to_hash
       tmp = content.merge(uri: uri).symbolize_keys
       [
@@ -379,7 +388,8 @@ module GoodData
         [:phoneNumber, :phone],
         [:firstName, :first_name],
         [:lastName, :last_name],
-        [:authenticationModes, :authentication_modes]
+        [:authenticationModes, :authentication_modes],
+        [:ssoProvider, :sso_provider]
       ].each do |vals|
         wire, rb = vals
         tmp[rb] = tmp[wire]

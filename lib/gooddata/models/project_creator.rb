@@ -10,7 +10,7 @@ module GoodData
     class ProjectCreator
       class << self
         def migrate(opts = {})
-          opts = { client: GoodData.connection, project: GoodData.project }.merge(opts)
+          opts = { client: GoodData.connection }.merge(opts)
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -25,15 +25,13 @@ module GoodData
           fail('You need to specify token for project creation') if token.nil? && project.nil?
 
           begin
-            GoodData.with_project(project, opts) do |p|
-              migrate_datasets(spec, opts.merge(project: p, client: client))
-              load(p, spec)
-              migrate_metrics(p, spec[:metrics] || [])
-              migrate_reports(p, spec[:reports] || [])
-              migrate_dashboards(p, spec[:dashboards] || [])
-              execute_tests(p, spec[:assert_tests] || [])
-              p
-            end
+            migrate_datasets(spec, opts.merge(project: project, client: client))
+            load(p, spec)
+            migrate_metrics(p, spec[:metrics] || [])
+            migrate_reports(p, spec[:reports] || [])
+            migrate_dashboards(p, spec[:dashboards] || [])
+            execute_tests(p, spec[:assert_tests] || [])
+            project
           end
         end
 
@@ -46,7 +44,7 @@ module GoodData
           p = opts[:project]
           fail ArgumentError, 'No :project specified' if p.nil?
 
-          project = Project[p, { :client => client }]
+          project = client.projects(p)
           fail ArgumentError, 'Wrong :project specified' if project.nil?
 
           bp = ProjectBlueprint.new(spec)

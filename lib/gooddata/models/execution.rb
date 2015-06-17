@@ -36,7 +36,7 @@ module GoodData
 
     # Timestamp when execution was finished
     def finished
-      Time.parse(json['execution']['endTime'])
+      json['execution']['endTime'] && Time.parse(json['execution']['endTime'])
     end
 
     # Log for execution
@@ -47,6 +47,26 @@ module GoodData
     # Is execution ok?
     def ok?
       status == :ok
+    end
+
+    # Returns schedule URL
+    #
+    # @return [String] Schedule URL
+    def schedule_uri
+      uri = @json['execution']['links']['self'] if @json && @json['execution'] && @json['execution']['links']
+      uri.split('/')[0..-3].join('/')
+    end
+
+    # Is execution running?
+    def running?
+      status == :running
+    end
+
+    # Returns schedule
+    #
+    # @return [String] Schedule URL
+    def schedule
+      schedule_uri && project.schedules(schedule_uri)
     end
 
     # Timestamp when execution was started
@@ -69,12 +89,20 @@ module GoodData
     # Wait for execution result, status different than RUNNING or SCHEDULED
     #
     # @return [GoodData::Execution] Execution result
-    def wait_for_result
-      res = client.poll_on_response(uri) do |body|
+    def wait_for_result(options = {})
+      res = client.poll_on_response(uri, options) do |body|
         body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
       end
       @json = res
       self
+    end
+
+    def duration
+      if running?
+        Time.now - started
+      else
+        finished && finished - started
+      end
     end
 
     # Compares two executions - based on their URI

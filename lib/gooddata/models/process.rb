@@ -67,6 +67,8 @@ module GoodData
             begin
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
+            rescue => e
+              puts e.inspect
             ensure
               res.delete if res
             end
@@ -142,20 +144,20 @@ module GoodData
 
       private
 
-      def zip_and_upload(path, files_to_exclude, opts = {})
-        def with_zip(opts = {})
-          Tempfile.open('deploy-graph-archive') do |temp|
-            zip_filename = temp.path
-            File.open(zip_filename, 'w') do |zip|
-              Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
-                yield zipfile
-              end
+      def with_zip(opts = {})
+        Tempfile.open('deploy-graph-archive') do |temp|
+          zip_filename = temp.path
+          File.open(zip_filename, 'w') do |zip|
+            Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
+              yield zipfile
             end
-            client.upload_to_user_webdav(temp.path, opts)
-            temp.path
           end
+          client.upload_to_user_webdav(temp.path, opts)
+          temp.path
         end
+      end
 
+      def zip_and_upload(path, files_to_exclude, opts = {})
         puts 'Creating package for upload'
         if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
           with_zip(opts) do |zipfile|
@@ -205,6 +207,7 @@ module GoodData
     # @return [IO] The stream of data that represents a zipped deployed process.
     def download
       link = links['source']
+      client.connection.refresh_token
       client.get(link, process: false) { |_, _, result| RestClient.get(result.to_hash['location'].first) }
     end
 
@@ -259,7 +262,7 @@ module GoodData
     def execute(executable, options = {})
       result = start_execution(executable, options)
       begin
-        client.poll_on_code(result['executionTask']['links']['poll'])
+        client.poll_on_code(result['executionTask']['links']['poll'], options)
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure

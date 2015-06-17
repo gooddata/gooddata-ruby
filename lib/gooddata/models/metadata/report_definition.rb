@@ -131,55 +131,10 @@ module GoodData
 
         begin
           unsaved_metrics.each(&:save)
-          rd = GoodData::ReportDefinition.create(options)
-          data_result(execute_inline(rd, options), options)
+          GoodData::ReportDefinition.create(options).execute
         ensure
           unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
-      end
-
-      def execute_inline(rd, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = opts[:client]
-        project = opts[:project]
-
-        rd = rd.respond_to?(:json) ? rd.json : rd
-        data = {
-          report_req: {
-            definitionContent: {
-              content: rd,
-              projectMetadata: project.links['metadata']
-            }
-          }
-        }
-        uri = "/gdc/app/projects/#{project.pid}/execute"
-        client.post(uri, data)
-      end
-
-      # TODO: refactor the method. It should be instance method
-      # Method used for getting a data_result from a wire representation of
-      # @param result [Hash, Object] Wire data from JSON
-      # @return [GoodData::ReportDataResult]
-      def data_result(result, options = { :client => GoodData.connection })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        data_result_uri = result['execResult']['dataResult']
-        result = client.poll_on_response(data_result_uri) do |body|
-          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
-        end
-
-        if result.empty?
-          client.create(EmptyResult, result)
-        else
-          client.create(ReportDataResult, result)
-        end
-      end
-
-      # Return true if the report definition is a chart
-      #
-      # @return [Boolean] Return true if report definition is a chart
-      def chart?
-        !table?
       end
 
       def create(options = { :client => GoodData.connection, :project => GoodData.project })
@@ -253,6 +208,13 @@ module GoodData
       self
     end
 
+    # Return true if the report definition is a chart
+    #
+    # @return [Boolean] Return true if report definition is a chart
+    def chart?
+      !table?
+    end
+
     def labels
       attribute_parts.map { |part| project.labels(part['attribute']['uri']) }
     end
@@ -265,26 +227,25 @@ module GoodData
       metric_parts.map { |i| project.metrics(i['uri']) }
     end
 
-    def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
-      client = opts[:client]
-      fail ArgumentError, 'No :client specified' if client.nil?
-
-      p = opts[:project]
-      fail ArgumentError, 'No :project specified' if p.nil?
-
-      project = client.projects(p)
-      fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-      opts = { client: client, project: project }
+    def execute(opts = {})
       result = if saved?
                  pars = {
                    'report_req' => { 'reportDefinition' => uri }
                  }
                  client.post '/gdc/xtab2/executor3', pars
                else
-                 ReportDefinition.execute_inline(self, opts)
+                 data = {
+                   report_req: {
+                     definitionContent: {
+                       content: to_hash,
+                       projectMetadata: project.links['metadata']
+                     }
+                   }
+                 }
+                 uri = "/gdc/app/projects/#{project.pid}/execute"
+                 client.post(uri, data)
                end
-      ReportDefinition.data_result(result, opts)
+      data_result(result, opts)
     end
 
     def filters
@@ -393,6 +354,30 @@ module GoodData
     # @return [Boolean] Return true if report definition is a table
     def table?
       content['format'] == 'grid'
+    end
+
+    private
+
+    def data_result(result, options = {})
+      data_result_uri = result['execResult']['dataResult']
+      begin
+        result = client.poll_on_response(data_result_uri, options) do |body|
+          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
+        end
+      rescue RestClient::BadRequest => e
+        resp = JSON.parse(e.response)
+        if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
+          raise GoodData::UncomputableReport
+        else
+          raise e
+        end
+      end
+
+      if result.empty?
+        client.create(EmptyResult, result)
+      else
+        client.create(ReportDataResult, result)
+      end
     end
   end
 end

@@ -5,7 +5,15 @@ describe "Full project implementation", :constraint => 'slow' do
     @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
-    @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+
+    GoodData.logging_on
+    GoodData.logger.level = Logger::DEBUG
+
+    begin
+      @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    rescue => e
+      puts e.inspect
+    end
   end
 
   after(:all) do
@@ -40,7 +48,7 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(results).to be_nil
 
     # When we change the model using the original blueprint. Basically change the title back.
-    results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client)
+    results = @project.update_from_blueprint(@spec)
     # It should offer no changes using the original blueprint
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
     expect(results).to be_nil
@@ -104,6 +112,80 @@ describe "Full project implementation", :constraint => 'slow' do
         [3, "jirka@gooddata.com"]]
       GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
       # blueprint.find_dataset('devs').upload(devs_data)
+    end
+  end
+
+  it "should load data to blueprint taken from project" do
+    GoodData.with_project(@project) do |p|
+      blueprint = p.blueprint
+      # references to date dim
+      commits_data = [
+        ["lines_changed","committed_on","dev_id","repo_id"],
+        [1,"01/01/2014",1,1],
+        [3,"01/02/2014",2,2],
+        [5,"05/02/2014",3,1]]
+      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
+
+      # references to anchor within project
+      devs_data = [
+        ["dev_id", "email"],
+        [1, "tomas@gooddata.com"],
+        [2, "petr@gooddata.com"],
+        [3, "jirka@gooddata.com"]]
+      GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
+    end
+  end
+
+  it "it silently ignores extra columns" do
+    GoodData.with_project(@project) do |p|
+      blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      commits_data = [
+        ["lines_changed","committed_on","dev_id","repo_id", "extra_column"],
+        [1,"01/01/2014",1,1,"something"],
+        [3,"01/02/2014",2,2,"something"],
+        [5,"05/02/2014",3,1,"something else"]
+      ]
+      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
+    end
+  end
+
+  context "it should give you a reasonable error message" do
+    it "if you omit a column" do
+      GoodData.with_project(@project) do |p|
+        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+        commits_data = [
+          ["lines_changed","committed_on","dev_id"],
+          [1,"01/01/2014",1],
+          [3,"01/02/2014",2],
+          [5,"05/02/2014",3]
+        ]
+        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(/repo_id/)
+      end
+    end
+    it "if you give it a malformed CSV" do
+      GoodData.with_project(@project) do |p|
+        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+        # it's in the header but not in the data
+        commits_data = [
+          ["lines_changed","committed_on","dev_id","repo_id"],
+          [1,"01/01/2014",1],
+          [3,"01/02/2014",2],
+          [5,"05/02/2014",3]
+        ]
+        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(/Number of columns/)
+      end
+    end
+    it "if you give it wrong date format" do
+      GoodData.with_project(@project) do |p|
+        blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+        commits_data = [
+          ["lines_changed","committed_on","dev_id","repo_id"],
+          [1,"01/01/2014",1,1],
+          [3,"45/50/2014",2,2],
+          [5,"05/02/2014",3,1]
+        ]
+        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(%r{45/50/2014})
+      end
     end
   end
 

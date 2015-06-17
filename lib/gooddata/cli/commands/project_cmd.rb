@@ -150,7 +150,7 @@ GoodData::CLI.module_eval do
       show.action do |global_options, options, _args|
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
-        spec, _ = GoodData::Command::Project.get_spec_and_project_id('.')
+        spec = GoodData::Command::Project.get_spec_and_project_id('.')[0]
         new_project = GoodData::Command::Project.build(opts.merge(spec: spec, client: client))
         puts "Project was created. New project PID is #{new_project.pid}, URI is #{new_project.uri}."
       end

@@ -40,7 +40,11 @@ module GoodData
       pairs = expression.scan(PARSE_MAQL_OBJECT_REGEXP).pmap do |uri|
         uri = uri.first
         if uri =~ /elements/
-          [uri, Attribute.find_element_value(uri, opts)]
+          begin
+            [uri, Attribute.find_element_value(uri, opts)]
+          rescue AttributeElementNotFound
+            [uri, '(empty value)']
+          end
         else
           [uri, GoodData::MdObject[uri, opts].title]
         end

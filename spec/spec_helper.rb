@@ -5,15 +5,23 @@ require 'pmap'
 require 'rspec'
 require 'coveralls'
 require 'pathname'
+require 'webmock/rspec'
 
+WebMock.disable!
 Coveralls.wear_merged!
 
 # Automagically include all helpers/*_helper.rb
+
+require_relative 'environment/environment'
+
+GoodData::Environment.load
 
 base = Pathname(__FILE__).dirname.expand_path
 Dir.glob(base + 'helpers/*_helper.rb').each do |file|
   require file
 end
+
+include GoodData::Helpers
 
 RSpec.configure do |config|
   config.include BlueprintHelper
@@ -28,7 +36,7 @@ RSpec.configure do |config|
 
   config.filter_run_excluding :broken => true
 
-  config.fail_fast = true
+  config.fail_fast = false
 
   config.before(:all) do
     # TODO: Move this to some method.
@@ -49,6 +57,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     # TODO: Setup test project
+    GoodData.logging_on
   end
 
   config.after(:suite) do

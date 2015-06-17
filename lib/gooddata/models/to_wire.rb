@@ -18,7 +18,8 @@ module GoodData
           {
             attribute: {
               identifier: GoodData::Model.identifier_for(dataset, type: :anchor_no_label),
-              title: "Records of #{ GoodData::Model.title(dataset) }"
+              title: "Records of #{GoodData::Model.title(dataset)}",
+              folder: dataset[:folder] || GoodData::Model.title(dataset)
             }
           }
         end
@@ -43,23 +44,27 @@ module GoodData
       def self.attribute_to_wire(dataset, attribute)
         default_label = DatasetBlueprint.default_label_for_attribute(dataset, attribute)
         label = default_label[:type].to_sym == :label ? default_label : default_label.merge(type: :primary_label)
-        {
+        payload = {
           attribute: {
             identifier: GoodData::Model.identifier_for(dataset, attribute),
             title: GoodData::Model.title(attribute),
+            folder: attribute[:folder] || dataset[:folder] || GoodData::Model.title(dataset),
             labels: ([attribute.merge(type: :primary_label)] + DatasetBlueprint.labels_for_attribute(dataset, attribute)).map do |l|
               {
                 label: {
                   identifier: GoodData::Model.identifier_for(dataset, l, attribute),
                   title: GoodData::Model.title(l),
                   type: l[:gd_type],
-                  dataType: l[:gd_data_type]
+                  dataType: GoodData::Model.normalize_gd_data_type(l[:gd_data_type])
                 }
               }
             end,
             defaultLabel: GoodData::Model.identifier_for(dataset, label, attribute)
           }
         }
+        payload.tap do |p|
+          p[:attribute][:description] = GoodData::Model.description(attribute) if GoodData::Model.description(attribute)
+        end
       end
 
       # Converts dataset to wire format.
@@ -100,13 +105,17 @@ module GoodData
       # @param fact [Hash] Fact blueprint
       # @return [Hash] Manifest for a particular reference
       def self.fact_to_wire(dataset, fact)
-        {
+        payload = {
           fact: {
             identifier: GoodData::Model.identifier_for(dataset, fact),
             title: GoodData::Model.title(fact),
-            dataType: fact[:gd_data_type] || DEFAULT_FACT_DATATYPE
+            folder: fact[:folder] || dataset[:folder] || GoodData::Model.title(dataset),
+            dataType: GoodData::Model.normalize_gd_data_type(fact[:gd_data_type]) || DEFAULT_FACT_DATATYPE
           }
         }
+        payload.tap do |p|
+          p[:fact][:description] = GoodData::Model.description(fact) if GoodData::Model.description(fact)
+        end
       end
 
       # Converts references to wire format.

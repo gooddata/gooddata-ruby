@@ -27,9 +27,9 @@ module GoodData
         return id if id.is_a?(MdObject)
         uri = if id.is_a?(Integer) || id =~ /^\d+$/
                 "#{project.md[MD_OBJ_CTG]}/#{id}"
-              elsif id !~ /\//
+              elsif id !~ %r{/}
                 identifier_to_uri options, id
-              elsif id =~ /^\//
+              elsif id =~ %r{^/}
                 id
               else
                 fail 'Unexpected object id format: expected numeric ID, identifier with no slashes or an URI starting with a slash'

@@ -4,10 +4,12 @@
     {
       "type": "dataset",
       "name": "repos",
+      "folder": "Foldered Repos",
       "columns": [
         {
           "type": "anchor",
-          "name": "repo_id"
+          "name": "repo_id",
+          "description": "This is anchor description"
         },
         {
           "type": "label",
@@ -16,7 +18,8 @@
         },
         {
           "type": "attribute",
-          "name": "department"
+          "name": "department",
+          "gd_data_type": "VARCHAR(128)"
         }
       ]
     },
@@ -42,7 +45,9 @@
       "columns": [
         {
           "type": "fact",
-          "name": "lines_changed"
+          "gd_data_type": "INT",
+          "name": "lines_changed",
+          "description": "Fact description"
         },
         {
           "type": "date",
