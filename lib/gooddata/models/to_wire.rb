@@ -18,7 +18,7 @@ module GoodData
           {
             attribute: {
               identifier: GoodData::Model.identifier_for(dataset, type: :anchor_no_label),
-              title: "Records of #{ GoodData::Model.title(dataset) }",
+              title: "Records of #{GoodData::Model.title(dataset)}",
               folder: dataset[:folder] || GoodData::Model.title(dataset)
             }
           }

@@ -216,9 +216,9 @@ module GoodData
                    elsif filter[:over] && filter[:to]
                      over = attr_cache[filter[:over]]
                      to = attr_cache[filter[:to]]
-                     "([#{label.attribute_uri}] IN (#{ element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ') })) OVER [#{over && over.uri}] TO [#{to && to.uri}]"
+                     "([#{label.attribute_uri}] IN (#{element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ')})) OVER [#{over && over.uri}] TO [#{to && to.uri}]"
                    else
-                     "[#{label.attribute_uri}] IN (#{ element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ') })"
+                     "[#{label.attribute_uri}] IN (#{element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ')})"
                    end
       [expression, errors]
     end
