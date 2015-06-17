@@ -147,14 +147,14 @@ module GoodData
 
         # kick the load
         pull = { 'pullIntegration' => File.basename(dir) }
-        link = project.md.links('etl')['pull']
+        link = project.md.links('etl')['pull2']
         task = client.post(link, pull, :info_message => "Starting the data load from user storage to dataset '#{dataset}'.")
 
-        res = client.poll_on_response(task['pullTask']['uri'], :info_message => 'Getting status of the dataload task.') do |body|
-          body['taskStatus'] == 'RUNNING' || body['taskStatus'] == 'PREPARED'
+        res = client.poll_on_response(task['pull2Task']['links']['poll'], :info_message => 'Getting status of the dataload task.') do |body|
+          body['wTaskStatus']['status'] == 'RUNNING' || body['wTaskStatus']['status'] == 'PREPARED'
         end
 
-        if res['taskStatus'] == 'ERROR' # rubocop:disable Style/GuardClause
+        if res['wTaskStatus']['status'] == 'ERROR' # rubocop:disable Style/GuardClause
           s = StringIO.new
           client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s, :client => client, :project => project)
           js = MultiJson.load(s.string)

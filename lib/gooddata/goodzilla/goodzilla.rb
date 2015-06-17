@@ -43,7 +43,7 @@ module GoodData
           begin
             [uri, Attribute.find_element_value(uri, opts)]
           rescue AttributeElementNotFound
-            [uri, "(empty value)"]
+            [uri, '(empty value)']
           end
         else
           [uri, GoodData::MdObject[uri, opts].title]
