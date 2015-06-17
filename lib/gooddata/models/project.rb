@@ -52,7 +52,7 @@ module GoodData
     class << self
       # Returns an array of all projects accessible by
       # current user
-      def all(opts = { client: GoodData.connection })
+      def all(opts = {client: GoodData.connection})
         c = client(opts)
         c.user.projects
       end
@@ -63,11 +63,11 @@ module GoodData
       #  - /gdc/projects/<id>
       #  - <id>
       #
-      def [](id, opts = { client: GoodData.connection })
+      def [](id, opts = {client: GoodData.connection})
         return id if id.instance_of?(GoodData::Project) || id.respond_to?(:project?) && id.project?
 
         if id == :all
-          Project.all({ client: GoodData.connection }.merge(opts))
+          Project.all({client: GoodData.connection}.merge(opts))
         else
           if id.to_s !~ %r{^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$}
             fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
@@ -102,7 +102,7 @@ module GoodData
       # - :summary
       # - :template (default /projects/blank)
       #
-      def create(opts = { :client => GoodData.connection }, &block)
+      def create(opts = {:client => GoodData.connection}, &block)
         GoodData.logger.info "Creating project #{opts[:title]}"
 
         c = client(opts)
@@ -166,13 +166,14 @@ module GoodData
     # @param [options] Optional report options
     # @return [GoodData::Report] Instance of new report
     def add_metric(metric, options = {})
-      default = { client: client, project: self }
+      default = {client: client, project: self}
       if metric.is_a?(String)
         GoodData::Metric.xcreate(metric, options.merge(default))
       else
         GoodData::Metric.xcreate(options[:expression], metric.merge(options.merge(default)))
       end
     end
+
     alias_method :create_metric, :add_metric
 
     # Creates new instance of report in context of project
@@ -183,6 +184,7 @@ module GoodData
       rep = GoodData::Report.create(options.merge(client: client, project: self))
       rep.save
     end
+
     alias_method :create_report, :add_report
 
     # Creates new instance of report definition in context of project
@@ -196,6 +198,7 @@ module GoodData
       rd.project = self
       rd.save
     end
+
     alias_method :create_report_definition, :add_report_definition
 
     # Returns an indication whether current user is admin in this project
@@ -342,6 +345,7 @@ module GoodData
     def create_variable(data)
       GoodData::Variable.create(data, client: client, project: self)
     end
+
     # Helper for getting dashboards of a project
     #
     # @param id [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
@@ -385,7 +389,7 @@ module GoodData
     # @return [Hash] Result of executing DML
     def execute_dml(dml, options = {})
       uri = "/gdc/md/#{pid}/dml/manage"
-      result = client.post(uri, manage: { maql: dml })
+      result = client.post(uri, manage: {maql: dml})
       polling_uri = result['uri']
 
       client.poll_on_response(polling_uri, options) do |body|
@@ -400,7 +404,7 @@ module GoodData
     def execute_maql(maql, options = {})
       ldm_links = client.get(md[GoodData::Model::LDM_CTG])
       ldm_uri = Links.new(ldm_links)[GoodData::Model::LDM_MANAGE_CTG]
-      response = client.post(ldm_uri, manage: { maql: maql })
+      response = client.post(ldm_uri, manage: {maql: maql})
       polling_uri = response['entries'].first['link']
 
       client.poll_on_response(polling_uri, options) do |body|
@@ -479,10 +483,10 @@ module GoodData
       role_name.downcase!
       role_list.each do |role|
         return role if role.uri == role_name ||
-                       role.identifier.downcase == role_name ||
-                       role.identifier.downcase.gsub(/role$/, '') == role_name ||
-                       role.title.downcase == role_name ||
-                       role.summary.downcase == role_name
+          role.identifier.downcase == role_name ||
+          role.identifier.downcase.gsub(/role$/, '') == role_name ||
+          role.title.downcase == role_name ||
+          role.summary.downcase == role_name
       end
       nil
     end
@@ -658,7 +662,7 @@ module GoodData
     # Helper for getting metrics of a project
     #
     # @return [Array<GoodData::Metric>] matric instance or list
-    def metrics(id = :all, opts = { :full => true })
+    def metrics(id = :all, opts = {:full => true})
       GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
@@ -789,6 +793,143 @@ module GoodData
       self
     end
 
+    DEFAULT_REPLACE_DATE_DIMENSION_OPTIONS = {
+      :old => nil,
+      :new => nil,
+      :purge => false,
+      :dry_run => true
+    }
+
+    def replace_date_dimension(opts)
+      fail ArgumentError, 'No :old dimension specified' if opts[:old].nil?
+      fail ArgumentError, 'No :new dimension specified' if opts[:new].nil?
+
+      # Merge with default options
+      opts = DEFAULT_REPLACE_DATE_DIMENSION_OPTIONS.merge(opts)
+
+     # Replaces string anywhere in JSON with another string and returns back new JSON
+      json_replace = lambda do |json_object, old_uri, new_uri|
+        data_string = JSON.generate(json_object)
+        regexp_replace = Regexp.new(old_uri+'([^0-9])')
+        json_result = data_string.gsub(regexp_replace, "#{new_uri}\\1")
+        JSON.parse(json_result)
+      end
+
+      # delete old report definitions (only the last version of each report is kept)
+      if opts[:purge]
+        puts 'Purging old project definitions'
+        reports.peach do |report|
+          report.purge_report_of_unused_definitions!
+        end
+      end
+
+      puts("Replacing date dimension '#{opts[:old]}' with date dimension '#{opts[:new]}' in project '(#{pid}): #{title}")
+
+      # get all attributes of the old date dim
+      old_dim = attributes_by_title(/\(#{opts[:old]}\)$/)
+
+      #iterate over all date attributes
+      old_dim.each do |old_date|
+        new_date_title = old_date.title.sub("(#{opts[:old]})", "(#{opts[:new]})")
+        new_date = attribute_by_title(new_date_title)
+        fail RuntimeError, "Unable to find attribute '#{new_date_title}' in date dimension '#{opts[:new]}'" if new_date.nil?
+
+        puts "  replacing date attribute '#{old_date.title}' (#{old_date.uri}) with '#{new_date.title}' (#{new_date.uri})"
+
+        # For each attribute prepare list of labels to replace
+        labels_mapping = {}
+
+        old_date.labels.each do |old_label|
+          new_label_title = old_label.title.sub("(#{opts[:old]})", "(#{opts[:new]})")
+
+          #go through all labels, label_by_title has some issues
+          new_date.json['attribute']['content']['displayForms'].each do |label_tmp|
+            if label_tmp['meta']['title'] == new_label_title
+              new_label = labels(label_tmp['meta']['uri'])
+              labels_mapping[old_label] = new_label
+            end
+          end
+        end
+        #now we should have all labels for this attribute and its replacement in new date dimension
+
+
+        #first fix all affected metrics that are using this attribute
+        dependent = old_date.usedby
+        puts 'Fixing metrics...'
+        dependent.each do |dependent_object|
+          cat = dependent_object['category']
+          if cat == 'metric'
+            affected_metric = metrics(dependent_object['link'])
+
+            puts "Metric '#{dependent_object['title']}' (#{affected_metric.uri}) contains old date attribute '#{old_date.title}' ...replacing"
+            affected_metric.replace(old_date.uri, new_date.uri)
+            affected_metric.save unless opts[:dry_run]
+          end
+        end
+
+        # Then search which reports are still using this attribute after replacement in metric...
+        dependent = old_date.usedby()
+        puts 'Fixing reports (standard)...'
+        dependent.each do |dependent_object|
+          cat = dependent_object['category']
+          # This does not seem to work every time... some references are kept...
+          if cat == 'reportDefinition'
+            affected_rd = report_definitions(dependent_object['link'])
+
+            puts "reportDefinition (#{affected_rd.uri}) contains old date attribute '#{old_date.title}' ...replacing"
+            affected_rd.replace(old_date.uri, new_date.uri)
+
+            # Affected_rd.replace(labels_mapping) #not sure if this is working correctly, try to do it one by one
+            labels_mapping.each_pair do |old_label, new_label|
+              affected_rd.replace(old_label.uri, new_label.uri)
+            end
+
+            affected_rd.save unless opts[:dry_run]
+          end
+        end
+
+        # Then search which dashboards and reports are still using this attribute after standard replacement in reports...
+        dependent = old_date.usedby
+        puts 'Fixing reports (force) & dashboards...'
+
+        dependent.each do |dependent_object|
+          cat = dependent_object['category']
+
+          #if standard replace did not work, use force...
+          if cat == 'reportDefinition'
+            affected_rd = report_definitions(dependent_object['link'])
+
+            puts "reportDefinition '#{affected_rd.title}' (#{affected_rd.uri}) still contains old date attribute '#{old_date.title}' ...replacing by force"
+            affected_rd.json['reportDefinition'] = json_replace.call(affected_rd.json, old_date.uri, new_date.uri)['reportDefinition']
+            #iterate over all labels
+            labels_mapping.each_pair do |old_label, new_label|
+              affected_rd.json['reportDefinition'] = json_replace(affected_rd.json, old_label.uri, new_label.uri)['reportDefinition']
+            end
+
+            affected_rd.save unless opts[:dry_run]
+          end
+
+          if cat == 'projectDashboard'
+            affected_dashboard = dashboards(dependent_object['link'])
+
+            puts "    dashboard '#{affected_dashboard.title}' (#{affected_dashboard.uri}) contains old date attribute '#{old_date.title}' ...replacing by force"
+            affected_dashboard.json['projectDashboard'] = json_replace.call(affected_dashboard.json, old_date.uri, new_date.uri)['projectDashboard']
+
+            # Iterate over all labels
+            labels_mapping.each_pair do |old_label, new_label|
+              affected_dashboard.json['projectDashboard'] = json_replace.call(affected_dashboard.json, old_label.uri, new_label.uri)['projectDashboard']
+            end
+
+            affected_dashboard.save unless opts[:dry_run]
+          end
+
+          ## TODO: Replace Filters here!
+
+          ## TODO: Replace MUFs here! - https://secure.gooddata.com/gdc/md/rl6s5ytdeg422n6a0ess0lb0qqdc2ssu/userfilters
+        end
+      end
+    end
+
     # Helper for getting reports of a project
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Report[id]
@@ -887,10 +1028,16 @@ module GoodData
       data['links']['self'] if data && data['links'] && data['links']['self']
     end
 
+    # List of user filters within this project
+    #
+    # @return [Array<GoodData::MandatoryUserFilter>] List of mandatory user
+    def user_filters
+    end
+
     # List of users in project
     #
     # @return [Array<GoodData::User>] List of users
-    def users(opts = { offset: 0, limit: 1_000 })
+    def users(opts = {offset: 0, limit: 1_000})
       result = []
 
       # TODO: @korczis, review this after WA-3953 get fixed
@@ -972,7 +1119,7 @@ module GoodData
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
-      list = diff[:changed].map { |x| { user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles] } }
+      list = diff[:changed].map { |x| {user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles]} }
       results.concat(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
 
       # Remove old users
@@ -990,7 +1137,7 @@ module GoodData
       end
       payloads.each_slice(100).mapcat do |payload|
         result = client.post(url, 'users' => payload)
-        result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, uri: x } } }
+        result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| {type: k.to_sym, uri: x} } }
       end
     end
 
@@ -1056,7 +1203,7 @@ module GoodData
         desired_roles = user_hash[:role] || user_hash[:roles] || 'readOnlyUser'
         begin
           login, roles = verify_user_to_add(user, desired_roles, options.merge(domain_users: domain_users, project_users: project_users, roles: role_list))
-          [{ login: login, roles: roles }]
+          [{login: login, roles: roles}]
         rescue
           []
         end
@@ -1066,18 +1213,18 @@ module GoodData
       results = payloads.each_slice(100).map do |payload|
         client.post(url, 'users' => payload)
       end
-      results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| { type: k.to_sym, uri: v_2 } } } }
+      results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| {type: k.to_sym, uri: v_2} } } }
     end
 
     alias_method :add_users, :set_users_roles
     alias_method :create_users, :set_users_roles
 
     def add_data_permissions(filters, options = {})
-      GoodData::UserFilterBuilder.execute_mufs(filters, { client: client, project: self }.merge(options))
+      GoodData::UserFilterBuilder.execute_mufs(filters, {client: client, project: self}.merge(options))
     end
 
     def add_variable_permissions(filters, var, options = {})
-      GoodData::UserFilterBuilder.execute_variables(filters, var, { client: client, project: self }.merge(options))
+      GoodData::UserFilterBuilder.execute_variables(filters, var, {client: client, project: self}.merge(options))
     end
 
     # Run validation on project
@@ -1095,7 +1242,7 @@ module GoodData
       end
     end
 
-    def variables(id = :all, options = { client: client, project: self })
+    def variables(id = :all, options = {client: client, project: self})
       GoodData::Variable[id, options]
     end
 
