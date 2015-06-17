@@ -13,8 +13,22 @@ module GoodData
     #
     #     GoodData.logging_on
     #
-    def logging_on
+    def logging_on(level = nil)
       @logger = default_logger if logger.is_a? NilLogger
+      if level
+        @logger.level = level
+      end
+      @logger
+    end
+
+    # Turn logging on with HTTP included
+    #
+    # ### Example
+    #
+    #     GoodData.logging_http_on
+    #
+    def logging_http_on
+      logging_on(Logger::DEBUG)
     end
 
     # Turn logging on
@@ -49,7 +63,7 @@ module GoodData
       @stats = true
     end
 
-    def stats_on? # rubocop:disable Style/TrivialAccessors
+    def stats_on?
       @stats
     end
 

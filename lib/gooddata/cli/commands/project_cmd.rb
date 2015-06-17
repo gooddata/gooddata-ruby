@@ -21,22 +21,42 @@ GoodData::CLI.module_eval do
     # TODO: Move away the ask methods. Provide params
     c.desc 'Create a gooddata project'
     c.command :create do |create|
+      create.default_value nil
+      create.arg_name :driver
+      create.flag [:driver]
+
+      create.default_value nil
+      create.arg_name :template
+      create.flag [:template]
+
+      create.default_value nil
+      create.arg_name :summary
+      create.flag [:summary]
+
       create.action do |global_options, options, args|
         opts = options.merge(global_options)
 
         title = args[0] || ask('Project name')
-        summary = args[1] || ask('Project summary') { |q| q.default = '' }
-        template = args[2] || ask('Project template')
-        token = opts[:token] || ask('token')
+        summary = opts[:summary] || args[1] || ask('Project summary') { |q| q.default = '' }
+        template = opts[:template] || args[2] || ask('Project template')
+        token = opts['token'] || ask('Token')
+        driver = opts[:driver] || ask('Driver') { |q| q.default = 'Pg' }
 
         opts = options.merge(global_options)
         client = GoodData.connect(opts)
-        project = GoodData::Command::Project.create(
-          :title => title,
-          :summary => summary,
-          :template => template,
-          :token => token,
-          client: client)
+        begin
+          project = GoodData::Command::Project.create(
+            :title => title,
+            :summary => summary,
+            :template => template,
+            :token => token,
+            :driver => driver,
+            client: client)
+        rescue => e
+          puts "Error creating project, reason: #{e.inspect}"
+          raise e
+        end
+
         puts "Project '#{project.title}' with id #{project.pid} created successfully!"
       end
     end

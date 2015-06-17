@@ -103,14 +103,14 @@ module GoodData
         end
 
         def disconnect
-          if @@instance # rubocop:disable ClassVars, Style/GuardClause
-            @@instance.disconnect # rubocop:disable ClassVars
+          if @@instance # rubocop:disable Style/GuardClause
+            @@instance.disconnect
             @@instance = nil # rubocop:disable ClassVars
           end
         end
 
         def connection
-          @@instance # rubocop:disable ClassVars
+          @@instance
         end
 
         # Retry block if exception thrown
@@ -212,7 +212,7 @@ module GoodData
         @stats = true
       end
 
-      def stats_on? # rubocop:disable Style/TrivialAccessors
+      def stats_on?
         @stats
       end
 
