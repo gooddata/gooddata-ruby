@@ -367,70 +367,6 @@ module GoodData
 
       # Uploads a file to GoodData server
       def upload(file, options = {})
-        def do_stream_file(uri, filename, _options = {})
-          GoodData.logger.info "Uploading file user storage #{uri}"
-
-          to_upload = File.new(filename)
-          cookies_str = request_params[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
-          req = Net::HTTP::Put.new(uri.path, 'User-Agent' => GoodData.gem_version_string, 'Cookie' => cookies_str)
-          req.content_length = to_upload.size
-          req.body_stream = to_upload
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
-
-          response = nil
-          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
-            response = http.start { |client| client.request(req) }
-          end
-          response
-        end
-
-        def webdav_dir_exists?(url)
-          method = :get
-          GoodData.logger.debug "#{method}: #{url}"
-
-          b = proc do
-            raw = {
-              :method => method,
-              :url => url,
-              :headers => @webdav_headers,
-              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
-            }.merge(cookies)
-            begin
-              RestClient::Request.execute(raw)
-            rescue RestClient::Exception => e
-              false if e.http_code == 404
-            end
-          end
-
-          res = nil
-          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
-            res = b.call
-          end
-          res
-        end
-
-        def create_webdav_dir_if_needed(url)
-          return if webdav_dir_exists?(url)
-
-          method = :mkcol
-          GoodData.logger.debug "#{method}: #{url}"
-          b = proc do
-            raw = {
-              :method => method,
-              :url => url,
-              :headers => @webdav_headers,
-              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
-            }.merge(cookies)
-            RestClient::Request.execute(raw)
-          end
-
-          GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
-            b.call
-          end
-        end
-
         dir = options[:directory] || ''
         staging_uri = options[:staging_url].to_s
         url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
@@ -449,6 +385,45 @@ module GoodData
       private
 
       ID_LENGTH = 16
+
+      def create_webdav_dir_if_needed(url)
+        return if webdav_dir_exists?(url)
+
+        method = :mkcol
+        GoodData.logger.debug "#{method}: #{url}"
+        b = proc do
+          raw = {
+            :method => method,
+            :url => url,
+            :headers => @webdav_headers,
+            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
+          }.merge(cookies)
+          RestClient::Request.execute(raw)
+        end
+
+        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+          b.call
+        end
+      end
+
+      def do_stream_file(uri, filename, _options = {})
+        GoodData.logger.info "Uploading file user storage #{uri}"
+
+        to_upload = File.new(filename)
+        cookies_str = request_params[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
+        req = Net::HTTP::Put.new(uri.path, 'User-Agent' => GoodData.gem_version_string, 'Cookie' => cookies_str)
+        req.content_length = to_upload.size
+        req.body_stream = to_upload
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
+
+        response = nil
+        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+          response = http.start { |client| client.request(req) }
+        end
+        response
+      end
 
       def generate_string
         SecureRandom.urlsafe_base64(ID_LENGTH)
@@ -606,6 +581,31 @@ module GoodData
         stat[:entries] << orig_title if placeholders
 
         stats[title] = stat
+      end
+
+      def webdav_dir_exists?(url)
+        method = :get
+        GoodData.logger.debug "#{method}: #{url}"
+
+        b = proc do
+          raw = {
+            :method => method,
+            :url => url,
+            :headers => @webdav_headers,
+            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
+          }.merge(cookies)
+          begin
+            RestClient::Request.execute(raw)
+          rescue RestClient::Exception => e
+            false if e.http_code == 404
+          end
+        end
+
+        res = nil
+        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+          res = b.call
+        end
+        res
       end
     end
   end

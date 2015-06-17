@@ -144,20 +144,20 @@ module GoodData
 
       private
 
-      def zip_and_upload(path, files_to_exclude, opts = {})
-        def with_zip(opts = {})
-          Tempfile.open('deploy-graph-archive') do |temp|
-            zip_filename = temp.path
-            File.open(zip_filename, 'w') do |zip|
-              Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
-                yield zipfile
-              end
+      def with_zip(opts = {})
+        Tempfile.open('deploy-graph-archive') do |temp|
+          zip_filename = temp.path
+          File.open(zip_filename, 'w') do |zip|
+            Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
+              yield zipfile
             end
-            client.upload_to_user_webdav(temp.path, opts)
-            temp.path
           end
+          client.upload_to_user_webdav(temp.path, opts)
+          temp.path
         end
+      end
 
+      def zip_and_upload(path, files_to_exclude, opts = {})
         puts 'Creating package for upload'
         if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
           with_zip(opts) do |zipfile|
