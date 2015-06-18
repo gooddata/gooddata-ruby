@@ -65,6 +65,24 @@ module GoodData
         filename
       end
 
+      def realize_s3(params)
+        client_params = params[:aws_client]
+        bucket_name = client_params[:bucket]
+        key = client_params[:key]
+        filename = Digest::SHA256.new.hexdigest(client_params.to_json)
+
+        s3 = AWS::S3.new(client_params)
+        bucket = s3.buckets[bucket_name]
+        obj = bucket.objects[key]
+        File.open(filename, 'wb') do |file|
+          obj.read do |chunk|
+             file.write(chunk)
+          end
+        end
+        puts "Realizing download from S3. Bucket #{bucket_name}, object with key #{key}."
+        filename
+      end
+
       def realize(params = {})
         @realized = true
         case @source.to_s
@@ -74,7 +92,13 @@ module GoodData
           realize_staging(params)
         when 'web'
           realize_link
+        when 's3'
+          realize_s3(params)
         end
+      end
+
+      def realized?
+        @realized == true
       end
     end
   end
