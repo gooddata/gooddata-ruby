@@ -203,7 +203,11 @@ module GoodData
             label.find_value_uri(v)
           end
         rescue
-          errors << [label.title, v]
+          errors << {
+            type: :error,
+            label: label.title,
+            value: v
+          }
           nil
         end
       end
@@ -251,21 +255,20 @@ module GoodData
       lookups_cache = create_lookups_cache(small_labels)
       attrs_cache = create_attrs_cache(filters, options)
 
-      errors = []
-      results = filters.pmapcat do |filter|
+      results = filters.flat_map do |filter|
         login = filter[:login]
         filter[:filters].pmapcat do |f|
           expression, error = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
-          errors << error unless error.empty?
           profiles_uri = (users_cache[login] && users_cache[login].uri)
           if profiles_uri && expression
-            [create_user_filter(expression, profiles_uri)]
+            [create_user_filter(expression, profiles_uri)] + errors
           else
-            []
+            [] + erorrs
           end
         end
       end
-      [results, errors]
+      binding.pry
+      results.group_by { |i| i[:type] }.values_at(:filter, :error)
     end
 
     def self.resolve_user_filter(user = [], project = [])
