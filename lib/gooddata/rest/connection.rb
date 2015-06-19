@@ -98,7 +98,7 @@ module GoodData
       attr_reader :user
 
       def initialize(opts)
-        @stats = {}
+        @stats = ThreadSafe::Hash.new
 
         headers = opts[:headers] || {}
         @webdav_headers = DEFAULT_WEBDAV_HEADERS.merge(headers)
