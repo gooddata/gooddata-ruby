@@ -230,10 +230,10 @@ module GoodData
     # Encapuslates the creation of filter
     def self.create_user_filter(expression, related)
       {
-        'related' => related,
-        'level' => :user,
-        'expression' => expression,
-        'type' => :filter
+        related: related,
+        level: :user,
+        expression: expression,
+        type: :filter
       }
     end
 
@@ -258,17 +258,18 @@ module GoodData
       results = filters.flat_map do |filter|
         login = filter[:login]
         filter[:filters].pmapcat do |f|
-          expression, error = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
+          expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
           profiles_uri = (users_cache[login] && users_cache[login].uri)
           if profiles_uri && expression
             [create_user_filter(expression, profiles_uri)] + errors
           else
-            [] + erorrs
+            [] + errors
           end
         end
       end
-      binding.pry
-      results.group_by { |i| i[:type] }.values_at(:filter, :error)
+      results.group_by { |i| i[:type] }
+        .values_at(:filter, :error)
+        .map { |i| i || [] }
     end
 
     def self.resolve_user_filter(user = [], project = [])
@@ -439,7 +440,6 @@ module GoodData
                              end
 
       fail "Validation failed #{errors}" if !ignore_missing_values && !errors.empty?
-
       filters = user_filters.map { |data| client.create(klass, data, project: project) }
       resolve_user_filters(filters, project_filters)
     end

@@ -44,7 +44,6 @@ describe "User filters implementation", :constraint => 'slow' do
     @project.add_data_permissions(filters)
     metric.execute.should == 6
     r = @project.compute_report(left: [metric], top: [@label.attribute])
-    r.include_column?(['tomas@gooddata.com', 1]).should == true
 
     r.include_column?(['tomas@gooddata.com', 1]).should == true
     r.include_column?(['jirka@gooddata.com', 5]).should == true

@@ -2,6 +2,7 @@
 
 require 'terminal-table'
 require 'securerandom'
+require 'monitor'
 
 require_relative '../version'
 require_relative '../exceptions/exceptions'
@@ -10,6 +11,8 @@ module GoodData
   module Rest
     # Wrapper of low-level HTTP/REST client/library
     class Connection
+      include MonitorMixin
+
       DEFAULT_URL = ENV['GD_SERVER'] || 'https://secure.gooddata.com'
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
@@ -98,6 +101,7 @@ module GoodData
       attr_reader :user
 
       def initialize(opts)
+        super()
         @stats = ThreadSafe::Hash.new
 
         headers = opts[:headers] || {}
@@ -558,37 +562,39 @@ module GoodData
       ]
 
       def update_stats(title, delta)
-        orig_title = title
+        synchronize do
+          orig_title = title
 
-        placeholders = true
+          placeholders = true
 
-        if placeholders
-          PH_MAP.each do |pm|
-            break if title.gsub!(pm[1], pm[0])
+          if placeholders
+            PH_MAP.each do |pm|
+              break if title.gsub!(pm[1], pm[0])
+            end
           end
+
+          stat = stats[title]
+          if stat.nil?
+            stat = {
+              :min => delta,
+              :max => delta,
+              :total => 0,
+              :avg => 0,
+              :calls => 0,
+              :entries => []
+            }
+          end
+
+          stat[:min] = delta if delta < stat[:min]
+          stat[:max] = delta if delta > stat[:max]
+          stat[:total] += delta
+          stat[:calls] += 1
+          stat[:avg] = stat[:total] / stat[:calls]
+
+          stat[:entries] << orig_title if placeholders
+
+          stats[title] = stat
         end
-
-        stat = stats[title]
-        if stat.nil?
-          stat = {
-            :min => delta,
-            :max => delta,
-            :total => 0,
-            :avg => 0,
-            :calls => 0,
-            :entries => []
-          }
-        end
-
-        stat[:min] = delta if delta < stat[:min]
-        stat[:max] = delta if delta > stat[:max]
-        stat[:total] += delta
-        stat[:calls] += 1
-        stat[:avg] = stat[:total] / stat[:calls]
-
-        stat[:entries] << orig_title if placeholders
-
-        stats[title] = stat
       end
 
       def webdav_dir_exists?(url)

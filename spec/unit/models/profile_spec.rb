@@ -6,11 +6,12 @@ require 'gooddata/models/domain'
 require 'gooddata/models/project'
 
 describe GoodData::Profile do
-  before(:all) do
+  before(:each) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
-    @user = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
+    @user1 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
+    @user2 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
 
     @users = [
       @client.create(GoodData::Profile,
@@ -60,9 +61,9 @@ describe GoodData::Profile do
     @client.disconnect
   end
 
-  def deep_dup(obj)
-    Marshal.load(Marshal.dump(obj))
-  end
+  # def deep_dup(obj)
+  #   Marshal.load(Marshal.dump(obj))
+  # end
 
   describe '#[]' do
     it 'Finds the profile by URL' do
@@ -82,81 +83,60 @@ describe GoodData::Profile do
 
   describe '#==' do
     it 'Returns true for same objects' do
-      user1 = deep_dup(@user)
-      user2 = deep_dup(@user)
-      res = user1 == user2
-      res.should be_truthy
+      expect(@user1).to eq @user2
+      expect(@user1.to_hash).to eq @user2.to_hash
     end
 
     it 'Returns false for different objects' do
-      user1 = deep_dup(@user)
-      user2 = deep_dup(@user)
-
       # Do some little modification
-      user2.first_name = 'kokos'
-
-      res = user1 == user2
-      res.should be_falsey
+      @user2.first_name = 'kokos'
+      expect(@user1).not_to eq @user2
+      expect(@user1.to_hash).not_to eq @user2.to_hash
     end
   end
 
   describe '#!=' do
     it 'Returns false for same objects' do
-      user1 = deep_dup(@user)
-      user2 = deep_dup(@user)
-      res = user1 != user2
+      res = @user1 != @user2
       res.should be_falsey
     end
 
     it 'Returns true for different objects' do
-      user1 = deep_dup(@user)
-      user2 = deep_dup(@user)
-
       # Do some little modification
-      user2.first_name = 'kokos'
+      @user2.first_name = 'kokos'
 
-      res = user1 != user2
+      res = @user1 != @user2
       res.should be_truthy
     end
   end
 
   describe '#apply' do
     it 'When diff of two objects applied to first result should be same as second object' do
-      skip("We need to resolve this in a simpler way. The assignable members seem to be too complicated")
-      user1 = deep_dup(@user)
-      user2 = deep_dup(@user)
-
+      skip('Problem with created and updated')
       # Do some little modification
-      user2.first_name = 'kokos'
-      diff = user1.diff(user2)
+      @user2.first_name = 'kokos'
+      expect(@user1).not_to eq @user2
 
+      diff = @user1.diff(@user2)
       expect(diff).to be_instance_of(Hash)
-      diff.length.should_not eql(0)
-
-      updated_user = GoodData::Profile.create(user1.to_hash.merge(diff))
-
-      res = user1 == user2
-      res.should be_truthy
+      updated_user = GoodData::Profile.create_object(@user1.to_hash.merge(diff))
+      expect(@user1).to eq updated_user
+      expect(@user2).not_to eq updated_user
     end
   end
 
   describe '#diff' do
     it 'Returns empty hash for same objects' do
-      user1 = deep_dup(@user)
-      user2 = deep_dup(@user)
-      res = user1.diff(user2)
+      res = @user1.diff(@user2)
       expect(res).to be_instance_of(Hash)
       res.length.should eql(0)
     end
   
     it 'Returns non empty hash for different objects' do
-      user1 = deep_dup(@user)
-      user2 = deep_dup(@user)
-  
       # Do some little modification
-      user2.first_name = 'kokos'
+      @user2.first_name = 'kokos'
   
-      res = user1.diff(user2)
+      res = @user1.diff(@user2)
       expect(res).to be_instance_of(Hash)
       res.length.should_not eql(0)
     end
@@ -223,7 +203,7 @@ describe GoodData::Profile do
 
   describe '#projects' do
     it 'Returns user projects as array of GoodData::Project' do
-      projects = @user.projects
+      projects = @user1.projects
       expect(projects).to be_an_instance_of(Array)
 
       projects.each do |project|
