@@ -55,7 +55,7 @@ module GoodData
                   identifier: GoodData::Model.identifier_for(dataset, l, attribute),
                   title: GoodData::Model.title(l),
                   type: l[:gd_type],
-                  dataType: l[:gd_data_type]
+                  dataType: GoodData::Model.normalize_gd_data_type(l[:gd_data_type])
                 }
               }
             end,
@@ -110,7 +110,7 @@ module GoodData
             identifier: GoodData::Model.identifier_for(dataset, fact),
             title: GoodData::Model.title(fact),
             folder: fact[:folder] || dataset[:folder] || GoodData::Model.title(dataset),
-            dataType: fact[:gd_data_type] || DEFAULT_FACT_DATATYPE
+            dataType: GoodData::Model.normalize_gd_data_type(fact[:gd_data_type]) || DEFAULT_FACT_DATATYPE
           }
         }
         payload.tap do |p|

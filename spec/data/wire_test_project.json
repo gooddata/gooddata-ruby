@@ -11,7 +11,6 @@
                 "attribute": {
                   "identifier": "attr.repos.repo_id",
                   "title": "Repo",
-                  "description": "This is anchor description",
                   "folder": "Foldered Repos",
                   "labels": [
                     {
@@ -31,7 +30,8 @@
                       }
                     }
                   ],
-                  "defaultLabel": "label.repos.repo_id"
+                  "defaultLabel": "label.repos.repo_id",
+                  "description": "This is anchor description"
                 }
               },
               "attributes": [
@@ -46,7 +46,7 @@
                           "identifier": "label.repos.department",
                           "title": "Department",
                           "type": null,
-                          "dataType": null
+                          "dataType": "VARCHAR(128)"
                         }
                       }
                     ],
@@ -122,9 +122,9 @@
                   "fact": {
                     "identifier": "fact.commits.lines_changed",
                     "title": "Lines Changed",
-                    "description": "Fact description",
                     "folder": "Commits",
-                    "dataType": "INT"
+                    "dataType": "INT",
+                    "description": "Fact description"
                   }
                 }
               ],

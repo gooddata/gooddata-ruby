@@ -7,28 +7,34 @@ module GoodData
     module FromWire
       # Converts dataset from wire format into an internal blueprint representation
       #
-      # @param stuff [Hash] Whatever comes from wire
+      # @param dataset [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.dataset_from_wire(stuff)
+      def self.dataset_from_wire(dataset, anchor_hash)
         {}.tap do |d|
           d[:type] = :dataset
-          d[:title] = stuff['dataset']['title'] if stuff['dataset']['title'] != stuff['dataset']['identifier'].split('.').last.titleize
-          d[:name] = stuff['dataset']['identifier'].split('.').last
-          d[:columns] = (parse_anchor(stuff) + parse_attributes(stuff) + parse_facts(stuff) + parse_references(stuff))
+          d[:title] = dataset['dataset']['title'] if dataset['dataset']['title'] != dataset['dataset']['identifier'].split('.').last.titleize
+          d[:name] = dataset['dataset']['identifier'].split('.').last
+          d[:columns] = (parse_anchor(dataset) + parse_attributes(dataset) + parse_facts(dataset) + parse_references(dataset, anchor_hash))
         end
       end
 
       # Entry method for converting information about project mode from wire
       # format into an internal blueprint representation
       #
-      # @param stuff [Hash] Whatever comes from wire
+      # @param wire_model [Hash] Whatever comes from wire
       # @return [GoodData::Model::ProjectBlueprint] Manifest for a particular reference
-      def self.from_wire(stuff)
-        model = stuff['projectModelView']['model']['projectModel']
+      def self.from_wire(wire_model)
+        model = wire_model['projectModelView']['model']['projectModel']
         datasets = model['datasets'] || []
         dims = model['dateDimensions'] || []
+        anchor_hash = Hash[model['datasets'].map do |d|
+          [
+            d['dataset']['identifier'].split('.').last,
+            d['dataset']['anchor']['attribute']['identifier'].split('.').last
+          ]
+        end]
         ProjectBlueprint.new(
-          datasets: datasets.map { |ds| dataset_from_wire(ds) },
+          datasets: datasets.map { |ds| dataset_from_wire(ds, anchor_hash) },
           date_dimensions: dims.map { |dd| parse_date_dimensions(dd) }
         )
       end
@@ -87,12 +93,12 @@ module GoodData
       #
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.parse_date_dimensions(stuff)
+      def self.parse_date_dimensions(date_dim)
         {}.tap do |d|
           d[:type] = :date_dimension
           # d[:urn] = :date_dimension
-          d[:name] = stuff['dateDimension']['name']
-          d[:title] = stuff['dateDimension']['title'] if stuff['dateDimension']['title'] != d[:name].titleize
+          d[:name] = date_dim['dateDimension']['name']
+          d[:title] = date_dim['dateDimension']['title'] if date_dim['dateDimension']['title'] != d[:name].titleize
         end
       end
 
@@ -134,22 +140,25 @@ module GoodData
 
       # Converts label from wire format into an internal blueprint representation
       #
-      # @param stuff [Hash] Whatever comes from wire
+      # @param dataset [Hash] Whatever comes from wire
+      # @param anchor_hash [Hash] dataset id -> anchor id hash
       # @return [Hash] Manifest for a particular reference
-      def self.parse_references(stuff)
-        references = stuff['dataset']['references'] || []
+      def self.parse_references(dataset, anchor_hash)
+        references = dataset['dataset']['references'] || []
         references.map do |ref|
+          dataset_name = ref.gsub(/^dataset\./, '')
           if ref =~ /^dataset\./
             {
               :type => :reference,
-              :name => ref.gsub(/^dataset\./, ''),
-              :dataset => ref.gsub(/^dataset\./, '')
+              # in case the dataset isn't in the model, take the name
+              :name => anchor_hash[dataset_name] || dataset_name,
+              :dataset => dataset_name
             }
           else
             {
               :type => :date,
-              :name => ref.gsub(/^dataset\./, ''),
-              :dataset => ref.gsub(/^dataset\./, '')
+              :name => dataset_name,
+              :dataset => dataset_name
             }
           end
         end

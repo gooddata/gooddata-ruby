@@ -27,10 +27,23 @@ describe GoodData::Model::FromWire do
     expect(col[:gd_type]).to eq 'GDC.text'
   end
 
+  it "should validate a gd_type" do
+    expect(GoodData::Model.check_gd_type("GDC.time")).to eq true
+    expect(GoodData::Model.check_gd_type("gdc.time")).to eq false
+    expect(GoodData::Model.check_gd_type("gdc.time3")).to eq false
+  end
+
   it "should validate a gd_datatype" do
-    expect(GoodData::Model.check_gd_datatype("GDC.time")).to eq true
-    expect(GoodData::Model.check_gd_datatype("gdc.time")).to eq false
-    expect(GoodData::Model.check_gd_datatype("gdc.time3")).to eq false
+    expect(GoodData::Model.check_gd_data_type("INT")).to eq true
+    expect(GoodData::Model.check_gd_data_type("int")).to eq true
+    expect(GoodData::Model.check_gd_data_type("VARCHAR(128)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("varchar(128)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("DECIMAL(10, 5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("DECIMAL(10,5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("DECIMAL(10,  5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("decimal(10, 5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("decimal(10,5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("decimal(10,  5)")).to eq true
   end
 
   it "should be able to omit titles if they are superfluous" do

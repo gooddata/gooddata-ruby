@@ -75,7 +75,7 @@ describe GoodData::Project, :constraint => 'slow' do
 
   describe "#member" do
     it 'Returns GoodData::Membership when looking for existing user using login' do
-      res = @project.get_user('svarovsky+gem_tester@gooddata.com')
+      res = @project.get_user(ConnectionHelper::DEFAULT_USERNAME)
       expect(res).to be_instance_of(GoodData::Membership)
     end
 
@@ -91,14 +91,14 @@ describe GoodData::Project, :constraint => 'slow' do
     end
 
     it 'Returns null for non-existing user' do
-      res = @project.get_user('john.doe@gooddata.com')
+      res = @project.get_user(ConnectionHelper::TEST_USERNAME)
       expect(res).to be_nil
     end
   end
 
   describe "#member?" do
     it 'Returns true when looking for existing user using login' do
-      res = @project.member?('svarovsky+gem_tester@gooddata.com')
+      res = @project.member?(ConnectionHelper::DEFAULT_USERNAME)
       expect(res).to be_truthy
     end
 
@@ -114,19 +114,19 @@ describe GoodData::Project, :constraint => 'slow' do
     end
 
     it 'Returns false for non-existing user' do
-      res = @project.member?('john.doe@gooddata.com')
+      res = @project.member?(ConnectionHelper::TEST_USERNAME)
       expect(res).to be_falsey
     end
 
     it 'Returns true for existing user when using optional list' do
       list = @project.members
-      res = @project.member?('svarovsky+gem_tester@gooddata.com', list)
+      res = @project.member?(ConnectionHelper::DEFAULT_USERNAME, list)
       expect(res).to be_truthy
     end
 
     it 'Returns false for non-existing user when using optional list' do
       list = []
-      res = @project.member?('svarovsky+gem_tester@gooddata.com', list)
+      res = @project.member?(ConnectionHelper::DEFAULT_USERNAME, list)
       expect(res).to be_falsey
     end
   end
@@ -140,7 +140,7 @@ describe GoodData::Project, :constraint => 'slow' do
 
     it 'Support variety of inputs' do
       users = @project.members.take(1)
-      res = @project.members?(users + ['john.doe@gooddata.com'])
+      res = @project.members?(users + [ConnectionHelper::TEST_USERNAME])
       expect(res).to eq [true, false]
     end
   end

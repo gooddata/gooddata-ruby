@@ -61,7 +61,7 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password, opts = { :verify_ssl => true })
+        def connect(username, password, opts = { verify_ssl: true })
           if username.nil? && password.nil?
             username = ENV['GD_GEM_USER']
             password = ENV['GD_GEM_PASSWORD']
@@ -71,7 +71,7 @@ module GoodData
 
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
-            new_opts[:sst_token] = username[:sst_token]
+            new_opts = username
           elsif username.is_a? Hash
             new_opts[:username] = username[:login] || username[:user] || username[:username]
             new_opts[:password] = username[:password]
@@ -236,7 +236,7 @@ module GoodData
         @connection.get uri, opts, & block
       end
 
-      def project_webdav_path(opts = { :project => GoodData.project })
+      def project_webdav_path(opts = { project: GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -248,7 +248,7 @@ module GoodData
         url
       end
 
-      def user_webdav_path(opts = { :project => GoodData.project })
+      def user_webdav_path(opts = { project: GoodData.project })
         p = opts[:project]
         fail ArgumentError, 'No :project specified' if p.nil?
 
@@ -296,21 +296,18 @@ module GoodData
         sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
         time_limit = options[:time_limit] || DEFAULT_POLL_TIME_LIMIT
 
-        # by default the response is processed
-        process = options[:process]
-
         # get the first status and start the timer
-        response = get(link, :process => process)
+        response = get(link, options)
         poll_start = Time.now
 
         while bl.call(response)
-          if time_limit && (Time.now - poll_start > time_limit)
-            fail "The time limit #{time_limit} secs for polling on #{link} is over"
+          limit_breached = time_limit && (Time.now - poll_start > time_limit)
+          if limit_breached
+            fail ExecutionLimitExceeded, "The time limit #{time_limit} secs for polling on #{link} is over"
           end
           sleep sleep_interval
           GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
-            sleep sleep_interval
-            response = get(link, :process => process)
+            response = get(link, options)
           end
         end
         response
@@ -347,7 +344,7 @@ module GoodData
         @connection.download source_relative_path, target_file_path, options
       end
 
-      def download_from_user_webdav(source_relative_path, target_file_path, options = { :client => GoodData.client, :project => project })
+      def download_from_user_webdav(source_relative_path, target_file_path, options = { client: GoodData.client, project: project })
         download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
                                                                        :staging_url => get_user_webdav_url(options)))
       end

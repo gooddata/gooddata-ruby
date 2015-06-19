@@ -10,7 +10,7 @@ RAW_DATA = {
    'meta' =>
     {'author'=>'/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248',
      'uri'=>'/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/70',
-     'tags'=>'a b cg r t',
+     'tags'=>'a a   b cg r t',
      'created'=>'2014-04-30 22:47:57',
      'identifier'=>'afo7bx1VakCz',
      'deprecated'=>'0',
@@ -24,7 +24,7 @@ RAW_DATA = {
 
 describe GoodData::MdObject do
   before(:each) do
-    @instance = GoodData::MdObject.new(RAW_DATA)
+    @instance = GoodData::MdObject.new(RAW_DATA.deep_dup)
   end
 
   describe '#identifier=' do
@@ -33,8 +33,26 @@ describe GoodData::MdObject do
       @instance.identifier = 'new_id'
       new_identifier = @instance.identifier
 
-      new_identifier.should_not == identifier
-      new_identifier.should == 'new_id'
+      expect(new_identifier).to_not eq identifier
+      expect(new_identifier).to eq 'new_id'
+    end
+  end
+
+  describe '#tag_list' do
+    it 'returns tags as list' do
+      expect(@instance.tag_set).to eq %w(a b cg r t).to_set
+    end
+  end
+
+  describe '#add_tag' do
+    it 'adds tag' do
+      expect(@instance.add_tag('xx').tag_set).to eq %w(a b cg r t xx).to_set
+    end
+  end
+
+  describe '#remove_tag' do
+    it 'returns tags as list' do
+      expect(@instance.remove_tag('t').tag_set).to eq %w(a b cg r).to_set
     end
   end
 end

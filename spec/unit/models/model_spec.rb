@@ -10,47 +10,44 @@ describe GoodData::Model do
     @additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/model_module.json")
 
     @blueprint_with_duplicate = GoodData::Model::ProjectBlueprint.new(
-        {
-            :title => "x",
-            :datasets => [
-                {
-                    :name => "commits",
-                    :columns => [
-                        {:type => "fact", :name => "lines_changed", :description=>"Fact description"}
-                    ]
-                }
-            ]})
+      {
+        :title => "x",
+        :datasets => [{
+          name: "commits",
+          columns: [
+            { type: "fact", name: "lines_changed", gd_data_type: 'INT', description: "Fact description" }
+          ]
+        }]
+      })
 
     @conflicting_blueprint = GoodData::Model::ProjectBlueprint.new(
-        {
-            :title => "x",
-            :datasets => [
-                {
-                    :name => "commits",
-                    :columns => [
-                        {:type => "attribute", :name => "lines_changed"}
-                    ]
-                }
-            ]})
+      {
+        title: 'x',
+        datasets: [{
+          name: 'commits',
+          columns: [
+            { type: 'attribute', name: 'lines_changed' }
+          ]
+        }]
+      })
   end
 
   it "should be possible to merge Schema blueprints" do
     first_dataset = @base_blueprint.find_dataset("devs").to_hash
     additional_blueprint = @additional_blueprint.find_dataset("devs").to_hash
     stuff = GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
-    stuff[:columns].include?({:type => "attribute", :name => "region"}).should == true
-    stuff[:columns].include?({:type => "anchor", :name => "id"}).should == true
+    expect(stuff[:columns].include?({:type => "attribute", :name => "region"})).to be_truthy
+    expect(stuff[:columns].include?({:type => "anchor", :name => "id"})).to be_truthy
   end
 
   it "should pass when merging 2 columns with the same name if both columns are identical" do
     first_dataset = @base_blueprint.find_dataset("commits").to_hash
     additional_blueprint = @blueprint_with_duplicate.find_dataset("commits").to_hash
-
     stuff = GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
 
-    stuff[:columns].count.should == 4
-    stuff[:columns].include?({:type => "fact", :name => "lines_changed", :description=>"Fact description"}).should == true
-    stuff[:columns].group_by { |col| col[:name] }["lines_changed"].count.should == 1
+    expect(stuff[:columns].count).to eq 4
+    expect(stuff[:columns].include?({ type: "fact", name: "lines_changed", gd_data_type: 'INT', description: "Fact description"})).to be_truthy
+    expect(stuff[:columns].group_by { |col| col[:name] }["lines_changed"].count).to eq 1
   end
 
   it "should pass when merging 2 columns with the same name if all attributes are identical" do
@@ -62,7 +59,7 @@ describe GoodData::Model do
 
   it "should be possible to merge directly whole bleuprints. Blueprint is changed in place when merge! is used" do
     @base_blueprint.merge!(@additional_blueprint)
-    @base_blueprint.find_dataset("repos").attributes.include?({:type => "attribute", :name => "department"})
+    @base_blueprint.find_dataset("repos").attributes.include?({ type: "attribute", name: "department" })
   end
 
 end

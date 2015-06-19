@@ -159,12 +159,12 @@ module GoodData
       # Method used for getting a data_result from a wire representation of
       # @param result [Hash, Object] Wire data from JSON
       # @return [GoodData::ReportDataResult]
-      def data_result(result, options = { :client => GoodData.connection })
-        client = options[:client]
+      def data_result(result, options = {})
+        client = options[:client] || GoodData.connection
         fail ArgumentError, 'No :client specified' if client.nil?
 
         data_result_uri = result['execResult']['dataResult']
-        result = client.poll_on_response(data_result_uri) do |body|
+        result = client.poll_on_response(data_result_uri, options) do |body|
           body && body['taskState'] && body['taskState']['status'] == 'WAIT'
         end
 
@@ -173,13 +173,6 @@ module GoodData
         else
           client.create(ReportDataResult, result)
         end
-      end
-
-      # Return true if the report definition is a chart
-      #
-      # @return [Boolean] Return true if report definition is a chart
-      def chart?
-        !table?
       end
 
       def create(options = { :client => GoodData.connection, :project => GoodData.project })
@@ -253,6 +246,13 @@ module GoodData
       self
     end
 
+    # Return true if the report definition is a chart
+    #
+    # @return [Boolean] Return true if report definition is a chart
+    def chart?
+      !table?
+    end
+
     def labels
       attribute_parts.map { |part| project.labels(part['attribute']['uri']) }
     end
@@ -265,15 +265,16 @@ module GoodData
       metric_parts.map { |i| project.metrics(i['uri']) }
     end
 
-    def execute(opts = { :client => GoodData.connection, :project => GoodData.project })
-      client = opts[:client]
-      fail ArgumentError, 'No :client specified' if client.nil?
-
-      p = opts[:project]
-      fail ArgumentError, 'No :project specified' if p.nil?
-
-      project = client.projects(p)
-      fail ArgumentError, 'Wrong :project specified' if project.nil?
+    def execute(opts = {})
+      # binding.pry
+      # client = opts[:client]
+      # fail ArgumentError, 'No :client specified' if client.nil?
+      #
+      # p = opts[:project]
+      # fail ArgumentError, 'No :project specified' if p.nil?
+      #
+      # project = client.projects(p)
+      # fail ArgumentError, 'Wrong :project specified' if project.nil?
 
       opts = { client: client, project: project }
       result = if saved?

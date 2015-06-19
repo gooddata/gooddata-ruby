@@ -224,10 +224,10 @@ module GoodData
     # Gets project blueprint from the server
     #
     # @return [GoodData::ProjectRole] Project role if found
-    def blueprint
+    def blueprint(options = {})
       result = client.get("/gdc/projects/#{pid}/model/view")
       polling_url = result['asyncTask']['link']['poll']
-      model = client.poll_on_code(polling_url)
+      model = client.poll_on_code(polling_url, options)
       GoodData::Model::FromWire.from_wire(model)
     end
 
@@ -312,7 +312,7 @@ module GoodData
     #
     # @param export_token [String] Export token of the package to be imported
     # @return [Project] current project
-    def import_clone(export_token)
+    def import_clone(export_token, options = {})
       import = {
         :importProject => {
           :token => export_token
@@ -321,7 +321,7 @@ module GoodData
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/import", import)
       status_url = result['uri']
-      client.poll_on_response(status_url) do |body|
+      client.poll_on_response(status_url, options) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
       self
@@ -383,12 +383,12 @@ module GoodData
     #
     # @param dml [String] DML expression
     # @return [Hash] Result of executing DML
-    def execute_dml(dml)
+    def execute_dml(dml, options = {})
       uri = "/gdc/md/#{pid}/dml/manage"
       result = client.post(uri, manage: { maql: dml })
       polling_uri = result['uri']
 
-      client.poll_on_response(polling_uri) do |body|
+      client.poll_on_response(polling_uri, options) do |body|
         body && body['taskState'] && body['taskState']['status'] == 'WAIT'
       end
     end
@@ -397,13 +397,13 @@ module GoodData
     #
     # @param maql [String] MAQL expression
     # @return [Hash] Result of executing MAQL
-    def execute_maql(maql)
+    def execute_maql(maql, options = {})
       ldm_links = client.get(md[GoodData::Model::LDM_CTG])
       ldm_uri = Links.new(ldm_links)[GoodData::Model::LDM_MANAGE_CTG]
       response = client.post(ldm_uri, manage: { maql: maql })
       polling_uri = response['entries'].first['link']
 
-      client.poll_on_response(polling_uri) do |body|
+      client.poll_on_response(polling_uri, options) do |body|
         body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
     end
@@ -717,7 +717,7 @@ module GoodData
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
 
-      polling_result = client.poll_on_response(polling_url) do |body|
+      polling_result = client.poll_on_response(polling_url, options) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
 
@@ -734,7 +734,7 @@ module GoodData
       result = client.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
       polling_url = result['uri']
 
-      client.poll_on_response(polling_url) do |body|
+      client.poll_on_response(polling_url, options) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
 
@@ -879,8 +879,8 @@ module GoodData
     #
     # @param file File to be uploaded
     # @param schema Schema to be used
-    def upload(file, dataset_blueprint, mode = 'FULL')
-      dataset_blueprint.upload file, self, mode
+    def upload(data, blueprint, dataset_name, options = {})
+      GoodData::Model.upload_data(data, blueprint, dataset_name, options.merge(client: client, project: self))
     end
 
     def uri
@@ -1087,10 +1087,10 @@ module GoodData
     # metric_filter - Checks metadata for inconsistent metric filters.
     # invalid_objects - Checks metadata for invalid/corrupted objects.
     # asyncTask response
-    def validate(filters = %w(ldm pdm metric_filter invalid_objects))
+    def validate(filters = %w(ldm pdm metric_filter invalid_objects), options = {})
       response = client.post "#{md['validate-project']}", 'validateProject' => filters
       polling_link = response['asyncTask']['link']['poll']
-      client.poll_on_response(polling_link) do |body|
+      client.poll_on_response(polling_link, options) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
     end

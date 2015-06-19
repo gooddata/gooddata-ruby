@@ -67,6 +67,8 @@ module GoodData
             begin
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
+            rescue => e
+              puts e.inspect
             ensure
               res.delete if res
             end
@@ -260,7 +262,7 @@ module GoodData
     def execute(executable, options = {})
       result = start_execution(executable, options)
       begin
-        client.poll_on_code(result['executionTask']['links']['poll'])
+        client.poll_on_code(result['executionTask']['links']['poll'], options)
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure

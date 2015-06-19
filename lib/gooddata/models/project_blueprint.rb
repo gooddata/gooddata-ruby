@@ -263,9 +263,11 @@ module GoodData
       #
       # @return [Array] array of errors
       def validate
-        refs_errors = validate_references
-        labels_errors = datasets.reduce([]) { |a, e| a.concat(e.validate) }
-        refs_errors.concat(labels_errors)
+        errors = []
+        errors.concat validate_references
+        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate) }
+        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate_gd_data_type_errors) }
+        errors
       end
 
       # Validate the blueprint and all its datasets and return true if model is valid. False otherwise.
@@ -473,6 +475,15 @@ module GoodData
       # @return [GoodData::Model::DatasetBlueprint]
       def dup
         ProjectBlueprint.new(data.deep_dup)
+      end
+
+      # Helper for storing the project blueprint into a file as JSON.
+      #
+      # @param filename [String] Name of the file where the blueprint should be stored
+      def store_to_file(filename)
+        File.open(filename, 'w') do |f|
+          f << JSON.pretty_generate(to_hash)
+        end
       end
 
       # Returns title of a dataset. If not present it is generated from the name

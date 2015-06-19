@@ -362,6 +362,12 @@ module GoodData
         end
       end
 
+      def validate_gd_data_type_errors
+        columns
+          .select { |x| x[:gd_data_type] && !GoodData::Model.check_gd_data_type(x[:gd_data_type]) }
+          .map { |e| { :error => :invalid_gd_data_type_specified, :column => e } }
+      end
+
       # Helper methods to decide wheather the dataset is considered wide.
       # Currently the wider datasets have both performance and usability
       # penalty

@@ -38,6 +38,9 @@ module GoodData
         Timeout::Error
       ]
 
+      RETRIES_ON_TOO_MANY_REQUESTS_ERROR = 10
+      RETRY_TIME_INITIAL_VALUE = 1
+      RETRY_TIME_COEFFICIENT = 1.5
       RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
 
       class << self
@@ -58,12 +61,13 @@ module GoodData
 
           retry_exception = opts[:on]
           retries = opts[:tries]
+          too_many_requests_tries = RETRIES_ON_TOO_MANY_REQUESTS_ERROR
 
           unless retry_exception.is_a?(Array)
             retry_exception = [retry_exception]
           end
 
-          retry_time = 1
+          retry_time = RETRY_TIME_INITIAL_VALUE
           begin
             return yield
           rescue RestClient::Unauthorized, RestClient::Forbidden => e # , RestClient::Unauthorized => e
@@ -71,16 +75,16 @@ module GoodData
             raise e if options[:dont_reauth]
             options[:refresh_token].call # (dont_reauth: true)
             retry if (retries -= 1) > 0
-          rescue RestClient::TooManyRequests
+          rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable
             GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
             sleep retry_time
-            retry_time *= 1.5
-            retry
+            retry_time *= RETRY_TIME_COEFFICIENT
+            # 10 requests with 1.5 coefficent should take ~ 3 mins to finish
+            retry if (too_many_requests_tries -= 1) > 1
           rescue *retry_exception => e
             GoodData.logger.warn e.inspect
-            retry if (retries -= 1) > 0
+            retry if (retries -= 1) > 1
           end
-
           yield
         end
       end
@@ -89,12 +93,12 @@ module GoodData
 
       # backward compatibility
       alias_method :cookies, :request_params
+      attr_reader :server
       attr_reader :stats
       attr_reader :user
 
       def initialize(opts)
         @stats = {}
-        @opts = opts
 
         headers = opts[:headers] || {}
         @webdav_headers = DEFAULT_WEBDAV_HEADERS.merge(headers)
@@ -112,11 +116,12 @@ module GoodData
       # Connect using username and password
       def connect(username, password, options = {})
         server = options[:server] || DEFAULT_URL
-
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
 
-        @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD.merge(headers)
+        options = options.merge(headers)
+
+        @server = RestClient::Resource.new server, options
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
@@ -200,7 +205,8 @@ module GoodData
               :user_agent => GoodData.gem_version_string
             },
             :method => :get,
-            :url => url
+            :url => url,
+            :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
           }.merge(cookies)
 
           if where.is_a?(IO) || where.is_a?(StringIO)
@@ -250,6 +256,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def delete(uri, options = {})
+        options = log_info(options)
         GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
           b = proc do
@@ -269,6 +276,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def get(uri, options = {}, &user_block)
+        options = log_info(options)
         GoodData.logger.debug "GET: #{@server.url}#{uri}"
         profile "GET #{uri}" do
           b = proc do
@@ -288,6 +296,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def put(uri, data, options = {})
+        options = log_info(options)
         payload = data.is_a?(Hash) ? data.to_json : data
         GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
@@ -308,6 +317,7 @@ module GoodData
       #
       # @param uri [String] Target URI
       def post(uri, data, options = {})
+        options = log_info(options)
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
@@ -358,7 +368,7 @@ module GoodData
       # Uploads a file to GoodData server
       def upload(file, options = {})
         def do_stream_file(uri, filename, _options = {})
-          puts "uploading the file #{uri}"
+          GoodData.logger.info "Uploading file user storage #{uri}"
 
           to_upload = File.new(filename)
           cookies_str = request_params[:cookies].map { |cookie| "#{cookie[0]}=#{cookie[1]}" }.join(';')
@@ -367,7 +377,7 @@ module GoodData
           req.body_stream = to_upload
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          http.verify_mode = (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
 
           response = nil
           GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
@@ -384,7 +394,8 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @webdav_headers
+              :headers => @webdav_headers,
+              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
             }.merge(cookies)
             begin
               RestClient::Request.execute(raw)
@@ -409,7 +420,8 @@ module GoodData
             raw = {
               :method => method,
               :url => url,
-              :headers => @webdav_headers
+              :headers => @webdav_headers,
+              :verify_ssl => (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
             }.merge(cookies)
             RestClient::Request.execute(raw)
           end
@@ -460,6 +472,16 @@ module GoodData
         @session_id = nil
       end
 
+      # log info_message given in options and make sure request_id is there
+      def log_info(options)
+        # if info_message given, log it with request_id (given or generated)
+        if options[:info_message]
+          request_id = options[:request_id] || generate_request_id
+          GoodData.logger.info "#{options[:info_message]} Request id: #{request_id}"
+        end
+        options
+      end
+
       # request heders with freshly generated request id
       def fresh_request_params(request_id = nil)
         @request_params.merge(:x_gdc_request => request_id || generate_request_id)
@@ -470,20 +492,9 @@ module GoodData
       end
 
       def process_response(options = {}, &block)
-        # begin
-        #   # Simply try again when ConnectionReset, ConnectionRefused etc.. (see e.g. MSF-7591)
-        #   response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => Proc.new { refresh_token }) do
-        #     block.call
-        #   end
-        # rescue RestClient::Unauthorized
-        #   raise $ERROR_INFO if options[:dont_reauth]
-        #   GoodData::Rest::Connection.retryable(:tries => 2) do
-        #     refresh_token
-        #     response = block.call
-        #   end
-        # end
+        retries = options[:tries] || 3
 
-        response = GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token unless options[:dont_reauth] }) do
+        response = GoodData::Rest::Connection.retryable(:tries => retries, :refresh_token => proc { refresh_token unless options[:dont_reauth] }) do
           block.call
         end
 
