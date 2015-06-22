@@ -27,7 +27,9 @@ module GoodData
 
     class << self
       def title(item)
-        item[:title] || item[:name].titleize
+        title = item[:title] || item[:name].try(:titleize)
+        fail "Title or name required." unless title
+        title
       end
 
       def description(item)
@@ -36,7 +38,13 @@ module GoodData
 
       def identifier_for(dataset, column = nil, column2 = nil) # rubocop:disable UnusedMethodArgument
         return "dataset.#{dataset[:name]}" if column.nil?
-        column = DatasetBlueprint.find_column_by_name(dataset, column) if column.is_a?(String)
+        
+        if column.is_a?(String)
+          column_name = column
+          column = DatasetBlueprint.find_column_by_name(dataset, column_name)
+          fail "Column #{column_name} not found" if column.nil?
+        end
+
         case column[:type].to_sym
         when :anchor_no_label
           "attr.#{dataset[:name]}.factsof"
@@ -61,15 +69,15 @@ module GoodData
         when :reference
           'REF'
         else
-          fail "Unknown type #{column[:type].to_sym}"
+          fail "Unknown type #{column[:type]}"
         end
       end
-
-      def check_gd_type(value)
-        GD_TYPES.any? { |v| v == value }
+      
+      def has_gd_type?(value)
+        GD_TYPES.include? value
       end
-
-      def check_gd_data_type(value)
+      
+      def has_gd_datatype?(value)
         GD_DATA_TYPES.any? do |v|
           case v
           when Regexp
@@ -81,7 +89,7 @@ module GoodData
           end
         end
       end
-
+      
       def normalize_gd_data_type(type)
         if type && type.upcase == 'INTEGER'
           'INT'
