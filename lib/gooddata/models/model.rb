@@ -68,7 +68,7 @@ module GoodData
       'GDC.geo.worldcountries.iso2', # World countries (ISO a2)
       'GDC.geo.worldcountries.iso3', # World countries (ISO a3)
       'GDC.geo.czdistricts.name',    #	Czech Districts (Name)
-      'GDC.geo.czdistricts.name_no_diacritics', #	Czech Districts
+      'GDC.geo.czdistricts.name_no_diacritics', # Czech Districts
       'GDC.geo.czdistricts.nuts4',   # Czech Districts (NUTS 4)
       'GDC.geo.czdistricts.knok',    # Czech Districts (KNOK)
 
