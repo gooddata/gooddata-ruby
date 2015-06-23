@@ -8,9 +8,6 @@ describe "Full project implementation", :constraint => 'slow' do
     @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
     @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
 
-    GoodData.logging_on
-    GoodData.logger.level = Logger::DEBUG
-
     begin
       @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
     rescue => e
@@ -493,6 +490,15 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(cloned_project.title).to eq title
     expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete
+  end
+
+  it "should be able to export report" do
+    m = @project.metrics.first
+    r = @project.create_report(top: [m], title: 'Report to export')
+    r.save
+    r.export(:csv)
+    r.export(:pdf)
+    r.delete
   end
 
   it "should be able to delete report along with its definitions" do
