@@ -1,0 +1,32 @@
+{
+  "title": "RubyGem Dev Week test",
+  "datasets": [
+    {
+      "type": "dataset",
+      "id": "dataset.sales",
+      "title": "Commits",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.sales.id"
+        },
+        {
+          "type": "fact",
+          "id" : "some_sales_fact_id",
+          "title": "Sales fact Title",
+          "description": "Sales Fact description"
+        },
+        {
+          "type": "reference",
+          "id": "ref_dev_id",
+          "dataset": "dataset.devs"
+        },
+        {
+          "type": "reference",
+          "id": "ref_repo_id",
+          "dataset": "dataset.repos"
+        }
+      ]
+    }
+  ]
+}

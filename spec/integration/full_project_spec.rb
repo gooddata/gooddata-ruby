@@ -2,15 +2,17 @@ require 'gooddata'
 
 describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
-    @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
-    @invalid_spec = JSON.parse(File.read("./spec/data/blueprint_invalid.json"), :symbolize_names => true)
+    @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
+    @invalid_spec = JSON.parse(File.read("./spec/data/blueprints/invalid_blueprint.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
+    @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+    @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
 
     GoodData.logging_on
     GoodData.logger.level = Logger::DEBUG
 
     begin
-      @project = @client.create_project_from_blueprint(@spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
     rescue => e
       puts e.inspect
     end
@@ -39,8 +41,9 @@ describe "Full project implementation", :constraint => 'slow' do
     dataset.save
 
     # Now the update of project using the original blueprint should offer update of the title. Nothing else.
+    results = GoodData::Model::ProjectCreator.migrate_datasets(@blueprint, project: @project, client: @client, dry_run: true)
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
-    expect(results['updateScript']['maqlDdl']).to eq "ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repos\", DESCRIPTION \"\");\n"
+    expect(results['updateScript']['maqlDdl']).to eq "ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repositories\", DESCRIPTION \"\");\n"
 
     # Update using a freshly gained blueprint should offer no changes.
     new_blueprint = @project.blueprint
@@ -55,10 +58,9 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should contain datasets" do
-    @project.blueprint.tap do |bp|
-      expect(bp.datasets.count).to eq 3
-      expect(bp.datasets(:include_date_dimensions => true).count).to eq 4
-    end
+    bp = @project.blueprint
+    expect(bp.datasets.count).to eq 3
+    expect(bp.datasets(:all, :include_date_dimensions => true).count).to eq 4
   end
 
   it "should contain metadata datasets" do
@@ -96,43 +98,20 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should load the data" do
     GoodData.with_project(@project) do |p|
-      blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+      # blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
       commits_data = [
         ["lines_changed","committed_on","dev_id","repo_id"],
         [1,"01/01/2014",1,1],
         [3,"01/02/2014",2,2],
         [5,"05/02/2014",3,1]]
-      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
-      # blueprint.find_dataset('commits').upload(commits_data)
+      @project.upload(commits_data, @blueprint, 'dataset.commits')
 
       devs_data = [
         ["dev_id", "email"],
         [1, "tomas@gooddata.com"],
         [2, "petr@gooddata.com"],
         [3, "jirka@gooddata.com"]]
-      GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
-      # blueprint.find_dataset('devs').upload(devs_data)
-    end
-  end
-
-  it "should load data to blueprint taken from project" do
-    GoodData.with_project(@project) do |p|
-      blueprint = p.blueprint
-      # references to date dim
-      commits_data = [
-        ["lines_changed","committed_on","dev_id","repo_id"],
-        [1,"01/01/2014",1,1],
-        [3,"01/02/2014",2,2],
-        [5,"05/02/2014",3,1]]
-      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
-
-      # references to anchor within project
-      devs_data = [
-        ["dev_id", "email"],
-        [1, "tomas@gooddata.com"],
-        [2, "petr@gooddata.com"],
-        [3, "jirka@gooddata.com"]]
-      GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
+      @project.upload(devs_data, @blueprint, 'dataset.devs')
     end
   end
 
@@ -145,7 +124,7 @@ describe "Full project implementation", :constraint => 'slow' do
         [3,"01/02/2014",2,2,"something"],
         [5,"05/02/2014",3,1,"something else"]
       ]
-      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
+      @project.upload(commits_data, blueprint, 'dataset.commits')
     end
   end
 
@@ -159,20 +138,20 @@ describe "Full project implementation", :constraint => 'slow' do
           [3,"01/02/2014",2],
           [5,"05/02/2014",3]
         ]
-        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(/repo_id/)
+        expect {@project.upload(commits_data, blueprint, 'dataset.commits')}.to raise_error(/repo_id/)
       end
     end
     it "if you give it a malformed CSV" do
       GoodData.with_project(@project) do |p|
         blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
-        # it's in the header but not in the data
+        # 4 cols in header but not in the data
         commits_data = [
           ["lines_changed","committed_on","dev_id","repo_id"],
           [1,"01/01/2014",1],
           [3,"01/02/2014",2],
           [5,"05/02/2014",3]
         ]
-        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(/Number of columns/)
+        expect {@project.upload(commits_data, blueprint, 'dataset.commits')}.to raise_error(/Number of columns/)
       end
     end
     it "if you give it wrong date format" do
@@ -184,7 +163,7 @@ describe "Full project implementation", :constraint => 'slow' do
           [3,"45/50/2014",2,2],
           [5,"05/02/2014",3,1]
         ]
-        expect {GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)}.to raise_error(%r{45/50/2014})
+        expect {@project.upload(commits_data, blueprint, 'dataset.commits')}.to raise_error(%r{45/50/2014})
       end
     end
   end
@@ -193,6 +172,14 @@ describe "Full project implementation", :constraint => 'slow' do
     f = @project.fact_by_title('Lines Changed')
     metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")")
     expect(metric.execute).to eq 9
+  end
+
+  it "should compute a count metric from dataset" do
+    # works on anchor without label
+    expect(@blueprint.datasets('dataset.commits').count(@project)).to eq 3
+
+    # works on anchor with label
+    expect(@blueprint.datasets('dataset.devs').count(@project)).to eq 3
   end
 
   it "should execute an anonymous metric twice and not fail" do
@@ -360,14 +347,6 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(tagged_facts.count).to eq 1
   end
 
-  it "should contain metadata for each dataset in project metadata" do
-    k = @project.metadata.keys
-    expect(k).to include("manifest_devs")
-    expect(@project.metadata("manifest_devs")).not_to be_nil
-    @project.set_metadata('a', 'b')
-    expect(@project.metadata('a')).to eq 'b'
-  end
-
   it "should be able to interpolate metric based on" do
     res = @project.compute_metric "SELECT SUM(![fact.commits.lines_changed])"
     expect(res).to eq 9
@@ -388,12 +367,10 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should load the data" do
-    blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
     devs_data = [
       ["dev_id", "email"],
       [4, "josh@gooddata.com"]]
-    GoodData::Model.upload_data(devs_data, blueprint, 'devs', mode: 'INCREMENTAL', :client => @client, :project => @project)
-    # blueprint.find_dataset('devs').upload(devs_data, :load => 'INCREMENTAL')
+    @project.upload(devs_data, @blueprint, 'dataset.devs', mode: 'INCREMENTAL')
   end
 
   it "should have more users"  do
@@ -478,10 +455,10 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to give you label by name" do
     attribute = @project.attributes('attr.devs.dev_id')
-    label = attribute.label_by_name('email')
+    label = attribute.label_by_name('Id')
     expect(label.label?).to eq true
-    expect(label.title).to eq 'Email'
-    expect(label.identifier).to eq 'label.devs.dev_id.email'
+    expect(label.title).to eq 'Id'
+    expect(label.identifier).to eq 'label.devs.dev_id.id'
     expect(label.attribute_uri).to eq attribute.uri
     expect(label.attribute).to eq attribute
   end

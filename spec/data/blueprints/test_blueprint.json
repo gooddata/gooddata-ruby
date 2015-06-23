@@ -1,0 +1,38 @@
+{
+  "title": "Devs module",
+  "datasets": [
+    {
+      "type": "dataset",
+      "id": "dataset.devs",
+      "title": "Developers",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.devs.id",
+          "title": "Current Stage"
+        },
+        {
+          "type": "label",
+          "id": "label.devs.id.id",
+          "reference": "attr.devs.id",
+          "title": "Devs Id",
+          "name": "devs_id"
+        },
+        {
+          "type": "attribute",
+          "id": "attr.devs.name",
+          "title": "Name"
+        },
+        {
+          "type": "label",
+          "id": "label.opp_snapshot.accountstagesnapshot",
+          "reference": "attr.devs.name",
+          "title": "Account Stage (Snapshot)",
+          "name": "account",
+          "gd_data_type": "VARCHAR(128)",
+          "gd_type": "GDC.text"
+        }
+      ]
+    }
+  ]
+}

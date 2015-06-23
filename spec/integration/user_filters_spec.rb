@@ -2,32 +2,27 @@ require 'gooddata'
 
 describe "User filters implementation", :constraint => 'slow' do
   before(:all) do
-    @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
+    @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
-    @project = @client.create_project_from_blueprint(@spec, :auth_token => ConnectionHelper::GD_PROJECT_TOKEN)
+    blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+    @project = @client.create_project_from_blueprint(blueprint, :auth_token => ConnectionHelper::GD_PROJECT_TOKEN)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
-    GoodData.with_project(@project) do |p|
-      @label = GoodData::Attribute.find_first_by_title('Dev', client: @client, project: @project).label_by_name('email')
-      
-      blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
-      commits_data = [
-        ["lines_changed","committed_on","dev_id","repo_id"],
-        [1,"01/01/2014",1,1],
-        [3,"01/02/2014",2,2],
-        [5,"05/02/2014",3,1]]
-      GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
-      # blueprint.find_dataset('commits').upload(commits_data)
+    @label = GoodData::Attribute.find_first_by_title('Dev', client: @client, project: @project).label_by_name('email')
 
-      devs_data = [
-        ["dev_id", "email"],
-        [1, "tomas@gooddata.com"],
-        [2, "petr@gooddata.com"],
-        [3, "jirka@gooddata.com"]]
-      GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
-      # blueprint.find_dataset('devs').upload(devs_data)
-    end
+    commits_data = [
+      ["lines_changed","committed_on","dev_id","repo_id"],
+      [1,"01/01/2014",1,1],
+      [3,"01/02/2014",2,2],
+      [5,"05/02/2014",3,1]]
+    @project.upload(commits_data, blueprint, 'dataset.commits')
 
+    devs_data = [
+      ["dev_id", "email"],
+      [1, "tomas@gooddata.com"],
+      [2, "petr@gooddata.com"],
+      [3, "jirka@gooddata.com"]]
+    @project.upload(devs_data, blueprint, 'dataset.devs')
   end
 
   after(:all) do

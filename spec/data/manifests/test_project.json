@@ -5,25 +5,18 @@
         {
           "referenceKey": 1,
           "populates": [
-            "label.repos.repo_id"
+            "some_label_id"
           ],
           "mode": "FULL",
-          "columnName": "repo_id"
-        },
-        {
-          "populates": [
-            "label.repos.repo_id.name"
-          ],
-          "mode": "FULL",
-          "columnName": "name"
+          "columnName": "dev_id"
         },
         {
           "referenceKey": 1,
           "populates": [
-            "label.repos.department"
+            "some_attr_label_id"
           ],
           "mode": "FULL",
-          "columnName": "department"
+          "columnName": "email"
         }
       ],
       "dataSet": "dataset.repos",
@@ -42,15 +35,13 @@
         {
           "referenceKey": 1,
           "populates": [
-            "label.devs.dev_id"
+            "label.devs.dev_id.id"
           ],
           "mode": "FULL",
           "columnName": "dev_id"
         },
         {
-          "populates": [
-            "label.devs.dev_id.email"
-          ],
+          "populates": ["label.devs.dev_id.email"],
           "mode": "FULL",
           "columnName": "email"
         }
@@ -88,7 +79,7 @@
         },
         {
           "populates": [
-            "label.devs.dev_id"
+            "label.devs.dev_id.id"
           ],
           "mode": "FULL",
           "columnName": "dev_id",
@@ -96,7 +87,7 @@
         },
         {
           "populates": [
-            "label.repos.repo_id"
+            "some_label_id"
           ],
           "mode": "FULL",
           "columnName": "repo_id",
