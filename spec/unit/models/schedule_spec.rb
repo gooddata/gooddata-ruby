@@ -496,4 +496,24 @@ describe GoodData::Schedule do
       end
     end
   end
+
+  describe '#name' do
+    it 'should be able to get name of the schedule.' do
+      begin
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        expect(schedule.name).to eq 'graph.grf'
+      ensure
+        schedule && schedule.delete
+      end
+    end
+
+    it 'should be able to return your name if specified during creation.' do
+      begin
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param.merge(name: 'My schedule name'))
+        expect(schedule.name).to eq 'My schedule name'
+      ensure
+        schedule && schedule.delete
+      end
+    end
+  end
 end

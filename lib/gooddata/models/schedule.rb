@@ -103,6 +103,7 @@ module GoodData
 
         schedule = c.create(GoodData::Schedule, GoodData::Helpers.stringify_keys_deep!(SCHEDULE_TEMPLATE.deep_dup), client: c, project: p)
 
+        schedule.name = options[:name]
         schedule.hidden_params = options[:hidden_params]
         schedule.set_trigger(trigger)
         schedule.params = default_opts[:params].merge(options[:params] || {})
