@@ -17,6 +17,29 @@ module GoodData
         @realized = false
       end
 
+      def realize(params = {})
+        @realized = true
+        source = @source && @source.to_s
+        case source
+        when 'ads'
+          realize_query(params)
+        when 'staging'
+          realize_staging(params)
+        when 'web'
+          realize_link
+        when 's3'
+          realize_s3(params)
+        else
+          fail "DataSource does not support type \"#{source}\""
+        end
+      end
+
+      def realized?
+        @realized == true
+      end
+
+      private
+
       def realize_query(params)
         query = @options[:query]
         dwh = params['ads_client']
@@ -65,16 +88,24 @@ module GoodData
         filename
       end
 
-      def realize(params = {})
-        @realized = true
-        case @source.to_s
-        when 'ads'
-          realize_query(params)
-        when 'staging'
-          realize_staging(params)
-        when 'web'
-          realize_link
+      def realize_s3(params)
+        s3_client = params['aws_client'] && params['aws_client']['s3_client']
+        fail 'AWS client not present. Perhaps S3Middleware is missing in the brick definition?' if !s3_client || !s3_client.respond_to?(:buckets)
+        bucket_name = @options[:bucket]
+        key = @options[:key]
+        fail "Key \"bucket\" is missing in S3 datasource" if bucket_name.blank?
+        fail "Key \"key\" is missing in S3 datasource" if key.blank?
+        puts "Realizing download from S3. Bucket #{bucket_name}, object with key #{key}."
+        filename = Digest::SHA256.new.hexdigest(@options.to_json)
+        bucket = s3_client.buckets[bucket_name]
+        obj = bucket.objects[key]
+        File.open(filename, 'wb') do |file|
+          obj.read do |chunk|
+            file.write(chunk)
+          end
         end
+        puts 'Done downloading file.'
+        filename
       end
     end
   end
