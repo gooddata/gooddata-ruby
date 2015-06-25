@@ -25,7 +25,7 @@ GoodData::CLI.module_eval do
         fail ArgumentError, 'Wrong project specified' if project.nil?
 
         puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-        binding.pry(:quiet => true,
+        binding.pry(:quiet => true, # rubocop:disable Lint/Debugger
                     :prompt => [proc do |_target_self, _nest_level, _pry|
                       'sdk_live_session: '
                     end])
