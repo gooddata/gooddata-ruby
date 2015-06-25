@@ -24,7 +24,7 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
-        query('metrics', Metric, options)
+        query('metric', Metric, options)
       end
 
       def xcreate(metric, options = { :client => GoodData.connection, :project => GoodData.project })

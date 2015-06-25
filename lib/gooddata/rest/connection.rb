@@ -282,10 +282,10 @@ module GoodData
       # @param uri [String] Target URI
       def get(uri, options = {}, &user_block)
         options = log_info(options)
-        GoodData.logger.debug "GET: #{@server.url}#{uri}"
+        GoodData.logger.debug "GET: #{@server.url}#{uri}, #{options}"
         profile "GET #{uri}" do
           b = proc do
-            params = fresh_request_params(options[:request_id])
+            params = fresh_request_params(options[:request_id]).merge(options)
             begin
               @server[uri].get(params, &user_block)
             rescue RestClient::Exception => e

@@ -33,8 +33,20 @@ module GoodData
         project = GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        query_result = client.get(project.md['query'] + "/#{query_obj_type}/")['query']['entries']
-        options[:full] == false ? query_result : query_result.pmap { |item| klass[item['link'], options] }
+        query_result = []
+        offset = 0
+        page_limit = 50
+        loop do
+          result = client.get(project.md['objects'] + '/query', params: { category: query_obj_type, limit: page_limit, offset: offset })
+          query_result.concat(result['objects']['items'])
+          break if result['objects']['paging']['count'] < page_limit
+          offset += page_limit
+        end
+        if klass
+          query_result.map { |item| client.create(klass, item, project: project) }
+        else
+          query_result
+        end
       end
 
       def dependency(uri, key = nil, opts = { :client => GoodData.connection })
