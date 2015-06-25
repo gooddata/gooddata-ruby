@@ -54,25 +54,25 @@ module GoodData
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
     def values(options = {})
-      limit = options[:limit] || 100
-      page_limit = 100
-      offset = 0
-      vals = []
-      loop do
-        results = GoodData.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", {})
-        elements = results['validElements']
-        items = elements['items'].map do |el|
-          v = el['element']
-          {
-            :value => v['title'],
-            :uri => v['uri']
-          }
+      client = client(options)
+      Enumerator.new do |y|
+        offset = options[:offset] || 0
+        limit = options[:limit] || 100
+        page_limit = 100
+        loop do
+          results = client.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", {})
+          elements = results['validElements']
+          items = elements['items'].map do |el|
+            v = el['element']
+            y << {
+              :value => v['title'],
+              :uri => v['uri']
+            }
+          end
+          break if elements['items'].count < page_limit
+          offset += page_limit
         end
-        vals.concat(items)
-        break if vals.length > limit || vals.length == elements['paging']['total'].to_i
-        offset += page_limit
       end
-      vals.take(limit)
     end
 
     def values_count

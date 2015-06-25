@@ -132,7 +132,7 @@ describe GoodData::Project, :constraint => 'slow' do
 
   describe '#set_user_roles' do
     it 'Properly updates user roles as needed' do
-      users_to_import = @domain.users.sample(5).map {|u| { user: u, role: 'admin' }}
+      users_to_import = @domain.users.drop(rand(100)).take(5).map {|u| { user: u, role: 'admin' }}
       @project.import_users(users_to_import, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
       users_without_owner = @project.users.reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.pselect { |u| u.role.title == 'Admin' }
 

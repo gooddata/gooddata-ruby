@@ -33,19 +33,17 @@ module GoodData
         project = GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        query_result = []
         offset = 0
         page_limit = 50
-        loop do
-          result = client.get(project.md['objects'] + '/query', params: { category: query_obj_type, limit: page_limit, offset: offset })
-          query_result.concat(result['objects']['items'])
-          break if result['objects']['paging']['count'] < page_limit
-          offset += page_limit
-        end
-        if klass
-          query_result.map { |item| client.create(klass, item, project: project) }
-        else
-          query_result
+        Enumerator.new do |y|
+          loop do
+            result = client.get(project.md['objects'] + '/query', params: { category: query_obj_type, limit: page_limit, offset: offset })
+            result['objects']['items'].each do |item|
+              y << (klass ? client.create(klass, item, project: project) : item)
+            end
+            break if result['objects']['paging']['count'] < page_limit
+            offset += page_limit
+          end
         end
       end
 

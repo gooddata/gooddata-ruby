@@ -412,7 +412,7 @@ describe "Full project implementation", :constraint => 'slow' do
     attribute = @project.attributes('attr.devs.dev_id')
     label = attribute.primary_label
     value = label.values.first
-    different_value = label.values[1]
+    different_value = label.values.drop(1).first
     fact = @project.facts('fact.commits.lines_changed')
     metric = @project.create_metric("SELECT SUM([#{fact.uri}]) WHERE [#{attribute.uri}] = [#{value[:uri]}]")
     metric.replace_value(label, value[:value], different_value[:value])
