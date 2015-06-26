@@ -21,7 +21,7 @@ module GoodData
 
           fail('You need to specify token for project creation') if opts[:auth_token].nil?
           project = opts[:project] || client.create_project(opts.merge(:title => spec[:title]))
-          
+
           begin
             migrate_datasets(spec, opts.merge(project: project, client: client))
             load(p, spec)
