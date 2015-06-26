@@ -48,7 +48,7 @@ describe GoodData::Metric do
                 {'content' =>
                    {'format' => '#,##0',
                     'expression' =>
-                      "SELECT SUM([#{USED_METRIC.uri})"},
+                      "SELECT SUM([#{USED_METRIC.uri}])"},
                  'meta' =>
                    {'author' => '/gdc/account/profile/4e1e8cacc4989228e0ae531b30853248',
                     'uri' => '/gdc/md/ksjy0nr3goz6k8yrpklz97l0mych7nez/obj/252',
@@ -69,27 +69,27 @@ describe GoodData::Metric do
 
   describe '#contain?' do
     it 'should say it contains a depending metric if it does' do
-      @instance.contain?(USED_METRIC).should == true
+      expect(@instance.contain?(USED_METRIC)).to eq true
     end
 
     it 'should say it contains a depending object which is given as a string if it does' do
-      @instance.contain?(USED_METRIC).should == true
+      expect(@instance.contain?(USED_METRIC)).to eq true
     end
 
     it 'should be able to replace an object if the object is used in the expression' do
-      pending('resolve mutating constant if I init from it')
+      skip('resolve mutating constant if I init from it')
     end
 
     it 'should be able to return an expression of the metric' do
-      @instance.expression.should == "SELECT SUM([#{USED_METRIC.uri})"
+      expect(@instance.expression).to eq "SELECT SUM([#{USED_METRIC.uri}])"
     end
 
     it 'should be able to replace an object if the object is used in the expression' do
-      @instance.contain?(USED_METRIC).should == true
-      @instance.contain?(UNUSED_METRIC).should == false
+      expect(@instance.contain?(USED_METRIC)).to be_truthy
+      expect(@instance.contain?(UNUSED_METRIC)).to be_falsey
       @instance.replace(USED_METRIC, UNUSED_METRIC)
-      @instance.contain?(USED_METRIC).should == false
-      @instance.contain?(UNUSED_METRIC).should == true
+      expect(@instance.contain?(USED_METRIC)).to be_falsey
+      expect(@instance.contain?(UNUSED_METRIC)).to be_truthy
     end
   end
 

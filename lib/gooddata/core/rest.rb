@@ -1,8 +1,6 @@
 # encoding: UTF-8
 
 module GoodData
-  DEFAULT_SLEEP_INTERVAL = 10
-
   class << self
     # Performs a HTTP GET request.
     #
@@ -77,39 +75,38 @@ module GoodData
 
     # Get WebDav directory for project data
     # @return [String]
-    def get_project_webdav_path(file, options = { :project => GoodData.project })
+    def project_webdav_path(options = { :project => GoodData.project })
       options = merge_options(options)
       project = options[:project]
-      project.get_project_webdav_path(file)
+      project.project_webdav_path
     end
 
     # Upload to project directory
     def upload_to_project_webdav(file, options = { :project => GoodData.project })
       options = merge_options(options)
-      webdav_filename = File.basename(file)
-      url = get_project_webdav_path(webdav_filename, options)
+      url = project_webdav_path(options)
       connection.upload(file, options.merge(:staging_url => url))
     end
 
     # Download from project directory
     def download_from_project_webdav(file, where, options = { :project => GoodData.project })
       options = merge_options(options)
-      url = get_project_webdav_path(file, options)
+      url = project_webdav_path(options)
       connection.download(file, where, options.merge(:staging_url => url))
     end
 
     # Get WebDav directory for user data
     # @return [String]
-    def get_user_webdav_path(file, options = { :project => GoodData.project })
+    def user_webdav_path(options = { :project => GoodData.project })
       options = merge_options(options)
       project = options[:project]
-      project.get_user_webdav_path(file)
+      project.user_webdav_path
     end
 
     # Download from user directory
     def download_from_user_webdav(file, where, options = { :project => GoodData.project })
       options = merge_options(options)
-      url = get_user_webdav_path(file, options)
+      url = user_webdav_path(options)
       connection.download(file, where, options.merge(:staging_url => url))
     end
 
@@ -123,21 +120,9 @@ module GoodData
     # @param options [Hash] Options
     # @return [Hash] Result of polling
     def poll_on_code(link, options = {})
-      code = options[:code] || 202
-      sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
-      response = GoodData.get(link, :process => false)
-      while response.code == code
-        sleep sleep_interval
-        GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
-          sleep sleep_interval
-          response = GoodData.get(link, :process => false)
-        end
-      end
-      if options[:process] == false
-        response
-      else
-        GoodData.get(link)
-      end
+      client = options[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+      client.poll_on_code(link, options)
     end
 
     # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
@@ -152,17 +137,7 @@ module GoodData
     def poll_on_response(link, options = {}, &bl)
       client = options[:client]
       fail ArgumentError, 'No :client specified' if client.nil?
-
-      sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
-      response = get(link)
-      while bl.call(response)
-        sleep sleep_interval
-        GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { client.connection.refresh_token }) do
-          sleep sleep_interval
-          response = get(link)
-        end
-      end
-      response
+      client.poll_on_response(link, options, &bl)
     end
 
     private

@@ -161,7 +161,7 @@ module GoodData
         ProjectBlueprint.datasets(to_hash, options).map { |d| DatasetBlueprint.new(d) }
       end
 
-      def add_dataset(a_dataset, index = nil)
+      def add_dataset!(a_dataset, index = nil)
         if index.nil? || index > datasets.length
           data[:datasets] << a_dataset.to_hash
         else
@@ -263,9 +263,11 @@ module GoodData
       #
       # @return [Array] array of errors
       def validate
-        refs_errors = validate_references
-        labels_errors = datasets.reduce([]) { |a, e| a.concat(e.validate) }
-        refs_errors.concat(labels_errors)
+        errors = []
+        errors.concat validate_references
+        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate) }
+        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate_gd_data_type_errors) }
+        errors
       end
 
       # Validate the blueprint and all its datasets and return true if model is valid. False otherwise.
@@ -458,10 +460,10 @@ module GoodData
             local_dataset = temp_blueprint.find_dataset(dataset.name)
             index = temp_blueprint.datasets.index(local_dataset)
             local_dataset.merge!(dataset)
-            temp_blueprint.remove_dataset(local_dataset.name)
-            temp_blueprint.add_dataset(local_dataset, index)
+            temp_blueprint.remove_dataset!(local_dataset.name)
+            temp_blueprint.add_dataset!(local_dataset, index)
           else
-            temp_blueprint.add_dataset(dataset.dup)
+            temp_blueprint.add_dataset!(dataset.dup)
           end
         end
         temp_blueprint
@@ -473,6 +475,15 @@ module GoodData
       # @return [GoodData::Model::DatasetBlueprint]
       def dup
         ProjectBlueprint.new(data.deep_dup)
+      end
+
+      # Helper for storing the project blueprint into a file as JSON.
+      #
+      # @param filename [String] Name of the file where the blueprint should be stored
+      def store_to_file(filename)
+        File.open(filename, 'w') do |f|
+          f << JSON.pretty_generate(to_hash)
+        end
       end
 
       # Returns title of a dataset. If not present it is generated from the name

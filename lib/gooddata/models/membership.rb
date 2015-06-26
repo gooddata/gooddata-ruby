@@ -50,9 +50,11 @@ module GoodData
               # And following lines are even much more ugly hack
               # 'authentication_modes' => ['sso', 'password']
             },
+            'links' => {},
             'meta' => {}
           }
         }
+        json['user']['links']['self'] = data[:uri] if data[:uri]
         c.create(self, json)
       end
 

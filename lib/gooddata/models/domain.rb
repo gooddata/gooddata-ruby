@@ -10,8 +10,6 @@ module GoodData
   class Domain < GoodData::Rest::Object
     attr_reader :name
 
-    USERS_OPTIONS = { :offset => 0, :limit => 10_000 }
-
     class << self
       # Looks for domain
       #
@@ -99,6 +97,7 @@ module GoodData
       end
 
       def update_user(user_data, options = { client: GoodData.connection })
+        user_data = user_data.to_hash if user_data.is_a?(GoodData::Profile)
         client = client(options)
         user_data = user_data.to_hash
         # generated_pass = rand(10E10).to_s
@@ -144,7 +143,7 @@ module GoodData
 
         # Optional sso provider
         tmp = user_data[:sso_provider]
-        data['ssoProvider'] = tmp if tmp && !tmp.empty?
+        data['ssoProvider'] = tmp if tmp
 
         # Optional timezone
         tmp = user_data[:timezone]
@@ -170,7 +169,8 @@ module GoodData
         c = client(opts)
         escaped_login = CGI.escape(login)
         domain = c.domain(domain)
-        url = "/gdc/account/domains/#{domain.name}/users?login=#{escaped_login}"
+        GoodData.logger.warn("Retrieving particular user \"#{login.inspect}\" from domain #{domain.name}")
+        url = "#{domain.uri}/users?login=#{escaped_login}"
         tmp = c.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
         items && items.length > 0 ? c.factory.create(GoodData::Profile, items.first) : nil
@@ -182,22 +182,30 @@ module GoodData
       # @option opts [Number] :offset The subject
       # @option opts [Number] :limit From address
       # TODO: Review opts[:limit] functionality
-      def users(domain, opts = USERS_OPTIONS.merge(:client => GoodData.connection))
-        result = []
+      def users(domain, id = :all, opts = {})
+        c = client(opts)
+        domain = c.domain(domain)
+        if id == :all
+          GoodData.logger.warn("Retrieving all users from domain #{domain.name}")
+          result = []
+          page_limit = opts[:page_limit] || 1000
+          limit = opts[:limit] || Float::INFINITY
+          offset = opts[:offset] || 0
+          uri = "#{domain.uri}/users?offset=#{offset}&limit=#{page_limit}"
+          loop do
+            tmp = client(opts).get(uri)
+            tmp['accountSettings']['items'].each do |account|
+              result << client(opts).create(GoodData::Profile, account)
+            end
+            break if result.length >= limit
 
-        offset = 0 || opts[:offset]
-        uri = "/gdc/account/domains/#{domain}/users?offset=#{offset}&limit=#{opts[:limit]}"
-        loop do
-          break unless uri
-          tmp = client(opts).get(uri)
-          tmp['accountSettings']['items'].each do |account|
-            result << client(opts).create(GoodData::Profile, account)
+            uri = tmp['accountSettings']['paging']['next']
+            break unless uri
           end
-          break if opts[:limit] && result.length >= opts[:limit]
-          uri = tmp['accountSettings']['paging']['next']
+          result
+        else
+          find_user_by_login(domain, id)
         end
-
-        result
       end
 
       # Create users specified in list
@@ -205,51 +213,26 @@ module GoodData
       # @param [String] default_domain_name Default domain name used when no specified in user
       # @return [Array<GoodData::User>] List of users created
       def create_users(list, default_domain = nil, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = client(opts)
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
-        domain_obj = client.domain(default_domain_name)
-        domains = {}
-        list.map do |user|
+        domain = client.domain(default_domain_name)
+
+        domain_users_cache = Hash[domain.users.map { |u| [u.login, u] }]
+        list.pmapcat do |user|
           begin
             user_data = user.to_hash
-            # TODO: Add user here
-            domain_name = user_data[:domain] || default_domain_name
-
-            # Lookup for domain in cache'
-            domain = domains[domain_name]
-
-            # Get domain info from REST, add to cache
-            if domain.nil?
-              domain = {
-                :domain => domain_obj,
-                :users => domain_obj.users
-              }
-
-              domain[:users_map] = Hash[domain[:users].map { |u| [u.login, u] }]
-              domains[domain_name] = domain
-            end
-
-            # Check if user exists in domain
-            domain_user = domain[:users_map][user_data[:login]]
-
-            # Create domain user if needed
+            domain_user = domain_users_cache[user_data[:login]]
             if !domain_user
-              # Add created user to cache
-              domain_user = domain[:domain].add_user(user_data, opts)
-              domain[:users] << domain_user
-              domain[:users_map][domain_user.login] = domain_user
-              { type: :user_added_to_domain, user: domain_user }
+              added_user = domain.add_user(user_data, opts)
+              [{ type: :user_added_to_domain, user: added_user }]
             else
-              # fields = [:firstName, :email]
-              diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login)
-              next if diff[:changed].empty?
-
-              domain_user = domain[:domain].update_user(domain_user.to_hash.merge(user_data.compact), opts)
-              domain[:users_map][domain_user.login] = domain_user
-              { type: :user_changed_in_domain, user: domain_user }
+              fields_to_check = opts[:fields_to_check] || user_data.keys
+              diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login, fields: fields_to_check)
+              next [] if diff[:changed].empty?
+              updated_user = domain.update_user(domain_user.to_hash.merge(user_data.compact), opts)
+              [{ type: :user_changed_in_domain, user: updated_user }]
             end
           rescue RuntimeError => e
-            { type: :error, reason: e }
+            [{ type: :error, reason: e }]
           end
         end
       end
@@ -268,7 +251,7 @@ module GoodData
     # Example
     #
     # GoodData.connect 'tomas.korcak@gooddata.com' 'your-password'
-    # domain = GoodData::Domain['gooddata-tomas-korcak']
+    # domain = project.domain('domain-name')
     # domain.add_user 'joe.doe@example', 'sup3rS3cr3tP4ssW0rtH'
     #
     def add_user(data, opts = {})
@@ -290,8 +273,8 @@ module GoodData
     # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
-      return member(name) if name.instance_of?(GoodData::Membership)
-      return member(name) if name.instance_of?(GoodData::Profile)
+      return member(name, user_list) if name.instance_of?(GoodData::Membership)
+      return member(name, user_list) if name.instance_of?(GoodData::Profile)
       name = name.is_a?(Hash) ? name[:login] || name[:uri] : name
       return nil unless name
       name.downcase!
@@ -358,11 +341,15 @@ module GoodData
     # domain = GoodData::Domain['gooddata-tomas-korcak']
     # pp domain.users
     #
-    def users(opts = USERS_OPTIONS)
-      GoodData::Domain.users(name, opts.merge(client: client))
+    def users(id = :all, opts = {})
+      GoodData::Domain.users(name, id, opts.merge(client: client))
     end
 
     alias_method :members, :users
+
+    def uri
+      "/gdc/account/domains/#{name}"
+    end
 
     private
 

@@ -27,10 +27,23 @@ describe GoodData::Model::FromWire do
     expect(col[:gd_type]).to eq 'GDC.text'
   end
 
+  it "should validate a gd_type" do
+    expect(GoodData::Model.check_gd_type("GDC.time")).to eq true
+    expect(GoodData::Model.check_gd_type("gdc.time")).to eq false
+    expect(GoodData::Model.check_gd_type("gdc.time3")).to eq false
+  end
+
   it "should validate a gd_datatype" do
-    expect(GoodData::Model.check_gd_datatype("GDC.time")).to eq true
-    expect(GoodData::Model.check_gd_datatype("gdc.time")).to eq false
-    expect(GoodData::Model.check_gd_datatype("gdc.time3")).to eq false
+    expect(GoodData::Model.check_gd_data_type("INT")).to eq true
+    expect(GoodData::Model.check_gd_data_type("int")).to eq true
+    expect(GoodData::Model.check_gd_data_type("VARCHAR(128)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("varchar(128)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("DECIMAL(10, 5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("DECIMAL(10,5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("DECIMAL(10,  5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("decimal(10, 5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("decimal(10,5)")).to eq true
+    expect(GoodData::Model.check_gd_data_type("decimal(10,  5)")).to eq true
   end
 
   it "should be able to omit titles if they are superfluous" do
@@ -42,11 +55,11 @@ describe GoodData::Model::FromWire do
   end
 
   it "should enable sorting" do
-    pending("UAAA")
+    skip("UAAA")
   end
 
   it "should allow defining date dimensions" do
-    pending('UAAA')
+    skip('UAAA')
   end
 
   it "should generate the same thing it parsed" do
@@ -61,6 +74,7 @@ describe GoodData::Model::FromWire do
       {
         type: 'anchor',
         name: "techoppanalysis",
+        folder: "Opportunity Benchmark",
         title: "Tech Opp. Analysis",
         gd_data_type: "VARCHAR(128)",
         gd_type: "GDC.text",
@@ -73,6 +87,7 @@ describe GoodData::Model::FromWire do
     expect(x).to eq [
       {
         :type=>'attribute',
+        :folder => "Opportunity Benchmark",
         :name=>"month",
         :gd_data_type=>"VARCHAR(128)",
         :gd_type=>"GDC.text",
@@ -88,6 +103,7 @@ describe GoodData::Model::FromWire do
       },
      {
        :type=>'attribute',
+       :folder => "Opportunity Benchmark",
        :name=>"cohorttype",
        :title=>"Cohort Type",
        :gd_data_type=>"VARCHAR(128)",
@@ -115,6 +131,12 @@ describe GoodData::Model::FromWire do
         :gd_type=>"GDC.text",
         :default_label => true
       }]
+  end
+
+  it "should be able to parse description from both attributes and facts" do
+    expect(@blueprint.find_dataset('opportunity').anchor[:description]).to eq 'This is opportunity attribute description'
+    expect(@blueprint.find_dataset('stage_history').facts.find {|f| f[:name] == 'stage_velocity'}[:description]).to eq 'Velocity description'
+    expect(@blueprint.find_dataset('opp_owner').attributes.find {|f| f[:name] == 'region'}[:description]).to eq 'Owner Region description'
   end
 
   it "should be able to deal with fiscal dimensions with weird names" do

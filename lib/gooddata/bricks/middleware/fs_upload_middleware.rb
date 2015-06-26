@@ -1,9 +1,4 @@
 # encoding: UTF-8
-
-require 'uri'
-require 'net/http'
-require 'pathname'
-
 require_relative 'base_middleware'
 
 module GoodData
@@ -15,20 +10,21 @@ module GoodData
       end
 
       def call(params)
-        returning(@app.call(params)) do |_result|
+        returning(@app.call(params)) do |_|
           destination = @destination
           (params['gdc_files_to_upload'] || []).each do |f|
-            case destination.to_s
-            when 'staging'
-              GoodData.upload_to_project_webdav(f[:path], directory: f[:webdav_directory])
-              puts "Uploaded local file \"#{f[:path]}\" to webdav."
+            path = f[:path]
+            case destination.to_sym
+            when :staging
+              GoodData.client.get '/gdc/account/token', :dont_reauth => true
+              url = GoodData.project_webdav_path
+              GoodData.upload_to_project_webdav(path)
+              puts "Uploaded local file \"#{path}\" to url \"#{url + path}\""
             end
           end
         end
       end
     end
-
-    # Alias to make it backwards compatible
     FsUploadMiddleware = FsProjectUploadMiddleware
   end
 end

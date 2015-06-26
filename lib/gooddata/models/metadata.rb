@@ -38,6 +38,11 @@ module GoodData
       @json = data.to_hash
     end
 
+    def add_tag(a_tag)
+      self.tags = tag_set.add(a_tag).to_a.join(' ')
+      self
+    end
+
     def delete
       if saved? # rubocop:disable Style/GuardClause
         client.delete(uri)
@@ -68,6 +73,11 @@ module GoodData
 
     def project
       @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, ''), :client => client]
+    end
+
+    def remove_tag(a_tag)
+      self.tags = tag_set.delete(a_tag).to_a.join(' ')
+      self
     end
 
     def saved?
@@ -130,6 +140,10 @@ module GoodData
       dupped[root_key]['meta']['title'] = new_title
       x = client.create(self.class, dupped, :project => project)
       x.save
+    end
+
+    def tag_set
+      tags.scan(/\w+/).to_set
     end
 
     def ==(other)

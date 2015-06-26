@@ -1,5 +1,14 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.15
+
+- Adding users now accepts more variants of providing users
+- Import users is not importing users to domain automatically. There is app in appstore that should help you with various ways of importing users
+- Speed improvements for adding users
+- Fixed listing facts/attributes on the dataset
+- Corrected fixed limit on listing users from domain. Paging is handled by different parameter
+- Replacing value in metric/attribute should be more resilient
+
 ## 0.6.14
 
 - Project update from blueprint does not fail when MAQL chunks are empty.

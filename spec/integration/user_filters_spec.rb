@@ -27,6 +27,7 @@ describe "User filters implementation", :constraint => 'slow' do
       GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
       # blueprint.find_dataset('devs').upload(devs_data)
     end
+
   end
 
   after(:all) do
@@ -84,7 +85,7 @@ describe "User filters implementation", :constraint => 'slow' do
     expect(@project.data_permissions.first.pretty_expression).to eq "[Dev] IN ([tomas@gooddata.com])"
   end
 
-  it "should fail when asked to set a value not in the proejct" do
+  it "should fail when asked to set a value not in the project" do
     filters = [
       [ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value', 'tomas@gooddata.com'],
       [ConnectionHelper::DEFAULT_USERNAME, @label.uri, 'tomas@gooddata.com']]
@@ -123,7 +124,7 @@ describe "User filters implementation", :constraint => 'slow' do
     perms = @project.data_permissions
     pretty = perms.pmap {|f| [f.related.login, f.pretty_expression]}
     expect(perms.first.related).to eq @client.user
-    expect(pretty).to eq [["svarovsky+gem_tester@gooddata.com", "[Dev] IN ([tomas@gooddata.com])"]]
+    expect(pretty).to eq [[ConnectionHelper::DEFAULT_USERNAME, "[Dev] IN ([tomas@gooddata.com])"]]
   end
 
   it "sets up mandatory users based on the state given as an end state by default." do

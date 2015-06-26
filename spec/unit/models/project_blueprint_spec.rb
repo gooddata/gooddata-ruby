@@ -13,11 +13,11 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it "should return the title" do
-    @blueprint.title.should == "RubyGem Dev Week test"
+    expect(@blueprint.title).to eq "RubyGem Dev Week test"
   end
 
   it 'valid blueprint should be marked as valid' do
-    @blueprint.valid?.should == true
+    expect(@blueprint.valid?).to eq true
   end
 
   it 'valid blueprint should give you empty array of errors' do
@@ -33,25 +33,57 @@ describe GoodData::Model::ProjectBlueprint do
       end
     end
     bp = GoodData::Model::ProjectBlueprint.new(builder)
+    expect(bp.valid?).to be_falsey
+    errors = bp.validate
+    expect(errors.first).to eq ({ anchor: 2 })
+    expect(errors.count).to eq 1
+  end
+
+  it 'model should be invalid if it invalid gd data type' do
+    builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id", gd_data_type: "INTEGERX")
+        d.add_attribute("attr1")
+        d.add_attribute("name")
+      end
+    end
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
     bp.valid?.should == false
     errors = bp.validate
-    errors.first.should == {:anchor => 2}
     errors.count.should == 1
   end
 
+  it 'model should be valid if it has int specified as integer and default should be decimal' do
+    builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id")
+        d.add_fact("fact1", gd_data_type: "integer")
+        d.add_fact("fact")
+        d.add_attribute("name")
+      end
+    end
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
+    bp.valid?.should == true
+    errors = bp.validate
+    errors.count.should == 0
+    facts = bp.to_wire[:diffRequest][:targetModel][:projectModel][:datasets].first[:dataset][:facts]
+    expect(facts[0][:fact][:dataType]).to eq 'INT'
+    expect(facts[1][:fact][:dataType]).to eq 'DECIMAL(12,2)'
+  end
+
   it 'invalid blueprint should be marked as invalid' do
-    @invalid_blueprint.valid?.should == false
+    expect(@invalid_blueprint.valid?).to eq false
   end
   
   it 'invalid blueprint should give you list of violating references' do
     errors = @invalid_blueprint.validate
-    errors.size.should == 1
-    errors.first.should == {
+    expect(errors.size).to eq 1
+    expect(errors.first).to eq({
         type: 'reference',
         name: 'user_id',
         dataset: 'users',
         reference: 'user_id'
-    }
+    })
   end
 
   it 'references return empty array if there is no reference' do
@@ -61,14 +93,14 @@ describe GoodData::Model::ProjectBlueprint do
 
   it "should be possible to create from ProjectBlueprint from ProjectBuilder in several ways" do
     builder = GoodData::Model::SchemaBuilder.new("stuff") do |d|
-      d.add_attribute("id", :title => "My Id")
-      d.add_fact("amount", :title => "Amount")
+      d.add_attribute("id", title: "My Id")
+      d.add_fact("amount", title: "Amount")
     end
     bp1 = GoodData::Model::ProjectBlueprint.new(builder)
-    bp1.valid?.should == true
+    expect(bp1.valid?).to eq true
 
     bp2 = builder.to_blueprint
-    bp2.valid?.should == true
+    expect(bp2.valid?).to eq true
   end
 
   it 'should be able to get dataset by name' do
@@ -89,47 +121,45 @@ describe GoodData::Model::ProjectBlueprint do
   end
 
   it 'should be able to tell me if ceratain dataset by name is in the blueprint' do
-    @blueprint.dataset?('devs').should be_truthy
+    expect(@blueprint.dataset?('devs')).to be_truthy
   end
 
   it 'should tell you it has anchor when it does' do
-    @repos.anchor?.should == true
+    expect(@repos.anchor?).to eq true
   end
 
   it 'should tell you it does not have anchor when it does not' do
-    @commits.anchor?.should == false
+    expect(@commits.anchor?).to be_falsey
   end
 
   it 'should be able to grab attribute' do
-    pending('Wrap into object')
-    @repos.labels.size.should == 1
-    @repos.labels.first.attribute.name.should == 'repo_id'
+    expect(@repos.labels.size).to eq 1
+    expect(@repos.labels.first[:reference]).to eq 'repo_id'
+    # TODO: this would be nice
+    # expect(@repos.labels.first.attribute.name).to eq 'repo_id'
   end
 
   it 'anchor should have labels' do
-    pending('Wrap into object')
-    @repos.anchor.labels.first.identifier.should == 'label.repos.repo_id'
+    skip('Wrap into objects')
+    expect(@repos.anchor.labels.first.identifier).to eq 'label.repos.repo_id'
   end
 
   it 'attribute should have labels' do
-    pending('Wrap into object')
-    @repos.attributes.first.labels.first.identifier.should == 'label.repos.department'
+    skip('Wrap into object')
+    expect(@repos.attributes.first.labels.first.identifier).to eq 'label.repos.department'
   end
 
   it 'commits should have one fact' do
-    pending('Wrap into object')
-    @commits.facts.size.should == 1
+    expect(@commits.facts.size).to eq 1
   end
 
   it 'Anchor on repos should have a label' do
-    pending('Wrap into object')
-    @repos.anchor.labels.size.should == 2
+    skip('wrap into objects')
+    expect(@repos.anchor.labels.size).to eq 2
   end
 
   it 'should not have a label for a dataset without anchor with label' do
-    pending('Wrap into object')
-    @commits.anchor.should == nil
-    # @commits.to_schema.anchor.labels.empty?.should == true
+    expect(@commits.anchor).to eq nil
   end
 
   it 'should be able to provide wire representation' do
@@ -142,98 +172,126 @@ describe GoodData::Model::ProjectBlueprint do
 
       p.add_dataset("repos") do |d|
         d.add_anchor("repo_id")
-        d.add_label("name", :reference => "invalid_ref")
+        d.add_label("name", reference: "invalid_ref")
       end
     end
     bp = GoodData::Model::ProjectBlueprint.new(builder)
-    bp.valid?.should == false
+    expect(bp.valid?).to be_falsey
     errors = bp.validate
-    errors.count.should == 1
+    expect(errors.count).to eq 1
   end
 
   it "should return attributes form all datasets" do
-    @blueprint.attributes.count.should == 1
+    expect(@blueprint.attributes.count).to eq 1
   end
 
   it "should return facts form all datasets" do
-    @blueprint.facts.count.should == 1
+    expect(@blueprint.facts.count).to eq 1
   end
 
   it "should return labels form all datasets" do
-    @blueprint.labels.count.should == 2
+    expect(@blueprint.labels.count).to eq 2
   end
 
   it "should return labels form all datasets" do
-    @blueprint.attributes_and_anchors.count.should == 3
+    expect(@blueprint.attributes_and_anchors.count).to eq 3
   end
 
   it "should be able to add datasets on the fly" do
     builder = GoodData::Model::SchemaBuilder.new("stuff") do |d|
-      d.add_attribute("id", :title => "My Id")
-      d.add_fact("amount", :title => "Amount")
+      d.add_attribute("id", title: "My Id")
+      d.add_fact("amount", title: "Amount")
     end
     dataset = builder.to_blueprint
-    @blueprint.datasets.count.should == 3
-    @blueprint.add_dataset(dataset)
-    @blueprint.datasets.count.should == 4
+    expect(@blueprint.datasets.count).to eq 3
+    @blueprint.add_dataset!(dataset)
+    expect(@blueprint.datasets.count).to eq 4
   end
 
   it "should be able to remove dataset by name" do
-    @blueprint.datasets.count.should == 3
+    expect(@blueprint.datasets.count).to eq 3
     @blueprint.remove_dataset!('repos')
-    @blueprint.datasets.count.should == 2
+    expect(@blueprint.datasets.count).to eq 2
   end
 
   it "should be able to remove dataset by reference" do
-    @blueprint.datasets.count.should == 3
+    expect(@blueprint.datasets.count).to eq 3
     dataset = @blueprint.find_dataset('repos')
     @blueprint.remove_dataset!(dataset)
-    @blueprint.datasets.count.should == 2
+    expect(@blueprint.datasets.count).to eq 2
   end
 
   it "should be able to serialize itself to a hash" do
     ser = @blueprint.to_hash
     ser.is_a?(Hash)
-    ser.keys.should == [:title, :datasets, :date_dimensions]
+    expect(ser.keys).to eq [:title, :datasets, :date_dimensions]
   end
 
   it "should be able to tell you whether a dataset is referencing any others including date dimensions" do
     referenced_datasets = @blueprint.referenced_by('commits')
-    referenced_datasets.count.should == 3
+    expect(referenced_datasets.count).to eq 3
   end
 
   it "should be able to find star centers - datasets that are not referenced by any other - these are typical fact tables" do
     centers = @blueprint.find_star_centers
-    centers.count.should == 1
-    centers.first.name.should == 'commits'
+    expect(centers.count).to eq 1
+    expect(centers.first.name).to eq 'commits'
   end
 
   it "should be able to return all attributes or anchors that can break metrics computed in the context of given dataset" do
     attrs = @blueprint.can_break('commits')
-    attrs.count.should == 3
+    expect(attrs.count).to eq 3
 
     attrs = @blueprint.can_break('devs')
-    attrs.count.should == 1
+    expect(attrs.count).to eq 1
   end
 
   it "should be able to merge models" do
     additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/additional_dataset_module.json") 
-    @blueprint.datasets.count.should == 3
+    expect(@blueprint.datasets.count).to eq 3
     @blueprint.merge!(additional_blueprint)
-    @blueprint.datasets.count.should == 4
+    expect(@blueprint.datasets.count).to eq 4
   end
 
   it "should be merging in the additive matter. Order should not matter." do
     builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
       p.add_date_dimension("created_on")
       p.add_dataset("stuff") do |d|
-        d.add_anchor("repo_id")
-        d.add_label("name", :reference => "invalid_ref")
+        d.add_anchor('repo_id')
+        d.add_label('name', reference: 'invalid_ref')
       end
     end
     dataset = builder.to_blueprint
 
     merged1 = @blueprint.merge(dataset)
     merged2 = dataset.merge(@blueprint)
+  end
+
+  it 'blueprint can be set with date reference and default format is set' do
+    builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
+      p.add_date_dimension("committed_on")
+
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id")
+        d.add_attribute("name")
+        d.add_date('opportunity_comitted', dataset: 'committed_on')
+      end
+    end
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
+    expect(bp.fields.find {|f| f[:type] == :date}[:format]).to eq GoodData::Model::DEFAULT_DATE_FORMAT
+  end
+
+  it 'blueprint can be set with date reference and default format is set' do
+    builder = GoodData::Model::ProjectBuilder.create("my_bp") do |p|
+      p.add_date_dimension("committed_on")
+
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id")
+        d.add_attribute("name")
+        d.add_date('opportunity_comitted', dataset: 'committed_on', format: 'yyyy/MM/dd')
+      end
+    end
+    bp = GoodData::Model::ProjectBlueprint.new(builder)
+    expect(bp.fields.find {|f| f[:type] == :date}[:format]).to eq 'yyyy/MM/dd'
   end
 end

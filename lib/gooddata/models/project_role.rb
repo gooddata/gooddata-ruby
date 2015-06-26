@@ -20,6 +20,30 @@ module GoodData
     include GoodData::Mixin::Contributor
     include GoodData::Mixin::Timestamps
 
+    EMPTY_OBJECT = {
+      'projectRole' => {
+        'permissions' => {},
+        'links' => {},
+        'meta' => {}
+      }
+    }
+
+    def self.create_object(data)
+      meta_data = {}.tap do |d|
+        d[:created] = data[:created] || Time.now
+        d[:identifier] = data[:identifier]
+        d[:updated] = data[:updated] || d[:created] || Time.now
+        d[:title] = data[:title]
+        d[:summary] = data[:summary]
+      end
+      new_data = EMPTY_OBJECT.deep_dup.tap do |d|
+        d['projectRole']['links']['self'] = data[:uri] if data[:uri]
+        d['projectRole']['meta'] = d['projectRole']['meta'].merge(meta_data.stringify_keys)
+        d['projectRole']['permissions'] = d['projectRole']['permissions'].merge((data[:permissions] || {}).stringify_keys)
+      end
+      new(new_data)
+    end
+
     def initialize(json)
       @json = json
     end
@@ -45,6 +69,8 @@ module GoodData
     #
     # @return [string] URI of this project role
     def uri
+      return @json['projectRole']['links']['self'] if @json['projectRole']['links']['self']
+      return nil unless @json['projectRole']['links']['roleUsers']
       @json['projectRole']['links']['roleUsers'].split('/')[0...-1].join('/')
     end
 

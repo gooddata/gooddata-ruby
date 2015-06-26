@@ -4,8 +4,6 @@ describe GoodData::Schedule do
   SCHEDULE_ID = ScheduleHelper::SCHEDULE_ID
   SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
-  @test_cron = '0 15 27 7 *'
-
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 
@@ -20,11 +18,16 @@ describe GoodData::Schedule do
 
     @project = ProjectHelper.get_default_project(:client => @client)
     @project_executable = 'graph/graph.grf'
+    @test_cron = '0 15 27 7 *'
     @test_data = {
       :timezone => 'UTC',
       :cron => '2 2 2 2 *',
       :client => @client,
-      :project => @project
+      :project => @project,
+      :params => {
+        'a' => 'b',
+        'b' => 'c'
+      }
     }
 
     @test_data_with_optional_param = {
@@ -76,12 +79,8 @@ describe GoodData::Schedule do
 
   describe '#create' do
     it 'Creates new schedule if mandatory params passed' do
-      schedule = nil
       begin
-        expect {
-          schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
-        }.not_to raise_error
-
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
         expect(schedule).to be_truthy
       ensure
         schedule && schedule.delete
@@ -89,12 +88,8 @@ describe GoodData::Schedule do
     end
 
     it 'Creates new schedule if mandatory params passed and optional params are present' do
-      schedule = nil
       begin
-        expect {
-          schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
-        }.not_to raise_error
-
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
         expect(schedule).to be_truthy
       ensure
         schedule && schedule.delete
@@ -138,25 +133,26 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no timezone specified' do
       data = @test_data.deep_dup
-      data[:timezone] = nil
-      schedule = nil
+      schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
+      schedule.timezone = nil
       begin
         expect {
-          schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
+          schedule.save
         }.to raise_error 'A timezone has to be provided'
       ensure
         schedule && schedule.delete
       end
     end
 
-    it 'Throws exception when no timezone specified' do
-      data = @test_data.deep_dup
-      data[:type] = nil
+    it 'Throws exception when no schedule type is specified' do
       schedule = nil
+      data = @test_data.deep_dup
       begin
-      expect {
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
-      }.to raise_error 'Schedule type has to be provided'
+        schedule.type = nil
+        expect {
+          schedule.save
+        }.to raise_error 'Schedule type has to be provided'
       ensure
         schedule && schedule.delete
       end
@@ -165,13 +161,13 @@ describe GoodData::Schedule do
 
   describe '#cron' do
     it 'Should return cron as string' do
-      schedule = nil
       begin
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
         res = schedule.cron
         res.should_not be_nil
         res.should_not be_empty
         res.should be_a_kind_of(String)
+        expect(schedule.time_based?).to be_truthy
       ensure
         schedule && schedule.delete
       end
@@ -334,12 +330,14 @@ describe GoodData::Schedule do
         old_params = schedule.params
 
         test_params = {
-          'PROCESS_ID' => '1-2-3-4'
+          'some_new_param' => '1-2-3-4'
         }
 
         schedule.params = test_params
-        expect(schedule.params).to eq(old_params.merge(test_params))
+        expect(schedule.params.keys).to eq(%w(PROCESS_ID EXECUTABLE some_new_param))
+        expect(schedule.params['some_new_param']).to eq '1-2-3-4'
         expect(schedule.dirty).to eq(true)
+        schedule.save
       ensure
         schedule && schedule.delete
       end
@@ -481,6 +479,18 @@ describe GoodData::Schedule do
         schedule.reschedule = test_reschedule
         expect(schedule.reschedule).to eq(test_reschedule)
         expect(schedule.dirty).to eq(true)
+      ensure
+        schedule && schedule.delete
+      end
+    end
+  end
+
+  describe '#executions' do
+    it 'Returns executions' do
+      begin
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        expect(schedule.executions).to be_empty
+        schedule.execute
       ensure
         schedule && schedule.delete
       end

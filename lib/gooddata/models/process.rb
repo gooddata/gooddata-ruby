@@ -67,6 +67,8 @@ module GoodData
             begin
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
+            rescue => e
+              puts e.inspect
             ensure
               res.delete if res
             end
@@ -167,9 +169,10 @@ module GoodData
           path
         else
           with_zip(opts) do |zipfile|
-            Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }.each do |file|
+            files_to_upload = Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }
+            puts "Uploading #{files_to_upload.count} files."
+            files_to_upload.each do |file|
               file_pathname = Pathname.new(file)
-              puts "Including item #{file_pathname}"
               file_relative_pathname = file_pathname.relative_path_from(Pathname.new(path))
               zipfile.add(file_relative_pathname, file)
             end
@@ -204,6 +207,7 @@ module GoodData
     # @return [IO] The stream of data that represents a zipped deployed process.
     def download
       link = links['source']
+      client.connection.refresh_token
       client.get(link, process: false) { |_, _, result| RestClient.get(result.to_hash['location'].first) }
     end
 
@@ -258,7 +262,7 @@ module GoodData
     def execute(executable, options = {})
       result = start_execution(executable, options)
       begin
-        client.poll_on_code(result['executionTask']['links']['poll'])
+        client.poll_on_code(result['executionTask']['links']['poll'], options)
       rescue RestClient::RequestFailed => e
         raise(e)
       ensure

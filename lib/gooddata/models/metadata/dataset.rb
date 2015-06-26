@@ -35,7 +35,7 @@ module GoodData
     #
     # @return [Array<GoodData::Fact>]
     def facts
-      fact_uris.pmap { |a_uri| project.attributes(a_uri) }
+      fact_uris.pmap { |a_uri| project.facts(a_uri) }
     end
 
     # Gives you list of fact uris on a dataset

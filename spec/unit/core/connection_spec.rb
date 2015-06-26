@@ -20,7 +20,7 @@ describe GoodData::Rest::Connection do
 
   describe '#connect' do
     it "Connects using username and password" do
-      c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
+      c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD, :verify_ssl => 0)
       c.should be_a(GoodData::Rest::Client)
       c.disconnect
     end
@@ -28,8 +28,24 @@ describe GoodData::Rest::Connection do
 
   describe '#disconnect' do
     it "Connects using username and password" do
-      c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD)
+      c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::DEFAULT_PASSWORD, :verify_ssl => 0)
       c.disconnect
     end
   end
+
+  describe '#generate_request_id' do
+    it "Generates a non-empty string" do
+      c = ConnectionHelper.create_default_connection
+
+      # generate a request id, and pass it to a request
+      id = c.generate_request_id
+      resp = c.get('/gdc/md', :request_id => id)
+
+      id.should be_a(String)
+      id.should_not be_empty
+
+      c.disconnect
+    end
+  end
+
 end
