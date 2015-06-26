@@ -5,7 +5,7 @@ describe "Variables implementation", :constraint => 'slow' do
     @spec = JSON.parse(File.read("./spec/data/blueprints/m_n_model.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
-    @project = @client.create_project_from_blueprint(@blueprint, :auth_token => ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project_from_blueprint(@blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
     @label = @project.attributes('attr.permission.id').label_by_name('label.permission.id.email')
 

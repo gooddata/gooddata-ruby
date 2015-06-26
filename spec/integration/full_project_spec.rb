@@ -8,11 +8,7 @@ describe "Full project implementation", :constraint => 'slow' do
     @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
     @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
 
-    begin
-      @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
-    rescue => e
-      puts e.inspect
-    end
+    @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN)
   end
 
   after(:all) do
