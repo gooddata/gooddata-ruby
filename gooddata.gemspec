@@ -42,14 +42,12 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'webmock', '~> 1.21', '>= 1.21.0'
   s.add_development_dependency 'debase', '~> 0.1', '>= 0.1.7' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'ruby-debug-ide', '~> 0.4' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
+  s.add_development_dependency 'bundler', '~> 1.7', '>= 1.7.3'
 
-  s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
-  s.add_dependency 'bundler', '~> 1.7', '>= 1.7.3'
   s.add_dependency 'docile', '~> 1.1', '>= 1.1.5'
   s.add_dependency 'erubis', '~> 2.7', '>= 2.7.0'
   s.add_dependency 'gli', '~> 2.12', '>= 2.12.2'
   s.add_dependency 'highline', '~> 1.6', '>= 1.6.21'
-  s.add_dependency 'i18n', '~> 0.6', '>= 0.6.9'
   s.add_dependency 'json_pure', '~> 1.8', '>= 1.8.1'
   s.add_dependency 'multi_json', '~> 1.10', '>= 1.10.0'
   s.add_dependency 'parseconfig', '~> 1.0', '>= 1.0.4'
@@ -61,4 +59,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'terminal-table', '~> 1.5', '>= 1.5.1'
   s.add_dependency 'salesforce_bulk_query', '~> 0.0'
   s.add_dependency 'aws-sdk', '~> 1.45'
+  s.add_dependency 'thread_safe'
 end

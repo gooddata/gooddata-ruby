@@ -119,7 +119,7 @@ describe GoodData::Schedule do
     end
 
     it 'Throws exception when no cron is specified' do
-      data = @test_data.deep_dup
+      data = GoodData::Helpers.deep_dup(@test_data)
       data[:cron] = nil
       schedule = nil
       begin
@@ -132,7 +132,7 @@ describe GoodData::Schedule do
     end
 
     it 'Throws exception when no timezone specified' do
-      data = @test_data.deep_dup
+      data = GoodData::Helpers.deep_dup(@test_data)
       schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
       schedule.timezone = nil
       begin
@@ -146,7 +146,7 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no schedule type is specified' do
       schedule = nil
-      data = @test_data.deep_dup
+      data = GoodData::Helpers.deep_dup(@test_data)
       begin
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
         schedule.type = nil

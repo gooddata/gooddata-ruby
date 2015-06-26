@@ -243,7 +243,7 @@ module GoodData
       #
       # @return [GoodData::Model::DatasetBlueprint] matching fields
       def dup
-        DatasetBlueprint.new(data.deep_dup, project_blueprint)
+        DatasetBlueprint.new(GoodData::Helpers.deep_dup(data), project_blueprint)
       end
 
       # Returns facts of a dataset
@@ -367,7 +367,7 @@ module GoodData
         identifiers = facts.map { |f| identifier_for(f) }
         identifiers.zip(facts).map do |id, fact|
           Metric.xcreate(
-            :title => fact[:name].titleize,
+            :title => GoodData::Helpers.titleize(fact[:name]),
             :expression => "SELECT SUM(![#{id}])")
         end
       end

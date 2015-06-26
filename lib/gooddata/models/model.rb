@@ -93,7 +93,7 @@ module GoodData
 
     class << self
       def title(item)
-        item[:title] || item[:id].titleize
+        item[:title] || GoodData::Helpers.titleize(item[:id])
       end
 
       def column_name(item)
@@ -222,7 +222,7 @@ module GoodData
       def merge_dataset_columns(a_schema_blueprint, b_schema_blueprint)
         a_schema_blueprint = a_schema_blueprint.to_hash
         b_schema_blueprint = b_schema_blueprint.to_hash
-        d = a_schema_blueprint.deep_dup
+        d = GoodData::Helpers.deep_dup(a_schema_blueprint)
         d[:columns] = d[:columns] + b_schema_blueprint[:columns]
         d[:columns].uniq!
         columns_that_failed_to_merge = d[:columns].group_by { |x| [:reference, :date].include?(x[:type]) ? x[:dataset] : x[:id] }.map { |k, v| [k, v.count, v] }.select { |x| x[1] > 1 }

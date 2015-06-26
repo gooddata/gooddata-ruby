@@ -36,10 +36,10 @@ module GoodData
         d[:title] = data[:title]
         d[:summary] = data[:summary]
       end
-      new_data = EMPTY_OBJECT.deep_dup.tap do |d|
+      new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
         d['projectRole']['links']['self'] = data[:uri] if data[:uri]
-        d['projectRole']['meta'] = d['projectRole']['meta'].merge(meta_data.stringify_keys)
-        d['projectRole']['permissions'] = d['projectRole']['permissions'].merge((data[:permissions] || {}).stringify_keys)
+        d['projectRole']['meta'] = d['projectRole']['meta'].merge(GoodData::Helpers.stringify_keys(meta_data))
+        d['projectRole']['permissions'] = d['projectRole']['permissions'].merge(GoodData::Helpers.stringify_keys(data[:permissions] || {}))
       end
       new(new_data)
     end

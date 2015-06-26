@@ -1,12 +1,16 @@
 # encoding: UTF-8
 
-require 'active_support/all'
 require 'pathname'
+require 'hashie'
 
 require_relative 'global_helpers_params'
 
 module GoodData
   module Helpers
+    class DeepMergeableHash < Hash
+      include Hashie::Extensions::DeepMerge
+    end
+
     class << self
       def error(msg)
         STDERR.puts(msg)
@@ -51,9 +55,11 @@ module GoodData
         end
       end
 
-      # TODO: Implement without using ActiveSupport
-      def humanize(str)
-        ActiveSupport::Inflector.humanize(str)
+      def titleize(str)
+        titleized = str.gsub(/[\.|_](.)/) { |x| x.upcase }
+        titleized = titleized.gsub('_', ' ')
+        titleized[0] = titleized[0].upcase
+        titleized
       end
 
       def join(master, slave, on, on2, options = {})
@@ -91,41 +97,102 @@ module GoodData
         RUBY_PLATFORM =~ /-darwin\d/
       end
 
-      # TODO: Implement without using ActiveSupport
-      def sanitize_string(str, filter = /[^a-z_]/, replacement = '')
-        str = ActiveSupport::Inflector.transliterate(str).downcase
-        str.gsub(filter, replacement)
-      end
-
       def underline(x)
         '=' * x.size
       end
 
-      # Recurscively changes the string keys of a hash to symbols.
-      #
-      # @param h [Hash] Data structure to change
-      # @return [Hash] Hash with symbolized keys
-      def symbolize_keys_deep!(h)
-        if Hash == h
-          Hash[
-            h.map do |k, v|
-              [k.respond_to?(:to_sym) ? k.to_sym : k, symbolize_keys_deep!(v)]
-            end
-          ]
-        else
-          h
+      def transform_keys!(an_object)
+        return enum_for(:transform_keys!) unless block_given?
+        an_object.keys.each do |key|
+          an_object[yield(key)] = delete(key)
+        end
+        an_object
+      end
+
+      def symbolize_keys!(an_object)
+        transform_keys!(an_object) do |key|
+          begin
+            key.to_sym
+          rescue
+            key
+          end
         end
       end
 
-      def stringify_keys_deep!(h)
-        if Hash == h.class
-          Hash[
-            h.map do |k, v|
-              [k.respond_to?(:to_s) ? k.to_s : k, stringify_keys_deep!(v)]
-            end
-          ]
+      def symbolize_keys(an_object)
+        transform_keys(an_object) do |key|
+          begin
+            key.to_sym
+          rescue
+            key
+          end
+        end
+      end
+
+      def transform_keys(an_object)
+        return enum_for(:transform_keys) unless block_given?
+        result = an_object.class.new
+        an_object.each_key do |key|
+          result[yield(key)] = an_object[key]
+        end
+        result
+      end
+
+      def deep_symbolize_keys(an_object)
+        deep_transform_keys(an_object) do |key|
+          begin
+            key.to_sym
+          rescue
+            key
+          end
+        end
+      end
+
+      def stringify_keys(an_object)
+        transform_keys(an_object) { |key| key.to_s }
+      end
+
+      def deep_stringify_keys(an_object)
+        deep_transform_keys(an_object) { |key| key.to_s }
+      end
+
+      def deep_transform_keys(an_object, &block)
+        _deep_transform_keys_in_object(an_object, &block)
+      end
+
+      def _deep_transform_keys_in_object(object, &block)
+        case object
+        when Hash
+          object.each_with_object({}) do |(key, value), result|
+            result[yield(key)] = _deep_transform_keys_in_object(value, &block)
+          end
+        when Array
+          object.map { |e| _deep_transform_keys_in_object(e, &block) }
         else
-          h
+          object
+        end
+      end
+
+      def deep_dup(an_object)
+        case an_object
+        when Array
+          an_object.map { |it| GoodData::Helpers.deep_dup(it) }
+        when Hash
+          an_object.each_with_object(an_object.dup) do |(key, value), hash|
+            hash[GoodData::Helpers.deep_dup(key)] = GoodData::Helpers.deep_dup(value)
+          end
+        when Object
+          an_object.duplicable? ? an_object.dup : an_object
+        end
+      end
+
+      def undot(params)
+        # for each key-value config given
+        params.map do |k, v|
+          # dot notation to hash
+          k.split('__').reverse.reduce(v) do |memo, obj|
+            GoodData::Helper.DeepMergeableHash[{ obj => memo }]
+          end
         end
       end
     end

@@ -101,7 +101,7 @@ module GoodData
           :reschedule => 0
         }
 
-        schedule = c.create(GoodData::Schedule, GoodData::Helpers.stringify_keys_deep!(SCHEDULE_TEMPLATE.deep_dup), client: c, project: p)
+        schedule = c.create(GoodData::Schedule, GoodData::Helpers.deep_stringify_keys(GoodData::Helpers.deep_dup(SCHEDULE_TEMPLATE)), client: c, project: p)
 
         schedule.name = options[:name]
         schedule.hidden_params = options[:hidden_params]
@@ -119,7 +119,7 @@ module GoodData
     # @param json [Object] Raw JSON
     # @return [GoodData::Schedule] New GoodData::Schedule instance
     def initialize(json)
-      json = GoodData::Helpers.stringify_keys_deep!(json)
+      json = GoodData::Helpers.deep_stringify_keys(json)
       super
       GoodData::Helpers.decode_params(json['schedule']['params'] || {})
       GoodData::Helpers.decode_params(json['schedule']['hiddenParams'] || {})

@@ -33,7 +33,7 @@ module GoodData
         if @config
           # load it from file and merge it
           defaults = { 'config' => MultiJson.load(File.read(@config)) }
-          default_params = defaults.extend(Hashie::Extensions::DeepMerge)
+          default_params = GoodData::Helpers::DeepMergeableHash[defaults]
           params = default_params.deep_merge(params)
         end
         params

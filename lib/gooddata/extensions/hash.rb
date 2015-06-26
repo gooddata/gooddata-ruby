@@ -1,11 +1,6 @@
 # encoding: UTF-8
-require 'hashie'
-
-require 'hashie/extensions/deep_merge'
 
 class Hash
-  include Hashie::Extensions::DeepMerge
-
   # Return a hash that includes everything but the given keys. This is useful for
   # limiting a set of parameters to everything but a few known toggles:
   #
@@ -28,18 +23,12 @@ class Hash
     self
   end
 
-  def undot
-    # for each key-value config given
-    hashes = map do |k, v|
-      # dot notation to hash
-      k.split('__').reverse.reduce(v) do |memo, obj|
-        { obj => memo }.extend(Hashie::Extensions::DeepMerge)
-      end
-    end
+  def slice(*keys)
+    keys.map! { |key| convert_key(key) } if respond_to?(:convert_key, true)
+    keys.each_with_object(self.class.new) { |k, hash| hash[k] = self[k] if key?(k) }
+  end
 
-    # merge back the keys as they came
-    hashes.reduce do |memo, obj|
-      memo.deep_merge(obj)
-    end
+  def compact
+    select { |_, value| !value.nil? }
   end
 end

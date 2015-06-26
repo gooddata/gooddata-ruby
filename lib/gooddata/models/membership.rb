@@ -381,7 +381,7 @@ module GoodData
     end
 
     def to_hash
-      tmp = content.merge(meta).merge('uri' => uri).symbolize_keys
+      tmp = GoodData::Helpers.symbolize_keys(content.merge(meta).merge('uri' => uri))
       [
         [:userRoles, :role],
         [:companyName, :company_name],

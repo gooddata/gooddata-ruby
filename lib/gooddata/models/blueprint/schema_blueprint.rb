@@ -122,7 +122,7 @@ module GoodData
       #
       # @return [String]
       def title
-        data[:title] || data[:id].titleize
+        data[:title] || GoodData::Helpers.titleize(data[:id])
       end
 
       # Validates the blueprint and returns true if model is valid. False otherwise.

@@ -276,7 +276,7 @@ module GoodData
         uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
 
         content['grid']['metrics'] = metric_parts.map do |item|
-          item.deep_dup.tap do |i|
+          GoodData::Helpers.deep_dup(item).tap do |i|
             i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
           end
         end
@@ -284,7 +284,7 @@ module GoodData
         cols = content['grid']['columns'] || []
         content['grid']['columns'] = cols.map do |item|
           if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
+            GoodData::Helpers.deep_dup(item).tap do |i|
               i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
             end
           else
@@ -295,7 +295,7 @@ module GoodData
         rows = content['grid']['rows'] || []
         content['grid']['rows'] = rows.map do |item|
           if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
+            GoodData::Helpers.deep_dup(item).tap do |i|
               i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
             end
           else
@@ -306,7 +306,7 @@ module GoodData
         widths = content['grid']['columnWidths'] || []
         content['grid']['columnWidths'] = widths.map do |item|
           if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
+            GoodData::Helpers.deep_dup(item).tap do |i|
               if i['locator'][0].key?('attributeHeaderLocator')
                 i['locator'][0]['attributeHeaderLocator']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
               end
@@ -319,7 +319,7 @@ module GoodData
         sort = content['grid']['sort']['columns'] || []
         content['grid']['sort']['columns'] = sort.map do |item|
           if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
+            GoodData::Helpers.deep_dup(item).tap do |i|
               next unless i.key?('metricSort')
               next unless i['metricSort'].key?('locators')
               next unless i['metricSort']['locators'][0].key?('attributeLocator2')
@@ -336,7 +336,7 @@ module GoodData
             key = e[0]
             val = e[1]
             a[key] = val.map do |item|
-              item.deep_dup.tap do |i|
+              GoodData::Helpers.deep_dup(item).tap do |i|
                 i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
               end
             end
