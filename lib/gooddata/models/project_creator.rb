@@ -18,9 +18,10 @@ module GoodData
           bp = ProjectBlueprint.new(spec)
           fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
           spec = bp.to_hash
-          token = opts[:token]
-          project = opts[:project] || client.create_project(:title => spec[:title], :auth_token => token, :client => client)
-          fail('You need to specify token for project creation') if token.nil? && project.nil?
+
+          fail('You need to specify token for project creation') if opts[:auth_token].nil?
+          project = opts[:project] || client.create_project(opts.merge(:title => spec[:title]))
+
 
           begin
             migrate_datasets(spec, opts.merge(project: project, client: client))

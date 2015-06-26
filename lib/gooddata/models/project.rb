@@ -33,7 +33,8 @@ module GoodData
         },
         'content' => {
           'guidedNavigation' => 1,
-          'driver' => 'Pg'
+          'driver' => 'Pg',
+          'environment' => 'PRODUCTION'
         }
       }
     }
@@ -93,6 +94,7 @@ module GoodData
           d['project']['content']['guidedNavigation'] = data[:guided_navigation] if data[:guided_navigation]
           d['project']['content']['authorizationToken'] = data[:auth_token] if data[:auth_token]
           d['project']['content']['driver'] = data[:driver] if data[:driver]
+          d['project']['content']['environment'] = data[:environment] if data[:environment]
         end
         c.create(Project, new_data)
       end
@@ -141,7 +143,7 @@ module GoodData
       end
 
       def create_from_blueprint(blueprint, options = {})
-        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: GoodData.connection))
+        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, client: GoodData.connection))
       end
 
       # Takes one CSV line and creates hash from data extracted
