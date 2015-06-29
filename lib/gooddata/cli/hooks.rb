@@ -17,7 +17,7 @@ GoodData::CLI.module_eval do
 
     username = creds[:username] if username.nil?
     password = creds[:password] if password.nil?
-    token = creds[:auth_token] if token.nil?
+    token = creds[:auth_token] || creds[:token] if token.nil?
 
     global[:token] = token if global[:token].nil?
     if global[:login].nil?

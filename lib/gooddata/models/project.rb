@@ -92,7 +92,10 @@ module GoodData
           d['project']['meta']['summary'] = data[:summary] if data[:summary]
           d['project']['meta']['projectTemplate'] = data[:template] if data[:template]
           d['project']['content']['guidedNavigation'] = data[:guided_navigation] if data[:guided_navigation]
-          d['project']['content']['authorizationToken'] = data[:auth_token] if data[:auth_token]
+
+          token = data[:auth_token] || data[:token]
+
+          d['project']['content']['authorizationToken'] = token if token
           d['project']['content']['driver'] = data[:driver] if data[:driver]
           d['project']['content']['environment'] = data[:environment] if data[:environment]
         end
@@ -111,7 +114,7 @@ module GoodData
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?
 
-        auth_token = opts[:auth_token]
+        auth_token = opts[:auth_token] || opts[:token]
         fail ArgumentError, 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
 
         project = create_object(opts)

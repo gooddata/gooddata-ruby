@@ -9,7 +9,7 @@ module GoodData
         def create(options = { client: GoodData.connection })
           title = options[:title]
           description = options[:summary] || options[:description]
-          token = options[:token] || options[:auth_token]
+          token = options[:auth_token] || options[:token]
           client = options[:client]
           GoodData::DataWarehouse.create(:title => title,
                                          :description => description,
