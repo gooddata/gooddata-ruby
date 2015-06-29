@@ -22,7 +22,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
   before(:all) do
     @client = ConnectionHelper::create_default_connection
-    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @process = @project.deploy_process('./spec/data/ruby_process',
                                        type: 'RUBY',
                                        name: 'Test ETL Process (Ruby)')
