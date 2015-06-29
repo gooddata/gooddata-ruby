@@ -7,14 +7,8 @@ module GoodData
       class << self
         # Create new project based on options supplied
         def create(options = { client: GoodData.connection })
-          title = options[:title]
           description = options[:summary] || options[:description]
-          token = options[:auth_token] || options[:token]
-          client = options[:client]
-          GoodData::DataWarehouse.create(:title => title,
-                                         :description => description,
-                                         :auth_token => token,
-                                         :client => client)
+          GoodData::DataWarehouse.create(options.merge(:description => description))
         end
       end
     end
