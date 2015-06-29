@@ -56,7 +56,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'restforce', '~> 1.5', '>= 1.5.0'
   s.add_dependency 'rest-client', '~> 1.7.2', '>= 1.7.2'
   s.add_dependency 'rubyzip', '~> 1.1', '>= 1.1.0'
-  s.add_dependency 'terminal-table', '~> 1.4', '>= 1.4.3'
+  s.add_dependency 'terminal-table', '~> 1.5', '>= 1.5.1'
   s.add_dependency 'salesforce_bulk_query', '~> 0.0'
   s.add_dependency 'aws-sdk', '~> 1.45'
 end
