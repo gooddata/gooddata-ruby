@@ -8,11 +8,7 @@ describe "Full project implementation", :constraint => 'slow' do
     @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
     @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
 
-    begin
-      @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
-    rescue => e
-      puts e.inspect
-    end
+    @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
 
   after(:all) do
@@ -23,7 +19,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should not build an invalid model" do
     expect {
-      @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     }.to raise_error(GoodData::ValidationError)
   end
 
@@ -478,7 +474,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to clone a project" do
     title = 'My new clone proejct'
-    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     expect(cloned_project.title).to eq title
     expect(cloned_project.facts.first.create_metric.execute).to eq 9
     cloned_project.delete
@@ -486,7 +482,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to clone a project without data" do
     title = 'My new clone project'
-    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, data: false)
+    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, data: false)
     expect(cloned_project.title).to eq title
     expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete

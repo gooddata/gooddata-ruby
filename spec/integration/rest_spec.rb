@@ -7,7 +7,7 @@ describe GoodData do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     # @project = ProjectHelper.get_default_project(:client => @client)
-    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
 
   after(:each) do

@@ -149,7 +149,7 @@ module GoodData
       end
 
       def create_project_from_blueprint(blueprint, options = {})
-        GoodData::Model::ProjectCreator.migrate(spec: blueprint, token: options[:auth_token], client: self)
+        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, client: self))
       end
 
       def domain(domain_name)

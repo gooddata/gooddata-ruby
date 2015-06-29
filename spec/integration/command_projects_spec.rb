@@ -11,11 +11,7 @@ describe GoodData::Command::Project, :constraint => 'slow' do
     GoodData.logging_on
     GoodData.logger.level = Logger::DEBUG
 
-    begin
-      @project = GoodData::Command::Project.build({:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, :client => @client})
-    rescue => e
-      puts e.inspect
-    end
+    @project = GoodData::Command::Project.build({:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, :client => @client})
   end
 
   after(:all) do
