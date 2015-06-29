@@ -544,6 +544,10 @@ module GoodData
       GoodData.download_from_project_webdav(file, where, project: self)
     end
 
+    def environment
+      json['project']['content']['environment']
+    end
+
     # Gets user by its email, full_name, login or uri
     alias_method :member, :get_user
 
