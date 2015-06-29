@@ -21,7 +21,6 @@ module GoodData
 
           project = opts[:project] || client.create_project(:title => spec[:title], :auth_token => opts[:token], :client => client, :environment => opts[:environment])
 
-
           begin
             migrate_datasets(spec, opts.merge(project: project, client: client))
             load(p, spec)
