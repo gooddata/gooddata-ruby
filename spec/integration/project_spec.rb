@@ -6,7 +6,7 @@ require 'gooddata'
 describe GoodData::Project, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper::create_default_connection
-    @project = @client.create_project(title: ProjectHelper::PROJECT_TITLE, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project(title: ProjectHelper::PROJECT_TITLE, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
   end
 

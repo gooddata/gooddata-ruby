@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'gooddata/models/domain'
+require 'gooddata/helpers/csv_helper'
 
 describe GoodData::Domain do
   before(:each) do
@@ -97,19 +98,27 @@ describe GoodData::Domain do
     end
 
     it 'Update a user' do
-      user = @domain.users.sample
+      user = @domain.users.reject { |u| u.login == @client.user.login }.sample
       login = user.login
       name = user.first_name
+      modes = user.authentication_modes
+      possible_modes = [:sso, :password]
+
 
       user.first_name = name.reverse
+      choice = SpecHelper.random_choice(possible_modes, user.authentication_modes)
+      user.authentication_modes = choice
       @domain.create_users([user])
       changed_user = @domain.get_user(login)
       expect(changed_user.first_name).to eq name.reverse
+      expect(changed_user.authentication_modes).to eq [choice]
 
       user.first_name = name
+      user.authentication_modes = modes
       @domain.create_users([user])
       reverted_user = @domain.get_user(login)
       expect(reverted_user.first_name).to eq name
+      expect(reverted_user.authentication_modes).to eq modes
     end
 
     it 'Fails with an exception if you try to create a user that is in a different domain' do

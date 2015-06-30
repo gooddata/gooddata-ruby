@@ -14,6 +14,8 @@ module GoodData::Helpers
   module ProjectHelper
     include GoodData::Environment::ProjectHelper
 
+    ENVIRONMENT = 'TESTING'
+
     def self.get_default_project(opts = {:client => GoodData.connection})
       GoodData::Project[PROJECT_ID, opts]
     end

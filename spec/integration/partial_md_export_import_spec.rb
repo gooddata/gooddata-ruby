@@ -8,7 +8,6 @@ describe "Object export between projects", :constraint => 'slow' do
     
     @source_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @target_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-
   end
 
   after(:all) do

@@ -313,7 +313,7 @@ module GoodData
 
     # Saves object if dirty, clears dirty flag
     def save!
-      if @dirty # rubocop:disable Style/GuardClause
+      if @dirty
         raw = @json.dup
         raw['accountSetting'].delete('login')
 
@@ -323,6 +323,7 @@ module GoodData
           @dirty = false
         end
       end
+      self
     end
 
     # Gets the preferred timezone
@@ -379,6 +380,16 @@ module GoodData
     def sso_provider=(an_sso_provider)
       @dirty = true
       @json['accountSetting']['ssoProvider'] = an_sso_provider
+    end
+
+    def authentication_modes
+      @json['accountSetting']['authenticationModes'].map { |x| x.downcase.to_sym }
+    end
+
+    def authentication_modes=(modes)
+      modes = Array(modes)
+      @dirty = true
+      @json['accountSetting']['authenticationModes'] = modes.map { |x| x.to_s.upcase }
     end
 
     def to_hash
