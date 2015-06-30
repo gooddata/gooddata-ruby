@@ -398,6 +398,8 @@ module GoodData
 
     def schedule_type=(type)
       json['schedule']['type'] = type
+      @dirty = true
+      self
     end
 
     def trigger_id
@@ -406,6 +408,8 @@ module GoodData
 
     def trigger_id=(a_trigger)
       json['schedule']['triggerScheduleId'] = a_trigger
+      @dirty = true
+      self
     end
 
     def name
@@ -414,6 +418,8 @@ module GoodData
 
     def name=(name)
       json['schedule']['name'] = name
+      @dirty = true
+      self
     end
 
     def set_trigger(trigger) # rubocop:disable Style/AccessorMethodName
