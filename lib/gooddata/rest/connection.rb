@@ -260,11 +260,12 @@ module GoodData
         GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
           b = proc do
+            params = fresh_request_params(options[:request_id])
             begin
-              @server[uri].delete(fresh_request_params(options[:request_id]))
+              @server[uri].delete(params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(e.inspect)
+              GoodData.logger.error(format_error(e, params))
               raise e
             end
           end
@@ -280,11 +281,12 @@ module GoodData
         GoodData.logger.debug "GET: #{@server.url}#{uri}"
         profile "GET #{uri}" do
           b = proc do
+            params = fresh_request_params(options[:request_id])
             begin
-              @server[uri].get(fresh_request_params(options[:request_id]), &user_block)
+              @server[uri].get(params, &user_block)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(e.inspect)
+              GoodData.logger.error(format_error(e, params))
               raise e
             end
           end
@@ -301,11 +303,12 @@ module GoodData
         GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
           b = proc do
+            params = fresh_request_params(options[:request_id])
             begin
-              @server[uri].put(payload, fresh_request_params(options[:request_id]))
+              @server[uri].put(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(e.inspect)
+              GoodData.logger.error(format_error(e, params))
               raise e
             end
           end
@@ -322,11 +325,12 @@ module GoodData
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
           b = proc do
+            params = fresh_request_params(options[:request_id])
             begin
-              @server[uri].post(payload, fresh_request_params(options[:request_id]))
+              @server[uri].post(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(e.inspect)
+              GoodData.logger.error(format_error(e, params))
               raise e
             end
           end
@@ -423,6 +427,10 @@ module GoodData
           response = http.start { |client| client.request(req) }
         end
         response
+      end
+
+      def format_error(e, params)
+        "#{params[:x_gdc_request]} #{e.inspect}"
       end
 
       def generate_string
