@@ -8,7 +8,7 @@ module GoodData
     end
 
     module ProjectHelper
-      PROJECT_ID = 'vc8mctilky1xu6uqclafvan8b0x1mv3k'
+      PROJECT_ID = 'i640il7dyatqmvak24zzr09ypt3ghqu2'
       PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
       PROJECT_TITLE = 'GoodTravis'
       PROJECT_SUMMARY = 'No summary'
