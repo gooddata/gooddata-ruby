@@ -516,4 +516,48 @@ describe GoodData::Schedule do
       end
     end
   end
+
+  describe '#trigger_id=' do
+    it 'should be able to set trigger_id of the schedule.' do
+      begin
+        process = @project.processes(ProcessHelper::PROCESS_ID)
+        schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
+        expect(schedule.dirty).to be_false
+        schedule.trigger_id = 'some_other_id'
+        expect(schedule.dirty).to be_true
+      ensure
+        schedule && schedule.delete
+      end
+    end
+  end
+
+  describe '#trigger_id=' do
+    it 'should be able to set trigger_id of the schedule.' do
+      begin
+        process = @project.processes(ProcessHelper::PROCESS_ID)
+        schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
+        expect(schedule.dirty).to be_false
+        schedule.trigger_id = 'some_other_id'
+        expect(schedule.dirty).to be_true
+      ensure
+        schedule && schedule.delete
+      end
+    end
+  end
+
+  describe '#name=' do
+    it 'should be able to set name of the schedule.' do
+      begin
+        process = @project.processes(ProcessHelper::PROCESS_ID)
+        schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
+        expect(schedule.name).to eq 'graph.grf'
+        schedule.name = 'MY NAME'
+        schedule.save
+        schedule2 = process.schedules.find { |s| s.obj_id == schedule.obj_id }
+        expect(schedule2.name).to eq 'MY NAME'
+      ensure
+        schedule && schedule.delete
+      end
+    end
+  end
 end
