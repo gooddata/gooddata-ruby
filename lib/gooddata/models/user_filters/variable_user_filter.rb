@@ -9,7 +9,7 @@ module GoodData
     # @return [String]
     def save
       res = client.post(uri, :variable => @json)
-      @json['uri'] = res['uri']
+      @json[:uri] = res['uri']
       self
     end
   end

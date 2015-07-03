@@ -69,7 +69,7 @@ module GoodData
         }
       }
       res = client.post(project.md['obj'], data)
-      @json['uri'] = res['uri']
+      @json[:uri] = res['uri']
     end
   end
 end
