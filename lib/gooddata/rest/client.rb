@@ -144,7 +144,7 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
-      def create_project(options = { title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN'] })
+      def create_project(options = { title: 'Project' })
         GoodData::Project.create({ client: self }.merge(options))
       end
 

@@ -17,6 +17,7 @@ module GoodData
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?
 
+        opts = { :auth_token => Helpers::AuthHelper.read_token }.merge(opts)
         auth_token = opts[:auth_token] || opts[:token]
         fail ArgumentError, 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
 
