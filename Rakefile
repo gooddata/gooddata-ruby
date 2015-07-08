@@ -5,7 +5,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'bundler/gem_tasks'
 
-require 'coveralls/rake/task'
+# require 'coveralls/rake/task'
 
 require 'rake/testtask'
 require 'rake/notes/rake_task'
@@ -18,7 +18,7 @@ task :cop do
   exec "rubocop lib/"
 end
 
-Coveralls::RakeTask.new
+# Coveralls::RakeTask.new
 
 desc 'Run continuous integration test'
 task :ci do
@@ -27,7 +27,7 @@ task :ci do
     Rake::Task['test:integration'].invoke
   end
   Rake::Task['test:cop'].invoke if RUBY_VERSION.start_with?('2.2') == false
-  Rake::Task['coveralls:push'].invoke
+  # Rake::Task['coveralls:push'].invoke
 end
 
 namespace :hook do
