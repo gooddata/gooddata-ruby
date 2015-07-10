@@ -260,8 +260,8 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should be possible to get all metrics with full objects" do
-    metrics1 = @project.metrics(:all, full: false)
-    expect(metrics1.first.class).to be Hash
+    metrics = @project.metrics(:all)
+    expect(metrics.first.class).to be GoodData::Metric
   end
 
   it "should be able to get a metric by identifier" do
