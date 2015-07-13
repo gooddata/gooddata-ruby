@@ -179,7 +179,8 @@ module GoodData
     # @param [Hash] opts execution options.
     # @option opts [Boolean] :wait Wait for execution result
     # @return [Object] Raw Response
-    def execute(opts = { :wait => true })
+    def execute(opts = {})
+      opts =  { :wait => true }.merge(opts)
       data = {
         :execution => {}
       }
@@ -187,7 +188,7 @@ module GoodData
       execution = client.create(GoodData::Execution, res, client: client, project: project)
 
       return execution unless opts[:wait]
-      execution.wait_for_result
+      execution.wait_for_result(opts)
     end
 
     # Returns execution URL
@@ -263,6 +264,13 @@ module GoodData
     def reschedule=(new_reschedule)
       @json['schedule']['reschedule'] = new_reschedule
       @dirty = true
+    end
+
+    # Returns execution process related to this schedule
+    #
+    # @return [GoodData::Process] Process ID
+    def process
+      project.processes(process_id)
     end
 
     # Returns execution process ID
