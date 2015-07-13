@@ -30,6 +30,20 @@ task :ci do
   # Rake::Task['coveralls:push'].invoke
 end
 
+namespace :gem do
+  desc "Release gem version #{GoodData::VERSION} to rubygems"
+  task :release do |t|
+    gem = "gooddata-#{GoodData::VERSION}.gem"
+
+    puts "Building #{gem} ..."
+    res = system('gem build ./gooddata.gemspec')
+    next if !res
+
+    puts "Pushing #{gem} ..."
+    res = system("gem push #{gem}")
+  end
+end
+
 namespace :hook do
   hook_path = File.join(File.dirname(__FILE__), '.git', 'hooks', 'pre-commit').to_s
 
