@@ -18,10 +18,12 @@ Gem::Specification.new do |s|
   s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
   s.description = %q{Use the GoodData::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
   s.email = %q{pavel@gooddata.com}
-  s.executables = ['gooddata']
   s.extra_rdoc_files = %w(LICENSE README.md)
 
   s.files = `git ls-files`.split($/)
+  s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+
   s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
   s.require_paths = ["lib"]
 
@@ -37,9 +39,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
   s.add_development_dependency 'guard', '~> 2'
   s.add_development_dependency 'guard-rspec', '~> 4'
-  s.add_development_dependency 'webmock', '~> 1.21.0'
-  s.add_development_dependency 'debase' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
-  s.add_development_dependency 'ruby-debug-ide' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
+  s.add_development_dependency 'webmock', '~> 1.21', '>= 1.21.0'
+  s.add_development_dependency 'debase', '~> 0.1', '>= 0.1.7' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
+  s.add_development_dependency 'ruby-debug-ide', '~> 0.4' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
 
   s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
   s.add_dependency 'bundler', '~> 1.7', '>= 1.7.3'
