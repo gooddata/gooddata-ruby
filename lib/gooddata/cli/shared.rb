@@ -6,6 +6,7 @@ require_relative '../version'
 require_relative '../core/core'
 require_relative '../extensions/extensions'
 require_relative '../exceptions/exceptions'
+require_relative '../helpers/auth_helpers'
 
 include GLI::App
 
@@ -30,7 +31,7 @@ GoodData::CLI.module_eval do
   flag [:p, :project_id]
 
   desc 'Server'
-  default_value GoodData::Rest::Connection::DEFAULT_URL
+  default_value GoodData::Helpers::AuthHelper.read_server
   arg_name 'server'
   flag [:s, :server]
 

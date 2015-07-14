@@ -24,7 +24,7 @@ module GoodData
 
         # Connect using username and password
         def connect(username, password, options = {})
-          server = options[:server] || DEFAULT_URL
+          server = options[:server] || Helpers::AuthHelper.read_server
           @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD
 
           super
