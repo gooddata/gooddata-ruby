@@ -24,6 +24,16 @@ module GoodData
           end
         end
 
+        # Try read token
+        #
+        # Tries to read it from ~/.gooddata file or from environment variable GD_PROJECT_TOKEN
+        # @param [String] credentials_file_path (credentials_file) Path to .gooddata file
+        # @return [String] auth token from .gooddata, environment variable or nil
+        def read_token(credentials_file_path = credentials_file)
+          goodfile = read_credentials(credentials_file_path)
+          goodfile[:auth_token] || goodfile[:token] || ENV['GD_PROJECT_TOKEN']
+        end
+
         # Writes credentials
         def write_credentials(credentials, credentials_file_path = credentials_file)
           File.open(credentials_file_path, 'w', 0600) do |f|
