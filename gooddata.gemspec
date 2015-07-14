@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'ruby-debug-ide', '~> 0.4' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
 
   s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
-  s.add_dependency 'bundler', '~> 1.7', '>= 1.7.3'
+  s.add_dependency 'bundler', '~> 1.10', '>= 1.10.5'
   s.add_dependency 'docile', '~> 1.1', '>= 1.1.5'
   s.add_dependency 'erubis', '~> 2.7', '>= 2.7.0'
   s.add_dependency 'gli', '~> 2.12', '>= 2.12.2'
