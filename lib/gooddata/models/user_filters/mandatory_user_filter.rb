@@ -30,7 +30,7 @@ module GoodData
           break if result['userFilters']['length'] < offset
           offset += count
         end
-        filters.map do |filter_data|
+        mufs = filters.map do |filter_data|
           payload = {
             'expression' => filter_data['userFilter']['content']['expression'],
             'related' => user_lookup[filter_data['userFilter']['meta']['uri']],
@@ -40,6 +40,7 @@ module GoodData
           }
           c.create(GoodData::MandatoryUserFilter, payload, project: project)
         end
+        mufs.enum_for
       end
 
       def count(options = { client: GoodData.connection, project: GoodData.project })

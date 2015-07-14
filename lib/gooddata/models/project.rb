@@ -1095,27 +1095,21 @@ module GoodData
     #
     #
     # @return [Array<GoodData::User>] List of users
-    def users(opts = { offset: 0, limit: 1_000 })
-      result = []
-
-      # TODO: @korczis, review this after WA-3953 get fixed
-      offset = 0 || opts[:offset]
-      uri = "/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{opts[:limit]}"
-      loop do
-        break unless uri
-        tmp = client(opts).get(uri)
-        tmp['users'].each do |user|
-          result << client.factory.create(GoodData::Membership, user, project: self)
-        end
-        offset += opts[:limit]
-        if tmp['users'].length == opts[:limit]
-          uri = "/gdc/projects/#{pid}/users?offset=#{offset}&limit=#{opts[:limit]}"
-        else
-          uri = nil
+    def users(opts = {})
+      client = client(opts)
+      Enumerator.new do |y|
+        offset = opts[:offset] || 0
+        limit = opts[:limit] || 1_000
+        loop do
+          tmp = client.get("/gdc/projects/#{pid}/users", params: { offset: offset, limit: limit })
+          tmp['users'].each do |user_data|
+            user = client.create(GoodData::Membership, user_data, project: self)
+            y << user if opts[:all] || user.enabled?
+          end
+          break if tmp['users'].count < limit
+          offset += limit
         end
       end
-
-      opts[:all] ? result : result.select(&:enabled?).reject(&:deleted?)
     end
 
     alias_method :members, :users
@@ -1138,7 +1132,7 @@ module GoodData
     def import_users(new_users, options = {})
       domain = options[:domain]
       role_list = roles
-      users_list = users(all: true, offset: 0, limit: 1_000)
+      users_list = users(all: true)
       new_users = new_users.map { |x| (x.is_a?(Hash) && x[:user] && x[:user].to_hash.merge(role: x[:role])) || x.to_hash }
 
       GoodData.logger.warn("Importing users to project (#{pid})")

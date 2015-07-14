@@ -183,26 +183,23 @@ module GoodData
       # @option opts [Number] :limit From address
       # TODO: Review opts[:limit] functionality
       def users(domain, id = :all, opts = {})
-        c = client(opts)
-        domain = c.domain(domain)
+        client = client(opts)
+        domain = client.domain(domain)
         if id == :all
           GoodData.logger.warn("Retrieving all users from domain #{domain.name}")
-          result = []
-          page_limit = opts[:page_limit] || 1000
-          limit = opts[:limit] || Float::INFINITY
-          offset = opts[:offset] || 0
-          uri = "#{domain.uri}/users?offset=#{offset}&limit=#{page_limit}"
-          loop do
-            tmp = client(opts).get(uri)
-            tmp['accountSettings']['items'].each do |account|
-              result << client(opts).create(GoodData::Profile, account)
+          Enumerator.new do |y|
+            page_limit = opts[:page_limit] || 1000
+            offset = opts[:offset] || 0
+            loop do
+              tmp = client(opts).get("#{domain.uri}/users", params: { offset: offset, limit: page_limit })
+              tmp['accountSettings']['items'].each do |user_data|
+                user = client.create(GoodData::Profile, user_data)
+                y << user
+              end
+              break if tmp['accountSettings']['items'].count < page_limit
+              offset += page_limit
             end
-            break if result.length >= limit
-
-            uri = tmp['accountSettings']['paging']['next']
-            break unless uri
           end
-          result
         else
           find_user_by_login(domain, id)
         end
