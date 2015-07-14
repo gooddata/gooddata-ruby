@@ -57,12 +57,11 @@ module GoodData
       client = client(options)
       Enumerator.new do |y|
         offset = options[:offset] || 0
-        limit = options[:limit] || 100
-        page_limit = 100
+        page_limit = options[:limit] || 100
         loop do
           results = client.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", {})
           elements = results['validElements']
-          items = elements['items'].map do |el|
+          elements['items'].map do |el|
             v = el['element']
             y << {
               :value => v['title'],
