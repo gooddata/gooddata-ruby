@@ -246,6 +246,8 @@ module GoodData
 
         url = project.links['uploads']
         fail 'Project WebDAV not supported in this Data Center' unless url
+
+        GoodData.logger.warn 'Beware! Project webdav is deprecated and should not be used.'
         url
       end
 
