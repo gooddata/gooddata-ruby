@@ -287,25 +287,7 @@ describe GoodData::Model::FromWire do
     expect(GoodData::Model.check_gd_data_type("decimal(10,5)")).to eq true
     expect(GoodData::Model.check_gd_data_type("decimal(10,  5)")).to eq true
   end
-  #
-  # it "should be able to omit titles if they are superfluous" do
-  #   view = MultiJson.load(File.read('./spec/data/superfluous_titles_view.json'))
-  #   blueprint = FromWire.from_wire(view)
-  #   expect(blueprint.datasets.count).to eq 1
-  #   expect(blueprint.datasets.first.find_column_by_name('current_status', nil).key?(:title)).to eq false
-  #   expect(blueprint.datasets.mapcat { |ds| ds.columns }.any? {|col| col[:name].titleize == col[:title]}).to eq false
-  # end
-  #
-  # it "should enable sorting" do
-  #   skip("UAAA")
-  # end
-  #
-  # it "should generate the same thing it parsed" do
-  #   a = @model_view['projectModelView']['model']['projectModel']['datasets'][3]
-  #   b = @blueprint.to_wire
-  #   # expect(b).to eq a
-  # end
-  #
+
   it "should be able to parse description from both attributes and facts" do
     expect(@blueprint.find_dataset('dataset.opportunity').anchor.description).to eq 'This is opportunity attribute description'
     expect(@blueprint.find_dataset('dataset.stage_history').facts.find {|f| f.id == 'fact.stage_history.stage_velocity'}.description).to eq 'Velocity description'

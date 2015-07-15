@@ -37,14 +37,6 @@ describe GoodData::Helpers do
     end
   end
 
-  describe '#sanitize_string' do
-    it 'works' do
-      expect = 'helloworld'
-      result = GoodData::Helpers.sanitize_string('Hello World')
-      result.should == expect
-    end
-  end
-
   describe "#decode_params" do
     it 'decodes the data params from json' do
       params = {

@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-require_relative 'from_wire_parse'
-
 module GoodData
   module Model
     module FromWire

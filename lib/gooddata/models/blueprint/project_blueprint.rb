@@ -51,7 +51,7 @@ module GoodData
       def self.remove_dataset(project, dataset_id)
         dataset = dataset_id.is_a?(String) ? find_dataset(project, dataset_id) : dataset_name
         index = project[:datasets].index(dataset)
-        dupped_project = project.deep_dup
+        dupped_project = GoodData::Helpers.deep_dup(project)
         dupped_project[:datasets].delete_at(index)
         dupped_project
       end
@@ -338,7 +338,7 @@ module GoodData
       # @param a_blueprint [GoodData::Model::DatasetBlueprint] Dataset blueprint to be merged
       # @return [GoodData::Model::DatasetBlueprint]
       def dup
-        ProjectBlueprint.new(data.deep_dup)
+        ProjectBlueprint.new(GoodData::Helpers.deep_dup(data))
       end
 
       # Returns list of facts from all the datasets in a blueprint
@@ -396,7 +396,7 @@ module GoodData
                     else
                       init_data
                     end
-        @data = some_data.deep_dup.symbolize_keys
+        @data = GoodData::Helpers.symbolize_keys(GoodData::Helpers.deep_dup(some_data))
         (@data[:datasets] || []).each do |d|
           d[:type] = d[:type].to_sym
           d[:columns].each do |c|

@@ -90,7 +90,7 @@ module GoodData
 
       def create_object(data = {})
         c = client(data)
-        new_data = EMPTY_OBJECT.deep_dup.tap do |d|
+        new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['project']['meta']['title'] = data[:title]
           d['project']['meta']['summary'] = data[:summary] if data[:summary]
           d['project']['meta']['projectTemplate'] = data[:template] if data[:template]
@@ -1015,7 +1015,7 @@ module GoodData
 
     # Saves project
     def save
-      data_to_send = raw_data.deep_dup
+      data_to_send = GoodData::Helpers.deep_dup(raw_data)
       data_to_send['project']['content'].delete('cluster')
       data_to_send['project']['content'].delete('isPublic')
       data_to_send['project']['content'].delete('state')

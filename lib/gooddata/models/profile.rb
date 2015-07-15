@@ -79,7 +79,7 @@ module GoodData
       end
 
       def create_object(attributes)
-        json = EMPTY_OBJECT.deep_dup
+        json = GoodData::Helpers.deep_dup(EMPTY_OBJECT)
         json['accountSetting']['links']['self'] = attributes[:uri] if attributes[:uri]
         res = client.create(GoodData::Profile, json)
 
@@ -393,7 +393,7 @@ module GoodData
     end
 
     def to_hash
-      tmp = content.merge(uri: uri).symbolize_keys
+      tmp = GoodData::Helpers.symbolize_keys(content.merge(uri: uri))
       [
         [:companyName, :company],
         [:phoneNumber, :phone],

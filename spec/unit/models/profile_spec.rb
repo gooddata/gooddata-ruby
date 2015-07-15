@@ -61,10 +61,6 @@ describe GoodData::Profile do
     @client.disconnect
   end
 
-  # def deep_dup(obj)
-  #   Marshal.load(Marshal.dump(obj))
-  # end
-
   describe '#[]' do
     it 'Finds the profile by URL' do
       project = ProjectHelper.get_default_project
@@ -177,7 +173,7 @@ describe GoodData::Profile do
       ]
   
       l2 = [
-        GoodData::Profile.new(@users[0].json.deep_dup)
+        GoodData::Profile.new(GoodData::Helpers.deep_dup(@users[0].json))
       ]
       l2[0].first_name = 'Peter'
   

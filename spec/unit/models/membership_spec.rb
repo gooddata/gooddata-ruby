@@ -102,7 +102,7 @@ describe GoodData::Membership do
       ]
 
       l2 = [
-        GoodData::Membership.new(@users[0].json.deep_dup)
+        GoodData::Membership.new(GoodData::Helpers.deep_dup(@users[0].json))
       ]
       l2[0].first_name = 'Peter'
 

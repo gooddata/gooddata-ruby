@@ -10,8 +10,8 @@ require_relative '../../client'
 
 # translate given params (with dots) to json-like params
 def load_undot(filename)
-  p = MultiJson.load(File.read(filename)).extend(Hashie::Extensions::DeepMerge)
-  p.undot
+  p = MultiJson.load(File.read(filename))
+  GoodData::Helper.undot(GoodData::Helper::DeepMergeableHash[p])
 end
 
 GoodData::CLI.module_eval do

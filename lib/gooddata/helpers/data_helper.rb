@@ -11,7 +11,7 @@ module GoodData
 
       def initialize(opts = {})
         opts = opts.is_a?(String) ? { type: :staging, path: opts } : opts
-        opts = opts.symbolize_keys
+        opts = GoodData::Helpers.symbolize_keys(opts)
         @source = opts[:type]
         @options = opts
         @realized = false

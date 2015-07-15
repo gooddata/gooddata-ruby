@@ -4,7 +4,7 @@ module GoodData
   class UserFilter < GoodData::MdObject
     def initialize(data)
       @dirty = false
-      @json = data.symbolize_keys
+      @json = GoodData::Helpers.symbolize_keys(data)
     end
 
     def ==(other)

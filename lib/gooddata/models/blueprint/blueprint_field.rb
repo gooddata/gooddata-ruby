@@ -10,7 +10,7 @@ module GoodData
       end
 
       def initialize(data, dataset)
-        @data = data.symbolize_keys
+        @data = GoodData::Helpers.symbolize_keys(data)
         @data[:type] = @data[:type].to_sym
         @dataset_blueprint = dataset
       end
@@ -39,7 +39,7 @@ module GoodData
       end
 
       def title
-        @data[:title] || @data[:id].titleize
+        @data[:title] || GoodData::Helpers.titleize(@data[:id])
       end
 
       # Validates the fields in the field
