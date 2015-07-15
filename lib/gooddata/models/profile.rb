@@ -312,8 +312,8 @@ module GoodData
     end
 
     # Saves object if dirty, clears dirty flag
-    def save!
-      if @dirty
+    def save!(force = false)
+      if @dirty || force
         raw = @json.dup
         raw['accountSetting'].delete('login')
 
