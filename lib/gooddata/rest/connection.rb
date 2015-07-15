@@ -13,7 +13,7 @@ module GoodData
     class Connection
       include MonitorMixin
 
-      DEFAULT_URL = ENV['GD_SERVER'] || 'https://secure.gooddata.com'
+      DEFAULT_URL = 'https://secure.gooddata.com'
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
       KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
@@ -119,7 +119,7 @@ module GoodData
 
       # Connect using username and password
       def connect(username, password, options = {})
-        server = options[:server] || DEFAULT_URL
+        server = options[:server] || Helpers::AuthHelper.read_server
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
 
