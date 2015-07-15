@@ -28,30 +28,30 @@ module GoodData
         #
         # Tries to read it from ~/.gooddata file or from environment variable GD_SERVER
         # @param [String] credentials_file_path (credentials_file) Path to .gooddata file
-        # @return [String] server token from .gooddata, environment variable or nil
+        # @return [String] server token from environment variable, .gooddata or nil
         def read_environment(credentials_file_path = credentials_file)
           goodfile = read_credentials(credentials_file_path)
-          [goodfile[:environment], ENV['GD_ENVIRONMENT'], GoodData::Project::DEFAULT_ENVIRONMENT].find { |x| !x.nil? && !x.empty? }
+          [ENV['GD_ENVIRONMENT'], goodfile[:environment], GoodData::Project::DEFAULT_ENVIRONMENT].find { |x| !x.nil? && !x.empty? }
         end
 
         # Try read server
         #
         # Tries to read it from ~/.gooddata file or from environment variable GD_SERVER
         # @param [String] credentials_file_path (credentials_file) Path to .gooddata file
-        # @return [String] server token from .gooddata, environment variable or DEFAULT_URL
+        # @return [String] server token from environment variable, .gooddata or DEFAULT_URL
         def read_server(credentials_file_path = credentials_file)
           goodfile = read_credentials(credentials_file_path)
-          [goodfile[:server], ENV['GD_SERVER'], GoodData::Rest::Connection::DEFAULT_URL].find { |x| !x.nil? && !x.empty? }
+          [ENV['GD_SERVER'], goodfile[:server], GoodData::Rest::Connection::DEFAULT_URL].find { |x| !x.nil? && !x.empty? }
         end
 
         # Try read token
         #
         # Tries to read it from ~/.gooddata file or from environment variable GD_PROJECT_TOKEN
         # @param [String] credentials_file_path (credentials_file) Path to .gooddata file
-        # @return [String] auth token from .gooddata, environment variable or nil
+        # @return [String] auth token from environment variable, .gooddata or nil
         def read_token(credentials_file_path = credentials_file)
           goodfile = read_credentials(credentials_file_path)
-          [goodfile[:auth_token],  goodfile[:token], ENV['GD_PROJECT_TOKEN']].find { |x| !x.nil? && !x.empty? }
+          [ENV['GD_PROJECT_TOKEN'], goodfile[:auth_token],  goodfile[:token]].find { |x| !x.nil? && !x.empty? }
         end
 
         # Writes credentials
