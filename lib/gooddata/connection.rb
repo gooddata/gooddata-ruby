@@ -79,5 +79,18 @@ module GoodData
 
       "#{GoodData::Helpers::AuthHelper.read_server}/gdc/account/customerlogin?sessionId=#{CGI.escape(final)}&serverURL=#{CGI.escape(provider)}&targetURL=#{CGI.escape(opts[:url])}"
     end
+
+    def connect_sso(login, provider, opts = DEFAULT_SSO_OPTIONS)
+      url = sso_url(login, provider, opts)
+      res = RestClient.get url
+
+      puts 'HEADERS: '
+      puts res.headers
+
+      puts 'COOKIES: '
+      puts res.cookies
+
+      obj = JSON.parse(res)
+    end
   end
 end
