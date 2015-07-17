@@ -1,5 +1,43 @@
 # GoodData Ruby SDK Changelog
 
+
+## 0.6.20
+- iterators for retrieval of project, domain, and group objects
+- use query resource inlining for retrieving user filters
+- added support of GoodData PGP SSO
+- project creation token is not taken from the ~/.gooddata file
+- project WebDav deprecation warning
+- removed dependency on Active Support gem
+
+## 0.6.19
+- major (not backward compatible) blueprint refactoring
+- add environment parameter to the project creation
+- new HTTP retry strategy with exponential wait times and maximum retries set to 10
+- max concurrent platform connections set to 20 per session
+- set socket timeout to 1 minute
+
+## 0.6.18
+- support for the HYPERLINK label type in blueprint
+- fixed method Schedule#create doesn't set schedule name
+- add method "error?" to the class "ExecutionDetail"
+- blueprint support for folders
+- ability to change SSO provider for existing platform user
+- schedules and executions convenience methods
+
+## 0.6.17
+- validation of the blueprint datatypes (e.g. INTEGER -> INT, allow mixed case etc.)
+- improved the data loading logging and error handling
+- date dimension switching
+- switched to the new asynchronous ETL pull resource
+- specification of date reference's format in blueprint
+- HTTP logging oneliner 
+
+## 0.6.16
+- fixed SSL certificate validation (verify_ssl option in the GoodData.connect)
+- logging changes: separated the HTTP and application logging to different levels, added platform request ID
+- fixed the WebDav URI bootstrap to work with the EU datacenter
+- new driver parameter allows Vertica based project creation
+
 ## 0.6.15
 
 - Adding users now accepts more variants of providing users
