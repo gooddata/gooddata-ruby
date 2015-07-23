@@ -82,13 +82,21 @@ module GoodData
             new_opts[:username] = username
             new_opts[:password] = password
           end
+
+          if username.is_a?(Hash) && username[:cookies]
+            new_opts[:sst_token] = username[:cookies]['GDCAuthSST']
+            new_opts[:cookies] = username[:cookies]
+          end
+
           unless new_opts[:sst_token]
             fail ArgumentError, 'No username specified' if new_opts[:username].nil?
             fail ArgumentError, 'No password specified' if new_opts[:password].nil?
           end
+
           if username.is_a?(Hash) && username.key?(:server)
             new_opts[:server] = username[:server]
           end
+
           client = Client.new(new_opts)
 
           if client
@@ -100,6 +108,14 @@ module GoodData
           # HACK: This line assigns class instance # if not done yet
           @@instance = client # rubocop:disable ClassVars
           client
+        end
+
+        def connect_sso(username, provider, opts)
+          RestClient.get(opts[:url]) do |response, request, result|
+            client = Client.new(opts)
+            cookies = response.cookies.dup
+            # cookies.delete('GDCAuthSST')
+          end
         end
 
         def disconnect
