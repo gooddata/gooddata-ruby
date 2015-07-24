@@ -1,5 +1,6 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.21
 
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects
