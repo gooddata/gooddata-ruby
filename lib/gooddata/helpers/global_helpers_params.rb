@@ -2,10 +2,10 @@
 
 module GoodData
   module Helpers
-    class << self
-      ENCODED_PARAMS_KEY = :gd_encoded_params
-      ENCODED_HIDDEN_PARAMS_KEY = :gd_encoded_hidden_params
+    ENCODED_PARAMS_KEY = 'gd_encoded_params'
+    ENCODED_HIDDEN_PARAMS_KEY = 'gd_encoded_hidden_params'
 
+    class << self
       # Encodes parameters for passing them to GD execution platform.
       # Core types are kept and complex types (arrays, structures, etc) are JSON encoded into key hash "gd_encoded_params" or "gd_encoded_hidden_params", depending on the 'hidden' method param.
       # The two different keys are used because the params and hidden params are merged by the platform and if we use the same key, the param would be overwritten.
@@ -19,7 +19,7 @@ module GoodData
       #
       # @param [Hash] params Parameters to be encoded
       # @return [Hash] Encoded parameters
-      def encode_params(params, hidden = false)
+      def encode_params(params, data_key)
         res = {}
         nested = {}
         core_types = [FalseClass, Fixnum, Float, NilClass, TrueClass, String]
@@ -30,9 +30,22 @@ module GoodData
             nested[k] = v
           end
         end
-        key = hidden ? ENCODED_HIDDEN_PARAMS_KEY : ENCODED_PARAMS_KEY
-        res[key] = nested.to_json unless nested.empty?
+        res[data_key] = nested.to_json unless nested.empty?
         res
+      end
+
+      # Encodes public parameters for passing them to GD execution platform.
+      # @param [Hash] params Parameters to be encoded
+      # @return [Hash] Encoded parameters
+      def encode_public_params(params)
+        encode_params(params, ENCODED_PARAMS_KEY)
+      end
+
+      # Encodes hidden parameters for passing them to GD execution platform.
+      # @param [Hash] params Parameters to be encoded
+      # @return [Hash] Encoded parameters
+      def encode_hidden_params(params)
+        encode_params(params, ENCODED_HIDDEN_PARAMS_KEY)
       end
 
       # Decodes params as they came from the platform
@@ -41,7 +54,13 @@ module GoodData
         key = ENCODED_PARAMS_KEY.to_s
         hidden_key = ENCODED_HIDDEN_PARAMS_KEY.to_s
         data_params = params[key] || '{}'
-        hidden_data_params = params[hidden_key] || '{}'
+        hidden_data_params = if params.key?(hidden_key) && params[hidden_key].nil?
+                               "{\"#{hidden_key}\" : null}"
+                             elsif params.key?(hidden_key)
+                               params[hidden_key]
+                             else
+                               '{}'
+                             end
 
         begin
           parsed_data_params = JSON.parse(data_params)
@@ -49,6 +68,10 @@ module GoodData
         rescue JSON::ParserError => e
           raise e.class, "Error reading json from '#{key}' or '#{hidden_key}' in params #{params}\n #{e.message}"
         end
+
+        # Add the nil on ENCODED_HIDDEN_PARAMS_KEY
+        # if the data was retrieved from API You will not have the actual values so encode -> decode is not losless. The nil on the key prevents the server from deleting the key
+        parsed_hidden_data_params[ENCODED_HIDDEN_PARAMS_KEY] = nil unless parsed_hidden_data_params.empty?
         params.delete(key)
         params.delete(hidden_key)
         params.merge(parsed_data_params).merge(parsed_hidden_data_params)
