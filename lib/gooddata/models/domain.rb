@@ -191,7 +191,12 @@ module GoodData
             page_limit = opts[:page_limit] || 1000
             offset = opts[:offset] || 0
             loop do
-              tmp = client(opts).get("#{domain.uri}/users", params: { offset: offset, limit: page_limit })
+              begin
+                tmp = client(opts).get("#{domain.uri}/users", params: { offset: offset, limit: page_limit })
+              rescue RestClient::BadRequest => e
+                raise e
+              end
+
               tmp['accountSettings']['items'].each do |user_data|
                 user = client.create(GoodData::Profile, user_data)
                 y << user
@@ -213,25 +218,29 @@ module GoodData
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
         domain = client.domain(default_domain_name)
 
+        # Prepare cache for domain users
         domain_users_cache = Hash[domain.users.map { |u| [u.login, u] }]
-        list.pmapcat do |user|
+
+        res = list.pmapcat do |user|
           begin
             user_data = user.to_hash
             domain_user = domain_users_cache[user_data[:login]]
             if !domain_user
               added_user = domain.add_user(user_data, opts)
-              [{ type: :user_added_to_domain, user: added_user }]
+              [{ type: :ok, :action => :user_added_to_domain, user: added_user }]
             else
               fields_to_check = opts[:fields_to_check] || user_data.keys
               diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login, fields: fields_to_check)
               next [] if diff[:changed].empty?
               updated_user = domain.update_user(domain_user.to_hash.merge(user_data.compact), opts)
-              [{ type: :user_changed_in_domain, user: updated_user }]
+              [{ type: :ok, :action => :user_changed_in_domain, user: updated_user }]
             end
           rescue RuntimeError => e
-            [{ type: :error, reason: e }]
+            [{ type: :error, :user => user, reason: e }]
           end
         end
+
+        res.group_by { |r| r[:type] }
       end
     end
 

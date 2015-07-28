@@ -270,7 +270,7 @@ module GoodData
               @server[uri].delete(params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              process_error(e, params)
               raise e
             end
           end
@@ -291,7 +291,7 @@ module GoodData
               @server[uri].get(params, &user_block)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              process_error(e, params)
               raise e
             end
           end
@@ -313,7 +313,7 @@ module GoodData
               @server[uri].put(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              process_error(e, params)
               raise e
             end
           end
@@ -335,7 +335,7 @@ module GoodData
               @server[uri].post(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              process_error(e, params)
               raise e
             end
           end
@@ -477,6 +477,10 @@ module GoodData
 
       def merge_cookies!(cookies)
         @request_params[:cookies].merge! cookies
+      end
+
+      def process_error(error, params)
+        GoodData.logger.error(format_error(error, params))
       end
 
       def process_response(options = {}, &block)
