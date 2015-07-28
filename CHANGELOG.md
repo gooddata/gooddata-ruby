@@ -1,6 +1,7 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.21
+- Consolidated error reporting for Domain#create_users & Project#import_users
 
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects
