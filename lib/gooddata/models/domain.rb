@@ -193,8 +193,6 @@ module GoodData
             loop do
               begin
                 tmp = client(opts).get("#{domain.uri}/users", params: { offset: offset, limit: page_limit })
-              rescue RestClient::BadRequest => e
-                raise e
               end
 
               tmp['accountSettings']['items'].each do |user_data|
