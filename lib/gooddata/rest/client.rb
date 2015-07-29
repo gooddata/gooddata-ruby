@@ -107,15 +107,11 @@ module GoodData
 
           # HACK: This line assigns class instance # if not done yet
           @@instance = client # rubocop:disable ClassVars
-          client
         end
 
-        def connect_sso(username, provider, opts)
-          RestClient.get(opts[:url]) do |response, request, result|
-            client = Client.new(opts)
-            cookies = response.cookies.dup
-            # cookies.delete('GDCAuthSST')
-          end
+        def connect_sso(sso)
+          client = Client.new(sso)
+          client
         end
 
         def disconnect

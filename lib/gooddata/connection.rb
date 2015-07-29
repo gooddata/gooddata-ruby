@@ -84,8 +84,8 @@ module GoodData
       url = sso_url(login, provider, opts)
       RestClient.get url do |response, request, result|
         cookies = response.cookies.dup
-        # cookies.delete('GDCAuthSST')
-        GoodData.connect(:cookies => {'GDCAuthSST' => cookies['GDCAuthSST']})
+
+        Rest::Client.connect_sso(:sst_token => cookies['GDCAuthSST'])
       end
     end
   end
