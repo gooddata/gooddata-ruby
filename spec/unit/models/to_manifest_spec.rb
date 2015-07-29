@@ -46,4 +46,20 @@ describe GoodData::Model::ToManifest do
     end
     expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][2]['constraints']).to eq ({ "date" => "yyyy/MM/dd" })
   end
+
+  it 'blueprint can handle date fact during creation of manifest' do
+    blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
+      p.add_date_dimension("committed_on")
+
+      p.add_dataset("repos") do |d|
+        d.add_anchor("repo_id")
+        d.add_label("repo_label", reference: "repo_id")
+        d.add_attribute("name")
+        d.add_label("name_label", reference: "name")
+        d.add_date('opportunity_comitted', dataset: 'committed_on', format: 'yyyy/MM/dd')
+        d.add_column(type: :date_fact, id: 'dt.date_fact')
+      end
+    end
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'].count).to eq 4
+  end
 end
