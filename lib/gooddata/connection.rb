@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require 'uri'
+
 require_relative 'core/logging'
 
 require_relative 'rest/rest'
@@ -82,10 +84,13 @@ module GoodData
 
     def connect_sso(login, provider, opts = DEFAULT_SSO_OPTIONS)
       url = sso_url(login, provider, opts)
-      RestClient.get url do |response, request, result|
-        cookies = response.cookies.dup
 
-        Rest::Client.connect_sso(:sst_token => cookies['GDCAuthSST'])
+      params = {
+        :x_gdc_request => "#{SecureRandom.urlsafe_base64(16)}:#{SecureRandom.urlsafe_base64(16)}"
+      }
+
+      RestClient.get url, params do |response, request, result|
+        Rest::Client.connect_sso(:sst_token => URI.decode(response.cookies['GDCAuthSST']))
       end
     end
   end
