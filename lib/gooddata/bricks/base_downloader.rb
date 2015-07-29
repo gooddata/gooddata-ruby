@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 require 'pathname'
-require 'aws'
+require 'aws-sdk'
 
 module GoodData
   module Bricks
@@ -29,19 +29,19 @@ module GoodData
 
         bucket_name = @params['s3_backup_bucket_name']
 
-        s3 = AWS::S3.new(
+        s3 = Aws::S3::Resource.new(
           :access_key_id => @params['aws_access_key_id'],
           :secret_access_key => @params['aws_secret_access_key']
         )
 
-        bucket = s3.buckets[bucket_name]
-        bucket = s3.buckets.create(bucket_name) unless bucket.exists?
+        bucket = s3.bucket(bucket_name)
+        bucket = s3.create_bucket(bucket: bucket_name) unless bucket.exists?
 
         files.each do |file|
           file_path =  Pathname.new(file)
           target_path = Pathname.new(@params['s3_backup_path'] || '') + file_path.basename
-          obj = bucket.objects[target_path]
-          obj.write(file_path)
+          obj = bucket.object(target_path)
+          obj.put(body: file_path)
           @logger.info "Backed up file #{file_path} to s3 #{target_path}" if @logger
         end
 
