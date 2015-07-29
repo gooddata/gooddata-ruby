@@ -37,7 +37,7 @@ describe GoodData::Bricks::AWSMiddleware do
 
   it "should preapre aws middleware for aws_client param" do
     middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda do |params|
-      expect(params['aws_client']['s3_client']).to be_kind_of(AWS::S3)
+      expect(params['aws_client']['s3_client']).to be_kind_of(Aws::S3::Resource)
     end)
     middleware.call('aws_client' => {
       'secret_access_key' => 'something',
