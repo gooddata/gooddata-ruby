@@ -60,6 +60,17 @@ module GoodData
         page_limit = options[:limit] || 100
         loop do
           results = client.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", {})
+
+          # Implementation of polling is based on
+          # https://opengrok.intgdc.com/source/xref/gdc-backend/src/test/java/com/gooddata/service/dao/ValidElementsDaoTest.java
+          status_url = result['uri']
+          if status_url
+            results = client.poll_on_response(status_url) do |body|
+              status = body['taskState']['status']
+              status == 'RUNNING' || status == 'PREPARED'
+            end
+          end
+
           elements = results['validElements']
           elements['items'].map do |el|
             v = el['element']
