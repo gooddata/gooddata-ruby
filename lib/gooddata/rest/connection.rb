@@ -148,7 +148,7 @@ module GoodData
         else
           credentials = Connection.construct_login_payload(username, password)
           generate_session_id
-          @auth = post(LOGIN_PATH, credentials)['userLogin']
+          @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
 
           refresh_token :dont_reauth => true
           @user = get(@auth['profile'])
@@ -270,12 +270,22 @@ module GoodData
               @server[uri].delete(params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              log_error(e, uri, params)
               raise e
             end
           end
           process_response(options, &b)
         end
+      end
+
+      # Helper for logging error
+      #
+      # @param e [RuntimeException] Exception to log
+      # @param uri [String] Uri on which the request failed
+      # @param uri [Hash] Additional params
+      def log_error(e, uri, params)
+        return if e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
+        GoodData.logger.error(format_error(e, params))
       end
 
       # HTTP GET
@@ -291,7 +301,7 @@ module GoodData
               @server[uri].get(params, &user_block)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              log_error(e, uri, params)
               raise e
             end
           end
@@ -313,7 +323,7 @@ module GoodData
               @server[uri].put(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              log_error(e, uri, params)
               raise e
             end
           end
@@ -335,7 +345,7 @@ module GoodData
               @server[uri].post(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              GoodData.logger.error(format_error(e, params))
+              log_error(e, uri, params)
               raise e
             end
           end
@@ -481,8 +491,8 @@ module GoodData
 
       def process_response(options = {}, &block)
         retries = options[:tries] || 3
-
-        response = GoodData::Rest::Connection.retryable(:tries => retries, :refresh_token => proc { refresh_token unless options[:dont_reauth] }) do
+        opts = { tries: retries, refresh_token: proc { refresh_token unless options[:dont_reauth] } }.merge(options)
+        response = GoodData::Rest::Connection.retryable(opts) do
           block.call
         end
 
