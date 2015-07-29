@@ -246,7 +246,7 @@ module GoodData
     #
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint(options = {})
-      result = client.get("/gdc/projects/#{pid}/model/view")
+      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true })
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
       bp = GoodData::Model::FromWire.from_wire(model)
