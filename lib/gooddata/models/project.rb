@@ -1141,19 +1141,39 @@ module GoodData
         u
       end
 
-      diffable_new = diffable_new_with_default_role.map do |u|
+      intermediate_new = diffable_new_with_default_role.map do |u|
         u[:role] = u[:role].map do |r|
           role = get_role(r, role_list)
           role && role.uri
         end
+
+        if u[:role].all?(&:nil?)
+          u[:type] = :error
+          u[:reason] = 'Invalid role(s) specified'
+        else
+          u[:type] = :ok
+        end
+
         u[:status] = 'ENABLED'
         u
       end
 
+      intermediate_new_by_type = intermediate_new.group_by { |i| i[:type] }
+      diffable_new = intermediate_new_by_type[:ok] || []
+
       # Diff users. Only login and role is important for the diff
       diff = GoodData::Helpers.diff(whitelisted_users, diffable_new, key: :login, fields: [:login, :role, :status])
 
-      results = []
+      results = {
+        :ok => [],
+        :error => []
+      }
+
+      concat_results = lambda do |res_tmp|
+        results[:ok].concat(res_tmp[:ok]) if res_tmp[:ok]
+        results[:error].concat(res_tmp[:error]) if res_tmp[:error]
+      end
+
       # Create new users
       u = diff[:added].map do |x|
         {
@@ -1161,19 +1181,21 @@ module GoodData
           role: x[:role]
         }
       end
+
       # This is only creating users that were not in the proejcts so far. This means this will reach into domain
       GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
-      results.concat create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users, only_domain: true)
+      concat_results.call(create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users, only_domain: true))
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
       list = diff[:changed].map { |x| { user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles] } }
-      results.concat(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
+      concat_results.call(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
 
       # Remove old users
       to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
-      GoodData.logger.warn("Removing #{to_remove.count} users in project (#{pid})")
-      results.concat(disable_users(to_remove))
+      GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
+      concat_results.call(disable_users(to_remove))
+
       results
     end
 
@@ -1183,10 +1205,15 @@ module GoodData
       payloads = list.map do |u|
         generate_user_payload(u[:uri], 'DISABLED')
       end
-      payloads.each_slice(100).mapcat do |payload|
+
+      users = payloads.each_slice(100).mapcat do |payload|
         result = client.post(url, 'users' => payload)
         result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, uri: x } } }
       end
+
+      {
+        :ok => users
+      }
     end
 
     def verify_user_to_add(login, desired_roles, options = {})
@@ -1203,6 +1230,8 @@ module GoodData
       domain = client.domain(options[:domain]) if options[:domain]
       domain_users = options[:domain_users] || (domain && domain.users)
       project_users = options[:project_users] || users
+
+      login = login[:login] if login.is_a?(Hash) && login.key?(:login)
 
       project_user = get_user(login, project_users)
       domain_user = if domain && !project_user && !user
@@ -1232,7 +1261,7 @@ module GoodData
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
     def set_users_roles(list, options = {})
-      return [] if list.empty?
+      return {} if list.empty?
       role_list = options[:roles] || roles
       project_users = options[:project_users] || users
       domain = options[:domain] && client.domain(options[:domain])
@@ -1246,22 +1275,37 @@ module GoodData
                        end
                      end
 
-      users_to_add = list.flat_map do |user_hash|
+      # List can contain some users which are not in domain for some reason
+      domain_users.compact!
+
+      intermediate_users = list.flat_map do |user_hash|
         user = user_hash[:user] || user_hash[:login]
         desired_roles = user_hash[:role] || user_hash[:roles] || 'readOnlyUser'
         begin
           login, roles = verify_user_to_add(user, desired_roles, options.merge(domain_users: domain_users, project_users: project_users, roles: role_list))
-          [{ login: login, roles: roles }]
-        rescue
-          []
+          [{ :type => :ok, login: login, roles: roles }]
+        rescue => e
+          [{ :type => :error, :reason => e.message, login: login, roles: roles }]
         end
       end
+
+      users_by_type = intermediate_users.group_by { |u| u[:type] }
+      users_to_add = users_by_type[:ok] || []
+
       payloads = users_to_add.map { |u| generate_user_payload(u[:login], 'ENABLED', u[:roles]) }
       url = "#{uri}/users"
       results = payloads.each_slice(100).map do |payload|
         client.post(url, 'users' => payload)
       end
-      results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| { type: k.to_sym, uri: v_2 } } } }
+
+      res = {
+        :ok => results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| { type: k.to_sym, uri: v_2 } } } },
+        :error => users_by_type[:error]
+      }
+
+      res.delete(:error) if res[:error].empty?
+      res.delete(:ok) if res[:ok].empty?
+      res
     end
 
     alias_method :add_users, :set_users_roles
