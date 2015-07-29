@@ -19,6 +19,10 @@ module GoodData
         @client || GoodData::Rest::Object.client(opts)
       end
 
+      def saved?
+        !uri.blank?
+      end
+
       class << self
         def default_client
         end

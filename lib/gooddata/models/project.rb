@@ -359,7 +359,8 @@ module GoodData
     end
 
     def create_schedule(process, date, executable, options = {})
-      GoodData::Schedule.create(process, date, executable, options.merge(client: client, project: self))
+      s = GoodData::Schedule.create(process, date, executable, options.merge(client: client, project: self))
+      s.save
     end
 
     def create_variable(data)
@@ -540,8 +541,8 @@ module GoodData
       URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
     end
 
-    def upload_file(file)
-      GoodData.upload_to_project_webdav(file, project: self)
+    def upload_file(file, options = {})
+      GoodData.upload_to_project_webdav(file, options.merge(project: self))
     end
 
     def download_file(file, where)
@@ -1028,14 +1029,6 @@ module GoodData
                  end
       @json = response
       self
-    end
-
-    # Checks if is project saved
-    #
-    # @return [Boolean] True if saved, false if not
-    def saved?
-      res = uri.nil?
-      !res
     end
 
     # @param [String | Number | Object] Anything that you can pass to GoodData::Schedule[id]

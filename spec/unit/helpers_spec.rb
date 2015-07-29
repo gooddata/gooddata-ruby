@@ -63,6 +63,7 @@ describe GoodData::Helpers do
       expected_result = {
         'param' => 'value',
         'number_param' => 5,
+        "gd_encoded_hidden_params" => nil,
         "deep_secret" => {
           "deeper_secret" => "hidden value"
         }

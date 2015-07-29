@@ -80,11 +80,6 @@ module GoodData
       self
     end
 
-    def saved?
-      res = uri.nil?
-      !res
-    end
-
     def save
       fail('Validation failed') unless validate
 
