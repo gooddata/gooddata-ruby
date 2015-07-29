@@ -114,21 +114,6 @@ describe "Full project implementation", :constraint => 'slow' do
     end
   end
 
-  it 'should upload the data when you deprecate attribute' do
-    l = @project.datasets('dataset.devs').attributes.pmapcat(&:labels).sample
-    l.deprecated = 1
-    l.save
-    b = @project.labels(l.identifier)
-    expect(b.deprecated).to eq "1"
-    devs_data = [
-      ["label.devs.dev_id.id", "label.devs.dev_id.email"],
-      [1, "tomas@gooddata.com"],
-      [2, "petr@gooddata.com"],
-      [3, "jirka@gooddata.com"]]
-
-    @project.upload(devs_data, @project.blueprint, 'dataset.devs')
-  end
-
   it "it silently ignores extra columns" do
     GoodData.with_project(@project) do |p|
       blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
