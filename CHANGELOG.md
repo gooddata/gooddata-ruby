@@ -2,6 +2,7 @@
 
 ## 0.6.21
 - Connect using SSO - GoodData#connect_sso
+- Consolidated error reporting for Domain#create_users & Project#import_users
 
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects

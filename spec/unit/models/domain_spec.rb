@@ -79,11 +79,11 @@ describe GoodData::Domain do
       res = @domain.create_users(list)
 
       # no errors
-      expect(res.select { |x| x[:type] == :user_added_to_domain }.count).to eq res.count
+      expect(res[:ok].select { |x| x[:action] == :user_added_to_domain }.count).to eq res[:ok].count
 
       expect(@domain.members?(list.map(&:login)).all?).to be_truthy
 
-      res.map { |r| r[:user] }.each do |r|
+      res[:ok].map { |r| r[:user] }.each do |r|
         expect(r).to be_an_instance_of(GoodData::Profile)
         r.delete
       end
