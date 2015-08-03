@@ -134,7 +134,7 @@ module GoodData
     end
 
     def after
-      schedules.find { |s| s.obj_id == trigger_id }
+      project.schedules(trigger_id)
     end
 
     def after=(schedule)
