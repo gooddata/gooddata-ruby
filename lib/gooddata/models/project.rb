@@ -186,6 +186,9 @@ module GoodData
 
     alias_method :create_metric, :add_metric
 
+    alias_method :add_measure, :add_metric
+    alias_method :create_measure, :add_metric
+
     # Creates new instance of report in context of project
     #
     # @param [options] Optional report options
@@ -357,6 +360,8 @@ module GoodData
     def compute_metric(expression)
       GoodData::Metric.xexecute(expression, client: client, project: self)
     end
+
+    alias_method :compute_measure, :compute_metric
 
     def create_schedule(process, date, executable, options = {})
       s = GoodData::Schedule.create(process, date, executable, options.merge(client: client, project: self))
@@ -691,13 +696,19 @@ module GoodData
       GoodData::Metric[id, opts.merge(project: self, client: client)]
     end
 
+    alias_method :measures, :metrics
+
     def metric_by_title(title)
       GoodData::Metric.find_first_by_title(title, project: self, client: client)
     end
 
+    alias_method :measure_by_title, :metric_by_title
+
     def metrics_by_title(title)
       GoodData::Metric.find_by_title(title, project: self, client: client)
     end
+
+    alias_method :measures_by_title, :metrics_by_title
 
     # Checks if the profile is member of project
     #

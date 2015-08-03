@@ -88,6 +88,8 @@ module GoodData
           end
         end
 
+        alias_method :migrate_measures, :migrate_metrics
+
         def load(project, spec)
           if spec.key?(:uploads) # rubocop:disable Style/GuardClause
             spec[:uploads].each do |load|

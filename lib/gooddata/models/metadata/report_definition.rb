@@ -34,6 +34,8 @@ module GoodData
         }
       end
 
+      alias_method :create_measure_part, :create_metric_part
+
       def create_attribute_part(attrib)
         {
           'attribute' => {
@@ -222,6 +224,8 @@ module GoodData
     def metric_parts
       content['grid']['metrics']
     end
+
+    alias_method :measure_parts, :metric_parts
 
     def metrics
       metric_parts.map { |i| project.metrics(i['uri']) }

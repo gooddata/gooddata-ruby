@@ -372,6 +372,8 @@ module GoodData
         end
       end
 
+      alias_method :suggest_measures, :suggest_metrics
+
       def to_blueprint
         GoodData::Model::ProjectBlueprint.new(datasets: [to_hash])
       end
