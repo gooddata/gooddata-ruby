@@ -142,7 +142,7 @@ module GoodData
         # Reset old cookies first
         if options[:sst_token]
           merge_cookies!('GDCAuthSST' => options[:sst_token])
-          tt = get('/gdc/account/token', @request_params)
+          get('/gdc/account/token', @request_params)
 
           @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
           @auth = {}

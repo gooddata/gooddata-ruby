@@ -89,7 +89,7 @@ module GoodData
         :x_gdc_request => "#{SecureRandom.urlsafe_base64(16)}:#{SecureRandom.urlsafe_base64(16)}"
       }
 
-      RestClient.get url, params do |response, request, result|
+      RestClient.get url, params do |response, _request, _result|
         Rest::Client.connect_sso(:sst_token => URI.decode(response.cookies['GDCAuthSST']))
       end
     end
