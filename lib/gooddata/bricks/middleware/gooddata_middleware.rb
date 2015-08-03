@@ -5,6 +5,7 @@ module GoodData
   module Bricks
     class GoodDataMiddleware < Bricks::Middleware
       def call(params)
+        params = params.to_hash
         logger = params['GDC_LOGGER']
         token_name = 'GDC_SST'
         protocol_name = 'CLIENT_GDC_PROTOCOL'

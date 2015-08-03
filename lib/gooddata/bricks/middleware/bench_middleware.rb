@@ -7,6 +7,7 @@ module GoodData
   module Bricks
     class BenchMiddleware < Bricks::Middleware
       def call(params)
+        params = params.to_hash
         puts 'Starting timer'
         result = nil
         report = Benchmark.measure { result = @app.call(params) }

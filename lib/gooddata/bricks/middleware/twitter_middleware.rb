@@ -8,6 +8,7 @@ module GoodData
   module Bricks
     class TwitterMiddleware < Bricks::Middleware
       def call(params)
+        params = params.to_hash
         client = Twitter::REST::Client.new do |config|
           config.consumer_key = params[:twitter_consumer_key]
           config.consumer_secret = params[:twitter_consumer_secret]
