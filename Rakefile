@@ -95,6 +95,14 @@ namespace :license do
   task :report do
     `bundle exec license_finder report --decisions-file dependency_decisions.yml --format=markdown > DEPENDENCIES.md`
   end
+
+  task :check do
+    Rake::Task['license:report'].invoke
+    res = `git diff --stat DEPENDENCIES.md`
+    raise 'License check error' unless res.include?('1 file changed, 1 insertion(+), 1 deletion(-)')
+
+    puts 'All licenses seem to be OK'
+  end
 end
 
 RSpec::Core::RakeTask.new(:test)
