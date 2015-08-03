@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
   s.require_paths = ["lib"]
 
+  s.add_development_dependency 'license_finder', '~> 2.0', '>= 2.0.4'
   s.add_development_dependency 'rake', '~> 10.3', '>= 10.3.1'
   s.add_development_dependency 'rake-notes', '~> 0.2', '>= 0.2.0'
   s.add_development_dependency 'redcarpet', '~> 3.1', '>= 3.1.1' if RUBY_PLATFORM != 'java'

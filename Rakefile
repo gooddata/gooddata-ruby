@@ -3,6 +3,7 @@
 require 'rubygems'
 
 require 'bundler/setup'
+require 'bundler/cli'
 require 'bundler/gem_tasks'
 
 # require 'coveralls/rake/task'
@@ -86,6 +87,15 @@ namespace :hook do
 
 end
 
+namespace :license do
+  task :info do
+    Bundler::CLI.start(['exec', 'license_finder', '--decisions-file', 'dependency_decisions.yml'])
+  end
+
+  task :report do
+    `bundle exec license_finder report --decisions-file dependency_decisions.yml --format=markdown > DEPENDENCIES.md`
+  end
+end
 
 RSpec::Core::RakeTask.new(:test)
 
