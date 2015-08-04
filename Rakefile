@@ -85,6 +85,45 @@ namespace :hook do
   end
 end
 
+namespace :license do
+  desc 'Add license header to each file'
+  task :add do
+    spec = Gem::Specification.load('gooddata.gemspec')
+    license = File.readlines(File.expand_path('../LICENSE.rb', __FILE__))
+    license << "\n"
+    license_lines = license.length
+
+    spec.files.each do |path|
+      next if path == 'LICENSE.rb'
+      next unless path.end_with?('.rb')
+
+      puts "Processing #{path}"
+
+      content = File.read(path)
+      content_lines = content.lines
+
+      update = content_lines.length < license_lines
+
+      if update == false
+        content_with_license = (license + content_lines[license_lines..-1]).join
+        update = content != content_with_license
+      end
+
+      next unless update
+
+      puts "Updating #{path}"
+
+      if content_lines.length > 0 && content_lines[0].downcase.strip == '# encoding: utf-8'
+        content_lines.slice!(0)
+        content_lines.slice!(0) if content_lines[0] == "\n"
+      end
+
+      new_content = (license + content_lines).join
+      File.open(path, 'w') { |file| file.write(new_content) }
+    end
+  end
+end
+
 RSpec::Core::RakeTask.new(:test)
 
 namespace :test do
