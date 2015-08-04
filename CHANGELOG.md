@@ -1,6 +1,8 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.22
+- Added rake task (license:add) for automatic license headers generating
+- Handle situation when upload_status.json does not exist
 - rake tasks license:check, license:report & license:info for automated license reporting added
 
 ## 0.6.21
