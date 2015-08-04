@@ -3,6 +3,7 @@
 require 'rubygems'
 
 require 'bundler/setup'
+require 'bundler/cli'
 require 'bundler/gem_tasks'
 
 # require 'coveralls/rake/task'
@@ -86,6 +87,25 @@ namespace :hook do
 end
 
 namespace :license do
+  desc 'Show license report'
+  task :info do
+    Bundler::CLI.start(['exec', 'license_finder', '--decisions-file', 'dependency_decisions.yml'])
+  end
+
+  desc 'Generate licenses report - DEPENDENCIES.md'
+  task :report do
+    `bundle exec license_finder report --decisions-file dependency_decisions.yml --format=markdown > DEPENDENCIES.md`
+  end
+
+  desc 'Check if DEPENDENCIES.md is up to date'
+  task :check do
+    Rake::Task['license:report'].invoke
+    res = `git diff --stat DEPENDENCIES.md`
+    fail 'License check error' unless res.include?('1 file changed, 1 insertion(+), 1 deletion(-)')
+
+    puts 'All licenses seem to be OK'
+  end
+
   desc 'Add license header to each file'
   task :add do
     spec = Gem::Specification.load('gooddata.gemspec')
