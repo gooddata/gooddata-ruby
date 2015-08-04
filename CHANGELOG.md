@@ -1,6 +1,7 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.22
+- added support of GoodData PGP SSO
 
 ## 0.6.21
 - Connect using SSO - GoodData#connect_sso
@@ -11,7 +12,6 @@
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects
 - use query resource inlining for retrieving user filters
-- added support of GoodData PGP SSO
 - fixed default parameters from ~/.gooddata file (auth token, server)
 - added project WebDav deprecation warning
 - removed dependency on Active Support gem
