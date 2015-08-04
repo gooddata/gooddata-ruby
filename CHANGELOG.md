@@ -4,6 +4,7 @@
 - Added rake task (license:add) for automatic license headers generating
 - Handle situation when upload_status.json does not exist
 - Connect using SSO - GoodData#connect_sso
+- Added Measure semantics, alias methods metrics to measure (ie. interpolate_metric -> interpolate_measure)
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users

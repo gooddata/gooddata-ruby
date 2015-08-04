@@ -8,6 +8,8 @@ module GoodData
       def metric?
         false
       end
+
+      alias_method :measure?, :metric?
     end
   end
 end
