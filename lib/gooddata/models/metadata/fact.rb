@@ -36,5 +36,7 @@ module GoodData
       a_title = options[:title] || "#{a_type} of #{title}"
       project.create_metric("SELECT #{a_type.to_s.upcase}([#{uri}])", title: a_title, extended_notation: false)
     end
+
+    alias_method :create_measure, :create_metric
   end
 end

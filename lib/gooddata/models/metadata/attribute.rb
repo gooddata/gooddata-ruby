@@ -100,6 +100,8 @@ module GoodData
       end
     end
 
+    alias_method :create_measure, :create_metric
+
     # For an element id find values (titles) for all display forms. Element id can be given as both number id or URI as a string beginning with /
     # @param [Object] element_id Element identifier either Number or a uri as a String
     # @return [Array] list of values for certain element. Returned in the same order as is the order of labels

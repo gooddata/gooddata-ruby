@@ -561,6 +561,8 @@ module GoodData
         stars.zip(metrics)
       end
 
+      alias_method :suggest_measures, :suggest_metrics
+
       def to_blueprint
         self
       end
