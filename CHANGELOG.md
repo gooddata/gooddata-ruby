@@ -1,8 +1,12 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.22
+
 ## 0.6.21
 - Connect using SSO - GoodData#connect_sso
 - Consolidated error reporting for Domain#create_users & Project#import_users
+- Removed superfluous error messages on 401
+- Fixed bug with rich params when it could happen that hidden params got deleted on schedule save
 
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects

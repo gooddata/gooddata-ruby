@@ -2,7 +2,7 @@
 
 # GoodData Module
 module GoodData
-  VERSION = '0.6.21'
+  VERSION = '0.6.22'
 
   class << self
     # Version
