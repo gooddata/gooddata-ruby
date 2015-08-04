@@ -109,17 +109,17 @@ namespace :license do
         update = content != content_with_license
       end
 
-      if update
-        puts "Updating #{path}"
+      next unless update
 
-        if content_lines.length > 0 && content_lines[0].downcase.strip == '# encoding: utf-8'
-          content_lines.slice!(0)
-          content_lines.slice!(0) if content_lines[0] == "\n"
-        end
+      puts "Updating #{path}"
 
-        new_content = (license + content_lines).join
-        File.open(path, 'w') { |file| file.write(new_content) }
+      if content_lines.length > 0 && content_lines[0].downcase.strip == '# encoding: utf-8'
+        content_lines.slice!(0)
+        content_lines.slice!(0) if content_lines[0] == "\n"
       end
+
+      new_content = (license + content_lines).join
+      File.open(path, 'w') { |file| file.write(new_content) }
     end
   end
 end
