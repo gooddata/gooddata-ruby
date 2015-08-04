@@ -19,6 +19,8 @@ module GoodData
       TOKEN_PATH = '/gdc/account/token'
       KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
 
+      ID_LENGTH = 16
+
       DEFAULT_HEADERS = {
         :content_type => :json,
         :accept => [:json, :zip],
@@ -57,6 +59,15 @@ module GoodData
             }
           }
           res
+        end
+
+        # Generate random string with URL safe base64 encoding
+        #
+        # @param [String] length Length of random string to be generated
+        #
+        # @return [String] Generated random string
+        def generate_string(length = ID_LENGTH)
+          SecureRandom.urlsafe_base64(length)
         end
 
         # Retry block if exception thrown
@@ -142,6 +153,8 @@ module GoodData
         # Reset old cookies first
         if options[:sst_token]
           merge_cookies!('GDCAuthSST' => options[:sst_token])
+          get('/gdc/account/token', @request_params)
+
           @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
           @auth = {}
           refresh_token :dont_reauth => true
@@ -403,8 +416,6 @@ module GoodData
 
       private
 
-      ID_LENGTH = 16
-
       def create_webdav_dir_if_needed(url)
         return if webdav_dir_exists?(url)
 
@@ -448,22 +459,18 @@ module GoodData
         "#{params[:x_gdc_request]} #{e.inspect}"
       end
 
-      def generate_string
-        SecureRandom.urlsafe_base64(ID_LENGTH)
-      end
-
       # generate session id to be passed as the first part to
       # x_gdc_request header
       def session_id
-        @session_id ||= generate_string
+        @session_id ||= Connection.generate_string
       end
 
       def call_id
-        generate_string
+        Connection.generate_string
       end
 
       def generate_session_id
-        @session_id = generate_string
+        @session_id = Connection.generate_string
       end
 
       def clear_session_id
