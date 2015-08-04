@@ -1,5 +1,7 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.22
+
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
 - Removed superfluous error messages on 401
