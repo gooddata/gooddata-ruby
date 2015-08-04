@@ -195,7 +195,13 @@ module GoodData
 
         if res['wTaskStatus']['status'] == 'ERROR' # rubocop:disable Style/GuardClause
           s = StringIO.new
-          client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s, :client => client, :project => project)
+
+          begin
+            client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s, :client => client, :project => project)
+          rescue => e
+            raise "Unable to download upload_status.json from remote server, reason: #{e.message}"
+          end
+
           js = MultiJson.load(s.string)
           manifest_cols =  manifest['dataSetSLIManifest']['parts'].map { |c| c['columnName'] }
 
