@@ -87,7 +87,7 @@ namespace :hook do
 end
 
 namespace :license do
-    desc 'Show license report'
+  desc 'Show license report'
   task :info do
     Bundler::CLI.start(['exec', 'license_finder', '--decisions-file', 'dependency_decisions.yml'])
   end
@@ -101,7 +101,7 @@ namespace :license do
   task :check do
     Rake::Task['license:report'].invoke
     res = `git diff --stat DEPENDENCIES.md`
-    raise 'License check error' unless res.include?('1 file changed, 1 insertion(+), 1 deletion(-)')
+    fail 'License check error' unless res.include?('1 file changed, 1 insertion(+), 1 deletion(-)')
 
     puts 'All licenses seem to be OK'
   end
