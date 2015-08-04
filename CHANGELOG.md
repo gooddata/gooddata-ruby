@@ -1,12 +1,12 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.22
+- [BIA-148] - Handle situation when upload_status.json does not exist
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
 - Removed superfluous error messages on 401
 - Fixed bug with rich params when it could happen that hidden params got deleted on schedule save
-- [BIA-148] - Handle situation when upload_status.json does not exist
 
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects
