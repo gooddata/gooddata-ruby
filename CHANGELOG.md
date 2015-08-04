@@ -1,6 +1,7 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.22
+- rake tasks license:check, license:report & license:info for automated license reporting added
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
