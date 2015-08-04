@@ -1,7 +1,8 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.22
-- [BIA-148] - Handle situation when upload_status.json does not exist
+- Added rake task (license:add) for automatic license headers generating
+- Handle situation when upload_status.json does not exist
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
