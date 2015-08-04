@@ -48,6 +48,20 @@ module GoodData
       disconnect
     end
 
+    # Generates SSO URL
+    #
+    # This SSO implementation is custom implementation provided by GoodData
+    # that allows your application to sign in an existing GoodData user.
+    # The authentication is done not by username and password but by generating a session
+    # specific token using pair of PGP keys.
+    #
+    # @see https://developer.gooddata.com/article/single-sign-on
+    #
+    # @param [String] login Email address used for logging into gooddata
+    # @param [String] provider Name of SSO provider
+    # @param [Hash] opts Additional options
+    # @option opts [Fixnum] :validity Validity in seconds from 'now'
+    # @return [String] URL which can be used for SSO logging in
     def sso_url(login, provider, opts = DEFAULT_SSO_OPTIONS)
       opts = DEFAULT_SSO_OPTIONS.merge(opts)
 
@@ -82,11 +96,23 @@ module GoodData
       "#{GoodData::Helpers::AuthHelper.read_server}/gdc/account/customerlogin?sessionId=#{CGI.escape(final)}&serverURL=#{CGI.escape(provider)}&targetURL=#{CGI.escape(opts[:url])}"
     end
 
-    def connect_sso(login, provider, opts = DEFAULT_SSO_OPTIONS)
-      url = sso_url(login, provider, opts)
+    # Connect to GoodData using SSO
+    #
+    # This SSO implementation is custom implementation provided by GoodData
+    # that allows your application to sign in an existing GoodData user.
+    # The authentication is done not by username and password but by generating a session
+    # specific token using pair of PGP keys.
+    #
+    # @see https://developer.gooddata.com/article/single-sign-on
+    #
+    # @param [String] login Email address used for logging into gooddata
+    # @param [String] provider Name of SSO provider
+    # @return [GoodData::Rest::Client] Instance of REST client
+    def connect_sso(login, provider)
+      url = sso_url(login, provider)
 
       params = {
-        :x_gdc_request => "#{SecureRandom.urlsafe_base64(16)}:#{SecureRandom.urlsafe_base64(16)}"
+        :x_gdc_request => "#{GoodData::Rest::Connection.generate_string}:#{GoodData::Rest::Connection.generate_string}"
       }
 
       RestClient.get url, params do |response, _request, _result|
