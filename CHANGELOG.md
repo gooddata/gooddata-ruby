@@ -3,6 +3,7 @@
 ## 0.6.22
 - Added rake task (license:add) for automatic license headers generating
 - Handle situation when upload_status.json does not exist
+- Connect using SSO - GoodData#connect_sso
 - Added Measure semantics, alias methods metrics to measure (ie. interpolate_metric -> interpolate_measure)
 
 ## 0.6.21
@@ -13,7 +14,6 @@
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects
 - use query resource inlining for retrieving user filters
-- added support of GoodData PGP SSO
 - fixed default parameters from ~/.gooddata file (auth token, server)
 - added project WebDav deprecation warning
 - removed dependency on Active Support gem
