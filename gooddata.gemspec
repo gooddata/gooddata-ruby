@@ -1,31 +1,31 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib/", __FILE__)
+# encoding: utf-8
+$LOAD_PATH.push File.expand_path('../lib/', __FILE__)
 require 'gooddata/version'
 
 Gem::Specification.new do |s|
-  s.name = %q{gooddata}
+  s.name = 'gooddata'
   s.version = GoodData::VERSION
   s.licenses = ['BSD']
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
   s.authors = [
-      'Pavel Kolesnikov',
-      'Thomas Watson Steen',
-      'Tomas Svarovsky',
-      'Tomas Korcak'
+    'Pavel Kolesnikov',
+    'Thomas Watson Steen',
+    'Tomas Svarovsky',
+    'Tomas Korcak'
   ]
 
-  s.summary = %q{A convenient Ruby wrapper around the GoodData RESTful API}
-  s.description = %q{Use the GoodData::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.}
-  s.email = %q{pavel@gooddata.com}
+  s.summary = 'A convenient Ruby wrapper around the GoodData RESTful API'
+  s.description = 'Use the GoodData::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.'
+  s.email = 'pavel@gooddata.com'
   s.extra_rdoc_files = %w(LICENSE README.md)
 
-  s.files = `git ls-files`.split($/)
+  s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
 
-  s.homepage = %q{http://github.com/gooddata/gooddata-ruby}
-  s.require_paths = ["lib"]
+  s.homepage = 'http://github.com/gooddata/gooddata-ruby'
+  s.require_paths = ['lib']
 
   s.add_development_dependency 'rake', '~> 10.3', '>= 10.3.1'
   s.add_development_dependency 'rake-notes', '~> 0.2', '>= 0.2.0'
