@@ -38,7 +38,7 @@ module GoodData
       # Pretty prints the MAQL expression. This basically means it finds out names of objects and elements and print their values instead of URIs
       # @param expression [String] Expression to be beautified
       # @return [String] Pretty printed MAQL expression
-      def pretty_print(expression, opts = {client: GoodData.connection, project: GoodData.project})
+      def pretty_print(expression, opts = { client: GoodData.connection, project: GoodData.project })
         temp = expression.dup
         pairs = expression.scan(PARSE_MAQL_OBJECT_REGEXP).pmap do |uri|
           uri = uri.first
@@ -85,7 +85,7 @@ module GoodData
         keys.zip(x)
       end
 
-      def interpolate_metric(metric, dictionary, options = {:client => GoodData.connection, :project => GoodData.project})
+      def interpolate_metric(metric, dictionary, options = { :client => GoodData.connection, :project => GoodData.project })
         interpolated = interpolate({
                                      :facts => GoodData::SmallGoodZilla.get_facts(metric),
                                      :attributes => GoodData::SmallGoodZilla.get_attributes(metric),
