@@ -7,6 +7,10 @@
 module GoodData
   module Mixin
     module MdJson
+      def from_json(json)
+        self.json = JSON.parse(json)
+      end
+
       def to_json
         json.to_json
       end

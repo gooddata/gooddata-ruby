@@ -69,6 +69,33 @@ module GoodData
       self
     end
 
+    # Add a report definition to a report. This will show on a UI as a new version.
+    #
+    # @param report_definition [GoodData::ReportDefinition | String] Report definition to add. Either it can be a URI of a report definition or an actual report definition object.
+    # @return [GoodData::Report] Return self
+    def add_definition!(report_definition)
+      res = add_definition(report_definition)
+      res.save
+    end
+
+    # Returns the newest (current version) report definition as an object
+    #
+    # @return [GoodData::ReportDefinition] Returns the newest report defintion
+    def definition
+      project.report_definitions(latest_report_definition_uri)
+    end
+
+    alias_method :latest_report_definition, :definition
+
+    # Returns the newest (current version) report definition uri
+    #
+    # @return [String] Returns uri of the newest report defintion
+    def definition_uri
+      definition_uris.last
+    end
+
+    alias_method :latest_report_definition_uri, :definition_uri
+
     # Gets a report definitions (versions) of this report as objects.
     #
     # @return [Array<GoodData::ReportDefinition>] Returns list of report definitions. Oldest comes first
@@ -133,20 +160,6 @@ module GoodData
     # Returns the newest (current version) report definition uri
     #
     # @return [String] Returns uri of the newest report defintion
-    def latest_report_definition_uri
-      definition_uris.last
-    end
-
-    # Returns the newest (current version) report definition as an object
-    #
-    # @return [GoodData::ReportDefinition] Returns the newest report defintion
-    def latest_report_definition
-      project.report_definitions(latest_report_definition_uri)
-    end
-
-    # Returns the newest (current version) report definition uri
-    #
-    # @return [String] Returns uri of the newest report defintion
     def purge_report_of_unused_definitions!
       full_list = definition_uris
       remove_definition_but_latest
@@ -194,6 +207,34 @@ module GoodData
       end
       new_defs.pmap(&:save)
       self
+    end
+
+    ## Update report definition and reflect the change in report
+    #
+    # @param [Hash] opts Options
+    # @option opts [Boolean] :immutable (true) Immutable true means that new definition will be created
+    # @return [GoodData::ReportDefinition] Updated and saved report definition
+    def update_definition(opts = { :immutable => true }, &block)
+      # TODO: Cache the latest report definition somehow
+      repdef = definition.dup
+
+      block.call(repdef, self) if block_given?
+
+      if opts[:immutable]
+        new_def = GoodData::ReportDefinition.create(:client => client, :project => project)
+
+        rd = repdef.json['reportDefinition']
+        rd.delete('links')
+        %w(author uri created identifier updated contributor).each { |k| rd['meta'].delete(k) }
+        new_def.json['reportDefinition'] = rd
+        new_def.save
+
+        add_definition!(new_def)
+      else
+        repdef.save
+      end
+
+      repdef
     end
   end
 end

@@ -12,8 +12,6 @@ require_relative 'metadata'
 module GoodData
   # Metric representation
   class Metric < MdObject
-    attr_reader :json
-
     include GoodData::Mixin::Lockable
 
     alias_method :to_hash, :json

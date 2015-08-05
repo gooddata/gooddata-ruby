@@ -6,6 +6,8 @@
 - Connect using SSO - GoodData#connect_sso
 - Added Measure semantics, alias methods metrics to measure (ie. interpolate_metric -> interpolate_measure)
 - rake tasks license:check, license:report & license:info for automated license reporting added
+- Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
+- GoodData::MdObject.json is assignable now (using attr_accessor)
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users

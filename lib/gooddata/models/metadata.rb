@@ -14,7 +14,7 @@ module GoodData
     MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
-    attr_reader :json
+    attr_accessor :json
 
     alias_method :raw_data, :json
     alias_method :to_hash, :json
