@@ -8,6 +8,7 @@
 - rake tasks license:check, license:report & license:info for automated license reporting added
 - Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
 - GoodData::MdObject.json is assignable now (using attr_accessor)
+- Update dashboards - Add GoodData::DashboardTab, GoodData::ReportItem, GoodData::FilterItem
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
