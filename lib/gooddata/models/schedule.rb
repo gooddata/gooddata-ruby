@@ -312,15 +312,22 @@ module GoodData
       @dirty = true
     end
 
-    # Returns list of executions
+    # Returns enumerator of executions
     #
     # @return [Array] Raw Executions JSON
     def executions
       if @json # rubocop:disable Style/GuardClause
         url = @json['schedule']['links']['executions']
-        res = client.get url
-        res['executions']['items'].map do |e|
-          client.create(Execution, e, :project => project)
+        Enumerator.new do |y|
+          loop do
+            res = client.get url
+            res['executions']['paging']['next']
+            res['executions']['items'].each do |execution|
+              y << client.create(Execution, execution, :project => project)
+            end
+            url = res['executions']['paging']['next']
+            break unless url
+          end
         end
       end
     end
