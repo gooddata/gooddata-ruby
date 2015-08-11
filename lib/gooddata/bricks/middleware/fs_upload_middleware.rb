@@ -15,6 +15,7 @@ module GoodData
       end
 
       def call(params)
+        params = params.to_hash
         returning(@app.call(params)) do |_|
           destination = @destination
           (params['gdc_files_to_upload'] || []).each do |f|
