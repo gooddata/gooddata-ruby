@@ -6,6 +6,7 @@
 - Connect using SSO - GoodData#connect_sso
 - Added Measure semantics, alias methods metrics to measure (ie. interpolate_metric -> interpolate_measure)
 - rake tasks license:check, license:report & license:info for automated license reporting added
+- Fixed a typo in labels
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
