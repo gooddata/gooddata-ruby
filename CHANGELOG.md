@@ -8,6 +8,7 @@
 - rake tasks license:check, license:report & license:info for automated license reporting added
 - Fixed a typo in labels
 - Executions are paging + are implemented as lazy enumerators
+- Blueprint works with deprecated labels 
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
