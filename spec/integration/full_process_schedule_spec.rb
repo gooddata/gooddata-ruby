@@ -90,6 +90,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       schedule = @process.create_schedule(schedule_first.obj_id, @process.executables.first)
       res = @process.schedules
       expect(res.count).to eq 2
+      expect(schedule.after).to eq schedule_first
       expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
     ensure
       schedule && schedule.delete
