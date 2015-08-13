@@ -1115,7 +1115,7 @@ module GoodData
           tmp = client.get("/gdc/projects/#{pid}/users", params: { offset: offset, limit: limit })
           tmp['users'].each do |user_data|
             user = client.create(GoodData::Membership, user_data, project: self)
-            y << user if opts[:all] || user.enabled?
+            y << user if opts[:all] || user && user.enabled?
           end
           break if tmp['users'].count < limit
           offset += limit
@@ -1291,7 +1291,7 @@ module GoodData
                      end || []
 
       # List can contain some users which are not in domain for some reason
-      domain_users.to_a.compact!
+      # domain_users.to_a.compact!
 
       intermediate_users = list.flat_map do |user_hash|
         user = user_hash[:user] || user_hash[:login]
