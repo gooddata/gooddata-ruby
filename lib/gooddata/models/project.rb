@@ -1288,10 +1288,10 @@ module GoodData
                        else
                          domain.users
                        end
-                     end
+                     end || []
 
       # List can contain some users which are not in domain for some reason
-      domain_users.compact!
+      domain_users.to_a.compact!
 
       intermediate_users = list.flat_map do |user_hash|
         user = user_hash[:user] || user_hash[:login]
@@ -1318,8 +1318,8 @@ module GoodData
         :error => users_by_type[:error]
       }
 
-      res.delete(:error) if res[:error].empty?
-      res.delete(:ok) if res[:ok].empty?
+      res.delete(:error) if res[:error] && res[:error].empty?
+      res.delete(:ok) if res[:ok] && res[:ok].empty?
       res
     end
 
