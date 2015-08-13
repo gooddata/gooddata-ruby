@@ -6,6 +6,10 @@
 - Connect using SSO - GoodData#connect_sso
 - Added Measure semantics, alias methods metrics to measure (ie. interpolate_metric -> interpolate_measure)
 - rake tasks license:check, license:report & license:info for automated license reporting added
+- Fixed a typo in labels
+- Executions are paging + are implemented as lazy enumerators
+- Fixed after getter in schedule
+- Blueprint works with deprecated labels 
 - Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
 - GoodData::MdObject.json is assignable now (using attr_accessor)
 
@@ -13,6 +17,7 @@
 - Consolidated error reporting for Domain#create_users & Project#import_users
 - Removed superfluous error messages on 401
 - Fixed bug with rich params when it could happen that hidden params got deleted on schedule save
+- Middlewares are transforming params to Ruby hash (useful for executors when they pass Java Hash instance)
 
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects

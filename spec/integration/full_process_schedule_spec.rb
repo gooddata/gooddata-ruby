@@ -90,6 +90,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       schedule = @process.create_schedule(schedule_first.obj_id, @process.executables.first)
       res = @process.schedules
       expect(res.count).to eq 2
+      expect(schedule.after).to eq schedule_first
       expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
     ensure
       schedule && schedule.delete
@@ -120,11 +121,13 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it "should be possible to execute schedule" do
     begin
       schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+      executions_count = schedule.executions.count
       result = schedule.execute
       expect(result.status).to eq :ok
       log = result.log
       expect(log.index('Hello Ruby executors')).not_to eq nil
       expect(log.index('Hello Ruby from the deep')).not_to eq nil
+      expect(executions_count + 1).to eq schedule.executions.count
     ensure
       schedule && schedule.delete
     end
