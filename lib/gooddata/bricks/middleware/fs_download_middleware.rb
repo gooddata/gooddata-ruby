@@ -10,6 +10,7 @@ module GoodData
   module Bricks
     class FsProjectDownloadMiddleware < Bricks::Middleware
       def call(params)
+        params = params.to_hash
         (params['gdc_files_to_download'] || []).each do |source|
           case source[:type].to_s
           when 'ads'

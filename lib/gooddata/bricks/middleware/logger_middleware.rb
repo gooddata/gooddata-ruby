@@ -12,6 +12,7 @@ module GoodData
   module Bricks
     class LoggerMiddleware < Bricks::Middleware
       def call(params)
+        params = params.to_hash
         logger = nil
         if params['GDC_LOGGING_OFF']
           logger = NilLogger.new

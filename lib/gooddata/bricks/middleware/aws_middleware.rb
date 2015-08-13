@@ -11,6 +11,7 @@ module GoodData
   module Bricks
     class AWSMiddleware < Bricks::Middleware
       def call(params)
+        params = params.to_hash
         if params.key?('aws_client')
           puts 'Setting up AWS-S3 connection'
           fail "Unable to connect to AWS. Parameter \"aws_client\" seems to be empty" unless params['aws_client']

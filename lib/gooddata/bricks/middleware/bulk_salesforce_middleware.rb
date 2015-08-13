@@ -28,6 +28,7 @@ module GoodData
       end
 
       def call(params)
+        params = params.to_hash
         params = self.class.create_client(params)
         @app.call(params)
       end
