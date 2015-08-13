@@ -44,7 +44,7 @@ describe GoodData::Project, :constraint => 'slow' do
         }
       end
       res = @project.add_users(users)
-      expect(res[:error].count).to eq users.length
+      expect(res.all? { |x| x[:type] == :error }).to eq true
     end
 
     it 'Adding users with domain should pass and users should be added to domain' do
@@ -56,7 +56,7 @@ describe GoodData::Project, :constraint => 'slow' do
       end
       @domain.create_users(users.map {|u| u[:user]})
       res = @project.add_users(users, domain: @domain)
-      links = res[:ok].map {|i| i[:uri]}
+      links = res.map {|i| i[:uri]}
       expect(@project.members?(links).all?).to be_truthy
     end
   end
@@ -177,7 +177,7 @@ describe GoodData::Project, :constraint => 'slow' do
 
       # set the roles
       res = @project.set_users_roles(list)
-      expect(res[:ok].length).to equal(list.length)
+      expect(res.length).to equal(list.length)
       expect(logins.map {|l| users.find {|u| u.login == l}}.pmap {|u| u.role.title}).to eq roles.flatten
     end
   
@@ -201,7 +201,7 @@ describe GoodData::Project, :constraint => 'slow' do
       end
   
       res = @project.set_users_roles(list)
-      expect(res[:ok].length).to equal(list.length)
+      expect(res.length).to equal(list.length)
       expect(logins.map {|l| users.find {|u| u.login == l}}.pmap {|u| u.role.title}).to eq roles.flatten
       
     end
