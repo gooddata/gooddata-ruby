@@ -529,7 +529,7 @@ describe GoodData::Schedule do
     it 'Returns executions' do
       begin
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
-        expect(schedule.executions).to be_empty
+        expect(schedule.executions.to_a).to be_empty
         schedule.execute
       ensure
         schedule && schedule.delete
