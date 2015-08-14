@@ -59,4 +59,46 @@ describe GoodData::MdObject do
       expect(@instance.remove_tag('t').tag_set).to eq %w(a b cg r).to_set
     end
   end
+
+  describe '#deprecated' do
+    it 'returns true/false' do
+      expect(@instance.deprecated).to be_falsey
+    end
+  end
+
+  describe '#deprecated=' do
+    it 'sets deprecated flag' do
+      expect(@instance.deprecated).to be_falsey
+      @instance.deprecated = true
+      expect(@instance.deprecated).to be_truthy
+      @instance.deprecated = false
+      expect(@instance.deprecated).to be_falsey
+      @instance.deprecated = 0
+      expect(@instance.deprecated).to be_falsey
+      @instance.deprecated = 1
+      expect(@instance.deprecated).to be_truthy
+    end
+  end
+
+  describe '#unlisted' do
+    it 'returns true/false' do
+      expect(@instance.unlisted).to be_falsey
+    end
+  end
+
+  describe '#unlisted?' do
+    it 'returns true/false' do
+      expect(@instance.unlisted?).to be_falsey
+    end
+  end
+
+  describe '#unlisted=' do
+    it 'sets unlisted flag' do
+      expect(@instance.unlisted).to be_falsey
+      @instance.unlisted = true
+      expect(@instance.unlisted?).to be_truthy
+      @instance.unlisted = false
+      expect(@instance.unlisted?).to be_falsey
+    end
+  end
 end

@@ -40,10 +40,10 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it 'should upload the data when you deprecate attribute with remote blueprint' do
     l = @project.labels('label.repository.name')
-    l.deprecated = 1
+    l.deprecated = true
     l.save
     b = @project.labels(l.identifier)
-    expect(b.deprecated).to eq "1"
+    expect(b.deprecated?).to be_truthy
 
     devs_data = [
       ["label.repository.name", "label.attribute1.name", "some_numbers"],
