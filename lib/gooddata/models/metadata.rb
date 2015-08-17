@@ -35,7 +35,7 @@ module GoodData
       end
     end
 
-    metadata_property_reader :uri, :identifier, :title, :summary, :tags, :deprecated, :category
+    metadata_property_reader :uri, :identifier, :title, :summary, :tags, :category
     metadata_property_writer :tags, :summary, :title, :identifier
 
     def initialize(data)
@@ -65,13 +65,22 @@ module GoodData
       client.connection.server_url + meta['uri']
     end
 
+    def deprecated
+      if meta['deprecated'] == '1'
+        true
+      else
+        false
+      end
+    end
+    alias_method :deprecated?, :deprecated
+
     def deprecated=(flag)
-      if flag == '1' || flag == 1
+      if flag == '1' || flag == 1 || flag == true
         meta['deprecated'] = '1'
-      elsif flag == '0' || flag == 0
+      elsif flag == '0' || flag == 0 || flag == false
         meta['deprecated'] = '0'
       else
-        fail 'You have to provide flag as either 1 or "1" or 0 or "0"'
+        fail 'You have to provide flag as either 1 or "1" or 0 or "0" or true/false'
       end
     end
 
@@ -147,6 +156,25 @@ module GoodData
 
     def ==(other)
       other.respond_to?(:uri) && other.uri == uri && other.respond_to?(:to_hash) && other.to_hash == to_hash
+    end
+
+    def listed?
+      !unlisted?
+    end
+
+    def unlisted
+      meta['unlisted'] == '1'
+    end
+    alias_method :unlisted?, :unlisted
+
+    def unlisted=(flag)
+      if flag == true
+        meta['unlisted'] = '1'
+      elsif flag == false
+        meta['unlisted'] = '0'
+      else
+        fail 'You have to provide flag as either true or false'
+      end
     end
 
     def validate

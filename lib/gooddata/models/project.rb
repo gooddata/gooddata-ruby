@@ -743,18 +743,23 @@ module GoodData
       GoodData::MdObject[id, opts.merge(project: self, client: client)]
     end
 
-    def partial_md_export(objs, options = {})
+    # Transfer objects from one project to another
+    #
+    # @param [Array<GoodData::MdObject | String>, String, GoodData::MdObject] objs Any representation of the object or a list of those
+    # @param [Hash] options The options to migration.
+    # @option options [Number] :time_limit Time in seconds before the blocking call will fail. See GoodData::Rest::Client.poll_on_response for additional details
+    # @option options [Number] :sleep_interval Interval between polls on the status of the migration.
+    # @return [String] Returns token that you can use as input for object_import
+    def objects_export(objs, options = {})
       fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objs.nil?
-      objs = [objs] unless objs.is_a?(Array)
+      objs = Array(objs)
       fail 'Nothing to migrate. The list you provided is empty' if objs.empty?
 
-      target_project = options[:project]
-      fail 'You have to provide a project instance or project pid to migrate to' if target_project.nil?
-      target_project = client.projects(target_project)
-      objs = objs.pmap { |obj| objects(obj) }
+      objs = objs.pmap { |obj| [obj, objects(obj)] }
+      fail ObjectsExportError, "Exporting objects failed with messages. Object #{objs.select { |_, obj| obj.nil? }.map { |o, _| o }.join(', ')} could not be found." if objs.any? { |_, obj| obj.nil? }
       export_payload = {
         :partialMDExport => {
-          :uris => objs.map(&:uri)
+          :uris => objs.map { |_, obj| obj.uri }
         }
       }
       result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
@@ -764,8 +769,22 @@ module GoodData
       polling_result = client.poll_on_response(polling_url, options) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
+      if polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'ERROR'
+        messages = GoodData::Helpers.interpolate_error_messages(polling_result['wTaskStatus']['messages']).join(' ')
+        fail ObjectsExportError, "Exporting objects failed with messages. #{messages}"
+      end
+      token
+    end
 
-      fail 'Exporting objects failed' if polling_result['wTaskStatus'] && polling_result['wTaskStatus']['status'] == 'ERROR'
+    # Import objects from import token. If you do not need specifically this method what you are probably looking for is transfer_objects. This is a lower level method.
+    #
+    # @param [String] token Migration token ID
+    # @param [Hash] options The options to migration.
+    # @option options [Number] :time_limit Time in seconds before the blocking call will fail. See GoodData::Rest::Client.poll_on_response for additional details
+    # @option options [Number] :sleep_interval Interval between polls on the status of the migration.
+    # @return [Boolean] Returns true if it succeeds or throws exceoption
+    def objects_import(token, options = {})
+      fail 'You need to provide a token for object import' if token.blank?
 
       import_payload = {
         :partialMDImport => {
@@ -775,14 +794,56 @@ module GoodData
         }
       }
 
-      result = client.post("#{target_project.md['maintenance']}/partialmdimport", import_payload)
+      result = client.post("#{md['maintenance']}/partialmdimport", import_payload)
       polling_url = result['uri']
 
-      client.poll_on_response(polling_url, options) do |body|
+      polling_result = client.poll_on_response(polling_url, options) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
 
-      fail 'Exporting objects failed' if polling_result['wTaskStatus']['status'] == 'ERROR'
+      if polling_result['wTaskStatus']['status'] == 'ERROR'
+        messages = GoodData::Helpers.interpolate_error_messages(polling_result['wTaskStatus']['messages']).join(' ')
+        fail ObjectsImportError, "Importing objects failed with messages. #{messages}"
+      end
+      true
+    end
+
+    # Transfer objects from one project to another
+    #
+    # @param [Array<GoodData::MdObject | String>, String, GoodData::MdObject] objects Any representation of the object or a list of those
+    # @param [Hash] options The options to migration.
+    # @option options [GoodData::Project | String | Array<String> | Array<GoodData::Project>] :project Project(s) to migrate to
+    # @option options [Number] :batch_size Number of projects that are migrated at the same time. Default is 10
+    #
+    # @return [Boolean | Array<Hash>] Return either true or throws exception if you passed only one project. If you provided an array returns list of hashes signifying sucees or failure. Take note that in case of list of projects it does not throw exception
+    def partial_md_export(objects, options = {})
+      projects = options[:project]
+      batch_size = options[:batch_size] || 10
+      token = objects_export(objects)
+
+      if projects.is_a?(Array)
+        projects.each_slice(batch_size).flat_map do |batch|
+          batch.pmap do |proj|
+            target_project = client.projects(proj)
+            begin
+              target_project.objects_import(token, options)
+              {
+                project: target_project,
+                result: true
+              }
+            rescue GoodData::ObjectsImportError => e
+              {
+                project: target_project,
+                result: false,
+                reason: e.message
+              }
+            end
+          end
+        end
+      else
+        target_project = client.projects(projects)
+        target_project.objects_import(token, options)
+      end
     end
 
     alias_method :transfer_objects, :partial_md_export
@@ -1115,7 +1176,7 @@ module GoodData
           tmp = client.get("/gdc/projects/#{pid}/users", params: { offset: offset, limit: limit })
           tmp['users'].each do |user_data|
             user = client.create(GoodData::Membership, user_data, project: self)
-            y << user if opts[:all] || user.enabled?
+            y << user if opts[:all] || user && user.enabled?
           end
           break if tmp['users'].count < limit
           offset += limit
@@ -1288,10 +1349,10 @@ module GoodData
                        else
                          domain.users
                        end
-                     end
+                     end || []
 
       # List can contain some users which are not in domain for some reason
-      domain_users.compact!
+      # domain_users.to_a.compact!
 
       intermediate_users = list.flat_map do |user_hash|
         user = user_hash[:user] || user_hash[:login]
@@ -1318,8 +1379,8 @@ module GoodData
         :error => users_by_type[:error]
       }
 
-      res.delete(:error) if res[:error].empty?
-      res.delete(:ok) if res[:ok].empty?
+      res.delete(:error) if res[:error] && res[:error].empty?
+      res.delete(:ok) if res[:ok] && res[:ok].empty?
       res
     end
 

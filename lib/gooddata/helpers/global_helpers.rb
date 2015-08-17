@@ -105,6 +105,16 @@ module GoodData
         '=' * x.size
       end
 
+      def interpolate_error_messages(errors)
+        errors.map { |e| interpolate_error_message(e) }
+      end
+
+      def interpolate_error_message(error)
+        message = error['error']['message']
+        params = error['error']['parameters']
+        sprintf(message, *params)
+      end
+
       def transform_keys!(an_object)
         return enum_for(:transform_keys!) unless block_given?
         an_object.keys.each do |key|

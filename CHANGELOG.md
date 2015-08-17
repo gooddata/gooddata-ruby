@@ -10,9 +10,8 @@
 - Executions are paging + are implemented as lazy enumerators
 - Fixed after getter in schedule
 - Blueprint works with deprecated labels 
-- Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
-- GoodData::MdObject.json is assignable now (using attr_accessor)
-- Update dashboards - Add GoodData::DashboardTab, GoodData::ReportItem, GoodData::FilterItem
+- Metadata object has new methods for working with unlisted attribute
+- Metadata method deprecated= now accepts and return true/false
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
