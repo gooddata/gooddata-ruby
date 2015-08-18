@@ -183,7 +183,7 @@ describe "User filters implementation", :constraint => 'slow' do
   end
 
   it "should be able to update the filter value" do
-    pending('We cannot swap filters yet')
+    skip('We cannot swap filters yet')
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com", "jirka@gooddata.com"]]
     @project.add_data_permissions(filters)
     perm = @project.data_permissions.first
