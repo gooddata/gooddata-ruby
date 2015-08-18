@@ -209,6 +209,16 @@ module GoodData
           end
         end
       end
+
+      # Creates a matrix with zeroes in all places. It is implemented as an Array of Arrays. First rows then columns.
+      #
+      # @param [Integer] m Number of rows
+      # @param [Integer] n Number of cols
+      # @param [Integer] val Alternatively can fill in positions with different values than zeroes. Defualt is zero.
+      # @return [Array<Array>] Returns a matrix of zeroes
+      def zeroes(m, n, val = 0)
+        m.times.map { n.times.map { val } }
+      end
     end
   end
 end

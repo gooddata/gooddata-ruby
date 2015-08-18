@@ -199,11 +199,11 @@ describe "Full project implementation", :constraint => 'slow' do
     metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")", :title => "My metric")
     metric.save
     result = @project.compute_report(:top => [metric], :left => ['label.devs.dev_id.email'])
-    expect(result[1][1]).to eq 3
+    expect(result[2][1]).to eq 3
     expect(result.include_row?(["jirka@gooddata.com", 5])).to be true
 
     result2 = @project.compute_report(:top => [metric], :left => ['label.devs.dev_id.email'])
-    expect(result2[1][1]).to eq 3
+    expect(result2[2][1]).to eq 3
     expect(result2.include_row?(["jirka@gooddata.com", 5])).to eq true
     expect(result2).to eq result
   end
@@ -530,7 +530,7 @@ describe "Full project implementation", :constraint => 'slow' do
     expect { def_uris.each {|uri| @client.get(uri)} }.to raise_error(RestClient::ResourceNotFound)
   end
 
-  it 'should be apossible to delete data from a dataset' do
+  it 'should be possible to delete data from a dataset' do
     dataset = @project.datasets('dataset.devs')
     expect(dataset.attributes.first.create_metric.execute).to be > 0
     dataset.delete_data

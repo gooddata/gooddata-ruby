@@ -75,8 +75,9 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
     report = @project.create_report(title: 'Test report', top: [m], left: ['label.devs.dev_id.email'])
     #both compute
     expect(m.execute).to eq 6
-    expect(report.execute.to_a).to eq [['jirka@gmail.com', 'petr@gmail.com', 'tomas@gmail.com'],
-                                       [3.0, 2.0, 1.0]]
+    expect(report.execute.without_top_headers.to_a).to eq [['jirka@gmail.com', 3.0],
+                                                           ['petr@gmail.com', 2.0],
+                                                           ['tomas@gmail.com', 1.0]]
 
     # We move attribute
     @blueprint.move!('some_attr_id', 'dataset.repos', 'dataset.commits')
@@ -93,7 +94,8 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
     # both still compute
     # since we did not change the grain the results are the same
     expect(m.execute).to eq 6
-    expect(report.execute.to_a).to eq [['jirka@gmail.com', 'petr@gmail.com', 'tomas@gmail.com'],
-                                       [3.0, 2.0, 1.0]]
+    expect(report.execute.without_top_headers.to_a).to eq [["jirka@gmail.com", 0.3E1],
+                                                           ["petr@gmail.com", 0.2E1],
+                                                           ["tomas@gmail.com", 0.1E1]]
   end
 end
