@@ -7,12 +7,10 @@
 require 'simplecov'
 require 'pmap'
 require 'rspec'
-require 'coveralls'
 require 'pathname'
 require 'webmock/rspec'
 
 WebMock.disable!
-Coveralls.wear_merged!
 
 # Automagically include all helpers/*_helper.rb
 
