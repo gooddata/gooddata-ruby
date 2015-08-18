@@ -189,7 +189,7 @@ describe "Variables implementation", :constraint => 'slow' do
   end
 
   it "should be able to update the filter value in place" do
-    pending('We cannot swap filters yet')
+    skip('We cannot swap filters yet')
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com", "jirka@gooddata.com"]]
     @project.add_variable_permissions(filters, @variable)
     perm = @variable.user_values.first

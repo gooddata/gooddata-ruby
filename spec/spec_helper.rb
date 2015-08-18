@@ -28,6 +28,8 @@ end
 include GoodData::Helpers
 
 RSpec.configure do |config|
+  config.deprecation_stream = File.open('deprecations.txt', 'w')
+
   config.include BlueprintHelper
   config.include CliHelper
   config.include ConnectionHelper
@@ -61,7 +63,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     # TODO: Setup test project
-    GoodData.logging_on
+    GoodData.logging_off
   end
 
   config.after(:suite) do
