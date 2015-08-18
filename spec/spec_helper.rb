@@ -7,12 +7,10 @@
 require 'simplecov'
 require 'pmap'
 require 'rspec'
-require 'coveralls'
 require 'pathname'
 require 'webmock/rspec'
 
 WebMock.disable!
-Coveralls.wear_merged!
 
 # Automagically include all helpers/*_helper.rb
 
@@ -72,8 +70,7 @@ RSpec.configure do |config|
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
+  SimpleCov::Formatter::HTMLFormatter
 ]
 
 SimpleCov.start do
