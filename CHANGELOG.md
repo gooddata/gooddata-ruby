@@ -17,12 +17,13 @@
 - Multiple data sets upload Project#upload_multiple
 - GoodData::MdObject.json is assignable now (using attr_accessor)
 - Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
+- Added more logging around connecting to server. Cleaning up staging information. Adding tests to make
+- Middlewares are transforming params to Ruby hash (useful for executors when they pass Java Hash instance)
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
 - Removed superfluous error messages on 401
 - Fixed bug with rich params when it could happen that hidden params got deleted on schedule save
-- Middlewares are transforming params to Ruby hash (useful for executors when they pass Java Hash instance)
 
 ## 0.6.20
 - added iterators for retrieval of project, domain, and group objects

@@ -68,32 +68,28 @@ module GoodData
 
     # Upload to user directory
     # @return [String]
-    def upload_to_user_webdav(file, options = { :project => GoodData.project })
-      options = merge_options(options)
-      project = options[:project]
-      u = URI(project.links['uploads'])
-      url = URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
-
+    def upload_to_user_webdav(file, options = {})
+      url = user_webdav_path({ :client => GoodData.client }.merge(options))
       connection.upload(file, options.merge(staging_url: url))
     end
 
     # Get WebDav directory for project data
     # @return [String]
-    def project_webdav_path(options = { :project => GoodData.project })
+    def project_webdav_path(options = {})
       options = merge_options(options)
       project = options[:project]
       project.project_webdav_path
     end
 
     # Upload to project directory
-    def upload_to_project_webdav(file, options = { :project => GoodData.project })
+    def upload_to_project_webdav(file, options = {})
       options = merge_options(options)
       url = project_webdav_path(options)
       connection.upload(file, options.merge(:staging_url => url))
     end
 
     # Download from project directory
-    def download_from_project_webdav(file, where, options = { :project => GoodData.project })
+    def download_from_project_webdav(file, where, options = {})
       options = merge_options(options)
       url = project_webdav_path(options)
       connection.download(file, where, options.merge(:staging_url => url))
@@ -101,16 +97,14 @@ module GoodData
 
     # Get WebDav directory for user data
     # @return [String]
-    def user_webdav_path(options = { :project => GoodData.project })
-      options = merge_options(options)
-      project = options[:project]
-      project.user_webdav_path
+    def user_webdav_path(options = {})
+      client = GoodData::Rest::Object.client({ :client => GoodData.client }.merge(options))
+      client.user_webdav_path
     end
 
     # Download from user directory
-    def download_from_user_webdav(file, where, options = { :project => GoodData.project })
-      options = merge_options(options)
-      url = user_webdav_path(options)
+    def download_from_user_webdav(file, where, options = {})
+      url = user_webdav_path({ :client => GoodData.client }.merge(options))
       connection.download(file, where, options.merge(:staging_url => url))
     end
 

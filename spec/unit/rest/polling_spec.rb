@@ -11,7 +11,6 @@ describe 'Behavior during polling and retries' do
     WebMock.enable!
 
     @server = GoodData::Environment::ConnectionHelper::DEFAULT_SERVER
-
     @coef = GoodData::Rest::Connection::RETRY_TIME_COEFFICIENT
     @init = GoodData::Rest::Connection::RETRY_TIME_INITIAL_VALUE
     @poll = GoodData::Rest::Client::DEFAULT_SLEEP_INTERVAL
@@ -23,7 +22,8 @@ describe 'Behavior during polling and retries' do
     GoodData::Rest::Connection.const_set(:RETRY_TIME_COEFFICIENT, 1)
     GoodData::Rest::Connection.const_set(:RETRY_TIME_INITIAL_VALUE, 0)
     GoodData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, 0)
-
+    stub_request(:get, "#{@server}/gdc")
+      .to_return(:body => {"about" => { "links" => [{ "link"=>"https://secure-di.gooddata.com/uploads", "summary"=>"User data staging area.", "category"=>"uploads", "title"=>"user-uploads" }]}}.to_json, :headers => { 'Content-Type' => "application/json" })
     stub_request(:post, "#{@server}/gdc/account/login")
       .to_return(:body => { :userLogin => { :profile => "/profile/123" }}.to_json, :headers => { 'Content-Type' => "application/json" })
     stub_request(:get, "#{@server}/gdc/account/token")

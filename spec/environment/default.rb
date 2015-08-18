@@ -16,6 +16,7 @@ module GoodData
       DEFAULT_DOMAIN = 'gooddata-tomas-korcak-gem-tester'
       DEFAULT_USER_URL = '/gdc/account/profile/3cea1102d5584813506352a2a2a00d95'
       DEFAULT_SERVER = 'https://secure.gooddata.com'
+      STAGING_URI = 'https://ea-di.staging.getgooddata.com/uploads/'
     end
 
     module ProcessHelper

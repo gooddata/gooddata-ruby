@@ -65,7 +65,7 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password, opts = { verify_ssl: true })
+        def connect(username, password = 'aaaa', opts = {})
           if username.nil? && password.nil?
             username = ENV['GD_GEM_USER']
             password = ENV['GD_GEM_PASSWORD']
@@ -75,18 +75,19 @@ module GoodData
 
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
-            new_opts = username
+            new_opts = new_opts.merge(username)
           elsif username.is_a? Hash
+            new_opts = new_opts.merge(username)
             new_opts[:username] = username[:login] || username[:user] || username[:username]
             new_opts[:password] = username[:password]
-            new_opts[:verify_ssl] = username[:verify_ssl] if username[:verify_ssl] == false || !username[:verify_ssl].blank?
-          elsif username.nil? && password.nil? && (opts.nil? || opts.empty?)
+          elsif username.nil? && password.nil? && opts.blank?
             new_opts = Helpers::AuthHelper.read_credentials
           else
             new_opts[:username] = username
             new_opts[:password] = password
           end
 
+          new_opts = { verify_ssl: true }.merge(new_opts)
           if username.is_a?(Hash) && username[:cookies]
             new_opts[:sst_token] = username[:cookies]['GDCAuthSST']
             new_opts[:cookies] = username[:cookies]
@@ -102,6 +103,7 @@ module GoodData
           end
 
           client = Client.new(new_opts)
+          GoodData.logger.info("Connected to server with webdav path #{client.user_webdav_path}")
 
           if client
             at_exit do
@@ -267,15 +269,13 @@ module GoodData
         url
       end
 
-      def user_webdav_path(opts = { project: GoodData.project })
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-        u = URI(project.links['uploads'])
-        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+      def user_webdav_path
+        uri = if opts[:webdav_server]
+                opts[:webdav_server]
+              else
+                links.find { |i| i['category'] == 'uploads' }['link']
+              end
+        uri.chomp('/') + '/'
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
@@ -365,37 +365,20 @@ module GoodData
 
       def download_from_user_webdav(source_relative_path, target_file_path, options = { client: GoodData.client, project: project })
         download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
-                                                                       :staging_url => get_user_webdav_url(options)))
+                                                                       :staging_url => user_webdav_path))
       end
 
       def upload_to_user_webdav(file, options = {})
         upload(file, options.merge(:directory => options[:directory],
-                                   :staging_url => get_user_webdav_url(options)))
+                                   :staging_url => user_webdav_path))
       end
 
       def with_project(pid, &block)
         GoodData.with_project(pid, client: self, &block)
       end
 
-      ###################### PRIVATE ######################
-
-      private
-
-      def get_user_webdav_url(options = {})
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = options[:project] || GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-        u = URI(project.links['uploads'])
-        us = u.to_s
-        ws = options[:client].opts[:webdav_server]
-        if !us.empty? && !us.downcase.start_with?('http') && !ws.empty?
-          u = URI.join(ws, us)
-        end
-
-        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+      def links
+        GoodData::Helpers.get_path(get('/gdc'), %w(about links))
       end
     end
   end
