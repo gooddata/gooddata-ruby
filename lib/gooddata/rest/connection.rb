@@ -24,14 +24,11 @@ module RestClient
       new_args = @args.dup
 
       url = headers[:location]
-      if url !~ /^http/
-        url = URI.parse(request.url).merge(url).to_s
-      end
+      url = URI.parse(request.url).merge(url).to_s if url !~ /^http/
+
       new_args[:url] = url
       if request
-        if request.max_redirects == 0
-          raise MaxRedirectsReached
-        end
+        fail MaxRedirectsReached if request.max_redirects == 0
         new_args[:password] = request.password
         new_args[:user] = request.user
         new_args[:headers] = request.headers
@@ -50,7 +47,7 @@ module RestClient
     # @param result [Net::HTTPResponse] Response
     # @param args [Hash] Original arguments
     # @return [Hash] Cookies to be passsed when following redirect
-    def get_redirection_cookies(request, result, args)
+    def get_redirection_cookies(request, _result, _args)
       request.cookies
     end
   end
