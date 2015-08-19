@@ -126,7 +126,7 @@ describe GoodData::Domain do
     end
 
     it 'updates properties of a profile' do
-      pending 'Add more users'
+      skip 'Add more users'
 
       user = @domain.users
         .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.sample

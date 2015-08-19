@@ -8,7 +8,6 @@ require 'gooddata'
 
 describe "Variables implementation", :constraint => 'slow' do
   before(:all) do
-    GoodData.logging_http_on
     @spec = JSON.parse(File.read("./spec/data/blueprints/m_n_model.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)

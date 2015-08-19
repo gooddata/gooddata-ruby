@@ -6,8 +6,6 @@ require 'bundler/setup'
 require 'bundler/cli'
 require 'bundler/gem_tasks'
 
-# require 'coveralls/rake/task'
-
 require 'rake/testtask'
 require 'rake/notes/rake_task'
 require 'rspec/core/rake_task'
@@ -19,8 +17,6 @@ task :cop do
   exec 'rubocop lib/ gooddata.gemspec Rakefile'
 end
 
-# Coveralls::RakeTask.new
-
 desc 'Run continuous integration test'
 task :ci do
   Rake::Task['test:unit'].invoke
@@ -28,7 +24,6 @@ task :ci do
     Rake::Task['test:integration'].invoke
   end
   Rake::Task['test:cop'].invoke if RUBY_VERSION.start_with?('2.2') == false
-  # Rake::Task['coveralls:push'].invoke
 end
 
 namespace :gem do

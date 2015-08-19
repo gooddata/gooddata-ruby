@@ -36,7 +36,7 @@ describe GoodData::Helpers do
 
   describe '#find_goodfile' do
     it 'works' do
-      pending "Ask @fluke777 how to create one"
+      skip "Ask @fluke777 how to create one"
       GoodData::Helpers.find_goodfile.should_not be_nil
     end
   end

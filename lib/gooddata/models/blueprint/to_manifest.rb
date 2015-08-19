@@ -38,6 +38,8 @@ module GoodData
           label_to_manifest(project, dataset, c, mode)
         when :fact
           fact_to_manifest(project, dataset, c, mode)
+        when :date_fact
+          fact_to_manifest(project, dataset, c, mode)
         when :reference
           reference_to_manifest(project, dataset, c, mode)
         when :date

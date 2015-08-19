@@ -134,9 +134,9 @@ module GoodData
       end
 
       if result.empty?
-        client.create(EmptyResult, result)
+        client.create(ReportDataResult, data: [], top: 0, left: 0, project: project)
       else
-        client.create(ReportDataResult, result)
+        ReportDataResult.from_xtab(result, client: client, project: project)
       end
     end
 
