@@ -562,9 +562,9 @@ describe GoodData::Schedule do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
         schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
-        expect(schedule.dirty).to be_false
+        expect(schedule.dirty).to be_falsey
         schedule.trigger_id = 'some_other_id'
-        expect(schedule.dirty).to be_true
+        expect(schedule.dirty).to be_truthy
       ensure
         schedule && schedule.delete
       end
@@ -576,9 +576,9 @@ describe GoodData::Schedule do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
         schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
-        expect(schedule.dirty).to be_false
+        expect(schedule.dirty).to be_falsey
         schedule.trigger_id = 'some_other_id'
-        expect(schedule.dirty).to be_true
+        expect(schedule.dirty).to be_truthy
       ensure
         schedule && schedule.delete
       end

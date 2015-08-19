@@ -68,7 +68,7 @@ describe GoodData::Domain do
     end
 
     it 'Accepts pagination options - offset' do
-      pending('not that useful and takes very long')
+      skip('not that useful and takes very long')
       users = @domain.users(offset: 1)
       expect(users).to be_instance_of(Array)
       users.each do |user|
