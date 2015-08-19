@@ -137,9 +137,8 @@ module GoodData
         :client => client,
         :project => project
       }
-
       res = GoodData::ReportDefinition.execute(opts.merge(:left => self))
-      res && res[0][0]
+      res.data[0][0] if res && !res.empty?
     end
 
     def expression

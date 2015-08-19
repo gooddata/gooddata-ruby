@@ -199,11 +199,11 @@ describe "Full project implementation", :constraint => 'slow' do
     metric = @project.create_metric("SELECT SUM(#\"#{f.title}\")", :title => "My metric")
     metric.save
     result = @project.compute_report(:top => [metric], :left => ['label.devs.dev_id.email'])
-    expect(result[1][1]).to eq 3
+    expect(result[2][1]).to eq 3
     expect(result.include_row?(["jirka@gooddata.com", 5])).to be true
 
     result2 = @project.compute_report(:top => [metric], :left => ['label.devs.dev_id.email'])
-    expect(result2[1][1]).to eq 3
+    expect(result2[2][1]).to eq 3
     expect(result2.include_row?(["jirka@gooddata.com", 5])).to eq true
     expect(result2).to eq result
   end
@@ -478,12 +478,30 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(m_cloned.execute).to eq cloned.execute
   end
 
-  it "should be able to clone a project" do
-    title = 'My new clone proejct'
-    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-    expect(cloned_project.title).to eq title
-    expect(cloned_project.facts.first.create_metric.execute).to eq 9
-    cloned_project.delete
+  it "should be able to clone a project and transfer the data" do
+    title = 'My new clone project'
+    begin
+      cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+      expect(cloned_project.title).to eq title
+      expect(cloned_project.facts.first.create_metric.execute).to eq 9
+      m = @project.facts.first.create_metric
+      m.identifier = 'metric.cloned_metric'
+      m.save
+
+      result = @project.transfer_objects(m, project: cloned_project)
+      expect(result).to be_truthy
+      cloned_metric = cloned_project.metrics('metric.cloned_metric')
+      expect(cloned_metric).not_to be_nil
+
+      cloned_metric.delete
+      cloned_metric = cloned_project.metrics('metric.cloned_metric')
+      expect(cloned_metric).to be_nil
+
+      result = @project.transfer_objects(m, project: [cloned_project], batch_size: 1)
+      expect(result).to eq [{project: cloned_project, result: true}]
+    ensure    
+      cloned_project.delete
+    end
   end
 
   it "should be able to clone a project without data" do
@@ -512,7 +530,7 @@ describe "Full project implementation", :constraint => 'slow' do
     expect { def_uris.each {|uri| @client.get(uri)} }.to raise_error(RestClient::ResourceNotFound)
   end
 
-  it 'should be apossible to delete data from a dataset' do
+  it 'should be possible to delete data from a dataset' do
     dataset = @project.datasets('dataset.devs')
     expect(dataset.attributes.first.create_metric.execute).to be > 0
     dataset.delete_data

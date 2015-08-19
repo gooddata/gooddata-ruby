@@ -40,7 +40,6 @@ describe 'Behavior during polling and retries' do
       .to_return(:body => {}.to_json, :status => 500, :headers => { 'Content-Type' => "application/json"} )
 
     @client = GoodData.connect('aaa', 'bbbb')
-    GoodData.logging_on
   end
 
   after :each do

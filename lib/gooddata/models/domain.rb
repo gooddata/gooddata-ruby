@@ -201,7 +201,7 @@ module GoodData
 
               tmp['accountSettings']['items'].each do |user_data|
                 user = client.create(GoodData::Profile, user_data)
-                y << user
+                y << user if user
               end
               break if tmp['accountSettings']['items'].count < page_limit
               offset += page_limit

@@ -8,7 +8,6 @@ require 'gooddata'
 
 describe GoodData::Project do
   before(:all) do
-    GoodData.logging_on
     @client = ConnectionHelper::create_default_connection
     @p = GoodData::Project.create_object(title: 'a', client: @client)
     @domain = @client.domain('dummy_domain')
