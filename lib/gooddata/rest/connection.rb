@@ -12,6 +12,50 @@ require 'thread_safe'
 require_relative '../version'
 require_relative '../exceptions/exceptions'
 
+module RestClient
+  module AbstractResponse
+    alias_method :old_follow_redirection, :follow_redirection
+    def follow_redirection(request = nil, result = nil, &block)
+      fail 'Using monkey patched version of RestClient::AbstractResponse#follow_redirection which is guaranteed to be compatible only with RestClient 1.8.0' if RestClient::VERSION != '1.8.0'
+
+      # @args[:cookies] = request.cookies
+      # old_follow_redirection(request, result, &block)
+
+      new_args = @args.dup
+
+      url = headers[:location]
+      if url !~ /^http/
+        url = URI.parse(request.url).merge(url).to_s
+      end
+      new_args[:url] = url
+      if request
+        if request.max_redirects == 0
+          raise MaxRedirectsReached
+        end
+        new_args[:password] = request.password
+        new_args[:user] = request.user
+        new_args[:headers] = request.headers
+        new_args[:max_redirects] = request.max_redirects - 1
+
+        # TODO: figure out what to do with original :cookie, :cookies values
+        new_args[:cookies] = get_redirection_cookies(request, result, new_args)
+      end
+
+      Request.execute(new_args, &block)
+    end
+
+    # Returns cookies which should be passed when following redirect
+    #
+    # @param request [RestClient::Request] Original request
+    # @param result [Net::HTTPResponse] Response
+    # @param args [Hash] Original arguments
+    # @return [Hash] Cookies to be passsed when following redirect
+    def get_redirection_cookies(request, result, args)
+      request.cookies
+    end
+  end
+end
+
 module GoodData
   module Rest
     # Wrapper of low-level HTTP/REST client/library
