@@ -63,7 +63,7 @@ module GoodData
 
           # Implementation of polling is based on
           # https://opengrok.intgdc.com/source/xref/gdc-backend/src/test/java/com/gooddata/service/dao/ValidElementsDaoTest.java
-          status_url = result['uri']
+          status_url = results['uri']
           if status_url
             results = client.poll_on_response(status_url) do |body|
               status = body['taskState']['status']
