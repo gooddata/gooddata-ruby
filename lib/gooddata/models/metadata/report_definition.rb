@@ -31,6 +31,8 @@ module GoodData
         end
       end
 
+      alias_method :create_measures_part, :create_metrics_part
+
       def create_metric_part(metric)
         {
           'alias' => metric.title,

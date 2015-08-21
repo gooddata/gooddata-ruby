@@ -23,7 +23,7 @@ task :ci do
   unless ENV['TRAVIS'] == 'true' && ENV['TRAVIS_SECURE_ENV_VARS'] == 'false'
     Rake::Task['test:integration'].invoke
   end
-  Rake::Task['test:cop'].invoke if RUBY_VERSION.start_with?('2.2') == false
+  Rake::Task['test:cop'].invoke
 end
 
 namespace :gem do
