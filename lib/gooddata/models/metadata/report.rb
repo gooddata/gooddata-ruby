@@ -212,15 +212,15 @@ module GoodData
     ## Update report definition and reflect the change in report
     #
     # @param [Hash] opts Options
-    # @option opts [Boolean] :immutable (true) Immutable true means that new definition will be created
+    # @option opts [Boolean] :new_definition (true) If true then new definition will be created
     # @return [GoodData::ReportDefinition] Updated and saved report definition
-    def update_definition(opts = { :immutable => true }, &block)
+    def update_definition(opts = { :new_definition => true }, &block)
       # TODO: Cache the latest report definition somehow
       repdef = definition.dup
 
       block.call(repdef, self) if block_given?
 
-      if opts[:immutable]
+      if opts[:new_definition]
         new_def = GoodData::ReportDefinition.create(:client => client, :project => project)
 
         rd = repdef.json['reportDefinition']
@@ -230,6 +230,7 @@ module GoodData
         new_def.save
 
         add_definition!(new_def)
+        return new_def
       else
         repdef.save
       end
