@@ -1147,6 +1147,10 @@ module GoodData
       GoodData::Model.upload_data(data, blueprint, dataset_name, options.merge(client: client, project: self))
     end
 
+    def upload_multiple(data, blueprint, options = {})
+      GoodData::Model.upload_multiple_data(data, blueprint, options.merge(client: client, project: self))
+    end
+
     def uri
       data['links']['self'] if data && data['links'] && data['links']['self']
     end
