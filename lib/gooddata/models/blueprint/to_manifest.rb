@@ -103,6 +103,16 @@ module GoodData
         }]
       end
 
+      # Generates safe name for upload
+      # @param dataset_path [String] Input name
+      # @return [String] Generated upload filename
+      def self.generate_upload_filename(dataset_path)
+        sanitized_name = dataset_path.gsub(/[^0-9a-z]/i, '_')
+        # ts = DateTime.now.strftime('%Y%m%d%H%M%S%6N')
+        # "#{sanitized_name}-#{ts}.csv"
+        "#{sanitized_name}.csv"
+      end
+
       # Converts label to manifest
       #
       # @param project [GoodData::Model::ProjectBlueprint] Project blueprint
@@ -136,7 +146,7 @@ module GoodData
             'dataSetSLIManifest' => {
               'parts' => columns.mapcat { |c| column_to_manifest(project, dataset, c, mode) },
               'dataSet' => dataset[:id],
-              'file' => 'data.csv', # should be configurable
+              'file' => ToManifest.generate_upload_filename(dataset[:id]), # should be configurable
               'csvParams' => {
                 'quoteChar' => '"',
                 'escapeChar' => '"',

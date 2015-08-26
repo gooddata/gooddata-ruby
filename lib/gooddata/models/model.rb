@@ -135,6 +135,22 @@ module GoodData
 
       # Load given file into a data set described by the given schema
       def upload_data(path, project_blueprint, dataset, options = { :client => GoodData.connection, :project => GoodData.project })
+        data = [
+          {
+            data: path,
+            dataset: dataset,
+            options: options
+          }
+        ]
+        GoodData::Model.upload_multiple_data(data, project_blueprint, options)
+      end
+
+      # Uploads multiple data sets using batch upload interface
+      # @param data [String|Array] Input data
+      # @param project_blueprint [ProjectBlueprint] Project blueprint
+      # @param options [Hash] Additional options
+      # @return [Hash] Batch upload result
+      def upload_multiple_data(data, project_blueprint, options = {:client => GoodData.connection, :project => GoodData.project})
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -143,25 +159,16 @@ module GoodData
 
         project = GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
-        # path = if path =~ URI.regexp
-        #   Tempfile.open('remote_file') do |temp|
-        #     temp << open(path).read
-        #     temp.flush
-        #     # GoodData::Model.upload_data(path, to_manifest(mode))
-        #   end
-        #
-        # else
-        #   # GoodData::Model.upload_data(path, to_manifest(mode))
-        #   # upload_data(path, mode)
-        # end
 
-        mode = options[:mode] || 'FULL'
-        manifest = GoodData::Model::ToManifest.dataset_to_manifest(project_blueprint, dataset, mode)
         project = options[:project] || GoodData.project
 
-        path = path.path if path.respond_to? :path
-        inline_data = path.is_a?(String) ? false : true
-        csv_header = nil
+        manifest = {
+
+          'dataSetSLIManifestList' => data.map do |d|
+            mode = d[:options] && d[:options][:mode] ? d[:options][:mode] : options[:mode] || 'FULL'
+            GoodData::Model::ToManifest.dataset_to_manifest(project_blueprint, d[:dataset], mode)
+          end
+        }
 
         # create a temporary zip file
         dir = Dir.mktmpdir
@@ -169,16 +176,26 @@ module GoodData
           Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
             # TODO: make sure schema columns match CSV column names
             zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(manifest) }
-            if inline_data
-              csv_header = path.first
-              zip.get_output_stream('data.csv') do |f|
-                path.each do |row|
-                  f.puts row.to_csv
+
+            data.zip(manifest['dataSetSLIManifestList']).each do |item|
+              path = item[0][:data]
+              path = item[0][:data].path if item[0][:data].respond_to? :path
+              inline_data = path.is_a?(String) ? false : true
+              csv_header = nil
+
+              filename = item[1]['dataSetSLIManifest']['file']
+
+              if inline_data
+                csv_header = path.first
+                zip.get_output_stream(filename) do |f|
+                  path.each do |row|
+                    f.puts row.to_csv
+                  end
                 end
+              else
+                csv_header = File.open(path, &:gets).split(',')
+                zip.add(filename, path)
               end
-            else
-              csv_header = File.open(path, &:gets).split(',')
-              zip.add('data.csv', path)
             end
           end
 
@@ -189,9 +206,11 @@ module GoodData
         end
 
         # kick the load
-        pull = { 'pullIntegration' => File.basename(dir) }
+        pull = {'pullIntegration' => File.basename(dir)}
         link = project.md.links('etl')['pull2']
-        task = client.post(link, pull, :info_message => "Starting the data load from user storage to dataset '#{dataset}'.")
+
+        # TODO: List uploaded datasets
+        task = client.post(link, pull, :info_message => "Starting the data load from user storage to dataset.")
 
         res = client.poll_on_response(task['pull2Task']['links']['poll'], :info_message => 'Getting status of the dataload task.') do |body|
           body['wTaskStatus']['status'] == 'RUNNING' || body['wTaskStatus']['status'] == 'PREPARED'
@@ -200,6 +219,11 @@ module GoodData
         if res['wTaskStatus']['status'] == 'ERROR' # rubocop:disable Style/GuardClause
           s = StringIO.new
 
+          messages = res['wTaskStatus']['messages'] || []
+          messages.each do |msg|
+            GoodData.logger.error(JSON.pretty_generate(msg))
+          end
+
           begin
             client.download_from_user_webdav(File.basename(dir) + '/upload_status.json', s, :client => client, :project => project)
           rescue => e
@@ -207,17 +231,17 @@ module GoodData
           end
 
           js = MultiJson.load(s.string)
-          manifest_cols =  manifest['dataSetSLIManifest']['parts'].map { |c| c['columnName'] }
+          manifest_cols = manifest['dataSetSLIManifest']['parts'].map { |c| c['columnName'] }
 
           # extract some human readable error message from the webdav file
           manifest_extra = manifest_cols - csv_header
           csv_extra = csv_header - manifest_cols
 
           error_message = begin
-                            js['error']['message'] % js['error']['parameters']
-                          rescue NoMethodError, ArgumentError
-                            ''
-                          end
+            js['error']['message'] % js['error']['parameters']
+          rescue NoMethodError, ArgumentError
+            ''
+          end
           m = "Load failed with error '#{error_message}'.\n"
           m += "Columns that should be there (manifest) but aren't in uploaded csv: #{manifest_extra}\n" unless manifest_extra.empty?
           m += "Columns that are in csv but shouldn't be there (manifest): #{csv_extra}\n" unless csv_extra.empty?
@@ -227,6 +251,8 @@ module GoodData
           m += "Manifest used for uploading:\n#{JSON.pretty_generate(manifest)}"
           fail m
         end
+
+        res
       end
 
       def merge_dataset_columns(a_schema_blueprint, b_schema_blueprint)
