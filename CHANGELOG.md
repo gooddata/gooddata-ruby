@@ -15,6 +15,8 @@
 - Included date_facts in building a manifest
 - Using API for user provisioning by login
 - Multiple data sets upload Project#upload_multiple
+- GoodData::MdObject.json is assignable now (using attr_accessor)
+- Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
