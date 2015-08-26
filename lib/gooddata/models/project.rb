@@ -1202,7 +1202,6 @@ module GoodData
 
     # Imports users
     def import_users(new_users, options = {})
-      domain = options[:domain]
       role_list = roles
       users_list = users(all: true)
       new_users = new_users.map { |x| (x.is_a?(Hash) && x[:user] && x[:user].to_hash.merge(role: x[:role])) || x.to_hash }
@@ -1246,8 +1245,8 @@ module GoodData
       }
 
       concat_results = lambda do |res_tmp|
-        results[:ok].concat(res_tmp[:ok]) if res_tmp[:ok]
-        results[:error].concat(res_tmp[:error]) if res_tmp[:error]
+        results[:ok].concat(res_tmp[:ok])
+        results[:error].concat(res_tmp[:error])
       end
 
       # Create new users
@@ -1260,7 +1259,7 @@ module GoodData
 
       # This is only creating users that were not in the proejcts so far. This means this will reach into domain
       GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
-      concat_results.call(create_users(u, roles: role_list, domain: domain, project_users: whitelisted_users, only_domain: true))
+      concat_results.call(create_users(u, roles: role_list, project_users: whitelisted_users))
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
@@ -1288,34 +1287,9 @@ module GoodData
       end
 
       {
-        :ok => users
+        ok: users,
+        error: []
       }
-    end
-
-    def verify_user_to_add(login, desired_roles, options = {})
-      user = login if login.respond_to?(:uri) && !login.uri.nil?
-      role_list = options[:roles] || roles
-      desired_roles = Array(desired_roles)
-      roles = desired_roles.map do |role_name|
-        role = get_role(role_name, role_list)
-        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
-        role.uri
-      end
-      return [user.uri, roles] if user
-
-      domain = client.domain(options[:domain]) if options[:domain]
-      domain_users = options[:domain_users] || (domain && domain.users)
-      project_users = options[:project_users] || users
-
-      login = login[:login] if login.is_a?(Hash) && login.key?(:login)
-
-      project_user = get_user(login, project_users)
-      domain_user = if domain && !project_user && !user
-                      domain.get_user(login, domain_users) if domain && !project_user
-                    end
-      user = project_user || domain_user
-      fail ArgumentError, "Invalid user '#{login}' specified" unless user
-      [user.uri, roles]
     end
 
     # Update user
@@ -1324,10 +1298,13 @@ module GoodData
     # @param desired_roles Roles to be assigned to user
     # @param role_list Optional cached list of roles used for lookups
     def set_user_roles(login, desired_roles, options = {})
-      user_uri, roles = verify_user_to_add(login, desired_roles, options)
+      user_uri, roles = resolve_roles(login, desired_roles, options)
       url = "#{uri}/users"
       payload = generate_user_payload(user_uri, 'ENABLED', roles)
-      client.post(url, payload)
+      res = client.post(url, payload)
+      failure = GoodData::Helpers.get_path(res, %w(projectUsersUpdateResult failed))
+      fail ArgumentError, "User #{user_uri} could not be aded. #{failure.first['message']}" unless failure.blank?
+      res
     end
 
     alias_method :add_user, :set_user_roles
@@ -1337,51 +1314,39 @@ module GoodData
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
     def set_users_roles(list, options = {})
-      return {} if list.empty?
+      response = { ok: [], error: [] }
+      return response if list.empty?
       role_list = options[:roles] || roles
       project_users = options[:project_users] || users
-      domain = options[:domain] && client.domain(options[:domain])
-      domain_users = if domain.nil?
-                       options[:domain_users]
-                     else
-                       if options[:only_domain] && list.count < 100
-                         list.map { |l| domain.find_user_by_login(l[:user][:login]) }
-                       else
-                         domain.users
-                       end
-                     end || []
-
-      # List can contain some users which are not in domain for some reason
-      # domain_users.to_a.compact!
 
       intermediate_users = list.flat_map do |user_hash|
         user = user_hash[:user] || user_hash[:login]
         desired_roles = user_hash[:role] || user_hash[:roles] || 'readOnlyUser'
         begin
-          login, roles = verify_user_to_add(user, desired_roles, options.merge(domain_users: domain_users, project_users: project_users, roles: role_list))
-          [{ :type => :ok, login: login, roles: roles }]
+          login, roles = resolve_roles(user, desired_roles, options.merge(project_users: project_users, roles: role_list))
+          [{ :type => :successful, user: login, roles: roles }]
         rescue => e
-          [{ :type => :error, :reason => e.message, login: login, roles: roles }]
+          [{ :type => :failed, :reason => e.message, user: login, roles: roles }]
         end
       end
 
+      # User can fail pre sending to API during resolving roles. We add only users that passed that step.
       users_by_type = intermediate_users.group_by { |u| u[:type] }
-      users_to_add = users_by_type[:ok] || []
+      users_to_add = users_by_type[:successful] || []
 
-      payloads = users_to_add.map { |u| generate_user_payload(u[:login], 'ENABLED', u[:roles]) }
-      url = "#{uri}/users"
+      payloads = users_to_add.map { |u| generate_user_payload(u[:user], 'ENABLED', u[:roles]) }
       results = payloads.each_slice(100).map do |payload|
-        client.post(url, 'users' => payload)
+        client.post("#{uri}/users", 'users' => payload)
       end
+      # this ugly line turns the hash of errors into list of errors with types so we can process them easily
+      typed_results = results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| v_2.is_a?(String) ? { type: k.to_sym, user: v_2 } : GoodData::Helpers.symbolize_keys(v_2).merge(type: k.to_sym) } } }
+      # we have to concat errors from role resolution and API result
+      results = typed_results + (users_by_type[:failed] || [])
 
-      res = {
-        :ok => results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| { type: k.to_sym, uri: v_2 } } } },
-        :error => users_by_type[:error]
-      }
-
-      res.delete(:error) if res[:error] && res[:error].empty?
-      res.delete(:ok) if res[:ok] && res[:ok].empty?
-      res
+      response.tap do |resp|
+        resp[:ok].concat(results.select { |r| r[:type] == :successful })
+        resp[:error].concat(results.select { |r| r[:type] == :failed })
+      end
     end
 
     alias_method :add_users, :set_users_roles
@@ -1416,6 +1381,33 @@ module GoodData
 
     def update_from_blueprint(blueprint, options = {})
       GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
+    end
+
+    def resolve_roles(login, desired_roles, options = {})
+      user = if login.is_a?(String) && login.include?('@')
+               '/gdc/account/profile/' + login
+             elsif login.is_a?(String)
+               login
+             elsif login.is_a?(Hash) && login[:login]
+               '/gdc/account/profile/' + login[:login]
+             elsif login.is_a?(Hash) && login[:uri]
+               login[:uri]
+             elsif login.respond_to?(:uri) && login.uri
+               login.uri
+             elsif login.respond_to?(:login) && login.login
+               '/gdc/account/profile/' + login.login
+             else
+               fail "Unsupported user specification #{login}"
+             end
+
+      role_list = options[:roles] || roles
+      desired_roles = Array(desired_roles)
+      roles = desired_roles.map do |role_name|
+        role = get_role(role_name, role_list)
+        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
+        role.uri
+      end
+      [user, roles]
     end
 
     private

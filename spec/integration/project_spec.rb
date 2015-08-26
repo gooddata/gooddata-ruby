@@ -31,7 +31,8 @@ describe GoodData::Project, :constraint => 'slow' do
       user = ProjectHelper.create_random_user(@client)
       @domain.create_users([user])
       res = @project.add_user(user, 'Admin', domain: @domain)
-      expect(@project.member?(res['projectUsersUpdateResult']['successful'].first)).to be_truthy
+      login = GoodData::Helpers.last_uri_part(res['projectUsersUpdateResult']['successful'].first)
+      expect(@project.member?(login)).to be_truthy
     end
   end
 
@@ -43,6 +44,7 @@ describe GoodData::Project, :constraint => 'slow' do
           role: 'Admin'
         }
       end
+
       res = @project.add_users(users)
       expect(res[:error].count).to eq users.length
     end
@@ -56,7 +58,7 @@ describe GoodData::Project, :constraint => 'slow' do
       end
       @domain.create_users(users.map {|u| u[:user]})
       res = @project.add_users(users, domain: @domain)
-      links = res[:ok].map {|i| i[:uri]}
+      links = res[:ok].map { |i| GoodData::Helpers.last_uri_part(i[:user]) }
       expect(@project.members?(links).all?).to be_truthy
     end
   end
@@ -65,7 +67,7 @@ describe GoodData::Project, :constraint => 'slow' do
     it "Updates user's name and surname and removes the users" do
       users = (1..2).to_a.map { |x| ProjectHelper.create_random_user(@client) }
       @domain.create_users(users)
-      @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      result = @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
       expect(@domain.members?(users)).to be_truthy
       expect(@project.members?(users)).to be_truthy
       expect(@project.members.count).to eq 3

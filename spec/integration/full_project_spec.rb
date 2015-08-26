@@ -499,6 +499,10 @@ describe "Full project implementation", :constraint => 'slow' do
 
       result = @project.transfer_objects(m, project: [cloned_project], batch_size: 1)
       expect(result).to eq [{project: cloned_project, result: true}]
+
+      # should work with pids
+      result = @project.transfer_objects(m, project: [cloned_project.pid], batch_size: 1)
+      expect(result.first[:result]).to be_truthy
     ensure    
       cloned_project.delete
     end
