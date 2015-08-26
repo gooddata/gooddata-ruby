@@ -14,8 +14,8 @@
 - Metadata method deprecated= now accepts and return true/false
 - Included date_facts in building a manifest
 - Using API for user provisioning by login
-- Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
 - GoodData::MdObject.json is assignable now (using attr_accessor)
+- Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
