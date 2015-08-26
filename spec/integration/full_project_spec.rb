@@ -260,6 +260,32 @@ describe "Full project implementation", :constraint => 'slow' do
     m.delete
   end
 
+  it "should be able to update report definition (update existing)" do
+    m = @project.metrics.first
+    r = @project.create_report(top: [m], title: 'xy')
+
+    latest_uri = r.definition_uri
+    new_def = r.update_definition do |definition|
+      definition.title = "Test TITLE: #{DateTime.now.strftime}"
+    end
+
+    expect(r.definition_uri).to eq new_def.uri
+    expect(r.definition_uri).to_not eq latest_uri
+  end
+
+  it "should be able to update report definition (create new)" do
+    m = @project.metrics.first
+    r = @project.create_report(top: [m], title: 'xy')
+
+    latest_uri = r.definition_uri
+    new_def = r.update_definition(:new_definition => false) do |definition|
+      definition.title = "Test TITLE: #{DateTime.now.strftime}"
+    end
+
+    expect(r.definition_uri).to eq new_def.uri
+    expect(r.definition_uri).to eq latest_uri
+  end
+
   it "should be possible to get all metrics" do
     metrics1 = @project.metrics
     expect(metrics1.count).to be >= 0

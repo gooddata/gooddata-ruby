@@ -4,6 +4,10 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require_relative 'dashboard_tab'
+require_relative 'dashboard/filter_item'
+require_relative 'dashboard/report_item'
+
 require_relative '../../core/core'
 require_relative '../metadata'
 require_relative 'metadata'
@@ -98,7 +102,9 @@ module GoodData
     end
 
     def tabs
-      content['tabs']
+      content['tabs'].map do |tab|
+        GoodData::DashboardTab.new(self, tab)
+      end
     end
 
     def tabs_ids
