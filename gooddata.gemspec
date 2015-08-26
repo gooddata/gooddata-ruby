@@ -59,6 +59,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rubyzip', '~> 1.1', '>= 1.1.0'
   s.add_dependency 'terminal-table', '~> 1.5', '>= 1.5.1'
   s.add_dependency 'salesforce_bulk_query', '~> 0.0'
-  s.add_dependency 'aws-sdk', '~> 1.45'
+  s.add_dependency 'aws-sdk', '~> 2.0'
   s.add_dependency 'thread_safe'
 end
