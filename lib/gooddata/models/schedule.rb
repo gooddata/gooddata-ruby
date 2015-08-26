@@ -27,7 +27,7 @@ module GoodData
         :timezone => nil,
         :params => {},
         :hiddenParams => {},
-        :reschedule => 0
+        :reschedule => nil
       }
     }
 
