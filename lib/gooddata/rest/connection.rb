@@ -342,7 +342,7 @@ module GoodData
       # @param uri [String] Uri on which the request failed
       # @param uri [Hash] Additional params
       def log_error(e, uri, params)
-        return if e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
+        return if e.response &&  e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
         GoodData.logger.error(format_error(e, params))
       end
 

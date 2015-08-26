@@ -14,6 +14,7 @@
 - Metadata method deprecated= now accepts and return true/false
 - Included date_facts in building a manifest
 - Using API for user provisioning by login
+- Multiple data sets upload Project#upload_multiple
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
