@@ -8,7 +8,7 @@ module GoodData
   module Mixin
     module MdObjId
       def obj_id(uri)
-        uri.split('/').last
+        GoodData::Helpers.last_uri_part(uri)
       end
     end
   end

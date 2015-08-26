@@ -41,6 +41,10 @@ module GoodData
         end
       end
 
+      def last_uri_part(uri)
+        uri.split('/').last
+      end
+
       def home_directory
         running_on_windows? ? ENV['USERPROFILE'] : ENV['HOME']
       end

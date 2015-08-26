@@ -13,6 +13,7 @@
 - Metadata object has new methods for working with unlisted attribute
 - Metadata method deprecated= now accepts and return true/false
 - Included date_facts in building a manifest
+- Using API for user provisioning by login
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
