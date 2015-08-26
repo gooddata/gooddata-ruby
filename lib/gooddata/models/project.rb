@@ -543,13 +543,6 @@ module GoodData
       end
     end
 
-    # Get WebDav directory for user data
-    # @return [String]
-    def user_webdav_path
-      u = URI(links['uploads'])
-      URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
-    end
-
     def upload_file(file, options = {})
       GoodData.upload_to_project_webdav(file, options.merge(project: self))
     end

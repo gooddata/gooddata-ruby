@@ -205,10 +205,9 @@ describe GoodData do
     end
   end
 
-
   describe '#user_webdav_path' do
     it 'Gets the path' do
-      @client.user_webdav_path(:project => @project)
+      expect(@client.user_webdav_path).to eq GoodData::Environment::ConnectionHelper::STAGING_URI
     end
   end
 end
