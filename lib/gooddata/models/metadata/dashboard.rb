@@ -31,23 +31,23 @@ module GoodData
         query('projectDashboard', Dashboard, options)
       end
 
-      def create_report_tab(tab)
+      def create_report_tab(tab, options = {:client => GoodData.client, :project => GoodData.project})
         title = tab[:title]
         {
           :title => title,
-          :items => tab[:items].map { |i| GoodData::Dashboard.create_report_tab_item(i) }
+          :items => tab[:items].map { |i| GoodData::Dashboard.create_report_tab_item(i, options) }
         }
       end
 
-      def create_report_tab_item(options = {})
-        title = options[:title]
+      def create_report_tab_item(item, options = {:client => GoodData.client, :project => GoodData.project})
+        title = item[:title]
 
-        report = GoodData::Report.find_first_by_title(title)
+        report = GoodData::Report.find_first_by_title(title, options)
         {
           :reportItem => {
             :obj => report.uri,
-            :sizeY => options[:size_y] || 200,
-            :sizeX => options[:size_x] || 300,
+            :sizeY => item[:size_y] || 200,
+            :sizeX => item[:size_x] || 300,
             :style => {
               :displayTitle => 1,
               :background => {
@@ -62,30 +62,58 @@ module GoodData
                 :labels => {}
               }
             },
-            :positionY => options[:position_y] || 0,
+            :positionY => item[:position_y] || 0,
             :filters => [],
-            :positionX => options[:position_x] || 0
+            :positionX => item[:position_x] || 0
           }
         }
       end
 
-      def create(options = {})
+      def create(dashboard = {:tabs => []}, options = {:client => GoodData.client, :project => GoodData.project})
+        client = options[:client]
+        fail ArgumentError, 'No :client specified' if client.nil?
+
+        p = options[:project]
+        fail ArgumentError, 'No :project specified' if p.nil?
+
+        project = GoodData::Project[p, options]
+        fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+        tabs = dashboard[:tabs] || []
+
         stuff = {
           'projectDashboard' => {
             'content' => {
-              'tabs' => options[:tabs].map { |t| GoodData::Dashboard.create_report_tab(t) },
+              'tabs' => tabs.map { |t| GoodData::Dashboard.create_report_tab(t, options) },
               'filters' => []
             },
             'meta' => {
-              'tags' => options[:tags],
-              'summary' => options[:summary],
-              'title' => options[:title]
+              'tags' => dashboard[:tags],
+              'summary' => dashboard[:summary],
+              'title' => dashboard[:title]
             }
           }
         }
-        Dashboard.new(stuff)
+
+        client.create(Dashboard, stuff, :project => project)
       end
     end
+
+    def add_tab(tab)
+      title = tab[:title] || 'Default Tab Title'
+      items = tab[:items] || []
+
+      new_tab_json = {
+        :title => title,
+        :items => items.map { |i| GoodData::Dashboard.create_report_tab_item(i, options) }
+      }
+
+      new_tab = GoodData::DashboardTab.new(self, GoodData::Helpers.deep_stringify_keys(new_tab_json))
+      content['tabs'] << new_tab.json
+      new_tab
+    end
+
+    alias_method :create_tab, :add_tab
 
     def exportable?
       true
