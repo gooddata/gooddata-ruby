@@ -21,6 +21,40 @@ module GoodData
       @json = json
     end
 
+    def create_report_item(item)
+      report = item[:report]
+
+      new_item_json = {
+        :reportItem => {
+          :obj => report.uri,
+          :sizeY => item[:size_y] || 200,
+          :sizeX => item[:size_x] || 300,
+          :style => {
+            :displayTitle => 1,
+            :background => {
+              :opacity => 0
+            }
+          },
+          :visualization => {
+            :grid => {
+              :columnWidths => []
+            },
+            :oneNumber => {
+              :labels => {}
+            }
+          },
+          :positionY => item[:position_y] || 0,
+          :filters => [],
+          :positionX => item[:position_x] || 0
+        }
+      }
+
+      new_item = GoodData::DashboardItem.new(self, GoodData::Helpers.deep_stringify_keys(new_item_json))
+      self.json['items'] << new_item.json
+      new_item
+    end
+    alias_method :add_report_item, :create_report_item
+
     def identifier
       @json['identifier']
     end

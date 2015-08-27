@@ -175,6 +175,12 @@ module GoodData
       end
     end
 
+    def add_dashboard(dashboard)
+      GoodData::Dashboard.create(dashboard, {:client => client, :project => self})
+    end
+
+    alias_method :create_dashboard, :add_dashboard
+
     # Creates a metric in a project
     #
     # @param [options] Optional report options
