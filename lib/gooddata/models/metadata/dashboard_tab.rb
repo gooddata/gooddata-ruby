@@ -21,7 +21,9 @@ module GoodData
       @json = json
     end
 
-    def create_report_item(report)
+    def create_report_item(item)
+      report = item[:report]
+
       new_item_json = {
         :reportItem => {
           :obj => report.uri,
