@@ -8,6 +8,7 @@ require 'terminal-table'
 require 'securerandom'
 require 'monitor'
 require 'thread_safe'
+require 'rest-client'
 
 require_relative '../version'
 require_relative '../exceptions/exceptions'
