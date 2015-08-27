@@ -8,6 +8,7 @@ require 'terminal-table'
 require 'securerandom'
 require 'monitor'
 require 'thread_safe'
+require 'rest-client'
 
 require_relative '../version'
 require_relative '../exceptions/exceptions'
@@ -181,7 +182,6 @@ module GoodData
         headers = options[:headers] || {}
 
         options = options.merge(headers)
-
         @server = RestClient::Resource.new server, options
 
         # Install at_exit handler first
@@ -201,9 +201,11 @@ module GoodData
           get('/gdc/account/token', @request_params)
 
           @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
+          GoodData.logger.info("Connected using SST to server #{@server.url} to profile \"#{@user['accountSetting']['login']}\"")
           @auth = {}
           refresh_token :dont_reauth => true
         else
+          GoodData.logger.info("Connected using username \"#{username}\" to server #{@server.url}")
           credentials = Connection.construct_login_payload(username, password)
           generate_session_id
           @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
@@ -211,6 +213,14 @@ module GoodData
           refresh_token :dont_reauth => true
           @user = get(@auth['profile'])
         end
+        GoodData.logger.info('Connection successful')
+      rescue RestClient::Unauthorized => e
+        GoodData.logger.info('Bad Login or Password')
+        GoodData.logger.info('Connection failed')
+        raise e
+      rescue RestClient::Forbidden => e
+        GoodData.logger.info('Connection failed')
+        raise e
       end
 
       # Disconnect
@@ -342,7 +352,7 @@ module GoodData
       # @param uri [String] Uri on which the request failed
       # @param uri [Hash] Additional params
       def log_error(e, uri, params)
-        return if e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
+        return if e.response && e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
         GoodData.logger.error(format_error(e, params))
       end
 
@@ -447,7 +457,6 @@ module GoodData
         dir = options[:directory] || ''
         staging_uri = options[:staging_url].to_s
         url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
-
         # Make a directory, if needed
         create_webdav_dir_if_needed url unless dir.empty?
 

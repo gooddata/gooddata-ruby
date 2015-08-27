@@ -37,87 +37,87 @@ describe GoodData::Project do
     ]
   end
 
-  describe 'verify_user_to_add' do    
+  describe 'resolve_roles' do    
     it 'Can handle case with user login when user is in the project' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add('john.doe@goodadta.com', 'test_role', project_users: @members, roles: @roles)
-      expect(a).to eq "/uri/john"
+      a, b = @p.resolve_roles('john.doe@goodadta.com', 'test_role', project_users: @members, roles: @roles)
+      expect(a).to eq "/gdc/account/profile/john.doe@goodadta.com"
       expect(b).to eq ["/roles/1"]
     end
     
     it 'Can handle case with user uri when user is in the project' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add('/uri/john', 'test_role', project_users: @members, roles: @roles)
+      a, b = @p.resolve_roles('/uri/john', 'test_role', project_users: @members, roles: @roles)
       expect(a).to eq "/uri/john"
       expect(b).to eq ["/roles/1"]
     end
     
     it 'can handle case with info with uri when user is in the project' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add({uri: '/uri/john', first_name: 'John'}, 'test_role', project_users: @members, roles: @roles)
+      a, b = @p.resolve_roles({uri: '/uri/john', first_name: 'John'}, 'test_role', project_users: @members, roles: @roles)
       expect(a).to eq "/uri/john"
       expect(b).to eq ["/roles/1"]
     end
     
     it 'can handle case with info with login when he is in the project' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add({ login: 'john.doe@goodadta.com', first_name: 'John' }, 'test_role', project_users: @members, roles: @roles)
-      expect(a).to eq "/uri/john"
+      a, b = @p.resolve_roles({ login: 'john.doe@goodadta.com', first_name: 'John' }, 'test_role', project_users: @members, roles: @roles)
+      expect(a).to eq "/gdc/account/profile/john.doe@goodadta.com"
       expect(b).to eq ["/roles/1"]
     end
     
     it 'can handle case with member when he is in the project' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add(@members.first, 'test_role_2', project_users: @members, roles: @roles)
+      a, b = @p.resolve_roles(@members.first, 'test_role_2', project_users: @members, roles: @roles)
       expect(a).to eq "/uri/john"
       expect(b).to eq ["/roles/2"]
     end
     
     it 'can handle case with profile when the user is in the project' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add(@domain_members.first, 'test_role_2', project_users: @members, roles: @roles)
+      a, b = @p.resolve_roles(@domain_members.first, 'test_role_2', project_users: @members, roles: @roles)
       expect(a).to eq "/uri/john_domain"
       expect(b).to eq ["/roles/2"]
     end
 
     it 'Can handle case with user login when user is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add('john.doe+in_domain@gooddata.com', 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
-      expect(a).to eq "/uri/john_domain"
+      a, b = @p.resolve_roles('john.doe+in_domain@gooddata.com', 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
+      expect(a).to eq "/gdc/account/profile/john.doe+in_domain@gooddata.com"
       expect(b).to eq ["/roles/1"]
     end
 
     it 'Can handle case with user uri when user is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add('/uri/john_domain', 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
+      a, b = @p.resolve_roles('/uri/john_domain', 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
       expect(a).to eq "/uri/john_domain"
       expect(b).to eq ["/roles/1"]
     end
 
     it 'can handle case with info with uri when user is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add({uri: '/uri/john_domain', first_name: 'John'}, 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
+      a, b = @p.resolve_roles({uri: '/uri/john_domain', first_name: 'John'}, 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
       expect(a).to eq "/uri/john_domain"
       expect(b).to eq ["/roles/1"]
     end
 
     it 'can handle case with info with login when he is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add({ login: 'john.doe+in_domain@gooddata.com', first_name: 'John' }, 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
-      expect(a).to eq "/uri/john_domain"
+      a, b = @p.resolve_roles({ login: 'john.doe+in_domain@gooddata.com', first_name: 'John' }, 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
+      expect(a).to eq "/gdc/account/profile/john.doe+in_domain@gooddata.com"
       expect(b).to eq ["/roles/1"]
     end
 
     it 'can handle case with member when he is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add(@domain_members.first, 'test_role_2', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
+      a, b = @p.resolve_roles(@domain_members.first, 'test_role_2', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
       expect(a).to eq "/uri/john_domain"
       expect(b).to eq ["/roles/2"]
     end
 
     it 'can handle case with profile when the user is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.verify_user_to_add(@domain_members.first, 'test_role_2', project_users: [], domain_users: @domain_members, roles: @roles)
+      a, b = @p.resolve_roles(@domain_members.first, 'test_role_2', project_users: [], domain_users: @domain_members, roles: @roles)
       expect(a).to eq "/uri/john_domain"
       expect(b).to eq ["/roles/2"]
     end
