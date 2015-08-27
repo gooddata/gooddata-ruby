@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../../core/core'
+require_relative '../../helpers/global_helpers'
 require_relative '../metadata'
 require_relative 'metadata'
 require_relative 'report'
@@ -16,40 +17,34 @@ module GoodData
     attr_reader :dashboard
     attr_accessor :json
 
+    EMPTY_OBJECT = {
+      :title => '',
+      :items => []
+    }
+
+    ASSIGNABLE_MEMBERS = [
+      :title,
+      :items,
+      :identifier
+    ]
+
+    class << self
+      def create(dashboard, tab)
+        res = GoodData::DashboardTab.new(dashboard, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        tab.each do |k, v|
+          res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
+        end
+        res
+      end
+    end
+
     def initialize(dashboard, json)
       @dashboard = dashboard
       @json = json
     end
 
     def create_report_item(item)
-      report = item[:report]
-
-      new_item_json = {
-        :reportItem => {
-          :obj => report.uri,
-          :sizeY => item[:size_y] || 200,
-          :sizeX => item[:size_x] || 300,
-          :style => {
-            :displayTitle => 1,
-            :background => {
-              :opacity => 0
-            }
-          },
-          :visualization => {
-            :grid => {
-              :columnWidths => []
-            },
-            :oneNumber => {
-              :labels => {}
-            }
-          },
-          :positionY => item[:position_y] || 0,
-          :filters => [],
-          :positionX => item[:position_x] || 0
-        }
-      }
-
-      new_item = GoodData::DashboardItem.new(self, GoodData::Helpers.deep_stringify_keys(new_item_json))
+      new_item = GoodData::ReportItem.create(self, item)
       self.json['items'] << new_item.json
       new_item
     end
