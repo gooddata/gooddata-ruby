@@ -170,6 +170,8 @@ module GoodData
           end
         }
 
+        csv_headers = []
+
         # create a temporary zip file
         dir = Dir.mktmpdir
         begin
@@ -196,6 +198,8 @@ module GoodData
                 csv_header = File.open(path, &:gets).split(',')
                 zip.add(filename, path)
               end
+
+              csv_headers << csv_header
             end
           end
 
@@ -204,6 +208,7 @@ module GoodData
         ensure
           FileUtils.rm_rf dir
         end
+        csv_headers.flatten!
 
         # kick the load
         pull = {'pullIntegration' => File.basename(dir)}
@@ -231,11 +236,19 @@ module GoodData
           end
 
           js = MultiJson.load(s.string)
-          manifest_cols = manifest['dataSetSLIManifest']['parts'].map { |c| c['columnName'] }
+          manifests = manifest['dataSetSLIManifestList'].map do |m|
+            m['dataSetSLIManifest']
+          end
+
+          parts = manifests.map do |manifest|
+            manifest['parts']
+          end
+
+          manifest_cols = parts.flatten.map { |c| c['columnName'] }
 
           # extract some human readable error message from the webdav file
-          manifest_extra = manifest_cols - csv_header
-          csv_extra = csv_header - manifest_cols
+          manifest_extra = manifest_cols - csv_headers
+          csv_extra = csv_headers - manifest_cols
 
           error_message = begin
             js['error']['message'] % js['error']['parameters']
@@ -245,7 +258,7 @@ module GoodData
           m = "Load failed with error '#{error_message}'.\n"
           m += "Columns that should be there (manifest) but aren't in uploaded csv: #{manifest_extra}\n" unless manifest_extra.empty?
           m += "Columns that are in csv but shouldn't be there (manifest): #{csv_extra}\n" unless csv_extra.empty?
-          m += "Columns in the uploaded csv: #{csv_header}\n"
+          m += "Columns in the uploaded csv: #{csv_headers}\n"
           m += "Columns in the manifest: #{manifest_cols}\n"
           m += "Original message:\n#{JSON.pretty_generate(js)}\n"
           m += "Manifest used for uploading:\n#{JSON.pretty_generate(manifest)}"
