@@ -316,7 +316,7 @@ module GoodData
         time_limit = options[:time_limit] || DEFAULT_POLL_TIME_LIMIT
 
         # get the first status and start the timer
-        response = get(link, options)
+        response = get(link)
         poll_start = Time.now
 
         while bl.call(response)
@@ -326,7 +326,7 @@ module GoodData
           end
           sleep sleep_interval
           GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
-            response = get(link, options)
+            response = get(link)
           end
         end
         response
