@@ -87,8 +87,17 @@ module GoodData
         begin
           url = "/gdc/account/domains/#{domain_name}/users"
           response = c.post(url, :accountSetting => data)
-        rescue RestClient::BadRequest
-          raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+        rescue RestClient::BadRequest => e
+          error = MultiJson.load(e.response)
+          error_type = GoodData::Helpers.get_path(error, %w(error errorClass))
+          case error_type
+          when 'com.gooddata.webapp.service.userprovisioning.LoginNameAlreadyRegisteredException'
+            raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+          when 'com.gooddata.json.validator.exception.MalformedMessageException'
+            raise GoodData::MalformedUserError, "User #{data[:login]} is malformed. The message from API is #{GoodData::Helpers.interpolate_error_message(error)}"
+          else
+            raise GoodData::Helpers.interpolate_error_message(error)
+          end
         end
 
         url = response['uri']
