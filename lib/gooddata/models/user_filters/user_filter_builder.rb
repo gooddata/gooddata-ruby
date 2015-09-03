@@ -228,7 +228,11 @@ module GoodData
                    else
                      "[#{label.attribute_uri}] IN (#{element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ')})"
                    end
-      [expression, errors]
+      if options[:ignore_missing_values]
+        [expression, []]
+      else
+        [expression, errors]
+      end
     end
 
     # Encapuslates the creation of filter
@@ -252,32 +256,48 @@ module GoodData
     # @param filters [Array<Hash>] Filters definition
     # @return [Array] first is list of MAQL statements
     def self.maqlify_filters(filters, options = {})
-      users_cache = options[:users_cache] # || create_cache(project.users, :login)
+      fail_early = options[:fail_early] == false ? false : true
+      users_cache = options[:users_cache]
       labels_cache = create_label_cache(filters, options)
       small_labels = get_small_labels(labels_cache)
       lookups_cache = create_lookups_cache(small_labels)
       attrs_cache = create_attrs_cache(filters, options)
-      results = filters.flat_map do |filter|
-        login = filter[:login]
-        filter[:filters].pmapcat do |f|
-          expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
-          profiles_uri = if options[:type] == :muf
-                           '/gdc/account/profile/' + filter[:login]
-                         elsif options[:type] == :variable
-                           (users_cache[login] && users_cache[login].uri)
-                         else
-                           fail 'Unsuported type in maqlify_filters.'
-                         end
-          if profiles_uri && expression
-            [create_user_filter(expression, profiles_uri)] + errors
-          else
-            [] + errors
-          end
+      create_filter_proc = proc do |login, f|
+        expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
+        profiles_uri = if options[:type] == :muf
+                         '/gdc/account/profile/' + login
+                       elsif options[:type] == :variable
+                         (users_cache[login] && users_cache[login].uri)
+                       else
+                         fail 'Unsuported type in maqlify_filters.'
+                       end
+
+        if profiles_uri && expression
+          [create_user_filter(expression, profiles_uri)] + errors
+        else
+          [] + errors
         end
       end
-      results.group_by { |i| i[:type] }
-        .values_at(:filter, :error)
-        .map { |i| i || [] }
+
+      # if fail early process until first error
+      results = if fail_early
+                  x = filters.inject([true, []]) do |(enough, a), e|
+                    login = e[:login]
+                    if enough
+                      y = e[:filters].pmapcat { |f| create_filter_proc.call(login, f) }
+                      [!y.any? { |r| r[:type] == :error }, a.concat(y)]
+                    else
+                      [false, a]
+                    end
+                  end
+                  x.last
+                else
+                  filters.flat_map do |filter|
+                    login = filter[:login]
+                    filter[:filters].pmapcat { |f| create_filter_proc.call(login, f) }
+                  end
+                end
+      results.group_by { |i| i[:type] }.values_at(:filter, :error).map { |i| i || [] }
     end
 
     def self.resolve_user_filter(user = [], project = [])
@@ -340,12 +360,10 @@ module GoodData
       users_must_exist = options[:users_must_exist] == false ? false : true
       dry_run = options[:dry_run]
 
-      # to_create, to_delete = execute(filters, project.data_permissions, MandatoryUserFilter, options.merge(type: :muf))
-
       filters = normalize_filters(user_filters)
       user_filters, errors = maqlify_filters(filters, options.merge(users_must_exist: users_must_exist, type: :muf))
 
-      fail "Validation failed #{errors}" if !ignore_missing_values && !errors.empty?
+      fail GoodData::FilterMaqlizationError, errors if !ignore_missing_values && !errors.empty?
       filters = user_filters.map { |data| client.create(MandatoryUserFilter, data, project: project) }
       to_create, to_delete = resolve_user_filters(filters, project.data_permissions)
 
@@ -463,7 +481,7 @@ module GoodData
                                maqlify_filters(filters, options.merge(users_cache: users_cache, users_must_exist: users_must_exist))
                              end
 
-      fail "Validation failed #{errors}" if !ignore_missing_values && !errors.empty?
+      fail GoodData::FilterMaqlizationError, errors if !ignore_missing_values && !errors.empty?
       filters = user_filters.map { |data| client.create(klass, data, project: project) }
       resolve_user_filters(filters, project_filters)
     end

@@ -123,7 +123,7 @@ module GoodData
       def transform_keys!(an_object)
         return enum_for(:transform_keys!) unless block_given?
         an_object.keys.each do |key|
-          an_object[yield(key)] = delete(key)
+          an_object[yield(key)] = an_object.delete(key)
         end
         an_object
       end

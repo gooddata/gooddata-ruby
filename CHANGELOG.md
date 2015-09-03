@@ -19,6 +19,7 @@
 - Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
 - Added more logging around connecting to server. Cleaning up staging information. Adding tests to make
 - Middlewares are transforming params to Ruby hash (useful for executors when they pass Java Hash instance)
+- Cleaning up way Data permissions work with errors so we can update Bricks
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users
