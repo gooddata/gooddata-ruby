@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "Variables implementation", :constraint => 'slow' do
+describe "Over-To data permissions implementation", :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/m_n_model.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
