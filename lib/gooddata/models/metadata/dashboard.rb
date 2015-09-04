@@ -31,7 +31,7 @@ module GoodData
         query('projectDashboard', Dashboard, options)
       end
 
-      def create_report_tab(tab, options = {:client => GoodData.client, :project => GoodData.project})
+      def create_report_tab(tab, options = { :client => GoodData.client, :project => GoodData.project })
         title = tab[:title]
         {
           :title => title,
@@ -39,7 +39,7 @@ module GoodData
         }
       end
 
-      def create_report_tab_item(item, options = {:client => GoodData.client, :project => GoodData.project})
+      def create_report_tab_item(item, options = { :client => GoodData.client, :project => GoodData.project })
         title = item[:title]
 
         report = GoodData::Report.find_first_by_title(title, options)
@@ -69,7 +69,7 @@ module GoodData
         }
       end
 
-      def create(dashboard = {:tabs => []}, options = {:client => GoodData.client, :project => GoodData.project})
+      def create(dashboard = { :tabs => []  }, options = { :client => GoodData.client, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 

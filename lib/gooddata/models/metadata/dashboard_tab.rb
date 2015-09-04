@@ -50,7 +50,7 @@ module GoodData
       }
 
       new_item = GoodData::DashboardItem.new(self, GoodData::Helpers.deep_stringify_keys(new_item_json))
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
     alias_method :add_report_item, :create_report_item
