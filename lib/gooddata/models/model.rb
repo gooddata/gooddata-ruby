@@ -150,7 +150,7 @@ module GoodData
       # @param project_blueprint [ProjectBlueprint] Project blueprint
       # @param options [Hash] Additional options
       # @return [Hash] Batch upload result
-      def upload_multiple_data(data, project_blueprint, options = {:client => GoodData.connection, :project => GoodData.project})
+      def upload_multiple_data(data, project_blueprint, options = { :client => GoodData.connection, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -211,17 +211,17 @@ module GoodData
         csv_headers.flatten!
 
         # kick the load
-        pull = {'pullIntegration' => File.basename(dir)}
+        pull = { 'pullIntegration' => File.basename(dir) }
         link = project.md.links('etl')['pull2']
 
         # TODO: List uploaded datasets
-        task = client.post(link, pull, :info_message => "Starting the data load from user storage to dataset.")
+        task = client.post(link, pull, :info_message => 'Starting the data load from user storage to dataset.')
 
         res = client.poll_on_response(task['pull2Task']['links']['poll'], :info_message => 'Getting status of the dataload task.') do |body|
           body['wTaskStatus']['status'] == 'RUNNING' || body['wTaskStatus']['status'] == 'PREPARED'
         end
 
-        if res['wTaskStatus']['status'] == 'ERROR' # rubocop:disable Style/GuardClause
+        if res['wTaskStatus']['status'] == 'ERROR'
           s = StringIO.new
 
           messages = res['wTaskStatus']['messages'] || []
@@ -240,8 +240,8 @@ module GoodData
             m['dataSetSLIManifest']
           end
 
-          parts = manifests.map do |manifest|
-            manifest['parts']
+          parts = manifests.map do |m|
+            m['parts']
           end
 
           manifest_cols = parts.flatten.map { |c| c['columnName'] }
