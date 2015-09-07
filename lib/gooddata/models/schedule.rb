@@ -106,7 +106,7 @@ module GoodData
             'PROCESS_ID' => process_id,
             'EXECUTABLE' => executable
           },
-          :reschedule => 0
+          :reschedule => 15
         }
 
         schedule.name = options[:name]
