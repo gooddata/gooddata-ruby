@@ -64,8 +64,8 @@ module GoodData
       end
 
       def titleize(str)
-        titleized = str.gsub(/[\.|_](.)/) { |x| x.upcase }
-        titleized = titleized.gsub('_', ' ')
+        titleized = str.gsub(/[\.|_](.)/, &:upcase)
+        titleized = titleized.tr('_', ' ')
         titleized[0] = titleized[0].upcase
         titleized
       end
@@ -168,11 +168,11 @@ module GoodData
       end
 
       def stringify_keys(an_object)
-        transform_keys(an_object) { |key| key.to_s }
+        transform_keys(an_object, &:to_s)
       end
 
       def deep_stringify_keys(an_object)
-        deep_transform_keys(an_object) { |key| key.to_s }
+        deep_transform_keys(an_object, &:to_s)
       end
 
       def deep_transform_keys(an_object, &block)

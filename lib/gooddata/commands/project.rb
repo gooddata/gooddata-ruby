@@ -105,9 +105,7 @@ module GoodData
         # @return [Object] Report of found problems
         def validate(project_id, options = { client: GoodData.connection })
           client = options[:client]
-          client.with_project(project_id) do |p|
-            p.validate
-          end
+          client.with_project(project_id, &:validate)
         end
 
         def jack_in(options)
@@ -157,9 +155,7 @@ module GoodData
         # @return [Array <GoodData::Role>] List of project roles
         def roles(project_id, options = { client: GoodData.connection })
           client = options[:client]
-          client.with_project(project_id) do |p|
-            p.roles
-          end
+          client.with_project(project_id, &:roles)
         end
 
         # Lists users in a project
@@ -168,9 +164,7 @@ module GoodData
         # @return [Array <GoodData::Membership>] List of project users
         def users(project_id, options = { client: GoodData.connection })
           client = options[:client]
-          client.with_project(project_id) do |p|
-            p.users
-          end
+          client.with_project(project_id, &:users)
         end
       end
     end

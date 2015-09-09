@@ -13,4 +13,3 @@ module GoodData
     end
   end
 end
-
