@@ -304,7 +304,7 @@ module GoodData
         content['grid']['columnWidths'] = widths.map do |item|
           if item.is_a?(Hash)
             GoodData::Helpers.deep_dup(item).tap do |i|
-              if i['locator'][0].key?('attributeHeaderLocator')
+              if i['locator'].length > 0 && ['locator'][0].key?('attributeHeaderLocator')
                 i['locator'][0]['attributeHeaderLocator']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
               end
             end

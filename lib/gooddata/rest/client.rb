@@ -276,6 +276,8 @@ module GoodData
                 links.find { |i| i['category'] == 'uploads' }['link']
               end
         uri.chomp('/') + '/'
+        res = uri.chomp('/') + '/'
+        res[0] == '/' ? "#{connection.server}#{res}" : res
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
