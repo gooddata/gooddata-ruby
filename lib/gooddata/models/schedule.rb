@@ -188,7 +188,7 @@ module GoodData
     # @return [Object] Raw Response
     def execute(opts = {})
       return nil unless saved?
-      opts =  { :wait => true }.merge(opts)
+      opts = { :wait => true }.merge(opts)
       data = {
         :execution => {}
       }
@@ -316,18 +316,17 @@ module GoodData
     #
     # @return [Array] Raw Executions JSON
     def executions
-      if @json # rubocop:disable Style/GuardClause
-        url = @json['schedule']['links']['executions']
-        Enumerator.new do |y|
-          loop do
-            res = client.get url
-            res['executions']['paging']['next']
-            res['executions']['items'].each do |execution|
-              y << client.create(Execution, execution, :project => project)
-            end
-            url = res['executions']['paging']['next']
-            break unless url
+      return nil unless @json
+      url = @json['schedule']['links']['executions']
+      Enumerator.new do |y|
+        loop do
+          res = client.get url
+          res['executions']['paging']['next']
+          res['executions']['items'].each do |execution|
+            y << client.create(Execution, execution, :project => project)
           end
+          url = res['executions']['paging']['next']
+          break unless url
         end
       end
     end

@@ -175,7 +175,9 @@ module GoodData
       end
 
       def project_is_accessible?(id)
-        projects(id) && true rescue false
+        projects(id) && true
+      rescue
+        true
       end
 
       def projects(id = :all)

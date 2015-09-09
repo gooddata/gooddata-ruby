@@ -5,11 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 
 module GoodData
-  class MalformedUserError < RuntimeError
-    DEFAULT_MSG = 'User is malformed'
+  class FilterMaqlizationError < RuntimeError
+    attr_accessor :errors
 
-    def initialize(msg = DEFAULT_MSG)
-      super(msg)
+    def initialize(errs = [])
+      super('Filter MAQLization failed')
+      @errors = errs
     end
   end
 end

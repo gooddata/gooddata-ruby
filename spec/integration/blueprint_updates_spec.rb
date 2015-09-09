@@ -19,6 +19,7 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
   end
 
   it 'Should create project using GoodData::Rest::Client#create_project' do
+  
     data = [
       ["repo_id", "repo_name"],
       [1, "goodot"],

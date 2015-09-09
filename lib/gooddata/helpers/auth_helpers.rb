@@ -55,7 +55,7 @@ module GoodData
         # @return [String] auth token from environment variable, .gooddata or nil
         def read_token(credentials_file_path = credentials_file)
           goodfile = read_credentials(credentials_file_path)
-          [ENV['GD_PROJECT_TOKEN'], goodfile[:auth_token],  goodfile[:token]].find { |x| !x.nil? && !x.empty? }
+          [ENV['GD_PROJECT_TOKEN'], goodfile[:auth_token], goodfile[:token]].find { |x| !x.nil? && !x.empty? }
         end
 
         # Writes credentials

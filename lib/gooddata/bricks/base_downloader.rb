@@ -42,7 +42,7 @@ module GoodData
         bucket = s3.buckets.create(bucket_name) unless bucket.exists?
 
         files.each do |file|
-          file_path =  Pathname.new(file)
+          file_path = Pathname.new(file)
           target_path = Pathname.new(@params['s3_backup_path'] || '') + file_path.basename
           obj = bucket.objects[target_path]
           obj.write(file_path)
