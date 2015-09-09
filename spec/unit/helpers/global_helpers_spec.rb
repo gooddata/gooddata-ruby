@@ -93,5 +93,19 @@ describe GoodData::Helpers do
       })
     end
 
+    it 'should be abe to join datasets' do
+      master = [{ id: 'a', x: 1 },
+                { id: 'b', x: 1 },
+                { id: 'c', x: 2 }]
+
+      lookup = [{ id: 1, y: 'FOO' },
+                { id: 2, y: 'BAR' }]
+
+      results = GoodData::Helpers.join(master, lookup, [:x], [:id])
+      expect(results).to eq [{:id=>"a", :y=>"FOO", :x=>1},
+                             {:id=>"b", :y=>"FOO", :x=>1},
+                             {:id=>"c", :y=>"BAR", :x=>2}]
+    end
+
   end
 end

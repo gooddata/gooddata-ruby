@@ -72,13 +72,14 @@ module GoodData
 
       def join(master, slave, on, on2, options = {})
         full_outer = options[:full_outer]
+        inner = options[:inner]
 
         lookup = create_lookup(slave, on2)
         marked_lookup = {}
         results = master.reduce([]) do |a, line|
           matching_values = lookup[line.values_at(*on)] || []
           marked_lookup[line.values_at(*on)] = 1
-          if matching_values.empty?
+          if matching_values.empty? && !inner
             a << line.to_hash
           else
             matching_values.each do |matching_value|

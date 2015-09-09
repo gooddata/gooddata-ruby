@@ -71,7 +71,7 @@ describe 'User filters implementation' do
     filters.first[:filters].last[:values].count.should == 2
   end
 
-  it "should normalize simplifed filters" do
+  it "should normalize simplified filters" do
     filters = [
       [
         "svarovsky+gem_tester@gooddata.com",

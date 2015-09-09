@@ -87,8 +87,17 @@ module GoodData
         begin
           url = "/gdc/account/domains/#{domain_name}/users"
           response = c.post(url, :accountSetting => data)
-        rescue RestClient::BadRequest
-          raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+        rescue RestClient::BadRequest => e
+          error = MultiJson.load(e.response)
+          error_type = GoodData::Helpers.get_path(error, %w(error errorClass))
+          case error_type
+          when 'com.gooddata.webapp.service.userprovisioning.LoginNameAlreadyRegisteredException'
+            raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+          when 'com.gooddata.json.validator.exception.MalformedMessageException'
+            raise GoodData::MalformedUserError, "User #{data[:login]} is malformed. The message from API is #{GoodData::Helpers.interpolate_error_message(error)}"
+          else
+            raise GoodData::Helpers.interpolate_error_message(error)
+          end
         end
 
         url = response['uri']
@@ -223,26 +232,24 @@ module GoodData
         # Prepare cache for domain users
         domain_users_cache = Hash[domain.users.map { |u| [u.login, u] }]
 
-        res = list.pmapcat do |user|
+        list.pmapcat do |user|
           begin
             user_data = user.to_hash
             domain_user = domain_users_cache[user_data[:login]]
             if !domain_user
               added_user = domain.add_user(user_data, opts)
-              [{ type: :ok, :action => :user_added_to_domain, user: added_user }]
+              [{ type: :successful, :action => :user_added_to_domain, user: added_user }]
             else
               fields_to_check = opts[:fields_to_check] || user_data.keys
               diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login, fields: fields_to_check)
               next [] if diff[:changed].empty?
               updated_user = domain.update_user(domain_user.to_hash.merge(user_data.compact), opts)
-              [{ type: :ok, :action => :user_changed_in_domain, user: updated_user }]
+              [{ type: :successful, :action => :user_changed_in_domain, user: updated_user }]
             end
           rescue RuntimeError => e
-            [{ type: :error, :user => user, reason: e }]
+            [{ type: :failed, :user => user, message: e }]
           end
         end
-
-        res.group_by { |r| r[:type] }
       end
     end
 
