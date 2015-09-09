@@ -10,13 +10,12 @@ module GoodData
       GD_PROJECT_TOKEN = ENV["GD_PROJECT_TOKEN"]
 
 
-      DEFAULT_USERNAME = "tomas.korcak+gem_tester@gooddata.com"
+      DEFAULT_USERNAME = "svarovsky@gooddata.com"
       TEST_USERNAME = "john.doe@gooddata.com"
       DEFAULT_PASSWORD = "jindrisska"
-      DEFAULT_DOMAIN = 'gooddata-tomas-korcak-gem-tester'
-      DEFAULT_USER_URL = '/gdc/account/profile/3cea1102d5584813506352a2a2a00d95'
-      DEFAULT_SERVER = 'https://secure.gooddata.com'
-      STAGING_URI = 'https://ea-di.staging.intgdc.com/uploads/'
+      DEFAULT_DOMAIN = 'svarovsky-test'
+      DEFAULT_USER_URL = '/gdc/account/profile/6e123be5a53dd863df5cf280fdb9c1fd'
+      DEFAULT_SERVER = 'https://staging3.getgooddata.com'
     end
 
     module ProcessHelper

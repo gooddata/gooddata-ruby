@@ -1242,39 +1242,22 @@ module GoodData
       # Diff users. Only login and role is important for the diff
       diff = GoodData::Helpers.diff(whitelisted_users, diffable_new, key: :login, fields: [:login, :role, :status])
 
-      results = {
-        :ok => [],
-        :error => []
-      }
-
-      concat_results = lambda do |res_tmp|
-        results[:ok].concat(res_tmp[:ok])
-        results[:error].concat(res_tmp[:error])
-      end
-
       # Create new users
-      u = diff[:added].map do |x|
-        {
-          user: x,
-          role: x[:role]
-        }
-      end
+      u = diff[:added].map { |x| { user: x, role: x[:role] } }
 
-      # This is only creating users that were not in the proejcts so far. This means this will reach into domain
+      results = []
       GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
-      concat_results.call(create_users(u, roles: role_list, project_users: whitelisted_users))
+      results.concat(create_users(u, roles: role_list, project_users: whitelisted_users))
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
       list = diff[:changed].map { |x| { user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles] } }
-      concat_results.call(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
+      results.concat(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
 
       # Remove old users
       to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
       GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
-      concat_results.call(disable_users(to_remove))
-
-      results
+      results.concat(disable_users(to_remove))
     end
 
     def disable_users(list)
@@ -1284,15 +1267,10 @@ module GoodData
         generate_user_payload(u[:uri], 'DISABLED')
       end
 
-      users = payloads.each_slice(100).mapcat do |payload|
+      payloads.each_slice(100).mapcat do |payload|
         result = client.post(url, 'users' => payload)
         result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, uri: x } } }
       end
-
-      {
-        ok: users,
-        error: []
-      }
     end
 
     # Update user
@@ -1317,8 +1295,7 @@ module GoodData
     # @param list List of users to be updated
     # @param role_list Optional list of cached roles to prevent unnecessary server round-trips
     def set_users_roles(list, options = {})
-      response = { ok: [], error: [] }
-      return response if list.empty?
+      return [] if list.empty?
       role_list = options[:roles] || roles
       project_users = options[:project_users] || users
 
@@ -1344,12 +1321,7 @@ module GoodData
       # this ugly line turns the hash of errors into list of errors with types so we can process them easily
       typed_results = results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| v_2.is_a?(String) ? { type: k.to_sym, user: v_2 } : GoodData::Helpers.symbolize_keys(v_2).merge(type: k.to_sym) } } }
       # we have to concat errors from role resolution and API result
-      results = typed_results + (users_by_type[:failed] || [])
-
-      response.tap do |resp|
-        resp[:ok].concat(results.select { |r| r[:type] == :successful })
-        resp[:error].concat(results.select { |r| r[:type] == :failed })
-      end
+      typed_results + (users_by_type[:failed] || [])
     end
 
     alias_method :add_users, :set_users_roles

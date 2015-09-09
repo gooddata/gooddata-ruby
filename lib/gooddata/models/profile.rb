@@ -377,6 +377,15 @@ module GoodData
       (first_name || '') + (last_name || '')
     end
 
+    def password
+      @json['accountSetting']['password']
+    end
+
+    def password=(a_password)
+      @dirty = true
+      @json['accountSetting']['password'] = a_password
+    end
+
     def sso_provider
       @json['accountSetting']['ssoProvider']
     end
