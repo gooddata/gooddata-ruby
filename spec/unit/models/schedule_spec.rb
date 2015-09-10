@@ -358,10 +358,9 @@ describe GoodData::Schedule do
   end
  
   describe '#reschedule' do
-    it 'Should return reschedule 15 if not provided' do
+    it 'Should return reschedule nil if not provided' do
       schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
-      expect(schedule.reschedule).to eq 15
-      expect(schedule.reschedule).to be_a_kind_of(Integer)
+      expect(schedule.reschedule).to eq nil
     end
 
     it 'Should return reschedule as integer' do
