@@ -62,5 +62,5 @@ Special thanks to Thomas Watson Steen [ <mailto:w@tson.dk> / [@wa7son](http://tw
 
 ## Copyright
 
-Copyright (c) 2010 - 2014 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
+Copyright (c) 2010 - 2015 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
 
