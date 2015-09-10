@@ -23,7 +23,7 @@ module GoodData::Helpers
       def remove_old_processes(project)
         processes = project.processes
         processes.pmap do |process|
-          next if process.obj_id == PROCESS_ID
+          next if process.obj_id == GoodData::Environment::ProcessHelper::PROCESS_ID
           puts "Deleting #{process.inspect}"
           process.delete
         end

@@ -27,7 +27,7 @@ module GoodData
         :timezone => nil,
         :params => {},
         :hiddenParams => {},
-        :reschedule => nil
+        # :reschedule => nil
       }
     }
 
@@ -106,7 +106,7 @@ module GoodData
             'PROCESS_ID' => process_id,
             'EXECUTABLE' => executable
           },
-          :reschedule => nil
+          # :reschedule => nil
         }
 
         schedule.name = options[:name]
@@ -116,7 +116,7 @@ module GoodData
         schedule.timezone = options[:timezone] || default_opts[:timezone]
         schedule.state = options[:state] || default_opts[:state]
         schedule.schedule_type = options[:type] || default_opts[:type]
-        schedule.reschedule = options[:reschedule] || default_opts[:reschedule]
+        schedule.reschedule = options[:reschedule] if options[:reschedule]
         schedule
       end
     end
@@ -508,19 +508,22 @@ module GoodData
     end
 
     def to_update_payload
-      {
+      res = {
         'schedule' => {
           'name' => name,
           'type' => type,
           'state' => state,
           'timezone' => timezone,
-          'reschedule' => reschedule,
           'cron' => cron,
           'triggerScheduleId' => trigger_id,
           'params' => GoodData::Helpers.encode_public_params(params),
           'hiddenParams' => GoodData::Helpers.encode_hidden_params(hidden_params)
         }
       }
+
+      res['schedule']['reschedule'] = reschedule if reschedule
+
+      res
     end
   end
 end
