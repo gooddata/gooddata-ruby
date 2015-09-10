@@ -8,7 +8,7 @@
 module GoodData
   SHA_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'git-sha.txt'))
 
-  VERSION = '0.6.22'
+  VERSION = '0.6.23'
   VERSION_SHA = File.open(SHA_PATH).read
 
   class << self
