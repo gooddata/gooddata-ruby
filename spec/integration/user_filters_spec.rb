@@ -94,11 +94,33 @@ describe "User filters implementation", :constraint => 'slow' do
 
   it "should fail when asked to set a value not in the project" do
     filters = [
-      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value', 'tomas@gooddata.com'],
-      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, 'tomas@gooddata.com']]
+      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value', 'tomas@gooddata.com']]
     expect do
       @project.add_data_permissions(filters)
     end.to raise_error
+    begin
+      @project.add_data_permissions(filters)
+    rescue GoodData::FilterMaqlizationError => e
+      expect(e.errors.count).to eq 1
+    end
+    expect(@project.data_permissions.count).to eq 0
+  end
+
+  it 'should fail but return all values if specified' do
+    domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+    u = domain.users.find { |u| u.login != ConnectionHelper::DEFAULT_USERNAME }
+    filters = [
+      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value', 'tomas@gooddata.com'],
+      [u.login, @label.uri, '%^&*( other nonexistent value', 'jirka@gooddata.com']
+    ]
+    expect do
+      @project.add_data_permissions(filters, fail_early: false)
+    end.to raise_error
+    begin
+      @project.add_data_permissions(filters, fail_early: false)
+    rescue GoodData::FilterMaqlizationError => e
+      expect(e.errors.count).to eq 2
+    end
     expect(@project.data_permissions.count).to eq 0
   end
 
@@ -115,7 +137,7 @@ describe "User filters implementation", :constraint => 'slow' do
     u = domain.users.find { |u| u.login != ConnectionHelper::DEFAULT_USERNAME }
 
     filters = [[u.login, @label.uri, "tomas@gooddata.com"]]
-    @project.add_data_permissions(filters)
+    results = @project.add_data_permissions(filters)
     filters = @project.data_permissions
     expect(filters.first.related.login).to eq u.login
     expect(filters.select(&:related_uri).count).to eq 1

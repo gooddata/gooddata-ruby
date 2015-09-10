@@ -90,7 +90,7 @@ module GoodData
         Timeout::Error
       ]
 
-      RETRIES_ON_TOO_MANY_REQUESTS_ERROR = 10
+      RETRIES_ON_TOO_MANY_REQUESTS_ERROR = 12
       RETRY_TIME_INITIAL_VALUE = 1
       RETRY_TIME_COEFFICIENT = 1.5
       RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
