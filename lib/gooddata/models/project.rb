@@ -272,10 +272,11 @@ module GoodData
     # @return [String] Project URL
     def browser_uri(options = {})
       grey = options[:grey]
+      server = client.connection.server_url
       if grey
-        client.connection.url + uri
+        "#{server}#{uri}"
       else
-        client.connection.url + '#s=' + uri
+        "#{server}/#s=#{uri}"
       end
     end
 
