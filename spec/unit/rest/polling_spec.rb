@@ -63,14 +63,14 @@ describe 'Behavior during polling and retries' do
     expect do
       @client.get('/too_many_reqs')
     end.to raise_error(RestClient::TooManyRequests)
-    expect(a_request(:get, "#{@server}/too_many_reqs")).to have_been_made.times(10)
+    expect(a_request(:get, "#{@server}/too_many_reqs")).to have_been_made.times(12)
   end
 
   it 'should make MAX_REQUESTS when hitting 503' do
     expect do
       @client.get('/out_of_service')
     end.to raise_error(RestClient::ServiceUnavailable)
-    expect(a_request(:get, "#{@server}/out_of_service")).to have_been_made.times(10)
+    expect(a_request(:get, "#{@server}/out_of_service")).to have_been_made.times(12)
   end
 
   it 'should make 1 additional request when hitting 500' do

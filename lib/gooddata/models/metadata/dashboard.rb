@@ -69,7 +69,7 @@ module GoodData
         }
       end
 
-      def create(dashboard = { :tabs => []  }, options = { :client => GoodData.client, :project => GoodData.project })
+      def create(dashboard = { :tabs => [] }, options = { :client => GoodData.client, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 

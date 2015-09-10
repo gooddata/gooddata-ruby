@@ -64,21 +64,22 @@ module GoodData
       end
 
       def titleize(str)
-        titleized = str.gsub(/[\.|_](.)/) { |x| x.upcase }
-        titleized = titleized.gsub('_', ' ')
+        titleized = str.gsub(/[\.|_](.)/, &:upcase)
+        titleized = titleized.tr('_', ' ')
         titleized[0] = titleized[0].upcase
         titleized
       end
 
       def join(master, slave, on, on2, options = {})
         full_outer = options[:full_outer]
+        inner = options[:inner]
 
         lookup = create_lookup(slave, on2)
         marked_lookup = {}
         results = master.reduce([]) do |a, line|
           matching_values = lookup[line.values_at(*on)] || []
           marked_lookup[line.values_at(*on)] = 1
-          if matching_values.empty?
+          if matching_values.empty? && !inner
             a << line.to_hash
           else
             matching_values.each do |matching_value|
@@ -122,7 +123,7 @@ module GoodData
       def transform_keys!(an_object)
         return enum_for(:transform_keys!) unless block_given?
         an_object.keys.each do |key|
-          an_object[yield(key)] = delete(key)
+          an_object[yield(key)] = an_object.delete(key)
         end
         an_object
       end
@@ -167,11 +168,11 @@ module GoodData
       end
 
       def stringify_keys(an_object)
-        transform_keys(an_object) { |key| key.to_s }
+        transform_keys(an_object, &:to_s)
       end
 
       def deep_stringify_keys(an_object)
-        deep_transform_keys(an_object) { |key| key.to_s }
+        deep_transform_keys(an_object, &:to_s)
       end
 
       def deep_transform_keys(an_object, &block)

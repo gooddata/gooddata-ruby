@@ -106,20 +106,7 @@ describe "Variables implementation", :constraint => 'slow' do
     expect(@variable.user_values.pmap {|m| m.pretty_expression}).to eq ["[Dev] IN ([jirka@gooddata.com])"]
     expect(@variable.user_values.count).to eq 1
   end
-  
-  it "should be able to add mandatory filter to a user not in the project if domain is provided" do
-    domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
-    u = domain.users.find { |u| u.login != ConnectionHelper::DEFAULT_USERNAME }
-    filters = [[u.login, @label.uri, "tomas@gooddata.com"]]
-    expect do
-      @project.add_variable_permissions(filters, @variable)
-    end.to raise_error
-    @project.add_variable_permissions(filters, @variable, :domain => domain)
-    filters = @variable.user_values
-    expect(filters.first.related.login).to eq u.login
-    expect(filters.count).to eq 1
-  end
-  
+
   it "should be able to print data permissions in a human readable form" do
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com"]]
     @project.add_variable_permissions(filters, @variable)

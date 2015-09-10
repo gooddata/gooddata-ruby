@@ -83,11 +83,11 @@ describe GoodData::Domain do
       res = @domain.create_users(list)
 
       # no errors
-      expect(res[:ok].select { |x| x[:action] == :user_added_to_domain }.count).to eq res[:ok].count
+      expect(res.select { |x| x[:type] == :successful && x[:action] == :user_added_to_domain }.count).to eq res.count
 
       expect(@domain.members?(list.map(&:login)).all?).to be_truthy
 
-      res[:ok].map { |r| r[:user] }.each do |r|
+      res.select { |x| x[:type] == :successful }.map { |r| r[:user] }.each do |r|
         expect(r).to be_an_instance_of(GoodData::Profile)
         r.delete
       end
@@ -126,15 +126,13 @@ describe GoodData::Domain do
     end
 
     it 'updates properties of a profile' do
-      skip 'Add more users'
-
       user = @domain.users
-        .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.sample
+        .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.take(20).sample
 
       old_email = user.email
       old_sso_provider = user.sso_provider || ''
       user.email = 'john.doe@gooddata.com'
-      user.sso_provider = user.sso_provider.blank? ? user.sso_provider.reverse : 'some_sso_provider'
+      user.sso_provider = user.sso_provider.blank? ? 'some_sso_provider' : user.sso_provider.reverse
       @domain.update_user(user)
       updated_user = @domain.find_user_by_login(user.login)
       expect(updated_user.email).to eq 'john.doe@gooddata.com'
