@@ -29,6 +29,7 @@ end
 namespace :gem do
   desc "Release gem version #{GoodData::VERSION} to rubygems"
   task :release do
+    `git rev-parse --verify HEAD > git-sha.txt`
     gem = "gooddata-#{GoodData::VERSION}.gem"
 
     puts "Building #{gem} ..."
