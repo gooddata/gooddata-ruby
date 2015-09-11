@@ -1,6 +1,7 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.23
+- Fixed typo sometimes causing crash of ReportDefinition#replace
 
 ## 0.6.22
 - Added rake task (license:add) for automatic license headers generating
