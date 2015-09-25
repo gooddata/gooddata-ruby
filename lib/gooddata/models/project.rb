@@ -954,7 +954,7 @@ module GoodData
         reports.peach(&:purge_report_of_unused_definitions!)
       end
 
-      fail ArgumentError, 'No :mapping specified' if (opts[:old].nil? && opts[:new].nill?) && (opts[:mapping].nil? || opts[:mapping].empty?)
+      fail ArgumentError, 'No :mapping specified' if (opts[:old].nil? && opts[:new].nil?) && (opts[:mapping].nil? || opts[:mapping].empty?)
 
       # Preprocess mapping, do necessary lookup
       mapping = {}
