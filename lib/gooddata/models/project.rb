@@ -903,8 +903,8 @@ module GoodData
     }
 
     def replace_date_dimension(opts)
-      fail ArgumentError, 'No :old dimension specified' if opts[:old].nil?
-      fail ArgumentError, 'No :new dimension specified' if opts[:new].nil?
+      fail ArgumentError, 'No :old dimension specified' if opts[:old].nil? && opts[:mapping].nil?
+      fail ArgumentError, 'No :new dimension specified' if opts[:new].nil? && opts[:mapping].nil?
 
       # Merge with default options
       opts = DEFAULT_REPLACE_DATE_DIMENSION_OPTIONS.merge(opts)
