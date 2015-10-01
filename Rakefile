@@ -12,10 +12,9 @@ require 'rspec/core/rake_task'
 
 require 'yard'
 
-desc 'Run Rubocop'
-task :cop do
-  exec 'rubocop -D lib/ gooddata.gemspec Rakefile'
-end
+require 'rubocop/rake_task'
+
+RuboCop::RakeTask.new
 
 desc 'Run continuous integration test'
 task :ci do
