@@ -208,15 +208,13 @@ module GoodData
       self
     end
 
-    # Replaces all occurences of something with something else. This is just a convenience method. The
-    # real work is done under the hood in report definition. This is just deferring to those
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
     #
-    # @param what [Object] What you would like to have changed
-    # @param for_what [Object] What you would like to have changed this for
-    # @return [GoodData::Report] Returns report with removed definition
-    def replace(what, for_what)
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
+    # @return [GoodData::Report]
+    def replace(mapping)
       new_defs = definitions.map do |rep_def|
-        rep_def.replace(what, for_what)
+        rep_def.replace(mapping)
       end
       new_defs.pmap(&:save)
       self

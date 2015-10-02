@@ -69,6 +69,14 @@ module GoodData
       values.select { |x| x.level == :user }
     end
 
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
+    #
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
+    # @return [GoodData::Variable]
+    def replace(mapping)
+      GoodData::MdObject.replace_quoted(self, mapping)
+    end
+
     # Retrieves variable values and returns only those related to project
     #
     # @return [Array<GoodData::VariableUserFilter>] Values of variable related to project
