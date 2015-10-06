@@ -1,5 +1,7 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.24
+
 ## 0.6.23
 - Fixed typo sometimes causing crash of ReportDefinition#replace
 
