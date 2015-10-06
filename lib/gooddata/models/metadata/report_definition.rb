@@ -242,7 +242,7 @@ module GoodData
                  uri = "/gdc/app/projects/#{project.pid}/execute"
                  client.post(uri, data)
                end
-      data_result(result, opts)
+      GoodData::Report.data_result(result, opts.merge(client: client))
     end
 
     def filters
@@ -351,30 +351,6 @@ module GoodData
     # @return [Boolean] Return true if report definition is a table
     def table?
       content['format'] == 'grid'
-    end
-
-    private
-
-    def data_result(result, options = {})
-      data_result_uri = result['execResult']['dataResult']
-      begin
-        result = client.poll_on_response(data_result_uri, options) do |body|
-          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
-        end
-      rescue RestClient::BadRequest => e
-        resp = JSON.parse(e.response)
-        if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
-          raise GoodData::UncomputableReport
-        else
-          raise e
-        end
-      end
-
-      if result.empty?
-        client.create(ReportDataResult, data: [], top: 0, left: 0, project: project)
-      else
-        ReportDataResult.from_xtab(result, client: client, project: project)
-      end
     end
   end
 end
