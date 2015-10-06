@@ -125,7 +125,7 @@ module GoodData
       tab = options[:tab] || ''
 
       req_uri = "/gdc/projects/#{project.pid}/clientexport"
-      x = client.post(req_uri, 'clientExport' => { 'url' => "https://secure.gooddata.com/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title })
+      x = client.post(req_uri, 'clientExport' => { 'url' => "#{client.connection.server_url}/dashboard.html#project=#{GoodData.project.uri}&dashboard=#{uri}&tab=#{tab}&export=1", 'name' => title })
       client.poll_on_code(x['asyncTask']['link']['poll'], options.merge(process: false))
     end
 
