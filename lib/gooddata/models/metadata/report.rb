@@ -57,6 +57,29 @@ module GoodData
         report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
         client.create(Report, report, :project => project)
       end
+
+      def data_result(result, options = {})
+        client = options[:client]
+        data_result_uri = result['execResult']['dataResult']
+        begin
+          result = client.poll_on_response(data_result_uri, options) do |body|
+            body && body['taskState'] && body['taskState']['status'] == 'WAIT'
+          end
+        rescue RestClient::BadRequest => e
+          resp = JSON.parse(e.response)
+          if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
+            raise GoodData::UncomputableReport
+          else
+            raise e
+          end
+        end
+
+        if result.empty?
+          ReportDataResult.new(data: [], top: 0, left: 0)
+        else
+          ReportDataResult.from_xtab(result)
+        end
+      end
     end
 
     # Add a report definition to a report. This will show on a UI as a new version.
@@ -127,17 +150,7 @@ module GoodData
     def execute(options = {})
       fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
       result = client.post '/gdc/xtab2/executor3', 'report_req' => { 'report' => uri }
-      data_result_uri = result['execResult']['dataResult']
-
-      result = client.poll_on_response(data_result_uri, options) do |body|
-        body && body['taskState'] && body['taskState']['status'] == 'WAIT'
-      end
-
-      if result.empty?
-        client.create(ReportDataResult, data: [], top: 0, left: 0, project: project)
-      else
-        ReportDataResult.from_xtab(result, client: client, project: project)
-      end
+      GoodData::Report.data_result(result, options.merge(client: client))
     end
 
     # Returns true if you can export and object
