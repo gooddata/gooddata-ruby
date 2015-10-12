@@ -19,7 +19,7 @@ module GoodData
     # @return [String]
     def find_value_uri(value)
       escaped_value = CGI.escape(value)
-      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc&filter=#{escaped_value}", {})
+      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc&filter=#{escaped_value}", 'validElementsRequest' => {})
       items = results['validElements']['items']
       if items.empty?
         fail(AttributeElementNotFound, value)
@@ -63,7 +63,7 @@ module GoodData
         offset = options[:offset] || 0
         page_limit = options[:limit] || 100
         loop do
-          results = client.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", {})
+          results = client.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", 'validElementsRequest' => {})
 
           # Implementation of polling is based on
           # https://opengrok.intgdc.com/source/xref/gdc-backend/src/test/java/com/gooddata/service/dao/ValidElementsDaoTest.java
@@ -90,7 +90,7 @@ module GoodData
     end
 
     def values_count
-      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc", {})
+      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc", 'validElementsRequest' => {})
       results['validElements']['paging']['total'].to_i
     end
 
