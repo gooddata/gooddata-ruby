@@ -14,7 +14,6 @@ require 'zip'
 require_relative '../exceptions/no_project_error'
 
 require_relative '../helpers/auth_helpers'
-require_relative '../helpers/global_helpers'
 
 require_relative '../rest/resource'
 require_relative '../mixins/author'
@@ -24,6 +23,10 @@ require_relative '../mixins/rest_resource'
 require_relative 'process'
 require_relative 'project_role'
 require_relative 'blueprint/blueprint'
+
+require_relative 'metadata/scheduled_mail'
+require_relative 'metadata/scheduled_mail/dashboard_attachment'
+require_relative 'metadata/scheduled_mail/report_attachment'
 
 module GoodData
   class Project < GoodData::Rest::Resource
@@ -1108,90 +1111,13 @@ module GoodData
       self
     end
 
-    DEFAULT_SCHEDULE_DASHBOARD_OPTS = {
-      :allTabs => 1,
-      :tabs => []
-    }
-
-    DEFAULT_SCHEDULE_REPORT_OPTS = {
-      :formats => %w(pdf xls),
-      :exportOptions => {
-        :pageOrientation => 'landscape'
-      }
-    }
-
-    DEFAULT_SCHEDULE_OPTS = {
-      # Meta options
-      :title => 'Scheduled report example',
-      :summary => 'Daily at 12:00pm PT',
-      :tags => '',
-      :deprecated => 0,
-
-      # Content When options
-      :recurrency => '0:0:0:12:0:0',
-      :startDate => '2012-06-05',
-      :timeZone => 'America/Los_Angeles',
-
-      # Content Email options
-      :to => [],
-      :bcc => [],
-      :subject => 'Scheduled Report',
-      :body => "Hey, I'm sending you new Reports and Dashboards!",
-
-      # Attachments
-      :attachments => []
-    }
-
     # Schedules an email with dashboard or report content
-    def schedule_email(opts = DEFAULT_SCHEDULE_OPTS)
-      opts = DEFAULT_SCHEDULE_OPTS.merge(GoodData::Helpers.symbolize_keys(opts))
+    def schedule_mail(options = GoodData::ScheduledMail::DEFAULT_OPTS)
+      GoodData::ScheduledMail.create(options.merge(client: client, project: self))
+    end
 
-      payload = {
-        :scheduledMail => {
-          :meta => {
-            :title => opts[:title],
-            :summary => opts[:summary],
-            :tags => opts[:tags],
-            :deprecated => opts[:deprecated]
-          },
-          :content => {
-            :when => {
-              :recurrency => opts[:recurrency],
-              :startDate => opts[:startDate] || opts[:start_date],
-              :timeZone => opts[:timeZone] || opts[:time_zone]
-            },
-            :to => opts[:to].is_a?(Array) ? opts[:to] : [opts[:to]],
-            :bcc => opts[:bcc].is_a?(Array) ? opts[:bcc] : [opts[:bcc]],
-            :subject => opts[:subject],
-            :body => opts[:body]
-          }
-        }
-      }
-
-      attachments = opts[:attachments].map do |attachment|
-        key = attachment.keys.first
-        body = attachment[key]
-
-        if key.is_a? (GoodData::Dashboard)
-          {
-            dashboardAttachment: DEFAULT_SCHEDULE_DASHBOARD_OPTS.merge(body.merge(:uri => key.uri))
-          }
-        elsif key.is_a? (GoodData::Report)
-          {
-            reportAttachment: DEFAULT_SCHEDULE_REPORT_OPTS.merge(body.merge(:uri => key.uri))
-          }
-        else
-          {
-            key => body
-          }
-        end
-      end
-
-
-      payload[:scheduledMail][:content][:attachments] = attachments
-
-      url = "/gdc/md/#{pid}/obj"
-      client.post url, payload
+    def scheduled_mails(options = { :full => false })
+      GoodData::ScheduledMail[:all, options.merge(project: self, client: client)]
     end
 
     # @param [String | Number | Object] Anything that you can pass to GoodData::Schedule[id]
