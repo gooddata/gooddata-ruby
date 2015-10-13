@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.24
+- Fixed problem with validElements causing 500
+
 ## 0.6.23
 - Fixed typo sometimes causing crash of ReportDefinition#replace
 
