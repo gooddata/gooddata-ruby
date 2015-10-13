@@ -17,7 +17,7 @@ module GoodData
     # Identifier of gem version
     # @return Formatted gem version
     def gem_version_string
-      "gooddata-gem/#{VERSION}"
+      "gooddata-gem/#{VERSION}/#{RUBY_PLATFORM}/#{RUBY_VERSION}"
     end
   end
 end
