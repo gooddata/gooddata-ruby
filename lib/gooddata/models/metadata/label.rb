@@ -91,7 +91,8 @@ module GoodData
 
     def values_count
       results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc", 'validElementsRequest' => {})
-      results['validElements']['paging']['total'].to_i
+      count = GoodData::Helpers.get_path(results, %w(validElements paging total))
+      count && count.to_i
     end
 
     # Gives an attribute of current label
