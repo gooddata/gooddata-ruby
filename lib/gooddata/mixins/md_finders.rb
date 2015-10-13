@@ -46,7 +46,7 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError 'Wrong :project specified' if project.nil?
 
-        self[:all, client: c, project: project].select { |r| r.tags.split(',').include?(tag) }
+        self[:all, client: c, project: project].select { |r| r.tag_set.include?(tag) }
       end
 
       # Finds a specific type of the object by title. Returns first match. Returns full object.
