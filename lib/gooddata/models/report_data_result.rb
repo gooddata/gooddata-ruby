@@ -11,9 +11,7 @@ module GoodData
       #
       # @param [Hash] data Data coming from the API
       # @return [GoodData::ReportDataResult] Returns new report data result
-      def from_xtab(data, options = {})
-        client = options[:client]
-        project = options[:project]
+      def from_xtab(data)
         top = top_headers(data)
         left = left_headers(data)
         jank = GoodData::Helpers.zeroes(rows(top), cols(left), nil)
@@ -23,7 +21,7 @@ module GoodData
         a = jank.zip(top).map { |x, y| x + y }
         b = left.zip(stuff).map { |x, y| x + y }
         result = a + b
-        client ? client.create(ReportDataResult, data: result, top: rows(top), left: cols(left), project: project) : ReportDataResult.new(data: result, top: rows(top), left: cols(left))
+        ReportDataResult.new(data: result, top: rows(top), left: cols(left))
       end
 
       private

@@ -413,8 +413,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
     expect(metric.contain?(attribute)).to be true
     expect(metric.contain?(repo_attribute)).to be false
-
-    metric.replace(attribute, repo_attribute)
+    metric.replace!(attribute => repo_attribute)
     metric.save
     expect(metric.execute).not_to eq 4
 

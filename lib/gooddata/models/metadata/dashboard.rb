@@ -129,6 +129,16 @@ module GoodData
       client.poll_on_code(x['asyncTask']['link']['poll'], options.merge(process: false))
     end
 
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
+    #
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
+    # @return [GoodData::Dashboard]
+    def replace(mapping)
+      x = GoodData::MdObject.replace_quoted(self, mapping)
+      vals = GoodData::MdObject.find_replaceable_values(self, mapping)
+      GoodData::MdObject.replace_quoted(x, vals)
+    end
+
     def tabs
       content['tabs'].map do |tab|
         GoodData::DashboardTab.new(self, tab)

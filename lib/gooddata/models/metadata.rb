@@ -33,6 +33,79 @@ module GoodData
           define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
         end
       end
+
+      # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
+      # representation and returns a new one with object references changed according to mapping. The references an be found either in the object structure or in the MAQL in bracketed form. This implementation takes care only of those in bracketed form.
+      #
+      # @param obj [GoodData::MdObject] what Object that should be replaced
+      # @param mapping [Array[Array]] Array of mapping pairs.
+      # @return [GoodData::MdObject]
+      def replace_bracketed(obj, mapping)
+        replace(obj, mapping) { |e, a, b| e.gsub("[#{a}]", "[#{b}]") }
+      end
+
+      # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
+      # representation and returns a new one with object references changed according to mapping. The references an be found either in the object structure or in the MAQL in bracketed form. This implementation takes care only of those in object structure where they are as a string in JSON.
+      #
+      # @param obj [GoodData::MdObject] Object that should be replaced
+      # @param mapping [Array[Array]] Array of mapping pairs.
+      # @return [GoodData::MdObject]
+      def replace_quoted(obj, mapping)
+        replace(obj, mapping) do |e, a, b|
+          e.gsub("\"#{a}\"", "\"#{b}\"")
+        end
+      end
+
+      # Helper method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
+      # representation yields for a client to perform replacement for each mapping pair and returns a new one
+      # with object of the same type as obj.
+      #
+      # @param obj [GoodData::MdObject] Object that should be replaced
+      # @param mapping [Array[Array]] Array of mapping pairs.
+      # @param block [Proc] Block that receives the object state as a JSON string and mapping pair and expects a new object state as a JSON string back
+      # @return [GoodData::MdObject]
+      def replace(obj, mapping, &block)
+        json = mapping.reduce(obj.to_json) do |a, e|
+          obj_a, obj_b = e
+          uri_what = obj_a.respond_to?(:uri) ? obj_a.uri : obj_a
+          uri_for_what = obj_b.respond_to?(:uri) ? obj_b.uri : obj_b
+          block.call(a, uri_what, uri_for_what)
+        end
+        client = obj.client
+        client.create(obj.class, MultiJson.load(json), :project => obj.project)
+      end
+
+      # Helper method used for finding attribute elements that are interesting becuase they can be possibly
+      # replaced according to mapping specification. This walks through all the attribute elemets. Picks only those
+      # whose attribute is mentioned in the mapping. Walks through all the labels of that particular attribute and
+      # tries to find a value from one to be translated into a label in second. Obviously this is not guaranteed to
+      # find any results or in some cases can yield to incorrect results.
+      #
+      # @param obj [GoodData::MdObject] Object that should be replaced
+      # @param mapping [Array[Array]] Array of mapping pairs.
+      # @param block [Proc] Block that receives the object state as a JSON string and mapping pair and expects a new object state as a JSON string back
+      # @return [GoodData::MdObject]
+      def find_replaceable_values(obj, mapping)
+        values_to_replace = GoodData::SmallGoodZilla.extract_element_uri_pairs(obj.to_json)
+        values_from_mapping = values_to_replace.select { |i| mapping.map { |a, _| a.uri }.include?(i.first) }
+        replaceable_vals = values_from_mapping.map do |a_uri, id|
+          from_attribute, to_attribute = mapping.find { |k, _| k.uri == a_uri }
+          vals = from_attribute.values_for(id)
+          labels = to_attribute.labels
+          results = labels.to_enum.mapcat do |l|
+            vals.map do |v|
+              begin
+                l.find_value_uri(v)
+              rescue
+                nil
+              end
+            end
+          end
+          fail "Unable to find replacement for #{a_uri}" if results.compact.empty?
+          [a_uri, id, results.compact.first]
+        end
+        replaceable_vals.map { |a, id, r| ["#{a}/elements?id=#{id}", r] }
+      end
     end
 
     metadata_property_reader :uri, :identifier, :title, :summary, :tags, :category
@@ -86,6 +159,25 @@ module GoodData
 
     def project
       @project ||= Project[uri.gsub(%r{\/obj\/\d+$}, ''), :client => client]
+    end
+
+    # Method used for replacing objects like Attribute, Fact or Metric. Returns new object of the same type.
+    #
+    # @param [GoodData::MdObject] what Object that should be replaced
+    # @param [GoodData::MdObject] for_what Object it is replaced with
+    # @return [GoodData::Metric]
+    def replace(mapping)
+      GoodData::MdObject.replace_quoted(self, mapping)
+    end
+
+    # Method used for replacing objects like Attribute, Fact or Metric. Returns itself mutated.
+    # @param [GoodData::MdObject] what Object that should be replaced
+    # @param [GoodData::MdObject] for_what Object it is replaced with
+    # @return [GoodData::Metric]
+    def replace!(mapping)
+      x = replace(mapping)
+      @json = x.json
+      self
     end
 
     def remove_tag(a_tag)

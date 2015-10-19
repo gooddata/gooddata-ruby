@@ -34,6 +34,33 @@ module GoodData
         nil
       end
 
+      # It takes what should be mapped to what and creates a mapping that is suitable for other internal methods.
+      # This means looking up the objects and returning it as array of pairs.
+      # The input can be given in several ways
+      #
+      # 1. Hash. For example it could look like
+      # {'label.states.name' => 'label.state.id'}
+      #
+      # 2 Arrays. In such case the arrays are zipped together. First item will be swapped for the first item in the second array etc.
+      # ['label.states.name'], ['label.state.id']
+      #
+      # @param what [Hash | Array] List/Hash of objects to be swapped
+      # @param for_what [Array] List of objects to be swapped
+      # @return [Array<GoodData::MdObject>] List of pairs of objects
+      def prepare_mapping(what, for_what = nil, options = {})
+        project = options[:project] || (for_what.is_a?(Hash) && for_what[:project]) || fail('Project has to be provided')
+        mapping = if what.is_a?(Hash)
+                    whats = what.keys
+                    to_whats = what.values
+                    whats.zip(to_whats)
+                  elsif what.is_a?(Array) && for_what.is_a?(Array)
+                    whats.zip(to_whats)
+                  else
+                    [[what, for_what]]
+                  end
+        mapping.pmap { |f, t| [project.objects(f), project.objects(t)] }
+      end
+
       def get_path(an_object, path = [])
         return an_object if path.empty?
         path.reduce(an_object) do |a, e|

@@ -92,6 +92,20 @@ module GoodData
         end
       end
 
+      # Returns blueprint with all references to one date dimensions changed to reference to the other. Changes the Blueprint in place.
+      #
+      # @param what [GoodData::Model::ReferenceBlueprintField | String] Date dimension reference field to be replaced.
+      # @param for_what [GoodData::Model::ReferenceBlueprintField | String] Date dimension reference field to be used as a replacement.
+      # @return [GoodData::Model::ProjectBlueprint]
+      def swap_date_dimension!(what, for_what)
+        what_id = what.respond_to?(:id) ? what.id : what
+        for_what_id = what.respond_to?(:id) ? for_what.id : for_what
+
+        fields = to_hash[:datasets].flat_map { |x| x[:columns] }.select { |x| x[:type] == :date }.select { |i| i[:dataset] == what_id }
+        fields.each { |f| f[:dataset] = for_what_id }
+        self
+      end
+
       # Returns true if a dataset contains a particular dataset false otherwise
       #
       # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
