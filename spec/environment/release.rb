@@ -7,7 +7,7 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      DEFAULT_SERVER = 'https://staging2.getgooddata.com'
+      DEFAULT_SERVER = 'https://staging2.intgdc.com'
       DEFAULT_USER_URL = '/gdc/account/profile/d8b356b30c0c12d1b4b97f56d6706ef2'
     end
 

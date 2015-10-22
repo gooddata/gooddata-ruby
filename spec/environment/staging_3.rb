@@ -15,7 +15,7 @@ module GoodData
       DEFAULT_PASSWORD = "jindrisska"
       DEFAULT_DOMAIN = 'svarovsky-test'
       DEFAULT_USER_URL = '/gdc/account/profile/6e123be5a53dd863df5cf280fdb9c1fd'
-      DEFAULT_SERVER = 'https://staging3.getgooddata.com'
+      DEFAULT_SERVER = 'https://staging3.intgdc.com'
     end
 
     module ProcessHelper
