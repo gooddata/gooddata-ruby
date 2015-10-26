@@ -90,7 +90,6 @@ describe GoodData::LifeCycle::Client do
     end
 
     it 'can update tenants segment id' do
-      GoodData.logging_http_on
       second_segment_name = "segment-#{SecureRandom.uuid}"
       second_master_project = @client.create_project(title: 'Test project', auth_token: TOKEN)
       second_segment = @domain.create_segment(segment_id: second_segment_name, master_project: second_master_project)
