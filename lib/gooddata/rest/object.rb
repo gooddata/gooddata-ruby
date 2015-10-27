@@ -7,6 +7,8 @@
 require_relative '../mixins/data_property_reader'
 require_relative '../mixins/data_property_writer'
 
+require_relative '../mixins/content_getter'
+
 require_relative '../mixins/meta_getter'
 
 require_relative '../mixins/meta_property_reader'
@@ -28,6 +30,7 @@ module GoodData
       extend Mixin::MetaPropertyReader
       extend Mixin::MetaPropertyWriter
 
+      include Mixin::ContentGetter
       include Mixin::RootKeyGetter
       include Mixin::DataGetter
       include Mixin::MetaGetter

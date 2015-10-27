@@ -6,6 +6,7 @@
 
 require_relative 'object'
 
+require_relative '../mixins/obj_id'
 require_relative '../mixins/rest_resource'
 
 module GoodData
@@ -14,7 +15,8 @@ module GoodData
     #
     # IS responsible for wrapping full CRUD interface
     class Resource < Object
-      extend  GoodData::Mixin::RestResource
+      extend  Mixin::RestResource
+      include Mixin::ObjId
 
       # Default constructor passing all arguments to parent
       def initialize(opts = {})
