@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 module GoodData
-  class ReportDataResult < Rest::Object
+  class ReportDataResult < Rest::Resource
     class << self
       # Does all the needed parsing on the apyload coming from the API and returns an instance of ReportDataResult
       #

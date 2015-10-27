@@ -13,7 +13,7 @@ require_relative 'project_role'
 require_relative '../rest/object'
 
 module GoodData
-  class Membership < GoodData::Rest::Object
+  class Membership < Rest::Resource
     attr_reader :json
 
     ASSIGNABLE_MEMBERS = [

@@ -11,7 +11,7 @@ require_relative '../extensions/enumerable'
 require_relative '../rest/object'
 
 module GoodData
-  class Domain < GoodData::Rest::Object
+  class Domain < Rest::Resource
     attr_reader :name
 
     class << self
@@ -333,6 +333,16 @@ module GoodData
     def members?(profiles, list = members)
       profiles.map { |p| member?(p, list) }
     end
+
+    def segments
+      segments_uri = "/gdc/domains/#{name}/segments"
+      res = client.get(segments_uri)
+      items = res['segments'] && res['segments']['items']
+      items.map do |item|
+        client.factory.create(GoodData::Segment, item, { :domain => self })
+      end
+    end
+
 
     # Update user in domain
     #

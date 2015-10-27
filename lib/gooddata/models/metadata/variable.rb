@@ -10,8 +10,6 @@ require_relative 'metadata'
 
 module GoodData
   class Variable < MdObject
-    root_key :prompt
-
     class << self
       # Method intended to get all objects of that type in a specified project
       #

@@ -11,7 +11,7 @@ require_relative '../rest/object'
 require_relative 'project'
 
 module GoodData
-  class Profile < GoodData::Rest::Object
+  class Profile < Rest::Resource
     attr_reader :user, :json
 
     EMPTY_OBJECT = {

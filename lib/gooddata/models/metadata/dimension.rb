@@ -10,9 +10,7 @@ require_relative 'metadata'
 
 module GoodData
   class Dimension < GoodData::MdObject
-    root_key :dimension
-
-    include GoodData::Mixin::IsDimension
+    include Mixin::IsDimension
 
     class << self
       # Method intended to get all objects of that type in a specified project

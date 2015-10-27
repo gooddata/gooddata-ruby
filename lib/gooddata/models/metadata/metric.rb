@@ -12,12 +12,7 @@ require_relative 'metadata'
 module GoodData
   # Metric representation
   class Metric < MdObject
-    include GoodData::Mixin::Lockable
-
-    alias_method :to_hash, :json
-
-    include GoodData::Mixin::RestResource
-    root_key :metric
+    include Mixin::Lockable
 
     class << self
       # Method intended to get all objects of that type in a specified project

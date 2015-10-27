@@ -12,8 +12,6 @@ module GoodData
   # Report Definition
   # TODO: Add more doc ...
   class ReportDefinition < GoodData::MdObject
-    root_key :reportDefinition
-
     class << self
       # Method intended to get all objects of that type in a specified project
       #

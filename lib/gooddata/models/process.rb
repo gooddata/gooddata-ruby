@@ -14,7 +14,7 @@ require_relative 'execution_detail'
 require_relative 'schedule'
 
 module GoodData
-  class Process < GoodData::Rest::Object
+  class Process < Rest::Resource
     attr_reader :data
 
     alias_method :raw_data, :data

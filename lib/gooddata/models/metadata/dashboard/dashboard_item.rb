@@ -4,11 +4,10 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-module GoodData
-  class DashboardItem
-    include GoodData::Mixin::RootKeyGetter
-    include GoodData::Mixin::DataGetter
+require_relative '../../../rest/resource'
 
+module GoodData
+  class DashboardItem < Rest::Resource
     attr_reader :tab
     attr_accessor :json
 

@@ -10,30 +10,15 @@ require_relative '../mixins/mixins'
 require_relative '../rest/object'
 
 module GoodData
-  class MdObject < GoodData::Rest::Object
+  class MdObject < Rest::Resource
     MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
-    attr_accessor :json
-
-    alias_method :raw_data, :json
-    alias_method :to_hash, :json
-
-    include GoodData::Mixin::RestResource
+    extend Mixin::MdIdToUri
+    extend Mixin::MdObjectIndexer
+    extend Mixin::MdObjectQuery
 
     class << self
-      def metadata_property_reader(*props)
-        props.each do |prop|
-          define_method prop, proc { meta[prop.to_s] }
-        end
-      end
-
-      def metadata_property_writer(*props)
-        props.each do |prop|
-          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
-        end
-      end
-
       # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
       # representation and returns a new one with object references changed according to mapping. The references an be found either in the object structure or in the MAQL in bracketed form. This implementation takes care only of those in bracketed form.
       #

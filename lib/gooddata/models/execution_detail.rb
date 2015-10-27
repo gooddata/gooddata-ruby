@@ -12,8 +12,6 @@ module GoodData
     attr_reader :dirty, :json
 
     alias_method :data, :json
-    alias_method :raw_data, :json
-    alias_method :to_hash, :json
 
     # Initializes object instance from raw wire JSON
     #
