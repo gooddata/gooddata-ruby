@@ -18,7 +18,7 @@ module GoodData
     extend Mixin::MdObjectIndexer
     extend Mixin::MdObjectQuery
 
-    include Mixin::MdFinders
+    extend Mixin::MdFinders
     include Mixin::MdRelations
 
     class << self
