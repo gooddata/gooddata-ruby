@@ -12,7 +12,7 @@ require_relative '../mixins/links'
 require_relative '../rest/resource'
 
 module GoodData
-  class SynchronizationResultDetails < Rest::Resource
+  class ClientSynchronizationResultDetails < Rest::Resource
     include Mixin::Links
 
     attr_accessor :synchronization_result

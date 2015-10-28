@@ -279,7 +279,7 @@ module GoodData
       res = client.get(clients_uri)
       res_clients = (res['clients'] && res['clients']['items']) || []
       res_clients.map do |res_client|
-        client.factory.create(GoodData::Client, res_client)
+        client.create(GoodData::Client, res_client)
       end
     end
 

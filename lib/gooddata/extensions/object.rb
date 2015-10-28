@@ -24,13 +24,4 @@ class Object
     send(:remove_const, name) if const_defined?(name)
     send(:const_set, name, val)
   end
-
-  # Converts an object into a string suitable for use as a URL query string, using the given key as the param name.
-  def to_query(key)
-    "#{CGI.escape(key.to_param)}=#{CGI.escape(to_param.to_s)}"
-  end
-
-  def to_param
-    to_s
-  end
 end

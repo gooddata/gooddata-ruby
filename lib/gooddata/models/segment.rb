@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative './client'
+require_relative './domain'
 require_relative '../models/synchronization_result'
 
 require_relative '../mixins/data_property_reader'
@@ -16,7 +17,7 @@ module GoodData
   class Segment < Rest::Resource
     SYNCHRONIZE_URI = '/gdc/domains/%s/segments/%s/synchronizeClients'
 
-    attr_writer :domain
+    attr_accessor :domain
 
     data_property_reader 'id'
 
@@ -84,10 +85,6 @@ module GoodData
       super
       @domain = data.delete('domain')
       @json = data
-    end
-
-    def domain
-      @domain || Domain[links['domain'], :client => client]
     end
 
     # Segment id getter for the Segment. Called segment_id since id is a reserved word in ruby world
@@ -168,7 +165,7 @@ module GoodData
         r['synchronizationResult'].nil?
       end
 
-      client.factory.create(SynchronizationResult, res)
+      client.create(ClientSynchronizationResult, res)
     end
 
     # Deletes a segment instance on the API.

@@ -38,6 +38,7 @@ module GoodData
       attr_accessor :json
       alias_method :raw_data, :json
       alias_method :to_hash, :json
+
       alias_method :to_json, :json
 
       attr_writer :client

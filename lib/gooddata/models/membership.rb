@@ -109,7 +109,7 @@ module GoodData
     def contributor
       url = @json['user']['meta']['contributor']
       data = client.get url
-      client.factory.create(GoodData::Membership, data)
+      client.create(GoodData::Membership, data)
     end
 
     # Gets date when created
@@ -242,7 +242,7 @@ module GoodData
     # Gets profile of this membership
     def profile
       raw = client.get @json['user']['links']['self']
-      client.factory.create(GoodData::Profile, raw)
+      client.create(GoodData::Profile, raw)
     end
 
     # Gets URL of profile membership
@@ -253,7 +253,7 @@ module GoodData
     # # Gets project which this membership relates to
     # def project
     #   raw = client.get project_url
-    #   client.factory.create(GoodData::Project, raw)
+    #   client.create(GoodData::Project, raw)
     # end
 
     # Gets project id
@@ -274,7 +274,7 @@ module GoodData
       tmp['projects'].map do |project_meta|
         project_uri = project_meta['project']['links']['self']
         project = client.get project_uri
-        client.factory.create(GoodData::Project, project)
+        client.create(GoodData::Project, project)
       end
     end
 
@@ -294,7 +294,7 @@ module GoodData
       tmp = client.get roles_link
       tmp['associatedRoles']['roles'].pmap do |role_uri|
         role = client.get role_uri
-        client.factory.create(GoodData::ProjectRole, role)
+        client.create(GoodData::ProjectRole, role)
       end
     end
 

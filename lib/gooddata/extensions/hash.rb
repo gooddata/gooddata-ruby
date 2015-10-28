@@ -35,18 +35,4 @@ class Hash
   def compact
     select { |_, value| !value.nil? }
   end
-
-  def method_missing(name, *_args, &_block)
-    self[name] || self[name.to_s]
-  end
-
-  # Converts a hash into a string suitable for use as a URL query string.
-  # An optional namespace can be passed to enclose the param names.
-  def to_query(namespace = nil)
-    collect do |key, value|
-      value.to_query(namespace ? "#{namespace}[#{key}]" : key)
-    end.sort * '&'
-  end
-
-  alias_method :to_param, :to_query
 end
