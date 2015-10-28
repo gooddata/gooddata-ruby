@@ -19,6 +19,7 @@ require_relative '../rest/resource'
 require_relative '../mixins/author'
 require_relative '../mixins/contributor'
 require_relative '../mixins/rest_resource'
+require_relative '../mixins/uri_getter'
 
 require_relative 'process'
 require_relative 'project_role'
@@ -50,6 +51,7 @@ module GoodData
 
     include Mixin::Author
     include Mixin::Contributor
+    include Mixin::UriGetter
 
     class << self
       # Returns an array of all projects accessible by

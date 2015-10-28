@@ -274,6 +274,15 @@ module GoodData
       GoodData::Domain.add_user(data, name, { client: client }.merge(opts))
     end
 
+    def clients
+      clients_uri = "/gdc/domains/#{name}/clients"
+      res = client.get(clients_uri)
+      res_clients = (res['clients'] && res['clients']['items']) || []
+      res_clients.map do |res_client|
+        client.factory.create(GoodData::Client, res_client)
+      end
+    end
+
     alias_method :create_user, :add_user
 
     def create_users(list, options = {})
@@ -334,15 +343,20 @@ module GoodData
       profiles.map { |p| member?(p, list) }
     end
 
-    def segments
+    def segments(master = nil)
       segments_uri = "/gdc/domains/#{name}/segments"
+
+      if master
+        master_uri = master.respond_to?(:uri) ? master.uri : master
+        segments_uri += "?#{master_uri}"
+      end
+
       res = client.get(segments_uri)
       items = res['segments'] && res['segments']['items']
       items.map do |item|
-        client.factory.create(GoodData::Segment, item, { :domain => self })
+        client.factory.create(GoodData::Segment, item, :domain => self)
       end
     end
-
 
     # Update user in domain
     #

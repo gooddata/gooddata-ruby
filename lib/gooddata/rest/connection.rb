@@ -402,7 +402,7 @@ module GoodData
       # HTTP POST
       #
       # @param uri [String] Target URI
-      def post(uri, data, options = {})
+      def post(uri, data = nil, options = {})
         options = log_info(options)
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
@@ -649,12 +649,16 @@ module GoodData
         ['/gdc/account/login/{id}', %r{/gdc/account/login/[\w]+}],
         ['/gdc/account/domains/{id}/users?login={login}', %r{/gdc/account/domains/[\w\d-]+/users\?login=[^&$]+}],
         ['/gdc/account/domains/{id}', %r{/gdc/account/domains/[\w\d-]+}],
-#
+
         ['/gdc/app/projects/{id}/execute', %r{/gdc/app/projects/[\w]+/execute}],
 
         ['/gdc/datawarehouse/instances/{id}', %r{/gdc/datawarehouse/instances/[\w]+}],
         ['/gdc/datawarehouse/executions/{id}', %r{/gdc/datawarehouse/executions/[\w]+}],
 
+        ['/gdc/domains/{id}/segments/{segment}/synchronizeClients/results/{result}/details?offset={offset}&limit={limit}', %r{/gdc/domains/[\w]+/segments/[\w-]+/synchronizeClients/results/[\w]+/details/\?offset=[\d]+&limit=[\d]+}],
+        ['/gdc/domains/{id}/segments/{segment}/synchronizeClients/results/{result}', %r{/gdc/domains/[\w]+/segments/[\w-]+/synchronizeClients/results/[\w]+}],
+        ['/gdc/domains/{id}/segments/{segment}/', %r{/gdc/domains/[\w]+/segments/[\w-]+/}],
+        ['/gdc/domains/{id}/segments/{segment}', %r{/gdc/domains/[\w]+/segments/[\w-]+}],
         ['/gdc/domains/{id}/clients?segment={segment}', %r{/gdc/domains/[\w]+/clients\?segment=[\w-]+}],
         ['/gdc/domains/{id}/', %r{/gdc/domains/[\w]+/}],
 
@@ -691,14 +695,7 @@ module GoodData
         ['/gdc/projects/{id}/dataload/processes/{id}/executions/{id}', %r{/gdc/projects/[\w]+/dataload/processes/[\w-]+/executions/[\w-]+}],
         ['/gdc/projects/{id}/dataload/processes/{id}', %r{/gdc/projects/[\w]+/dataload/processes/[\w-]+}],
         ['/gdc/projects/{id}/', %r{/gdc/projects/[\w]+/}],
-        ['/gdc/projects/{id}', %r{/gdc/projects/[\w]+}],
-
-
-        # TODO
-        # /gdc/account/domains/{id}/users?login=gemtest420846%40gooddata.com
-
-        # REVIEW
-        # /gdc/md/{id}/userfilters?count=1000&offset=10000
+        ['/gdc/projects/{id}', %r{/gdc/projects/[\w]+}]
       ]
 
       def update_stats(title, delta)
