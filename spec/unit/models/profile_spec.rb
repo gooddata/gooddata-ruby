@@ -13,7 +13,7 @@ describe GoodData::Profile do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
-
+    
     @user1 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
     @user2 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
 
