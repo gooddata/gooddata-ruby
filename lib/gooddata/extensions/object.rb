@@ -5,12 +5,24 @@
 # LICENSE file in the root directory of this source tree.
 
 class Object
+  class << self
+    def set_const(name, val)
+      send(:remove_const, name) if const_defined?(name)
+      send(:const_set, name, val)
+    end
+  end
+
   def blank?
     respond_to?(:empty?) ? empty? : !self
   end
 
   def duplicable?
     true
+  end
+
+  def set_const(name, val)
+    send(:remove_const, name) if const_defined?(name)
+    send(:const_set, name, val)
   end
 
   # Converts an object into a string suitable for use as a URL query string, using the given key as the param name.

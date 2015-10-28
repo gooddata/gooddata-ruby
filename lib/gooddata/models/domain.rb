@@ -289,6 +289,19 @@ module GoodData
       GoodData::Domain.create_users(list, name, { client: client }.merge(options))
     end
 
+    def segments(id = :all)
+      GoodData::Segment[id, domain: self]
+    end
+
+    # Creates new segment in current domain from parameters passed
+    #
+    # @param data [Hash] Data for segment namely :segment_id and :master_project is accepted. Master_project can be given as either a PID or a Project instance
+    # @return [GoodData::Segment] New Segment instance
+    def create_segment(data)
+      segment = GoodData::Segment.create(data, domain: self, client: client)
+      segment.save
+    end
+
     # Gets user by its login or uri in various shapes
     # It does not find by other information because that is not unique. If you want to search by name or email please
     # use fuzzy_get_user.
@@ -343,21 +356,6 @@ module GoodData
       profiles.map { |p| member?(p, list) }
     end
 
-    def segments(master = nil)
-      segments_uri = "/gdc/domains/#{name}/segments"
-
-      if master
-        master_uri = master.respond_to?(:uri) ? master.uri : master
-        segments_uri += "?#{master_uri}"
-      end
-
-      res = client.get(segments_uri)
-      items = res['segments'] && res['segments']['items']
-      items.map do |item|
-        client.factory.create(GoodData::Segment, item, :domain => self)
-      end
-    end
-
     # Update user in domain
     #
     # @param opts [Hash] Data of the user to be updated
@@ -386,8 +384,18 @@ module GoodData
 
     alias_method :members, :users
 
+    # Returns uri for the domain.
+    #
+    # @return [String] Uri of the segments
     def uri
       "/gdc/account/domains/#{name}"
+    end
+
+    # Returns uri for segments on the domain. This will be removed soon. It is here that for segments the "account" portion of the URI was removed. And not for the rest
+    #
+    # @return [String] Uri of the segments
+    def segments_uri
+      "/gdc/domains/#{name}"
     end
 
     private

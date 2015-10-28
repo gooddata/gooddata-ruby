@@ -7,31 +7,30 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      GD_PROJECT_TOKEN = ENV["GD_PROJECT_TOKEN"]
+      set_const :GD_PROJECT_TOKEN, ENV["GD_PROJECT_TOKEN"]
 
-
-      DEFAULT_USERNAME = "svarovsky@gooddata.com"
-      TEST_USERNAME = "john.doe@gooddata.com"
-      DEFAULT_PASSWORD = "jindrisska"
-      DEFAULT_DOMAIN = 'svarovsky-test'
-      DEFAULT_USER_URL = '/gdc/account/profile/6e123be5a53dd863df5cf280fdb9c1fd'
-      DEFAULT_SERVER = 'https://staging3.getgooddata.com'
+      set_const :DEFAULT_USERNAME, "svarovsky@gooddata.com"
+      set_const :TEST_USERNAME, "john.doe@gooddata.com"
+      set_const :DEFAULT_PASSWORD, "jindrisska"
+      set_const :DEFAULT_DOMAIN, 'svarovsky-test'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/6e123be5a53dd863df5cf280fdb9c1fd'
+      set_const :DEFAULT_SERVER, 'https://staging3.getgooddata.com'
     end
 
     module ProcessHelper
-      PROCESS_ID = '81fa71a4-69fd-4c58-aa09-66e7f53f4647'
-      DEPLOY_NAME = 'graph.grf'
+      set_const :PROCESS_ID, '81fa71a4-69fd-4c58-aa09-66e7f53f4647'
+      set_const :DEPLOY_NAME, 'graph.grf'
     end
 
     module ProjectHelper
-      PROJECT_ID = 'we1vvh4il93r0927r809i3agif50d7iz'
-      PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
-      PROJECT_TITLE = 'GoodTravis'
-      PROJECT_SUMMARY = 'No summary'
+      set_const :PROJECT_ID, 'we1vvh4il93r0927r809i3agif50d7iz'
+      set_const :PROJECT_URL, "/gdc/projects/#{PROJECT_ID}"
+      set_const :PROJECT_TITLE, 'GoodTravis'
+      set_const :PROJECT_SUMMARY, 'No summary'
     end
 
     module ScheduleHelper
-      SCHEDULE_ID = '54b90771e4b067429a27a549'
+      set_const :SCHEDULE_ID, '54b90771e4b067429a27a549'
     end
   end
 end
