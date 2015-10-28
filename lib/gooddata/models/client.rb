@@ -94,7 +94,7 @@ module GoodData
     # @param a_project [String|GoodData::Project] Id or an instance of a project
     # @return [GoodData::Cliet] Returns the instance of the client
     def project=(a_project)
-      @json['client']['project'] = a_project.respond_to?(:uri) ? a_project.uri : a_project
+      data['project'] = a_project.respond_to?(:uri) ? a_project.uri : a_project
       self
     end
 
@@ -117,7 +117,7 @@ module GoodData
     # @param a_segment [String] Id of the segment.
     # @return [GoodData::Client] Returns the instance of the client
     def segment=(a_segment)
-      @json['client']['segment'] = a_segment.respond_to?(:uri) ? a_segment.uri : a_segment
+      data['segment'] = a_segment.respond_to?(:uri) ? a_segment.uri : a_segment
       self
     end
 
