@@ -18,6 +18,9 @@ module GoodData
     extend Mixin::MdObjectIndexer
     extend Mixin::MdObjectQuery
 
+    include Mixin::MdFinders
+    include Mixin::MdRelations
+
     class << self
       # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
       # representation and returns a new one with object references changed according to mapping. The references an be found either in the object structure or in the MAQL in bracketed form. This implementation takes care only of those in bracketed form.
