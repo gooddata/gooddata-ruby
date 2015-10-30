@@ -25,6 +25,14 @@ module GoodData
       @json = json
     end
 
+    def filters
+      data['filters']
+    end
+
+    def filters=(new_filters)
+      data['filters'] = new_filters
+    end
+
     def position_x
       data['positionX']
     end

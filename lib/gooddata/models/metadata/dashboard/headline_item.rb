@@ -7,9 +7,9 @@
 require_relative 'dashboard_item'
 
 module GoodData
-  class FilterItem < DashboardItem
+  class HeadlineItem < DashboardItem
     EMPTY_OBJECT = {
-      'filterItem' => {
+      'headlineItem' => {
         'positionX' => 0,
         'sizeY' => 200,
         'sizeX' => 300,
@@ -19,13 +19,13 @@ module GoodData
 
     ASSIGNABLE_MEMBERS = DashboardItem::ASSIGNABLE_MEMBERS + [
       :id,
-      :content_id,
-      :parent_filters
+      :metric,
+      :linked_with_external_filter
     ]
 
     class << self
       def create(tab, item)
-        res = GoodData::FilterItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        res = GoodData::HeadlineItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
         item.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
         end
@@ -37,28 +37,20 @@ module GoodData
       super
     end
 
-    def id
-      data['id']
+    def metric
+      data['metric']
     end
 
-    def id=(new_id)
-      data['id'] = new_id
+    def metric=(new_metric)
+      data['metric'] = new_metric.respond_to?(:uri) ? new_metric.uri : new_metric
     end
 
-    def content_id
-      data['contentId']
+    def linked_with_external_filter
+      data['linkedWithExternalFilter']
     end
 
-    def content_id=(new_content_id)
-      data['contentId'] = new_content_id
-    end
-
-    def parent_filters
-      data['parentFilters']
-    end
-
-    def parent_filters=(new_parent_filters)
-      data['parentFilters'] = new_parent_filters
+    def linked_with_external_filter=(new_linked_with_external_filter)
+      data['linked_with_external_filter'] = new_linked_with_external_filter ? 1 : 0
     end
   end
 end

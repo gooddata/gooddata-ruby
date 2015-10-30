@@ -44,7 +44,7 @@ module GoodData
 
     class << self
       def obj_uri(obj)
-        obj.is_a?(String) ? obj : obj.uri
+        obj.respond_to?(:uri) ? obj.uri : obj
       end
 
       def create(tab, item)
@@ -58,14 +58,6 @@ module GoodData
 
     def initialize(tab, json)
       super
-    end
-
-    def filters
-      data['filters']
-    end
-
-    def filters=(new_filters)
-      data['filters'] = new_filters
     end
 
     def obj

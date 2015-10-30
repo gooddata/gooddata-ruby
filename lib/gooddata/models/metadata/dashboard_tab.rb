@@ -12,6 +12,12 @@ require_relative 'report'
 
 require 'multi_json'
 
+require_relative 'dashboard/filter_item'
+require_relative 'dashboard/filter_apply_item'
+require_relative 'dashboard/geo_chart_item'
+require_relative 'dashboard/headline_item'
+require_relative 'dashboard/report_item'
+
 module GoodData
   class DashboardTab
     attr_reader :dashboard
@@ -49,7 +55,25 @@ module GoodData
       new_item
     end
 
-    alias_method :add_filter_item, :create_filter_item
+    def create_filter_apply_item(item)
+      new_item = GoodData::FilterApplyItem.create(self, item)
+      self.json['items'] << new_item.json
+      new_item
+    end
+
+    def create_geo_chart_item(item)
+      new_item = GoodData::GeoChartItem.create(self, item)
+      self.json['items'] << new_item.json
+      new_item
+    end
+    alias_method :add_geo_chart_item, :create_geo_chart_item
+
+    def create_headline_item(item)
+      new_item = GoodData::HeadlineItem.create(self, item)
+      self.json['items'] << new_item.json
+      new_item
+    end
+    alias_method :add_headline_item, :create_headline_item
 
     def create_report_item(item)
       new_item = GoodData::ReportItem.create(self, item)
@@ -70,10 +94,16 @@ module GoodData
       @json['items'].map do |item|
         type = item.keys.first
         case type
-        when 'reportItem'
-          GoodData::ReportItem.new(self, item)
+        when 'geoChartItem'
+          GoodData::GeoChartItem.new(self, item)
+        when 'headlineItem'
+          GoodData::HeadlineItem.new(self, item)
         when 'filterItem'
           GoodData::FilterItem.new(self, item)
+        when 'filterApplyItem'
+          GoodData::FilterApplyItem.new(self, item)
+        when 'reportItem'
+          GoodData::ReportItem.new(self, item)
         else
           GoodData::DashboardItem.new(self, item)
         end
