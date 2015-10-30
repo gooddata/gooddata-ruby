@@ -6,7 +6,7 @@
 
 require_relative './client'
 require_relative './domain'
-require_relative '../models/synchronization_result'
+require_relative '../models/client_synchronization_result'
 
 require_relative '../mixins/data_property_reader'
 require_relative '../mixins/links'
