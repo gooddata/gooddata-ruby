@@ -16,7 +16,9 @@ require_relative 'dashboard/filter_item'
 require_relative 'dashboard/filter_apply_item'
 require_relative 'dashboard/geo_chart_item'
 require_relative 'dashboard/headline_item'
+require_relative 'dashboard/iframe_item'
 require_relative 'dashboard/report_item'
+require_relative 'dashboard/text_item'
 
 module GoodData
   class DashboardTab
@@ -75,12 +77,26 @@ module GoodData
     end
     alias_method :add_headline_item, :create_headline_item
 
+    def create_iframe_item(item)
+      new_item = GoodData::IframeItem.create(self, item)
+      self.json['items'] << new_item.json
+      new_item
+    end
+    alias_method :add_iframe_item, :create_iframe_item
+
     def create_report_item(item)
       new_item = GoodData::ReportItem.create(self, item)
       self.json['items'] << new_item.json
       new_item
     end
     alias_method :add_report_item, :create_report_item
+
+    def create_text_item(item)
+      new_item = GoodData::TextItem.create(self, item)
+      self.json['items'] << new_item.json
+      new_item
+    end
+    alias_method :add_text_item, :create_text_item
 
     def identifier
       @json['identifier']
@@ -94,16 +110,20 @@ module GoodData
       @json['items'].map do |item|
         type = item.keys.first
         case type
-        when 'geoChartItem'
-          GoodData::GeoChartItem.new(self, item)
-        when 'headlineItem'
-          GoodData::HeadlineItem.new(self, item)
         when 'filterItem'
           GoodData::FilterItem.new(self, item)
         when 'filterApplyItem'
           GoodData::FilterApplyItem.new(self, item)
+        when 'geoChartItem'
+          GoodData::GeoChartItem.new(self, item)
+        when 'headlineItem'
+          GoodData::HeadlineItem.new(self, item)
+        when 'iframeItem'
+          GoodData::IframeItem.new(self, item)
         when 'reportItem'
           GoodData::ReportItem.new(self, item)
+        when 'textItem'
+          GoodData::TextItem.new(self, item)
         else
           GoodData::DashboardItem.new(self, item)
         end
