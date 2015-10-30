@@ -80,7 +80,7 @@ module GoodData
       # @param block [Proc] Block that receives the object state as a JSON string and mapping pair and expects a new object state as a JSON string back
       # @return [GoodData::MdObject]
       def find_replaceable_values(obj, mapping)
-        values_to_replace = GoodData::SmallGoodZilla.extract_element_uri_pairs(obj.to_json)
+        values_to_replace = GoodData::SmallGoodZilla.extract_element_uri_pairs(MultiJson.dump(obj.to_json))
         values_from_mapping = values_to_replace.select { |i| mapping.map { |a, _| a.uri }.include?(i.first) }
         replaceable_vals = values_from_mapping.map do |a_uri, id|
           from_attribute, to_attribute = mapping.find { |k, _| k.uri == a_uri }
