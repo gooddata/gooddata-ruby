@@ -12,9 +12,7 @@ require_relative '../../mixins/is_attribute'
 
 module GoodData
   class Attribute < MdObject
-    root_key :attribute
-
-    include GoodData::Mixin::IsAttribute
+    include Mixin::IsAttribute
 
     ATTRIBUTE_BASE_AGGREGATIONS = [:count]
 
@@ -32,16 +30,17 @@ module GoodData
       #
       # @param uri [String] Uri of the element. in the form of /gdc/md/PID/obj/OBJ_ID/elements?id=21
       # @return [String] Textual representation of a particular attribute element
-      def find_element_value(uri, opts = { :client => @client, :project => @project })
-        matches = uri.match(%r{(.*)/elements\?id=(\d+)$})
-        opts[:project].attributes(matches[1]).primary_label.find_element_value(uri)
+      def find_element_value(stuff, opts = { :project => GoodData.project })
+        stuff.scan(%r{([^\[\]]*)\/elements\?id=(\d+)}).pmap do |a, id|
+          opts[:project].attributes(a).primary_label.find_element_value(id.to_i)
+        end.first
       end
     end
 
     # Returns the labels of an attribute
     # @return [Array<GoodData::Label>]
     def display_forms
-      content['displayForms'].map { |df| GoodData::Label[df['meta']['uri'], :client => client, :project => project] }
+      content['displayForms'].pmap { |df| project.labels(df['meta']['uri']) }
     end
     alias_method :labels, :display_forms
 

@@ -59,7 +59,12 @@ module GoodData
       def create(type, data = {}, opts = {})
         res = type.new(data)
         res.client = client
-        res.project = opts[:project]
+
+        opts.each do |key, value|
+          method = "#{key}="
+          res.send(method, value) if res.respond_to?(method)
+        end
+
         res
       end
 

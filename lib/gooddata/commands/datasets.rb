@@ -131,7 +131,7 @@ module GoodData
         guesser.headers.each_with_index do |header, i|
           options = guess[header].map(&:to_s)
           options = options.select { |t| t != :connection_point.to_s } if connection_point_set
-          type = ask question_fmt % [i + 1, header], :answers => options
+          type = ask((question_fmt % [i + 1, header]), :answers => options)
           model.push :title => header, :name => header, :type => type.upcase
           connection_point_set = true if type == :connection_point.to_s
         end

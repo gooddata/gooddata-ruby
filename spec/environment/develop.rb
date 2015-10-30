@@ -7,24 +7,25 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      DEFAULT_SERVER = 'https://staging.getgooddata.com'
-      DEFAULT_USER_URL = '/gdc/account/profile/6ca71a392e15700a4db4537f441eba39'
+      set_const :DEFAULT_SERVER, 'https://staging3.intgdc.com'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/a3700850b92a0a6c097e48369b5d226f'
+      set_const :STAGING_URI, 'https://staging3.intgdc.com/gdc/uploads/'
     end
 
     module ProcessHelper
-      PROCESS_ID = '94e7be67-5f68-405d-bdeb-93006d50482d'
-      DEPLOY_NAME = 'graph/graph.grf'
+      set_const :PROCESS_ID, 'e4369e27-a6c7-4782-b4cb-a06b2e2db326'
+      set_const :DEPLOY_NAME, 'graph/graph.grf'
     end
 
     module ProjectHelper
-      PROJECT_ID = 'k8rzngunca3t9dywmxhqzpgwlui3yg0m'
-      PROJECT_URL = "/gdc/projects/#{PROJECT_ID}"
-      PROJECT_TITLE = 'GoodTravis'
-      PROJECT_SUMMARY = 'No summary'
+      set_const :PROJECT_ID, 'hq7ik4hpsaknrsvb07jz2adbci1iq5s8'
+      set_const :PROJECT_URL, "/gdc/projects/#{PROJECT_ID}"
+      set_const :PROJECT_TITLE, 'GoodTravis'
+      set_const :PROJECT_SUMMARY, 'No summary'
     end
 
     module ScheduleHelper
-      SCHEDULE_ID = '55953261e4b0a92792febe4e'
+      set_const :SCHEDULE_ID, '55ed6757e4b0d165852ab308'
     end
   end
 end

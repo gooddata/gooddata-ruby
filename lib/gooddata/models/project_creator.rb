@@ -64,7 +64,7 @@ module GoodData
 
           response = client.get(link)
 
-          chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
+          chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
           if !chunks.nil? && !dry_run
             chunks['updateScript']['maqlDdlChunks'].each do |chunk|
               result = project.execute_maql(chunk)
@@ -110,18 +110,20 @@ module GoodData
           end
         end
 
-        def pick_correct_chunks(chunks)
+        def pick_correct_chunks(chunks, opts = {})
+          preference = opts[:preference] || {}
           # first is cascadeDrops, second is preserveData
           rules = [
-            [false, true],
-            [false, false],
-            [true, true],
-            [true, false]
+            { priority: 1, cascade_drops: false, preserve_data: true },
+            { priority: 2, cascade_drops: false, preserve_data: false },
+            { priority: 3, cascade_drops: true, preserve_data: true },
+            { priority: 4, cascade_drops: true, preserve_data: false }
           ]
-          stuff = chunks.select { |chunk| chunk['updateScript']['maqlDdlChunks'] }
-          rules.reduce(nil) do |a, e|
-            a || stuff.find { |chunk| e[0] == chunk['updateScript']['cascadeDrops'] && e[1] == chunk['updateScript']['preserveData'] }
-          end
+          stuff = chunks.select { |chunk| chunk['updateScript']['maqlDdlChunks'] }.map { |chunk| { cascade_drops: chunk['updateScript']['cascadeDrops'], preserve_data: chunk['updateScript']['preserveData'], maql: chunk['updateScript']['maqlDdlChunks'], orig: chunk } }
+          results = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] }
+
+          pick = results.find { |r| r.values_at(:cascade_drops, :preserve_data) == preference.values_at(:cascade_drops, :preserve_data) } || results.first
+          pick[:orig] if pick
         end
       end
     end

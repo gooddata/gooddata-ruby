@@ -14,7 +14,7 @@ require_relative 'execution_detail'
 require_relative 'schedule'
 
 module GoodData
-  class Process < GoodData::Rest::Object
+  class Process < Rest::Resource
     attr_reader :data
 
     alias_method :raw_data, :data
@@ -284,8 +284,8 @@ module GoodData
       client.post(executions_link,
                   :execution => {
                     :graph => executable.to_s,
-                    :params => GoodData::Helpers.encode_params(params, false),
-                    :hiddenParams => GoodData::Helpers.encode_params(hidden_params, true)
+                    :params => GoodData::Helpers.encode_public_params(params),
+                    :hiddenParams => GoodData::Helpers.encode_hidden_params(hidden_params)
                   })
     end
   end

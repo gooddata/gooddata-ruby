@@ -7,7 +7,7 @@
 module GoodData
   module Mixin
     module MdObjId
-      def obj_id(uri)
+      def uri_obj_id(uri)
         GoodData::Helpers.last_uri_part(uri)
       end
     end

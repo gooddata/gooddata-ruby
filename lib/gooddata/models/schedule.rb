@@ -15,19 +15,13 @@ module GoodData
   class Schedule < Rest::Resource
     attr_reader :dirty, :json
 
-    alias_method :data, :json
-    alias_method :raw_data, :json
-
-    include GoodData::Mixin::RestResource
-    root_key :schedule
-
     SCHEDULE_TEMPLATE = {
       :schedule => {
         :type => nil,
         :timezone => nil,
         :params => {},
         :hiddenParams => {},
-        :reschedule => nil
+        # :reschedule => nil
       }
     }
 
@@ -106,7 +100,7 @@ module GoodData
             'PROCESS_ID' => process_id,
             'EXECUTABLE' => executable
           },
-          :reschedule => 0
+          # :reschedule => nil
         }
 
         schedule.name = options[:name]
@@ -116,7 +110,7 @@ module GoodData
         schedule.timezone = options[:timezone] || default_opts[:timezone]
         schedule.state = options[:state] || default_opts[:state]
         schedule.schedule_type = options[:type] || default_opts[:type]
-        schedule.reschedule = options[:reschedule] || default_opts[:reschedule]
+        schedule.reschedule = options[:reschedule] if options[:reschedule]
         schedule
       end
     end
@@ -188,7 +182,7 @@ module GoodData
     # @return [Object] Raw Response
     def execute(opts = {})
       return nil unless saved?
-      opts =  { :wait => true }.merge(opts)
+      opts = { :wait => true }.merge(opts)
       data = {
         :execution => {}
       }
@@ -316,18 +310,17 @@ module GoodData
     #
     # @return [Array] Raw Executions JSON
     def executions
-      if @json # rubocop:disable Style/GuardClause
-        url = @json['schedule']['links']['executions']
-        Enumerator.new do |y|
-          loop do
-            res = client.get url
-            res['executions']['paging']['next']
-            res['executions']['items'].each do |execution|
-              y << client.create(Execution, execution, :project => project)
-            end
-            url = res['executions']['paging']['next']
-            break unless url
+      return nil unless @json
+      url = @json['schedule']['links']['executions']
+      Enumerator.new do |y|
+        loop do
+          res = client.get url
+          res['executions']['paging']['next']
+          res['executions']['items'].each do |execution|
+            y << client.create(Execution, execution, :project => project)
           end
+          url = res['executions']['paging']['next']
+          break unless url
         end
       end
     end
@@ -509,19 +502,22 @@ module GoodData
     end
 
     def to_update_payload
-      {
+      res = {
         'schedule' => {
           'name' => name,
           'type' => type,
           'state' => state,
           'timezone' => timezone,
-          'reschedule' => reschedule,
           'cron' => cron,
           'triggerScheduleId' => trigger_id,
           'params' => GoodData::Helpers.encode_public_params(params),
           'hiddenParams' => GoodData::Helpers.encode_hidden_params(hidden_params)
         }
       }
+
+      res['schedule']['reschedule'] = reschedule if reschedule
+
+      res
     end
   end
 end

@@ -25,6 +25,8 @@ end
 
 include GoodData::Helpers
 
+RSpec::Expectations.configuration.warn_about_potential_false_positives = false
+
 RSpec.configure do |config|
   config.deprecation_stream = File.open('deprecations.txt', 'w')
 
@@ -52,7 +54,11 @@ RSpec.configure do |config|
     # end
 
     # TODO: Fully setup global environment
+    # $stdout.sync=true
+    # $stderr.sync=true
+
     GoodData.logging_off
+    GoodData.stats_off
   end
 
   config.after(:all) do

@@ -11,7 +11,7 @@ require_relative '../rest/object'
 require_relative 'project'
 
 module GoodData
-  class Profile < GoodData::Rest::Object
+  class Profile < Rest::Resource
     attr_reader :user, :json
 
     EMPTY_OBJECT = {
@@ -375,6 +375,15 @@ module GoodData
 
     def name
       (first_name || '') + (last_name || '')
+    end
+
+    def password
+      @json['accountSetting']['password']
+    end
+
+    def password=(a_password)
+      @dirty = true
+      @json['accountSetting']['password'] = a_password
     end
 
     def sso_provider

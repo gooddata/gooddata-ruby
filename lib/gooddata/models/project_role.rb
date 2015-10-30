@@ -13,16 +13,10 @@ require_relative '../rest/rest'
 require_relative '../mixins/rest_resource'
 
 module GoodData
-  class ProjectRole < GoodData::Rest::Object
-    attr_accessor :json
-
-    include GoodData::Mixin::RestResource
-
-    root_key :projectRole
-
-    include GoodData::Mixin::Author
-    include GoodData::Mixin::Contributor
-    include GoodData::Mixin::Timestamps
+  class ProjectRole < Rest::Resource
+    include Mixin::Author
+    include Mixin::Contributor
+    include Mixin::Timestamps
 
     EMPTY_OBJECT = {
       'projectRole' => {

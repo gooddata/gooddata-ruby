@@ -34,6 +34,33 @@ module GoodData
         nil
       end
 
+      # It takes what should be mapped to what and creates a mapping that is suitable for other internal methods.
+      # This means looking up the objects and returning it as array of pairs.
+      # The input can be given in several ways
+      #
+      # 1. Hash. For example it could look like
+      # {'label.states.name' => 'label.state.id'}
+      #
+      # 2 Arrays. In such case the arrays are zipped together. First item will be swapped for the first item in the second array etc.
+      # ['label.states.name'], ['label.state.id']
+      #
+      # @param what [Hash | Array] List/Hash of objects to be swapped
+      # @param for_what [Array] List of objects to be swapped
+      # @return [Array<GoodData::MdObject>] List of pairs of objects
+      def prepare_mapping(what, for_what = nil, options = {})
+        project = options[:project] || (for_what.is_a?(Hash) && for_what[:project]) || fail('Project has to be provided')
+        mapping = if what.is_a?(Hash)
+                    whats = what.keys
+                    to_whats = what.values
+                    whats.zip(to_whats)
+                  elsif what.is_a?(Array) && for_what.is_a?(Array)
+                    whats.zip(to_whats)
+                  else
+                    [[what, for_what]]
+                  end
+        mapping.pmap { |f, t| [project.objects(f), project.objects(t)] }
+      end
+
       def get_path(an_object, path = [])
         return an_object if path.empty?
         path.reduce(an_object) do |a, e|
@@ -64,21 +91,22 @@ module GoodData
       end
 
       def titleize(str)
-        titleized = str.gsub(/[\.|_](.)/) { |x| x.upcase }
-        titleized = titleized.gsub('_', ' ')
+        titleized = str.gsub(/[\.|_](.)/, &:upcase)
+        titleized = titleized.tr('_', ' ')
         titleized[0] = titleized[0].upcase
         titleized
       end
 
       def join(master, slave, on, on2, options = {})
         full_outer = options[:full_outer]
+        inner = options[:inner]
 
         lookup = create_lookup(slave, on2)
         marked_lookup = {}
         results = master.reduce([]) do |a, line|
           matching_values = lookup[line.values_at(*on)] || []
           marked_lookup[line.values_at(*on)] = 1
-          if matching_values.empty?
+          if matching_values.empty? && !inner
             a << line.to_hash
           else
             matching_values.each do |matching_value|
@@ -122,7 +150,7 @@ module GoodData
       def transform_keys!(an_object)
         return enum_for(:transform_keys!) unless block_given?
         an_object.keys.each do |key|
-          an_object[yield(key)] = delete(key)
+          an_object[yield(key)] = an_object.delete(key)
         end
         an_object
       end
@@ -167,11 +195,11 @@ module GoodData
       end
 
       def stringify_keys(an_object)
-        transform_keys(an_object) { |key| key.to_s }
+        transform_keys(an_object, &:to_s)
       end
 
       def deep_stringify_keys(an_object)
-        deep_transform_keys(an_object) { |key| key.to_s }
+        deep_transform_keys(an_object, &:to_s)
       end
 
       def deep_transform_keys(an_object, &block)

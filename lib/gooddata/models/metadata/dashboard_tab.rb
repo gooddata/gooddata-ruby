@@ -43,6 +43,14 @@ module GoodData
       @json = json
     end
 
+    def create_filter_item(item)
+      new_item = GoodData::FilterItem.create(self, item)
+      self.json['items'] << new_item.json
+      new_item
+    end
+
+    alias_method :add_filter_item, :create_filter_item
+
     def create_report_item(item)
       new_item = GoodData::ReportItem.create(self, item)
       self.json['items'] << new_item.json

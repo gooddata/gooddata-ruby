@@ -7,7 +7,7 @@
 require_relative '../rest/resource'
 
 module GoodData
-  class DataWarehouse < GoodData::Rest::Resource
+  class DataWarehouse < Rest::Resource
     class << self
       CREATE_URL = '/gdc/datawarehouse/instances'
 
@@ -51,10 +51,6 @@ module GoodData
         c.create(DataWarehouse, final_json)
       end
     end
-    attr_accessor :json
-
-    alias_method :to_json, :json
-    alias_method :raw_data, :json
 
     def initialize(json)
       super

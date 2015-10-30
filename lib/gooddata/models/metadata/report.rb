@@ -9,9 +9,7 @@ require_relative 'metadata'
 
 module GoodData
   class Report < GoodData::MdObject
-    root_key :report
-
-    include GoodData::Mixin::Lockable
+    include Mixin::Lockable
 
     class << self
       # Method intended to get all objects of that type in a specified project
@@ -56,6 +54,29 @@ module GoodData
         # TODO: write test for report definitions with explicit identifiers
         report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
         client.create(Report, report, :project => project)
+      end
+
+      def data_result(result, options = {})
+        client = options[:client]
+        data_result_uri = result['execResult']['dataResult']
+        begin
+          result = client.poll_on_response(data_result_uri, options) do |body|
+            body && body['taskState'] && body['taskState']['status'] == 'WAIT'
+          end
+        rescue RestClient::BadRequest => e
+          resp = JSON.parse(e.response)
+          if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
+            raise GoodData::UncomputableReport
+          else
+            raise e
+          end
+        end
+
+        if result.empty?
+          ReportDataResult.new(data: [], top: 0, left: 0)
+        else
+          ReportDataResult.from_xtab(result)
+        end
       end
     end
 
@@ -127,17 +148,7 @@ module GoodData
     def execute(options = {})
       fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
       result = client.post '/gdc/xtab2/executor3', 'report_req' => { 'report' => uri }
-      data_result_uri = result['execResult']['dataResult']
-
-      result = client.poll_on_response(data_result_uri, options) do |body|
-        body && body['taskState'] && body['taskState']['status'] == 'WAIT'
-      end
-
-      if result.empty?
-        client.create(ReportDataResult, data: [], top: 0, left: 0, project: project)
-      else
-        ReportDataResult.from_xtab(result, client: client, project: project)
-      end
+      GoodData::Report.data_result(result, options.merge(client: client))
     end
 
     # Returns true if you can export and object
@@ -195,15 +206,13 @@ module GoodData
       self
     end
 
-    # Replaces all occurences of something with something else. This is just a convenience method. The
-    # real work is done under the hood in report definition. This is just deferring to those
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
     #
-    # @param what [Object] What you would like to have changed
-    # @param for_what [Object] What you would like to have changed this for
-    # @return [GoodData::Report] Returns report with removed definition
-    def replace(what, for_what)
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
+    # @return [GoodData::Report]
+    def replace(mapping)
       new_defs = definitions.map do |rep_def|
-        rep_def.replace(what, for_what)
+        rep_def.replace(mapping)
       end
       new_defs.pmap(&:save)
       self

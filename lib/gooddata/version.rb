@@ -6,7 +6,7 @@
 
 # GoodData Module
 module GoodData
-  VERSION = '0.6.22'
+  VERSION = '0.6.24'
 
   class << self
     # Version
@@ -17,7 +17,7 @@ module GoodData
     # Identifier of gem version
     # @return Formatted gem version
     def gem_version_string
-      "gooddata-gem/#{VERSION}"
+      "gooddata-gem/#{VERSION}/#{RUBY_PLATFORM}/#{RUBY_VERSION}"
     end
   end
 end

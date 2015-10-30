@@ -1,5 +1,11 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.24
+- Fixed problem with validElements causing 500
+
+## 0.6.23
+- Fixed typo sometimes causing crash of ReportDefinition#replace
+
 ## 0.6.22
 - Added rake task (license:add) for automatic license headers generating
 - Handle situation when upload_status.json does not exist
@@ -19,6 +25,11 @@
 - Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
 - Added more logging around connecting to server. Cleaning up staging information. Adding tests to make
 - Middlewares are transforming params to Ruby hash (useful for executors when they pass Java Hash instance)
+- Cleaning up way Data permissions work with errors so we can update Bricks
+- Fixed Project#browser_url
+- Increased max count of retries for 429 - Too Many Requests
+- Fixed potentional crash of ReportDefinition#replace
+- Updated dependencies (gems)
 
 ## 0.6.21
 - Consolidated error reporting for Domain#create_users & Project#import_users

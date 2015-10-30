@@ -10,8 +10,8 @@ require_relative 'meta_getter'
 module GoodData
   module Mixin
     module RestGetters
-      include GoodData::Mixin::MetaGetter
-      include GoodData::Mixin::DataGetter
+      include Mixin::MetaGetter
+      include Mixin::DataGetter
     end
   end
 end

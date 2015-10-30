@@ -7,7 +7,7 @@
 require_relative '../rest/rest'
 
 module GoodData
-  class Invitation < GoodData::Rest::Object
+  class Invitation < Rest::Resource
     def initialize(json)
       @json = json
     end

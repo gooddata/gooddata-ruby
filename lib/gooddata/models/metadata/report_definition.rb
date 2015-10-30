@@ -12,8 +12,6 @@ module GoodData
   # Report Definition
   # TODO: Add more doc ...
   class ReportDefinition < GoodData::MdObject
-    root_key :reportDefinition
-
     class << self
       # Method intended to get all objects of that type in a specified project
       #
@@ -52,10 +50,16 @@ module GoodData
         }
       end
 
-      def create_filters_part(filters)
-        filters.select { |f| f.class == GoodData::Variable }.map do |v|
-          { expression: "[#{v.uri}]" }
-        end
+      # Method creates the list of filter representaion suitable for posting on the api. It can currently recognize 2 types of filters. Variable filters and attribute filters. Method for internal usage
+      #
+      # @param filters [GoodData::Variable|Array<Array>]
+      # @param options [Hash] the options hash
+      # @return [Array<Hash>] Returns the structure that is stored internally in the report definition and later psted on the API
+      def create_filters_part(filters, options = {})
+        project = options[:project]
+        vars = filters.select { |f| f.is_a?(GoodData::Variable) }.map { |v| { expression: "[#{v.uri}]" } }
+        category = filters.select { |f| f.is_a?(Array) }.map { |v| GoodData::SmallGoodZilla.create_category_filter(v, project) }
+        vars + category
       end
 
       def create_part(stuff)
@@ -167,7 +171,7 @@ module GoodData
                 'rows' => ReportDefinition.create_part(left)
               },
               'format' => 'grid',
-              'filters' => ReportDefinition.create_filters_part(filters)
+              'filters' => ReportDefinition.create_filters_part(filters, :project => p)
             },
             'meta' => {
               'tags' => '',
@@ -242,108 +246,22 @@ module GoodData
                  uri = "/gdc/app/projects/#{project.pid}/execute"
                  client.post(uri, data)
                end
-      data_result(result, opts)
+      GoodData::Report.data_result(result, opts.merge(client: client))
     end
 
     def filters
       content['filters'].map { |f| f['expression'] }
     end
 
-    # Replace certain object in report definition. Returns new definition which is not saved.
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
     #
-    # @param what [GoodData::MdObject | String] Object which responds to uri or a string that should be replaced
-    # @option for_what [GoodData::MdObject | String] Object which responds to uri or a string that should used as replacement
-    # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-    def replace(what, for_what = nil)
-      pairs = if what.is_a?(Hash)
-                whats = what.keys
-                to_whats = what.values
-                whats.zip(to_whats)
-              elsif what.is_a?(Array) && for_what.is_a?(Array)
-                whats.zip(to_whats)
-              else
-                [[what, for_what]]
-              end
-
-      pairs.each do |pair|
-        what = pair[0]
-        for_what = pair[1]
-
-        uri_what = what.respond_to?(:uri) ? what.uri : what
-        uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
-
-        content['grid']['metrics'] = metric_parts.map do |item|
-          GoodData::Helpers.deep_dup(item).tap do |i|
-            i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-          end
-        end
-
-        cols = content['grid']['columns'] || []
-        content['grid']['columns'] = cols.map do |item|
-          if item.is_a?(Hash)
-            GoodData::Helpers.deep_dup(item).tap do |i|
-              i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-            end
-          else
-            item
-          end
-        end
-
-        rows = content['grid']['rows'] || []
-        content['grid']['rows'] = rows.map do |item|
-          if item.is_a?(Hash)
-            GoodData::Helpers.deep_dup(item).tap do |i|
-              i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-            end
-          else
-            item
-          end
-        end
-
-        widths = content['grid']['columnWidths'] || []
-        content['grid']['columnWidths'] = widths.map do |item|
-          if item.is_a?(Hash)
-            GoodData::Helpers.deep_dup(item).tap do |i|
-              if i['locator'][0].key?('attributeHeaderLocator')
-                i['locator'][0]['attributeHeaderLocator']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-              end
-            end
-          else
-            item
-          end
-        end
-
-        sort = content['grid']['sort']['columns'] || []
-        content['grid']['sort']['columns'] = sort.map do |item|
-          if item.is_a?(Hash)
-            GoodData::Helpers.deep_dup(item).tap do |i|
-              next unless i.key?('metricSort')
-              next unless i['metricSort'].key?('locators')
-              next unless i['metricSort']['locators'][0].key?('attributeLocator2')
-              i['metricSort']['locators'][0]['attributeLocator2']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-              i['metricSort']['locators'][0]['attributeLocator2']['element'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-            end
-          else
-            item
-          end
-        end
-
-        if content.key?('chart')
-          content['chart']['buckets'] = content['chart']['buckets'].reduce({}) do |a, e|
-            key = e[0]
-            val = e[1]
-            a[key] = val.map do |item|
-              GoodData::Helpers.deep_dup(item).tap do |i|
-                i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-              end
-            end
-            a
-          end
-        end
-
-        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub("[#{uri_what}]", "[#{uri_for_what}]") } }
-      end
-      self
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
+    # @return [GoodData::ReportDefinition]
+    def replace(mapping)
+      x = GoodData::MdObject.replace_quoted(self, mapping)
+      x = GoodData::MdObject.replace_bracketed(x, mapping)
+      vals = GoodData::MdObject.find_replaceable_values(self, mapping)
+      GoodData::MdObject.replace_bracketed(x, vals)
     end
 
     # Return true if the report definition is a table
@@ -351,30 +269,6 @@ module GoodData
     # @return [Boolean] Return true if report definition is a table
     def table?
       content['format'] == 'grid'
-    end
-
-    private
-
-    def data_result(result, options = {})
-      data_result_uri = result['execResult']['dataResult']
-      begin
-        result = client.poll_on_response(data_result_uri, options) do |body|
-          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
-        end
-      rescue RestClient::BadRequest => e
-        resp = JSON.parse(e.response)
-        if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
-          raise GoodData::UncomputableReport
-        else
-          raise e
-        end
-      end
-
-      if result.empty?
-        client.create(ReportDataResult, data: [], top: 0, left: 0, project: project)
-      else
-        ReportDataResult.from_xtab(result, client: client, project: project)
-      end
     end
   end
 end

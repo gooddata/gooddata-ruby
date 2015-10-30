@@ -8,8 +8,6 @@ require_relative '../metadata'
 
 module GoodData
   class Dataset < MdObject
-    root_key :dataSet
-
     class << self
       # Method intended to get all objects of that type in a specified project
       #

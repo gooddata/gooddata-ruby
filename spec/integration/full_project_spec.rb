@@ -365,7 +365,7 @@ describe "Full project implementation", :constraint => 'slow' do
     fact = @project.fact_by_title('Lines Changed')
     expect(fact.tags.empty?).to be_truthy
 
-    fact.tags = "tag1,tag2,tag3"
+    fact.tags = "tag1 tag2 tag3"
     fact.save
 
     tagged_facts = GoodData::Fact.find_by_tag('tag3', :client => @client, :project => @project)
@@ -413,8 +413,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
     expect(metric.contain?(attribute)).to be true
     expect(metric.contain?(repo_attribute)).to be false
-
-    metric.replace(attribute, repo_attribute)
+    metric.replace!(attribute => repo_attribute)
     metric.save
     expect(metric.execute).not_to eq 4
 

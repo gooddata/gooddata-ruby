@@ -12,9 +12,7 @@ require_relative 'metadata'
 
 module GoodData
   class Fact < GoodData::MdObject
-    root_key :fact
-
-    include GoodData::Mixin::IsFact
+    include Mixin::IsFact
 
     # TODO: verify that we have all (which we do not right now)
     FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median, :runsum, :runmin, :runmax, :runavg, :runstdev, :runstdevp, :runvar, :runvarp, :stdev, :stdevp, :var, :varp]
