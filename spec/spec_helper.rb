@@ -54,7 +54,11 @@ RSpec.configure do |config|
     # end
 
     # TODO: Fully setup global environment
+    # $stdout.sync=true
+    # $stderr.sync=true
+
     GoodData.logging_off
+    GoodData.stats_off
   end
 
   config.after(:all) do

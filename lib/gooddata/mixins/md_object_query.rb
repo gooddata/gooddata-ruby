@@ -97,7 +97,7 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'No :project specified' if project.nil?
 
-        dependency("#{project.md['usedby2']}/#{obj_id(uri)}", key, opts)
+        dependency("#{project.md['usedby2']}/#{uri_obj_id(uri)}", key, opts)
       end
 
       alias_method :used_by, :usedby
@@ -110,7 +110,7 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'No :project specified' if project.nil?
 
-        dependency("#{project.md['using2']}/#{obj_id(uri)}", key, opts)
+        dependency("#{project.md['using2']}/#{uri_obj_id(uri)}", key, opts)
       end
 
       def usedby?(uri, target_uri, opts = { :client => GoodData.connection, :project => GoodData.project })

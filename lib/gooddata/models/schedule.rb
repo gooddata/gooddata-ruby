@@ -15,12 +15,6 @@ module GoodData
   class Schedule < Rest::Resource
     attr_reader :dirty, :json
 
-    alias_method :data, :json
-    alias_method :raw_data, :json
-
-    include GoodData::Mixin::RestResource
-    root_key :schedule
-
     SCHEDULE_TEMPLATE = {
       :schedule => {
         :type => nil,

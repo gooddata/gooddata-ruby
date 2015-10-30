@@ -12,9 +12,7 @@ require_relative '../../mixins/is_attribute'
 
 module GoodData
   class Attribute < MdObject
-    root_key :attribute
-
-    include GoodData::Mixin::IsAttribute
+    include Mixin::IsAttribute
 
     ATTRIBUTE_BASE_AGGREGATIONS = [:count]
 

@@ -4,36 +4,30 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require 'multi_json'
+
 require_relative '../core/project'
 
 require_relative '../mixins/mixins'
 require_relative '../rest/object'
 
 module GoodData
-  class MdObject < GoodData::Rest::Object
+  class MdObject < Rest::Resource
     MD_OBJ_CTG = 'obj'
     IDENTIFIERS_CFG = 'instance-identifiers'
 
-    attr_accessor :json
+    extend Mixin::MdIdToUri
+    extend Mixin::MdObjectIndexer
+    extend Mixin::MdObjectQuery
 
-    alias_method :raw_data, :json
-    alias_method :to_hash, :json
+    extend Mixin::MdFinders
+    extend Mixin::MdObjId
 
-    include GoodData::Mixin::RestResource
+    include Mixin::Links
+    include Mixin::ObjId
+    include Mixin::MdRelations
 
     class << self
-      def metadata_property_reader(*props)
-        props.each do |prop|
-          define_method prop, proc { meta[prop.to_s] }
-        end
-      end
-
-      def metadata_property_writer(*props)
-        props.each do |prop|
-          define_method "#{prop}=", proc { |val| meta[prop.to_s] = val }
-        end
-      end
-
       # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
       # representation and returns a new one with object references changed according to mapping. The references an be found either in the object structure or in the MAQL in bracketed form. This implementation takes care only of those in bracketed form.
       #
@@ -65,7 +59,7 @@ module GoodData
       # @param block [Proc] Block that receives the object state as a JSON string and mapping pair and expects a new object state as a JSON string back
       # @return [GoodData::MdObject]
       def replace(obj, mapping, &block)
-        json = mapping.reduce(obj.to_json) do |a, e|
+        json = mapping.reduce(MultiJson.dump(obj.to_json)) do |a, e|
           obj_a, obj_b = e
           uri_what = obj_a.respond_to?(:uri) ? obj_a.uri : obj_a
           uri_for_what = obj_b.respond_to?(:uri) ? obj_b.uri : obj_b
@@ -86,7 +80,7 @@ module GoodData
       # @param block [Proc] Block that receives the object state as a JSON string and mapping pair and expects a new object state as a JSON string back
       # @return [GoodData::MdObject]
       def find_replaceable_values(obj, mapping)
-        values_to_replace = GoodData::SmallGoodZilla.extract_element_uri_pairs(obj.to_json)
+        values_to_replace = GoodData::SmallGoodZilla.extract_element_uri_pairs(MultiJson.dump(obj.to_json))
         values_from_mapping = values_to_replace.select { |i| mapping.map { |a, _| a.uri }.include?(i.first) }
         replaceable_vals = values_from_mapping.map do |a_uri, id|
           from_attribute, to_attribute = mapping.find { |k, _| k.uri == a_uri }

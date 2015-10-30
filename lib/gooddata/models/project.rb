@@ -19,13 +19,14 @@ require_relative '../rest/resource'
 require_relative '../mixins/author'
 require_relative '../mixins/contributor'
 require_relative '../mixins/rest_resource'
+require_relative '../mixins/uri_getter'
 
 require_relative 'process'
 require_relative 'project_role'
 require_relative 'blueprint/blueprint'
 
 module GoodData
-  class Project < GoodData::Rest::Resource
+  class Project < Rest::Resource
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
@@ -48,15 +49,9 @@ module GoodData
 
     attr_accessor :connection, :json
 
-    alias_method :to_json, :json
-    alias_method :raw_data, :json
-
-    include GoodData::Mixin::RestResource
-
-    Project.root_key :project
-
-    include GoodData::Mixin::Author
-    include GoodData::Mixin::Contributor
+    include Mixin::Author
+    include Mixin::Contributor
+    include Mixin::UriGetter
 
     class << self
       # Returns an array of all projects accessible by

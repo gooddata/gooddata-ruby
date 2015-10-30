@@ -402,7 +402,7 @@ module GoodData
       # HTTP POST
       #
       # @param uri [String] Target URI
-      def post(uri, data, options = {})
+      def post(uri, data = nil, options = {})
         options = log_info(options)
         GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
@@ -431,17 +431,49 @@ module GoodData
       def stats_table(values = stats)
         sorted = values.sort_by { |_k, v| v[:avg] }
         Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
+          overall = {
+            :avg => 0,
+            :calls => 0,
+            :total => 0
+          }
+
           sorted.each do |l|
+            avg = l[1][:avg]
+            min = l[1][:min]
+            max = l[1][:max]
+            total = l[1][:total]
+            calls = l[1][:calls]
+
             row = [
               l[0],
-              sprintf('%.3f', l[1][:avg]),
-              sprintf('%.3f', l[1][:min]),
-              sprintf('%.3f', l[1][:max]),
-              sprintf('%.3f', l[1][:total]),
-              l[1][:calls]
+              sprintf('%.3f', avg),
+              sprintf('%.3f', min),
+              sprintf('%.3f', max),
+              sprintf('%.3f', total),
+              calls
             ]
+
+            overall[:min] = min if overall[:min].nil? || min < overall[:min]
+            overall[:max] = max if overall[:max].nil? || max > overall[:max]
+            overall[:total] += total
+            overall[:calls] += calls
+            overall[:avg] += avg
+
             t.add_row row
           end
+
+          overall[:avg] = overall[:avg] / sorted.length
+          row = [
+            'TOTAL',
+            sprintf('%.3f', overall[:avg]),
+            sprintf('%.3f', overall[:min]),
+            sprintf('%.3f', overall[:max]),
+            sprintf('%.3f', overall[:total]),
+            overall[:calls]
+          ]
+
+          t.add_row :separator
+          t.add_row row
         end
       end
 
@@ -613,24 +645,57 @@ module GoodData
 
       # TODO: Store PH_MAP for wildcarding of URLs in reports in separate file
       PH_MAP = [
-        ['/gdc/projects/{id}/users/{id}/permissions', %r{/gdc/projects/[\w]+/users/[\w]+/permissions}],
-        ['/gdc/projects/{id}/roles/{id}', %r{/gdc/projects/[\w]+/roles/[\d]+}],
-        ['/gdc/projects/{id}/model/diff/{id}', %r{/gdc/projects/[\w]+/model/diff/[\w]+}],
-        ['/gdc/projects/{id}/', %r{/gdc/projects/[\w]+/}],
-        ['/gdc/projects/{id}', %r{/gdc/projects/[\w]+}],
+        ['/gdc/account/profile/{id}', %r{/gdc/account/profile/[\w]+}],
+        ['/gdc/account/login/{id}', %r{/gdc/account/login/[\w]+}],
+        ['/gdc/account/domains/{id}/users?login={login}', %r{/gdc/account/domains/[\w\d-]+/users\?login=[^&$]+}],
+        ['/gdc/account/domains/{id}', %r{/gdc/account/domains/[\w\d-]+}],
+
+        ['/gdc/app/projects/{id}/execute', %r{/gdc/app/projects/[\w]+/execute}],
+
+        ['/gdc/datawarehouse/instances/{id}', %r{/gdc/datawarehouse/instances/[\w]+}],
+        ['/gdc/datawarehouse/executions/{id}', %r{/gdc/datawarehouse/executions/[\w]+}],
+
+        ['/gdc/domains/{id}/segments/{segment}/synchronizeClients/results/{result}/details?offset={offset}&limit={limit}', %r{/gdc/domains/[\w]+/segments/[\w-]+/synchronizeClients/results/[\w]+/details/\?offset=[\d]+&limit=[\d]+}],
+        ['/gdc/domains/{id}/segments/{segment}/synchronizeClients/results/{result}', %r{/gdc/domains/[\w]+/segments/[\w-]+/synchronizeClients/results/[\w]+}],
+        ['/gdc/domains/{id}/segments/{segment}/', %r{/gdc/domains/[\w]+/segments/[\w-]+/}],
+        ['/gdc/domains/{id}/segments/{segment}', %r{/gdc/domains/[\w]+/segments/[\w-]+}],
+        ['/gdc/domains/{id}/clients?segment={segment}', %r{/gdc/domains/[\w]+/clients\?segment=[\w-]+}],
+        ['/gdc/domains/{id}/', %r{/gdc/domains/[\w]+/}],
+
+        ['/gdc/exporter/result/{id}/{id}', %r{/gdc/exporter/result/[\w]+/[\w]+}],
+
+        ['/gdc/internal/projects/{id}/objects/setPermissions', %r{/gdc/internal/projects/[\w]+/objects/setPermissions}],
+
+        ['/gdc/md/{id}/variables/item/{id}', %r{/gdc/md/[\w]+/variables/item/[\d]+}],
+        ['/gdc/md/{id}/validate/task/{id}', %r{/gdc/md/[\w]+/validate/task/[\w]+}],
         ['/gdc/md/{id}/using2/{id}/{id}', %r{/gdc/md/[\w]+/using2/[\d]+/[\d]+}],
+        ['/gdc/md/{id}/using2/{id}', %r{/gdc/md/[\w]+/using2/[\d]+}],
+        ['/gdc/md/{id}/userfilters?users={users}', %r{/gdc/md/[\w]+/userfilters\?users=[/\w]+}],
+        ['/gdc/md/{id}/userfilters?count={count}&offset={offset}', %r{/gdc/md/[\w]+/userfilters\?count=[\d]+&offset=[\d]+}],
         ['/gdc/md/{id}/usedby2/{id}/{id}', %r{/gdc/md/[\w]+/usedby2/[\d]+/[\d]+}],
+        ['/gdc/md/{id}/usedby2/{id}', %r{/gdc/md/[\w]+/usedby2/[\d]+}],
         ['/gdc/md/{id}/tasks/{id}/status', %r{/gdc/md/[\w]+/tasks/[\w]+/status}],
         ['/gdc/md/{id}/obj/{id}/validElements', %r{/gdc/md/[\w]+/obj/[\d]+/validElements(/)?(\?.*)?}],
         ['/gdc/md/{id}/obj/{id}/elements', %r{/gdc/md/[\w]+/obj/[\d]+/elements(/)?(\?.*)?}],
         ['/gdc/md/{id}/obj/{id}', %r{/gdc/md/[\w]+/obj/[\d]+}],
-        ['/gdc/md/{id}/etl/task/{id}', %r{/gdc/md/[\w]+/etl/task/[\d]+}],
+        ['/gdc/md/{id}/etltask/{id}', %r{/gdc/md/[\w]+/etltask/[\w]+}],
         ['/gdc/md/{id}/dataResult/{id}', %r{/gdc/md/[\w]+/dataResult/[\d]+}],
         ['/gdc/md/{id}', %r{/gdc/md/[\w]+}],
-        ['/gdc/app/projects/{id}/execute', %r{/gdc/app/projects/[\w]+/execute}],
-        ['/gdc/account/profile/{id}', %r{/gdc/account/profile/[\w]+}],
-        ['/gdc/account/login/{id}', %r{/gdc/account/login/[\w]+}],
-        ['/gdc/account/domains/{id}', %r{/gdc/account/domains/[\w\d-]+}]
+
+        ['/gdc/projects/{id}/users/{id}/roles', %r{/gdc/projects/[\w]+/users/[\w]+/roles}],
+        ['/gdc/projects/{id}/users/{id}/permissions', %r{/gdc/projects/[\w]+/users/[\w]+/permissions}],
+        ['/gdc/projects/{id}/users', %r{/gdc/projects/[\w]+/users}],
+        ['/gdc/projects/{id}/schedules/{id}/executions/{id}', %r{/gdc/projects/[\w]+/schedules/[\w]+/executions/[\w]+}],
+        ['/gdc/projects/{id}/schedules/{id}', %r{/gdc/projects/[\w]+/schedules/[\w]+}],
+        ['/gdc/projects/{id}/roles/{id}', %r{/gdc/projects/[\w]+/roles/[\d]+}],
+        ['/gdc/projects/{id}/model/view/{id}', %r{/gdc/projects/[\w]+/model/view/[\w]+}],
+        ['/gdc/projects/{id}/model/view', %r{/gdc/projects/[\w]+/model/view}],
+        ['/gdc/projects/{id}/model/diff/{id}', %r{/gdc/projects/[\w]+/model/diff/[\w]+}],
+        ['/gdc/projects/{id}/model/diff', %r{/gdc/projects/[\w]+/model/diff}],
+        ['/gdc/projects/{id}/dataload/processes/{id}/executions/{id}', %r{/gdc/projects/[\w]+/dataload/processes/[\w-]+/executions/[\w-]+}],
+        ['/gdc/projects/{id}/dataload/processes/{id}', %r{/gdc/projects/[\w]+/dataload/processes/[\w-]+}],
+        ['/gdc/projects/{id}/', %r{/gdc/projects/[\w]+/}],
+        ['/gdc/projects/{id}', %r{/gdc/projects/[\w]+}]
       ]
 
       def update_stats(title, delta)

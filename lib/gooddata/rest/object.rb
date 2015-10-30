@@ -4,6 +4,18 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require_relative '../mixins/data_property_reader'
+require_relative '../mixins/data_property_writer'
+
+require_relative '../mixins/content_getter'
+
+require_relative '../mixins/meta_getter'
+
+require_relative '../mixins/meta_property_reader'
+require_relative '../mixins/meta_property_writer'
+
+require_relative '../mixins/root_key_getter'
+
 module GoodData
   module Rest
     # Base class dealing with REST endpoints
@@ -12,6 +24,23 @@ module GoodData
     # MUST provide way to work with remote REST-like API in unified manner.
     # MUST NOT create new connections.
     class Object
+      extend Mixin::DataPropertyReader
+      extend Mixin::DataPropertyWriter
+
+      extend Mixin::MetaPropertyReader
+      extend Mixin::MetaPropertyWriter
+
+      include Mixin::ContentGetter
+      include Mixin::RootKeyGetter
+      include Mixin::DataGetter
+      include Mixin::MetaGetter
+
+      attr_accessor :json
+      alias_method :raw_data, :json
+      alias_method :to_hash, :json
+
+      alias_method :to_json, :json
+
       attr_writer :client
       attr_accessor :project
 

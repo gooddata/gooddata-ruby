@@ -9,9 +9,7 @@ require_relative 'metadata'
 
 module GoodData
   class Report < GoodData::MdObject
-    root_key :report
-
-    include GoodData::Mixin::Lockable
+    include Mixin::Lockable
 
     class << self
       # Method intended to get all objects of that type in a specified project

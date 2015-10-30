@@ -7,7 +7,7 @@
 require 'gooddata/models/segment'
 require 'securerandom'
 
-describe GoodData::LifeCycle::Client do
+describe GoodData::Client do
   TOKEN = 'mustangs'
 
   before(:all) do
@@ -39,7 +39,7 @@ describe GoodData::LifeCycle::Client do
 
     it 'Returns specific tenant when schedule ID passed' do
       client = @segment.clients(@segment_client.uri)
-      expect(client).to be_an_instance_of(GoodData::LifeCycle::Client)
+      expect(client).to be_an_instance_of(GoodData::Client)
       expect(client.uri).to eq @segment_client.uri
     end
 

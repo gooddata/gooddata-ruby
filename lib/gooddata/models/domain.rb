@@ -11,7 +11,7 @@ require_relative '../extensions/enumerable'
 require_relative '../rest/object'
 
 module GoodData
-  class Domain < GoodData::Rest::Object
+  class Domain < Rest::Resource
     attr_reader :name
 
     class << self
@@ -274,6 +274,15 @@ module GoodData
       GoodData::Domain.add_user(data, name, { client: client }.merge(opts))
     end
 
+    def clients
+      clients_uri = "/gdc/domains/#{name}/clients"
+      res = client.get(clients_uri)
+      res_clients = (res['clients'] && res['clients']['items']) || []
+      res_clients.map do |res_client|
+        client.create(GoodData::Client, res_client)
+      end
+    end
+
     alias_method :create_user, :add_user
 
     def create_users(list, options = {})
@@ -281,15 +290,15 @@ module GoodData
     end
 
     def segments(id = :all)
-      GoodData::LifeCycle::Segment[id, domain: self]
+      GoodData::Segment[id, domain: self]
     end
 
     # Creates new segment in current domain from parameters passed
     #
     # @param data [Hash] Data for segment namely :segment_id and :master_project is accepted. Master_project can be given as either a PID or a Project instance
-    # @return [GoodData::LifeCycle::Segment] New Segment instance
+    # @return [GoodData::Segment] New Segment instance
     def create_segment(data)
-      segment = GoodData::LifeCycle::Segment.create(data, domain: self, client: client)
+      segment = GoodData::Segment.create(data, domain: self, client: client)
       segment.save
     end
 

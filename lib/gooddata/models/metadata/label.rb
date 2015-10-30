@@ -10,9 +10,7 @@ require_relative 'metadata'
 
 module GoodData
   class Label < GoodData::MdObject
-    root_key :attributeDisplayForm
-
-    include GoodData::Mixin::IsLabel
+    include Mixin::IsLabel
 
     # Finds an attribute element URI for given value. This URI can be used by find_element_value to find the original value again
     # @param [String] value value of an label you are looking for

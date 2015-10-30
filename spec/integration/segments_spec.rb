@@ -7,7 +7,7 @@
 require 'gooddata/models/segment'
 require 'securerandom'
 
-describe GoodData::LifeCycle::Segment do
+describe GoodData::Segment do
   TOKEN = 'mustangs'
 
   before(:all) do
@@ -40,8 +40,8 @@ describe GoodData::LifeCycle::Segment do
     it 'Returns specific segment when segment ID passed' do
       s = @domain.segments(@segment_name)
       @segment.uri == s.uri
-      expect(s).to be_an_instance_of(GoodData::LifeCycle::Segment)
-      expect(@segment).to be_an_instance_of(GoodData::LifeCycle::Segment)
+      expect(s).to be_an_instance_of(GoodData::Segment)
+      expect(@segment).to be_an_instance_of(GoodData::Segment)
     end
   end
 
@@ -79,7 +79,7 @@ describe GoodData::LifeCycle::Segment do
       begin
         client_project = @client.create_project(title: 'client_1 project', auth_token: TOKEN)
         segment_client = @segment.create_client(id: 'tenant_1', project: client_project)
-        expect(segment_client).to be_an_instance_of(GoodData::LifeCycle::Client)
+        expect(segment_client).to be_an_instance_of(GoodData::Client)
         expect(@segment.clients.count).to eq 1
       ensure
         segment_client && segment_client.delete
