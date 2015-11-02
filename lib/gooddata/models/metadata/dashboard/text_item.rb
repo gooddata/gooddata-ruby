@@ -7,9 +7,9 @@
 require_relative 'dashboard_item'
 
 module GoodData
-  class FilterItem < DashboardItem
+  class TextItem < DashboardItem
     EMPTY_OBJECT = {
-      'filterItem' => {
+      'textItem' => {
         'positionX' => 0,
         'sizeY' => 200,
         'sizeX' => 300,
@@ -18,14 +18,13 @@ module GoodData
     }
 
     ASSIGNABLE_MEMBERS = DashboardItem::ASSIGNABLE_MEMBERS + [
-      :id,
-      :content_id,
-      :parent_filters
+      :text,
+      :text_size
     ]
 
     class << self
       def create(tab, item)
-        res = GoodData::FilterItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        res = GoodData::TextItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
         item.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
         end
@@ -37,28 +36,20 @@ module GoodData
       super
     end
 
-    def id
-      data['id']
+    def text
+      data['text']
     end
 
-    def id=(new_id)
-      data['id'] = new_id
+    def text=(new_text)
+      data['text'] = new_text
     end
 
-    def content_id
-      data['contentId']
+    def text_size
+      data['textSize']
     end
 
-    def content_id=(new_content_id)
-      data['contentId'] = new_content_id
-    end
-
-    def parent_filters
-      data['parentFilters']
-    end
-
-    def parent_filters=(new_parent_filters)
-      data['parentFilters'] = new_parent_filters
+    def text_size=(new_text_size)
+      data['textSize'] = new_text_size
     end
   end
 end

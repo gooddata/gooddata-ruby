@@ -5,19 +5,59 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'dashboard_item'
+require_relative '../../../helpers/global_helpers'
 
 module GoodData
   class ReportItem < DashboardItem
+    EMPTY_OBJECT = {
+      :reportItem => {
+        :obj => nil,
+        :sizeY => 200,
+        :sizeX => 300,
+        :style => {
+          :displayTitle => 1,
+          :background => {
+            :opacity => 0
+          }
+        },
+        :visualization => {
+          :grid => {
+            :columnWidths => []
+          },
+          :oneNumber => {
+            :labels => {}
+          }
+        },
+        :positionY => 0,
+        :filters => [],
+        :positionX => 0
+      }
+    }
+
+    ASSIGNABLE_MEMBERS = DashboardItem::ASSIGNABLE_MEMBERS + [
+      :filters,
+      :obj,
+      :report,
+      :style,
+      :visualization
+    ]
+
+    class << self
+      def obj_uri(obj)
+        obj.respond_to?(:uri) ? obj.uri : obj
+      end
+
+      def create(tab, item)
+        res = GoodData::ReportItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        item.each do |k, v|
+          res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
+        end
+        res
+      end
+    end
+
     def initialize(tab, json)
       super
-    end
-
-    def filters
-      data['filters']
-    end
-
-    def filters=(new_filters)
-      data['filters'] = new_filters
     end
 
     def obj
@@ -27,10 +67,11 @@ module GoodData
     alias_method :object, :obj
 
     def obj=(new_obj)
-      data['obj'] = new_obj.is_a?(String) ? new_obj : new_obj.uri
+      data['obj'] = ReportItem.obj_uri(new_obj)
     end
 
     alias_method :object=, :obj=
+    alias_method :report=, :obj=
 
     def style
       data['style']

@@ -7,9 +7,9 @@
 require_relative 'dashboard_item'
 
 module GoodData
-  class FilterItem < DashboardItem
+  class GeoChartItem < DashboardItem
     EMPTY_OBJECT = {
-      'filterItem' => {
+      'geoChartItem' => {
         'positionX' => 0,
         'sizeY' => 200,
         'sizeX' => 300,
@@ -19,13 +19,13 @@ module GoodData
 
     ASSIGNABLE_MEMBERS = DashboardItem::ASSIGNABLE_MEMBERS + [
       :id,
-      :content_id,
-      :parent_filters
+      :metric,
+      :layers_base_color
     ]
 
     class << self
       def create(tab, item)
-        res = GoodData::FilterItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        res = GoodData::GeoChartItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
         item.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
         end
@@ -37,28 +37,20 @@ module GoodData
       super
     end
 
-    def id
-      data['id']
+    def metric
+      data['metric']
     end
 
-    def id=(new_id)
-      data['id'] = new_id
+    def metric=(new_metric)
+      data['metric'] = new_metric.respond_to?(:uri) ? new_metric.uri : new_metric
     end
 
-    def content_id
-      data['contentId']
+    def layers_base_color
+      data['layersBaseColor']
     end
 
-    def content_id=(new_content_id)
-      data['contentId'] = new_content_id
-    end
-
-    def parent_filters
-      data['parentFilters']
-    end
-
-    def parent_filters=(new_parent_filters)
-      data['parentFilters'] = new_parent_filters
+    def layers_base_color=(new_layers_base_color)
+      data['layersBaseColor'] = new_layers_base_color
     end
   end
 end
