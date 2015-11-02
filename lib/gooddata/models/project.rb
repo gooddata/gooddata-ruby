@@ -288,7 +288,7 @@ module GoodData
       begin
         # Create the project first so we know that it is passing.
         # What most likely is wrong is the token and the export actaully takes majority of the time
-        new_project = GoodData::Project.create(options.merge(:title => a_title, :client => client))
+        new_project = GoodData::Project.create(options.merge(:title => a_title, :client => client, :driver => content[:driver]))
         export_token = export_clone(options)
         new_project.import_clone(export_token)
       rescue
