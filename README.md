@@ -71,5 +71,5 @@ For full contributor info see [contributors page](https://github.com/gooddata/go
 
 ## Copyright
 
-Copyright (c) 2010 - 2014 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
+Copyright (c) 2010 - 2015 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
 
