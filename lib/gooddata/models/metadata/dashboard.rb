@@ -52,7 +52,7 @@ module GoodData
         query('projectDashboard', Dashboard, options)
       end
 
-      def create(dashboard = {}, options = {:client => GoodData.client, :project => GoodData.project})
+      def create(dashboard = {}, options = { :client => GoodData.client, :project => GoodData.project })
         client = options[:client]
         fail ArgumentError, 'No :client specified' if client.nil?
 
