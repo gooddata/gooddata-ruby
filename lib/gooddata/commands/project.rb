@@ -113,25 +113,16 @@ module GoodData
 
           spin_session = proc do |goodfile, _blueprint|
             project_id = options[:project_id] || goodfile[:project_id]
-            message = 'You have to provide "project_id". You can either provide it through -p flag'\
-               'or even better way is to fill it in in your Goodfile under key "project_id".'\
-               'If you just started a project you have to create it first. One way might be'\
-               'through "gooddata project build"'
-            fail message if project_id.nil? || project_id.empty?
 
             begin
               require 'gooddata'
               client = GoodData.connect(options)
-
-              GoodData.with_project(project_id, :client => client) do |project|
-                fail ArgumentError, 'Wrong project specified' if project.nil?
-
-                puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-                binding.pry(:quiet => true, # rubocop:disable Lint/Debugger
-                            :prompt => [proc do |_target_self, _nest_level, _pry|
-                              'project_live_session: '
-                            end])
-              end
+              project = client.projects(project_id) if project_id
+              puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
+              binding.pry(:quiet => true, # rubocop:disable Lint/Debugger
+                          :prompt => [proc do |_target_self, _nest_level, _pry|
+                            'project_live_session: '
+                          end])
             rescue GoodData::ProjectNotFound
               puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
             end

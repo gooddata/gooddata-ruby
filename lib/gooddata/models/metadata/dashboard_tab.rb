@@ -53,47 +53,47 @@ module GoodData
 
     def create_filter_item(item)
       new_item = GoodData::FilterItem.create(self, item)
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
 
     def create_filter_apply_item(item)
       new_item = GoodData::FilterApplyItem.create(self, item)
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
 
     def create_geo_chart_item(item)
       new_item = GoodData::GeoChartItem.create(self, item)
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
     alias_method :add_geo_chart_item, :create_geo_chart_item
 
     def create_headline_item(item)
       new_item = GoodData::HeadlineItem.create(self, item)
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
     alias_method :add_headline_item, :create_headline_item
 
     def create_iframe_item(item)
       new_item = GoodData::IframeItem.create(self, item)
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
     alias_method :add_iframe_item, :create_iframe_item
 
     def create_report_item(item)
       new_item = GoodData::ReportItem.create(self, item)
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
     alias_method :add_report_item, :create_report_item
 
     def create_text_item(item)
       new_item = GoodData::TextItem.create(self, item)
-      self.json['items'] << new_item.json
+      json['items'] << new_item.json
       new_item
     end
     alias_method :add_text_item, :create_text_item

@@ -16,5 +16,12 @@ GoodData::CLI.module_eval do
         GoodData::Command::Auth.store
       end
     end
+
+    c.desc 'Clean the credentials'
+    c.command :clear do |store|
+      store.action do |_global_options, _options, _args|
+        GoodData::Command::Auth.unstore
+      end
+    end
   end
 end
