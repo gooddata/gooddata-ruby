@@ -186,7 +186,7 @@ module GoodData
     # so it precaches the values and still be able to function for larger ones even
     # though that would mean tons of requests
     def self.get_small_labels(labels_cache)
-      labels_cache.values.select { |label| label && label.values_count < 100_000 }
+      labels_cache.values.select { |label| label && label.values_count && label.values_count < 100_000 }
     end
 
     # Creates a MAQL expression(s) based on the filter defintion.
