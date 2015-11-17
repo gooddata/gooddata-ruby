@@ -151,14 +151,7 @@ module GoodData
       # @param options [Hash] Additional options
       # @return [Hash] Batch upload result
       def upload_multiple_data(data, project_blueprint, options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         project = options[:project] || GoodData.project
 

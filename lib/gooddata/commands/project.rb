@@ -79,15 +79,7 @@ module GoodData
 
         # Update project
         def update(opts = { client: GoodData.connection })
-          client = opts[:client]
-          fail ArgumentError, 'No :client specified' if client.nil?
-
-          p = opts[:project]
-          fail ArgumentError, 'No :project specified' if p.nil?
-
-          project = GoodData::Project[p, opts]
-          fail ArgumentError, 'Wrong :project specified' if project.nil?
-
+          client, project = GoodData.get_client_and_project(opts)
           GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :client => client, :project => project)
         end
 

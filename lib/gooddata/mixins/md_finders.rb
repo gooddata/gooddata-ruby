@@ -38,15 +38,9 @@ module GoodData
       end
 
       def find_by_tag(tag, opts = { :client => GoodData.connection, :project => GoodData.project })
-        c = client || opts[:client]
+        client, project = GoodData.get_client_and_project(opts)
 
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError 'Wrong :project specified' if project.nil?
-
-        self[:all, client: c, project: project].select { |r| r.tag_set.include?(tag) }
+        self[:all, client: client, project: project].select { |r| r.tag_set.include?(tag) }
       end
 
       # Finds a specific type of the object by title. Returns first match. Returns full object.
