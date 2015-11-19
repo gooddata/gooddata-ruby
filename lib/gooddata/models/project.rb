@@ -176,6 +176,11 @@ module GoodData
 
     alias_method :create_dashboard, :add_dashboard
 
+    def add_group(data)
+      g = GoodData::UserGroup.create(data.merge(project: self))
+      g.save
+    end
+
     # Creates a metric in a project
     #
     # @param [options] Optional report options
@@ -337,6 +342,10 @@ module GoodData
         body['taskState']['status'] == 'RUNNING'
       end
       result['exportArtifact']['token']
+    end
+
+    def groups
+      GoodData::UserGroup.all(:project => self)
     end
 
     # Imports a clone into current project. The project has to be freshly
