@@ -5,13 +5,19 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../rest/rest'
+require_relative '../rest/resource'
+require_relative '../mixins/author'
+require_relative '../mixins/contributor'
+require_relative '../mixins/links'
 require_relative '../mixins/rest_resource'
+require_relative '../mixins/uri_getter'
 
 module GoodData
   class UserGroup < Rest::Resource
-    # include Mixin::Author
-    # include Mixin::Contributor
-    # include Mixin::Timestamps
+    include Mixin::Author
+    include Mixin::Contributor
+    include Mixin::Links
+    include Mixin::UriGetter
 
     EMPTY_OBJECT = {
       'userGroup' => {
@@ -63,13 +69,29 @@ module GoodData
           d['userGroup']['content']['description'] = data[:description]
           d['userGroup']['content']['project'] = data[:project].respond_to?(:uri) ? data[:project].uri : data[:project]
         end
-        binding.pry
         client.create(GoodData::UserGroup, GoodData::Helpers.deep_stringify_keys(new_data))
       end
     end
 
     def initialize(json)
       @json = json
+    end
+
+    def add_user(user)
+      add_users([user])
+    end
+
+    def add_users(users)
+      payload = {
+        modifyMembers: {
+          operation: 'ADD',
+          items: users.map do |user|
+            user.respond_to?(:uri) ? user.uri : user
+          end
+        }
+      }
+
+      client.post(uri_modify_members, payload)
     end
 
     def name
@@ -91,13 +113,21 @@ module GoodData
     # Gets Users with this Role
     #
     # @return [Array<GoodData::Profile>] List of users
-    def users
-      url = data['links']['roleUsers']
-      tmp = client.get url
-      tmp['associatedUsers']['users'].pmap do |user_url|
-        url = user_url
-        user = client.get url
-        client.create(GoodData::Profile, user)
+    def members(opts = {})
+      url = GoodData::Helpers.get_path(data, %w(links members))
+      return unless url
+      Enumerator.new do |y|
+        loop do
+          res = client.get url
+          res['userGroupMembers']['paging']['next']
+          res['userGroupMembers']['items'].each do |member|
+            # y << client.create(Execution, execution, :project => project)
+            y << member
+          end
+          url = res['userGroupMembers']['paging']['next']
+          puts "url='#{url}'"
+          break unless url
+        end
       end
     end
 
@@ -119,6 +149,10 @@ module GoodData
         @json = client.get(res['uri'])
       end
       self
+    end
+
+    def uri_modify_members
+      links['modifyMembers']
     end
 
     def ==(other)
