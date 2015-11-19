@@ -71,6 +71,25 @@ module GoodData
         end
         client.create(GoodData::UserGroup, GoodData::Helpers.deep_stringify_keys(new_data))
       end
+
+      def construct_payload(users, operation)
+        users = users.kind_of?(Array) ? users : [users]
+
+        {
+          modifyMembers: {
+            operation: operation,
+            items: users.map do |user|
+              user.respond_to?(:uri) ? user.uri : user
+            end
+          }
+        }
+      end
+
+      def modify_users(client, users, operation, uri)
+        payload = construct_payload(users, operation)
+        client.post(uri, payload)
+      end
+
     end
 
     def initialize(json)
@@ -78,21 +97,10 @@ module GoodData
     end
 
     def add_user(user)
-      add_users([user])
+      UserGroup.modify_users(client, user, 'ADD', uri_modify_members)
     end
 
-    def add_users(users)
-      payload = {
-        modifyMembers: {
-          operation: 'ADD',
-          items: users.map do |user|
-            user.respond_to?(:uri) ? user.uri : user
-          end
-        }
-      }
-
-      client.post(uri_modify_members, payload)
-    end
+    alias_method :add_users, :add_user
 
     def name
       content['name']
@@ -150,6 +158,18 @@ module GoodData
       end
       self
     end
+
+    def remove_user(user)
+      UserGroup.modify_users(client, user, 'REMOVE', uri_modify_members)
+    end
+
+    alias_method :remove_users, :remove_user
+
+    def set_user(user)
+      UserGroup.modify_users(client, user, 'SET', uri_modify_members)
+    end
+
+    alias_method :set_users, :set_user
 
     def uri_modify_members
       links['modifyMembers']
