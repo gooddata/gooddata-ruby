@@ -550,7 +550,7 @@ module GoodData
             star, metrics = e
             metrics.each(&:save)
             reports_stubs = metrics.map do |m|
-              breaks = broken_by(star).map { |ds, aM| ds.identifier_for(aM) }
+              breaks = broken_by(star).map { |ds, a_M| ds.identifier_for(a_M) }
               [breaks, m]
             end
             a.concat(reports_stubs)
