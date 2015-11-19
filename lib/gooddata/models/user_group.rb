@@ -36,31 +36,14 @@ module GoodData
       # @param id [String|Symbol] Uri of the segment required or :all for all segments.
       # @return [Array<GoodData::Segment>] List of segments for a particular domain
       def [](id, opts = {})
-        domain = opts[:domain]
-        fail ArgumentError, 'No :domain specified' if domain.nil?
-
-        client = domain.client
-        fail ArgumentError, 'No client specified' if client.nil?
-
-        if id == :all
-          GoodData::Segment.all(opts)
-        else
-          result = client.get(domain.segments_uri + "/segments/#{CGI.escape(id)}")
-          client.create(GoodData::Segment, result.merge('domain' => domain))
-        end
-      end
-
-      # Returns list of all segments for domain
-      #
-      # @param opts [Hash] Options. Should contain :domain for which you want to get the segments.
-      # @return [Array<GoodData::Segment>] List of segments for a particular domain
-      def all(opts = {})
         project = opts[:project]
         fail 'Project has to be passed in options' unless project
         fail 'Project has to be of type GoodData::Project' unless project.is_a?(GoodData::Project)
         client = project.client
+
         results = client.get('/gdc/userGroups', params: { :project => project.pid })
-        GoodData::Helpers.get_path(results, %w(userGroups items)).map { |i| client.create(GoodData::UserGroup, i.merge('project' => project)) }
+        groups = GoodData::Helpers.get_path(results, %w(userGroups items)).map { |i| client.create(GoodData::UserGroup, i, :project => project) }
+        id == :all ? groups : groups.find { |g| g.obj_id == id }
       end
 
       def create(data)
@@ -96,11 +79,11 @@ module GoodData
       @json = json
     end
 
-    def add_user(user)
+    def add_members(user)
       UserGroup.modify_users(client, user, 'ADD', uri_modify_members)
     end
 
-    alias_method :add_users, :add_user
+    alias_method :add_member, :add_members
 
     def name
       content['name']
@@ -129,8 +112,12 @@ module GoodData
           res = client.get url
           res['userGroupMembers']['paging']['next']
           res['userGroupMembers']['items'].each do |member|
-            # y << client.create(Execution, execution, :project => project)
-            y << member
+            y << case member.keys.first
+                   when 'user'
+                     client.create(GoodData::Profile, client.get(GoodData::Helpers.get_path(member, %w(user links self))), :project => project)
+                   when 'userGroup'
+                     client.create(UserGroup, client.get(GoodData::Helpers.get_path(member, %w(userGroup links self))), :project => project)
+                 end
           end
           url = res['userGroupMembers']['paging']['next']
           puts "url='#{url}'"
@@ -139,19 +126,11 @@ module GoodData
       end
     end
 
-    # Gets Raw object URI
-    #
-    # @return [string] URI of this project role
-    # def uri
-    #   GoodData::Helpers.get_path(data, %w(links self))
-    # end
-
     def save
       if uri
         # get rid of unsupprted keys
         data = @json['userGroup']
         res = client.put(uri, { 'userGroup' => data.except('meta', 'links') })
-        binding.pry
       else
         res = client.post('/gdc/userGroups', @json)
         @json = client.get(res['uri'])
@@ -159,17 +138,17 @@ module GoodData
       self
     end
 
-    def remove_user(user)
+    def remove_members(user)
       UserGroup.modify_users(client, user, 'REMOVE', uri_modify_members)
     end
 
-    alias_method :remove_users, :remove_user
+    alias_method :remove_member, :remove_members
 
-    def set_user(user)
+    def set_members(user)
       UserGroup.modify_users(client, user, 'SET', uri_modify_members)
     end
 
-    alias_method :set_users, :set_user
+    alias_method :set_member, :set_members
 
     def uri_modify_members
       links['modifyMembers']

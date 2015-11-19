@@ -344,8 +344,8 @@ module GoodData
       result['exportArtifact']['token']
     end
 
-    def groups
-      GoodData::UserGroup.all(:project => self)
+    def user_groups(id = :all)
+      GoodData::UserGroup[id, project: self]
     end
 
     # Imports a clone into current project. The project has to be freshly
