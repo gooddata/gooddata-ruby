@@ -182,7 +182,7 @@ module GoodData
       begin
         g.save
       rescue RestClient::Conflict
-        get_group(data[:name])
+        user_groups(data[:name])
       end
     end
 
@@ -484,11 +484,6 @@ module GoodData
     # @return [String]
     def project_webdav_path
       client.project_webdav_path(:project => self)
-    end
-
-    # Gets group
-    def get_group(id)
-      UserGroup[id, :client => client, :project => self]
     end
 
     # Gets project role by its identifier
