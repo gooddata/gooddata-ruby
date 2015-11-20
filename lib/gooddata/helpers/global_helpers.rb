@@ -272,7 +272,7 @@ module GoodData
       project = GoodData::Project[p, opts]
       fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-      return client, project
+      [client, project]
     end
   end
 end

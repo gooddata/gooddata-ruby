@@ -107,7 +107,7 @@ module GoodData
       end
 
       def xexecute(expression, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client, project = GoodData.get_client_and_project(opts)
+        GoodData.get_client_and_project(opts)
 
         execute(expression, opts.merge(:extended_notation => true))
       end

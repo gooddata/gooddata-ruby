@@ -153,7 +153,7 @@ module GoodData
       def upload_multiple_data(data, project_blueprint, options = { :client => GoodData.connection, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
-        project = options[:project] || GoodData.project
+        project ||= GoodData.project
 
         manifest = {
 

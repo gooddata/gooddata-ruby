@@ -56,7 +56,7 @@ module GoodData
       end
 
       def with_deploy(dir, options = {}, &block)
-        client, project = GoodData.get_client_and_project(options)
+        _client, project = GoodData.get_client_and_project(options)
 
         GoodData.with_project(project) do
           params = options[:params].nil? ? [] : [options[:params]]

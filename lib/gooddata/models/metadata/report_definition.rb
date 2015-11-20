@@ -79,7 +79,7 @@ module GoodData
       end
 
       def find(stuff, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client, project = GoodData.get_client_and_project(opts)
+        _client, project = GoodData.get_client_and_project(opts)
 
         stuff.map do |item|
           obj = if item.is_a?(String)
