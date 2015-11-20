@@ -178,8 +178,15 @@ module GoodData
 
     def add_group(data)
       g = GoodData::UserGroup.create(data.merge(project: self))
-      g.save
+
+      begin
+        g.save
+      rescue RestClient::Conflict
+        get_group(data[:name])
+      end
     end
+
+    alias_method :create_group, :add_group
 
     # Creates a metric in a project
     #
@@ -477,6 +484,11 @@ module GoodData
     # @return [String]
     def project_webdav_path
       client.project_webdav_path(:project => self)
+    end
+
+    # Gets group
+    def get_group(id)
+      UserGroup[id, :client => client, :project => self]
     end
 
     # Gets project role by its identifier
