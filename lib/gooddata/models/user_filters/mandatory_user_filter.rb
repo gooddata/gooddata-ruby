@@ -21,11 +21,11 @@ module GoodData
         c = client(options)
         project = options[:project]
         filters = query('userFilter', nil, options)
-        count = 10_000
+        count = 1_000
         offset = 0
         user_lookup = {}
         loop do
-          result = c.get("/gdc/md/#{project.pid}/userfilters?count=1000&offset=#{offset}")
+          result = c.get("/gdc/md/#{project.pid}/userfilters?count=#{count}&offset=#{offset}")
           result['userFilters']['items'].each do |item|
             item['userFilters'].each do |f|
               user_lookup[f] = item['user']
