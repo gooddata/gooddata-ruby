@@ -15,7 +15,7 @@ module GoodData
     #
     # IS responsible for wrapping full CRUD interface
     class Resource < Object
-      extend Mixin::RestResource
+      include Mixin::RestResource
       include Mixin::ObjId
 
       # Default constructor passing all arguments to parent
