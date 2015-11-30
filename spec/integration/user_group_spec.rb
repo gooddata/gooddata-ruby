@@ -25,12 +25,11 @@ describe GoodData::UserGroup do
     @project.add_users(users)
     @users = @project.users.to_a
 
-    @group = @project.add_group(:name => @user_group_name, :description => @user_group_description)
+    @group = @project.add_user_group(:name => @user_group_name, :description => @user_group_description)
   end
 
   after(:all) do
-    @group.delete
-
+    @group && @group.delete
     @project && @project.delete
     @client.disconnect
   end
