@@ -47,7 +47,7 @@ module GoodData
         fail 'Project has to be of type GoodData::Project' unless project.is_a?(GoodData::Project)
         client = project.client
 
-        results = client.get('/gdc/userGroups', params: { :project => project.pid })
+        results = client.get('/gdc/userGroups', params: { :project => project.pid, :user => opts[:user] }.compact)
         groups = GoodData::Helpers.get_path(results, %w(userGroups items)).map { |i| client.create(GoodData::UserGroup, i, :project => project) }
         id == :all ? groups : groups.find { |g| g.obj_id == id || g.name == id }
       end
@@ -70,13 +70,15 @@ module GoodData
       #
       # @return [Hash] Created payload
       def construct_payload(users, operation)
-        users = users.kind_of?(Array) ? users : [users]
+        users = users.is_a?(Array) ? users : [users]
 
         {
           modifyMembers: {
             operation: operation,
             items: users.map do |user|
-              user.respond_to?(:uri) ? user.uri : user
+              uri = user.respond_to?(:uri) ? user.uri : user
+              fail 'You cannot add group as member of another group as of now.' if uri =~ %r{^\/gdc\/userGroups\/}
+              uri
             end
           }
         }
@@ -147,26 +149,34 @@ module GoodData
     # Gets Users with this Role
     #
     # @return [Array<GoodData::Profile>] List of users
-    def members(opts = {})
+    def members
       url = GoodData::Helpers.get_path(data, %w(links members))
-      return unless url
+      return [] unless url
       Enumerator.new do |y|
         loop do
           res = client.get url
           res['userGroupMembers']['paging']['next']
           res['userGroupMembers']['items'].each do |member|
-            y << case member.keys.first
-                   when 'user'
-                     client.create(GoodData::Profile, client.get(GoodData::Helpers.get_path(member, %w(user links self))), :project => project)
-                   when 'userGroup'
-                     client.create(UserGroup, client.get(GoodData::Helpers.get_path(member, %w(userGroup links self))), :project => project)
-                 end
+            case member.keys.first
+            when 'user'
+              y << client.create(GoodData::Profile, client.get(GoodData::Helpers.get_path(member, %w(user links self))), :project => project)
+            when 'userGroup'
+              y << client.create(UserGroup, client.get(GoodData::Helpers.get_path(member, %w(userGroup links self))), :project => project)
+            end
           end
           url = res['userGroupMembers']['paging']['next']
-          puts "url='#{url}'"
           break unless url
         end
       end
+    end
+
+    # Verifies if user is in a group or any nested group and returns true if it does
+    #
+    # @return [Boolean] Retruns true if member is member of the group or any of its members
+    def member?(a_member)
+      # could be better on API directly?
+      uri = a_member.respond_to?(:uri) ? a_member.uri : a_member
+      members.map(&:uri).include?(uri)
     end
 
     # Save user group
@@ -174,14 +184,14 @@ module GoodData
     #
     # @return [UserGroup] Created or updated user group
     def save
-      if uri
-        # get rid of unsupprted keys
-        data = json['userGroup']
-        res = client.put(uri, { 'userGroup' => data.except('meta', 'links') })
-      else
-        res = client.post('/gdc/userGroups', @json)
-        @json = client.get(res['uri'])
-      end
+      res = if uri
+              # get rid of unsupprted keys
+              data = json['userGroup']
+              client.put(uri, 'userGroup' => data.except('meta', 'links'))
+            else
+              client.post('/gdc/userGroups', @json)
+            end
+      @json = client.get(res['uri'])
       self
     end
 
@@ -201,7 +211,7 @@ module GoodData
     #
     # @param [String | User | Array<User>] Users to set as members of user group
     # @return [nil] Nothing is returned
-    def set_members(user)
+    def set_members(user) # rubocop:disable Style/AccessorMethodName
       UserGroup.modify_users(client, user, 'SET', uri_modify_members)
     end
 
@@ -212,6 +222,13 @@ module GoodData
     # @return [String] URI used for membership manipulation/management
     def uri_modify_members
       links['modifyMembers']
+    end
+
+    # Is it a user group?
+    #
+    # @return [Boolean] Return true if it is a user group
+    def user_group?
+      true
     end
 
     # Checks if two user groups are same

@@ -14,7 +14,7 @@ require 'yard'
 
 desc 'Run Rubocop'
 task :cop do
-  exec 'rubocop lib/ gooddata.gemspec Rakefile'
+  exec 'rubocop -D lib/ gooddata.gemspec Rakefile'
 end
 
 desc 'Run continuous integration test'

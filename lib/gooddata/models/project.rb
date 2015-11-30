@@ -176,7 +176,7 @@ module GoodData
 
     alias_method :create_dashboard, :add_dashboard
 
-    def add_group(data)
+    def add_user_group(data)
       g = GoodData::UserGroup.create(data.merge(project: self))
 
       begin
@@ -186,7 +186,7 @@ module GoodData
       end
     end
 
-    alias_method :create_group, :add_group
+    alias_method :create_group, :add_user_group
 
     # Creates a metric in a project
     #
@@ -351,8 +351,8 @@ module GoodData
       result['exportArtifact']['token']
     end
 
-    def user_groups(id = :all)
-      GoodData::UserGroup[id, project: self]
+    def user_groups(id = :all, options = {})
+      GoodData::UserGroup[id, options.merge(project: self)]
     end
 
     # Imports a clone into current project. The project has to be freshly
@@ -1098,7 +1098,7 @@ module GoodData
 
     alias_method :members, :users
 
-    def whitelist_users(new_users, users_list, whitelist)
+    def whitelist_users(new_users, users_list, whitelist, mode = :exclude)
       return [new_users, users_list] unless whitelist
 
       new_whitelist_proc = proc do |user|
@@ -1109,7 +1109,11 @@ module GoodData
         whitelist.any? { |wl| wl.is_a?(Regexp) ? user.login =~ wl : user.login.include?(wl) }
       end
 
-      [new_users.reject(&new_whitelist_proc), users_list.reject(&whitelist_proc)]
+      if mode == :include
+        [new_users.select(&new_whitelist_proc), users_list.select(&whitelist_proc)]
+      elsif mode == :exclude
+        [new_users.reject(&new_whitelist_proc), users_list.reject(&whitelist_proc)]
+      end
     end
 
     # Imports users
@@ -1121,6 +1125,9 @@ module GoodData
       GoodData.logger.warn("Importing users to project (#{pid})")
 
       whitelisted_new_users, whitelisted_users = whitelist_users(new_users.map(&:to_hash), users_list, options[:whitelists])
+
+      # First check that if groups are provided we have them set up
+      check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq)
 
       # conform the role on list of new users so we can diff them with the users coming from the project
       diffable_new_with_default_role = whitelisted_new_users.map do |u|
@@ -1167,6 +1174,30 @@ module GoodData
       to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
       GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
       results.concat(disable_users(to_remove))
+
+      # reassign to groups
+      mappings = new_users.map(&:to_hash).flat_map do |user|
+        groups = user[:user_group] || []
+        groups.map { |g| [user[:login], g] }
+      end
+      unless mappings.empty?
+        users_lookup = users.reduce({}) do |a, e|
+          a[e.login] = e
+          a
+        end
+        mappings.group_by { |_, g| g }.each do |g, mapping|
+          # find group + set users
+          # CARE YOU DO NOT KNOW URI
+          user_groups(g).set_members(mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri })
+        end
+        mentioned_groups = mappings.map(&:last).uniq
+        groups_to_cleanup = user_groups.reject { |g| mentioned_groups.include?(g.name) }
+        # clean all groups not mentioned with exception of whitelisted users
+        groups_to_cleanup.each do |g|
+          g.set_members(whitelist_users(g.members.map(&:to_hash), [], options[:whitelists], :include).first.map { |x| x[:uri] })
+        end
+      end
+      results
     end
 
     def disable_users(list)
@@ -1180,6 +1211,12 @@ module GoodData
         result = client.post(url, 'users' => payload)
         result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, uri: x } } }
       end
+    end
+
+    def check_groups(specified_groups)
+      groups = user_groups.map(&:name)
+      missing_groups = specified_groups - groups
+      fail "All groups have to be specified before you try to import users. Groups that are currently in project are #{groups.join(',')} and you asked for #{missing_groups.join(',')}" unless missing_groups.empty?
     end
 
     # Update user
@@ -1196,7 +1233,6 @@ module GoodData
       fail ArgumentError, "User #{user_uri} could not be aded. #{failure.first['message']}" unless failure.blank?
       res
     end
-
     alias_method :add_user, :set_user_roles
 
     # Update list of users

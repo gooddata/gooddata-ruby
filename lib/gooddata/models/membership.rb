@@ -401,6 +401,10 @@ module GoodData
       tmp
     end
 
+    def user_groups
+      project.user_groups(:all, user: obj_id)
+    end
+
     private
 
     # Sets status to 'ENABLED' or 'DISABLED'
