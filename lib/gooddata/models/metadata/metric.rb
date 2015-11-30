@@ -29,14 +29,7 @@ module GoodData
       end
 
       def create(metric, options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         if metric.is_a?(String)
           expression = metric || options[:expression]
@@ -114,14 +107,7 @@ module GoodData
       end
 
       def xexecute(expression, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = opts[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        GoodData.get_client_and_project(opts)
 
         execute(expression, opts.merge(:extended_notation => true))
       end

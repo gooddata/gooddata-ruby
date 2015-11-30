@@ -253,4 +253,26 @@ module GoodData
       end
     end
   end
+
+  class << self
+    def get_client(opts)
+      client = opts[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+
+      client
+    end
+
+    def get_client_and_project(opts)
+      client = opts[:client]
+      fail ArgumentError, 'No :client specified' if client.nil?
+
+      p = opts[:project]
+      fail ArgumentError, 'No :project specified' if p.nil?
+
+      project = GoodData::Project[p, opts]
+      fail ArgumentError, 'Wrong :project specified' if project.nil?
+
+      [client, project]
+    end
+  end
 end

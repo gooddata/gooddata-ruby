@@ -16,14 +16,7 @@ module GoodData
       # @return [MdObject] if id is a String or number single object is returned
       # @return [Array] if :all was provided as an id, list of objects should be returned. Note that this is implemented only in the subclasses. MdObject does not support this since API has no means to return list of all types of objects
       def [](id, options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, :client => client]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         fail "You have to provide an \"id\" to be searched for." unless id
         fail(NoProjectError, 'Connect to a project before searching for an object') unless project

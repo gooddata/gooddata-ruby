@@ -30,14 +30,7 @@ module GoodData
       # @param id [String] URL, ID of schedule or :all
       # @return [GoodData::Schedule|Array<GoodData::Schedule>] List of schedules
       def [](id, opts = { :client => GoodData.connection, :project => GoodData.project })
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' if c.nil?
-
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        c, project = GoodData.get_client_and_project(opts)
 
         if id == :all
           GoodData::Schedule.all(opts)
@@ -56,14 +49,7 @@ module GoodData
       # Returns list of all schedules for active project
       # @return [Array<GoodData::Schedule>] List of schedules
       def all(opts = { :client => GoodData.connection, :project => GoodData.project })
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' if c.nil?
-
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        c, project = GoodData.get_client_and_project(opts)
 
         tmp = c.get "/gdc/projects/#{project.pid}/schedules"
         tmp['schedules']['items'].map { |schedule| c.create(GoodData::Schedule, schedule, project: project) }
@@ -77,20 +63,13 @@ module GoodData
       # @param options [Hash] Optional options
       # @return [GoodData::Schedule] New GoodData::Schedule instance
       def create(process_id, trigger, executable, options = {})
-        c = client(options)
-        fail ArgumentError, 'No :client specified' if c.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        c, project = GoodData.get_client_and_project(options)
 
         fail 'Process ID has to be provided' if process_id.blank?
         fail 'Executable has to be provided' if executable.blank?
         fail 'Trigger schedule has to be provided' if trigger.blank?
 
-        schedule = c.create(GoodData::Schedule, GoodData::Helpers.deep_stringify_keys(GoodData::Helpers.deep_dup(SCHEDULE_TEMPLATE)), client: c, project: p)
+        schedule = c.create(GoodData::Schedule, GoodData::Helpers.deep_stringify_keys(GoodData::Helpers.deep_dup(SCHEDULE_TEMPLATE)), client: c, project: project)
 
         default_opts = {
           :type => 'MSETL',

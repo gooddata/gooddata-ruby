@@ -79,10 +79,7 @@ module GoodData
       end
 
       def find(stuff, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = opts[:client]
-        project = opts[:project]
-        fail ArgumentError, 'No :client specified' if client.nil?
-        fail ArgumentError, 'No :project specified' if project.nil?
+        _client, project = GoodData.get_client_and_project(opts)
 
         stuff.map do |item|
           obj = if item.is_a?(String)
@@ -137,14 +134,7 @@ module GoodData
       end
 
       def create(options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         left = Array(options[:left])
         top = Array(options[:top])
@@ -171,7 +161,7 @@ module GoodData
                 'rows' => ReportDefinition.create_part(left)
               },
               'format' => 'grid',
-              'filters' => ReportDefinition.create_filters_part(filters, :project => p)
+              'filters' => ReportDefinition.create_filters_part(filters, :project => project)
             },
             'meta' => {
               'tags' => '',

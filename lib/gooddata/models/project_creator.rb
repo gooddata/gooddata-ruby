@@ -38,15 +38,10 @@ module GoodData
 
         def migrate_datasets(spec, opts = {})
           opts = { client: GoodData.connection }.merge(opts)
-          client = opts[:client]
           dry_run = opts[:dry_run]
-          fail ArgumentError, 'No :client specified' if client.nil?
 
-          p = opts[:project]
-          fail ArgumentError, 'No :project specified' if p.nil?
+          client, project = GoodData.get_client_and_project(opts)
 
-          project = client.projects(p)
-          fail ArgumentError, 'Wrong :project specified' if project.nil?
           bp = ProjectBlueprint.new(spec)
           uri = "/gdc/projects/#{project.pid}/model/diff"
           result = client.post(uri, bp.to_wire)
