@@ -26,6 +26,7 @@ module GoodData
     include Mixin::Links
     include Mixin::ObjId
     include Mixin::MdRelations
+    include Mixin::MdGrantees
 
     class << self
       # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON

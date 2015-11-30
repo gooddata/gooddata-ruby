@@ -30,6 +30,7 @@ module GoodData
         base.send :include, GoodData::Mixin::NotAttribute
         base.send :include, GoodData::Mixin::NotExportable
         base.send :include, GoodData::Mixin::NotFact
+        base.send :include, GoodData::Mixin::NotUserGroup
         base.send :include, GoodData::Mixin::NotMetric
         base.send :include, GoodData::Mixin::NotLabel
         base.send :include, GoodData::Mixin::MdRelations

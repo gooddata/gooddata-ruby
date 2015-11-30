@@ -132,11 +132,17 @@ describe GoodData::Domain do
       old_email = user.email
       old_sso_provider = user.sso_provider || ''
       user.email = 'john.doe@gooddata.com'
-      user.sso_provider = user.sso_provider.blank? ? 'some_sso_provider' : user.sso_provider.reverse
+      user.sso_provider = 'some_sso_provider'
       @domain.update_user(user)
       updated_user = @domain.find_user_by_login(user.login)
       expect(updated_user.email).to eq 'john.doe@gooddata.com'
       expect(updated_user.sso_provider).to eq 'some_sso_provider'
+
+      updated_user.sso_provider = 'some_sso_provider'.reverse
+      @domain.update_user(updated_user)
+      updated_user = @domain.find_user_by_login(user.login)
+      expect(updated_user.sso_provider).to eq 'some_sso_provider'.reverse
+
       updated_user.email = old_email
       updated_user.sso_provider = old_sso_provider
       @domain.update_user(updated_user)
