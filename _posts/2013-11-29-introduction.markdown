@@ -32,4 +32,4 @@ gem "gooddata"
 bundle install
 {% endhighlight %}
 
-Thats it! Next, if you are new to Ruby and want to get the basics of using a Ruby Gem start with [Part I](http://sdk.gooddata.com/gooddata-ruby/get-started-part-1-setting-up). If not, skip straight ahead to [Part II](http://sdk.gooddata.com/gooddata-ruby/get-started-part-2-your-first-project) in the Tutorial.
+Thats it! Next, if you are new to Ruby and want to get the basics of using a Ruby Gem start with [Part I](http://sdk.gooddata.com/gooddata-ruby/get-started/get-started-part-1-setting-up). If not, skip straight ahead to [Part II](http://sdk.gooddata.com/gooddata-ruby/get-started/get-started-part-2-your-first-project) in the Tutorial.
