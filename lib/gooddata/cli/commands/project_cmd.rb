@@ -10,26 +10,28 @@ require 'pp'
 require_relative '../shared'
 require_relative '../../commands/project'
 
-GoodData::CLI.module_eval do
-  desc 'Manage your project'
-  arg_name 'project_command'
+module GoodData
+  module CLI
+    desc 'Manage your project'
+    arg_name 'project_command'
 
-  command :project do |c|
-    c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
-    c.command :jack_in do |jack|
+    command :project do |c|
+      c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
+      c.command :jack_in do |jack|
+        jack.action do |global_options, options, _args|
+          warn '[DEPRECATION] `gooddata project jack_in` is deprecated.  Please use `gooddata jack_in` instead.'
+          opts = options.merge(global_options)
+          GoodData::Command::Project.jack_in(opts)
+        end
+      end
+    end
+
+    desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
+    command :jack_in do |jack|
       jack.action do |global_options, options, _args|
-        warn '[DEPRECATION] `gooddata project jack_in` is deprecated.  Please use `gooddata jack_in` instead.'
         opts = options.merge(global_options)
         GoodData::Command::Project.jack_in(opts)
       end
-    end
-  end
-
-  command :jack_in do |jack|
-    desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
-    jack.action do |global_options, options, _args|
-      opts = options.merge(global_options)
-      GoodData::Command::Project.jack_in(opts)
     end
   end
 end
