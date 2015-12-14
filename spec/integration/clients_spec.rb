@@ -12,8 +12,8 @@ describe GoodData::Client do
 
   before(:all) do
     @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
-    @master_project = @client.create_project(title: 'Test project', auth_token: TOKEN)
     @domain = @client.domain('mustangs')
+    @master_project = @client.create_project(title: 'Test project', auth_token: TOKEN)
     @segment_name = "segment-#{SecureRandom.uuid}"
     @segment = @domain.create_segment(segment_id: @segment_name, master_project: @master_project)
   end
@@ -53,8 +53,7 @@ describe GoodData::Client do
   describe '#delete' do
     before(:all) do
       client_id = SecureRandom.uuid
-      @client_project = @client.create_project(title: 'client_1 project', auth_token: TOKEN)
-      @segment_client = @segment.create_client(id: "tenant_#{client_id}", project: @client_project)
+      @segment_client = @segment.create_client(id: "tenant_#{client_id}")
     end
 
     it 'Deletes particular client' do
@@ -63,11 +62,31 @@ describe GoodData::Client do
       s.delete
       expect(@segment.clients.count).to eq 0
       @segment_client = nil
-      @client_project = nil
     end
 
     after(:all) do
-      @client_project && @client_project.delete
+      @segment_client && @segment_client.delete
+    end
+  end
+
+  describe '#delete' do
+    before(:all) do
+      client_id = SecureRandom.uuid
+      @client_project = @client.create_project(title: 'client_1 project', auth_token: TOKEN)
+      @segment_client = @segment.create_client(id: "tenant_#{client_id}", project: @client_project)
+    end
+
+    it 'Deletes particular client. Project is cleaned up as well' do
+      expect(@segment.clients.count).to eq 1
+      s = @segment.clients(@segment_client.uri)
+      s.delete
+      expect(@segment.clients.count).to eq 0
+      expect(@client_project.reload!.state).to eq :deleted
+      @segment_client = nil
+    end
+
+    after(:all) do
+      @segment_client && segment_client.delete
     end
   end
 

@@ -124,7 +124,7 @@ module GoodData
         project.save
         # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
         while project.state.to_s != 'enabled'
-          if project.state.to_s == 'deleted'
+          if project.deleted?
             # if project is switched to deleted state, fail. This is usually problem of creating a template which is invalid.
             fail 'Project was marked as deleted during creation. This usually means you were trying to create from template and it failed.'
           end
@@ -408,8 +408,15 @@ module GoodData
 
     # Deletes project
     def delete
-      fail "Project '#{title}' with id #{uri} is already deleted" if state == :deleted
+      fail "Project '#{title}' with id #{uri} is already deleted" if deleted?
       client.delete(uri)
+    end
+
+    # Returns true if project is in deleted state
+    #
+    # @return [Boolean] Returns true if object deleted. False otherwise.
+    def deleted?
+      state == :deleted
     end
 
     # Helper for getting rid of all data in the project

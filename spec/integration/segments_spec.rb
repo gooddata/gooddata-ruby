@@ -27,8 +27,8 @@ describe GoodData::Segment do
   end
 
   after(:all) do
+    @master_project.delete if @master_project
     @client.disconnect
-    @master_project.delete
   end
 
   describe '#[]' do
@@ -83,8 +83,23 @@ describe GoodData::Segment do
         expect(@segment.clients.count).to eq 1
       ensure
         segment_client && segment_client.delete
-        client_project && client_project.delete
       end
     end
   end
+
+  describe '#provision_client_projects' do
+    it 'can create a new client in a segment without project and then provision' do
+      begin
+        segment_client = @segment.create_client(id: 'tenant_1')
+        expect(segment_client).to be_an_instance_of(GoodData::Client)
+        expect(@segment.clients.count).to eq 1
+        @domain.synchronize_clients
+        @domain.provision_client_projects
+        expect(@domain.segments.flat_map { |s| s.clients.to_a }.all?(&:project?)).to be_truthy
+      ensure
+        segment_client && segment_client.delete
+      end
+    end
+  end
+
 end
