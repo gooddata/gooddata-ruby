@@ -44,8 +44,12 @@ module GoodData
             md_class = GoodData::Dashboard
           when 'report'
             md_class = GoodData::Report
+          when 'attributeDisplayForm'
+            md_class = GoodData::Label
           when 'reportDefinition'
             md_class = GoodData::ReportDefinition
+          when 'dataSet'
+            md_class = GoodData::Dataset
           else
             md_class = self
           end
