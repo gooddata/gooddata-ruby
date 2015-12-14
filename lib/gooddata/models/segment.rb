@@ -156,6 +156,9 @@ module GoodData
       self
     end
 
+    # Runs async process that walks thorugh segments and provisions projects if necessary.
+    #
+    # @return [Array] Returns array of results
     def synchronize_clients
       sync_uri = SYNCHRONIZE_URI % [domain.obj_id, id]
       res = client.post sync_uri, nil

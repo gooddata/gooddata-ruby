@@ -111,7 +111,23 @@ module GoodData
     #
     # @return [GoodData::Project] Returns the instance of the client's project
     def project
-      client.projects(project_uri)
+      client.projects(project_uri) if project?
+    end
+
+    # Returns boolean if client has a project provisioned
+    #
+    # @return [Boolean] Returns true if client has a project provisioned. False otherwise
+    def project?
+      project_uri != nil
+    end
+
+    # Reloads the client from the URI
+    #
+    # @return [GoodData::Client] Returns the updated client object
+    def reload!
+      res = client.get(uri)
+      @json = res
+      self
     end
 
     # Segment id setter which this client is connected to.
@@ -155,6 +171,7 @@ module GoodData
     #
     # @return [GoodData::Client] Segment instance
     def delete
+      project.delete if project && !project.deleted?
       client.delete(uri) if uri
     end
   end

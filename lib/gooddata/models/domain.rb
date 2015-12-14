@@ -356,6 +356,40 @@ module GoodData
       profiles.map { |p| member?(p, list) }
     end
 
+    # Returns uri for segments on the domain. This will be removed soon. It is here that for segments the "account" portion of the URI was removed. And not for the rest
+    #
+    # @return [String] Uri of the segments
+    def segments_uri
+      "/gdc/domains/#{name}"
+    end
+
+    # Calls Segment#synchronize_clients on all segments and concatenates the results
+    #
+    # @return [Array] Returns array of results
+    def synchronize_clients
+      segments.flat_map(&:synchronize_clients)
+    end
+
+    # Runs async process that walks through segments and provisions projects if necessary.
+    #
+    # @return [Enumerator] Returns Enumerator of results
+    def provision_client_projects
+      res = client.post(segments_uri + '/provisionClientProjects', nil)
+      res = client.poll_on_code(res['asyncTask']['links']['poll'])
+      klass = Struct.new('ProvisioningResult', :id, :status, :project_uri)
+      Enumerator.new do |y|
+        uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))
+        loop do
+          result = client.get(uri)
+          (GoodData::Helpers.get_path(result, %w(clientProjectProvisioningResultDetails items)) || []).each do |item|
+            y << klass.new(item['id'], item['status'], item['project'])
+          end
+          uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResultDetails paging next))
+          break if uri.nil?
+        end
+      end
+    end
+
     # Update user in domain
     #
     # @param opts [Hash] Data of the user to be updated
@@ -389,13 +423,6 @@ module GoodData
     # @return [String] Uri of the segments
     def uri
       "/gdc/account/domains/#{name}"
-    end
-
-    # Returns uri for segments on the domain. This will be removed soon. It is here that for segments the "account" portion of the URI was removed. And not for the rest
-    #
-    # @return [String] Uri of the segments
-    def segments_uri
-      "/gdc/domains/#{name}"
     end
 
     private
