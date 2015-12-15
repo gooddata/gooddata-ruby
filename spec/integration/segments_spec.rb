@@ -23,7 +23,7 @@ describe GoodData::Segment do
   end
 
   after(:each) do
-    @segment && @segment.delete
+    @segment && @segment.delete(force: true)
   end
 
   after(:all) do
@@ -102,4 +102,30 @@ describe GoodData::Segment do
     end
   end
 
+  describe '#update_clients' do
+    it 'can create a new client in a segment without project and then provision' do
+      begin
+        uuid_2 = SecureRandom.uuid
+        master_project_2 = @client.create_project(title: "Test MASTER project for #{uuid_2}", auth_token: TOKEN)
+        segment_name_2 = "segment-#{uuid_2}"
+        segment_2 = @domain.create_segment(segment_id: segment_name_2, master_project: master_project_2)
+        proj = Proc.new { @client.create_project(title: "Test project for #{@uuid}", auth_token: TOKEN) }
+        data = [{id: 'client_777', segment: segment_name_2, project: proj.call.uri},
+                {id: 'client_888', segment: @segment_name, project: proj.call.uri}]
+        res = @domain.update_clients(data)
+        expect(@domain.segments.map(&:id)).to include(@segment.id, segment_2.id)
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include('client_777', 'client_888')
+
+        data = [{id: 'client_999', segment: segment_name_2, project: proj.call.uri},
+                {id: 'client_000', segment: @segment_name, project: proj.call.uri}]
+        res = @domain.update_clients(data)
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include('client_777', 'client_888', 'client_000', 'client_999')
+        res = @domain.update_clients(data, delete_extra: true)
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include('client_000', 'client_999')
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).not_to include('client_777', 'client_888')
+      ensure
+        segment_2.delete(force: true) if segment_2
+      end
+    end
+  end
 end

@@ -390,6 +390,29 @@ module GoodData
       end
     end
 
+    def update_clients(data, options = {})
+      payload = data.map do |datum|
+        {
+          :client => {
+            :id => datum[:id],
+            :segment => segments_uri + '/segments/' + datum[:segment],
+            :project => datum[:project]
+          }
+        }
+      end
+      if options[:delete_extra] == true
+        res = client.post(segments_uri + '/updateClients?deleteExtra=true', updateClients: { items: payload })
+      else
+        res = client.post(segments_uri + '/updateClients', updateClients: { items: payload })
+      end
+      data = GoodData::Helpers.get_path(res, ['updateClientsResponse'])
+      if data
+        data.flat_map { |k, v| v.map { |h| GoodData::Helpers.symbolize_keys(h.merge('type' => k)) } }
+      else
+        []
+      end
+    end
+
     # Update user in domain
     #
     # @param opts [Hash] Data of the user to be updated

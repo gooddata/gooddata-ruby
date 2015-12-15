@@ -174,9 +174,19 @@ module GoodData
     # Deletes a segment instance on the API.
     #
     # @return [GoodData::Segment] Segment instance
-    def delete
+    def delete(options = {})
+      force = options[:force] == true ? true : false
+      clients.peach(&:delete) if force
       client.delete(uri) if uri
       self
+    rescue RestClient::BadRequest => e
+      payload = GoodData::Helpers.parse_http_exception(e)
+      case GoodData::Helpers.get_path(payload)
+      when 'gdc.c4.conflict.domain.segment.contains_clients'
+        throw SegmentNotEmpty
+      else
+        raise e
+      end
     end
   end
 end
