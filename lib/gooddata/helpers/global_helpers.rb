@@ -242,6 +242,10 @@ module GoodData
         end
       end
 
+      def parse_http_exception(e)
+        JSON.parse(e.response)
+      end
+
       # Creates a matrix with zeroes in all places. It is implemented as an Array of Arrays. First rows then columns.
       #
       # @param [Integer] m Number of rows
