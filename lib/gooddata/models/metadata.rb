@@ -60,7 +60,7 @@ module GoodData
       # @param block [Proc] Block that receives the object state as a JSON string and mapping pair and expects a new object state as a JSON string back
       # @return [GoodData::MdObject]
       def replace(obj, mapping, &block)
-        json = mapping.reduce(MultiJson.dump(obj.to_json)) do |a, e|
+        json = mapping.reduce(obj.to_json) do |a, e|
           obj_a, obj_b = e
           uri_what = obj_a.respond_to?(:uri) ? obj_a.uri : obj_a
           uri_for_what = obj_b.respond_to?(:uri) ? obj_b.uri : obj_b
