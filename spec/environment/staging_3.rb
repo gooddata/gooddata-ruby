@@ -11,7 +11,7 @@ module GoodData
 
       set_const :DEFAULT_USERNAME, "svarovsky@gooddata.com"
       set_const :TEST_USERNAME, "john.doe@gooddata.com"
-      set_const :DEFAULT_PASSWORD, "jindrisska"
+      set_const :DEFAULT_PASSWORD, GoodData::Helpers.decrypt('9m5Fe6WIxtkoG9vi2CanKm/CmZMLTpGYzr2duXh75m8=\n', ENV['GD_SPEC_PASSWORD'])
       set_const :DEFAULT_DOMAIN, 'svarovsky-test'
       set_const :DEFAULT_USER_URL, '/gdc/account/profile/6e123be5a53dd863df5cf280fdb9c1fd'
       set_const :DEFAULT_SERVER, 'https://staging3.getgooddata.com'
