@@ -261,7 +261,7 @@ module GoodData
       # encrypts data with the given key. returns a binary data with the
       # unhashed random iv in the first 16 bytes
       def encrypt(data, key)
-        cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
         cipher.encrypt
         cipher.key = key = Digest::SHA256.digest(key)
         random_iv = cipher.random_iv
@@ -282,7 +282,7 @@ module GoodData
         cipher.decrypt
         cipher.key = cipher_key = Digest::SHA256.digest(key)
         random_iv = data[0..15] # extract iv from first 16 bytes
-        data = data[16..data.size-1]
+        data = data[16..data.size - 1]
         cipher.iv = Digest::SHA256.digest(random_iv + cipher_key)[0..15]
         begin
           decrypted = cipher.update(data)
