@@ -13,7 +13,6 @@ describe GoodData::Client do
   before(:all) do
     @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
     @domain = @client.domain('mustangs')
-    binding.pry
     @master_project = @client.create_project(title: 'Test project', auth_token: TOKEN)
     @segment_name = "segment-#{SecureRandom.uuid}"
     @segment = @domain.create_segment(segment_id: @segment_name, master_project: @master_project)

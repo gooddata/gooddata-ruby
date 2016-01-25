@@ -43,7 +43,7 @@ module GoodData
           client, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
-          uri = "/gdc/projects/#{project.pid}/model/diff"
+          uri = "/gdc/projects/#{project.pid}/model/diff?includeGrain=true"
           result = client.post(uri, bp.to_wire)
 
           link = result['asyncTask']['link']['poll']
