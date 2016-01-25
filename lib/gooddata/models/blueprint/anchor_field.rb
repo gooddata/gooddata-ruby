@@ -16,6 +16,20 @@ module GoodData
         true
       end
 
+      # Returns true if grain is defined
+      #
+      # @return [Boolean] Returns true if grain is defined on the anchor
+      def grain?
+        !data[:grain].nil?
+      end
+
+      # Returns grain definition if the anchor has it. Nil otherwise
+      #
+      # @return [Array<Hash>] Returns grain definitions
+      def grain
+        data[:grain]
+      end
+
       # Removes all the labels from the anchor. This is a typical operation that people want to perform
       #
       # @return [GoodData::Model::ProjectBlueprint] Returns changed blueprint

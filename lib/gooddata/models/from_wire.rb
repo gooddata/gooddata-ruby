@@ -74,6 +74,14 @@ module GoodData
           a[:title] = attribute['title']
           a[:description] = attribute['description']
           a[:folder] = attribute['folder']
+          a[:grain] = (attribute['grain'] || []).map do |g|
+            case g.keys.first.to_sym
+            when :dateDimension
+              { date: g.values.first }
+            else
+              Helpers.symbolize_keys(g)
+            end
+          end
         end
         [attribute] + pl + rl
       end
