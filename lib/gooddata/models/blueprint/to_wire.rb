@@ -54,12 +54,14 @@ module GoodData
           a[:attribute][:folder] = attribute[:folder] || dataset[:folder] || GoodData::Model.title(dataset)
           a[:attribute][:labels] = labels unless labels.empty?
           a[:attribute][:description] = GoodData::Model.description(attribute) if GoodData::Model.description(attribute)
-          a[:attribute][:grain] = (attribute[:grain] || []).map do |g|
-            case g.keys.first
-            when :date
-              { dateDimension: g.values.first }
-            else
-              g
+          if attribute[:grain]
+            a[:attribute][:grain] = attribute[:grain].map do |g|
+              case g.keys.first
+              when :date
+                { dateDimension: g.values.first }
+              else
+                g
+              end
             end
           end
           default = ls.find { |l| l[:default_label] }
