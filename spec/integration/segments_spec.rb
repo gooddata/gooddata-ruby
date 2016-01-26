@@ -109,20 +109,30 @@ describe GoodData::Segment do
         master_project_2 = @client.create_project(title: "Test MASTER project for #{uuid_2}", auth_token: TOKEN)
         segment_name_2 = "segment-#{uuid_2}"
         segment_2 = @domain.create_segment(segment_id: segment_name_2, master_project: master_project_2)
-        proj = Proc.new { @client.create_project(title: "Test project for #{@uuid}", auth_token: TOKEN) }
-        data = [{id: 'client_777', segment: segment_name_2, project: proj.call.uri},
-                {id: 'client_888', segment: @segment_name, project: proj.call.uri}]
+
+        client_1 = "client-#{SecureRandom.uuid}"
+        client_2 = "client-#{SecureRandom.uuid}"
+        data = [{id: client_1, segment: segment_name_2 },
+                {id: client_2, segment: @segment_name }]
         res = @domain.update_clients(data)
         expect(@domain.segments.map(&:id)).to include(@segment.id, segment_2.id)
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include('client_777', 'client_888')
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include(client_1, client_2)
 
-        data = [{id: 'client_999', segment: segment_name_2, project: proj.call.uri},
-                {id: 'client_000', segment: @segment_name, project: proj.call.uri}]
+        client_3 = "client-#{SecureRandom.uuid}"
+        client_4 = "client-#{SecureRandom.uuid}"
+        data = [{id: client_3, segment: segment_name_2 },
+                {id: client_4, segment: @segment_name }]
         res = @domain.update_clients(data)
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include('client_777', 'client_888', 'client_000', 'client_999')
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include(client_1, client_2, client_3, client_4)
+
+        # bring the projects
+        @domain.synchronize_clients
+        @domain.provision_client_projects
+        projects_to_delete = @domain.segments.pmapcat {|s| s.clients.to_a }.select { |c| [client_1, client_2].include?(c.id) }.map(&:project)
         res = @domain.update_clients(data, delete_extra: true)
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include('client_000', 'client_999')
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).not_to include('client_777', 'client_888')
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include(client_3, client_4)
+        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).not_to include(client_1, client_2)
+        expect(projects_to_delete.pmap(&:reload!).map(&:state)).to eq [:deleted, :deleted]
       ensure
         segment_2.delete(force: true) if segment_2
       end
