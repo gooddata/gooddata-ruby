@@ -18,21 +18,27 @@ GoodData::CLI.module_eval do
       password = global_options[:password]
       fail ArgumentError, 'No password specified' if password.nil? || password.empty?
 
+      client = GoodData.connect username, password, server: global_options[:server]
+
       pid = global_options[:project_id]
-      fail ArgumentError, 'No project specified' if pid.nil?
-
-      client = GoodData.connect username, password
-
-      proj = GoodData::Project[pid, :client => client]
-
-      GoodData.with_project(proj, :client => client) do |project|
-        fail ArgumentError, 'Wrong project specified' if project.nil?
-
+      if pid.nil?
         puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
         binding.pry(:quiet => true, # rubocop:disable Lint/Debugger
                     :prompt => [proc do |_target_self, _nest_level, _pry|
-                      'sdk_live_session: '
-                    end])
+          'sdk_live_session: '
+        end])
+      else
+        proj = GoodData::Project[pid, :client => client]
+
+        GoodData.with_project(proj, :client => client) do |project|
+          fail ArgumentError, 'Wrong project specified' if project.nil?
+
+          puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
+          binding.pry(:quiet => true, # rubocop:disable Lint/Debugger
+                      :prompt => [proc do |_target_self, _nest_level, _pry|
+            'sdk_live_session: '
+          end])
+        end
       end
       client.disconnect
     end
