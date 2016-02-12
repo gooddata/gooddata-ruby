@@ -14,7 +14,10 @@ require 'yard'
 
 require 'rubocop/rake_task'
 
-RuboCop::RakeTask.new
+desc 'Run RuboCop'
+RuboCop::RakeTask.new(:rubocop) do |task|
+  task.patterns = ['lib/**/*.rb']
+end
 
 desc 'Run continuous integration test'
 task :ci do
