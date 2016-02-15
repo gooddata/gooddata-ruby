@@ -226,6 +226,7 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(r.locked?).to eq true
     r.unlock!
     expect(r.locked?).to eq false
+    r.delete
   end
 
   it "should be able to purge report from older revisions" do

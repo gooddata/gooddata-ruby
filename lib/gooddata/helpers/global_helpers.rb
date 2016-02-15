@@ -292,7 +292,6 @@ module GoodData
           return nil
         end
 
-        puts "DECRYPTED: #{decrypted}"
         decrypted
       end
     end
