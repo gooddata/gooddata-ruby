@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_development_dependency 'bundler', '>= 1.10.6'
-  s.add_development_dependency 'coveralls', '~> 0.8', '>= 0.8.2'
   s.add_development_dependency 'debase', '~> 0.1', '>= 0.1.7' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'guard', '~> 2.13', '>= 2.13.0'
   s.add_development_dependency 'guard-rspec', '~> 4.6', '>= 4.6.4'

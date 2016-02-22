@@ -1,18 +1,17 @@
 # gooddata-ruby
 
-As of February 22, 2016  1:37pm. 85 total
+As of February 22, 2016  1:54pm. 83 total
 
 ## Summary
-* 63 MIT
+* 62 MIT
 * 6 Apache 2.0
 * 4 ruby
 * 3 unknown
 * 3 BSD
-* 1 GPL-2.0, LGPL-2.1, MPL-1.1, New BSD, Simplified BSD
-* 1 Artistic 2.0, GPL-2, MIT
-* 1 GPL-2
-* 1 GNU GPL v2, MIT, Perl Artistic v2
 * 1 2-clause BSDL
+* 1 GPL-2.0, LGPL-2.1, MPL-1.1, New BSD, Simplified BSD
+* 1 GNU GPL v2, MIT, Perl Artistic v2
+* 1 Artistic 2.0, GPL-2, MIT
 * 1 Simplified BSD
 
 
@@ -137,14 +136,6 @@ unknown manually approved
 
   >> puts Color.red "This is red" # but this part is mostly untested
 
-
-<a name="coveralls"></a>
-### <a href="https://coveralls.io">coveralls</a> v0.8.10 (development)
-#### A Ruby implementation of the Coveralls API.
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
-
-A Ruby implementation of the Coveralls API.
 
 <a name="crack"></a>
 ### <a href="http://github.com/jnunemaker/crack">crack</a> v0.4.3
@@ -734,18 +725,6 @@ Default HTML formatter for SimpleCov code coverage tool for ruby 1.9+
 <a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A simple DSL for gathering options and parsing the command line
-
-<a name="term-ansicolor"></a>
-### <a href="http://flori.github.com/term-ansicolor">term-ansicolor</a> v1.3.2
-#### Ruby library that colors strings using ANSI escape sequences
-
-GPL-2 manually approved
-
->
-
-><cite>  2016-02-22</cite>
-
-This library uses ANSI escape sequences to control the attributes of terminal output
 
 <a name="terminal-table"></a>
 ### <a href="https://github.com/tj/terminal-table">terminal-table</a> v1.5.2
