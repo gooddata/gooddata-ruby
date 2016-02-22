@@ -1,6 +1,6 @@
 # gooddata-ruby
 
-As of February 22, 2016  1:23pm. 85 total
+As of February 22, 2016  1:37pm. 85 total
 
 ## Summary
 * 63 MIT
@@ -16,95 +16,6 @@ As of February 22, 2016  1:23pm. 85 total
 * 1 Simplified BSD
 
 
-## Action
-85 *unapproved*
-
-* <a href="#rake">rake</a> (unknown)
-* <a href="#ZenTest">ZenTest</a> (MIT)
-* <a href="#addressable">addressable</a> (Apache 2.0)
-* <a href="#ast">ast</a> (MIT)
-* <a href="#parser">parser</a> (MIT)
-* <a href="#astrolabe">astrolabe</a> (MIT)
-* <a href="#json">json</a> (ruby)
-* <a href="#mini_portile2">mini_portile2</a> (MIT)
-* <a href="#nokogiri">nokogiri</a> (MIT)
-* <a href="#aws-sdk-v1">aws-sdk-v1</a> (Apache 2.0)
-* <a href="#aws-sdk">aws-sdk</a> (Apache 2.0)
-* <a href="#bundler">bundler</a> (unknown)
-* <a href="#coderay">coderay</a> (MIT)
-* <a href="#colored">colored</a> (unknown)
-* <a href="#unf_ext">unf_ext</a> (MIT)
-* <a href="#unf">unf</a> (2-clause BSDL)
-* <a href="#domain_name">domain_name</a> (GPL-2.0, LGPL-2.1, MPL-1.1, New BSD, Simplified BSD)
-* <a href="#http-cookie">http-cookie</a> (MIT)
-* <a href="#mime-types">mime-types</a> (Artistic 2.0, GPL-2, MIT)
-* <a href="#netrc">netrc</a> (MIT)
-* <a href="#rest-client">rest-client</a> (MIT)
-* <a href="#docile">docile</a> (MIT)
-* <a href="#simplecov-html">simplecov-html</a> (MIT)
-* <a href="#simplecov">simplecov</a> (MIT)
-* <a href="#tins">tins</a> (MIT)
-* <a href="#term-ansicolor">term-ansicolor</a> (GPL-2)
-* <a href="#thor">thor</a> (MIT)
-* <a href="#coveralls">coveralls</a> (MIT)
-* <a href="#safe_yaml">safe_yaml</a> (MIT)
-* <a href="#crack">crack</a> (MIT)
-* <a href="#debase-ruby_core_source">debase-ruby_core_source</a> (MIT)
-* <a href="#debase">debase</a> (MIT)
-* <a href="#diff-lcs">diff-lcs</a> (GNU GPL v2, MIT, Perl Artistic v2)
-* <a href="#erubis">erubis</a> (MIT)
-* <a href="#multipart-post">multipart-post</a> (MIT)
-* <a href="#faraday">faraday</a> (MIT)
-* <a href="#faraday_middleware">faraday_middleware</a> (MIT)
-* <a href="#ffi">ffi</a> (BSD)
-* <a href="#formatador">formatador</a> (MIT)
-* <a href="#gli">gli</a> (Apache 2.0)
-* <a href="#highline">highline</a> (ruby)
-* <a href="#json_pure">json_pure</a> (ruby)
-* <a href="#multi_json">multi_json</a> (MIT)
-* <a href="#parseconfig">parseconfig</a> (MIT)
-* <a href="#pmap">pmap</a> (Apache 2.0)
-* <a href="#method_source">method_source</a> (MIT)
-* <a href="#slop">slop</a> (MIT)
-* <a href="#pry">pry</a> (MIT)
-* <a href="#hashie">hashie</a> (MIT)
-* <a href="#restforce">restforce</a> (MIT)
-* <a href="#rubyzip">rubyzip</a> (Simplified BSD)
-* <a href="#xml-simple">xml-simple</a> (ruby)
-* <a href="#salesforce_bulk_query">salesforce_bulk_query</a> (BSD)
-* <a href="#terminal-table">terminal-table</a> (MIT)
-* <a href="#thread_safe">thread_safe</a> (Apache 2.0)
-* <a href="#gooddata">gooddata</a> (BSD)
-* <a href="#rb-fsevent">rb-fsevent</a> (MIT)
-* <a href="#rb-inotify">rb-inotify</a> (MIT)
-* <a href="#listen">listen</a> (MIT)
-* <a href="#lumberjack">lumberjack</a> (MIT)
-* <a href="#nenv">nenv</a> (MIT)
-* <a href="#shellany">shellany</a> (MIT)
-* <a href="#notiffany">notiffany</a> (MIT)
-* <a href="#guard">guard</a> (MIT)
-* <a href="#guard-compat">guard-compat</a> (MIT)
-* <a href="#rspec-support">rspec-support</a> (MIT)
-* <a href="#rspec-core">rspec-core</a> (MIT)
-* <a href="#rspec-expectations">rspec-expectations</a> (MIT)
-* <a href="#rspec-mocks">rspec-mocks</a> (MIT)
-* <a href="#rspec">rspec</a> (MIT)
-* <a href="#guard-rspec">guard-rspec</a> (MIT)
-* <a href="#hashdiff">hashdiff</a> (MIT)
-* <a href="#multi_xml">multi_xml</a> (MIT)
-* <a href="#httparty">httparty</a> (MIT)
-* <a href="#license_finder">license_finder</a> (MIT)
-* <a href="#powerpack">powerpack</a> (MIT)
-* <a href="#rainbow">rainbow</a> (MIT)
-* <a href="#rake-notes">rake-notes</a> (MIT)
-* <a href="#redcarpet">redcarpet</a> (MIT)
-* <a href="#ruby-progressbar">ruby-progressbar</a> (MIT)
-* <a href="#rubocop">rubocop</a> (MIT)
-* <a href="#ruby-debug-ide">ruby-debug-ide</a> (MIT)
-* <a href="#webmock">webmock</a> (MIT)
-* <a href="#yard">yard</a> (MIT)
-* <a href="#yard-rspec">yard-rspec</a> (MIT)
-
 
 ## Items
 
@@ -113,7 +24,7 @@ As of February 22, 2016  1:23pm. 85 total
 ### <a href="https://github.com/seattlerb/zentest">ZenTest</a> v4.11.0 (development)
 #### ZenTest provides 4 different tools: zentest, unit_diff, autotest, and multiruby
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 ZenTest provides 4 different tools: zentest, unit_diff, autotest, and
 multiruby.
@@ -141,7 +52,7 @@ installed versions.
 ### <a href="https://github.com/sporkmonger/addressable">addressable</a> v2.3.8
 #### URI Implementation
 
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> _**unapproved**_
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> whitelisted
 
 Addressable is a replacement for the URI implementation that is part of
 Ruby's standard library. It more closely conforms to the relevant RFCs and
@@ -152,7 +63,7 @@ adds support for IRIs and URI templates.
 ### <a href="https://whitequark.github.io/ast/">ast</a> v2.1.0
 #### A library for working with Abstract Syntax Trees.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A library for working with Abstract Syntax Trees.
 
@@ -160,7 +71,7 @@ A library for working with Abstract Syntax Trees.
 ### <a href="https://github.com/yujinakayama/astrolabe">astrolabe</a> v1.3.1
 #### An object-oriented AST extension for Parser
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 An object-oriented AST extension for Parser
 
@@ -168,7 +79,7 @@ An object-oriented AST extension for Parser
 ### <a href="http://aws.amazon.com/sdkforruby">aws-sdk</a> v1.66.0
 #### AWS SDK for Ruby V1
 
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> _**unapproved**_
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> whitelisted
 
 Version 1 of the AWS SDK for Ruby. Available as both `aws-sdk` and `aws-sdk-v1`.
 Use `aws-sdk-v1` if you want to load v1 and v2 of the Ruby SDK in the same
@@ -178,7 +89,7 @@ application.
 ### <a href="http://aws.amazon.com/sdkforruby">aws-sdk-v1</a> v1.66.0
 #### AWS SDK for Ruby V1
 
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> _**unapproved**_
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> whitelisted
 
 Version 1 of the AWS SDK for Ruby. Available as both `aws-sdk` and `aws-sdk-v1`.
 Use `aws-sdk-v1` if you want to load v1 and v2 of the Ruby SDK in the same
@@ -188,7 +99,11 @@ application.
 ### bundler v1.11.2 (development)
 #### 
 
-unknown _**unapproved**_
+unknown manually approved
+
+>
+
+><cite>  2016-02-22</cite>
 
 
 
@@ -196,7 +111,7 @@ unknown _**unapproved**_
 ### <a href="http://coderay.rubychan.de">coderay</a> v1.1.0
 #### Fast syntax highlighting for selected languages.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Fast and easy syntax highlighting for selected languages, written in Ruby. Comes with RedCloth integration and LOC counter.
 
@@ -204,7 +119,11 @@ Fast and easy syntax highlighting for selected languages, written in Ruby. Comes
 ### <a href="http://github.com/defunkt/colored">colored</a> v1.2
 #### Add some color to your life.
 
-unknown _**unapproved**_
+unknown manually approved
+
+>
+
+><cite>  2016-02-22</cite>
 
   >> puts "this is red".red
  
@@ -223,7 +142,7 @@ unknown _**unapproved**_
 ### <a href="https://coveralls.io">coveralls</a> v0.8.10 (development)
 #### A Ruby implementation of the Coveralls API.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A Ruby implementation of the Coveralls API.
 
@@ -231,7 +150,7 @@ A Ruby implementation of the Coveralls API.
 ### <a href="http://github.com/jnunemaker/crack">crack</a> v0.4.3
 #### Really simple JSON and XML parsing, ripped from Merb and Rails.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Really simple JSON and XML parsing, ripped from Merb and Rails.
 
@@ -239,7 +158,7 @@ Really simple JSON and XML parsing, ripped from Merb and Rails.
 ### <a href="https://github.com/denofevil/debase">debase</a> v0.2.1 (development)
 #### debase is a fast implementation of the standard Ruby debugger debug.rb for Ruby 2.0
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
     debase is a fast implementation of the standard Ruby debugger debug.rb for Ruby 2.0.
     It is implemented by utilizing a new Ruby TracePoint class. The core component
@@ -251,7 +170,7 @@ Really simple JSON and XML parsing, ripped from Merb and Rails.
 ### <a href="http://github.com/os97673/debase-ruby_core_source">debase-ruby_core_source</a> v0.8.1
 #### Provide Ruby core source files
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Provide Ruby core source files for C extensions that need them.
 
@@ -259,7 +178,7 @@ Provide Ruby core source files for C extensions that need them.
 ### <a href="http://diff-lcs.rubyforge.org/">diff-lcs</a> v1.2.5
 #### Diff::LCS computes the difference between two Enumerable sequences using the McIlroy-Hunt longest common subsequence (LCS) algorithm
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a>, Perl Artistic v2, GNU GPL v2 _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a>, Perl Artistic v2, GNU GPL v2 whitelisted
 
 Diff::LCS computes the difference between two Enumerable sequences using the
 McIlroy-Hunt longest common subsequence (LCS) algorithm. It includes utilities
@@ -278,7 +197,7 @@ We are happy to report that this issue has been resolved.
 ### <a href="https://ms-ati.github.io/docile/">docile</a> v1.1.5
 #### Docile keeps your Ruby DSLs tame and well-behaved
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Docile turns any Ruby object into a DSL. Especially useful with the Builder pattern.
 
@@ -286,7 +205,11 @@ Docile turns any Ruby object into a DSL. Especially useful with the Builder patt
 ### <a href="https://github.com/knu/ruby-domain_name">domain_name</a> v0.5.25
 #### Domain Name manipulation library for Ruby
 
-<a href="http://opensource.org/licenses/bsd-license">Simplified BSD</a>, <a href="http://opensource.org/licenses/BSD-3-Clause">New BSD</a>, MPL-1.1, GPL-2.0, LGPL-2.1 _**unapproved**_
+<a href="http://opensource.org/licenses/bsd-license">Simplified BSD</a>, <a href="http://opensource.org/licenses/BSD-3-Clause">New BSD</a>, MPL-1.1, GPL-2.0, LGPL-2.1 manually approved
+
+>
+
+><cite>  2016-02-22</cite>
 
 This is a Domain Name manipulation library for Ruby.
 
@@ -298,7 +221,7 @@ Suffix List.
 ### <a href="http://www.kuwata-lab.com/erubis/">erubis</a> v2.7.0
 #### a fast and extensible eRuby implementation which supports multi-language
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
   Erubis is an implementation of eRuby and has the following features:
 
@@ -318,7 +241,7 @@ Suffix List.
 ### <a href="https://github.com/lostisland/faraday">faraday</a> v0.9.2
 #### HTTP/REST API client library.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 
 
@@ -326,7 +249,7 @@ Suffix List.
 ### <a href="https://github.com/lostisland/faraday_middleware">faraday_middleware</a> v0.10.0
 #### Various middleware for Faraday
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Various middleware for Faraday
 
@@ -334,7 +257,7 @@ Various middleware for Faraday
 ### <a href="http://wiki.github.com/ffi/ffi">ffi</a> v1.9.10
 #### Ruby FFI
 
-<a href="http://en.wikipedia.org/wiki/BSD_licenses#4-clause_license_.28original_.22BSD_License.22.29">BSD</a> _**unapproved**_
+<a href="http://en.wikipedia.org/wiki/BSD_licenses#4-clause_license_.28original_.22BSD_License.22.29">BSD</a> whitelisted
 
 Ruby FFI library
 
@@ -342,7 +265,7 @@ Ruby FFI library
 ### <a href="http://github.com/geemus/formatador">formatador</a> v0.2.5
 #### Ruby STDOUT text formatting
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 STDOUT text formatting
 
@@ -350,7 +273,7 @@ STDOUT text formatting
 ### <a href="http://davetron5000.github.com/gli">gli</a> v2.13.4
 #### Build command-suite CLI apps that are awesome.
 
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> _**unapproved**_
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> whitelisted
 
 Build command-suite CLI apps that are awesome.  Bootstrap your app, add commands, options and documentation while maintaining a well-tested idiomatic command-line app
 
@@ -358,7 +281,7 @@ Build command-suite CLI apps that are awesome.  Bootstrap your app, add commands
 ### <a href="http://github.com/gooddata/gooddata-ruby">gooddata</a> v0.6.24 (default)
 #### A convenient Ruby wrapper around the GoodData RESTful API
 
-<a href="http://en.wikipedia.org/wiki/BSD_licenses#4-clause_license_.28original_.22BSD_License.22.29">BSD</a> _**unapproved**_
+<a href="http://en.wikipedia.org/wiki/BSD_licenses#4-clause_license_.28original_.22BSD_License.22.29">BSD</a> whitelisted
 
 Use the GoodData::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.
 
@@ -366,7 +289,7 @@ Use the GoodData::Client class to integrate GoodData into your own application o
 ### <a href="http://guardgem.org">guard</a> v2.13.0 (development)
 #### Guard keeps an eye on your file modifications
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Guard is a command line tool to easily handle events on file system modifications.
 
@@ -374,7 +297,7 @@ Guard is a command line tool to easily handle events on file system modification
 ### guard-compat v1.2.1
 #### Tools for developing Guard compatible plugins
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Helps creating valid Guard plugins and testing them
 
@@ -382,7 +305,7 @@ Helps creating valid Guard plugins and testing them
 ### <a href="https://rubygems.org/gems/guard-rspec">guard-rspec</a> v4.6.4 (development)
 #### Guard gem for RSpec
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Guard::RSpec automatically run your specs (much like autotest).
 
@@ -390,7 +313,7 @@ Guard::RSpec automatically run your specs (much like autotest).
 ### <a href="https://github.com/liufengyun/hashdiff">hashdiff</a> v0.2.3
 #### HashDiff is a diff lib to compute the smallest difference between two hashes.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
  HashDiff is a diff lib to compute the smallest difference between two hashes. 
 
@@ -398,7 +321,7 @@ Guard::RSpec automatically run your specs (much like autotest).
 ### <a href="https://github.com/intridea/hashie">hashie</a> v3.4.3
 #### Your friendly neighborhood hash library.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Hashie is a collection of classes and mixins that make hashes more powerful.
 
@@ -406,7 +329,7 @@ Hashie is a collection of classes and mixins that make hashes more powerful.
 ### <a href="https://github.com/JEG2/highline">highline</a> v1.7.8
 #### HighLine is a high-level command-line IO library.
 
-<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> _**unapproved**_
+<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> whitelisted
 
 A high-level IO library that provides validation, type conversion, and more for
 command-line interfaces. HighLine also includes a complete menu system that can
@@ -418,7 +341,7 @@ minutes of work.
 ### <a href="https://github.com/sparklemotion/http-cookie">http-cookie</a> v1.0.2
 #### A Ruby library to handle HTTP Cookies based on RFC 6265
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 HTTP::Cookie is a Ruby library to handle HTTP Cookies based on RFC 6265.  It has with security, standards compliance and compatibility in mind, to behave just the same as today's major web browsers.  It has builtin support for the legacy cookies.txt and the latest cookies.sqlite formats of Mozilla Firefox, and its modular API makes it easy to add support for a new backend store.
 
@@ -426,7 +349,7 @@ HTTP::Cookie is a Ruby library to handle HTTP Cookies based on RFC 6265.  It has
 ### <a href="http://jnunemaker.github.com/httparty">httparty</a> v0.13.7
 #### Makes http fun! Also, makes consuming restful web services dead easy.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Makes http fun! Also, makes consuming restful web services dead easy.
 
@@ -434,7 +357,7 @@ Makes http fun! Also, makes consuming restful web services dead easy.
 ### <a href="http://flori.github.com/json">json</a> v1.8.3
 #### JSON Implementation for Ruby
 
-<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> _**unapproved**_
+<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> whitelisted
 
 This is a JSON implementation as a Ruby extension in C.
 
@@ -442,7 +365,7 @@ This is a JSON implementation as a Ruby extension in C.
 ### <a href="http://flori.github.com/json">json_pure</a> v1.8.3
 #### JSON Implementation for Ruby
 
-<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> _**unapproved**_
+<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> whitelisted
 
 This is a JSON implementation in pure Ruby.
 
@@ -450,7 +373,7 @@ This is a JSON implementation in pure Ruby.
 ### <a href="https://github.com/pivotal/LicenseFinder">license_finder</a> v2.0.4 (development)
 #### Audit the OSS licenses of your application's dependencies.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
     LicenseFinder works with your package managers to find
     dependencies, detect the licenses of the packages in them, compare
@@ -462,7 +385,7 @@ This is a JSON implementation in pure Ruby.
 ### <a href="https://github.com/guard/listen">listen</a> v3.0.5
 #### Listen to file modifications
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 The Listen gem listens to file modifications and notifies you about the changes. Works everywhere!
 
@@ -470,7 +393,7 @@ The Listen gem listens to file modifications and notifies you about the changes.
 ### <a href="http://github.com/bdurand/lumberjack">lumberjack</a> v1.0.9
 #### A simple, powerful, and very fast logging utility that can be a drop in replacement for Logger or ActiveSupport::BufferedLogger.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A simple, powerful, and very fast logging utility that can be a drop in replacement for Logger or ActiveSupport::BufferedLogger. Provides support for automatically rolling log files even with multiple processes writing the same log file.
 
@@ -478,7 +401,7 @@ A simple, powerful, and very fast logging utility that can be a drop in replacem
 ### <a href="http://banisterfiend.wordpress.com">method_source</a> v0.8.2
 #### retrieve the sourcecode for a method
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 retrieve the sourcecode for a method
 
@@ -486,7 +409,7 @@ retrieve the sourcecode for a method
 ### <a href="https://github.com/mime-types/ruby-mime-types/">mime-types</a> v2.99
 #### The mime-types library provides a library and registry for information about MIME content type definitions
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a>, Artistic 2.0, GPL-2 _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a>, Artistic 2.0, GPL-2 whitelisted
 
 The mime-types library provides a library and registry for information about
 MIME content type definitions. It can be used to determine defined filename
@@ -511,7 +434,7 @@ appropriately:
 ### <a href="http://github.com/flavorjones/mini_portile">mini_portile2</a> v2.0.0
 #### Simplistic port-like solution for developers
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Simplistic port-like solution for developers. It provides a standard and simplified way to compile against dependency libraries without messing up your system.
 
@@ -519,7 +442,7 @@ Simplistic port-like solution for developers. It provides a standard and simplif
 ### <a href="http://github.com/intridea/multi_json">multi_json</a> v1.11.2
 #### A common interface to multiple JSON libraries.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A common interface to multiple JSON libraries, including Oj, Yajl, the JSON gem (with C-extensions), the pure-Ruby JSON gem, NSJSONSerialization, gson.rb, JrJackson, and OkJson.
 
@@ -527,7 +450,7 @@ A common interface to multiple JSON libraries, including Oj, Yajl, the JSON gem 
 ### <a href="https://github.com/sferik/multi_xml">multi_xml</a> v0.5.5
 #### A generic swappable back-end for XML parsing
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Provides swappable XML backends utilizing LibXML, Nokogiri, Ox, or REXML.
 
@@ -535,7 +458,7 @@ Provides swappable XML backends utilizing LibXML, Nokogiri, Ox, or REXML.
 ### <a href="https://github.com/nicksieger/multipart-post">multipart-post</a> v2.0.0
 #### A multipart form post accessory for Net::HTTP.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Use with Net::HTTP to do multipart form posts.  IO values that have #content_type, #original_filename, and #local_path will be posted as a binary file.
 
@@ -543,7 +466,7 @@ Use with Net::HTTP to do multipart form posts.  IO values that have #content_typ
 ### <a href="https://github.com/e2/nenv">nenv</a> v0.2.0
 #### Convenience wrapper for Ruby's ENV
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Using ENV is like using raw SQL statements in your code. We all know how that ends...
 
@@ -551,7 +474,7 @@ Using ENV is like using raw SQL statements in your code. We all know how that en
 ### <a href="https://github.com/geemus/netrc">netrc</a> v0.11.0
 #### Library to read and write netrc files.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 This library can read and update netrc files, preserving formatting including comments and whitespace.
 
@@ -559,7 +482,7 @@ This library can read and update netrc files, preserving formatting including co
 ### <a href="http://nokogiri.org">nokogiri</a> v1.6.7
 #### Nokogiri (鋸) is an HTML, XML, SAX, and Reader parser
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Nokogiri (鋸) is an HTML, XML, SAX, and Reader parser.  Among
 Nokogiri's many features is the ability to search documents via XPath
@@ -572,7 +495,7 @@ using enough of it.
 ### <a href="https://github.com/guard/notiffany">notiffany</a> v0.0.8
 #### Notifier library (extracted from Guard project)
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
     Wrapper libray for most popular notification
     libraries such as Growl, Libnotify, Notifu
@@ -582,7 +505,7 @@ using enough of it.
 ### <a href="http://github.com/datafolklabs/ruby-parseconfig/">parseconfig</a> v1.0.6
 #### Config File Parser for Standard Unix/Linux Type Config Files
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 ParseConfig provides simple parsing of standard configuration files in the form of 'param = value'.  It also supports nested [group] sections.
 
@@ -590,7 +513,7 @@ ParseConfig provides simple parsing of standard configuration files in the form 
 ### <a href="https://github.com/whitequark/parser">parser</a> v2.2.3.0
 #### A Ruby parser written in pure Ruby.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A Ruby parser written in pure Ruby.
 
@@ -598,7 +521,7 @@ A Ruby parser written in pure Ruby.
 ### <a href="https://github.com/bruceadams/pmap">pmap</a> v1.1.1
 #### Add parallel methods into Enumerable: pmap and peach
 
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> _**unapproved**_
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> whitelisted
 
 Add parallel methods into Enumerable: pmap and peach
 
@@ -606,7 +529,7 @@ Add parallel methods into Enumerable: pmap and peach
 ### <a href="https://github.com/bbatsov/powerpack">powerpack</a> v0.1.1
 #### A few useful extensions to core Ruby classes.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A few useful extensions to core Ruby classes.
 
@@ -614,7 +537,7 @@ A few useful extensions to core Ruby classes.
 ### <a href="http://pryrepl.org">pry</a> v0.10.3
 #### An IRB alternative and runtime developer console
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 An IRB alternative and runtime developer console
 
@@ -622,7 +545,7 @@ An IRB alternative and runtime developer console
 ### <a href="https://github.com/sickill/rainbow">rainbow</a> v2.0.0
 #### Colorize printed text on ANSI terminals
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Colorize printed text on ANSI terminals
 
@@ -630,7 +553,11 @@ Colorize printed text on ANSI terminals
 ### rake v10.4.2 (development)
 #### This rake is bundled with Ruby
 
-unknown _**unapproved**_
+unknown manually approved
+
+>
+
+><cite>  2016-02-22</cite>
 
 
 
@@ -638,7 +565,7 @@ unknown _**unapproved**_
 ### <a href="https://github.com/fgrehm/rake-notes">rake-notes</a> v0.2.0 (development)
 #### rake notes task for non-Rails' projects
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 rake notes task for non-Rails' projects
 
@@ -646,7 +573,7 @@ rake notes task for non-Rails' projects
 ### <a href="http://rubygems.org/gems/rb-fsevent">rb-fsevent</a> v0.9.6
 #### Very simple & usable FSEvents API
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 FSEvents API with Signals catching (without RubyCocoa)
 
@@ -654,7 +581,7 @@ FSEvents API with Signals catching (without RubyCocoa)
 ### <a href="http://github.com/nex3/rb-inotify">rb-inotify</a> v0.9.5
 #### A Ruby wrapper for Linux's inotify, using FFI
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A Ruby wrapper for Linux's inotify, using FFI
 
@@ -662,7 +589,7 @@ A Ruby wrapper for Linux's inotify, using FFI
 ### <a href="http://github.com/vmg/redcarpet">redcarpet</a> v3.3.3 (development)
 #### Markdown that smells nice
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A fast, safe and extensible Markdown to (X)HTML parser
 
@@ -670,7 +597,7 @@ A fast, safe and extensible Markdown to (X)HTML parser
 ### <a href="https://github.com/rest-client/rest-client">rest-client</a> v1.8.0
 #### Simple HTTP and REST client for Ruby, inspired by microframework syntax for specifying actions.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A simple HTTP and REST client for Ruby, inspired by the Sinatra microframework style of specifying actions: get, put, post, delete.
 
@@ -678,7 +605,7 @@ A simple HTTP and REST client for Ruby, inspired by the Sinatra microframework s
 ### <a href="https://github.com/ejholmes/restforce">restforce</a> v2.1.2
 #### A lightweight ruby client for the Salesforce REST API.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A lightweight ruby client for the Salesforce REST API.
 
@@ -686,7 +613,7 @@ A lightweight ruby client for the Salesforce REST API.
 ### <a href="http://github.com/rspec">rspec</a> v3.4.0 (development)
 #### rspec-3.4.0
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 BDD for Ruby
 
@@ -694,7 +621,7 @@ BDD for Ruby
 ### <a href="http://github.com/rspec/rspec-core">rspec-core</a> v3.4.1
 #### rspec-core-3.4.1
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 BDD for Ruby. RSpec runner and example groups.
 
@@ -702,7 +629,7 @@ BDD for Ruby. RSpec runner and example groups.
 ### <a href="http://github.com/rspec/rspec-expectations">rspec-expectations</a> v3.4.0
 #### rspec-expectations-3.4.0
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 rspec-expectations provides a simple, readable API to express expected outcomes of a code example.
 
@@ -710,7 +637,7 @@ rspec-expectations provides a simple, readable API to express expected outcomes 
 ### <a href="http://github.com/rspec/rspec-mocks">rspec-mocks</a> v3.4.0
 #### rspec-mocks-3.4.0
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 RSpec's 'test double' framework, with support for stubbing and mocking
 
@@ -718,7 +645,7 @@ RSpec's 'test double' framework, with support for stubbing and mocking
 ### <a href="https://github.com/rspec/rspec-support">rspec-support</a> v3.4.1
 #### rspec-support-3.4.1
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Support utilities for RSpec gems
 
@@ -726,7 +653,7 @@ Support utilities for RSpec gems
 ### <a href="http://github.com/bbatsov/rubocop">rubocop</a> v0.35.1 (development)
 #### Automatic Ruby code style checking tool.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
     Automatic Ruby code style checking tool.
     Aims to enforce the community-driven Ruby Style Guide.
@@ -736,7 +663,7 @@ Support utilities for RSpec gems
 ### <a href="https://github.com/ruby-debug/ruby-debug-ide">ruby-debug-ide</a> v0.6.0 (development)
 #### IDE interface for ruby-debug.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 An interface which glues ruby-debug to IDEs like Eclipse (RDT), NetBeans and RubyMine.
 
@@ -745,7 +672,7 @@ An interface which glues ruby-debug to IDEs like Eclipse (RDT), NetBeans and Rub
 ### <a href="https://github.com/jfelchner/ruby-progressbar">ruby-progressbar</a> v1.7.5
 #### Ruby/ProgressBar is a flexible text progress bar library for Ruby.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Ruby/ProgressBar is an extremely flexible text progress bar library for Ruby.
 The output can be customized with a flexible formatting system including:
@@ -756,7 +683,7 @@ percentage, bars of various formats, elapsed time and estimated time remaining.
 ### <a href="http://github.com/rubyzip/rubyzip">rubyzip</a> v1.1.7
 #### rubyzip is a ruby module for reading and writing zip files
 
-<a href="http://opensource.org/licenses/bsd-license">Simplified BSD</a> _**unapproved**_
+<a href="http://opensource.org/licenses/bsd-license">Simplified BSD</a> whitelisted
 
 
 
@@ -764,7 +691,7 @@ percentage, bars of various formats, elapsed time and estimated time remaining.
 ### <a href="https://github.com/dtao/safe_yaml">safe_yaml</a> v1.0.4
 #### SameYAML provides an alternative implementation of YAML.load suitable for accepting user input in Ruby applications.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Parse YAML safely
 
@@ -772,7 +699,7 @@ Parse YAML safely
 ### <a href="https://github.com/cvengros/salesforce_bulk_query">salesforce_bulk_query</a> v0.2.0
 #### Downloading data from Salesforce Bulk API made easy and scalable.
 
-<a href="http://en.wikipedia.org/wiki/BSD_licenses#4-clause_license_.28original_.22BSD_License.22.29">BSD</a> _**unapproved**_
+<a href="http://en.wikipedia.org/wiki/BSD_licenses#4-clause_license_.28original_.22BSD_License.22.29">BSD</a> whitelisted
 
 A library for downloading data from Salesforce Bulk API. We only focus on querying, other operations of the API aren't supported. Designed to handle a lot of data.
 
@@ -780,7 +707,7 @@ A library for downloading data from Salesforce Bulk API. We only focus on queryi
 ### shellany v0.0.1
 #### Simple, somewhat portable command capturing
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 MRI+JRuby compatible command output capturing
 
@@ -788,7 +715,7 @@ MRI+JRuby compatible command output capturing
 ### <a href="http://github.com/colszowka/simplecov">simplecov</a> v0.11.1 (development)
 #### Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
 
@@ -796,7 +723,7 @@ Code coverage for Ruby 1.9+ with a powerful configuration library and automatic 
 ### <a href="https://github.com/colszowka/simplecov-html">simplecov-html</a> v0.10.0
 #### Default HTML formatter for SimpleCov code coverage tool for ruby 1.9+
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Default HTML formatter for SimpleCov code coverage tool for ruby 1.9+
 
@@ -804,7 +731,7 @@ Default HTML formatter for SimpleCov code coverage tool for ruby 1.9+
 ### <a href="http://github.com/leejarvis/slop">slop</a> v3.6.0
 #### Simple Lightweight Option Parsing
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A simple DSL for gathering options and parsing the command line
 
@@ -812,7 +739,11 @@ A simple DSL for gathering options and parsing the command line
 ### <a href="http://flori.github.com/term-ansicolor">term-ansicolor</a> v1.3.2
 #### Ruby library that colors strings using ANSI escape sequences
 
-GPL-2 _**unapproved**_
+GPL-2 manually approved
+
+>
+
+><cite>  2016-02-22</cite>
 
 This library uses ANSI escape sequences to control the attributes of terminal output
 
@@ -820,7 +751,7 @@ This library uses ANSI escape sequences to control the attributes of terminal ou
 ### <a href="https://github.com/tj/terminal-table">terminal-table</a> v1.5.2
 #### Simple, feature rich ascii table generation library
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 
 
@@ -828,7 +759,7 @@ This library uses ANSI escape sequences to control the attributes of terminal ou
 ### <a href="http://whatisthor.com/">thor</a> v0.19.1
 #### Thor is a toolkit for building powerful command-line interfaces.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Thor is a toolkit for building powerful command-line interfaces.
 
@@ -836,7 +767,7 @@ Thor is a toolkit for building powerful command-line interfaces.
 ### <a href="https://github.com/ruby-concurrency/thread_safe">thread_safe</a> v0.3.5
 #### A collection of data structures and utilities to make thread-safe programming in Ruby easier
 
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> _**unapproved**_
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> whitelisted
 
 Thread-safe collections and utilities for Ruby
 
@@ -844,7 +775,7 @@ Thread-safe collections and utilities for Ruby
 ### <a href="https://github.com/flori/tins">tins</a> v1.6.0
 #### Useful stuff.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 All the stuff that isn't good/big enough for a real library.
 
@@ -852,7 +783,11 @@ All the stuff that isn't good/big enough for a real library.
 ### <a href="https://github.com/knu/ruby-unf">unf</a> v0.1.4
 #### A wrapper library to bring Unicode Normalization Form support to Ruby/JRuby
 
-2-clause BSDL _**unapproved**_
+2-clause BSDL manually approved
+
+>
+
+><cite>  2016-02-22</cite>
 
 This is a wrapper library to bring Unicode Normalization Form support
 to Ruby/JRuby.
@@ -862,7 +797,7 @@ to Ruby/JRuby.
 ### <a href="https://github.com/knu/ruby-unf_ext">unf_ext</a> v0.0.7.1
 #### Unicode Normalization Form support library for CRuby
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 Unicode Normalization Form support library for CRuby
 
@@ -870,7 +805,7 @@ Unicode Normalization Form support library for CRuby
 ### <a href="http://github.com/bblimke/webmock">webmock</a> v1.22.3 (development)
 #### Library for stubbing HTTP requests in Ruby.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 WebMock allows stubbing HTTP requests and setting expectations on HTTP requests.
 
@@ -878,7 +813,7 @@ WebMock allows stubbing HTTP requests and setting expectations on HTTP requests.
 ### <a href="https://github.com/maik/xml-simple">xml-simple</a> v1.1.5
 #### A simple API for XML processing.
 
-<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> _**unapproved**_
+<a href="http://www.ruby-lang.org/en/LICENSE.txt">ruby</a> whitelisted
 
 
 
@@ -886,7 +821,7 @@ WebMock allows stubbing HTTP requests and setting expectations on HTTP requests.
 ### <a href="http://yardoc.org">yard</a> v0.8.7.6 (development)
 #### Documentation tool for consistent and usable documentation in Ruby.
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
     YARD is a documentation generation tool for the Ruby programming language.
     It enables the user to generate consistent, usable documentation that can be
@@ -898,6 +833,6 @@ WebMock allows stubbing HTTP requests and setting expectations on HTTP requests.
 ### <a href="http://yardoc.org">yard-rspec</a> v0.1 (development)
 #### YARD plugin to list RSpec specifications inside documentation
 
-<a href="http://opensource.org/licenses/mit-license">MIT</a> _**unapproved**_
+<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 
