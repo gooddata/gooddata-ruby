@@ -853,6 +853,13 @@ module GoodData
                 project: target_project,
                 result: true
               }
+            rescue RestClient::Exception => e
+              {
+                project: proj,
+                exception: e,
+                result: false,
+                reason: GoodData::Helpers.interpolate_error_message(MultiJson.load(e.response))
+              }
             rescue GoodData::ObjectsImportError => e
               {
                 project: target_project,
