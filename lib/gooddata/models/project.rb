@@ -846,8 +846,8 @@ module GoodData
       if projects.is_a?(Array)
         projects.each_slice(batch_size).flat_map do |batch|
           batch.pmap do |proj|
-            target_project = client.projects(proj)
             begin
+              target_project = client.projects(proj)
               target_project.objects_import(token, options)
               {
                 project: target_project,
