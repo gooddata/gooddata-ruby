@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../metadata'
 require_relative 'metadata'
@@ -8,8 +12,6 @@ module GoodData
   # Report Definition
   # TODO: Add more doc ...
   class ReportDefinition < GoodData::MdObject
-    root_key :reportDefinition
-
     class << self
       # Method intended to get all objects of that type in a specified project
       #
@@ -17,7 +19,7 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
-        query('reportdefinition', ReportDefinition, options)
+        query('reportDefinition', ReportDefinition, options)
       end
 
       def create_metrics_part(left, top)
@@ -27,12 +29,16 @@ module GoodData
         end
       end
 
+      alias_method :create_measures_part, :create_metrics_part
+
       def create_metric_part(metric)
         {
           'alias' => metric.title,
           'uri' => metric.uri
         }
       end
+
+      alias_method :create_measure_part, :create_metric_part
 
       def create_attribute_part(attrib)
         {
@@ -44,10 +50,16 @@ module GoodData
         }
       end
 
-      def create_filters_part(filters)
-        filters.select { |f| f.class == GoodData::Variable }.map do |v|
-          { expression: "[#{v.uri}]" }
-        end
+      # Method creates the list of filter representaion suitable for posting on the api. It can currently recognize 2 types of filters. Variable filters and attribute filters. Method for internal usage
+      #
+      # @param filters [GoodData::Variable|Array<Array>]
+      # @param options [Hash] the options hash
+      # @return [Array<Hash>] Returns the structure that is stored internally in the report definition and later psted on the API
+      def create_filters_part(filters, options = {})
+        project = options[:project]
+        vars = filters.select { |f| f.is_a?(GoodData::Variable) }.map { |v| { expression: "[#{v.uri}]" } }
+        category = filters.select { |f| f.is_a?(Array) }.map { |v| GoodData::SmallGoodZilla.create_category_filter(v, project) }
+        vars + category
       end
 
       def create_part(stuff)
@@ -67,55 +79,39 @@ module GoodData
       end
 
       def find(stuff, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = opts[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
+        _client, project = GoodData.get_client_and_project(opts)
 
         stuff.map do |item|
-          if item.respond_to?(:attribute?) && item.attribute?
-            item.display_forms.first
-          elsif item.is_a?(String)
-            x = GoodData::MdObject.get_by_id(item, opts)
-            fail "Object given by id \"#{item}\" could not be found" if x.nil?
-            case x.raw_data.keys.first.to_s
-            when 'attribute'
-              attr = GoodData::Attribute.new(x.json)
-              attr.client = client
-              attr.project = opts[:project]
-              attr.display_forms.first
-            when 'attributeDisplayForm'
-              GoodData::Label.new(x.json)
-            when 'metric'
-              GoodData::Metric.new(x.json)
-            end
-          elsif item.is_a?(Hash) && item.keys.include?(:title)
-            case item[:type].to_s
-            when 'metric'
-              GoodData::Metric.find_first_by_title(item[:title])
-            when 'attribute'
-              result = GoodData::Attribute.find_first_by_title(item[:title])
-              result.display_forms.first
-            end
-          elsif item.is_a?(Hash) && (item.keys.include?(:id))
-            case item[:type].to_s
-            when 'metric'
-              GoodData::Metric.get_by_id(item[:id])
-            when 'attribute'
-              GoodData::Attribute.get_by_id(item[:id]).display_forms.first
-            when 'label'
-              GoodData::Label.get_by_id(item[:id])
-          end
-          elsif item.is_a?(Hash) && (item.keys.include?(:identifier))
-            case item[:type].to_s
-            when 'metric'
-              GoodData::Metric.get_by_id(item[:identifier])
-            when 'attribute'
-              result = GoodData::Attribute.get_by_id(item[:identifier])
-              result.display_forms.first
-            when 'label'
-              GoodData::Label.get_by_id(item[:identifier])
-            end
+          obj = if item.is_a?(String)
+                  begin
+                    project.objects(item)
+                  rescue RestClient::ResourceNotFound
+                    raise "Object given by id \"#{item}\" could not be found"
+                  end
+                elsif item.is_a?(Hash) && item.keys.include?(:title)
+                  case item[:type].to_s
+                  when 'metric'
+                    GoodData::Metric.find_first_by_title(item[:title], opts)
+                  when 'attribute'
+                    GoodData::Attribute.find_first_by_title(item[:title], opts)
+                  end
+                elsif item.is_a?(Hash) && (item.keys.include?(:id) || item.keys.include?(:identifier))
+                  id = item[:id] || item[:identifier]
+                  case item[:type].to_s
+                  when 'metric'
+                    project.metrics(id)
+                  when 'attribute'
+                    project.attributes(id)
+                  when 'label'
+                    projects.labels(id)
+                  end
+                else
+                  item
+                end
+          if obj.respond_to?(:attribute?) && obj.attribute?
+            obj.display_forms.first
           else
-            item
+            obj
           end
         end
       end
@@ -131,59 +127,14 @@ module GoodData
 
         begin
           unsaved_metrics.each(&:save)
-          rd = GoodData::ReportDefinition.create(options)
-          data_result(execute_inline(rd, options), options)
+          GoodData::ReportDefinition.create(options).execute
         ensure
           unsaved_metrics.each { |m| m.delete if m && m.saved? }
         end
       end
 
-      def execute_inline(rd, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = opts[:client]
-        project = opts[:project]
-
-        rd = rd.respond_to?(:json) ? rd.json : rd
-        data = {
-          report_req: {
-            definitionContent: {
-              content: rd,
-              projectMetadata: project.links['metadata']
-            }
-          }
-        }
-        uri = "/gdc/app/projects/#{project.pid}/execute"
-        client.post(uri, data)
-      end
-
-      # TODO: refactor the method. It should be instance method
-      # Method used for getting a data_result from a wire representation of
-      # @param result [Hash, Object] Wire data from JSON
-      # @return [GoodData::ReportDataResult]
-      def data_result(result, options = {})
-        client = options[:client] || GoodData.connection
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        data_result_uri = result['execResult']['dataResult']
-        result = client.poll_on_response(data_result_uri, options) do |body|
-          body && body['taskState'] && body['taskState']['status'] == 'WAIT'
-        end
-
-        if result.empty?
-          client.create(EmptyResult, result)
-        else
-          client.create(ReportDataResult, result)
-        end
-      end
-
       def create(options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         left = Array(options[:left])
         top = Array(options[:top])
@@ -210,7 +161,7 @@ module GoodData
                 'rows' => ReportDefinition.create_part(left)
               },
               'format' => 'grid',
-              'filters' => ReportDefinition.create_filters_part(filters)
+              'filters' => ReportDefinition.create_filters_part(filters, :project => project)
             },
             'meta' => {
               'tags' => '',
@@ -261,132 +212,46 @@ module GoodData
       content['grid']['metrics']
     end
 
+    alias_method :measure_parts, :metric_parts
+
     def metrics
       metric_parts.map { |i| project.metrics(i['uri']) }
     end
 
     def execute(opts = {})
-      # binding.pry
-      # client = opts[:client]
-      # fail ArgumentError, 'No :client specified' if client.nil?
-      #
-      # p = opts[:project]
-      # fail ArgumentError, 'No :project specified' if p.nil?
-      #
-      # project = client.projects(p)
-      # fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-      opts = { client: client, project: project }
       result = if saved?
                  pars = {
                    'report_req' => { 'reportDefinition' => uri }
                  }
                  client.post '/gdc/xtab2/executor3', pars
                else
-                 ReportDefinition.execute_inline(self, opts)
+                 data = {
+                   report_req: {
+                     definitionContent: {
+                       content: to_hash,
+                       projectMetadata: project.links['metadata']
+                     }
+                   }
+                 }
+                 uri = "/gdc/app/projects/#{project.pid}/execute"
+                 client.post(uri, data)
                end
-      ReportDefinition.data_result(result, opts)
+      GoodData::Report.data_result(result, opts.merge(client: client))
     end
 
     def filters
       content['filters'].map { |f| f['expression'] }
     end
 
-    # Replace certain object in report definition. Returns new definition which is not saved.
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
     #
-    # @param what [GoodData::MdObject | String] Object which responds to uri or a string that should be replaced
-    # @option for_what [GoodData::MdObject | String] Object which responds to uri or a string that should used as replacement
-    # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-    def replace(what, for_what = nil)
-      pairs = if what.is_a?(Hash)
-                whats = what.keys
-                to_whats = what.values
-                whats.zip(to_whats)
-              elsif what.is_a?(Array) && for_what.is_a?(Array)
-                whats.zip(to_whats)
-              else
-                [[what, for_what]]
-              end
-
-      pairs.each do |pair|
-        what = pair[0]
-        for_what = pair[1]
-
-        uri_what = what.respond_to?(:uri) ? what.uri : what
-        uri_for_what = for_what.respond_to?(:uri) ? for_what.uri : for_what
-
-        content['grid']['metrics'] = metric_parts.map do |item|
-          item.deep_dup.tap do |i|
-            i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-          end
-        end
-
-        cols = content['grid']['columns'] || []
-        content['grid']['columns'] = cols.map do |item|
-          if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
-              i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-            end
-          else
-            item
-          end
-        end
-
-        rows = content['grid']['rows'] || []
-        content['grid']['rows'] = rows.map do |item|
-          if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
-              i['attribute']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-            end
-          else
-            item
-          end
-        end
-
-        widths = content['grid']['columnWidths'] || []
-        content['grid']['columnWidths'] = widths.map do |item|
-          if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
-              if i['locator'][0].key?('attributeHeaderLocator')
-                i['locator'][0]['attributeHeaderLocator']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-              end
-            end
-          else
-            item
-          end
-        end
-
-        sort = content['grid']['sort']['columns'] || []
-        content['grid']['sort']['columns'] = sort.map do |item|
-          if item.is_a?(Hash)
-            item.deep_dup.tap do |i|
-              next unless i.key?('metricSort')
-              next unless i['metricSort'].key?('locators')
-              next unless i['metricSort']['locators'][0].key?('attributeLocator2')
-              i['metricSort']['locators'][0]['attributeLocator2']['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-              i['metricSort']['locators'][0]['attributeLocator2']['element'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-            end
-          else
-            item
-          end
-        end
-
-        if content.key?('chart')
-          content['chart']['buckets'] = content['chart']['buckets'].reduce({}) do |a, e|
-            key = e[0]
-            val = e[1]
-            a[key] = val.map do |item|
-              item.deep_dup.tap do |i|
-                i['uri'].gsub!("[#{uri_what}]", "[#{uri_for_what}]")
-              end
-            end
-            a
-          end
-        end
-
-        content['filters'] = filters.map { |filter_expression| { 'expression' => filter_expression.gsub("[#{uri_what}]", "[#{uri_for_what}]") } }
-      end
-      self
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
+    # @return [GoodData::ReportDefinition]
+    def replace(mapping)
+      x = GoodData::MdObject.replace_quoted(self, mapping)
+      x = GoodData::MdObject.replace_bracketed(x, mapping)
+      vals = GoodData::MdObject.find_replaceable_values(self, mapping)
+      GoodData::MdObject.replace_bracketed(x, vals)
     end
 
     # Return true if the report definition is a table

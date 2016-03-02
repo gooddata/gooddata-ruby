@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'gooddata/client'
 require 'gooddata/models/model'
@@ -32,16 +36,8 @@ describe GoodData::Helpers do
 
   describe '#find_goodfile' do
     it 'works' do
-      pending "Ask @fluke777 how to create one"
+      skip "Ask @fluke777 how to create one"
       GoodData::Helpers.find_goodfile.should_not be_nil
-    end
-  end
-
-  describe '#sanitize_string' do
-    it 'works' do
-      expect = 'helloworld'
-      result = GoodData::Helpers.sanitize_string('Hello World')
-      result.should == expect
     end
   end
 
@@ -71,6 +67,7 @@ describe GoodData::Helpers do
       expected_result = {
         'param' => 'value',
         'number_param' => 5,
+        "gd_encoded_hidden_params" => nil,
         "deep_secret" => {
           "deeper_secret" => "hidden value"
         }

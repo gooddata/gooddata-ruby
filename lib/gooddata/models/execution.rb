@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../rest/resource'
 require_relative '../extensions/hash'
@@ -8,8 +12,6 @@ module GoodData
     attr_reader :dirty, :json
 
     alias_method :data, :json
-    alias_method :raw_data, :json
-    alias_method :to_hash, :json
 
     # Initializes object instance from raw wire JSON
     #

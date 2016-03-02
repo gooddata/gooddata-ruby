@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'multi_json'
 require 'pmap'
@@ -9,7 +13,7 @@ require_relative 'project_role'
 require_relative '../rest/object'
 
 module GoodData
-  class Membership < GoodData::Rest::Object
+  class Membership < Rest::Resource
     attr_reader :json
 
     ASSIGNABLE_MEMBERS = [
@@ -105,7 +109,7 @@ module GoodData
     def contributor
       url = @json['user']['meta']['contributor']
       data = client.get url
-      client.factory.create(GoodData::Membership, data)
+      client.create(GoodData::Membership, data)
     end
 
     # Gets date when created
@@ -238,7 +242,7 @@ module GoodData
     # Gets profile of this membership
     def profile
       raw = client.get @json['user']['links']['self']
-      client.factory.create(GoodData::Profile, raw)
+      client.create(GoodData::Profile, raw)
     end
 
     # Gets URL of profile membership
@@ -249,7 +253,7 @@ module GoodData
     # # Gets project which this membership relates to
     # def project
     #   raw = client.get project_url
-    #   client.factory.create(GoodData::Project, raw)
+    #   client.create(GoodData::Project, raw)
     # end
 
     # Gets project id
@@ -270,7 +274,7 @@ module GoodData
       tmp['projects'].map do |project_meta|
         project_uri = project_meta['project']['links']['self']
         project = client.get project_uri
-        client.factory.create(GoodData::Project, project)
+        client.create(GoodData::Project, project)
       end
     end
 
@@ -290,7 +294,7 @@ module GoodData
       tmp = client.get roles_link
       tmp['associatedRoles']['roles'].pmap do |role_uri|
         role = client.get role_uri
-        client.factory.create(GoodData::ProjectRole, role)
+        client.create(GoodData::ProjectRole, role)
       end
     end
 
@@ -381,7 +385,7 @@ module GoodData
     end
 
     def to_hash
-      tmp = content.merge(meta).merge('uri' => uri).symbolize_keys
+      tmp = GoodData::Helpers.symbolize_keys(content.merge(meta).merge('uri' => uri))
       [
         [:userRoles, :role],
         [:companyName, :company_name],
@@ -395,6 +399,10 @@ module GoodData
         tmp.delete(wire)
       end
       tmp
+    end
+
+    def user_groups
+      project.user_groups(:all, user: obj_id)
     end
 
     private

@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative 'nil_logger'
 
@@ -13,8 +17,20 @@ module GoodData
     #
     #     GoodData.logging_on
     #
-    def logging_on
+    def logging_on(level = nil)
       @logger = default_logger if logger.is_a? NilLogger
+      @logger.level = level if level
+      @logger
+    end
+
+    # Turn logging on with HTTP included
+    #
+    # ### Example
+    #
+    #     GoodData.logging_http_on
+    #
+    def logging_http_on
+      logging_on(Logger::DEBUG)
     end
 
     # Turn logging on
@@ -49,7 +65,7 @@ module GoodData
       @stats = true
     end
 
-    def stats_on? # rubocop:disable Style/TrivialAccessors
+    def stats_on?
       @stats
     end
 

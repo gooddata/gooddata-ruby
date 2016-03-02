@@ -1,4 +1,8 @@
-# encoding: utf-8
+# encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative 'object'
 
@@ -55,7 +59,12 @@ module GoodData
       def create(type, data = {}, opts = {})
         res = type.new(data)
         res.client = client
-        res.project = opts[:project]
+
+        opts.each do |key, value|
+          method = "#{key}="
+          res.send(method, value) if res.respond_to?(method)
+        end
+
         res
       end
 

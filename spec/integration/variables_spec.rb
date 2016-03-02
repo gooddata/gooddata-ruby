@@ -1,30 +1,34 @@
+# encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require 'gooddata'
 
 describe "Variables implementation", :constraint => 'slow' do
   before(:all) do
-    @spec = JSON.parse(File.read("./spec/data/test_project_model_spec.json"), :symbolize_names => true)
+    @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @client = ConnectionHelper::create_default_connection
-    @project = @client.create_project_from_blueprint(@spec, :auth_token => ConnectionHelper::GD_PROJECT_TOKEN)
+    blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+    @project = @client.create_project_from_blueprint(blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
     @label = GoodData::Attribute.find_first_by_title('Dev', client: @client, project: @project).label_by_name('email')
-    
-    blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+
     commits_data = [
       ["lines_changed","committed_on","dev_id","repo_id"],
       [1,"01/01/2014",1,1],
       [3,"01/02/2014",2,2],
       [5,"05/02/2014",3,1]]
-    GoodData::Model.upload_data(commits_data, blueprint, 'commits', :client => @client, :project => @project)
-    # blueprint.find_dataset('commits').upload(commits_data)
+    @project.upload(commits_data, blueprint, 'dataset.commits')
     
     devs_data = [
       ["dev_id", "email"],
       [1, "tomas@gooddata.com"],
       [2, "petr@gooddata.com"],
       [3, "jirka@gooddata.com"]]
-    GoodData::Model.upload_data(devs_data, blueprint, 'devs', :client => @client, :project => @project)
-    # blueprint.find_dataset('devs').upload(devs_data)
+    @project.upload(devs_data, blueprint, 'dataset.devs')
     
     @variable = @project.create_variable(title: 'uaaa', attribute: @label.attribute).save
 
@@ -102,20 +106,7 @@ describe "Variables implementation", :constraint => 'slow' do
     expect(@variable.user_values.pmap {|m| m.pretty_expression}).to eq ["[Dev] IN ([jirka@gooddata.com])"]
     expect(@variable.user_values.count).to eq 1
   end
-  
-  it "should be able to add mandatory filter to a user not in the project if domain is provided" do
-    domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
-    u = domain.users.find { |u| u.login != ConnectionHelper::DEFAULT_USERNAME }
-    filters = [[u.login, @label.uri, "tomas@gooddata.com"]]
-    expect do
-      @project.add_variable_permissions(filters, @variable)
-    end.to raise_error
-    @project.add_variable_permissions(filters, @variable, :domain => domain)
-    filters = @variable.user_values
-    expect(filters.first.related.login).to eq u.login
-    expect(filters.count).to eq 1
-  end
-  
+
   it "should be able to print data permissions in a human readable form" do
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com"]]
     @project.add_variable_permissions(filters, @variable)
@@ -185,7 +176,7 @@ describe "Variables implementation", :constraint => 'slow' do
   end
 
   it "should be able to update the filter value in place" do
-    pending('We cannot swap filters yet')
+    skip('We cannot swap filters yet')
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com", "jirka@gooddata.com"]]
     @project.add_variable_permissions(filters, @variable)
     perm = @variable.user_values.first

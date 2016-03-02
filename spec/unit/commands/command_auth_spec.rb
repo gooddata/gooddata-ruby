@@ -1,3 +1,9 @@
+# encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require 'highline'
 
 require 'gooddata/cli/terminal'
@@ -11,6 +17,8 @@ describe GoodData::Command::Auth do
     :email => 'joedoe@example.com',
     :password => 'secretPassword',
     :token => 't0k3n1sk0',
+    :environment => 'DEVELOPMENT',
+    :server => 'https://secure.gooddata.com'
   }
 
   DEFAULT_CREDENTIALS_OVER = {
@@ -59,6 +67,8 @@ describe GoodData::Command::Auth do
       @input << DEFAULT_CREDENTIALS[:email] << "\n"
       @input << DEFAULT_CREDENTIALS[:password] << "\n"
       @input << DEFAULT_CREDENTIALS[:token] << "\n"
+      @input << DEFAULT_CREDENTIALS[:environment] << "\n"
+      @input << DEFAULT_CREDENTIALS[:server] << "\n"
       @input.rewind
 
       GoodData::Command::Auth.ask_for_credentials
@@ -105,6 +115,8 @@ describe GoodData::Command::Auth do
       @input << DEFAULT_CREDENTIALS[:email] << "\n"
       @input << DEFAULT_CREDENTIALS[:password] << "\n"
       @input << DEFAULT_CREDENTIALS[:token] << "\n"
+      @input << DEFAULT_CREDENTIALS[:environment] << "\n"
+      @input << DEFAULT_CREDENTIALS[:server] << "\n"
       @input << 'y' << "\n"
       @input.rewind
 
@@ -118,6 +130,8 @@ describe GoodData::Command::Auth do
       @input << DEFAULT_CREDENTIALS[:email] << "\n"
       @input << DEFAULT_CREDENTIALS[:password] << "\n"
       @input << DEFAULT_CREDENTIALS[:token] << "\n"
+      @input << DEFAULT_CREDENTIALS[:environment] << "\n"
+      @input << DEFAULT_CREDENTIALS[:server] << "\n"
       @input << 'y' << "\n"
       @input.rewind
 
@@ -132,6 +146,8 @@ describe GoodData::Command::Auth do
       @input << DEFAULT_CREDENTIALS_OVER[:email] << "\n"
       @input << DEFAULT_CREDENTIALS_OVER[:password] << "\n"
       @input << DEFAULT_CREDENTIALS_OVER[:token] << "\n"
+      @input << DEFAULT_CREDENTIALS[:environment] << "\n"
+      @input << DEFAULT_CREDENTIALS[:server] << "\n"
       @input << 'n' << "\n"
       @input.rewind
 

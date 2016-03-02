@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../metadata'
 require_relative '../../mixins/is_label'
@@ -6,16 +10,14 @@ require_relative 'metadata'
 
 module GoodData
   class Label < GoodData::MdObject
-    root_key :attributeDisplayForm
-
-    include GoodData::Mixin::IsLabel
+    include Mixin::IsLabel
 
     # Finds an attribute element URI for given value. This URI can be used by find_element_value to find the original value again
     # @param [String] value value of an label you are looking for
     # @return [String]
     def find_value_uri(value)
       escaped_value = CGI.escape(value)
-      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc&filter=#{escaped_value}", {})
+      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc&filter=#{escaped_value}", 'validElementsRequest' => {})
       items = results['validElements']['items']
       if items.empty?
         fail(AttributeElementNotFound, value)
@@ -54,30 +56,41 @@ module GoodData
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
     def values(options = {})
-      limit = options[:limit] || 100
-      page_limit = 100
-      offset = 0
-      vals = []
-      loop do
-        results = GoodData.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", {})
-        elements = results['validElements']
-        items = elements['items'].map do |el|
-          v = el['element']
-          {
-            :value => v['title'],
-            :uri => v['uri']
-          }
+      client = client(options)
+      Enumerator.new do |y|
+        offset = options[:offset] || 0
+        page_limit = options[:limit] || 100
+        loop do
+          results = client.post("#{uri}/validElements?limit=#{page_limit}&offset=#{offset}&order=asc", 'validElementsRequest' => {})
+
+          # Implementation of polling is based on
+          # https://opengrok.intgdc.com/source/xref/gdc-backend/src/test/java/com/gooddata/service/dao/ValidElementsDaoTest.java
+          status_url = results['uri']
+          if status_url
+            results = client.poll_on_response(status_url) do |body|
+              status = body['taskState']['status']
+              status == 'RUNNING' || status == 'PREPARED'
+            end
+          end
+
+          elements = results['validElements']
+          elements['items'].map do |el|
+            v = el['element']
+            y << {
+              :value => v['title'],
+              :uri => v['uri']
+            }
+          end
+          break if elements['items'].count < page_limit
+          offset += page_limit
         end
-        vals.concat(items)
-        break if vals.length > limit || vals.length == elements['paging']['total'].to_i
-        offset += page_limit
       end
-      vals.take(limit)
     end
 
     def values_count
-      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc", {})
-      results['validElements']['paging']['total'].to_i
+      results = client.post("#{uri}/validElements?limit=1&offset=0&order=asc", 'validElementsRequest' => {})
+      count = GoodData::Helpers.get_path(results, %w(validElements paging total))
+      count && count.to_i
     end
 
     # Gives an attribute of current label

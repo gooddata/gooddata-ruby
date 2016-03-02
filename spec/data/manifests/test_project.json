@@ -1,0 +1,107 @@
+[
+  {
+    "dataSetSLIManifest": {
+      "parts": [
+        {
+          "referenceKey": 1,
+          "populates": [
+            "some_label_id"
+          ],
+          "mode": "FULL",
+          "columnName": "repo_id"
+        },
+        {
+          "referenceKey": 1,
+          "populates": [
+            "some_attr_label_id"
+          ],
+          "mode": "FULL",
+          "columnName": "repo_name"
+        }
+      ],
+      "dataSet": "dataset.repos",
+      "file": "dataset_repos.csv",
+      "csvParams": {
+        "quoteChar": "\"",
+        "escapeChar": "\"",
+        "separatorChar": ",",
+        "endOfLine": "\n"
+      }
+    }
+  },
+  {
+    "dataSetSLIManifest": {
+      "parts": [
+        {
+          "referenceKey": 1,
+          "populates": [
+            "label.devs.dev_id.id"
+          ],
+          "mode": "FULL",
+          "columnName": "dev_id"
+        },
+        {
+          "populates": ["label.devs.dev_id.email"],
+          "mode": "FULL",
+          "columnName": "email"
+        }
+      ],
+      "dataSet": "dataset.devs",
+      "file": "dataset_devs.csv",
+      "csvParams": {
+        "quoteChar": "\"",
+        "escapeChar": "\"",
+        "separatorChar": ",",
+        "endOfLine": "\n"
+      }
+    }
+  },
+  {
+    "dataSetSLIManifest": {
+      "parts": [
+        {
+          "populates": [
+            "fact.commits.lines_changed"
+          ],
+          "mode": "FULL",
+          "columnName": "lines_changed"
+        },
+        {
+          "populates": [
+            "committed_on.date.mdyy"
+          ],
+          "mode": "FULL",
+          "constraints": {
+            "date": "MM/dd/yyyy"
+          },
+          "columnName": "committed_on",
+          "referenceKey": 1
+        },
+        {
+          "populates": [
+            "label.devs.dev_id.id"
+          ],
+          "mode": "FULL",
+          "columnName": "dev_id",
+          "referenceKey": 1
+        },
+        {
+          "populates": [
+            "some_label_id"
+          ],
+          "mode": "FULL",
+          "columnName": "repo_id",
+          "referenceKey": 1
+        }
+      ],
+      "dataSet": "dataset.commits",
+      "file": "dataset_commits.csv",
+      "csvParams": {
+        "quoteChar": "\"",
+        "escapeChar": "\"",
+        "separatorChar": ",",
+        "endOfLine": "\n"
+      }
+    }
+  }
+]

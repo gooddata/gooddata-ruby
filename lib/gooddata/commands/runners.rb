@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'pathname'
 
@@ -24,7 +28,6 @@ module GoodData
         script_body = <<-script_body
         require 'fileutils'
         FileUtils::cd(\"#{pwd + brick_dir}\") do\
-          require 'bundler/setup'
 
           $SCRIPT_PARAMS = {
             "GDC_SST" => \"#{sst}\",
@@ -34,13 +37,10 @@ module GoodData
             "GDC_LOGGER_FILE" => STDOUT,
             "GDC_ENV_LOCAL" => true
           }.merge(#{params})
-          eval(File.read(\"./main.rb\"))
+          require './main.rb'
         end
         script_body
-
-        Bundler.with_clean_env do
-          system('ruby', '-e', script_body)
-        end
+        system('ruby', '-e', script_body)
       end
     end
   end

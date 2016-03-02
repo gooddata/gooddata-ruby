@@ -1,4 +1,9 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require_relative 'base_middleware'
 
 module GoodData
@@ -10,6 +15,7 @@ module GoodData
       end
 
       def call(params)
+        params = params.to_hash
         returning(@app.call(params)) do |_|
           destination = @destination
           (params['gdc_files_to_upload'] || []).each do |f|

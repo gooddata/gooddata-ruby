@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../metadata'
 require_relative '../../core/rest'
@@ -8,9 +12,7 @@ require_relative 'metadata'
 
 module GoodData
   class Fact < GoodData::MdObject
-    root_key :fact
-
-    include GoodData::Mixin::IsFact
+    include Mixin::IsFact
 
     # TODO: verify that we have all (which we do not right now)
     FACT_BASE_AGGREGATIONS = [:sum, :min, :max, :avg, :median, :runsum, :runmin, :runmax, :runavg, :runstdev, :runstdevp, :runvar, :runvarp, :stdev, :stdevp, :var, :varp]
@@ -22,7 +24,7 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
-        query('facts', Fact, options)
+        query('fact', Fact, options)
       end
     end
 
@@ -36,5 +38,7 @@ module GoodData
       a_title = options[:title] || "#{a_type} of #{title}"
       project.create_metric("SELECT #{a_type.to_s.upcase}([#{uri}])", title: a_title, extended_notation: false)
     end
+
+    alias_method :create_measure, :create_metric
   end
 end

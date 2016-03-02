@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'pmap'
 
@@ -9,16 +13,10 @@ require_relative '../rest/rest'
 require_relative '../mixins/rest_resource'
 
 module GoodData
-  class ProjectRole < GoodData::Rest::Object
-    attr_accessor :json
-
-    include GoodData::Mixin::RestResource
-
-    root_key :projectRole
-
-    include GoodData::Mixin::Author
-    include GoodData::Mixin::Contributor
-    include GoodData::Mixin::Timestamps
+  class ProjectRole < Rest::Resource
+    include Mixin::Author
+    include Mixin::Contributor
+    include Mixin::Timestamps
 
     EMPTY_OBJECT = {
       'projectRole' => {
@@ -36,10 +34,10 @@ module GoodData
         d[:title] = data[:title]
         d[:summary] = data[:summary]
       end
-      new_data = EMPTY_OBJECT.deep_dup.tap do |d|
+      new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
         d['projectRole']['links']['self'] = data[:uri] if data[:uri]
-        d['projectRole']['meta'] = d['projectRole']['meta'].merge(meta_data.stringify_keys)
-        d['projectRole']['permissions'] = d['projectRole']['permissions'].merge((data[:permissions] || {}).stringify_keys)
+        d['projectRole']['meta'] = d['projectRole']['meta'].merge(GoodData::Helpers.stringify_keys(meta_data))
+        d['projectRole']['permissions'] = d['projectRole']['permissions'].merge(GoodData::Helpers.stringify_keys(data[:permissions] || {}))
       end
       new(new_data)
     end

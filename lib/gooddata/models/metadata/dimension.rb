@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../metadata'
 require_relative '../../mixins/is_dimension'
@@ -6,9 +10,7 @@ require_relative 'metadata'
 
 module GoodData
   class Dimension < GoodData::MdObject
-    root_key :dimension
-
-    include GoodData::Mixin::IsDimension
+    include Mixin::IsDimension
 
     class << self
       # Method intended to get all objects of that type in a specified project
@@ -17,7 +19,7 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
-        query('dimensions', Dimension, options)
+        query('dimension', Dimension, options)
       end
 
       # Returns a Project object identified by given string

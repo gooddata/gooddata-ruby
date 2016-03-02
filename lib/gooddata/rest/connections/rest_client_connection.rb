@@ -1,4 +1,8 @@
-# encoding: utf-8
+# encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../connection'
 
@@ -24,7 +28,7 @@ module GoodData
 
         # Connect using username and password
         def connect(username, password, options = {})
-          server = options[:server] || DEFAULT_URL
+          server = options[:server] || Helpers::AuthHelper.read_server
           @server = RestClient::Resource.new server, DEFAULT_LOGIN_PAYLOAD
 
           super

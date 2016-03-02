@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'pathname'
 require 'aws'
@@ -38,7 +42,7 @@ module GoodData
         bucket = s3.buckets.create(bucket_name) unless bucket.exists?
 
         files.each do |file|
-          file_path =  Pathname.new(file)
+          file_path = Pathname.new(file)
           target_path = Pathname.new(@params['s3_backup_path'] || '') + file_path.basename
           obj = bucket.objects[target_path]
           obj.write(file_path)

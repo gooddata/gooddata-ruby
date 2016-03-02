@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'gooddata/helpers/csv_helper'
 
@@ -53,5 +57,55 @@ describe GoodData::Helpers do
         }
       ])
     end
+
+    it 'should encode params and preserve the nil in hidden' do
+      x = GoodData::Helpers.decode_params({ "x" => "y", GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"a":{"b": "c"}}'})
+      expect(x).to eq({"x"=>"y", "a"=>{"b"=>"c"}, "gd_encoded_hidden_params"=>nil})
+    end
+
+    it 'should encode params and preserve the nil in hidden' do
+      x = GoodData::Helpers.decode_params({GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => nil})
+      expect(x).to eq({"gd_encoded_hidden_params" =>nil})
+    end
+
+    it 'should encode params and preserve the nil in hidden' do
+      x = GoodData::Helpers.decode_params({
+        "x" => "y",
+        GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b": "c"}}',
+        GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"a":{"b": "c"}}'
+      })
+      expect(x).to eq({
+        "x"=>"y",
+        "a"=>{"b"=>"c"},
+        "d" => {"b" => "c"},
+        "gd_encoded_hidden_params"=>nil
+      })
+    end
+
+    it 'should encode params and note preserve the nil in public' do
+      x = GoodData::Helpers.decode_params({
+        "x" => "y",
+        GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b": "c"}}'
+      })
+      expect(x).to eq({
+        "x"=>"y",
+        "d" => {"b" => "c"}
+      })
+    end
+
+    it 'should be abe to join datasets' do
+      master = [{ id: 'a', x: 1 },
+                { id: 'b', x: 1 },
+                { id: 'c', x: 2 }]
+
+      lookup = [{ id: 1, y: 'FOO' },
+                { id: 2, y: 'BAR' }]
+
+      results = GoodData::Helpers.join(master, lookup, [:x], [:id])
+      expect(results).to eq [{:id=>"a", :y=>"FOO", :x=>1},
+                             {:id=>"b", :y=>"FOO", :x=>1},
+                             {:id=>"c", :y=>"BAR", :x=>2}]
+    end
+
   end
 end

@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative 'mixins'
 
@@ -26,6 +30,7 @@ module GoodData
         base.send :include, GoodData::Mixin::NotAttribute
         base.send :include, GoodData::Mixin::NotExportable
         base.send :include, GoodData::Mixin::NotFact
+        base.send :include, GoodData::Mixin::NotUserGroup
         base.send :include, GoodData::Mixin::NotMetric
         base.send :include, GoodData::Mixin::NotLabel
         base.send :include, GoodData::Mixin::MdRelations

@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'gooddata/models/domain'
 require 'gooddata/models/membership'
@@ -102,7 +106,7 @@ describe GoodData::Membership do
       ]
 
       l2 = [
-        GoodData::Membership.new(@users[0].json.deep_dup)
+        GoodData::Membership.new(GoodData::Helpers.deep_dup(@users[0].json))
       ]
       l2[0].first_name = 'Peter'
 

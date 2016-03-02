@@ -1,5 +1,77 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.24
+- Fixed problem with validElements causing 500
+
+## 0.6.23
+- Fixed typo sometimes causing crash of ReportDefinition#replace
+
+## 0.6.22
+- Added rake task (license:add) for automatic license headers generating
+- Handle situation when upload_status.json does not exist
+- Connect using SSO - GoodData#connect_sso
+- Added Measure semantics, alias methods metrics to measure (ie. interpolate_metric -> interpolate_measure)
+- rake tasks license:check, license:report & license:info for automated license reporting added
+- Fixed a typo in labels
+- Executions are paging + are implemented as lazy enumerators
+- Fixed after getter in schedule
+- Blueprint works with deprecated labels 
+- Metadata object has new methods for working with unlisted attribute
+- Metadata method deprecated= now accepts and return true/false
+- Included date_facts in building a manifest
+- Using API for user provisioning by login
+- Multiple data sets upload Project#upload_multiple
+- GoodData::MdObject.json is assignable now (using attr_accessor)
+- Added method for updating report definition in easy way - GoodData::Report#update_definiton(opts, &block)
+- Added more logging around connecting to server. Cleaning up staging information. Adding tests to make
+- Middlewares are transforming params to Ruby hash (useful for executors when they pass Java Hash instance)
+- Cleaning up way Data permissions work with errors so we can update Bricks
+- Fixed Project#browser_url
+- Increased max count of retries for 429 - Too Many Requests
+- Fixed potentional crash of ReportDefinition#replace
+- Updated dependencies (gems)
+
+## 0.6.21
+- Consolidated error reporting for Domain#create_users & Project#import_users
+- Removed superfluous error messages on 401
+- Fixed bug with rich params when it could happen that hidden params got deleted on schedule save
+
+## 0.6.20
+- added iterators for retrieval of project, domain, and group objects
+- use query resource inlining for retrieving user filters
+- fixed default parameters from ~/.gooddata file (auth token, server)
+- added project WebDav deprecation warning
+- removed dependency on Active Support gem
+
+## 0.6.19
+- major (not backward compatible) blueprint refactoring
+- added environment parameter to the project creation
+- added HTTP retry strategy with exponential wait times and maximum retries set to 10
+- set max concurrent platform connections set to 20 per session
+- set socket timeout to 1 minute
+
+## 0.6.18
+- added support for the HYPERLINK label type in blueprint
+- fixed method Schedule#create doesn't set schedule name
+- added method "error?" to the class "ExecutionDetail"
+- added blueprint support for folders
+- added ability to change SSO provider for existing platform user
+- added schedules and executions convenience methods
+
+## 0.6.17
+- added validation of the blueprint datatypes (e.g. INTEGER -> INT, allow mixed case etc.)
+- improved the data loading logging and error handling
+- added date dimension switching
+- switched to the new asynchronous ETL pull resource
+- added specification of date reference's format in blueprint
+- added HTTP logging oneliner 
+
+## 0.6.16
+- fixed SSL certificate validation (verify_ssl option in the GoodData.connect)
+- logging changes: separated the HTTP and application logging to different levels, added platform request ID
+- fixed the WebDav URI bootstrap to work with the EU datacenter
+- added driver parameter for Vertica based project creation
+
 ## 0.6.15
 
 - Adding users now accepts more variants of providing users

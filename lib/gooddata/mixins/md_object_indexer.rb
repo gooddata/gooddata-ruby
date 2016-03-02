@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 module GoodData
   module Mixin
@@ -12,14 +16,7 @@ module GoodData
       # @return [MdObject] if id is a String or number single object is returned
       # @return [Array] if :all was provided as an id, list of objects should be returned. Note that this is implemented only in the subclasses. MdObject does not support this since API has no means to return list of all types of objects
       def [](id, options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, :client => client]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         fail "You have to provide an \"id\" to be searched for." unless id
         fail(NoProjectError, 'Connect to a project before searching for an object') unless project
@@ -47,8 +44,12 @@ module GoodData
             md_class = GoodData::Dashboard
           when 'report'
             md_class = GoodData::Report
+          when 'attributeDisplayForm'
+            md_class = GoodData::Label
           when 'reportDefinition'
             md_class = GoodData::ReportDefinition
+          when 'dataSet'
+            md_class = GoodData::Dataset
           else
             md_class = self
           end

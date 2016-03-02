@@ -1,10 +1,16 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require_relative 'base_middleware'
 
 module GoodData
   module Bricks
     class GoodDataMiddleware < Bricks::Middleware
       def call(params)
+        params = params.to_hash
         logger = params['GDC_LOGGER']
         token_name = 'GDC_SST'
         protocol_name = 'CLIENT_GDC_PROTOCOL'

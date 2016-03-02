@@ -1,6 +1,11 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'gooddata/models/domain'
+require 'gooddata/helpers/csv_helper'
 
 describe GoodData::Domain do
   before(:each) do
@@ -56,22 +61,14 @@ describe GoodData::Domain do
   describe '#users' do
     it 'Should list users' do
       users = @domain.users
-      expect(users).to be_instance_of(Array)
-      users.each do |user|
-        expect(user).to be_an_instance_of(GoodData::Profile)
-      end
-    end
-
-    it 'Accepts pagination options - limit' do
-      users = @domain.users(:all, limit: 10)
-      expect(users).to be_instance_of(Array)
+      expect(users).to be_instance_of(Enumerator)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::Profile)
       end
     end
 
     it 'Accepts pagination options - offset' do
-      pending('not that useful and takes very long')
+      skip('not that useful and takes very long')
       users = @domain.users(offset: 1)
       expect(users).to be_instance_of(Array)
       users.each do |user|
@@ -86,30 +83,38 @@ describe GoodData::Domain do
       res = @domain.create_users(list)
 
       # no errors
-      expect(res.select { |x| x[:type] == :user_added_to_domain }.count).to eq res.count
+      expect(res.select { |x| x[:type] == :successful && x[:action] == :user_added_to_domain }.count).to eq res.count
 
       expect(@domain.members?(list.map(&:login)).all?).to be_truthy
 
-      res.map { |r| r[:user] }.each do |r|
+      res.select { |x| x[:type] == :successful }.map { |r| r[:user] }.each do |r|
         expect(r).to be_an_instance_of(GoodData::Profile)
         r.delete
       end
     end
 
     it 'Update a user' do
-      user = @domain.users.sample
+      user = @domain.users.reject { |u| u.login == @client.user.login }.sample
       login = user.login
       name = user.first_name
+      modes = user.authentication_modes
+      possible_modes = [:sso, :password]
+
 
       user.first_name = name.reverse
+      choice = SpecHelper.random_choice(possible_modes, user.authentication_modes)
+      user.authentication_modes = choice
       @domain.create_users([user])
       changed_user = @domain.get_user(login)
       expect(changed_user.first_name).to eq name.reverse
+      expect(changed_user.authentication_modes).to eq [choice]
 
       user.first_name = name
+      user.authentication_modes = modes
       @domain.create_users([user])
       reverted_user = @domain.get_user(login)
       expect(reverted_user.first_name).to eq name
+      expect(reverted_user.authentication_modes).to eq modes
     end
 
     it 'Fails with an exception if you try to create a user that is in a different domain' do
@@ -121,19 +126,23 @@ describe GoodData::Domain do
     end
 
     it 'updates properties of a profile' do
-      pending 'Add more users'
-
       user = @domain.users
-        .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.sample
+        .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.take(20).sample
 
       old_email = user.email
       old_sso_provider = user.sso_provider || ''
       user.email = 'john.doe@gooddata.com'
-      user.sso_provider = user.sso_provider.blank? ? user.sso_provider.reverse : 'some_sso_provider'
+      user.sso_provider = 'some_sso_provider'
       @domain.update_user(user)
       updated_user = @domain.find_user_by_login(user.login)
       expect(updated_user.email).to eq 'john.doe@gooddata.com'
       expect(updated_user.sso_provider).to eq 'some_sso_provider'
+
+      updated_user.sso_provider = 'some_sso_provider'.reverse
+      @domain.update_user(updated_user)
+      updated_user = @domain.find_user_by_login(user.login)
+      expect(updated_user.sso_provider).to eq 'some_sso_provider'.reverse
+
       updated_user.email = old_email
       updated_user.sso_provider = old_sso_provider
       @domain.update_user(updated_user)

@@ -1,4 +1,8 @@
-# encoding: utf-8
+# encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'rest-client'
 
@@ -61,34 +65,45 @@ module GoodData
         # @param username [String] Username to be used for authentication
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
-        def connect(username, password, opts = { verify_ssl: true })
+        def connect(username, password = 'aaaa', opts = {})
           if username.nil? && password.nil?
             username = ENV['GD_GEM_USER']
             password = ENV['GD_GEM_PASSWORD']
           end
 
-          username.symbolize_keys! if username.is_a?(Hash)
+          username = GoodData::Helpers.symbolize_keys(username) if username.is_a?(Hash)
 
           new_opts = opts.dup
           if username.is_a?(Hash) && username.key?(:sst_token)
-            new_opts = username
+            new_opts = new_opts.merge(username)
           elsif username.is_a? Hash
+            new_opts = new_opts.merge(username)
             new_opts[:username] = username[:login] || username[:user] || username[:username]
             new_opts[:password] = username[:password]
-          elsif username.nil? && password.nil? && (opts.nil? || opts.empty?)
+          elsif username.nil? && password.nil? && opts.blank?
             new_opts = Helpers::AuthHelper.read_credentials
           else
             new_opts[:username] = username
             new_opts[:password] = password
           end
+
+          new_opts = { verify_ssl: true }.merge(new_opts)
+          if username.is_a?(Hash) && username[:cookies]
+            new_opts[:sst_token] = username[:cookies]['GDCAuthSST']
+            new_opts[:cookies] = username[:cookies]
+          end
+
           unless new_opts[:sst_token]
             fail ArgumentError, 'No username specified' if new_opts[:username].nil?
             fail ArgumentError, 'No password specified' if new_opts[:password].nil?
           end
+
           if username.is_a?(Hash) && username.key?(:server)
             new_opts[:server] = username[:server]
           end
+
           client = Client.new(new_opts)
+          GoodData.logger.info("Connected to server with webdav path #{client.user_webdav_path}")
 
           if client
             at_exit do
@@ -98,18 +113,22 @@ module GoodData
 
           # HACK: This line assigns class instance # if not done yet
           @@instance = client # rubocop:disable ClassVars
+        end
+
+        def connect_sso(sso)
+          client = Client.new(sso)
           client
         end
 
         def disconnect
-          if @@instance # rubocop:disable ClassVars, Style/GuardClause
-            @@instance.disconnect # rubocop:disable ClassVars
+          if @@instance # rubocop:disable Style/GuardClause
+            @@instance.disconnect
             @@instance = nil # rubocop:disable ClassVars
           end
         end
 
         def connection
-          @@instance # rubocop:disable ClassVars
+          @@instance
         end
 
         # Retry block if exception thrown
@@ -143,12 +162,12 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
-      def create_project(options = { title: 'Project', auth_token: ENV['GD_PROJECT_TOKEN'] })
+      def create_project(options = { title: 'Project' })
         GoodData::Project.create({ client: self }.merge(options))
       end
 
       def create_project_from_blueprint(blueprint, options = {})
-        GoodData::Model::ProjectCreator.migrate(spec: blueprint, token: options[:auth_token], client: self)
+        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, client: self))
       end
 
       def domain(domain_name)
@@ -156,7 +175,9 @@ module GoodData
       end
 
       def project_is_accessible?(id)
-        projects(id) && true rescue false
+        projects(id) && true
+      rescue
+        true
       end
 
       def projects(id = :all)
@@ -211,7 +232,7 @@ module GoodData
         @stats = true
       end
 
-      def stats_on? # rubocop:disable Style/TrivialAccessors
+      def stats_on?
         @stats
       end
 
@@ -245,18 +266,19 @@ module GoodData
 
         url = project.links['uploads']
         fail 'Project WebDAV not supported in this Data Center' unless url
+
+        GoodData.logger.warn 'Beware! Project webdav is deprecated and should not be used.'
         url
       end
 
-      def user_webdav_path(opts = { project: GoodData.project })
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-        u = URI(project.links['uploads'])
-        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+      def user_webdav_path
+        uri = if opts[:webdav_server]
+                opts[:webdav_server]
+              else
+                links.find { |i| i['category'] == 'uploads' }['link']
+              end
+        res = uri.chomp('/') + '/'
+        res[0] == '/' ? "#{connection.server}#{res}" : res
       end
 
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
@@ -295,9 +317,10 @@ module GoodData
       def poll_on_response(link, options = {}, &bl)
         sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
         time_limit = options[:time_limit] || DEFAULT_POLL_TIME_LIMIT
+        process = options[:process] == false ? false : true
 
         # get the first status and start the timer
-        response = get(link, options)
+        response = get(link, process: process)
         poll_start = Time.now
 
         while bl.call(response)
@@ -307,7 +330,7 @@ module GoodData
           end
           sleep sleep_interval
           GoodData::Rest::Client.retryable(:tries => 3, :refresh_token => proc { connection.refresh_token }) do
-            response = get(link, options)
+            response = get(link, process: process)
           end
         end
         response
@@ -346,37 +369,20 @@ module GoodData
 
       def download_from_user_webdav(source_relative_path, target_file_path, options = { client: GoodData.client, project: project })
         download(source_relative_path, target_file_path, options.merge(:directory => options[:directory],
-                                                                       :staging_url => get_user_webdav_url(options)))
+                                                                       :staging_url => user_webdav_path))
       end
 
       def upload_to_user_webdav(file, options = {})
         upload(file, options.merge(:directory => options[:directory],
-                                   :staging_url => get_user_webdav_url(options)))
+                                   :staging_url => user_webdav_path))
       end
 
       def with_project(pid, &block)
         GoodData.with_project(pid, client: self, &block)
       end
 
-      ###################### PRIVATE ######################
-
-      private
-
-      def get_user_webdav_url(options = {})
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = options[:project] || GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
-        u = URI(project.links['uploads'])
-        us = u.to_s
-        ws = options[:client].opts[:webdav_server]
-        if !us.empty? && !us.downcase.start_with?('http') && !ws.empty?
-          u = URI.join(ws, us)
-        end
-
-        URI.join(u.to_s.chomp(u.path.to_s), '/uploads/')
+      def links
+        GoodData::Helpers.get_path(get('/gdc'), %w(about links))
       end
     end
   end

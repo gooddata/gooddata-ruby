@@ -1,7 +1,11 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative 'project'
-require_relative 'project_blueprint'
+require_relative 'blueprint/project_blueprint'
 
 require 'open-uri'
 
@@ -16,13 +20,10 @@ module GoodData
 
           spec = opts[:spec] || fail('You need to provide spec for migration')
           bp = ProjectBlueprint.new(spec)
+          fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
           spec = bp.to_hash
 
-          fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
-
-          token = opts[:token]
-          project = opts[:project] || GoodData::Project.create(:title => spec[:title], :auth_token => token, :client => client)
-          fail('You need to specify token for project creation') if token.nil? && project.nil?
+          project = opts[:project] || client.create_project(opts.merge(:title => spec[:title], :client => client, :environment => opts[:environment]))
 
           begin
             migrate_datasets(spec, opts.merge(project: project, client: client))
@@ -37,19 +38,11 @@ module GoodData
 
         def migrate_datasets(spec, opts = {})
           opts = { client: GoodData.connection }.merge(opts)
-          client = opts[:client]
           dry_run = opts[:dry_run]
-          fail ArgumentError, 'No :client specified' if client.nil?
 
-          p = opts[:project]
-          fail ArgumentError, 'No :project specified' if p.nil?
-
-          project = client.projects(p)
-          fail ArgumentError, 'Wrong :project specified' if project.nil?
+          client, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
-          # schema = Schema.load(schema) unless schema.respond_to?(:to_maql_create)
-          # project = GoodData.project unless project
           uri = "/gdc/projects/#{project.pid}/model/diff"
           result = client.post(uri, bp.to_wire)
 
@@ -66,16 +59,11 @@ module GoodData
 
           response = client.get(link)
 
-          chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'])
+          chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
           if !chunks.nil? && !dry_run
             chunks['updateScript']['maqlDdlChunks'].each do |chunk|
               result = project.execute_maql(chunk)
               fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
-            end
-            bp.datasets.zip(GoodData::Model::ToManifest.to_manifest(bp.to_hash)).each do |ds|
-              dataset = ds[0]
-              manifest = ds[1]
-              GoodData::ProjectMetadata["manifest_#{dataset.name}", :client => client, :project => project] = manifest.to_json
             end
           end
           chunks
@@ -99,6 +87,8 @@ module GoodData
           end
         end
 
+        alias_method :migrate_measures, :migrate_metrics
+
         def load(project, spec)
           if spec.key?(:uploads) # rubocop:disable Style/GuardClause
             spec[:uploads].each do |load|
@@ -115,18 +105,20 @@ module GoodData
           end
         end
 
-        def pick_correct_chunks(chunks)
+        def pick_correct_chunks(chunks, opts = {})
+          preference = opts[:preference] || {}
           # first is cascadeDrops, second is preserveData
           rules = [
-            [false, true],
-            [false, false],
-            [true, true],
-            [true, false]
+            { priority: 1, cascade_drops: false, preserve_data: true },
+            { priority: 2, cascade_drops: false, preserve_data: false },
+            { priority: 3, cascade_drops: true, preserve_data: true },
+            { priority: 4, cascade_drops: true, preserve_data: false }
           ]
-          stuff = chunks.select { |chunk| chunk['updateScript']['maqlDdlChunks'] }
-          rules.reduce(nil) do |a, e|
-            a || stuff.find { |chunk| e[0] == chunk['updateScript']['cascadeDrops'] && e[1] == chunk['updateScript']['preserveData'] }
-          end
+          stuff = chunks.select { |chunk| chunk['updateScript']['maqlDdlChunks'] }.map { |chunk| { cascade_drops: chunk['updateScript']['cascadeDrops'], preserve_data: chunk['updateScript']['preserveData'], maql: chunk['updateScript']['maqlDdlChunks'], orig: chunk } }
+          results = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] }
+
+          pick = results.find { |r| r.values_at(:cascade_drops, :preserve_data) == preference.values_at(:cascade_drops, :preserve_data) } || results.first
+          pick[:orig] if pick
         end
       end
     end

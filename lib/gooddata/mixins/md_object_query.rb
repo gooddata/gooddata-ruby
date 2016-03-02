@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 module GoodData
   module Mixin
@@ -33,8 +37,18 @@ module GoodData
         project = GoodData::Project[p, options]
         fail ArgumentError, 'Wrong :project specified' if project.nil?
 
-        query_result = client.get(project.md['query'] + "/#{query_obj_type}/")['query']['entries']
-        options[:full] == false ? query_result : query_result.pmap { |item| klass[item['link'], options] }
+        offset = 0
+        page_limit = 50
+        Enumerator.new do |y|
+          loop do
+            result = client.get(project.md['objects'] + '/query', params: { category: query_obj_type, limit: page_limit, offset: offset })
+            result['objects']['items'].each do |item|
+              y << (klass ? client.create(klass, item, project: project) : item)
+            end
+            break if result['objects']['paging']['count'] < page_limit
+            offset += page_limit
+          end
+        end
       end
 
       def dependency(uri, key = nil, opts = { :client => GoodData.connection })
@@ -83,7 +97,7 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'No :project specified' if project.nil?
 
-        dependency("#{project.md['usedby2']}/#{obj_id(uri)}", key, opts)
+        dependency("#{project.md['usedby2']}/#{uri_obj_id(uri)}", key, opts)
       end
 
       alias_method :used_by, :usedby
@@ -96,7 +110,7 @@ module GoodData
         project = GoodData::Project[p, opts]
         fail ArgumentError, 'No :project specified' if project.nil?
 
-        dependency("#{project.md['using2']}/#{obj_id(uri)}", key, opts)
+        dependency("#{project.md['using2']}/#{uri_obj_id(uri)}", key, opts)
       end
 
       def usedby?(uri, target_uri, opts = { :client => GoodData.connection, :project => GoodData.project })

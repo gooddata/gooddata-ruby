@@ -1,4 +1,9 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require 'tempfile'
 
 require 'gooddata/core/rest'
@@ -7,7 +12,7 @@ describe GoodData do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     # @project = ProjectHelper.get_default_project(:client => @client)
-    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
 
   after(:each) do
@@ -200,10 +205,9 @@ describe GoodData do
     end
   end
 
-
   describe '#user_webdav_path' do
     it 'Gets the path' do
-      @client.user_webdav_path(:project => @project)
+      expect(@client.user_webdav_path).to eq GoodData::Environment::ConnectionHelper::STAGING_URI
     end
   end
 end

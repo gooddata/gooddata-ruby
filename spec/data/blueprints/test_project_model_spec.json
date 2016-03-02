@@ -1,0 +1,106 @@
+{
+  "title": "RubyGem Dev Week test",
+  "datasets": [
+    {
+      "type": "dataset",
+      "id": "dataset.repos",
+      "title": "Repositories",
+      "folder": "Foldered Repos",
+      "columns": [
+        {
+          "type": "anchor",
+          "id" : "attr.repos.repo_id",
+          "description": "This is anchor description",
+          "title": "Repository Id"
+        },
+        {
+          "type": "label",
+          "id" : "some_label_id",
+          "column_name": "repo_id",
+          "reference": "attr.repos.repo_id",
+          "title": "Repository Id"
+        },
+        {
+          "type": "attribute",
+          "id" : "some_attr_id",
+          "title": "Repository Name"
+        },
+        {
+          "type": "label",
+          "id" : "some_attr_label_id",
+          "reference": "some_attr_id",
+          "column_name": "repo_name",
+          "gd_data_type": "VARCHAR(128)",
+          "title": "Repository Name"
+        }
+      ]
+    },
+    {
+      "type": "dataset",
+      "id": "dataset.devs",
+      "title": "Developers",
+      "columns": [
+        {
+          "type": "anchor",
+          "id" : "attr.devs.dev_id",
+          "title": "Dev",
+          "folder": "Anchor folder"
+        },
+        {
+          "type": "label",
+          "id": "label.devs.dev_id.id",
+          "column_name": "dev_id",
+          "reference": "attr.devs.dev_id",
+          "title": "Id"
+        },
+        {
+          "type": "label",
+          "id": "label.devs.dev_id.email",
+          "column_name": "email",
+          "reference": "attr.devs.dev_id",
+          "title": "Email",
+          "default_label": true
+        }
+      ]
+    },
+    {
+      "type": "dataset",
+      "id": "dataset.commits",
+      "title": "Commits",
+      "columns": [
+        {
+          "type": "anchor",
+          "id" : "attr.commits.factsof"
+        },
+        {
+          "type": "fact",
+          "id" : "fact.commits.lines_changed",
+          "column_name": "lines_changed",
+          "title": "Lines Changed",
+          "description": "Fact description"
+        },
+        {
+          "type": "date",
+          "column_name": "committed_on",
+          "dataset": "committed_on"
+        },
+        {
+          "type": "reference",
+          "column_name": "dev_id",
+          "dataset": "dataset.devs"
+        },
+        {
+          "type": "reference",
+          "column_name": "repo_id",
+          "dataset": "dataset.repos"
+        }
+      ]
+    }
+  ],
+  "date_dimensions": [
+    {
+      "type": "date_dimension",
+      "id": "committed_on"
+    }
+  ]
+}

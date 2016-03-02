@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'pry'
 require 'zip'
@@ -10,7 +14,7 @@ require_relative 'execution_detail'
 require_relative 'schedule'
 
 module GoodData
-  class Process < GoodData::Rest::Object
+  class Process < Rest::Resource
     attr_reader :data
 
     alias_method :raw_data, :data
@@ -52,14 +56,7 @@ module GoodData
       end
 
       def with_deploy(dir, options = {}, &block)
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        _client, project = GoodData.get_client_and_project(options)
 
         GoodData.with_project(project) do
           params = options[:params].nil? ? [] : [options[:params]]
@@ -79,15 +76,7 @@ module GoodData
       end
 
       def upload_package(path, files_to_exclude, opts = { :client => GoodData.connection })
-        client = opts[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
-
+        GoodData.get_client_and_project(opts)
         zip_and_upload(path, files_to_exclude, opts)
       end
 
@@ -100,14 +89,7 @@ module GoodData
       # @option options [String] :process_id ID of a process to be redeployed (do not set if you want to create a new process)
       # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
       def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'No :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         path = Pathname(path) || fail('Path is not specified')
         files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |pname| Pathname(pname) }
@@ -135,7 +117,7 @@ module GoodData
                 client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
               end
 
-        process = client.create(Process, res, project: p)
+        process = client.create(Process, res, project: project)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
       end
@@ -144,20 +126,20 @@ module GoodData
 
       private
 
-      def zip_and_upload(path, files_to_exclude, opts = {})
-        def with_zip(opts = {})
-          Tempfile.open('deploy-graph-archive') do |temp|
-            zip_filename = temp.path
-            File.open(zip_filename, 'w') do |zip|
-              Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
-                yield zipfile
-              end
+      def with_zip(opts = {})
+        Tempfile.open('deploy-graph-archive') do |temp|
+          zip_filename = temp.path
+          File.open(zip_filename, 'w') do |zip|
+            Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
+              yield zipfile
             end
-            client.upload_to_user_webdav(temp.path, opts)
-            temp.path
           end
+          client.upload_to_user_webdav(temp.path, opts)
+          temp.path
         end
+      end
 
+      def zip_and_upload(path, files_to_exclude, opts = {})
         puts 'Creating package for upload'
         if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
           with_zip(opts) do |zipfile|
@@ -280,8 +262,8 @@ module GoodData
       client.post(executions_link,
                   :execution => {
                     :graph => executable.to_s,
-                    :params => GoodData::Helpers.encode_params(params, false),
-                    :hiddenParams => GoodData::Helpers.encode_params(hidden_params, true)
+                    :params => GoodData::Helpers.encode_public_params(params),
+                    :hiddenParams => GoodData::Helpers.encode_hidden_params(hidden_params)
                   })
     end
   end

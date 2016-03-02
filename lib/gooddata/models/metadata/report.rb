@@ -1,13 +1,15 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../metadata'
 require_relative 'metadata'
 
 module GoodData
   class Report < GoodData::MdObject
-    root_key :report
-
-    include GoodData::Mixin::Lockable
+    include Mixin::Lockable
 
     class << self
       # Method intended to get all objects of that type in a specified project
@@ -16,18 +18,11 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
-        query('reports', Report, options)
+        query('report', Report, options)
       end
 
       def create(options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = client.projects(p)
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         title = options[:title]
         fail 'Report needs a title specified' unless title
@@ -53,6 +48,29 @@ module GoodData
         report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
         client.create(Report, report, :project => project)
       end
+
+      def data_result(result, options = {})
+        client = options[:client]
+        data_result_uri = result['execResult']['dataResult']
+        begin
+          result = client.poll_on_response(data_result_uri, options) do |body|
+            body && body['taskState'] && body['taskState']['status'] == 'WAIT'
+          end
+        rescue RestClient::BadRequest => e
+          resp = JSON.parse(e.response)
+          if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
+            raise GoodData::UncomputableReport
+          else
+            raise e
+          end
+        end
+
+        if result.empty?
+          ReportDataResult.new(data: [], top: 0, left: 0)
+        else
+          ReportDataResult.from_xtab(result)
+        end
+      end
     end
 
     # Add a report definition to a report. This will show on a UI as a new version.
@@ -64,6 +82,33 @@ module GoodData
       content['definitions'] = definition_uris << rep_def.uri
       self
     end
+
+    # Add a report definition to a report. This will show on a UI as a new version.
+    #
+    # @param report_definition [GoodData::ReportDefinition | String] Report definition to add. Either it can be a URI of a report definition or an actual report definition object.
+    # @return [GoodData::Report] Return self
+    def add_definition!(report_definition)
+      res = add_definition(report_definition)
+      res.save
+    end
+
+    # Returns the newest (current version) report definition as an object
+    #
+    # @return [GoodData::ReportDefinition] Returns the newest report defintion
+    def definition
+      project.report_definitions(latest_report_definition_uri)
+    end
+
+    alias_method :latest_report_definition, :definition
+
+    # Returns the newest (current version) report definition uri
+    #
+    # @return [String] Returns uri of the newest report defintion
+    def definition_uri
+      definition_uris.last
+    end
+
+    alias_method :latest_report_definition_uri, :definition_uri
 
     # Gets a report definitions (versions) of this report as objects.
     #
@@ -96,17 +141,7 @@ module GoodData
     def execute(options = {})
       fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
       result = client.post '/gdc/xtab2/executor3', 'report_req' => { 'report' => uri }
-      data_result_uri = result['execResult']['dataResult']
-
-      result = client.poll_on_response(data_result_uri, options) do |body|
-        body && body['taskState'] && body['taskState']['status'] == 'WAIT'
-      end
-
-      if result.empty?
-        client.create(EmptyResult, result)
-      else
-        client.create(ReportDataResult, result)
-      end
+      GoodData::Report.data_result(result, options.merge(client: client))
     end
 
     # Returns true if you can export and object
@@ -124,20 +159,6 @@ module GoodData
       result = client.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
       result1 = client.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
       client.poll_on_code(result1['uri'], options.merge(process: false))
-    end
-
-    # Returns the newest (current version) report definition uri
-    #
-    # @return [String] Returns uri of the newest report defintion
-    def latest_report_definition_uri
-      definition_uris.last
-    end
-
-    # Returns the newest (current version) report definition as an object
-    #
-    # @return [GoodData::ReportDefinition] Returns the newest report defintion
-    def latest_report_definition
-      project.report_definitions(latest_report_definition_uri)
     end
 
     # Returns the newest (current version) report definition uri
@@ -178,18 +199,45 @@ module GoodData
       self
     end
 
-    # Replaces all occurences of something with something else. This is just a convenience method. The
-    # real work is done under the hood in report definition. This is just deferring to those
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
     #
-    # @param what [Object] What you would like to have changed
-    # @param for_what [Object] What you would like to have changed this for
-    # @return [GoodData::Report] Returns report with removed definition
-    def replace(what, for_what)
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
+    # @return [GoodData::Report]
+    def replace(mapping)
       new_defs = definitions.map do |rep_def|
-        rep_def.replace(what, for_what)
+        rep_def.replace(mapping)
       end
       new_defs.pmap(&:save)
       self
+    end
+
+    ## Update report definition and reflect the change in report
+    #
+    # @param [Hash] opts Options
+    # @option opts [Boolean] :new_definition (true) If true then new definition will be created
+    # @return [GoodData::ReportDefinition] Updated and saved report definition
+    def update_definition(opts = { :new_definition => true }, &block)
+      # TODO: Cache the latest report definition somehow
+      repdef = definition.dup
+
+      block.call(repdef, self) if block_given?
+
+      if opts[:new_definition]
+        new_def = GoodData::ReportDefinition.create(:client => client, :project => project)
+
+        rd = repdef.json['reportDefinition']
+        rd.delete('links')
+        %w(author uri created identifier updated contributor).each { |k| rd['meta'].delete(k) }
+        new_def.json['reportDefinition'] = rd
+        new_def.save
+
+        add_definition!(new_def)
+        return new_def
+      else
+        repdef.save
+      end
+
+      repdef
     end
   end
 end

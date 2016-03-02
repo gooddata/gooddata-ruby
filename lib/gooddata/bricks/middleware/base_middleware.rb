@@ -1,4 +1,9 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require 'hashie'
 
 module GoodData
@@ -33,7 +38,7 @@ module GoodData
         if @config
           # load it from file and merge it
           defaults = { 'config' => MultiJson.load(File.read(@config)) }
-          default_params = defaults.extend(Hashie::Extensions::DeepMerge)
+          default_params = GoodData::Helpers::DeepMergeableHash[defaults]
           params = default_params.deep_merge(params)
         end
         params

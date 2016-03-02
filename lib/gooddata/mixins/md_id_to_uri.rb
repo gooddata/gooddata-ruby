@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 module GoodData
   module Mixin
@@ -7,14 +11,7 @@ module GoodData
 
       # TODO: Add test
       def identifier_to_uri(opts = { :client => GoodData.connection, :project => GoodData.project }, *ids)
-        client = opts[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(opts)
 
         uri = project.md[IDENTIFIERS_CFG]
         response = client.post uri, 'identifierToUri' => ids

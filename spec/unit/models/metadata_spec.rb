@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'gooddata'
 
@@ -24,7 +28,7 @@ RAW_DATA = {
 
 describe GoodData::MdObject do
   before(:each) do
-    @instance = GoodData::MdObject.new(RAW_DATA.deep_dup)
+    @instance = GoodData::MdObject.new(GoodData::Helpers.deep_dup(RAW_DATA))
   end
 
   describe '#identifier=' do
@@ -53,6 +57,48 @@ describe GoodData::MdObject do
   describe '#remove_tag' do
     it 'returns tags as list' do
       expect(@instance.remove_tag('t').tag_set).to eq %w(a b cg r).to_set
+    end
+  end
+
+  describe '#deprecated' do
+    it 'returns true/false' do
+      expect(@instance.deprecated).to be_falsey
+    end
+  end
+
+  describe '#deprecated=' do
+    it 'sets deprecated flag' do
+      expect(@instance.deprecated).to be_falsey
+      @instance.deprecated = true
+      expect(@instance.deprecated).to be_truthy
+      @instance.deprecated = false
+      expect(@instance.deprecated).to be_falsey
+      @instance.deprecated = 0
+      expect(@instance.deprecated).to be_falsey
+      @instance.deprecated = 1
+      expect(@instance.deprecated).to be_truthy
+    end
+  end
+
+  describe '#unlisted' do
+    it 'returns true/false' do
+      expect(@instance.unlisted).to be_falsey
+    end
+  end
+
+  describe '#unlisted?' do
+    it 'returns true/false' do
+      expect(@instance.unlisted?).to be_falsey
+    end
+  end
+
+  describe '#unlisted=' do
+    it 'sets unlisted flag' do
+      expect(@instance.unlisted).to be_falsey
+      @instance.unlisted = true
+      expect(@instance.unlisted?).to be_truthy
+      @instance.unlisted = false
+      expect(@instance.unlisted?).to be_falsey
     end
   end
 end

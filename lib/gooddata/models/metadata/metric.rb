@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require_relative '../../goodzilla/goodzilla'
 require_relative '../../mixins/mixins'
@@ -8,14 +12,7 @@ require_relative 'metadata'
 module GoodData
   # Metric representation
   class Metric < MdObject
-    attr_reader :json
-
-    include GoodData::Mixin::Lockable
-
-    alias_method :to_hash, :json
-
-    include GoodData::Mixin::RestResource
-    root_key :metric
+    include Mixin::Lockable
 
     class << self
       # Method intended to get all objects of that type in a specified project
@@ -24,7 +21,7 @@ module GoodData
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
-        query('metrics', Metric, options)
+        query('metric', Metric, options)
       end
 
       def xcreate(metric, options = { :client => GoodData.connection, :project => GoodData.project })
@@ -32,14 +29,7 @@ module GoodData
       end
 
       def create(metric, options = { :client => GoodData.connection, :project => GoodData.project })
-        client = options[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = options[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, options]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        client, project = GoodData.get_client_and_project(options)
 
         if metric.is_a?(String)
           expression = metric || options[:expression]
@@ -117,14 +107,7 @@ module GoodData
       end
 
       def xexecute(expression, opts = { :client => GoodData.connection, :project => GoodData.project })
-        client = opts[:client]
-        fail ArgumentError, 'No :client specified' if client.nil?
-
-        p = opts[:project]
-        fail ArgumentError, 'No :project specified' if p.nil?
-
-        project = GoodData::Project[p, opts]
-        fail ArgumentError, 'Wrong :project specified' if project.nil?
+        GoodData.get_client_and_project(opts)
 
         execute(expression, opts.merge(:extended_notation => true))
       end
@@ -135,9 +118,8 @@ module GoodData
         :client => client,
         :project => project
       }
-
       res = GoodData::ReportDefinition.execute(opts.merge(:left => self))
-      res && res[0][0]
+      res.data[0][0] if res && !res.empty?
     end
 
     def expression
@@ -174,27 +156,15 @@ module GoodData
       contain?(uri)
     end
 
-    # Method used for replacing objects like Attribute, Fact or Metric.
-    # @param [GoodData::MdObject] what Object that should be replaced
-    # @param [GoodData::MdObject] for_what Object it is replaced with
+    # Method used for replacing values in their state according to mapping. Can be used to replace any values but it is typically used to replace the URIs. Returns a new object of the same type.
+    #
+    # @param [Array<Array>]Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
     # @return [GoodData::Metric]
-    def replace(what, for_what = nil)
-      pairs = if what.is_a?(Hash)
-                whats = what.keys
-                to_whats = what.values
-                whats.zip(to_whats)
-              elsif what.is_a?(Array) && for_what.is_a?(Array)
-                whats.zip(to_whats)
-              else
-                [[what, for_what]]
-              end
-
-      pairs.each do |a, b|
-        uri_what = a.respond_to?(:uri) ? a.uri : a
-        uri_for_what = b.respond_to?(:uri) ? b.uri : b
-        self.expression = expression.gsub("[#{uri_what}]", "[#{uri_for_what}]")
-      end
-      self
+    def replace(mapping)
+      x = GoodData::MdObject.replace_quoted(self, mapping)
+      x = GoodData::MdObject.replace_bracketed(x, mapping)
+      vals = GoodData::MdObject.find_replaceable_values(x, mapping)
+      GoodData::MdObject.replace_bracketed(x, vals)
     end
 
     # Method used for replacing attribute element values. Looks up certain value of a label in the MAQL expression and exchanges it for a different value of the same label.

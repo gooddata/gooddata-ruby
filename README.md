@@ -49,18 +49,27 @@ If you are using gems just
 
 ## Credits
 
-This project was originaly started by Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ] 
+**Originaly started by**
 
-Project is now actively developed and maintained by following folks
+Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ] 
 
-- [Tomas Korcak](https://github.com/korczis) [<mailto:korczis@gmail.com> / [@korczis](http://twitter.com/korczis)] 
-- [Tomas Svarovsky](https://github.com/fluke777) [<mailto:svarovsky.tomas@gmail.com> / [@fluke777](http://twitter.com/fluke777)]
+**Actively developed and maintained by**
+
+- [Tomas Korcak](https://github.com/korczis) [ <mailto:korczis@gmail.com> / [@korczis](http://twitter.com/korczis) ] 
+- [Tomas Svarovsky](https://github.com/fluke777) [ <mailto:svarovsky.tomas@gmail.com> / [@fluke777](http://twitter.com/fluke777) ]
+
+**Contributors**
+
 - [Patrick McConlogue](https://github.com/thnkr/)
 - [Petr Cvengros](https://github.com/cvengros)
 
-Special thanks to Thomas Watson Steen [ <mailto:w@tson.dk> / [@wa7son](http://twitter.com/wa7son) ].
+For full contributor info see [contributors page](https://github.com/gooddata/gooddata-ruby/graphs/contributors).
+
+**Special thanks to**
+
+- Thomas Watson Steen [ <mailto:w@tson.dk> / [@wa7son](http://twitter.com/wa7son) ].
 
 ## Copyright
 
-Copyright (c) 2010 - 2014 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
+Copyright (c) 2010 - 2015 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
 

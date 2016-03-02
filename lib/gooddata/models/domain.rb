@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'cgi'
 
@@ -7,7 +11,7 @@ require_relative '../extensions/enumerable'
 require_relative '../rest/object'
 
 module GoodData
-  class Domain < GoodData::Rest::Object
+  class Domain < Rest::Resource
     attr_reader :name
 
     class << self
@@ -83,8 +87,17 @@ module GoodData
         begin
           url = "/gdc/account/domains/#{domain_name}/users"
           response = c.post(url, :accountSetting => data)
-        rescue RestClient::BadRequest
-          raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+        rescue RestClient::BadRequest => e
+          error = MultiJson.load(e.response)
+          error_type = GoodData::Helpers.get_path(error, %w(error errorClass))
+          case error_type
+          when 'com.gooddata.webapp.service.userprovisioning.LoginNameAlreadyRegisteredException'
+            raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+          when 'com.gooddata.json.validator.exception.MalformedMessageException'
+            raise GoodData::MalformedUserError, "User #{data[:login]} is malformed. The message from API is #{GoodData::Helpers.interpolate_error_message(error)}"
+          else
+            raise GoodData::Helpers.interpolate_error_message(error)
+          end
         end
 
         url = response['uri']
@@ -183,26 +196,26 @@ module GoodData
       # @option opts [Number] :limit From address
       # TODO: Review opts[:limit] functionality
       def users(domain, id = :all, opts = {})
-        c = client(opts)
-        domain = c.domain(domain)
+        client = client(opts)
+        domain = client.domain(domain)
         if id == :all
           GoodData.logger.warn("Retrieving all users from domain #{domain.name}")
-          result = []
-          page_limit = opts[:page_limit] || 1000
-          limit = opts[:limit] || Float::INFINITY
-          offset = opts[:offset] || 0
-          uri = "#{domain.uri}/users?offset=#{offset}&limit=#{page_limit}"
-          loop do
-            tmp = client(opts).get(uri)
-            tmp['accountSettings']['items'].each do |account|
-              result << client(opts).create(GoodData::Profile, account)
-            end
-            break if result.length >= limit
+          Enumerator.new do |y|
+            page_limit = opts[:page_limit] || 1000
+            offset = opts[:offset] || 0
+            loop do
+              begin
+                tmp = client(opts).get("#{domain.uri}/users", params: { offset: offset, limit: page_limit })
+              end
 
-            uri = tmp['accountSettings']['paging']['next']
-            break unless uri
+              tmp['accountSettings']['items'].each do |user_data|
+                user = client.create(GoodData::Profile, user_data)
+                y << user if user
+              end
+              break if tmp['accountSettings']['items'].count < page_limit
+              offset += page_limit
+            end
           end
-          result
         else
           find_user_by_login(domain, id)
         end
@@ -216,23 +229,25 @@ module GoodData
         default_domain_name = default_domain.respond_to?(:name) ? default_domain.name : default_domain
         domain = client.domain(default_domain_name)
 
+        # Prepare cache for domain users
         domain_users_cache = Hash[domain.users.map { |u| [u.login, u] }]
+
         list.pmapcat do |user|
           begin
             user_data = user.to_hash
             domain_user = domain_users_cache[user_data[:login]]
             if !domain_user
               added_user = domain.add_user(user_data, opts)
-              [{ type: :user_added_to_domain, user: added_user }]
+              [{ type: :successful, :action => :user_added_to_domain, user: added_user }]
             else
               fields_to_check = opts[:fields_to_check] || user_data.keys
               diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login, fields: fields_to_check)
               next [] if diff[:changed].empty?
               updated_user = domain.update_user(domain_user.to_hash.merge(user_data.compact), opts)
-              [{ type: :user_changed_in_domain, user: updated_user }]
+              [{ type: :successful, :action => :user_changed_in_domain, user: updated_user }]
             end
           rescue RuntimeError => e
-            [{ type: :error, reason: e }]
+            [{ type: :failed, :user => user, message: e }]
           end
         end
       end
@@ -259,10 +274,32 @@ module GoodData
       GoodData::Domain.add_user(data, name, { client: client }.merge(opts))
     end
 
+    def clients
+      clients_uri = "/gdc/domains/#{name}/clients"
+      res = client.get(clients_uri)
+      res_clients = (res['clients'] && res['clients']['items']) || []
+      res_clients.map do |res_client|
+        client.create(GoodData::Client, res_client)
+      end
+    end
+
     alias_method :create_user, :add_user
 
     def create_users(list, options = {})
       GoodData::Domain.create_users(list, name, { client: client }.merge(options))
+    end
+
+    def segments(id = :all)
+      GoodData::Segment[id, domain: self]
+    end
+
+    # Creates new segment in current domain from parameters passed
+    #
+    # @param data [Hash] Data for segment namely :segment_id and :master_project is accepted. Master_project can be given as either a PID or a Project instance
+    # @return [GoodData::Segment] New Segment instance
+    def create_segment(data)
+      segment = GoodData::Segment.create(data, domain: self, client: client)
+      segment.save
     end
 
     # Gets user by its login or uri in various shapes
@@ -319,6 +356,63 @@ module GoodData
       profiles.map { |p| member?(p, list) }
     end
 
+    # Returns uri for segments on the domain. This will be removed soon. It is here that for segments the "account" portion of the URI was removed. And not for the rest
+    #
+    # @return [String] Uri of the segments
+    def segments_uri
+      "/gdc/domains/#{name}"
+    end
+
+    # Calls Segment#synchronize_clients on all segments and concatenates the results
+    #
+    # @return [Array] Returns array of results
+    def synchronize_clients
+      segments.flat_map(&:synchronize_clients)
+    end
+
+    # Runs async process that walks through segments and provisions projects if necessary.
+    #
+    # @return [Enumerator] Returns Enumerator of results
+    def provision_client_projects
+      res = client.post(segments_uri + '/provisionClientProjects', nil)
+      res = client.poll_on_code(res['asyncTask']['links']['poll'])
+      klass = Struct.new('ProvisioningResult', :id, :status, :project_uri)
+      Enumerator.new do |y|
+        uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))
+        loop do
+          result = client.get(uri)
+          (GoodData::Helpers.get_path(result, %w(clientProjectProvisioningResultDetails items)) || []).each do |item|
+            y << klass.new(item['id'], item['status'], item['project'])
+          end
+          uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResultDetails paging next))
+          break if uri.nil?
+        end
+      end
+    end
+
+    def update_clients(data, options = {})
+      payload = data.map do |datum|
+        {
+          :client => {
+            :id => datum[:id],
+            :segment => segments_uri + '/segments/' + datum[:segment],
+            :project => datum[:project]
+          }
+        }
+      end
+      if options[:delete_extra] == true
+        res = client.post(segments_uri + '/updateClients?deleteExtra=true', updateClients: { items: payload })
+      else
+        res = client.post(segments_uri + '/updateClients', updateClients: { items: payload })
+      end
+      data = GoodData::Helpers.get_path(res, ['updateClientsResponse'])
+      if data
+        data.flat_map { |k, v| v.map { |h| GoodData::Helpers.symbolize_keys(h.merge('type' => k)) } }
+      else
+        []
+      end
+    end
+
     # Update user in domain
     #
     # @param opts [Hash] Data of the user to be updated
@@ -347,6 +441,9 @@ module GoodData
 
     alias_method :members, :users
 
+    # Returns uri for the domain.
+    #
+    # @return [String] Uri of the segments
     def uri
       "/gdc/account/domains/#{name}"
     end

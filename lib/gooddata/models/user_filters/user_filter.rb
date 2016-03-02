@@ -1,10 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 module GoodData
   class UserFilter < GoodData::MdObject
     def initialize(data)
       @dirty = false
-      @json = data
+      @json = GoodData::Helpers.symbolize_keys(data)
     end
 
     def ==(other)
@@ -20,7 +24,7 @@ module GoodData
     #
     # @return [String] Uri of related object
     def related_uri
-      @json['related']
+      @json[:related]
     end
 
     # Returns the the object of this filter is related to. It can be either project or a user
@@ -35,7 +39,7 @@ module GoodData
     #
     # @return [GoodData::Project | GoodData::Profile] Related object
     def variable
-      uri = @json['prompt']
+      uri = @json[:prompt]
       GoodData::Variable[uri, client: client, project: project]
     end
 
@@ -46,14 +50,14 @@ module GoodData
     #
     # @return [Symbol] level on which this filter will be applied
     def level
-      @json['level'].to_sym
+      @json[:level].to_sym
     end
 
     # Returns the MAQL expression of the filter
     #
     # @return [String] MAQL expression
     def expression
-      @json['expression']
+      @json[:expression]
     end
 
     # Allows to set the MAQL expression of the filter
@@ -62,21 +66,21 @@ module GoodData
     # @return [String] MAQL expression
     def expression=(expression)
       @dirty = true
-      @json['expression'] = expression
+      @json[:expression] = expression
     end
 
     # Gives you URI of the filter
     #
     # @return [String]
     def uri
-      @json['uri']
+      @json[:uri]
     end
 
     # Allows to set URI of the filter
     #
     # @return [String]
     def uri=(uri)
-      @json['uri'] = uri
+      @json[:uri] = uri
     end
 
     # Returns pretty version of the expression

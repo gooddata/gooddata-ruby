@@ -1,0 +1,32 @@
+[
+  {
+    "dataSetSLIManifest": {
+      "parts": [
+        {
+          "referenceKey": 1,
+          "populates": [
+            "label.devs.id.id"
+          ],
+          "mode": "FULL",
+          "columnName": "devs_id"
+        },
+        {
+          "referenceKey": 1,
+          "populates": [
+            "label.opp_snapshot.accountstagesnapshot"
+          ],
+          "mode": "FULL",
+          "columnName": "account"
+        }
+      ],
+      "dataSet": "dataset.devs",
+      "file": "data.csv",
+      "csvParams": {
+        "quoteChar": "\"",
+        "escapeChar": "\"",
+        "separatorChar": ",",
+        "endOfLine": "\n"
+      }
+    }
+  }
+]

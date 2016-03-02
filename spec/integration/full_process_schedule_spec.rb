@@ -1,3 +1,9 @@
+# encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require 'gooddata'
 
 describe "Full process and schedule exercise", :constraint => 'slow' do
@@ -22,7 +28,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
   before(:all) do
     @client = ConnectionHelper::create_default_connection
-    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @process = @project.deploy_process('./spec/data/ruby_process',
                                        type: 'RUBY',
                                        name: 'Test ETL Process (Ruby)')
@@ -84,6 +90,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       schedule = @process.create_schedule(schedule_first.obj_id, @process.executables.first)
       res = @process.schedules
       expect(res.count).to eq 2
+      expect(schedule.after).to eq schedule_first
       expect(@process.schedules.map(&:uri)).to include(schedule_first.uri, schedule.uri)
     ensure
       schedule && schedule.delete
@@ -114,11 +121,13 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   it "should be possible to execute schedule" do
     begin
       schedule = @process.create_schedule('0 15 27 7 *', @process.executables.first)
+      executions_count = schedule.executions.count
       result = schedule.execute
       expect(result.status).to eq :ok
       log = result.log
       expect(log.index('Hello Ruby executors')).not_to eq nil
       expect(log.index('Hello Ruby from the deep')).not_to eq nil
+      expect(executions_count + 1).to eq schedule.executions.count
     ensure
       schedule && schedule.delete
     end

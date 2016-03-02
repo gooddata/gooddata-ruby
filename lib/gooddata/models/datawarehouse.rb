@@ -1,8 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 require_relative '../rest/resource'
 
 module GoodData
-  class DataWarehouse < GoodData::Rest::Resource
+  class DataWarehouse < Rest::Resource
     class << self
       CREATE_URL = '/gdc/datawarehouse/instances'
 
@@ -17,7 +22,8 @@ module GoodData
         c = client(opts)
         fail ArgumentError, 'No :client specified' if c.nil?
 
-        auth_token = opts[:auth_token]
+        opts = { :auth_token => Helpers::AuthHelper.read_token }.merge(opts)
+        auth_token = opts[:auth_token] || opts[:token]
         fail ArgumentError, 'You have to provide your token for creating projects as :auth_token parameter' if auth_token.nil? || auth_token.empty?
 
         title = opts[:title]
@@ -45,10 +51,6 @@ module GoodData
         c.create(DataWarehouse, final_json)
       end
     end
-    attr_accessor :json
-
-    alias_method :to_json, :json
-    alias_method :raw_data, :json
 
     def initialize(json)
       super

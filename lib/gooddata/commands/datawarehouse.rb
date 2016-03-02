@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 module GoodData
   module Command
@@ -7,14 +11,8 @@ module GoodData
       class << self
         # Create new project based on options supplied
         def create(options = { client: GoodData.connection })
-          title = options[:title]
           description = options[:summary] || options[:description]
-          token = options[:token] || options[:auth_token]
-          client = options[:client]
-          GoodData::DataWarehouse.create(:title => title,
-                                         :description => description,
-                                         :auth_token => token,
-                                         :client => client)
+          GoodData::DataWarehouse.create(options.merge(:description => description))
         end
       end
     end

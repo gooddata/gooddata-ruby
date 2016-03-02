@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'pmap'
 
@@ -7,7 +11,7 @@ require_relative '../rest/object'
 require_relative 'project'
 
 module GoodData
-  class Profile < GoodData::Rest::Object
+  class Profile < Rest::Resource
     attr_reader :user, :json
 
     EMPTY_OBJECT = {
@@ -79,7 +83,7 @@ module GoodData
       end
 
       def create_object(attributes)
-        json = EMPTY_OBJECT.deep_dup
+        json = GoodData::Helpers.deep_dup(EMPTY_OBJECT)
         json['accountSetting']['links']['self'] = attributes[:uri] if attributes[:uri]
         res = client.create(GoodData::Profile, json)
 
@@ -313,7 +317,7 @@ module GoodData
 
     # Saves object if dirty, clears dirty flag
     def save!
-      if @dirty # rubocop:disable Style/GuardClause
+      if @dirty
         raw = @json.dup
         raw['accountSetting'].delete('login')
 
@@ -323,6 +327,7 @@ module GoodData
           @dirty = false
         end
       end
+      self
     end
 
     # Gets the preferred timezone
@@ -372,6 +377,15 @@ module GoodData
       (first_name || '') + (last_name || '')
     end
 
+    def password
+      @json['accountSetting']['password']
+    end
+
+    def password=(a_password)
+      @dirty = true
+      @json['accountSetting']['password'] = a_password
+    end
+
     def sso_provider
       @json['accountSetting']['ssoProvider']
     end
@@ -381,8 +395,18 @@ module GoodData
       @json['accountSetting']['ssoProvider'] = an_sso_provider
     end
 
+    def authentication_modes
+      @json['accountSetting']['authenticationModes'].map { |x| x.downcase.to_sym }
+    end
+
+    def authentication_modes=(modes)
+      modes = Array(modes)
+      @dirty = true
+      @json['accountSetting']['authenticationModes'] = modes.map { |x| x.to_s.upcase }
+    end
+
     def to_hash
-      tmp = content.merge(uri: uri).symbolize_keys
+      tmp = GoodData::Helpers.symbolize_keys(content.merge(uri: uri))
       [
         [:companyName, :company],
         [:phoneNumber, :phone],

@@ -1,4 +1,8 @@
 # encoding: UTF-8
+#
+# Copyright (c) 2010-2015 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'pathname'
 
@@ -13,7 +17,8 @@ module GoodData
           template = options[:template]
           token = options[:token]
           client = options[:client]
-          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token, :client => client)
+          driver = options[:driver] || 'Pg'
+          GoodData::Project.create(:title => title, :summary => summary, :template => template, :auth_token => token, :client => client, :driver => driver)
         end
 
         # Show existing project
@@ -74,15 +79,7 @@ module GoodData
 
         # Update project
         def update(opts = { client: GoodData.connection })
-          client = opts[:client]
-          fail ArgumentError, 'No :client specified' if client.nil?
-
-          p = opts[:project]
-          fail ArgumentError, 'No :project specified' if p.nil?
-
-          project = GoodData::Project[p, opts]
-          fail ArgumentError, 'Wrong :project specified' if project.nil?
-
+          client, project = GoodData.get_client_and_project(opts)
           GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :client => client, :project => project)
         end
 
@@ -91,7 +88,7 @@ module GoodData
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
-          GoodData::Model::ProjectCreator.migrate(:spec => opts[:spec], :token => opts[:token], :client => client)
+          GoodData::Model::ProjectCreator.migrate(opts.merge(:client => client))
         end
 
         # Performs project validation
@@ -100,9 +97,7 @@ module GoodData
         # @return [Object] Report of found problems
         def validate(project_id, options = { client: GoodData.connection })
           client = options[:client]
-          client.with_project(project_id) do |p|
-            p.validate
-          end
+          client.with_project(project_id, &:validate)
         end
 
         def jack_in(options)
@@ -110,25 +105,16 @@ module GoodData
 
           spin_session = proc do |goodfile, _blueprint|
             project_id = options[:project_id] || goodfile[:project_id]
-            message = 'You have to provide "project_id". You can either provide it through -p flag'\
-               'or even better way is to fill it in in your Goodfile under key "project_id".'\
-               'If you just started a project you have to create it first. One way might be'\
-               'through "gooddata project build"'
-            fail message if project_id.nil? || project_id.empty?
 
             begin
               require 'gooddata'
               client = GoodData.connect(options)
-
-              GoodData.with_project(project_id, :client => client) do |project|
-                fail ArgumentError, 'Wrong project specified' if project.nil?
-
-                puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-                binding.pry(:quiet => true,
-                            :prompt => [proc do |_target_self, _nest_level, _pry|
-                              'project_live_session: '
-                            end])
-              end
+              project = client.projects(project_id) if project_id
+              puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
+              binding.pry(:quiet => true, # rubocop:disable Lint/Debugger
+                          :prompt => [proc do |_target_self, _nest_level, _pry|
+                            'project_live_session: '
+                          end])
             rescue GoodData::ProjectNotFound
               puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
             end
@@ -152,9 +138,7 @@ module GoodData
         # @return [Array <GoodData::Role>] List of project roles
         def roles(project_id, options = { client: GoodData.connection })
           client = options[:client]
-          client.with_project(project_id) do |p|
-            p.roles
-          end
+          client.with_project(project_id, &:roles)
         end
 
         # Lists users in a project
@@ -163,9 +147,7 @@ module GoodData
         # @return [Array <GoodData::Membership>] List of project users
         def users(project_id, options = { client: GoodData.connection })
           client = options[:client]
-          client.with_project(project_id) do |p|
-            p.users
-          end
+          client.with_project(project_id, &:users)
         end
       end
     end
