@@ -124,6 +124,23 @@ module GoodData
 
     # Is schedule enabled?
     #
+    # @return [GoodData::Schedule]
+    def disable
+      @json['schedule']['state'] = 'DISABLED'
+      @dirty = true
+      self
+    end
+
+    # Is schedule enabled?
+    #
+    # @return [Boolean]
+    def disable!
+      disable
+      save
+    end
+
+    # Is schedule disabled?
+    #
     # @return [Boolean]
     def disabled?
       state == 'DISABLED'
@@ -136,7 +153,7 @@ module GoodData
       !disabled?
     end
 
-    # enables
+    # Enables the schedule
     #
     # @return [GoodData::Schedule]
     def enable
@@ -145,13 +162,12 @@ module GoodData
       self
     end
 
-    # Is schedule enabled?
+    # Enables and saves the schedule
     #
     # @return [GoodData::Schedule]
-    def disable
-      @json['schedule']['state'] = 'DISABLED'
-      @dirty = true
-      self
+    def enable!
+      enable
+      save
     end
 
     # Executes schedule

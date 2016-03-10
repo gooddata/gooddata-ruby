@@ -274,12 +274,23 @@ module GoodData
       GoodData::Domain.add_user(data, name, { client: client }.merge(opts))
     end
 
-    def clients
+    # Returns all the clients defined in all segments defined in domain. Alternatively
+    # id of a client can be provided in which case it returns just that client
+    # if it exists.
+    #
+    # @param id [String] Id of client that you are looking for
+    # @return [Object] Raw response
+    #
+    def clients(id = :all)
       clients_uri = "/gdc/domains/#{name}/clients"
       res = client.get(clients_uri)
       res_clients = (res['clients'] && res['clients']['items']) || []
-      res_clients.map do |res_client|
-        client.create(GoodData::Client, res_client)
+      if id == :all
+        res_clients.map { |res_client| client.create(GoodData::Client, res_client) }
+      else
+        find_result = res_clients.find { |c| c['client']['id'] == id }
+        fail "Client with id #{id} was not found" unless find_result
+        client.create(GoodData::Client, find_result)
       end
     end
 

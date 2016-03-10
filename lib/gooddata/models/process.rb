@@ -188,10 +188,13 @@ module GoodData
           with_zip(opts) do |zipfile|
             zipfile.add(File.basename(path), path)
           end
-
         elsif !path.directory?
-          client.upload_to_user_webdav(path, opts)
-          path
+          # this branch expects a zipped file. Since the filename on webdav is by default
+          # equal to the filename of a local file. I happened often that the name clashed
+          # if ran in parallel. Create a randomized name to mitigate that
+          randomized_filename = (0...16).map { (65 + rand(26)).chr }.join
+          client.upload_to_user_webdav(path, { filename: randomized_filename }.merge(opts))
+          randomized_filename
         else
           with_zip(opts) do |zipfile|
             files_to_upload = Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }

@@ -116,6 +116,15 @@ module GoodData
     # Master project id getter for the Segment.
     #
     # @return [String] Project uri
+    def master_project_id
+      GoodData::Helpers.last_uri_part(master_project_uri)
+    end
+
+    alias_method :master_id, :master_project_id
+
+    # Master project uri getter for the Segment.
+    #
+    # @return [String] Project uri
     def master_project_uri
       data['masterProject']
     end
