@@ -186,7 +186,7 @@ module GoodData
         url = "#{domain.uri}/users?login=#{escaped_login}"
         tmp = c.get url
         items = tmp['accountSettings']['items'] if tmp['accountSettings']
-        items && items.length > 0 ? c.factory.create(GoodData::Profile, items.first) : nil
+        items && !items.empty? ? c.factory.create(GoodData::Profile, items.first) : nil
       end
 
       # Returns list of users for domain specified

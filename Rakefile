@@ -15,7 +15,7 @@ require 'yard'
 require 'rubocop/rake_task'
 
 desc 'Run RuboCop'
-RuboCop::RakeTask.new(:rubocop) do |task|
+RuboCop::RakeTask.new(:cop) do |task|
   task.patterns = ['lib/**/*.rb']
 end
 
