@@ -86,7 +86,7 @@ describe GoodData::Client do
     end
 
     after(:all) do
-      @segment_client && segment_client.delete
+      @segment_client && @segment_client.delete
     end
   end
 

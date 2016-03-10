@@ -62,7 +62,7 @@ describe GoodData::Profile do
   end
 
   after(:all) do
-    @client.disconnect
+    @client && @client.disconnect
   end
 
   describe '#[]' do

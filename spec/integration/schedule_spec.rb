@@ -24,7 +24,6 @@ describe GoodData::Schedule do
     @client = ConnectionHelper.create_default_connection
 
     @project = ProjectHelper.get_default_project(:client => @client)
-    @project_executable = 'graph/graph.grf'
     @test_cron = '0 15 27 7 *'
     @test_data = {
       :timezone => 'UTC',
@@ -87,7 +86,7 @@ describe GoodData::Schedule do
   describe '#create' do
     it 'Creates new schedule if mandatory params passed' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         expect(schedule).to be_truthy
       ensure
         schedule && schedule.delete
@@ -96,7 +95,7 @@ describe GoodData::Schedule do
 
     it 'Creates new schedule if mandatory params passed and optional params are present' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         expect(schedule).to be_truthy
       ensure
         schedule && schedule.delete
@@ -107,7 +106,7 @@ describe GoodData::Schedule do
       schedule = nil
       begin
         expect {
-          schedule = @project.create_schedule(nil, @test_cron, @project_executable, @test_data)
+          schedule = @project.create_schedule(nil, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         }.to raise_error 'Process ID has to be provided'
       ensure
         schedule && schedule.delete
@@ -131,7 +130,7 @@ describe GoodData::Schedule do
       schedule = nil
       begin
         expect {
-          schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
+          schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, nil, ProcessHelper::DEPLOY_NAME, data)
         }.to raise_error 'Trigger schedule has to be provided'
       ensure
         schedule && schedule.delete
@@ -140,7 +139,7 @@ describe GoodData::Schedule do
 
     it 'Throws exception when no timezone specified' do
       data = GoodData::Helpers.deep_dup(@test_data)
-      schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
+      schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, data)
       schedule.timezone = nil
       begin
         expect {
@@ -155,7 +154,7 @@ describe GoodData::Schedule do
       schedule = nil
       data = GoodData::Helpers.deep_dup(@test_data)
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, data)
         schedule.type = nil
         expect {
           schedule.save
@@ -169,7 +168,7 @@ describe GoodData::Schedule do
   describe '#cron' do
     it 'Should return cron as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.cron
         res.should_not be_nil
         res.should_not be_empty
@@ -186,7 +185,7 @@ describe GoodData::Schedule do
       test_cron = '2 2 2 2 *'
 
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         schedule.cron = test_cron
         expect(schedule.cron).to eq(test_cron)
         expect(schedule.dirty).to eq(true)
@@ -199,7 +198,7 @@ describe GoodData::Schedule do
   describe '#executable' do
     it 'Should return executable as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.executable
         res.should_not be_nil
         res.should_not be_empty
@@ -215,7 +214,7 @@ describe GoodData::Schedule do
       test_executable = 'this/is/test.grf'
 
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         schedule.executable = test_executable
         expect(schedule.executable).to eq(test_executable)
         expect(schedule.dirty).to eq(true)
@@ -260,7 +259,7 @@ describe GoodData::Schedule do
   describe '#execution_url' do
     it 'Should return execution URL as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.execution_url
         res.should_not be_nil
         res.should_not be_empty
@@ -274,7 +273,7 @@ describe GoodData::Schedule do
   describe '#type' do
     it 'Should return execution type as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.type
         res.should_not be_nil
         res.should be_a_kind_of(String)
@@ -287,7 +286,7 @@ describe GoodData::Schedule do
   describe '#hidden_params' do
     it 'Should return execution hidden_params as hash' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.hidden_params
         res.should_not be_nil
         res.should be_a_kind_of(Hash)
@@ -300,7 +299,7 @@ describe GoodData::Schedule do
   describe '#hidden_params=' do
     it 'Assigns the hidden params and marks the object dirty' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         old_params = schedule.hidden_params
 
         test_params = {
@@ -319,7 +318,7 @@ describe GoodData::Schedule do
   describe '#set_hidden_parameter' do
     it 'Assigns the hidden parameter and marks the object dirty' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         old_params = schedule.hidden_params
 
         test_parameter = {'test_parameter' => 'just_testing' }
@@ -335,7 +334,7 @@ describe GoodData::Schedule do
   describe '#set_parameter' do
     it 'Assigns the hidden parameter and marks the object dirty' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         old_params = schedule.params
 
         test_parameter = {'test_parameter' => 'just_testing' }
@@ -352,7 +351,7 @@ describe GoodData::Schedule do
   describe '#params' do
     it 'Should return execution params as hash' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.params
         res.should_not be_nil
         res.should_not be_empty
@@ -366,7 +365,7 @@ describe GoodData::Schedule do
   describe '#params=' do
     it 'Assigns the params and marks the object dirty' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         old_params = schedule.params
 
         test_params = {
@@ -387,7 +386,7 @@ describe GoodData::Schedule do
   describe '#process_id' do
     it 'Should return process id as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.process_id
         res.should_not be_nil
         res.should_not be_empty
@@ -403,7 +402,7 @@ describe GoodData::Schedule do
       test_process_id = '1-2-3-4'
 
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         schedule.process_id = test_process_id
         expect(schedule.process_id).to eq(test_process_id)
         expect(schedule.dirty).to eq(true)
@@ -416,7 +415,7 @@ describe GoodData::Schedule do
   describe '#save' do
     it 'Should save a schedule' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         expect(@project.schedules(schedule.uri)).to eq schedule
         expect(@project.schedules).to include(schedule)
       ensure
@@ -428,7 +427,7 @@ describe GoodData::Schedule do
   describe '#state' do
     it 'Should return execution state as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.state
         res.should_not be_nil
         res.should_not be_empty
@@ -442,7 +441,7 @@ describe GoodData::Schedule do
   describe '#type' do
     it 'Should return execution type as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.type
         res.should_not be_nil
         res.should_not be_empty
@@ -458,7 +457,7 @@ describe GoodData::Schedule do
       test_type = 'TEST'
 
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         schedule.type = test_type
         expect(schedule.type).to eq(test_type)
         expect(schedule.dirty).to eq(true)
@@ -471,7 +470,7 @@ describe GoodData::Schedule do
   describe '#timezone' do
     it 'Should return timezone as string' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.timezone
         res.should_not be_nil
         res.should_not be_empty
@@ -487,7 +486,7 @@ describe GoodData::Schedule do
       test_timezone = 'PST'
 
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         schedule.timezone = test_timezone
         expect(schedule.timezone).to eq(test_timezone)
         expect(schedule.dirty).to eq(true)
@@ -500,7 +499,7 @@ describe GoodData::Schedule do
   describe '#reschedule' do
     it 'Should return reschedule as integer' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         res = schedule.reschedule
         res.should_not be_nil
         res.should be_a_kind_of(Integer)
@@ -515,7 +514,7 @@ describe GoodData::Schedule do
       test_reschedule = 45
 
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         schedule.reschedule = test_reschedule
         expect(schedule.reschedule).to eq(test_reschedule)
         expect(schedule.dirty).to eq(true)
@@ -528,7 +527,7 @@ describe GoodData::Schedule do
   describe '#executions' do
     it 'Returns executions' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         expect(schedule.executions.to_a).to be_empty
         schedule.execute
       ensure
@@ -540,7 +539,7 @@ describe GoodData::Schedule do
   describe '#name' do
     it 'should be able to get name of the schedule.' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         expect(schedule.name).to eq 'graph.grf'
       ensure
         schedule && schedule.delete
@@ -549,7 +548,7 @@ describe GoodData::Schedule do
 
     it 'should be able to return your name if specified during creation.' do
       begin
-        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param.merge(name: 'My schedule name'))
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param.merge(name: 'My schedule name'))
         expect(schedule.name).to eq 'My schedule name'
       ensure
         schedule && schedule.delete
@@ -561,7 +560,7 @@ describe GoodData::Schedule do
     it 'should be able to set trigger_id of the schedule.' do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
-        schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         expect(schedule.dirty).to be_falsey
         schedule.trigger_id = 'some_other_id'
         expect(schedule.dirty).to be_truthy
@@ -575,7 +574,7 @@ describe GoodData::Schedule do
     it 'should be able to set trigger_id of the schedule.' do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
-        schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         expect(schedule.dirty).to be_falsey
         schedule.trigger_id = 'some_other_id'
         expect(schedule.dirty).to be_truthy
@@ -589,7 +588,7 @@ describe GoodData::Schedule do
     it 'should be able to set name of the schedule.' do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
-        schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param)
+        schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         expect(schedule.name).to eq 'graph.grf'
         schedule.name = 'MY NAME'
         schedule.save
@@ -605,7 +604,7 @@ describe GoodData::Schedule do
     it 'should preserve the hidden parmeters.' do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
-        schedule = process.create_schedule(@test_cron, @project_executable, @test_data_with_optional_param.merge({hidden_params: {
+        schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param.merge({hidden_params: {
           "a" => {
             "b" => "c"
           }
