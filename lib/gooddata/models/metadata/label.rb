@@ -66,10 +66,11 @@ module GoodData
           if body.nil? || body['taskState'].nil?
             puts "body or body['taskState'] nil!"
             pp body
-            return true
+            true
+          else
+            status = body['taskState']['status']
+            status == 'RUNNING' || status == 'PREPARED'
           end
-          status = body['taskState']['status']
-          status == 'RUNNING' || status == 'PREPARED'
         end
       end
 
