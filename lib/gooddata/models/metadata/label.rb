@@ -62,15 +62,8 @@ module GoodData
       status_url = results['uri']
       if status_url
         results = client.poll_on_response(status_url) do |body|
-          # Workardound for situating when body or taskState is nil
-          if body.nil? || body['taskState'].nil?
-            puts "body or body['taskState'] nil!"
-            pp body
-            true
-          else
-            status = body['taskState']['status']
-            status == 'RUNNING' || status == 'PREPARED'
-          end
+          status = body['taskState'] && body['taskState']['status']
+          status == 'RUNNING' || status == 'PREPARED'
         end
       end
 
