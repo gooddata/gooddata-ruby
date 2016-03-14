@@ -94,9 +94,7 @@ module GoodData
       def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
-        if path.start_with?(APP_STORE_URL)
-          return deploy_brick(path, options)
-        end
+        return deploy_brick(path, options) if path.start_with?(APP_STORE_URL)
 
         path = Pathname(path) || fail('Path is not specified')
         files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |pname| Pathname(pname) }
@@ -129,11 +127,13 @@ module GoodData
         process
       end
 
-      def deploy_brick(path, options = {:client => GoodData.client, :project => GoodData.project})
+      def deploy_brick(path, options = { :client => GoodData.client, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
         brick_uri_parts = URI(path).path.split('/')
-        ref, brick_name, brick_path = brick_uri_parts[4], brick_uri_parts.last, brick_uri_parts[5..-1].join('/')
+        ref = brick_uri_parts[4]
+        brick_name = brick_uri_parts.last
+        brick_path = brick_uri_parts[5..-1].join('/')
 
         Dir.mktmpdir do |dir|
           Dir.chdir(dir) do
@@ -144,9 +144,7 @@ module GoodData
             if ref
               `git checkout #{ref}`
 
-              if $?.to_i != 0
-                fail 'Wrong branch or tag specified!'
-              end
+              fail 'Wrong branch or tag specified!' if $CHILD_STATUS.to_i != 0
             end
 
             opts = {
@@ -158,8 +156,8 @@ module GoodData
 
             full_brick_path = File.join(dir, 'app_store', brick_path)
 
-            unless File.exists?(full_brick_path)
-              fail "Invalid brickname specified - '#{brick_name}'"
+            unless File.exist?(full_brick_path)
+              fail "Invalid brick name specified - '#{brick_name}'"
             end
 
             return deploy(full_brick_path, opts)
