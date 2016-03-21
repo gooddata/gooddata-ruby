@@ -278,7 +278,15 @@ module GoodData
       clients_uri = "/gdc/domains/#{name}/clients"
       res = client.get(clients_uri)
       res_clients = (res['clients'] && res['clients']['items']) || []
-      res_clients.map do |res_client|
+
+      if id != :all
+        res_client = res_clients.find do |r|
+          r['client']['id'] == id
+        end
+        return client.create(GoodData::Client, res_client)
+      end
+
+      res_client.map do |res_client|
         client.create(GoodData::Client, res_client)
       end
     end
