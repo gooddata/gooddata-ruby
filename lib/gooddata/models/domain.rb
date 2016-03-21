@@ -376,13 +376,13 @@ module GoodData
     def provision_client_projects
       res = client.post(segments_uri + '/provisionClientProjects', nil)
       res = client.poll_on_code(res['asyncTask']['links']['poll'])
-      klass = Struct.new('ProvisioningResult', :id, :status, :project_uri)
+      klass = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
       Enumerator.new do |y|
         uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))
         loop do
           result = client.get(uri)
           (GoodData::Helpers.get_path(result, %w(clientProjectProvisioningResultDetails items)) || []).each do |item|
-            y << klass.new(item['id'], item['status'], item['project'])
+            y << klass.new(item['id'], item['status'], item['project'], item['error'])
           end
           uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResultDetails paging next))
           break if uri.nil?
