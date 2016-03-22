@@ -16,7 +16,7 @@ module GoodData
     # @param [String] value value of an label you are looking for
     # @return [String]
     def find_value_uri(value)
-      results = get_valid_elements({ filter: value})
+      results = get_valid_elements(filter: value)
       items = results['validElements']['items']
       if items.empty?
         fail(AttributeElementNotFound, value)
@@ -51,7 +51,7 @@ module GoodData
           offset: 0,
           order: 'asc'
         }
-        params = default_params.merge(url_or_params).map { |x, v| "#{x}=#{CGI.escape(v.to_s)}" }.reduce { |x, v| "#{x}&#{v}" }
+        params = default_params.merge(url_or_params).map { |x, v| "#{x}=#{CGI.escape(v.to_s)}" }.reduce { |a, e| "#{a}&#{e}" }
         final_url = "#{uri}/validElements?#{params}"
       end
 
@@ -85,12 +85,11 @@ module GoodData
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
     def values(options = {})
-      client = client(options)
       Enumerator.new do |y|
         offset = options[:offset] || 0
         page_limit = options[:limit] || 100
         loop do
-          results = get_valid_elements({ limit: page_limit, offset: offset})
+          results = get_valid_elements(limit: page_limit, offset: offset)
 
           elements = results['validElements']
           elements['items'].map do |el|

@@ -409,7 +409,7 @@ module GoodData
             :segment => segments_uri + '/segments/' + datum[:segment]
           }
         }.tap do |h|
-          h[:client][:project] = datum[:project] if datum.has_key?(:project)
+          h[:client][:project] = datum[:project] if datum.key?(:project)
         end
       end
       if options[:delete_extra] == true
