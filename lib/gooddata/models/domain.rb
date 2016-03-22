@@ -406,10 +406,11 @@ module GoodData
         {
           :client => {
             :id => datum[:id],
-            :segment => segments_uri + '/segments/' + datum[:segment],
-            :project => datum[:project]
+            :segment => segments_uri + '/segments/' + datum[:segment]
           }
-        }
+        }.tap do |h|
+          h[:client][:project] = datum[:project] if datum.has_key?(:project)
+        end
       end
       if options[:delete_extra] == true
         res = client.post(segments_uri + '/updateClients?deleteExtra=true', updateClients: { items: payload })
