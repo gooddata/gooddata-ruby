@@ -94,7 +94,7 @@ module GoodData
       def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
-        return deploy_brick(path, options) if path.start_with?(APP_STORE_URL)
+        return deploy_brick(path, options) if path.to_s.start_with?(APP_STORE_URL)
 
         path = Pathname(path) || fail('Path is not specified')
         files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |pname| Pathname(pname) }
