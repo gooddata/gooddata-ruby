@@ -258,6 +258,14 @@ module GoodData
         m.times.map { n.times.map { val } }
       end
 
+      # Turns a boolean or string 'true' into boolean. Useful for bricks.
+      #
+      # @param [Object] Something
+      # @return [Boolean] Returns true or false if the input is 'true' or true
+      def to_boolean(param)
+        (param == 'true' || param == true) ? true : false
+      end
+
       # encrypts data with the given key. returns a binary data with the
       # unhashed random iv in the first 16 bytes
       def encrypt(data, key)

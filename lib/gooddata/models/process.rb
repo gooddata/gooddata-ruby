@@ -94,7 +94,7 @@ module GoodData
       def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
-        return deploy_brick(path, options) if path.start_with?(APP_STORE_URL)
+        return deploy_brick(path, options) if path.to_s.start_with?(APP_STORE_URL)
 
         path = Pathname(path) || fail('Path is not specified')
         files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |pname| Pathname(pname) }
@@ -188,10 +188,13 @@ module GoodData
           with_zip(opts) do |zipfile|
             zipfile.add(File.basename(path), path)
           end
-
         elsif !path.directory?
-          client.upload_to_user_webdav(path, opts)
-          path
+          # this branch expects a zipped file. Since the filename on webdav is by default
+          # equal to the filename of a local file. I happened often that the name clashed
+          # if ran in parallel. Create a randomized name to mitigate that
+          randomized_filename = (0...16).map { (65 + rand(26)).chr }.join
+          client.upload_to_user_webdav(path, { filename: randomized_filename }.merge(opts))
+          randomized_filename
         else
           with_zip(opts) do |zipfile|
             files_to_upload = Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }
