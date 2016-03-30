@@ -23,8 +23,16 @@ module GoodData
           GoodData::Domain.add_user(data.merge(opts))
         end
 
-        def list_users(domain, opts = { :client => GoodData.connection })
-          GoodData::Domain.users(domain, opts)
+        def list_users(domain_name, options = { :client => GoodData.connection })
+          client = GoodData.connect(options)
+          domain = client.domain(domain_name)
+
+          rows = domain.users.to_a.map do |user|
+            [user.email, user.full_name]
+          end
+
+          table = Terminal::Table.new :headings => ['Email', 'Full Name'], :rows => rows
+          puts table
         end
       end
     end

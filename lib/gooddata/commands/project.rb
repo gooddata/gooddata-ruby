@@ -5,6 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'pathname'
+require 'terminal-table'
+
+require_relative '../connection'
 
 module GoodData
   module Command
@@ -146,8 +149,25 @@ module GoodData
         # @param project_id [String | GoodData::Project] Project id or project instance to list the users in
         # @return [Array <GoodData::Membership>] List of project users
         def users(project_id, options = { client: GoodData.connection })
-          client = options[:client]
+          client = options[:client] || GoodData.connect(options)
           client.with_project(project_id, &:users)
+        end
+
+        # Lists users in a project
+        #
+        # @param options [Hash] List of users
+        #
+        # TODO: Review and refactor #users & #list_users
+        def list_users(options = { client: GoodData.connection })
+          client = GoodData.connect(options)
+          project = client.projects(options[:project_id])
+
+          rows = project.users.to_a.map do |user|
+            [user.email, user.full_name, user.role.title, user.user_groups.join(', ')]
+          end
+
+          table = Terminal::Table.new :headings => ['Email', 'Full Name', 'Role', 'Groups'], :rows => rows
+          puts table
         end
       end
     end

@@ -24,6 +24,14 @@ module GoodData
           GoodData::Command::Project.jack_in(opts)
         end
       end
+
+      c.desc 'Shows users in project'
+      c.command :users do |users|
+        users.action do |global_options, options, _args|
+          opts = options.merge(global_options)
+          GoodData::Command::Project.list_users(opts)
+        end
+      end
     end
 
     desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
