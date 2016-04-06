@@ -38,23 +38,26 @@ module GoodData
         client = domain.client
         fail ArgumentError, 'No client specified' if client.nil?
 
-        base_uri = domain.segments_uri + "/clients?segment=#{CGI.escape(segment.segment_id)}"
-        tenants_uri = id == :all ? base_uri : base_uri + "&name=#{CGI.escape(id)}"
-        e = Enumerator.new do |y|
-          loop do
-            res = client.get tenants_uri
-            res['clients']['paging']['next']
-            res['clients']['items'].each do |i|
-              p = i['client']['project']
-              tenant = client.create(GoodData::Client, i.merge('domain' => domain))
-              tenant.project = p
-              y << tenant
+        if id == :all
+          tenants_uri = domain.segments_uri + "/clients?segment=#{CGI.escape(segment.segment_id)}"
+          Enumerator.new do |y|
+            loop do
+              res = client.get tenants_uri
+              res['clients']['paging']['next']
+              res['clients']['items'].each do |i|
+                p = i['client']['project']
+                tenant = client.create(GoodData::Client, i.merge('domain' => domain))
+                tenant.project = p
+                y << tenant
+              end
+              url = res['clients']['paging']['next']
+              break unless url
             end
-            url = res['clients']['paging']['next']
-            break unless url
           end
+        else
+          data = client.get(domain.segments_uri + "/clients/#{CGI.escape(id)}")
+          client.create(GoodData::Client, data.merge('domain' => domain))
         end
-        id == :all ? e : e.first
       end
 
       # Creates new client from parameters passed

@@ -388,6 +388,9 @@ module GoodData
       res = client.post(segments_uri + '/provisionClientProjects', nil)
       res = client.poll_on_code(res['asyncTask']['links']['poll'])
       klass = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
+      failed_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult failed count), 0)
+      created_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult created count), 0)
+      return Enumerator.new([]) if failed_count + created_count == 0
       Enumerator.new do |y|
         uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))
         loop do
