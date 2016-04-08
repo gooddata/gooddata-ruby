@@ -80,8 +80,8 @@ describe GoodData::Project, :constraint => 'slow' do
       @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
       # it should be updated
       bill_changed = @domain.get_user(bill)
-      expect(bill_changed.first_name).to eql('buffalo')
-      expect(bill_changed.last_name).to eql('bill')
+      expect(bill_changed.first_name).to eq 'buffalo'
+      expect(bill_changed.last_name).to eq 'bill'
       expect(@project.members?(users)).to be_truthy
       expect(@project.members.count).to eq 3
       expect(@project.member?(bill_changed)).to be_truthy
@@ -115,7 +115,7 @@ describe GoodData::Project, :constraint => 'slow' do
       users_unchanged = users - [user_role_changed]
       new_role = users[1][:role] = users[1][:role] == "admin" ? "editor" : "admin"
       @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
-      expect(@project.get_user(user_role_changed).role.identifier).to eql("#{new_role}Role")
+      expect(@project.get_user(user_role_changed).role.identifier).to eq "#{new_role}Role"
       expect(users_unchanged.map {|u| @project.get_user(u)}.map(&:role).map(&:title).uniq).to eq ['Editor']
     end
 

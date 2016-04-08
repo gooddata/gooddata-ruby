@@ -112,15 +112,16 @@ describe GoodData::Profile do
 
   describe '#apply' do
     it 'When diff of two objects applied to first result should be same as second object' do
-      skip('Problem with created and updated')
       # Do some little modification
       @user2.first_name = 'kokos'
       expect(@user1).not_to eq @user2
 
       diff = @user1.diff(@user2)
       expect(diff).to be_instance_of(Hash)
+
       updated_user = GoodData::Profile.create_object(@user1.to_hash.merge(diff))
-      expect(@user1).to eq updated_user
+
+      expect(updated_user.first_name).to eq @user2.first_name
       expect(@user2).not_to eq updated_user
     end
   end

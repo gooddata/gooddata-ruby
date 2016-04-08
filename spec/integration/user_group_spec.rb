@@ -49,7 +49,7 @@ describe GoodData::UserGroup do
       @group.add_member(users)
 
       new_count = @group.members.to_a.length
-      expect(new_count).to eql(old_count + 1)
+      expect(new_count).to eq (old_count + 1)
 
       group_members = @group.members.to_a
 
@@ -69,7 +69,7 @@ describe GoodData::UserGroup do
       @group.set_members(users)
 
       group_members = @group.members.to_a
-      expect(group_members.length).to eql(users.length)
+      expect(group_members.length).to eq users.length
     end
   end
 
@@ -80,11 +80,11 @@ describe GoodData::UserGroup do
       @group.set_members(users)
 
       group_members = @group.members.to_a
-      expect(group_members.length).to eql(users.length)
+      expect(group_members.length).to eq users.length
 
       @group.remove_members(users)
       group_members = @group.members.to_a
-      expect(group_members.length).to eql(0)
+      expect(group_members.length).to eq 0
     end
   end
 
@@ -99,7 +99,7 @@ describe GoodData::UserGroup do
 
   describe '#name' do
     it 'Should return name of user group' do
-      expect(@group.name).to eql(@user_group_name)
+      expect(@group.name).to eq @user_group_name
     end
   end
 
@@ -107,13 +107,13 @@ describe GoodData::UserGroup do
     it 'Should assign name of user group' do
       new_name = 'This is new name'
       @group.name = new_name
-      expect(@group.name).to eql(new_name)
+      expect(@group.name).to eq new_name
     end
   end
 
   describe '#description' do
     it 'Should return name of user group' do
-      expect(@group.description).to eql(@user_group_description)
+      expect(@group.description).to eq @user_group_description
     end
   end
 
@@ -121,7 +121,7 @@ describe GoodData::UserGroup do
     it 'Should assign description of user group' do
       new_description = 'This is new description'
       @group.description = new_description
-      expect(@group.description).to eql(new_description)
+      expect(@group.description).to eq new_description
     end
   end
 end
