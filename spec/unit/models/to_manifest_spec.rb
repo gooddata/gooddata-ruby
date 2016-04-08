@@ -20,7 +20,6 @@ describe GoodData::Model::ToManifest do
   end
 
   it 'blueprint can be set with date reference and default format is set' do
-    skip('not yet')
     blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
 
@@ -30,11 +29,10 @@ describe GoodData::Model::ToManifest do
         d.add_date('opportunity_comitted', dataset: 'committed_on')
       end
     end
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][2]['constraints']).to eq ({ "date" => GoodData::Model::DEFAULT_DATE_FORMAT })
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][0]['constraints']).to eq ({ "date" => GoodData::Model::DEFAULT_DATE_FORMAT })
   end
 
   it 'blueprint can be set with date reference and default format is set' do
-    skip('not yet')
     blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
 
@@ -44,7 +42,7 @@ describe GoodData::Model::ToManifest do
         d.add_date('opportunity_comitted', dataset: 'committed_on', format: 'yyyy/MM/dd')
       end
     end
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][2]['constraints']).to eq ({ "date" => "yyyy/MM/dd" })
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][0]['constraints']).to eq ({ "date" => "yyyy/MM/dd" })
   end
 
   it 'blueprint can handle date fact during creation of manifest' do

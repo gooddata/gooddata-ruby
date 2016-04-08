@@ -66,15 +66,6 @@ describe GoodData::Domain do
         expect(user).to be_an_instance_of(GoodData::Profile)
       end
     end
-
-    it 'Accepts pagination options - offset' do
-      skip('not that useful and takes very long')
-      users = @domain.users(offset: 1)
-      expect(users).to be_instance_of(Array)
-      users.each do |user|
-        expect(user).to be_an_instance_of(GoodData::Profile)
-      end
-    end
   end
 
   describe '#create_users' do
