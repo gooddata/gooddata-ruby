@@ -9,6 +9,7 @@ require 'pmap'
 
 require_relative 'project'
 require_relative 'project_role'
+require_relative 'user_group'
 
 require_relative '../rest/object'
 
@@ -162,6 +163,14 @@ module GoodData
       @json['user']['content']['firstname'] = new_first_name
     end
 
+    # Get full name
+    #
+    # @return String Full Name
+    # NOTE: This can be tricky to implement correctly for i18n
+    def full_name
+      "#{first_name} #{last_name}"
+    end
+
     # Gets the invitations
     #
     # @return [Array<GoodData::Invitation>] List of invitations
@@ -289,6 +298,8 @@ module GoodData
     #
     # @return [Array<GoodData::ProjectRole>] Array of project roles
     def roles
+      # TODO: Implement getting roles in project and cache them there
+      # See: https://jira.intgdc.com/browse/TMA-112
       roles_link = GoodData::Helpers.get_path(@json, %w(user links roles))
       return unless roles_link
       tmp = client.get roles_link

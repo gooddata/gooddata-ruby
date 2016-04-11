@@ -226,6 +226,7 @@ module GoodData
     # Get full name
     #
     # @return String Full Name
+    # NOTE: This can be tricky to implement correctly for i18n
     def full_name
       "#{first_name} #{last_name}"
     end

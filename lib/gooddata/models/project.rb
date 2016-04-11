@@ -21,6 +21,7 @@ require_relative '../mixins/contributor'
 require_relative '../mixins/rest_resource'
 require_relative '../mixins/uri_getter'
 
+require_relative 'membership'
 require_relative 'process'
 require_relative 'project_role'
 require_relative 'blueprint/blueprint'
