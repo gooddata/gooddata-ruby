@@ -55,6 +55,7 @@ module GoodData
             end
           end
         else
+          id = id.respond_to?(:client_id) ? id.client_id : id
           data = client.get(domain.segments_uri + "/clients/#{CGI.escape(id)}")
           client.create(GoodData::Client, data.merge('domain' => domain))
         end
