@@ -25,7 +25,7 @@ module GoodData
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '56e17daee4b0a8435609f796'
+      set_const :SCHEDULE_ID, '571024efe4b025350e321b85'
     end
   end
 end
