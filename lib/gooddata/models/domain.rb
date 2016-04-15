@@ -405,6 +405,7 @@ module GoodData
     end
 
     def update_clients(data, options = {})
+      delete_projects = options[:delete_projects] == false ? false : true
       payload = data.map do |datum|
         {
           :client => {
@@ -423,7 +424,7 @@ module GoodData
       data = GoodData::Helpers.get_path(res, ['updateClientsResponse'])
       if data
         result = data.flat_map { |k, v| v.map { |h| GoodData::Helpers.symbolize_keys(h.merge('type' => k)) } }
-        result.select { |r| r[:status] == 'DELETED' }.peach { |r| r[:originalProject] && client.delete(r[:originalProject]) } if options[:delete_projects]
+        result.select { |r| r[:status] == 'DELETED' }.peach { |r| r[:originalProject] && client.delete(r[:originalProject]) } if delete_projects
         result
       else
         []
