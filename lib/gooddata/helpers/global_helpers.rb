@@ -63,10 +63,12 @@ module GoodData
         mapping.pmap { |f, t| [project.objects(f), project.objects(t)] }
       end
 
-      def get_path(an_object, path = [])
+      def get_path(an_object, path = [], default = nil)
         return an_object if path.empty?
+        return default if an_object.nil?
+
         path.reduce(an_object) do |a, e|
-          a && a.key?(e) ? a[e] : nil
+          a && a.key?(e) ? a[e] : default
         end
       end
 

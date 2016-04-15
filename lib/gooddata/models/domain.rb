@@ -388,6 +388,9 @@ module GoodData
       res = client.post(segments_uri + '/provisionClientProjects', nil)
       res = client.poll_on_code(res['asyncTask']['links']['poll'])
       klass = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
+      failed_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult failed count), 0)
+      created_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult created count), 0)
+      return Enumerator.new([]) if failed_count + created_count == 0
       Enumerator.new do |y|
         uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))
         loop do
@@ -402,6 +405,7 @@ module GoodData
     end
 
     def update_clients(data, options = {})
+      delete_projects = options[:delete_projects] == false ? false : true
       payload = data.map do |datum|
         {
           :client => {
@@ -420,7 +424,7 @@ module GoodData
       data = GoodData::Helpers.get_path(res, ['updateClientsResponse'])
       if data
         result = data.flat_map { |k, v| v.map { |h| GoodData::Helpers.symbolize_keys(h.merge('type' => k)) } }
-        result.select { |r| r[:status] == 'DELETED' }.peach { |r| r[:originalProject] && client.delete(r[:originalProject]) }
+        result.select { |r| r[:status] == 'DELETED' }.peach { |r| r[:originalProject] && client.delete(r[:originalProject]) } if delete_projects
         result
       else
         []

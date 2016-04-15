@@ -38,7 +38,7 @@ describe GoodData::Client do
     end
 
     it 'Returns specific tenant when schedule ID passed' do
-      client = @segment.clients(@segment_client.uri)
+      client = @segment.clients(@segment_client)
       expect(client).to be_an_instance_of(GoodData::Client)
       expect(client.uri).to eq @segment_client.uri
     end
@@ -58,7 +58,7 @@ describe GoodData::Client do
 
     it 'Deletes particular client' do
       expect(@segment.clients.count).to eq 1
-      s = @segment.clients(@segment_client.uri)
+      s = @segment.clients(@segment_client)
       s.delete
       expect(@segment.clients.count).to eq 0
       @segment_client = nil
@@ -78,7 +78,7 @@ describe GoodData::Client do
 
     it 'Deletes particular client. Project is cleaned up as well' do
       expect(@segment.clients.count).to eq 1
-      s = @segment.clients(@segment_client.uri)
+      s = @segment.clients(@segment_client)
       s.delete
       expect(@segment.clients.count).to eq 0
       expect(@client_project.reload!.state).to eq :deleted
@@ -102,7 +102,7 @@ describe GoodData::Client do
         other_client_project = @client.create_project(title: "client_#{@client_id} other project", auth_token: TOKEN)
         @segment_client.project = other_client_project
         @segment_client.save
-        expect(@segment.clients('tenant_1').project_uri).to eq other_client_project.uri
+        expect(@segment.clients(@segment_client).project_uri).to eq other_client_project.uri
       ensure
         other_client_project && other_client_project.delete
       end
