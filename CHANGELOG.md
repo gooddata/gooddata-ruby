@@ -1,5 +1,11 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.26
+- There is first implementation of transfering ETLs
+- Fixed bug with getting clients from domain
+- Temporary workaround for problem on API when it fails with 500 when you are trying to read  changes of provision clients when nothing was provisioned
+- Added option to not delete projects when updating clients in segments
+
 ## 0.6.24
 - Fixed problem with validElements causing 500
 
