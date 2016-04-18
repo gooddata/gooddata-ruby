@@ -338,7 +338,7 @@ module GoodData
               @server[uri].delete(params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params, options)
+              log_error(e, uri, params)
               raise e
             end
           end
@@ -351,12 +351,9 @@ module GoodData
       # @param e [RuntimeException] Exception to log
       # @param uri [String] Uri on which the request failed
       # @param uri [Hash] Additional params
-      def log_error(e, uri, params, options = {})
+      def log_error(e, uri, params)
         return if e.response && e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
-
-        if options[:do_not_log].nil? || options[:do_not_log].index(e.class).nil?
-          GoodData.logger.error(format_error(e, params))
-        end
+        GoodData.logger.error(format_error(e, params))
       end
 
       # HTTP GET
@@ -372,7 +369,7 @@ module GoodData
               @server[uri].get(params, &user_block)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params, options)
+              log_error(e, uri, params)
               raise e
             end
           end
@@ -394,7 +391,7 @@ module GoodData
               @server[uri].put(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params, options)
+              log_error(e, uri, params)
               raise e
             end
           end
@@ -416,7 +413,7 @@ module GoodData
               @server[uri].post(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params, options)
+              log_error(e, uri, params)
               raise e
             end
           end
