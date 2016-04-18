@@ -14,7 +14,7 @@ require_relative '../rest/resource'
 require_relative 'execution_detail'
 require_relative 'schedule'
 
-APP_STORE_URL ||= 'https://github.com/gooddata/app_store'
+APP_STORE_URL ||= 'https://github.com/gooddata/appstore'
 
 module GoodData
   class Process < Rest::Resource
