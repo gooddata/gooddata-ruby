@@ -14,16 +14,24 @@ class TestLogger < Logger
     @last_message = args[0] if level == Logger::DEBUG
     super(*args)
   end
+
   def info(*args)
-    @last_message = args[0] if level == Logger::INFO
+    @last_message = args[0] if level <= Logger::INFO
     super(*args)
   end
+
   def warn(*args)
-    @last_message = args[0] if level == Logger::WARN
+    @last_message = args[0] if level <= Logger::WARN
     super(*args)
   end
+
   def error(*args)
-    @last_message = args[0] if level == Logger::ERROR
+    @last_message = args[0] if level <= Logger::ERROR
+    super(*args)
+  end
+
+  def fatal(*args)
+    @last_message = args[0] if level <= Logger::FATAL
     super(*args)
   end
 end
