@@ -175,7 +175,7 @@ module GoodData
             data.zip(manifest['dataSetSLIManifestList']).each do |item|
               path = item[0][:data]
               path = item[0][:data].path if item[0][:data].respond_to? :path
-              inline_data = path.is_a?(String) ? false : true
+              inline_data = !path.is_a?(String)
               csv_header = nil
 
               filename = item[1]['dataSetSLIManifest']['file']
