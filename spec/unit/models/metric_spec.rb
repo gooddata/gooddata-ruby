@@ -80,10 +80,6 @@ describe GoodData::Metric do
       expect(@instance.contain?(USED_METRIC)).to eq true
     end
 
-    it 'should be able to replace an object if the object is used in the expression' do
-      skip('resolve mutating constant if I init from it')
-    end
-
     it 'should be able to return an expression of the metric' do
       expect(@instance.expression).to eq "SELECT SUM([#{USED_METRIC.uri}])"
     end

@@ -108,16 +108,15 @@ describe GoodData::Client do
       end
     end
 
-    it 'can update tenants segment id' do
-      pending 'Fix the test '
-
+    it 'throws error when trying to update tenants segment id' do
       second_segment_name = "segment-#{SecureRandom.uuid}"
       second_master_project = @client.create_project(title: 'Test project', auth_token: TOKEN)
       second_segment = @domain.create_segment(segment_id: second_segment_name, master_project: second_master_project)
       @segment_client.segment = second_segment
-      @segment_client.save
-      expect(second_segment.clients.find { |s| s.uri == @segment_client.uri }).not_to be_nil
-      expect(@segment.clients.find { |s| s.uri == @segment_client.uri }).to be_nil
+
+      expect {
+        @segment_client.save
+      }.to raise_error(RestClient::BadRequest)
     end
 
     it 'cannot update a client id' do

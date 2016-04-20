@@ -28,10 +28,10 @@ module GoodData
         root = Pathname(options[:root] || '/')
         pwd = Pathname(pwd).expand_path
         loop do
-          gf = pwd + 'Goodfile'
-          return gf if gf.exist?
+          gf = pwd + '.gooddata'
+          return gf if File.exists?(gf)
           pwd = pwd.parent
-          break unless root == pwd
+          break if root == pwd
         end
         nil
       end
