@@ -190,10 +190,6 @@ describe GoodData::Model::FromWire do
         }
       ])
     end
-
-    it 'should' do
-      skip('primary vs default. Is it covered?')
-    end
   end
 
   describe '#parse_facts' do
