@@ -14,16 +14,22 @@ module GoodData
       def [](key, opts = { :client => GoodData.connection, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(opts)
 
+        get_opts = {
+          do_not_log: [
+            RestClient::ResourceNotFound
+          ]
+        }
+
         if key == :all
           uri = "/gdc/projects/#{project.pid}/dataload/metadata"
-          res = client.get(uri)
+          res = client.get(uri, get_opts)
           res['metadataItems']['items'].reduce({}) do |memo, i|
             memo[i['metadataItem']['key']] = i['metadataItem']['value']
             memo
           end
         else
           uri = "/gdc/projects/#{project.pid}/dataload/metadata/#{key}"
-          res = client.get(uri)
+          res = client.get(uri, get_opts)
           res['metadataItem']['value']
         end
       end

@@ -7,6 +7,12 @@
 module GoodData
   # Dummy implementation of logger
   class NilLogger
+    attr_accessor :level
+
+    def initialize(*_args)
+      @level = nil
+    end
+
     def debug(*_args)
     end
 

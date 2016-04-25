@@ -14,6 +14,8 @@ module GoodData
   class Domain < Rest::Resource
     attr_reader :name
 
+    ProvisioningResult = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
+
     class << self
       # Looks for domain
       #
@@ -387,7 +389,6 @@ module GoodData
     def provision_client_projects
       res = client.post(segments_uri + '/provisionClientProjects', nil)
       res = client.poll_on_code(res['asyncTask']['links']['poll'])
-      klass = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
       failed_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult failed count), 0)
       created_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult created count), 0)
       return Enumerator.new([]) if failed_count + created_count == 0
@@ -396,7 +397,7 @@ module GoodData
         loop do
           result = client.get(uri)
           (GoodData::Helpers.get_path(result, %w(clientProjectProvisioningResultDetails items)) || []).each do |item|
-            y << klass.new(item['id'], item['status'], item['project'], item['error'])
+            y << ProvisioningResult.new(item['id'], item['status'], item['project'], item['error'])
           end
           uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResultDetails paging next))
           break if uri.nil?

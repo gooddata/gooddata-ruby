@@ -4,33 +4,40 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require 'rest-client'
+
 require_relative 'nil_logger'
 
 module GoodData
+  DEFAULT_LOG_LEVEL = Logger::INFO
+  DEFAULT_LOG_OUTPUT = STDOUT
+  DEFAULT_LOGGER_CLASS = Logger
+
+  DEFAULT_RESTLOG_LEVEL = Logger::INFO
+  DEFAULT_RESTLOG_OUTPUT = STDOUT
+  DEFAULT_RESTLOGGER_CLASS = Logger
+
   class << self
-    attr_writer :logger
+    attr_accessor :logger, :rest_logger
     attr_writer :stats
 
     # Turn logging on
     #
     # ### Example
     #
+    #     # Turn of default logging
     #     GoodData.logging_on
     #
-    def logging_on(level = nil)
-      @logger = default_logger if logger.is_a? NilLogger
-      @logger.level = level if level
+    #     # Log only WARN and higher
+    #     GoodData.logging_on(Logger::WARN)
+    #
+    #     # Log DEBUG and above to file
+    #     GoodData.logging_on(Logger::DEBUG, 'log.txt')
+    #
+    def logging_on(level = DEFAULT_LOG_LEVEL, output = DEFAULT_LOG_OUTPUT, klass = DEFAULT_LOGGER_CLASS)
+      @logger = klass.new(output)
+      @logger.level = level
       @logger
-    end
-
-    # Turn logging on with HTTP included
-    #
-    # ### Example
-    #
-    #     GoodData.logging_http_on
-    #
-    def logging_http_on
-      logging_on(Logger::DEBUG)
     end
 
     # Turn logging on
@@ -47,18 +54,30 @@ module GoodData
       !@logger.instance_of?(NilLogger)
     end
 
-    # Returns the logger instance. The default implementation
-    # is a logger to stdout on INFO level
-    # For some serious logging, set the logger instance using
-    # the logger= method
+    # Turn logging on with HTTP included
     #
     # ### Example
     #
-    #     require 'logger'
-    #     GoodData.logger = Logger.new(STDOUT)
+    #     GoodData.logging_http_on
     #
-    def logger
-      @logger ||= default_logger
+    def logging_http_on(level = DEFAULT_RESTLOG_LEVEL, output = DEFAULT_RESTLOG_OUTPUT, klass = DEFAULT_RESTLOGGER_CLASS)
+      @logger = klass.new(output)
+      @logger.level = level
+      @logger
+    end
+
+    # Turn logging on
+    #
+    # ### Example
+    #
+    #     GoodData.logging_http_off
+    #
+    def logging_http_off
+      @rest_client = NilLogger.new
+    end
+
+    def logging_http_on?
+      !@rest_client.instance_of?(NilLogger)
     end
 
     def stats_on
@@ -73,14 +92,14 @@ module GoodData
       @stats = false
     end
 
-    private
+    # Initial setup of logger
+    GoodData.logger = GoodData.logging_on
 
-    # The default logger - stdout and INFO level
-    #
-    def default_logger
-      log = Logger.new(STDOUT)
-      log.level = Logger::INFO
-      log
-    end
+    # Initial setup of rest logger
+    GoodData.rest_logger = GoodData.logging_http_on(
+      nil,
+      DEFAULT_RESTLOG_OUTPUT,
+      NilLogger
+    )
   end
 end

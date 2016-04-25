@@ -330,7 +330,7 @@ module GoodData
       # @param uri [String] Target URI
       def delete(uri, options = {})
         options = log_info(options)
-        GoodData.logger.debug "DELETE: #{@server.url}#{uri}"
+        GoodData.rest_logger.info "DELETE: #{@server.url}#{uri}"
         profile "DELETE #{uri}" do
           b = proc do
             params = fresh_request_params(options[:request_id])
@@ -338,7 +338,7 @@ module GoodData
               @server[uri].delete(params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params)
+              log_error(e, uri, params, options)
               raise e
             end
           end
@@ -351,9 +351,12 @@ module GoodData
       # @param e [RuntimeException] Exception to log
       # @param uri [String] Uri on which the request failed
       # @param uri [Hash] Additional params
-      def log_error(e, uri, params)
+      def log_error(e, uri, params, options = {})
         return if e.response && e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
-        GoodData.logger.error(format_error(e, params))
+
+        if options[:do_not_log].nil? || options[:do_not_log].index(e.class).nil?
+          GoodData.logger.error(format_error(e, params))
+        end
       end
 
       # HTTP GET
@@ -361,7 +364,7 @@ module GoodData
       # @param uri [String] Target URI
       def get(uri, options = {}, &user_block)
         options = log_info(options)
-        GoodData.logger.debug "GET: #{@server.url}#{uri}, #{options}"
+        GoodData.rest_logger.info "GET: #{@server.url}#{uri}, #{options}"
         profile "GET #{uri}" do
           b = proc do
             params = fresh_request_params(options[:request_id]).merge(options)
@@ -369,7 +372,7 @@ module GoodData
               @server[uri].get(params, &user_block)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params)
+              log_error(e, uri, params, options)
               raise e
             end
           end
@@ -383,7 +386,7 @@ module GoodData
       def put(uri, data, options = {})
         options = log_info(options)
         payload = data.is_a?(Hash) ? data.to_json : data
-        GoodData.logger.debug "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
+        GoodData.rest_logger.info "PUT: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "PUT #{uri}" do
           b = proc do
             params = fresh_request_params(options[:request_id])
@@ -391,7 +394,7 @@ module GoodData
               @server[uri].put(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params)
+              log_error(e, uri, params, options)
               raise e
             end
           end
@@ -404,7 +407,7 @@ module GoodData
       # @param uri [String] Target URI
       def post(uri, data = nil, options = {})
         options = log_info(options)
-        GoodData.logger.debug "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
+        GoodData.rest_logger.info "POST: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile "POST #{uri}" do
           payload = data.is_a?(Hash) ? data.to_json : data
           b = proc do
@@ -413,7 +416,7 @@ module GoodData
               @server[uri].post(payload, params)
             rescue RestClient::Exception => e
               # log the error if it happens
-              log_error(e, uri, params)
+              log_error(e, uri, params, options)
               raise e
             end
           end
@@ -506,7 +509,6 @@ module GoodData
         return if webdav_dir_exists?(url)
 
         method = :mkcol
-        GoodData.logger.debug "#{method}: #{url}"
         b = proc do
           raw = {
             :method => method,
@@ -595,25 +597,25 @@ module GoodData
 
         if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
           result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
-          GoodData.logger.debug "Request ID: #{response.headers[:x_gdc_request]} - Response: #{result.inspect}"
+          GoodData.rest_logger.debug "Request ID: #{response.headers[:x_gdc_request]} - Response: #{result.inspect}"
         elsif ['text/plain;charset=UTF-8', 'text/plain; charset=UTF-8', 'text/plain'].include?(content_type)
           result = response
-          GoodData.logger.debug 'Response: plain text'
+          GoodData.rest_logger.debug 'Response: plain text'
         elsif content_type == 'application/zip'
           result = response
-          GoodData.logger.debug 'Response: a zipped stream'
+          GoodData.rest_logger.debug 'Response: a zipped stream'
         elsif response.headers[:content_length].to_s == '0'
           result = nil
-          GoodData.logger.debug 'Response: Empty response possibly 204'
+          GoodData.rest_logger.debug 'Response: Empty response possibly 204'
         elsif response.code == 204
           result = nil
-          GoodData.logger.debug 'Response: 204 no content'
+          GoodData.rest_logger.debug 'Response: 204 no content'
         else
           fail "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
         end
         result
       rescue RestClient::Exception => e
-        GoodData.logger.debug "Response: #{e.response}"
+        GoodData.logger.error "Response: #{e.response}"
         raise $ERROR_INFO
       end
 
