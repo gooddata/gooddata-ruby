@@ -29,7 +29,7 @@ module GoodData
         pwd = Pathname(pwd).expand_path
         loop do
           gf = pwd + '.gooddata'
-          return gf if File.exists?(gf)
+          return gf if File.exist?(gf)
           pwd = pwd.parent
           break if root == pwd
         end
