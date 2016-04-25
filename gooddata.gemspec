@@ -29,8 +29,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'debase', '~> 0.1', '>= 0.1.7' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
-  s.add_development_dependency 'guard', '~> 2.13', '>= 2.13.0'
-  s.add_development_dependency 'guard-rspec', '~> 4.6', '>= 4.6.4'
   s.add_development_dependency 'license_finder', '~> 2.0', '>= 2.0.4'
   s.add_development_dependency 'rake', '~> 10.4', '>= 10.4.2'
   s.add_development_dependency 'rake-notes', '~> 0.2', '>= 0.2.0'
