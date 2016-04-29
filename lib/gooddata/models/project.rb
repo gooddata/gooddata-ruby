@@ -207,7 +207,11 @@ module GoodData
                      else
                        client.projects(to_project)
                      end
+        transfer_processes(from_project, to_project)
+        transfer_schedules(from_project, to_project)
+      end
 
+      def transfer_processes(from_project, to_project)
         from_project.processes.each do |process|
           Dir.mktmpdir('etl_transfer') do |dir|
             dir = Pathname(dir)
@@ -224,7 +228,6 @@ module GoodData
           .select { |_, procs| procs.length == 1 }
           .flat_map { |_, procs| procs.select { |p| p[0].project.pid == to_project.pid }.map { |p| p[0] } }
           .peach(&:delete)
-        transfer_schedules(from_project, to_project)
       end
 
       # Clones project along with etl and schedules.
