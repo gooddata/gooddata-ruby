@@ -352,8 +352,7 @@ module GoodData
     # @param [options] Optional report options
     # @return [GoodData::Report] Instance of new report
     def add_report(options = {})
-      rep = GoodData::Report.create(options.merge(client: client, project: self))
-      rep.save
+      GoodData::Report.create(options.merge(client: client, project: self))
     end
 
     alias_method :create_report, :add_report
