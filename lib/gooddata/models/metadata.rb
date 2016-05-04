@@ -194,7 +194,8 @@ module GoodData
         explicit_identifier = meta['identifier']
         # Pre-check to provide a user-friendly error rather than
         # failing later
-        if explicit_identifier && MdObject[explicit_identifier, opts]
+        klass = self.class
+        if explicit_identifier && klass[explicit_identifier, opts]
           fail "Identifier '#{explicit_identifier}' already in use"
         end
 

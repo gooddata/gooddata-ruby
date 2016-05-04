@@ -27,7 +27,11 @@ module GoodData
         title = options[:title]
         fail 'Report needs a title specified' unless title
         summary = options[:summary] || ''
-        rd = options[:rd] || ReportDefinition.create(options)
+
+        options_rd = options.dup
+        options_rd.delete(:identifier)
+
+        rd = options[:rd] || ReportDefinition.create(options_rd)
         rd.save
 
         report = {
