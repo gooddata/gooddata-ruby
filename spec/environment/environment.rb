@@ -10,6 +10,7 @@ module GoodData
       def load(env = ENV['GD_ENV'] || 'develop')
         require_relative 'default'
 
+        puts "Loading environment '#{env}'"
         begin
           require_relative env
         rescue
