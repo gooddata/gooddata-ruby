@@ -7,10 +7,9 @@
 module GoodData
   module Environment
     class << self
-      def load(env = ENV['GD_ENV'].gsub('origin/', '') || 'develop')
+      def load(env = (ENV['GD_ENV'] && ENV['GD_ENV'].gsub('origin/', '')) || 'develop')
         require_relative 'default'
 
-        puts "Loading environment '#{env}'"
         begin
           require_relative env
         rescue
