@@ -9,7 +9,13 @@ module GoodData
     class << self
       def load(env = ENV['GD_ENV'] || 'develop')
         require_relative 'default'
-        require_relative env
+
+        begin
+          require_relative env
+        rescue
+          puts "Unable to find environment '#{env}'"
+          require_relative 'develop'
+        end
 
         ENV['GD_SERVER'] = GoodData::Environment::ConnectionHelper::DEFAULT_SERVER
       end
