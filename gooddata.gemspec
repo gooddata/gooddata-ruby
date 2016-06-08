@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'debase', '~> 0.1', '>= 0.1.7' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'license_finder', '~> 2.0', '>= 2.0.4'
-  s.add_development_dependency 'rake', '~> 10.4', '>= 10.4.2'
+  s.add_development_dependency 'rake', '~> 11.1', '>= 11.1.1'
   s.add_development_dependency 'rake-notes', '~> 0.2', '>= 0.2.0'
   s.add_development_dependency 'redcarpet', '~> 3.1', '>= 3.1.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 3.4', '>= 3.4.0'
