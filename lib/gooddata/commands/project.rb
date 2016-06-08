@@ -106,7 +106,7 @@ module GoodData
         def jack_in(options)
           goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
 
-          spin_session = proc do |goodfile, _blueprint|
+          spin_session = proc do |goodfile|
             project_id = options[:project_id] || goodfile[:project_id]
 
             begin
@@ -125,10 +125,8 @@ module GoodData
 
           if goodfile_path
             goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
-            model_key = goodfile[:model]
-            blueprint = GoodData::Model::ProjectBlueprint.new(eval(File.read(model_key)).to_hash) if File.exist?(model_key) && !File.directory?(model_key)
             FileUtils.cd(goodfile_path.dirname) do
-              spin_session.call(goodfile, blueprint)
+              spin_session.call(goodfile)
             end
           else
             spin_session.call({}, nil)

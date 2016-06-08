@@ -40,6 +40,11 @@ module GoodData
     arg_name 'server'
     flag [:s, :server]
 
+    desc 'Verify SSL certificate'
+    default_value true
+    arg_name 'verify-ssl'
+    switch [:'verify-ssl', :verify_ssl]
+
     desc 'WEBDAV Server. Used for uploads of files'
     default_value nil
     arg_name 'web dav server'
