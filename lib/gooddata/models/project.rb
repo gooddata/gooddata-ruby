@@ -1283,7 +1283,7 @@ module GoodData
     # Imports users
     def import_users(new_users, options = {})
       role_list = roles
-      users_list = users(all: true)
+      users_list = users
       new_users = new_users.map { |x| (x.is_a?(Hash) && x[:user] && x[:user].to_hash.merge(role: x[:role])) || x.to_hash }
 
       GoodData.logger.warn("Importing users to project (#{pid})")
@@ -1305,6 +1305,11 @@ module GoodData
           role && role.uri
         end
 
+        u[:role_title] = u[:role].map do |r|
+          role = get_role(r, role_list)
+          role && role.title
+        end
+
         if u[:role].all?(&:nil?)
           u[:type] = :error
           u[:reason] = 'Invalid role(s) specified'
@@ -1321,6 +1326,18 @@ module GoodData
 
       # Diff users. Only login and role is important for the diff
       diff = GoodData::Helpers.diff(whitelisted_users, diffable_new, key: :login, fields: [:login, :role, :status])
+      diff_results = diff.flat_map do |operation, users|
+        if operation == :changed
+          users.map { |u| u[:new_obj].merge(operation: operation) }
+        else
+          users.map { |u| u.merge(operation: operation) }
+        end
+      end
+      diff_results = diff_results.map do |u|
+        u[:login_uri] = "/gdc/account/profile/" + u[:login]
+        u
+      end
+      return diff_results if options[:dry_run]
 
       # Create new users
       u = diff[:added].map { |x| { user: x, role: x[:role] } }
@@ -1337,7 +1354,7 @@ module GoodData
       # Remove old users
       to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
       GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
-      results.concat(disable_users(to_remove))
+      results.concat(disable_users(to_remove, roles: role_list, project_users: whitelisted_users))
 
       # reassign to groups
       mappings = new_users.map(&:to_hash).flat_map do |user|
@@ -1361,19 +1378,20 @@ module GoodData
           g.set_members(whitelist_users(g.members.map(&:to_hash), [], options[:whitelists], :include).first.map { |x| x[:uri] })
         end
       end
-      results
+      GoodData::Helpers.join(results, diff_results, [:user], [:login_uri])
     end
 
-    def disable_users(list)
+    def disable_users(list, options = {})
       list = list.map(&:to_hash)
       url = "#{uri}/users"
       payloads = list.map do |u|
-        generate_user_payload(u[:uri], 'DISABLED')
+        uri, = resolve_roles(u, [], options)
+        generate_user_payload(uri, 'DISABLED')
       end
 
       payloads.each_slice(100).mapcat do |payload|
         result = client.post(url, 'users' => payload)
-        result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, uri: x } } }
+        result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, user: x } } }
       end
     end
 
