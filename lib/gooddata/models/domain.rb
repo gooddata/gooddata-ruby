@@ -232,11 +232,11 @@ module GoodData
         domain = client.domain(default_domain_name)
 
         # Prepare cache for domain users
-        domain_users_cache = Hash[domain.users.map { |u| [u.login, u] }]
+        domain_users_cache = Hash[domain.users.map { |u| [u.login.downcase, u] }]
 
         list.pmapcat do |user|
           begin
-            user_data = user.to_hash
+            user_data = user.to_hash.tap { |uh| uh[:login].downcase }
             domain_user = domain_users_cache[user_data[:login]]
             if !domain_user
               added_user = domain.add_user(user_data, opts)
