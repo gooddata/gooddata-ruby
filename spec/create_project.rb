@@ -42,12 +42,12 @@ GoodData.with_connection('tomas.korcak+gem_tester@gooddata.com', 'jindrisska', :
   report = project.create_report(title: 'Awesome_report', top: [metric], left: ['label.dev_email'])
   report.save
 
-  process_path = File.expand_path("../data/cc/cc.zip", __FILE__)
-  process = project.deploy_process(process_path, name: 'Test ETL Process')
+  process_path = File.expand_path("../data/hello_world_process/hello_world.zip", __FILE__)
+  process = project.deploy_process(process_path, name: 'Test ETL Process', type: 'RUBY')
   puts process.inspect
 
   begin
-    schedule = process.create_schedule('0 0 1 1 *', 'graph/graph.grf', params: {param1: 'a', param2: 'b'})
+    schedule = process.create_schedule('0 0 1 1 *', 'hello_world.rb')
     puts schedule.inspect
   rescue => e
     puts e.inspect
