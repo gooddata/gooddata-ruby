@@ -165,6 +165,7 @@ namespace :test do
   end
 
   task :all => [:unit, :integration, :cop]
+  task :ci => [:unit, :integration]
 end
 
 desc 'Run all tests'
