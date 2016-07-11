@@ -61,9 +61,9 @@ module GoodData
     #     GoodData.logging_http_on
     #
     def logging_http_on(level = DEFAULT_RESTLOG_LEVEL, output = DEFAULT_RESTLOG_OUTPUT, klass = DEFAULT_RESTLOGGER_CLASS)
-      @logger = klass.new(output)
-      @logger.level = level
-      @logger
+      @rest_logger = klass.new(output)
+      @rest_logger.level = level
+      @rest_logger
     end
 
     # Turn logging on
@@ -73,11 +73,11 @@ module GoodData
     #     GoodData.logging_http_off
     #
     def logging_http_off
-      @rest_client = NilLogger.new
+      @rest_logger = NilLogger.new
     end
 
     def logging_http_on?
-      !@rest_client.instance_of?(NilLogger)
+      !@rest_logger.instance_of?(NilLogger)
     end
 
     def stats_on
