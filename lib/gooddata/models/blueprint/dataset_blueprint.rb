@@ -372,7 +372,8 @@ module GoodData
         identifiers.zip(facts).map do |id, fact|
           Metric.xcreate(
             :title => GoodData::Helpers.titleize(fact[:name]),
-            :expression => "SELECT SUM(![#{id}])")
+            :expression => "SELECT SUM(![#{id}])"
+          )
         end
       end
 
