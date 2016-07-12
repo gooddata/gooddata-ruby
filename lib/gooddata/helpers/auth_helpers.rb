@@ -60,7 +60,7 @@ module GoodData
 
         # Writes credentials
         def write_credentials(credentials, credentials_file_path = credentials_file)
-          File.open(credentials_file_path, 'w', 0600) do |f|
+          File.open(credentials_file_path, 'w', 0o600) do |f|
             f.puts JSON.pretty_generate(credentials)
           end
           credentials
