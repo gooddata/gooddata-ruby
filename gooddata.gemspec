@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.11.0'
 
-  s.add_dependency 'aws-sdk', '~> 1.45'
+  s.add_dependency 'aws-sdk-v1', '~> 1.45'
   s.add_dependency 'docile', '~> 1.1', '>= 1.1.5'
   s.add_dependency 'erubis', '~> 2.7', '>= 2.7.0'
   s.add_dependency 'gli', '~> 2.13', '>= 2.13.2'
