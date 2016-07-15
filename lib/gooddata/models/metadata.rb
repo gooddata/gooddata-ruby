@@ -239,7 +239,7 @@ module GoodData
     end
 
     def tag_set
-      tags.scan(/\w+/).to_set
+      tags.split.to_set
     end
 
     def ==(other)
