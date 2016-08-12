@@ -495,6 +495,10 @@ module GoodData
       result['exportArtifact']['token']
     end
 
+    def folders(id = :all)
+      GoodData::Folder[id, project: self, client: client]
+    end
+
     def user_groups(id = :all, options = {})
       GoodData::UserGroup[id, options.merge(project: self)]
     end
