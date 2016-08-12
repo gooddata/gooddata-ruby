@@ -38,5 +38,9 @@ module GoodData
         res
       end
     end
+
+    def type
+      self.json['folder']['content']['type'][0]
+    end
   end
 end
