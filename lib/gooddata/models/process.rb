@@ -195,6 +195,10 @@ module GoodData
 
           end
 
+        if res.keys.first == 'asyncTask'
+          res = JSON.parse(client.poll_on_code(res['asyncTask']['links']['poll'], options.merge(process: false)))
+        end
+
         process = client.create(Process, res, project: project)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
