@@ -92,9 +92,11 @@ module GoodData
       # @option options [String] :process_id ID of a process to be redeployed (do not set if you want to create a new process)
       # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
       def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
-        client, project = GoodData.get_client_and_project(options)
-
         return deploy_brick(path, options) if path.to_s.start_with?(APP_STORE_URL)
+
+        return deploy_from_appstore(path, options) if (path =~ /\${.*}:(.*)\/(.*):\//) == 0
+
+        client, project = GoodData.get_client_and_project(options)
 
         path = Pathname(path) || fail('Path is not specified')
         files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |pname| Pathname(pname) }
@@ -165,6 +167,39 @@ module GoodData
         end
       end
 
+      def deploy_from_appstore(path, options = {:client => GoodData.client, :project => GoodData.project})
+        client, project = GoodData.get_client_and_project(options)
+
+        deploy_name = options[:name]
+        fail ArgumentError, 'options[:name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
+
+        verbose = options[:verbose] || false
+        puts HighLine.color("Deploying #{path}", HighLine::BOLD) if verbose
+
+        process_id = options[:process_id]
+
+        data = {
+          process: {
+            name: deploy_name,
+            path: path,
+            type: 'RUBY'
+          }
+        }
+
+        res =
+          if process_id.nil?
+            client.post("/gdc/projects/#{project.pid}/dataload/processes", data)
+
+          else
+            client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
+
+          end
+
+        process = client.create(Process, res, project: project)
+        puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
+        process
+      end
+      
       # ----------------------------- Private Stuff
 
       private
