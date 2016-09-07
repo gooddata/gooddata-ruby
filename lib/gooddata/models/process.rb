@@ -94,7 +94,7 @@ module GoodData
       def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
         return deploy_brick(path, options) if path.to_s.start_with?(APP_STORE_URL)
 
-        return deploy_from_appstore(path, options) if (path =~ /\${.*}:(.*)\/(.*):\//) == 0
+        return deploy_from_appstore(path.to_s, options) if (path.to_s =~ /\${.*}:(.*)\/(.*):\//) == 0
 
         client, project = GoodData.get_client_and_project(options)
 
