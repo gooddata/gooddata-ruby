@@ -320,6 +320,10 @@ module GoodData
       process['executables']
     end
 
+    def path
+      process['path']
+    end
+
     def schedules
       project.schedules.select { |schedule| schedule.process_id == obj_id }
     end

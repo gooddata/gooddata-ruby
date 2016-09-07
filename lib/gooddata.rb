@@ -18,6 +18,7 @@ require_relative 'gooddata/core/core'
 require_relative 'gooddata/data/data'
 require_relative 'gooddata/exceptions/exceptions'
 require_relative 'gooddata/helpers/helpers'
+require_relative 'gooddata/lcm/lcm'
 require_relative 'gooddata/models/models'
 
 # Files

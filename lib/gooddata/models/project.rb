@@ -213,14 +213,21 @@ module GoodData
 
       def transfer_processes(from_project, to_project)
         from_project.processes.each do |process|
-          Dir.mktmpdir('etl_transfer') do |dir|
-            dir = Pathname(dir)
-            filename = dir + 'process.zip'
-            File.open(filename, 'w') do |f|
-              f << process.download
+          to_process = to_project.processes.find { |p| p.name == process.name }
+
+          if process.path
+            to_process.delete if to_process
+            GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
+          else
+            Dir.mktmpdir('etl_transfer') do |dir|
+              dir = Pathname(dir)
+              filename = dir + 'process.zip'
+              File.open(filename, 'w') do |f|
+                f << process.download
+              end
+
+              to_process ? to_process.deploy(filename, type: process.type, name: process.name) : to_project.deploy_process(filename, type: process.type, name: process.name)
             end
-            to_process = to_project.processes.find { |p| p.name == process.name }
-            to_process ? to_process.deploy(filename, type: process.type, name: process.name) : to_project.deploy_process(filename, type: process.type, name: process.name)
           end
         end
         res = (from_project.processes + to_project.processes).map { |p| [p, p.name, p.type] }
