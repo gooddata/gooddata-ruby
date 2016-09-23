@@ -78,6 +78,56 @@ module GoodData
           filter_on_segment.map { |s| domain.segments(s).synchronize_clients }
         end
       end
+
+      def transfer_label_types(source_project, targets)
+        semaphore = Mutex.new
+
+        synchronized_puts = Proc.new do |*args|
+          semaphore.synchronize {
+            puts args
+          }
+        end
+
+        # Convert to array
+        targets = [targets] unless targets.kind_of?(Array)
+
+        client = source_project.client
+
+        # Get attributes from source project
+        attributes = GoodData::Attribute[:all, client: client, project: source_project]
+
+        # Get display forms
+        display_forms = attributes.map do |attribute|
+          attribute.content['displayForms']
+        end
+
+        # Flatten result
+        display_forms.flatten!(2)
+
+        # Select only display forms with content type
+        display_forms.select! { |display_form| display_form['content']['type'] }
+
+        # Generate transfer table
+        transfer = {}
+        display_forms.each { |display_form| transfer[display_form['meta']['identifier']] = display_form['content']['type'] }
+
+        puts 'Transferring label types'
+        puts JSON.pretty_generate(transfer)
+
+        # Transfer to target projects
+        targets.peach do |target|
+          transfer.peach do |identifier, type|
+            uri = GoodData::MdObject.identifier_to_uri({project: target, client: client}, identifier)
+            obj = GoodData::MdObject[uri, {project: target, client: client}]
+
+            if obj.content['type'] != type
+              synchronized_puts.call "Updating #{identifier} -> #{type} in #{target.title} - #{target.uri}"
+              obj.content['type'] = type
+              obj.save
+            end
+          end
+        end
+      end
     end
   end
 end
