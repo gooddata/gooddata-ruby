@@ -488,6 +488,7 @@ module GoodData
       end
 
       # Uploads a file to GoodData server
+
       def upload(file, options = {})
         dir = options[:directory] || ''
         staging_uri = options[:staging_url].to_s
