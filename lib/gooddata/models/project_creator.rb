@@ -63,7 +63,10 @@ module GoodData
           if !chunks.nil? && !dry_run
             chunks['updateScript']['maqlDdlChunks'].each do |chunk|
               result = project.execute_maql(chunk)
-              fail 'Creating dataset failed' if result['wTaskStatus']['status'] == 'ERROR'
+              if result['wTaskStatus']['status'] == 'ERROR'
+                puts JSON.pretty_generate(result)
+                fail 'Creating dataset failed'
+              end
             end
           end
           chunks
