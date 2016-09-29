@@ -27,18 +27,23 @@ module GoodData
         messages
       end
 
-      def transfer_everything(client, domain, migration_spec, filter_on_segment = [])
+      def transfer_everything(client, domain, migration_spec, filter_on_segment = [], opts = {})
         puts 'Ensuring Users - warning: works across whole domain not just provided segment(s)'
         ensure_users(domain, migration_spec, filter_on_segment)
 
         puts 'Migrating Blueprints'
+
+        bp_opts = {
+          update_preference: opts[:update_preference] || opts['update_preference'],
+          maql_replacements: opts[:maql_replacements] || opts['maql_replacements']
+        }
 
         domain.segments.peach do |segment|
           next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
           bp = segment.master_project.blueprint
           segment.clients.each do |c|
             p = c.project
-            p.update_from_blueprint(bp)
+            p.update_from_blueprint(bp, bp_opts)
           end
         end
 
