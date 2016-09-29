@@ -59,17 +59,32 @@ module GoodData
 
           response = client.get(link)
 
-          chunks = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
-          if !chunks.nil? && !dry_run
-            chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-              result = project.execute_maql(chunk)
-              if result['wTaskStatus']['status'] == 'ERROR'
-                puts JSON.pretty_generate(result)
-                fail 'Creating dataset failed'
+          maqls = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
+          if !maqls.empty? && !dry_run
+            maqls.each_with_index do |maql, _idx|
+              begin
+                chunks = maql[:orig]['updateScript']['maqlDdlChunks']
+                chunks.each do |chunk|
+                  # TODO: Hack the MAQL here
+                  (opts[:maql_replacements] || opts['maql_replacements'] || {}).each do |k, v|
+                    src = Regexp.new(k)
+                    dest = v
+                    chunk.gsub!(src, dest)
+                  end
+
+                  result = project.execute_maql(chunk)
+                  if result['wTaskStatus']['status'] == 'ERROR'
+                    puts JSON.pretty_generate(result)
+                    fail 'Creating dataset failed'
+                  end
+                end
+                return chunks
+              rescue => e
+                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{chunks.inspect}"
+                next
               end
             end
           end
-          chunks
         end
 
         def migrate_reports(project, spec)
@@ -109,7 +124,8 @@ module GoodData
         end
 
         def pick_correct_chunks(chunks, opts = {})
-          preference = opts[:preference] || {}
+          preference = opts[:update_preference]
+
           # first is cascadeDrops, second is preserveData
           rules = [
             { priority: 1, cascade_drops: false, preserve_data: true },
@@ -117,11 +133,25 @@ module GoodData
             { priority: 3, cascade_drops: true, preserve_data: true },
             { priority: 4, cascade_drops: true, preserve_data: false }
           ]
-          stuff = chunks.select { |chunk| chunk['updateScript']['maqlDdlChunks'] }.map { |chunk| { cascade_drops: chunk['updateScript']['cascadeDrops'], preserve_data: chunk['updateScript']['preserveData'], maql: chunk['updateScript']['maqlDdlChunks'], orig: chunk } }
-          results = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] }
 
-          pick = results.find { |r| r.values_at(:cascade_drops, :preserve_data) == preference.values_at(:cascade_drops, :preserve_data) } || results.first
-          pick[:orig] if pick
+          stuff = chunks.select do |chunk|
+            chunk['updateScript']['maqlDdlChunks']
+          end
+
+          stuff = stuff.map do |chunk|
+            { cascade_drops: chunk['updateScript']['cascadeDrops'], preserve_data: chunk['updateScript']['preserveData'], maql: chunk['updateScript']['maqlDdlChunks'], orig: chunk }
+          end
+
+          results = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] } || []
+
+          (preference || {}).each do |k, v|
+            results = results.find_all do |result|
+              sym = k.to_sym
+              !result.has_key?(sym) || result[sym] == v
+            end
+          end
+
+          preference ? results : [results.first]
         end
       end
     end
