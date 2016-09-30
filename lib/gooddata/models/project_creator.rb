@@ -72,6 +72,8 @@ module GoodData
                     chunk.gsub!(src, dest)
                   end
 
+                  puts chunk
+
                   result = project.execute_maql(chunk)
                   if result['wTaskStatus']['status'] == 'ERROR'
                     puts JSON.pretty_generate(result)
