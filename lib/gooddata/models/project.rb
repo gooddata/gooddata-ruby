@@ -325,8 +325,6 @@ module GoodData
 
         objects = from_project.find_by_tag(tag)
 
-        puts "Objects: #{objects}"
-
         puts JSON.pretty_generate(objects)
 
         from_project.partial_md_export(objects, project: to_project)
@@ -765,6 +763,8 @@ module GoodData
       objects.flatten!
 
       objects.uniq!
+
+      objects
     end
 
     # Gets user by its email, full_name, login or uri.
