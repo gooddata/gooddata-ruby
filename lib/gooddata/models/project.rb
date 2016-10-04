@@ -321,7 +321,7 @@ module GoodData
       end
 
       def transfer_tagged_stuff(from_project, to_project, tag)
-        puts 'Transferring tagged stuff'
+        puts "Transferring tagged stuff - #{tag}"
 
         objects = from_project.find_by_tag(tag)
 
