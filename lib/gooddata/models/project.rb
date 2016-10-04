@@ -319,16 +319,16 @@ module GoodData
         messages
         # messages.map {|m| m.merge({custom_project_id: custom_project_id})}
       end
-    end
 
-    def transfer_tagged_stuff(from_project, to_project, tag)
-      puts 'Transferring tagged stuff'
+      def transfer_tagged_stuff(from_project, to_project, tag)
+        puts 'Transferring tagged stuff'
 
-      objects = from_project.find_by_tag(tag)
+        objects = from_project.find_by_tag(tag)
 
-      puts JSON.pretty_generate(objects)
+        puts JSON.pretty_generate(objects)
 
-      from_project.partial_md_export(objects, project: to_project)
+        from_project.partial_md_export(objects, project: to_project)
+      end
     end
 
     def add_dashboard(dashboard)
