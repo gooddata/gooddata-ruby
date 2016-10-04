@@ -59,6 +59,7 @@ module GoodData
 
           response = client.get(link)
 
+          errors = []
           maqls = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
           if !maqls.empty? && !dry_run
             maqls.each_with_index do |maql, _idx|
@@ -72,6 +73,8 @@ module GoodData
                     chunk.gsub!(src, dest)
                   end
 
+                  puts chunk
+
                   result = project.execute_maql(chunk)
                   if result['wTaskStatus']['status'] == 'ERROR'
                     puts JSON.pretty_generate(result)
@@ -81,9 +84,12 @@ module GoodData
                 return chunks
               rescue => e
                 puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{chunks.inspect}"
+                errors << e
                 next
               end
             end
+
+            fail "Unable to migrate LDM, reason(s): #{JSON.pretty_generate(errors)}" unless errors.empty?
           end
         end
 

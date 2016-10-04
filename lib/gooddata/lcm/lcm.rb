@@ -38,6 +38,8 @@ module GoodData
           maql_replacements: opts[:maql_replacements] || opts['maql_replacements']
         }
 
+        tags = opts[:production_tag] || opts['production_tag']
+
         domain.segments.peach do |segment|
           next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
           bp = segment.master_project.blueprint
@@ -74,6 +76,8 @@ module GoodData
             s.update_hidden_params(migration_spec[:additional_hidden_params] || {})
             s.save
           end
+
+          GoodData::Project.transfer_tagged_stuff(segment_master, project, tags) if tags
         end
 
         puts 'Migrating Dashboards'
@@ -123,6 +127,8 @@ module GoodData
         targets.peach do |target|
           transfer.peach do |identifier, type|
             uri = GoodData::MdObject.identifier_to_uri({project: target, client: client}, identifier)
+            next unless uri
+
             obj = GoodData::MdObject[uri, {project: target, client: client}]
 
             if obj.content['type'] != type

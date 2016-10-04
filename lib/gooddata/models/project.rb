@@ -321,6 +321,16 @@ module GoodData
       end
     end
 
+    def transfer_tagged_stuff(from_project, to_project, tag)
+      puts 'Transferring tagged stuff'
+
+      objects = from_project.find_by_tag(tag)
+
+      puts JSON.pretty_generate(objects)
+
+      from_project.partial_md_export(objects, project: to_project)
+    end
+
     def add_dashboard(dashboard)
       GoodData::Dashboard.create(dashboard, :client => client, :project => self)
     end
@@ -737,6 +747,23 @@ module GoodData
 
     # Gets user by its email, full_name, login or uri
     alias_method :member, :get_user
+
+    def find_by_tag(tags)
+      tags = tags.split(',').map(&:strip) unless tags.kind_of?(Array)
+
+      objects = tags.map do |tag|
+        url = "/gdc/md/#{self.pid}/tags/#{tag}"
+        res = self.client.get(url)
+
+        ((res || {})['entries'] || []).map do |entry|
+          entry['link']
+        end
+      end
+
+      objects.flatten!
+
+      objects.uniq!
+    end
 
     # Gets user by its email, full_name, login or uri.
     #
