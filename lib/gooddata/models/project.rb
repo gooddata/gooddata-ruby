@@ -961,7 +961,9 @@ module GoodData
       fail ObjectsExportError, "Exporting objects failed with messages. Object #{objs.select { |_, obj| obj.nil? }.map { |o, _| o }.join(', ')} could not be found." if objs.any? { |_, obj| obj.nil? }
       export_payload = {
         :partialMDExport => {
-          :uris => objs.map { |_, obj| obj.uri }
+          :uris => objs.map { |_, obj| obj.uri },
+          :exportAttributeProperties => '1',
+          :crossDataCenterExport => '1'
         }
       }
       result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
