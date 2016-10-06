@@ -319,16 +319,16 @@ module GoodData
         messages
         # messages.map {|m| m.merge({custom_project_id: custom_project_id})}
       end
-    end
 
-    def transfer_tagged_stuff(from_project, to_project, tag)
-      puts 'Transferring tagged stuff'
+      def transfer_tagged_stuff(from_project, to_project, tag)
+        puts "Transferring tagged stuff - #{tag}"
 
-      objects = from_project.find_by_tag(tag)
+        objects = from_project.find_by_tag(tag)
 
-      puts JSON.pretty_generate(objects)
+        puts JSON.pretty_generate(objects)
 
-      from_project.partial_md_export(objects, project: to_project)
+        from_project.partial_md_export(objects, project: to_project)
+      end
     end
 
     def add_dashboard(dashboard)
@@ -763,6 +763,8 @@ module GoodData
       objects.flatten!
 
       objects.uniq!
+
+      objects
     end
 
     # Gets user by its email, full_name, login or uri.
@@ -959,7 +961,9 @@ module GoodData
       fail ObjectsExportError, "Exporting objects failed with messages. Object #{objs.select { |_, obj| obj.nil? }.map { |o, _| o }.join(', ')} could not be found." if objs.any? { |_, obj| obj.nil? }
       export_payload = {
         :partialMDExport => {
-          :uris => objs.map { |_, obj| obj.uri }
+          :uris => objs.map { |_, obj| obj.uri },
+          :exportAttributeProperties => '1',
+          :crossDataCenterExport => '1'
         }
       }
       result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
