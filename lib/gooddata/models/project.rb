@@ -590,7 +590,13 @@ module GoodData
     # @return [Array] Result of executing MAQLs
     def delete_all_data(options = {})
       return false unless options[:force]
-      datasets.pmap(&:delete_data)
+      begin
+        datasets.pmap(&:delete_data)
+      rescue MaqlExecutionError => e
+        # This is here so that we do not throw out exceptions on synchornizing date dimensions
+        # Currently there is no reliable way how to tell it is a date dimension
+        fail e unless GoodData::Helpers.interpolate_error_messages(e.data['wTaskStatus']['messages']) == ["Internal error [handle_exception, hide_internal]."]
+      end
     end
 
     # Deletes dashboards for project
@@ -627,9 +633,13 @@ module GoodData
       response = client.post(ldm_uri, manage: { maql: maql })
       polling_uri = response['entries'].first['link']
 
-      client.poll_on_response(polling_uri, options) do |body|
+      result = client.poll_on_response(polling_uri, options) do |body|
         body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
+      if result['wTaskStatus']['status'] == 'ERROR'
+        fail MaqlExecutionError.new("Executionof MAQL '#{maql}' failed in project '#{pid}'", result)
+      end
+      result
     end
 
     # Helper for getting facts of a project
@@ -749,11 +759,11 @@ module GoodData
     alias_method :member, :get_user
 
     def find_by_tag(tags)
-      tags = tags.split(',').map(&:strip) unless tags.kind_of?(Array)
+      tags = tags.split(',').map(&:strip) unless tags.is_a?(Array)
 
       objects = tags.map do |tag|
-        url = "/gdc/md/#{self.pid}/tags/#{tag}"
-        res = self.client.get(url)
+        url = "/gdc/md/#{pid}/tags/#{tag}"
+        res = client.get(url)
 
         ((res || {})['entries'] || []).map do |entry|
           entry['link']

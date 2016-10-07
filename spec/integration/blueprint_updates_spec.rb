@@ -8,6 +8,7 @@ require 'gooddata'
 
 describe 'Create project using GoodData client', :constraint => 'slow' do
   before(:all) do    
+    GoodData.logging_http_on
     @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')
     @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
@@ -49,7 +50,7 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
         reference: 'attr.commits.factsof',
         name: 'anchor_label')
     end
-    @project.update_from_blueprint(bp, preference: { cascade_drops: false,  preserve_data: false})
+    @project.update_from_blueprint(bp, maql_replacements: { "PRESERVE DATA" => ""})
     data = [
       ['label.commits.factsof.id', 'fact.commits.lines_changed', 'committed_on', 'dataset.devs', 'dataset.repos'],
       ['111', 1, '01/01/2011', '1', '1'],

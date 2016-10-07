@@ -31,7 +31,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should do nothing if the project is updated with the same blueprint" do
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
-    expect(results).to be_nil
+    expect(results).to eq []
   end
 
   it 'should try to rename a dataset back' do
@@ -40,20 +40,19 @@ describe "Full project implementation", :constraint => 'slow' do
     dataset.save
 
     # Now the update of project using the original blueprint should offer update of the title. Nothing else.
-    results = GoodData::Model::ProjectCreator.migrate_datasets(@blueprint, project: @project, client: @client, dry_run: true)
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
-    expect(results['updateScript']['maqlDdl']).to eq "ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repositories\", DESCRIPTION \"\");\n"
+    expect(results.first['updateScript']['maqlDdlChunks']).to eq ["ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repositories\", DESCRIPTION \"\");\n"]
 
     # Update using a freshly gained blueprint should offer no changes.
     new_blueprint = @project.blueprint
     results = GoodData::Model::ProjectCreator.migrate_datasets(new_blueprint, project: @project, client: @client, dry_run: true)
-    expect(results).to be_nil
+    expect(results).to eq []
 
     # When we change the model using the original blueprint. Basically change the title back.
     results = @project.update_from_blueprint(@spec)
     # It should offer no changes using the original blueprint
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
-    expect(results).to be_nil
+    expect(results).to eq []
   end
 
   it "should contain datasets" do
@@ -470,12 +469,16 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to give you values for" do
     attribute = @project.attributes('attr.devs.dev_id')
-    expect(attribute.values_for(2)).to eq ["tomas@gooddata.com", "1"]
+    values = attribute.labels.find { |l| l.identifier == 'label.devs.dev_id.email'}.values.to_a
+    id = values.find { |v| v[:value] == 'tomas@gooddata.com' }[:uri][-1].to_i
+    expect(attribute.values_for(id)).to eq ['tomas@gooddata.com', '1']
   end
 
   it "should be able to find specific element and give you the primary label value" do
     attribute = @project.attributes('attr.devs.dev_id')
-    expect(@project.find_attribute_element_value("#{attribute.uri}/elements?id=2")).to eq 'tomas@gooddata.com'
+    values = attribute.labels.find { |l| l.identifier == 'label.devs.dev_id.email'}.values.to_a
+    uri = values.find { |v| v[:value] == 'tomas@gooddata.com' }[:uri]
+    expect(@project.find_attribute_element_value(uri)).to eq 'tomas@gooddata.com'
   end
 
   it "should be able to give you label by name" do

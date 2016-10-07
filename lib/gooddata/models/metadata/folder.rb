@@ -20,27 +20,27 @@ module GoodData
       # @param options [Hash] the options hash
       # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
-      def all(options = {:client => GoodData.connection, :project => GoodData.project})
+      def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('folder', Folder, options)
       end
     end
 
     def entries
-      (self.json['folder']['content']['entries'] || []).pmap do |entry|
-        res = case self.json['folder']['content']['type'].first
-                when 'fact'
-                  GoodData::Fact[entry['link'], :client => self.client, :project => self.project]
-                when 'metric'
-                  GoodData::Metric[entry['link'], :client => self.client, :project => self.project]
-                else
-                  GoodData::MdObject[entry['link'], :client => self.client, :project => self.project]
+      (json['folder']['content']['entries'] || []).pmap do |entry|
+        res = case json['folder']['content']['type'].first
+              when 'fact'
+                GoodData::Fact[entry['link'], :client => client, :project => project]
+              when 'metric'
+                GoodData::Metric[entry['link'], :client => client, :project => project]
+              else
+                GoodData::MdObject[entry['link'], :client => client, :project => project]
               end
         res
       end
     end
 
     def type
-      self.json['folder']['content']['type'][0]
+      json['folder']['content']['type'][0]
     end
   end
 end

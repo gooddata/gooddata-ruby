@@ -39,58 +39,36 @@ module GoodData
         def migrate_datasets(spec, opts = {})
           opts = { client: GoodData.connection }.merge(opts)
           dry_run = opts[:dry_run]
+          replacements = opts['maql_replacements'] || opts[:maql_replacements] || {}
 
           client, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
+
           uri = "/gdc/projects/#{project.pid}/model/diff?includeGrain=true"
           result = client.post(uri, bp.to_wire)
+          response = client.poll_on_code(result['asyncTask']['link']['poll'])
 
-          link = result['asyncTask']['link']['poll']
-          response = client.get(link, :process => false)
-
-          while response.code != 200
-            sleep 1
-            GoodData::Rest::Client.retryable(:tries => 3) do
-              sleep 1
-              response = client.get(link, :process => false)
-            end
-          end
-
-          response = client.get(link)
-
-          errors = []
           maqls = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
-          if !maqls.empty? && !dry_run
-            maqls.each_with_index do |maql, _idx|
+          replaced_maqls = apply_replacements_on_maql(maqls, replacements)
+
+          unless dry_run
+            errors = []
+            replaced_maqls.each do |replaced_maql_chunks|
               begin
-                chunks = maql[:orig]['updateScript']['maqlDdlChunks']
-                chunks.each do |chunk|
-                  # TODO: Hack the MAQL here
-                  (opts[:maql_replacements] || opts['maql_replacements'] || {}).each do |k, v|
-                    src = Regexp.new(k)
-                    dest = v
-                    chunk.gsub!(src, dest)
-                  end
-
-                  puts chunk
-
-                  result = project.execute_maql(chunk)
-                  if result['wTaskStatus']['status'] == 'ERROR'
-                    puts JSON.pretty_generate(result)
-                    fail 'Creating dataset failed'
-                  end
-                end
-                return chunks
+                replaced_maql_chunks['updateScript']['maqlDdlChunks'].each { |chunk| project.execute_maql(chunk) }
               rescue => e
-                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{chunks.inspect}"
+                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
                 errors << e
                 next
               end
             end
-
-            fail "Unable to migrate LDM, reason(s): #{JSON.pretty_generate(errors)}" unless errors.empty?
+            if errors.length == replaced_maqls.length
+              messages = errors.map { |e| GoodData::Helpers.interpolate_error_messages(e.data['wTaskStatus']['messages']) }
+              fail "Unable to migrate LDM, reason(s): \n #{messages.join("\n")}"
+            end
           end
+          replaced_maqls
         end
 
         def migrate_reports(project, spec)
@@ -130,7 +108,7 @@ module GoodData
         end
 
         def pick_correct_chunks(chunks, opts = {})
-          preference = opts[:update_preference]
+          preference = GoodData::Helpers.symbolize_keys(opts[:update_preference] || {})
 
           # first is cascadeDrops, second is preserveData
           rules = [
@@ -150,14 +128,24 @@ module GoodData
 
           results = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] } || []
 
-          (preference || {}).each do |k, v|
+          preference.each do |k, v|
             results = results.find_all do |result|
-              sym = k.to_sym
-              !result.has_key?(sym) || result[sym] == v
+              result[k] == v
             end
           end
+          (preference.empty? ? [results.first].compact : results).map { |result| result[:orig] }
+        end
 
-          preference ? results : [results.first]
+        private
+
+        def apply_replacements_on_maql(maqls, replacements = {})
+          maqls.map do |maql|
+            GoodData::Helpers.deep_dup(maql).tap do |m|
+              m['updateScript']['maqlDdlChunks'] = m['updateScript']['maqlDdlChunks'].map do |chunk|
+                replacements.reduce(chunk) { |a, (k, v)| a.gsub(Regexp.new(k), v) }
+              end
+            end
+          end
         end
       end
     end
