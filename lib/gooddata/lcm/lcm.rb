@@ -18,9 +18,9 @@ module GoodData
             next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
             p = client.project
             begin
-              p.create_users(migration_spec[:technical_user].map { |u| {login: u, role: 'admin'} })
+              p.create_users(migration_spec[:technical_user].map { |u| { login: u, role: 'admin' } })
             rescue RestClient::Exception => e
-              messages << {type: :technical_user_addition, status: 'ERROR', message: e.message}
+              messages << { type: :technical_user_addition, status: 'ERROR', message: e.message }
             end
           end
         end
@@ -91,14 +91,12 @@ module GoodData
       def transfer_label_types(source_project, targets)
         semaphore = Mutex.new
 
-        synchronized_puts = Proc.new do |*args|
-          semaphore.synchronize {
-            puts args
-          }
+        synchronized_puts = proc do |*args|
+          semaphore.synchronize { puts args }
         end
 
         # Convert to array
-        targets = [targets] unless targets.kind_of?(Array)
+        targets = [targets] unless targets.is_a?(Array)
 
         client = source_project.client
 
@@ -126,10 +124,10 @@ module GoodData
         # Transfer to target projects
         targets.peach do |target|
           transfer.peach do |identifier, type|
-            uri = GoodData::MdObject.identifier_to_uri({project: target, client: client}, identifier)
+            uri = GoodData::MdObject.identifier_to_uri({ project: target, client: client }, identifier)
             next unless uri
 
-            obj = GoodData::MdObject[uri, {project: target, client: client}]
+            obj = GoodData::MdObject[uri, { project: target, client: client }]
 
             if obj.content['type'] != type
               synchronized_puts.call "Updating #{identifier} -> #{type} in #{target.title} - #{target.uri}"

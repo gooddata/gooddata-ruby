@@ -8,7 +8,7 @@ require 'gooddata/models/project_creator'
 
 describe GoodData::Model::ProjectCreator do
 
-  it 'should pick correct update chunk based on priority' do
+  before(:each) do
     # Priority is
     #
     # [cascadeDrops, preserveData],
@@ -16,112 +16,60 @@ describe GoodData::Model::ProjectCreator do
     # [false, false],
     # [true, true],
     # [true, false]
-    data = [
-      { 'updateScript' => {
-        'cascadeDrops' => false,
-        'preserveData' => true,
-        'maqlDdlChunks' => "a"
-      }},
-      { 'updateScript' => {
-        'cascadeDrops' => false,
-        'preserveData' => false,
-        'maqlDdlChunks' => "b"
-      }}
-    ]
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data)
-    chunk.should == {
-      'updateScript' => {
-      'cascadeDrops' => false,
-      'preserveData' => true,
-      'maqlDdlChunks' => "a"
-    }}
+    #
+    # The data is ordered in descending priority
+    @chunk_a = {
+                'updateScript' => {
+                  'cascadeDrops' => false,
+                  'preserveData' => true,
+                  'maqlDdlChunks' => 'a'
+                }
+              }
 
+    @chunk_b = {
+                'updateScript' => {
+                  'cascadeDrops' => false,
+                  'preserveData' => false,
+                  'maqlDdlChunks' => 'b'
+                }
+              }
+    @chunk_c = {
+                'updateScript' => {
+                  'cascadeDrops' => true,
+                  'preserveData' => true,
+                  'maqlDdlChunks' => 'c'
+                }
+              }
 
-    data = [
-      { 'updateScript' => {
-        'cascadeDrops' => true,
-        'preserveData' => true,
-        'maqlDdlChunks' => "a"
-      }},
-      { 'updateScript' => {
-        'cascadeDrops' => true,
-        'preserveData' => false,
-        'maqlDdlChunks' => "b"
-      }}
-    ]
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data)
-    chunk.should == {
-      'updateScript' => {
-      'cascadeDrops' => true,
-      'preserveData' => true,
-      'maqlDdlChunks' => "a"
-    }}
+    @chunk_d = {
+                'updateScript' => {
+                  'cascadeDrops' => true,
+                  'preserveData' => false,
+                  'maqlDdlChunks' => 'd'
+                }
+              }
 
+    @data = [@chunk_a, @chunk_b, @chunk_c, @chunk_d]
 
-    data = [
-      { 'updateScript' => {
-        'cascadeDrops' => true,
-        'preserveData' => false,
-        'maqlDdlChunks' => "a"
-      }},
-      { 'updateScript' => {
-        'cascadeDrops' => true,
-        'preserveData' => true,
-        'maqlDdlChunks' => "b"
-      }}
-    ]
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data)
-    chunk.should == {
-      'updateScript' => {
-      'cascadeDrops' => true,
-      'preserveData' => true,
-      'maqlDdlChunks' => "b"
-    }}
+  end
+
+  it 'should pick correct update chunk based on priority' do
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data)
+    expect(chunk).to eq [@chunk_a]
   end
 
   it 'should pick correct update chunk based on your preference if it is possible to satisfy it' do
-    data = [
-      { 'updateScript' => {
-        'cascadeDrops' => true,
-        'preserveData' => false,
-        'maqlDdlChunks' => "a"
-      }},
-      { 'updateScript' => {
-        'cascadeDrops' => true,
-        'preserveData' => true,
-        'maqlDdlChunks' => "b"
-      }}
-    ]
-
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data, preference: { cascade_drops: true,  preserve_data: false})
-    chunk.should == {
-      'updateScript' => {
-      'cascadeDrops' => true,
-      'preserveData' => false,
-      'maqlDdlChunks' => "a"
-    }}
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true,  preserve_data: false})
+    expect(chunk).to eq [@chunk_d]
   end
 
-  it 'should pick correct update chunk based on your preference if it is not possible to satisfy it' do
-    data = [
-      { 'updateScript' => {
-        'cascadeDrops' => true,
-        'preserveData' => true,
-        'maqlDdlChunks' => "a"
-      }},
-      { 'updateScript' => {
-        'cascadeDrops' => false,
-        'preserveData' => true,
-        'maqlDdlChunks' => "b"
-      }}
-    ]
+  it 'should pick correct update chunks based on your preference if it is possible to satisfy it and the preference is ambiguous' do
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true })
+    expect(chunk).to eq [@chunk_c, @chunk_d]
+  end
 
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(data, preference: { cascade_drops: true,  preserve_data: false})
-    chunk.should == {
-      'updateScript' => {
-      'cascadeDrops' => false,
-      'preserveData' => true,
-      'maqlDdlChunks' => "b"
-    }}
+  it 'should not pick a chunk if it is not possible to satisfy it based on your preference' do
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true,  preserve_data: false, unmeetable_condition: true})
+    expect(chunk).to eq []
   end
 end

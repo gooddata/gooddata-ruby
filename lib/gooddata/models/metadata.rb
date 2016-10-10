@@ -145,7 +145,7 @@ module GoodData
     def deprecated=(flag)
       if flag == '1' || flag == 1 || flag == true
         meta['deprecated'] = '1'
-      elsif flag == '0' || flag == 0 || flag == false
+      elsif flag == '0' || flag == 0 || flag == false # rubocop:disable Style/NumericPredicate
         meta['deprecated'] = '0'
       else
         fail 'You have to provide flag as either 1 or "1" or 0 or "0" or true/false'

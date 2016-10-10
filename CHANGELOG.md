@@ -1,5 +1,10 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.44
+- Fixed the tests
+- The MAQL execution now throws an exception if there is an error
+- The authentication is made via tokens not cookies
+
 ## 0.6.26
 - There is first implementation of transfering ETLs
 - Fixed bug with getting clients from domain

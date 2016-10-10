@@ -94,7 +94,7 @@ module GoodData
       def deploy(path, options = { :client => GoodData.client, :project => GoodData.project })
         return deploy_brick(path, options) if path.to_s.start_with?(APP_STORE_URL)
 
-        return deploy_from_appstore(path.to_s, options) if (path.to_s =~ /\${.*}:(.*)\/(.*):\//) == 0
+        return deploy_from_appstore(path.to_s, options) if (path.to_s =~ %r{\${.*}:(.*)\/(.*):\/}) == 0 # rubocop:disable Style/NumericPredicate
 
         client, project = GoodData.get_client_and_project(options)
 
@@ -146,7 +146,7 @@ module GoodData
             if ref
               `git checkout #{ref}`
 
-              fail 'Wrong branch or tag specified!' if $CHILD_STATUS.to_i != 0
+              fail 'Wrong branch or tag specified!' if $CHILD_STATUS.to_i.nonzero?
             end
 
             opts = {
@@ -167,7 +167,7 @@ module GoodData
         end
       end
 
-      def deploy_from_appstore(path, options = {:client => GoodData.client, :project => GoodData.project})
+      def deploy_from_appstore(path, options = { :client => GoodData.client, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
         deploy_name = options[:name]
@@ -203,8 +203,6 @@ module GoodData
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
       end
-      
-      # ----------------------------- Private Stuff
 
       private
 

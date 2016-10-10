@@ -94,7 +94,7 @@ module GoodData
     #
     # @return [Array] Return left headers as Array of Arrays. The notation is of a matrix. First rows then cols.
     def left_headers
-      return nil if @left_headers_cols_nums == 0
+      return nil if @left_headers_cols_nums.zero?
       top = @left_headers_cols_nums - 1
       without_top_headers.slice(0, [0, top]).to_a
     end
@@ -103,7 +103,7 @@ module GoodData
     #
     # @return [Array] Return top headers as Array of Arrays. The notation is of a matrix. First rows then cols.
     def top_headers
-      return nil if @top_headers_rows_nums == 0
+      return nil if @top_headers_rows_nums.zero?
       top = @top_headers_rows_nums - 1
       without_left_headers.slice([0, top], 0).to_a
     end
@@ -175,7 +175,7 @@ module GoodData
     # @return [Array] Returns true if data result is empty
     def empty?
       row, cols = size
-      row == 0 && cols == 0
+      row.zero? && cols.zero?
     end
 
     # Allows you to test if a report contains a row.

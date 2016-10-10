@@ -401,7 +401,7 @@ module GoodData
       #
       # @return [Array] array of errors
       def validate_some_anchors
-        find_columns_by_type(:anchor).count == 0 ? [{ type: :no_anchor, dataset: id }] : []
+        find_columns_by_type(:anchor).count.zero? ? [{ type: :no_anchor, dataset: id }] : []
       end
 
       # Validate if the dataset does not have more than one anchor defined.

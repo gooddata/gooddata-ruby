@@ -13,9 +13,7 @@ describe GoodData::Schedule do
 
   before(:all) do
     @client = ConnectionHelper.create_default_connection
-
     @project = ProjectHelper.get_default_project(:client => @client)
-
     # ScheduleHelper.remove_old_schedules(@project)
     # ProcessHelper.remove_old_processes(@project)
   end

@@ -34,8 +34,8 @@ module GoodData
         end
       end
 
-      def respond_to?(method_sym, *arguments, &block)
-        if @data.key?(method_sym)
+      def respond_to_missing?(method_name, include_private = false)
+        if @data.key?(method_name)
           true
         else
           super

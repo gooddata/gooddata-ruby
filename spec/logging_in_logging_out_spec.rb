@@ -86,8 +86,8 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   it "should be able to regenerate TT" do
     regular_client = ConnectionHelper::create_default_connection
     projects = regular_client.projects
-    regular_client.connection.cookies[:cookies].delete('GDCAuthTT')
+    regular_client.connection.headers.delete(:x_gdc_authtt)
     regular_client.get('/gdc/md')
-    expect(regular_client.connection.cookies[:cookies]).to have_key 'GDCAuthTT'
+    expect(regular_client.connection.headers).to have_key :x_gdc_authtt
   end
 end
