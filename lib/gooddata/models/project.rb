@@ -828,7 +828,7 @@ module GoodData
       puts "Inviting #{email}, role: #{role}"
 
       role_url = nil
-      if role.index('/gdc/') != 0
+      if role.index('/gdc/').nonzero?
         tmp = get_role(role)
         role_url = tmp.uri if tmp
       else
@@ -1501,7 +1501,7 @@ module GoodData
         client.post("#{uri}/users", 'users' => payload)
       end
       # this ugly line turns the hash of errors into list of errors with types so we can process them easily
-      typed_results = results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v_2| v_2.is_a?(String) ? { type: k.to_sym, user: v_2 } : GoodData::Helpers.symbolize_keys(v_2).merge(type: k.to_sym) } } }
+      typed_results = results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v2| v2.is_a?(String) ? { type: k.to_sym, user: v2 } : GoodData::Helpers.symbolize_keys(v2).merge(type: k.to_sym) } } }
       # we have to concat errors from role resolution and API result
       typed_results + (users_by_type[:failed] || [])
     end

@@ -265,7 +265,7 @@ module GoodData
       # @param [Object] Something
       # @return [Boolean] Returns true or false if the input is 'true' or true
       def to_boolean(param)
-        (param == 'true' || param == true) ? true : false
+        param == 'true' || param == true ? true : false
       end
 
       # encrypts data with the given key. returns a binary data with the
@@ -283,10 +283,10 @@ module GoodData
         Base64.encode64(random_iv + encrypted)
       end
 
-      def decrypt(data_base_64, key)
+      def decrypt(database64, key)
         return '' if key.nil? || key.empty?
 
-        data = Base64.decode64(data_base_64)
+        data = Base64.decode64(database64)
 
         cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
         cipher.decrypt

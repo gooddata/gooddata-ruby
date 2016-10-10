@@ -26,7 +26,7 @@ module RestClient
 
       new_args[:url] = url
       if request
-        fail MaxRedirectsReached if request.max_redirects == 0
+        fail MaxRedirectsReached if request.max_redirects.zero?
         new_args[:password] = request.password
         new_args[:user] = request.user
         new_args[:headers] = request.headers
@@ -168,7 +168,7 @@ module GoodData
         @user = nil
         @server = nil
         @opts = opts
-        @verify_ssl = (@opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE) ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
+        @verify_ssl = @opts[:verify_ssl] == false || @opts[:verify_ssl] == OpenSSL::SSL::VERIFY_NONE ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
 
         # Initialize headers
         reset_headers!

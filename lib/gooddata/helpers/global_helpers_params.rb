@@ -26,7 +26,7 @@ module GoodData
       def encode_params(params, data_key)
         res = {}
         nested = {}
-        core_types = [FalseClass, Fixnum, Float, NilClass, TrueClass, String]
+        core_types = [FalseClass, Integer, Float, NilClass, TrueClass, String]
         params.each do |k, v|
           if core_types.include?(v.class)
             res[k] = v

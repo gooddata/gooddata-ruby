@@ -93,14 +93,14 @@ module GoodData
         res
       end
 
-      def diff(item_1, item_2)
-        x = diff_list([item_1], [item_2])
+      def diff(item1, item2)
+        x = diff_list([item1], [item2])
         return {} if x[:changed].empty?
         x[:changed].first[:diff]
       end
 
-      def diff_list(list_1, list_2)
-        GoodData::Helpers.diff(list_1, list_2, key: :login)
+      def diff_list(list1, list2)
+        GoodData::Helpers.diff(list1, list2, key: :login)
       end
 
       # Gets user currently logged in

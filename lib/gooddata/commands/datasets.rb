@@ -77,7 +77,7 @@ module GoodData
 
           fail(CommandFailed, "Usage: #{$PROGRAM_NAME} <dataset config>") unless cfg_file
           config = begin
-            JSON.load open(cfg_file)
+            JSON.parse open(cfg_file)
           rescue
             raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
           end
@@ -103,7 +103,7 @@ module GoodData
           file, cfg_file = args
           fail(CommandFailed, "Usage: #{$PROGRAM_NAME} datasets:load <file> <dataset config>") unless cfg_file
           begin
-            config = JSON.load open(cfg_file)
+            config = JSON.parse open(cfg_file)
           rescue
             raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
           end
