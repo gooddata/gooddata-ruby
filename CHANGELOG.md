@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.45
+- Fixed transfer_everything when LDMs are the same
+
 ## 0.6.44
 - Fixed the tests
 - The MAQL execution now throws an exception if there is an error

@@ -129,10 +129,16 @@ module GoodData
 
             obj = GoodData::MdObject[uri, { project: target, client: client }]
 
-            if obj.content['type'] != type
-              synchronized_puts.call "Updating #{identifier} -> #{type} in #{target.title} - #{target.uri}"
-              obj.content['type'] = type
-              obj.save
+            if obj
+              if obj.content['type'] != type
+                synchronized_puts.call "Updating #{identifier} -> #{type} in '#{target.title}'"
+                obj.content['type'] = type
+                obj.save
+              else
+                synchronized_puts.call "Identifier #{identifier} in '#{target.title}' already has desired type - #{type}"
+              end
+            else
+              synchronized_puts.call "Unable to find #{identifier} in '#{target.title}'"
             end
           end
         end
