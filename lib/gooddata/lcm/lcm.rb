@@ -124,10 +124,10 @@ module GoodData
         # Transfer to target projects
         targets.peach do |target|
           transfer.peach do |identifier, type|
-            uri = GoodData::MdObject.identifier_to_uri({ project: target, client: client }, identifier)
+            uri = GoodData::MdObject.identifier_to_uri({ project: target, client: target.client }, identifier)
             next unless uri
 
-            obj = GoodData::MdObject[uri, { project: target, client: client }]
+            obj = GoodData::MdObject[uri, { project: target, client: target.client }]
 
             if obj
               if obj.content['type'] != type

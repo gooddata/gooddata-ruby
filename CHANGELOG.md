@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.46
+- Fixed transfer_label_types, use target client for lookup
+
 ## 0.6.45
 - Fixed transfer_everything when LDMs are the same
 
