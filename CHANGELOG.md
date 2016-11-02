@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.47
+- Fixed BigDecimal issues in ReportDataResult#data
+
 ## 0.6.46
 - Fixed transfer_label_types, use target client for lookup
 
