@@ -59,7 +59,11 @@ module GoodData
       end
 
       def data(data)
-        data['xtab_data']['data'].map { |row| row.map { |i| i ? BigDecimal(i) : i } }
+        data['xtab_data']['data'].map do |row|
+          row.map do |i|
+            i ? (BigDecimal(1) * i) : i
+          end
+        end
       end
     end
 

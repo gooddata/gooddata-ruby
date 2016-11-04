@@ -63,7 +63,7 @@ module GoodData
                 next
               end
             end
-            if (errors.length > 0) && (errors.length == replaced_maqls.length)
+            if !errors.empty? && (errors.length == replaced_maqls.length)
               messages = errors.map { |e| GoodData::Helpers.interpolate_error_messages(e.data['wTaskStatus']['messages']) }
               fail "Unable to migrate LDM, reason(s): \n #{messages.join("\n")}"
             end

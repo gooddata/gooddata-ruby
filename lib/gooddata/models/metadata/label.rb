@@ -51,7 +51,7 @@ module GoodData
           offset: 0,
           order: 'asc'
         }
-        params = default_params.merge(url_or_params).map { |x, v| "#{x}=#{CGI.escape(v.to_s)}" }.reduce { |a, e| "#{a}&#{e}" }
+        params = default_params.merge(url_or_params).map { |acc, elem| "#{acc}=#{CGI.escape(elem.to_s)}" }.reduce { |acc, elem| "#{acc}&#{elem}" }
         final_url = "#{uri}/validElements?#{params}"
       end
 

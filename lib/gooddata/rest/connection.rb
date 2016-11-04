@@ -594,7 +594,7 @@ module GoodData
       end
 
       def scrub_params(params, keys)
-        keys = keys.reduce([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
+        keys = keys.reduce([]) { |acc, elem| acc.concat([elem.to_s, elem.to_sym]) }
 
         new_params = GoodData::Helpers.deep_dup(params)
         GoodData::Helpers.hash_dfs(new_params) do |k, _key|
