@@ -1,4 +1,4 @@
-# gooddata-ruby CLI 
+# gooddata-ruby CLI
 
 ## api
 
@@ -70,7 +70,7 @@ tomaskorcak@kx-mac:~/$ gooddata api get /gdc
 ### api info
 
 Info about the API version etc
-   
+
 ```
 tomaskorcak@kx-mac:~/$ gooddata api info
 GoodData API
@@ -223,10 +223,6 @@ tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb project invi
 Inviting tomas.korcak@gooddata.com, role: /gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/2
 ```
 
-### project jack_in
-
-If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project
-
 ### project list_users
 
 List users
@@ -373,7 +369,7 @@ drwxr-xr-x  31 tomaskorcak  staff  1054 Apr 22 14:10 ..
 -rw-r--r--   1 tomaskorcak  staff   103 Apr 22 14:10 brick.rb
 -rw-r--r--   1 tomaskorcak  staff   179 Apr 22 14:10 main.rb
 
-tomaskorcak@kx-mac:~/$ cat mybrick/brick.rb 
+tomaskorcak@kx-mac:~/$ cat mybrick/brick.rb
 class MyBrick < GoodData::Bricks::Brick
 
     def call(params)
@@ -382,7 +378,7 @@ class MyBrick < GoodData::Bricks::Brick
 
 end
 
-tomaskorcak@kx-mac:~/$ cat mybrick/main.rb 
+tomaskorcak@kx-mac:~/$ cat mybrick/main.rb
 require_relative '../../gooddata/bricks/bricks'
 
 require_relative './mybrick'

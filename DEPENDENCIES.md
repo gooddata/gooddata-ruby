@@ -96,7 +96,7 @@ application.
 
 <a name="bundler"></a>
 ### bundler v1.11.2 (development)
-#### 
+####
 
 unknown manually approved
 
@@ -125,7 +125,7 @@ unknown manually approved
 ><cite>  2016-02-22</cite>
 
   >> puts "this is red".red
- 
+
   >> puts "this is red with a blue background (read: ugly)".red_on_blue
 
   >> puts "this is red with an underline".red.underline
@@ -306,7 +306,7 @@ Guard::RSpec automatically run your specs (much like autotest).
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
- HashDiff is a diff lib to compute the smallest difference between two hashes. 
+ HashDiff is a diff lib to compute the smallest difference between two hashes.
 
 <a name="hashie"></a>
 ### <a href="https://github.com/intridea/hashie">hashie</a> v3.4.3
@@ -523,10 +523,6 @@ Add parallel methods into Enumerable: pmap and peach
 <a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
 A few useful extensions to core Ruby classes.
-
-<a name="pry"></a>
-### <a href="http://pryrepl.org">pry</a> v0.10.3
-#### An IRB alternative and runtime developer console
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
@@ -813,5 +809,3 @@ WebMock allows stubbing HTTP requests and setting expectations on HTTP requests.
 #### YARD plugin to list RSpec specifications inside documentation
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
-
-

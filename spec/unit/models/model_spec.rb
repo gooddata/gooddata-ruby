@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'pry'
 require 'gooddata/models/model'
 
 describe GoodData::Model do
@@ -47,7 +46,7 @@ describe GoodData::Model do
   end
 
   it "should be possible to merge Schema blueprints" do
-    
+
     first_dataset = @base_blueprint.find_dataset("dataset.devs").to_hash
     additional_blueprint = @additional_blueprint.find_dataset("dataset.devs").to_hash
     stuff = GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
@@ -61,7 +60,7 @@ describe GoodData::Model do
     first_dataset = @base_blueprint.find_dataset("dataset.commits").to_hash
     additional_blueprint = @blueprint_with_duplicate.find_dataset("dataset.commits").to_hash
     stuff = GoodData::Model.merge_dataset_columns(first_dataset, additional_blueprint)
-    
+
     expect(GoodData::Model::ProjectBlueprint.new(stuff)).to be_valid
 
     expect(stuff[:columns].count).to eq 6
