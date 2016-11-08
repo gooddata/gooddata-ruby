@@ -16,6 +16,10 @@ module GoodData
         dataset_blueprint.attribute_for_label(self)
       end
 
+      def reference_label?
+        data[:reference_label] == true || self == attribute.reference_label
+      end
+
       # Returns gd_data_type
       #
       # @return [String] returns gd_data_type of the label
