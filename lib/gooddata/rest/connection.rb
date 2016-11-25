@@ -288,7 +288,7 @@ module GoodData
           end
         end
 
-        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+        GoodData::Rest::Connection.retryable(:tries => ConnectionHelper::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           if where.is_a?(IO) || where.is_a?(StringIO)
             b.call(where)
           else
@@ -486,7 +486,7 @@ module GoodData
           RestClient::Request.execute(raw)
         end
 
-        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+        GoodData::Rest::Connection.retryable(:tries => ConnectionHelper::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           b.call
         end
       end
@@ -543,7 +543,7 @@ module GoodData
       end
 
       def process_response(options = {}, &block)
-        retries = options[:tries] || 3
+        retries = options[:tries] || ConnectionHelper::GD_MAX_RETRY
         process = options[:process]
         dont_reauth = options[:dont_reauth]
         options = options.reject { |k, _| [:process, :dont_reauth].include?(k) }
@@ -594,7 +594,7 @@ module GoodData
       end
 
       def scrub_params(params, keys)
-        keys = keys.reduce([]) { |a, e| a.concat([e.to_s, e.to_sym]) }
+        keys = keys.reduce([]) { |acc, elem| acc.concat([elem.to_s, elem.to_sym]) }
 
         new_params = GoodData::Helpers.deep_dup(params)
         GoodData::Helpers.hash_dfs(new_params) do |k, _key|
@@ -700,7 +700,7 @@ module GoodData
         method = :get
         GoodData.logger.debug "#{method}: #{url}"
 
-        GoodData::Rest::Connection.retryable(:tries => 2, :refresh_token => proc { refresh_token }) do
+        GoodData::Rest::Connection.retryable(:tries => ConnectionHelper::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           raw = {
             :method => method,
             :url => url,

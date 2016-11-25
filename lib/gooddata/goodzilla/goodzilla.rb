@@ -146,10 +146,10 @@ module GoodData
         ids = GoodData::SmallGoodZilla.get_ids(metric)
         interpolated_ids = ids.zip(Array(interpolate_ids(options, ids)))
 
-        metric = interpolated[:facts].reduce(metric) { |a, e| a.sub("#\"#{e[0]}\"", "[#{e[1]}]") }
-        metric = interpolated[:attributes].reduce(metric) { |a, e| a.sub("@\"#{e[0]}\"", "[#{e[1]}]") }
-        metric = interpolated[:metrics].reduce(metric) { |a, e| a.sub("?\"#{e[0]}\"", "[#{e[1]}]") }
-        metric = interpolated_ids.reduce(metric) { |a, e| a.gsub("![#{e[0]}]", "[#{e[1]}]") }
+        metric = interpolated[:facts].reduce(metric) { |acc, elem| acc.sub("#\"#{elem[0]}\"", "[#{elem[1]}]") }
+        metric = interpolated[:attributes].reduce(metric) { |acc, elem| acc.sub("@\"#{elem[0]}\"", "[#{elem[1]}]") }
+        metric = interpolated[:metrics].reduce(metric) { |acc, elem| acc.sub("?\"#{elem[0]}\"", "[#{elem[1]}]") }
+        metric = interpolated_ids.reduce(metric) { |acc, elem| acc.gsub("![#{elem[0]}]", "[#{elem[1]}]") }
         metric
       end
 

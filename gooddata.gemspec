@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'redcarpet', '~> 3.1', '>= 3.1.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 3.4', '>= 3.4.0'
   s.add_development_dependency 'rspec-expectations', '~> 3.4', '>= 3.4.0'
-  s.add_development_dependency 'rubocop', '~> 0.34', '>= 0.34.0'
+  s.add_development_dependency 'rubocop', '~> 0.45', '>= 0.45.0'
   s.add_development_dependency 'ruby-debug-ide', '~> 0.4' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'simplecov', '~> 0.10', '>= 0.10.0'
   s.add_development_dependency 'webmock', '~> 1.21', '>= 1.21.0'
