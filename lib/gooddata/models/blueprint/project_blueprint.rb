@@ -308,7 +308,7 @@ module GoodData
       #
       # @return [Array<Hash>]
       def attributes
-        datasets.reduce([]) { |a, e| a.concat(e.attributes) }
+        datasets.reduce([]) { |acc, elem| acc.concat(elem.attributes) }
       end
 
       # Returns list of attributes and anchors from all the datasets in a blueprint
@@ -718,8 +718,8 @@ module GoodData
       def validate
         errors = []
         errors.concat validate_references
-        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate) }
-        errors.concat datasets.reduce([]) { |a, e| a.concat(e.validate_gd_data_type_errors) }
+        errors.concat datasets.reduce([]) { |acc, elem| acc.concat(elem.validate) }
+        errors.concat datasets.reduce([]) { |acc, elem| acc.concat(elem.validate_gd_data_type_errors) }
         errors
       rescue
         raise GoodData::ValidationError

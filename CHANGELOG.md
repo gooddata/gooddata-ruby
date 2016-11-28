@@ -1,5 +1,9 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.47
+- Support for GD_MAX_RETRY environment variable for external manual override of maximum retry attempts
+- Updated dependencies (gems)
+
 ## 0.6.46
 - Fixed transfer_label_types, use target client for lookup
 

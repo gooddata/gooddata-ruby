@@ -75,7 +75,7 @@ describe 'Behavior during polling and retries' do
 
   it 'should make 1 additional request when hitting 500' do
     expect do
-      @client.get('/internal_error')
+      @client.get('/internal_error', :tries => 3)
     end.to raise_error(RestClient::InternalServerError)
     expect(a_request(:get, "#{@server}/internal_error")).to have_been_made.times(3)
   end
