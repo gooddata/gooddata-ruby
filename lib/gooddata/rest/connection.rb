@@ -543,7 +543,7 @@ module GoodData
       end
 
       def process_response(options = {}, &block)
-        retries = options[:tries] || ConnectionHelper::GD_MAX_RETRY
+        retries = options[:tries] || 3 # ConnectionHelper::GD_MAX_RETRY
         process = options[:process]
         dont_reauth = options[:dont_reauth]
         options = options.reject { |k, _| [:process, :dont_reauth].include?(k) }

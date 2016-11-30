@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.48
+- Fix jruby issue with uninitialized constant GoodData::Rest::Connection::ConnectionHelper
+
 ## 0.6.47
 - Support for GD_MAX_RETRY environment variable for external manual override of maximum retry attempts
 - Updated dependencies (gems)
