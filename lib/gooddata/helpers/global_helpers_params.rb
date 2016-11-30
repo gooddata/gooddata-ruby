@@ -70,7 +70,7 @@ module GoodData
           parsed_data_params = JSON.parse(data_params)
           parsed_hidden_data_params = JSON.parse(hidden_data_params)
         rescue JSON::ParserError => e
-          raise e.class, "Error reading json from '#{key}' or '#{hidden_key}' in params #{params}\n #{e.message}"
+          raise e.class, "Error reading json from '#{key}' or '#{hidden_key}', reason: #{e.message}"
         end
 
         # Add the nil on ENCODED_HIDDEN_PARAMS_KEY

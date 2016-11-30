@@ -3,6 +3,7 @@
 ## 0.6.47
 - Support for GD_MAX_RETRY environment variable for external manual override of maximum retry attempts
 - Updated dependencies (gems)
+- Do not log params if JSON parsing fails
 
 ## 0.6.46
 - Fixed transfer_label_types, use target client for lookup
