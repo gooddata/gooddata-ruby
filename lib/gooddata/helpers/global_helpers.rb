@@ -9,6 +9,7 @@ require 'pathname'
 require 'hashie'
 require 'openssl'
 
+require_relative '../extensions/object'
 require_relative 'global_helpers_params'
 
 module GoodData
@@ -16,6 +17,8 @@ module GoodData
     class DeepMergeableHash < Hash
       include Hashie::Extensions::DeepMerge
     end
+
+    set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 3
 
     class << self
       def error(msg)
