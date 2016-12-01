@@ -1,5 +1,0 @@
-require_relative '../../gooddata/bricks/bricks'
-
-require_relative './mybrick'
-
-GoodData::Bricks::Pipeline.prepare([LoggerMiddleware, BenchMiddleware, GoodDataMiddleware, MyBrick])
