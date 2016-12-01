@@ -12,7 +12,7 @@ module GoodData
   module Environment
     module ConnectionHelper
       set_const :GD_PROJECT_TOKEN, ENV["GD_PROJECT_TOKEN"]
-      set_const :GD_MAX_RETRY, (ENV["GD_MAX_RETRY"] && ENV["GD_MAX_RETRY"].to_i) || 3
+      set_const :GD_MAX_RETRY, Helpers::GD_MAX_RETRY
 
       set_const :DEFAULT_USERNAME, "tomas.korcak+gem_tester@gooddata.com"
       set_const :TEST_USERNAME, "john.doe@gooddata.com"

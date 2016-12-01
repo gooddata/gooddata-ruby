@@ -13,6 +13,8 @@ require 'rest-client'
 require_relative '../version'
 require_relative '../exceptions/exceptions'
 
+require_relative '../helpers/global_helpers'
+
 module RestClient
   module AbstractResponse
     alias_method :old_follow_redirection, :follow_redirection
@@ -288,7 +290,7 @@ module GoodData
           end
         end
 
-        GoodData::Rest::Connection.retryable(:tries => ConnectionHelper::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
+        GoodData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           if where.is_a?(IO) || where.is_a?(StringIO)
             b.call(where)
           else
@@ -486,7 +488,7 @@ module GoodData
           RestClient::Request.execute(raw)
         end
 
-        GoodData::Rest::Connection.retryable(:tries => ConnectionHelper::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
+        GoodData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           b.call
         end
       end
@@ -543,7 +545,7 @@ module GoodData
       end
 
       def process_response(options = {}, &block)
-        retries = options[:tries] || 3 # ConnectionHelper::GD_MAX_RETRY
+        retries = options[:tries] || Helpers::GD_MAX_RETRY
         process = options[:process]
         dont_reauth = options[:dont_reauth]
         options = options.reject { |k, _| [:process, :dont_reauth].include?(k) }
@@ -700,7 +702,7 @@ module GoodData
         method = :get
         GoodData.logger.debug "#{method}: #{url}"
 
-        GoodData::Rest::Connection.retryable(:tries => ConnectionHelper::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
+        GoodData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
           raw = {
             :method => method,
             :url => url,

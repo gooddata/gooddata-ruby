@@ -7,6 +7,7 @@
 require 'rest-client'
 
 require_relative '../helpers/auth_helpers'
+require_relative '../helpers/global_helpers'
 
 require_relative 'connection'
 require_relative 'object_factory'
@@ -329,7 +330,7 @@ module GoodData
             fail ExecutionLimitExceeded, "The time limit #{time_limit} secs for polling on #{link} is over"
           end
           sleep sleep_interval
-          GoodData::Rest::Client.retryable(:tries => ConnectionHelper::GD_MAX_RETRY, :refresh_token => proc { connection.refresh_token }) do
+          GoodData::Rest::Client.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { connection.refresh_token }) do
             response = get(link, process: process)
           end
         end
