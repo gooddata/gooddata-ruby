@@ -94,7 +94,12 @@ module GoodData
           error_type = GoodData::Helpers.get_path(error, %w(error errorClass))
           case error_type
           when 'com.gooddata.webapp.service.userprovisioning.LoginNameAlreadyRegisteredException'
-            raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+            u = Domain::find_user_by_login(domain_name, data[:login])
+            if u
+              response = { 'uri' => u.uri }
+            else
+              raise GoodData::UserInDifferentDomainError, "User #{data[:login]} is already in different domain"
+            end
           when 'com.gooddata.json.validator.exception.MalformedMessageException'
             raise GoodData::MalformedUserError, "User #{data[:login]} is malformed. The message from API is #{GoodData::Helpers.interpolate_error_message(error)}"
           else
