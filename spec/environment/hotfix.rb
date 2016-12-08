@@ -9,13 +9,20 @@ module GoodData
     module ConnectionHelper
       set_const :DEFAULT_SERVER, 'https://staging2.intgdc.com'
       set_const :DEFAULT_USER_URL, '/gdc/account/profile/d8b356b30c0c12d1b4b97f56d6706ef2'
+      set_const :STAGING_URI, 'https://na1-staging2-di.intgdc.com/uploads/'
+    end
+
+    module ProcessHelper
+      set_const :PROCESS_ID, 'eddb2d5f-c002-4cb4-a0ba-9b9b32c0a40f'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'i640il7dyatqmvak24zzr09ypt3ghqu2'
-      set_const :PROJECT_URL, "/gdc/projects/#{PROJECT_ID}"
-      set_const :PROJECT_TITLE, 'GoodTravis'
-      set_const :PROJECT_SUMMARY, 'No summary'
+      set_const :PROJECT_ID, 'wrbjys321jmc1ut9tcfode4kh1j2o0k6'
     end
+
+    module ScheduleHelper
+      set_const :SCHEDULE_ID, '583c08e1e4b00e7feeb4a2b3'
+    end
+
   end
 end
