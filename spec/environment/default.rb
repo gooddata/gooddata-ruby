@@ -32,7 +32,6 @@ module GoodData
 
     module ProjectHelper
       set_const :PROJECT_ID, ''
-      set_const :PROJECT_URL, "/gdc/projects/#{PROJECT_ID}"
       set_const :PROJECT_TITLE, 'GoodTravis'
       set_const :PROJECT_SUMMARY, 'No summary'
     end
