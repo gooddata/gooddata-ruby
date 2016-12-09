@@ -538,7 +538,7 @@ describe GoodData::Schedule do
     it 'should be able to get name of the schedule.' do
       begin
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
-        expect(schedule.name).to eq ProcessHelper::DEPLOY_NAME
+        expect("cc/graph/#{schedule.name}").to eq ProcessHelper::DEPLOY_NAME
       ensure
         schedule && schedule.delete
       end
@@ -587,7 +587,7 @@ describe GoodData::Schedule do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
         schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
-        expect(schedule.name).to eq ProcessHelper::DEPLOY_NAME
+        expect("cc/graph/#{schedule.name}").to eq ProcessHelper::DEPLOY_NAME
         schedule.name = 'MY NAME'
         schedule.save
         schedule2 = process.schedules.find { |s| s.obj_id == schedule.obj_id }
