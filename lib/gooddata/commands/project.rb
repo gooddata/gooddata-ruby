@@ -103,36 +103,6 @@ module GoodData
           client.with_project(project_id, &:validate)
         end
 
-        def jack_in(options)
-          goodfile_path = GoodData::Helpers.find_goodfile(Pathname('.'))
-
-          spin_session = proc do |goodfile|
-            project_id = options[:project_id] || goodfile[:project_id]
-
-            begin
-              require 'gooddata'
-              client = GoodData.connect(options)
-              project = client.projects(project_id) if project_id
-              puts "Use 'exit' to quit the live session. Use 'q' to jump out of displaying a large output."
-              binding.pry(:quiet => true, # rubocop:disable Lint/Debugger
-                          :prompt => [proc do |_target_self, _nest_level, _pry|
-                            'project_live_session: '
-                          end])
-            rescue GoodData::ProjectNotFound
-              puts "Project with id \"#{project_id}\" could not be found. Make sure that the id you provided is correct."
-            end
-          end
-
-          if goodfile_path
-            goodfile = MultiJson.load(File.read(goodfile_path), :symbolize_keys => true)
-            FileUtils.cd(goodfile_path.dirname) do
-              spin_session.call(goodfile)
-            end
-          else
-            spin_session.call({}, nil)
-          end
-        end
-
         # Lists roles in a project
         #
         # @param project_id [String | GoodData::Project] Project id or project instance to list the users in
