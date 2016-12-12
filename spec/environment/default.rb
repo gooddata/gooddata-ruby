@@ -27,12 +27,11 @@ module GoodData
 
     module ProcessHelper
       set_const :PROCESS_ID, ''
-      set_const :DEPLOY_NAME, 'graph.grf'
+      set_const :DEPLOY_NAME, 'cc/graph/graph.grf'
     end
 
     module ProjectHelper
       set_const :PROJECT_ID, ''
-      set_const :PROJECT_URL, "/gdc/projects/#{PROJECT_ID}"
       set_const :PROJECT_TITLE, 'GoodTravis'
       set_const :PROJECT_SUMMARY, 'No summary'
     end
