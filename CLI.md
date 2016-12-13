@@ -223,10 +223,6 @@ tomaskorcak@kx-mac:~/$ gooddata -p tk6192gsnav58crp6o1ahsmtuniq8khb project invi
 Inviting tomas.korcak@gooddata.com, role: /gdc/projects/tk6192gsnav58crp6o1ahsmtuniq8khb/roles/2
 ```
 
-### project jack_in
-
-If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project
-
 ### project list_users
 
 List users

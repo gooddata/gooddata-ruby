@@ -16,29 +16,12 @@ module GoodData
     arg_name 'project_command'
 
     command :project do |c|
-      c.desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
-      c.command :jack_in do |jack|
-        jack.action do |global_options, options, _args|
-          warn '[DEPRECATION] `gooddata project jack_in` is deprecated.  Please use `gooddata jack_in` instead.'
-          opts = options.merge(global_options)
-          GoodData::Command::Project.jack_in(opts)
-        end
-      end
-
       c.desc 'Shows users in project'
       c.command :users do |users|
         users.action do |global_options, options, _args|
           opts = options.merge(global_options)
           GoodData::Command::Project.list_users(opts)
         end
-      end
-    end
-
-    desc 'If you are in a gooddata project blueprint or if you provide a project id it will start an interactive session inside that project'
-    command :jack_in do |jack|
-      jack.action do |global_options, options, _args|
-        opts = options.merge(global_options)
-        GoodData::Command::Project.jack_in(opts)
       end
     end
   end
