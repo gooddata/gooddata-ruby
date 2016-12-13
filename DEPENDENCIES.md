@@ -524,14 +524,6 @@ Add parallel methods into Enumerable: pmap and peach
 
 A few useful extensions to core Ruby classes.
 
-<a name="pry"></a>
-### <a href="http://pryrepl.org">pry</a> v0.10.3
-#### An IRB alternative and runtime developer console
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
-
-An IRB alternative and runtime developer console
-
 <a name="rainbow"></a>
 ### <a href="https://github.com/sickill/rainbow">rainbow</a> v2.0.0
 #### Colorize printed text on ANSI terminals
