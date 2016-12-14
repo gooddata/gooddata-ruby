@@ -86,6 +86,15 @@ module GoodData
         else
           filter_on_segment.map { |s| domain.segments(s).synchronize_clients }
         end
+
+        puts 'Migrating User Groups'
+        # User groups must be migrated after dashboards
+        domain.clients.peach do |c|
+          segment = c.segment
+          segment_master = segment.master_project
+          project = c.project
+          GoodData::Project.transfer_user_groups(segment_master, project)
+        end
       end
 
       def transfer_label_types(source_project, targets)

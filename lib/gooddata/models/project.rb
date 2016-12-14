@@ -240,6 +240,27 @@ module GoodData
           .peach(&:delete)
       end
 
+      def transfer_user_groups(from_project, to_project)
+        from_project.user_groups.each do |ug|
+          # migrate groups
+          new_group = to_project.user_groups.select{|group| group.name == ug.name }.first
+          new_group ||= UserGroup.create({:name => ug.name, :description => ug.description, :project => to_project})
+          new_group.project = to_project
+          new_group.description = ug.description
+          new_group.save
+          # migrate dashboard "grantees"
+          dashboards = from_project.dashboards
+          dashboards.each do |dashboard|
+            new_dashboard = to_project.dashboards.select{|dash| dash.title == dashboard.title}.first
+            next unless new_dashboard
+            grantee = dashboard.grantees['granteeURIs']['items'].select{|item| item['aclEntryURI']['grantee'].split('/').last == ug.links['self'].split('/').last}.first
+            next unless grantee
+            permission = grantee['aclEntryURI']['permission']
+            new_dashboard.grant({:member => new_group, :permission => permission})
+          end
+        end
+      end
+
       # Clones project along with etl and schedules.
       #
       # @param client [GoodData::Rest::Client] GoodData client to be used for connection

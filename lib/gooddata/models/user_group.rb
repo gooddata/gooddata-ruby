@@ -191,7 +191,7 @@ module GoodData
             else
               client.post('/gdc/userGroups', @json)
             end
-      @json = client.get(res['uri'])
+      @json = client.get(res['uri']) if res
       self
     end
 
