@@ -10,12 +10,14 @@ require 'gooddata/bricks/middleware/base_middleware'
 
 describe GoodData::Bricks do
   it "Has GoodData::Bricks::Brick class" do
-    GoodData::Bricks::Brick.should_not == nil
+    GoodData::Bricks::Brick.should_not be(nil)
   end
 
   it "should be possible to use block as an app in pipeline" do
     p = GoodData::Bricks::Pipeline.prepare([
-      lambda { |params| puts "x" }
+      lambda do |_params|
+        puts "x"
+      end
     ])
     p.call({})
   end
@@ -23,7 +25,7 @@ describe GoodData::Bricks do
   describe "#load_defaults" do
     context "when you define a middleware with default_loaded_call and give it some defaults file with prefix" do
       class TestMiddleWare < GoodData::Bricks::Middleware
-        def initialize(options={})
+        def initialize(options = {})
           @config = 'spec/bricks/default-config.json'
           super(options)
         end
@@ -54,7 +56,7 @@ describe GoodData::Bricks do
           TestBrick
         ])
 
-        res = p.call({
+        res = p.call(
           'config' => {
             'my' => {
               'namespace' => {
@@ -66,9 +68,9 @@ describe GoodData::Bricks do
               'some_key' => 'some value'
             }
           }
-        })
+        )
 
-        res.should eq({
+        res.should eq(
           'config' => {
             'my' => {
               'namespace' => {
@@ -82,30 +84,27 @@ describe GoodData::Bricks do
             }
           },
           "something_cool" => "redefined value and also default value 2"
-        })
+        )
       end
     end
   end
 
-
   # TODO: Better test pre and post so we are sure it is executed in right order
   it "should be possible to use instance both as middleware and app" do
-
     class DummyMiddleware < GoodData::Bricks::Middleware
-
       def call(params)
         puts "pre"
         app.call(params)
         puts "post"
       end
-
     end
 
     p = GoodData::Bricks::Pipeline.prepare([
       DummyMiddleware.new,
-      lambda { |params| puts "x" }
+      lambda do |_params|
+        puts "x"
+      end
     ])
     p.call({})
   end
-
 end

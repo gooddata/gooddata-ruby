@@ -8,7 +8,7 @@ require 'gooddata/cli/cli'
 
 describe GoodData::CLI do
   it 'Has GoodData::CLI class' do
-    GoodData::CLI.should_not == nil
+    expect(GoodData::CLI).not_to be_nil
   end
 
   it 'Has GoodData::CLI::main() working' do

@@ -28,7 +28,6 @@ describe GoodData do
 
   def test_webdav_upload(params)
     GoodData.with_project(@project, :client => @client) do
-
       # use current timestamp as a directory name on webdav
       dir = params[:no_dir] ? nil : Time.now.to_i.to_s
       dir = "#{dir}/#{dir}" if params[:nested_dir]
@@ -72,7 +71,9 @@ describe GoodData do
 
       # if it's unknown it should raise an error, otherwise it should download the right stuff
       if params[:unknown_file]
-        expect{ download_block.call }.to raise_error(ArgumentError)
+        expect do
+          download_block.call
+        end.to raise_error(ArgumentError)
       else
         download_block.call
 

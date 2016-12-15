@@ -45,7 +45,7 @@ describe GoodData::Rest::Connection do
 
       # generate a request id, and pass it to a request
       id = c.generate_request_id
-      resp = c.get('/gdc/md', :request_id => id)
+      c.get('/gdc/md', :request_id => id)
 
       id.should be_a(String)
       id.should_not be_empty
@@ -53,5 +53,4 @@ describe GoodData::Rest::Connection do
       c.disconnect
     end
   end
-
 end

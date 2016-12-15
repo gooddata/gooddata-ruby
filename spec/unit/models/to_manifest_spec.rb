@@ -9,7 +9,6 @@ require 'gooddata'
 include GoodData::Model
 
 describe GoodData::Model::ToManifest do
-
   before(:each) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @result = JSON.parse(File.read("./spec/data/manifests/test_project.json"))
@@ -29,7 +28,7 @@ describe GoodData::Model::ToManifest do
         d.add_date('opportunity_comitted', dataset: 'committed_on')
       end
     end
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][0]['constraints']).to eq ({ "date" => GoodData::Model::DEFAULT_DATE_FORMAT })
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][0]['constraints']).to eq("date" => GoodData::Model::DEFAULT_DATE_FORMAT)
   end
 
   it 'blueprint can be set with date reference and default format is set' do
@@ -42,7 +41,7 @@ describe GoodData::Model::ToManifest do
         d.add_date('opportunity_comitted', dataset: 'committed_on', format: 'yyyy/MM/dd')
       end
     end
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][0]['constraints']).to eq ({ "date" => "yyyy/MM/dd" })
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'][0]['constraints']).to eq("date" => "yyyy/MM/dd")
   end
 
   it 'blueprint can handle date fact during creation of manifest' do
@@ -76,7 +75,7 @@ describe GoodData::Model::ToManifest do
         d.add_column(type: :date_fact, id: 'dt.date_fact')
       end
     end
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts']).to include({"referenceKey"=>1, "populates"=>["repo_label_1"], "mode"=>"FULL", "columnName"=>"repo_label_1"})
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts']).to include("referenceKey" => 1, "populates" => ["repo_label_1"], "mode" => "FULL", "columnName" => "repo_label_1")
 
     blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
@@ -98,8 +97,8 @@ describe GoodData::Model::ToManifest do
       end
     end
 
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts']).to include({"referenceKey"=>1, "populates"=>["repo_label_2"], "mode"=>"FULL", "columnName"=>"repo_label_2"})
-    expect(blueprint.to_manifest[1]['dataSetSLIManifest']['parts']).to include({"populates"=>["repo_label_2"], "mode"=>"FULL", "columnName"=>"repos", "referenceKey"=>1})
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts']).to include("referenceKey" => 1, "populates" => ["repo_label_2"], "mode" => "FULL", "columnName" => "repo_label_2")
+    expect(blueprint.to_manifest[1]['dataSetSLIManifest']['parts']).to include("populates" => ["repo_label_2"], "mode" => "FULL", "columnName" => "repos", "referenceKey" => 1)
   end
 
   it 'blueprint cannot have more than one reference key.' do
@@ -117,7 +116,7 @@ describe GoodData::Model::ToManifest do
         d.add_column(type: :date_fact, id: 'dt.date_fact')
       end
     end
-    
+
     expect(blueprint.valid?).to be false
     expect(blueprint.validate).to eq [
       {
@@ -126,5 +125,4 @@ describe GoodData::Model::ToManifest do
       }
     ]
   end
-  
 end

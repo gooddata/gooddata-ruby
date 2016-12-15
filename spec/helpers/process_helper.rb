@@ -15,17 +15,19 @@ require_relative '../environment/environment'
 
 GoodData::Environment.load
 
-module GoodData::Helpers
-  module ProcessHelper
-    include GoodData::Environment::ProcessHelper
+module GoodData
+  module Helpers
+    module ProcessHelper
+      include GoodData::Environment::ProcessHelper
 
-    class << self
-      def remove_old_processes(project)
-        processes = project.processes
-        processes.pmap do |process|
-          next if process.obj_id == GoodData::Environment::ProcessHelper::PROCESS_ID
-          puts "Deleting #{process.inspect}"
-          process.delete
+      class << self
+        def remove_old_processes(project)
+          processes = project.processes
+          processes.pmap do |process|
+            next if process.obj_id == GoodData::Environment::ProcessHelper::PROCESS_ID
+            puts "Deleting #{process.inspect}"
+            process.delete
+          end
         end
       end
     end

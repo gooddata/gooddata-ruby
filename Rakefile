@@ -16,7 +16,7 @@ require 'rubocop/rake_task'
 
 desc 'Run RuboCop'
 RuboCop::RakeTask.new(:cop) do |task|
-  task.patterns = ['lib/**/*.rb']
+  task.patterns = ['{lib,spec}/**/*.rb']
 end
 
 desc 'Run continuous integration test'

@@ -11,7 +11,7 @@ describe "Object export between projects", :constraint => 'slow' do
     @client = ConnectionHelper.create_default_connection
 
     spec = MultiJson.load(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_keys => true)
-    
+
     @source_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @target_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
@@ -29,7 +29,7 @@ describe "Object export between projects", :constraint => 'slow' do
     metric = @source_project.create_metric("SELECT SUM(#\"#{f.title}\")", :title => metric_title)
     metric.save
 
-    @target_project.metrics.count.should == 0
+    expect(@target_project.metrics.count).to eq 0
 
     @source_project.partial_md_export(metric, :project => @target_project)
 
@@ -38,5 +38,4 @@ describe "Object export between projects", :constraint => 'slow' do
     expect(metric).not_to be_nil
     expect(metric.title).to eq metric_title
   end
-
 end

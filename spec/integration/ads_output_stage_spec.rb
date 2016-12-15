@@ -15,7 +15,8 @@ describe GoodData::AdsOutputStage, :constraint => 'slow' do
     GoodData::DataWarehouse.all.map do |ads|
       begin
         ads.delete
-      rescue
+      rescue => e
+        puts "Cannot delete ads #{ads.id}. Reason: #{e.message}"
       end
     end
 

@@ -7,7 +7,7 @@
 require 'gooddata'
 
 describe 'Create project using GoodData client', :constraint => 'slow' do
-  before(:all) do    
+  before(:all) do
     @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')
     @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
@@ -19,42 +19,47 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
   end
 
   it 'Should create project using GoodData::Rest::Client#create_project' do
-  
     data = [
-      ["repo_id", "repo_name"],
+      %w(repo_id repo_name),
       [1, "goodot"],
       [2, "bam"],
-      [3, "infra"]]
+      [3, "infra"]
+    ]
     @project.upload(data, @blueprint, 'dataset.repos')
 
     data = [
-      ['dev_id', 'email'],
+      %w(dev_id email),
       ['1', 'tomas@gmail.com'],
       ['2', 'petr@gmail.com'],
-      ['3', 'jirka@gmail.com']]
+      ['3', 'jirka@gmail.com']
+    ]
     @project.upload(data, @blueprint, 'dataset.devs')
 
     data = [
-      ['lines_changed', 'committed_on', 'dev_id', 'repo_id'],
+      %w(lines_changed committed_on dev_id repo_id),
       [1, '01/01/2011', '1', '1'],
       [2, '01/01/2011', '2', '2'],
-      [3, '01/01/2011', '3', '3']]
+      [3, '01/01/2011', '3', '3']
+    ]
     @project.upload(data, @blueprint, 'dataset.commits')
   end
 
   it "should be able to add anchor's labels" do
     bp = @project.blueprint
     bp.datasets('dataset.commits').change do |d|
-      d.add_label('label.commits.factsof.id',
+      d.add_label(
+        'label.commits.factsof.id',
         reference: 'attr.commits.factsof',
-        name: 'anchor_label')
+        name: 'anchor_label'
+      )
     end
-    @project.update_from_blueprint(bp, maql_replacements: { "PRESERVE DATA" => ""})
+    @project.update_from_blueprint(bp, maql_replacements: { "PRESERVE DATA" => "" })
     data = [
       ['label.commits.factsof.id', 'fact.commits.lines_changed', 'committed_on', 'dataset.devs', 'dataset.repos'],
       ['111', 1, '01/01/2011', '1', '1'],
       ['222', 2, '01/01/2011', '2', '2'],
-      ['333', 3, '01/01/2011', '3', '3']]
+      ['333', 3, '01/01/2011', '3', '3']
+    ]
     @project.upload(data, bp, 'dataset.commits')
     m = @project.facts.first.create_metric
     @project.compute_report(top: [m], left: ['label.commits.factsof.id'])
@@ -73,7 +78,7 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
     # define stuff
     m = @project.facts.first.create_metric.save
     report = @project.create_report(title: 'Test report', top: [m], left: ['label.devs.dev_id.email'])
-    #both compute
+    # both compute
     expect(m.execute).to eq 6
     expect(report.execute.without_top_headers.to_a).to eq [['jirka@gmail.com', 3],
                                                            ['petr@gmail.com', 2],
@@ -85,10 +90,11 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
 
     # load new data
     data = [
-      ['lines_changed', 'committed_on', 'dev_id', 'repo_id', 'repo_name'],
+      %w(lines_changed committed_on dev_id repo_id repo_name),
       [1, '01/01/2011', '1', '1', 'goodot'],
       [2, '01/01/2011', '2', '2', 'goodot'],
-      [3, '01/01/2011', '3', '3', 'infra']]
+      [3, '01/01/2011', '3', '3', 'infra']
+    ]
     @project.upload(data, @blueprint, 'dataset.commits')
 
     # both still compute

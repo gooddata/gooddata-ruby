@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-
 require 'gooddata/models/profile'
 require 'gooddata/models/domain'
 require 'gooddata/models/project'
@@ -13,51 +12,47 @@ describe GoodData::Profile do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
-    
+
     @user1 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
     @user2 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
 
     @users = [
-      @client.create(GoodData::Profile,
-        {
-          'accountSetting' => {
-            'email' => 'petr.cvengros@gooddata.com',
-            'firstName' => 'Petr',
-            'lastName' => 'Cvengros'
-          }
+      @client.create(
+        GoodData::Profile,
+        'accountSetting' => {
+          'email' => 'petr.cvengros@gooddata.com',
+          'firstName' => 'Petr',
+          'lastName' => 'Cvengros'
         }
       ),
 
-      @client.create(GoodData::Profile,
-        {
-          'accountSetting' => {
-            'email' => 'tomas.korcak@gooddata.com',
-            'firstName' => 'Tomas',
-            'lastName' => 'Korcak'
-          }
+      @client.create(
+        GoodData::Profile,
+        'accountSetting' => {
+          'email' => 'tomas.korcak@gooddata.com',
+          'firstName' => 'Tomas',
+          'lastName' => 'Korcak'
         }
       ),
 
-      @client.create(GoodData::Profile,
-        {
-          'accountSetting' => {
-            'email' => 'patrick.mcconlogue@gooddata.com',
-            'firstName' => 'Patrick',
-            'lastName' => 'McConlogue'
+      @client.create(
+        GoodData::Profile,
+        'accountSetting' => {
+          'email' => 'patrick.mcconlogue@gooddata.com',
+          'firstName' => 'Patrick',
+          'lastName' => 'McConlogue'
 
-          }
         }
       ),
 
-      @client.create(GoodData::Profile,
-        {
-          'accountSetting' => {
-            'email' => 'tomas.svarovsky@gooddata.com',
-            'firstName' => 'Tomas',
-            'lastName' => 'Svarovsky'
-          }
+      @client.create(
+        GoodData::Profile,
+        'accountSetting' => {
+          'email' => 'tomas.svarovsky@gooddata.com',
+          'firstName' => 'Tomas',
+          'lastName' => 'Svarovsky'
         }
-      ),
+      )
     ]
   end
 
@@ -132,11 +127,11 @@ describe GoodData::Profile do
       expect(res).to be_instance_of(Hash)
       res.length.should eql(0)
     end
-  
+
     it 'Returns non empty hash for different objects' do
       # Do some little modification
       @user2.first_name = 'kokos'
-  
+
       res = @user1.diff(@user2)
       expect(res).to be_instance_of(Hash)
       res.length.should_not eql(0)
@@ -148,53 +143,53 @@ describe GoodData::Profile do
       l1 = [
         @users[0]
       ]
-  
+
       l2 = [
         @users[0]
       ]
-  
+
       diff = GoodData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(0)
     end
-  
+
     it 'Recognizes added element' do
       l1 = []
-  
+
       l2 = [
         @users[0]
       ]
-  
+
       diff = GoodData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(1)
       diff[:changed].length.should eql(0)
       diff[:removed].length.should eql(0)
     end
-  
+
     it 'Recognizes changed element' do
       l1 = [
         @users[0]
       ]
-  
+
       l2 = [
         GoodData::Profile.new(GoodData::Helpers.deep_dup(@users[0].json))
       ]
       l2[0].first_name = 'Peter'
-  
+
       diff = GoodData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(1)
       diff[:removed].length.should eql(0)
     end
-  
+
     it 'Recognizes removed element' do
       l1 = [
         @users[0]
       ]
-  
+
       l2 = []
-  
+
       diff = GoodData::Profile.diff_list(l1, l2)
       diff[:added].length.should eql(0)
       diff[:changed].length.should eql(0)

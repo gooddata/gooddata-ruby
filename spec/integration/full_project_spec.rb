@@ -10,7 +10,7 @@ describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprints/invalid_blueprint.json"), :symbolize_names => true)
-    @client = ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
     @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
 
@@ -24,9 +24,9 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should not build an invalid model" do
-    expect {
+    expect do
       @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-    }.to raise_error(GoodData::ValidationError)
+    end.to raise_error(GoodData::ValidationError)
   end
 
   it "should do nothing if the project is updated with the same blueprint" do
@@ -49,7 +49,7 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(results).to eq []
 
     # When we change the model using the original blueprint. Basically change the title back.
-    results = @project.update_from_blueprint(@spec)
+    @project.update_from_blueprint(@spec)
     # It should offer no changes using the original blueprint
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
     expect(results).to eq []
@@ -95,32 +95,34 @@ describe "Full project implementation", :constraint => 'slow' do
   end
 
   it "should load the data" do
-    GoodData.with_project(@project) do |p|
+    GoodData.with_project(@project) do
       # blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
       commits_data = [
-        ["lines_changed","committed_on","dev_id","repo_id"],
-        [1,"01/01/2014",1,1],
-        [3,"01/02/2014",2,2],
-        [5,"05/02/2014",3,1]]
+        %w(lines_changed committed_on dev_id repo_id),
+        [1, "01/01/2014", 1, 1],
+        [3, "01/02/2014", 2, 2],
+        [5, "05/02/2014", 3, 1]
+      ]
       @project.upload(commits_data, @blueprint, 'dataset.commits')
 
       devs_data = [
-        ["dev_id", "email"],
+        %w(dev_id email),
         [1, "tomas@gooddata.com"],
         [2, "petr@gooddata.com"],
-        [3, "jirka@gooddata.com"]]
+        [3, "jirka@gooddata.com"]
+      ]
       @project.upload(devs_data, @blueprint, 'dataset.devs')
     end
   end
 
   it "it silently ignores extra columns" do
-    GoodData.with_project(@project) do |p|
+    GoodData.with_project(@project) do
       blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
       commits_data = [
-        ["lines_changed","committed_on","dev_id","repo_id", "extra_column"],
-        [1,"01/01/2014",1,1,"something"],
-        [3,"01/02/2014",2,2,"something"],
-        [5,"05/02/2014",3,1,"something else"]
+        %w(lines_changed committed_on dev_id repo_id extra_column),
+        [1, "01/01/2014", 1, 1, "something"],
+        [3, "01/02/2014", 2, 2, "something"],
+        [5, "05/02/2014", 3, 1, "something else"]
       ]
       @project.upload(commits_data, blueprint, 'dataset.commits')
     end
@@ -128,40 +130,46 @@ describe "Full project implementation", :constraint => 'slow' do
 
   context "it should give you a reasonable error message" do
     it "if you omit a column" do
-      GoodData.with_project(@project) do |p|
+      GoodData.with_project(@project) do
         blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
         commits_data = [
-          ["lines_changed","committed_on","dev_id"],
-          [1,"01/01/2014",1],
-          [3,"01/02/2014",2],
-          [5,"05/02/2014",3]
+          %w(lines_changed committed_on dev_id),
+          [1, "01/01/2014", 1],
+          [3, "01/02/2014", 2],
+          [5, "05/02/2014", 3]
         ]
-        expect {@project.upload(commits_data, blueprint, 'dataset.commits')}.to raise_error(/repo_id/)
+        expect do
+          @project.upload(commits_data, blueprint, 'dataset.commits')
+        end.to raise_error(/repo_id/)
       end
     end
     it "if you give it a malformed CSV" do
-      GoodData.with_project(@project) do |p|
+      GoodData.with_project(@project) do
         blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
         # 4 cols in header but not in the data
         commits_data = [
-          ["lines_changed","committed_on","dev_id","repo_id"],
-          [1,"01/01/2014",1],
-          [3,"01/02/2014",2],
-          [5,"05/02/2014",3]
+          %w(lines_changed committed_on dev_id repo_id),
+          [1, "01/01/2014", 1],
+          [3, "01/02/2014", 2],
+          [5, "05/02/2014", 3]
         ]
-        expect {@project.upload(commits_data, blueprint, 'dataset.commits')}.to raise_error(/Number of columns/)
+        expect do
+          @project.upload(commits_data, blueprint, 'dataset.commits')
+        end.to raise_error(/Number of columns/)
       end
     end
     it "if you give it wrong date format" do
-      GoodData.with_project(@project) do |p|
+      GoodData.with_project(@project) do
         blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
         commits_data = [
-          ["lines_changed","committed_on","dev_id","repo_id"],
-          [1,"01/01/2014",1,1],
-          [3,"45/50/2014",2,2],
-          [5,"05/02/2014",3,1]
+          %w(lines_changed committed_on dev_id repo_id),
+          [1, "01/01/2014", 1, 1],
+          [3, "45/50/2014", 2, 2],
+          [5, "05/02/2014", 3, 1]
         ]
-        expect {@project.upload(commits_data, blueprint, 'dataset.commits')}.to raise_error(%r{45/50/2014})
+        expect do
+          @project.upload(commits_data, blueprint, 'dataset.commits')
+        end.to raise_error(%r{45/50/2014})
       end
     end
   end
@@ -247,9 +255,9 @@ describe "Full project implementation", :constraint => 'slow' do
     rd = r.latest_report_definition
     rd.content['chart'] = { 'styles' => { 'global' => { 'colorMapping' => 1 } } }
 
-    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => 1 })
+    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq('colorMapping' => 1)
     rd.reset_color_mapping!
-    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq ({ 'colorMapping' => [] })
+    expect(GoodData::Helpers.get_path(rd.content, %w(chart styles global))).to eq('colorMapping' => [])
     r.delete
     res = m.used_by
     res.each do |dependency|
@@ -393,12 +401,13 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should load the data" do
     devs_data = [
-      ["dev_id", "email"],
-      [4, "josh@gooddata.com"]]
+      %w(dev_id email),
+      [4, "josh@gooddata.com"]
+    ]
     @project.upload(devs_data, @blueprint, 'dataset.devs', mode: 'INCREMENTAL')
   end
 
-  it "should have more users"  do
+  it "should have more users" do
     attribute = @project.attributes('attr.devs.dev_id')
     expect(attribute.attribute?).to be true
     expect(attribute.create_metric.execute).to eq 4
@@ -469,14 +478,14 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to give you values for" do
     attribute = @project.attributes('attr.devs.dev_id')
-    values = attribute.labels.find { |l| l.identifier == 'label.devs.dev_id.email'}.values.to_a
+    values = attribute.labels.find { |l| l.identifier == 'label.devs.dev_id.email' }.values.to_a
     id = values.find { |v| v[:value] == 'tomas@gooddata.com' }[:uri][-1].to_i
     expect(attribute.values_for(id)).to eq ['tomas@gooddata.com', '1']
   end
 
   it "should be able to find specific element and give you the primary label value" do
     attribute = @project.attributes('attr.devs.dev_id')
-    values = attribute.labels.find { |l| l.identifier == 'label.devs.dev_id.email'}.values.to_a
+    values = attribute.labels.find { |l| l.identifier == 'label.devs.dev_id.email' }.values.to_a
     uri = values.find { |v| v[:value] == 'tomas@gooddata.com' }[:uri]
     expect(@project.find_attribute_element_value(uri)).to eq 'tomas@gooddata.com'
   end
@@ -527,12 +536,12 @@ describe "Full project implementation", :constraint => 'slow' do
       expect(cloned_metric).to be_nil
 
       result = @project.transfer_objects(m, project: [cloned_project], batch_size: 1)
-      expect(result).to eq [{project: cloned_project, result: true}]
+      expect(result).to eq [{ project: cloned_project, result: true }]
 
       # should work with pids
       result = @project.transfer_objects(m, project: [cloned_project.pid], batch_size: 1)
       expect(result.first[:result]).to be_truthy
-    ensure    
+    ensure
       cloned_project.delete
     end
   end
@@ -560,7 +569,7 @@ describe "Full project implementation", :constraint => 'slow' do
     r.save
     def_uris = r.definition_uris
     r.delete
-    expect { def_uris.each {|uri| @client.get(uri)} }.to raise_error(RestClient::ResourceNotFound)
+    expect { def_uris.each { |uri| @client.get(uri) } }.to raise_error(RestClient::ResourceNotFound)
   end
 
   it 'should be possible to delete data from a dataset' do

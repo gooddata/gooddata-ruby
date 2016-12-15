@@ -8,7 +8,7 @@ require 'gooddata/bricks/bricks'
 
 describe GoodData::Bricks::Brick do
   it "Has GoodData::Bricks::Brick class" do
-    GoodData::Bricks::Brick.should_not == nil
+    GoodData::Bricks::Brick.should_not be(nil)
   end
 
   describe '#version' do
@@ -22,8 +22,7 @@ describe GoodData::Bricks::Brick do
 
   it "should be possible to execute custom brick" do
     class CustomBrick < GoodData::Bricks::Brick
-
-      def call(params)
+      def call(_params)
         puts 'hello'
       end
     end

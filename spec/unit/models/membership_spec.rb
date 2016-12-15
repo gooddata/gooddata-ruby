@@ -13,57 +13,52 @@ describe GoodData::Membership do
     @client = ConnectionHelper.create_default_connection
 
     @users = [
-      @client.create(GoodData::Membership,
-        {
-          'user' => {
-            'content' => {
-              'email' => 'petr.cvengros@gooddata.com',
-              'firstname' => 'Petr',
-              'lastname' => 'Cvengros'
-            },
-            'meta' => {}
-          }
+      @client.create(
+        GoodData::Membership,
+        'user' => {
+          'content' => {
+            'email' => 'petr.cvengros@gooddata.com',
+            'firstname' => 'Petr',
+            'lastname' => 'Cvengros'
+          },
+          'meta' => {}
         }
       ),
 
       GoodData::Membership.new(
-        {
-          'user' => {
-            'content' => {
-              'email' => 'tomas.korcak@gooddata.com',
-              'firstname' => 'Tomas',
-              'lastname' => 'Korcak'
-            },
-            'meta' => {}
-          }
+        'user' => {
+          'content' => {
+            'email' => 'tomas.korcak@gooddata.com',
+            'firstname' => 'Tomas',
+            'lastname' => 'Korcak'
+          },
+          'meta' => {}
         }
       ),
 
-      @client.create(GoodData::Membership,
-        {
-          'user' => {
-            'content' => {
-              'email' => 'patrick.mcconlogue@gooddata.com',
-              'firstname' => 'Patrick',
-              'lastname' => 'McConlogue'
-            },
-            'meta' => {}
-          }
+      @client.create(
+        GoodData::Membership,
+        'user' => {
+          'content' => {
+            'email' => 'patrick.mcconlogue@gooddata.com',
+            'firstname' => 'Patrick',
+            'lastname' => 'McConlogue'
+          },
+          'meta' => {}
         }
       ),
 
-      @client.create(GoodData::Membership,
-        {
-          'user' => {
-            'content' => {
-              'email' => 'tomas.svarovsky@gooddata.com',
-              'firstname' => 'Tomas',
-              'lastname' => 'Svarovsky'
-            },
-            'meta' => {}
-          }
+      @client.create(
+        GoodData::Membership,
+        'user' => {
+          'content' => {
+            'email' => 'tomas.svarovsky@gooddata.com',
+            'firstname' => 'Tomas',
+            'lastname' => 'Svarovsky'
+          },
+          'meta' => {}
         }
-      ),
+      )
     ]
   end
 

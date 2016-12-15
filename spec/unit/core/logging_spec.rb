@@ -36,8 +36,6 @@ class TestLogger < Logger
   end
 end
 
-
-
 describe 'GoodData - logging' do
   TEST_MESSAGE = 'Hello World!'
 
@@ -101,7 +99,6 @@ describe 'GoodData - logging' do
       expect(GoodData.logger.last_message).to include(message)
     end
   end
-
 
   describe '#logging_on' do
     it 'Enables logging' do

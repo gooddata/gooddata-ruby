@@ -8,9 +8,7 @@ require 'gooddata/helpers/csv_helper'
 
 describe GoodData::Helpers do
   describe '#diff' do
-
     before :each do
-
       @old_tomas = { id: 1, name: 'Tomas', age: 28 }
       @new_tomas = { id: 1, name: "Lil'Tomas", age: 28 }
       @patrick = { id: 4, name: 'Patrick', age: 24 }
@@ -32,8 +30,8 @@ describe GoodData::Helpers do
       expect(diff[:changed]).to eq([
         {
           old_obj: @old_tomas,
-          new_obj: @new_tomas, 
-          diff: { name: "Lil'Tomas"}
+          new_obj: @new_tomas,
+          diff: { name: "Lil'Tomas" }
         },
         {
           old_obj: @old_korczis,
@@ -59,38 +57,27 @@ describe GoodData::Helpers do
     end
 
     it 'should encode params and preserve the nil in hidden' do
-      x = GoodData::Helpers.decode_params({ "x" => "y", GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"a":{"b": "c"}}'})
-      expect(x).to eq({"x"=>"y", "a"=>{"b"=>"c"}, "gd_encoded_hidden_params"=>nil})
+      x = GoodData::Helpers.decode_params("x" => "y", GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"a":{"b": "c"}}')
+      expect(x).to eq("x" => "y", "a" => { "b" => "c" }, "gd_encoded_hidden_params" => nil)
     end
 
     it 'should encode params and preserve the nil in hidden' do
-      x = GoodData::Helpers.decode_params({GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => nil})
-      expect(x).to eq({"gd_encoded_hidden_params" =>nil})
+      x = GoodData::Helpers.decode_params(GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => nil)
+      expect(x).to eq("gd_encoded_hidden_params" => nil)
     end
 
     it 'should encode params and preserve the nil in hidden' do
-      x = GoodData::Helpers.decode_params({
+      x = GoodData::Helpers.decode_params(
         "x" => "y",
         GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b": "c"}}',
         GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"a":{"b": "c"}}'
-      })
-      expect(x).to eq({
-        "x"=>"y",
-        "a"=>{"b"=>"c"},
-        "d" => {"b" => "c"},
-        "gd_encoded_hidden_params"=>nil
-      })
+      )
+      expect(x).to eq("x" => "y", "a" => { "b" => "c" }, "d" => { "b" => "c" }, "gd_encoded_hidden_params" => nil)
     end
 
     it 'should encode params and note preserve the nil in public' do
-      x = GoodData::Helpers.decode_params({
-        "x" => "y",
-        GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b": "c"}}'
-      })
-      expect(x).to eq({
-        "x"=>"y",
-        "d" => {"b" => "c"}
-      })
+      x = GoodData::Helpers.decode_params("x" => "y", GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b": "c"}}')
+      expect(x).to eq("x" => "y", "d" => { "b" => "c" })
     end
 
     it 'should be abe to join datasets' do
@@ -102,24 +89,24 @@ describe GoodData::Helpers do
                 { id: 2, y: 'BAR' }]
 
       results = GoodData::Helpers.join(master, lookup, [:x], [:id])
-      expect(results).to eq [{:id=>"a", :y=>"FOO", :x=>1},
-                             {:id=>"b", :y=>"FOO", :x=>1},
-                             {:id=>"c", :y=>"BAR", :x=>2}]
+      expect(results).to eq [{ :id => "a", :y => "FOO", :x => 1 },
+                             { :id => "b", :y => "FOO", :x => 1 },
+                             { :id => "c", :y => "BAR", :x => 2 }]
     end
 
     it 'should encode secure params' do
-      x = GoodData::Helpers.decode_params({
+      x = GoodData::Helpers.decode_params(
         "x" => "y",
         "d|b|foo" => "bar",
         "d|b|e|w" => "z",
         GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b":{"c": "a"}}}',
         GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"d":{"b":{"e":{"f": "g"}}}}'
-      })
-      expect(x).to eq({
-        "x"=>"y",
+      )
+      expect(x).to eq(
+        "x" => "y",
         "d" => { "b" => { "c" => "a", "e" => { "f" => "g", "w" => "z" }, "foo" => "bar" } },
-        "gd_encoded_hidden_params"=>nil
-      })
+        "gd_encoded_hidden_params" => nil
+      )
     end
   end
 end

@@ -9,7 +9,7 @@ require 'gooddata'
 describe "Over-To data permissions implementation", :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/m_n_model.json"), :symbolize_names => true)
-    @client = ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
     @project = @client.create_project_from_blueprint(@blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
@@ -19,27 +19,31 @@ describe "Over-To data permissions implementation", :constraint => 'slow' do
       ['label.commits.id', 'fact.commits.lines_changed', 'dataset.users'],
       [1, 1, 1],
       [2, 3, 2],
-      [3, 5, 3]]
+      [3, 5, 3]
+    ]
     @project.upload(data, @blueprint, 'dataset.commits')
-    
+
     data = [
       ["label.users.id", "label.users.id.email"],
       [1, "tomas@gooddata.com"],
       [2, "petr@gooddata.com"],
-      [3, "jirka@gooddata.com"]]
+      [3, "jirka@gooddata.com"]
+    ]
     @project.upload(data, @blueprint, 'dataset.users')
 
     data = [
       ["label.permission.id", "label.permission.id.email"],
       [1, "tomas@gooddata.com"],
       [2, "petr@gooddata.com"],
-      [3, "jirka@gooddata.com"]]
+      [3, "jirka@gooddata.com"]
+    ]
     @project.upload(data, @blueprint, 'dataset.permission_users')
 
     data = [
       ['label.visibility.id', 'dataset.permission_users', 'dataset.commits'],
       [1, 1, 1],
-      [3, 1, 3]]
+      [3, 1, 3]
+    ]
     @project.upload(data, @blueprint, 'dataset.visibility')
 
     @variable = @project.create_variable(title: 'uaaa', attribute: @label.attribute).save
@@ -51,7 +55,7 @@ describe "Over-To data permissions implementation", :constraint => 'slow' do
       {
         login: ConnectionHelper::DEFAULT_USERNAME,
         filters: [
-          { label: @label.uri, values: ["tomas@gooddata.com"], over: @attr1.uri, to: @attr2.uri}
+          { label: @label.uri, values: ["tomas@gooddata.com"], over: @attr1.uri, to: @attr2.uri }
         ]
       }
     ]
@@ -62,7 +66,7 @@ describe "Over-To data permissions implementation", :constraint => 'slow' do
   end
 
   after(:each) do
-    @project.data_permissions.pmap &:delete
+    @project.data_permissions.pmap(&:delete)
   end
 
   it "should fail if you are specifying OVER TO filter and variables. Variables do not support OVER TO" do
@@ -71,7 +75,7 @@ describe "Over-To data permissions implementation", :constraint => 'slow' do
     end.to raise_exception
   end
 
-  it "should create an over to filter transparently" do    
+  it "should create an over to filter transparently" do
     metric = @project.create_metric("SELECT SUM(#\"Fact.Commits.Lines Changed\")", :title => 'x')
     expect(metric.execute).to eq 9
     @project.add_data_permissions(@filters)

@@ -28,7 +28,7 @@ describe GoodData::ChannelConfiguration, :constraint => 'slow' do
   it 'should not create dubplicate channel' do
     begin
       channel = GoodData::ChannelConfiguration.create(client: @client)
-      channel_2 = GoodData::ChannelConfiguration.create(client: @client, title: 'another channel')
+      GoodData::ChannelConfiguration.create(client: @client, title: 'another channel')
       expect(GoodData::ChannelConfiguration.all).to eq [channel]
     ensure
       channel && channel.delete

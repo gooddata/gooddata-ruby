@@ -401,6 +401,7 @@ module GoodData
       fail 'Schedule type has to be provided' if schedule_type.blank?
       if @dirty
         if saved?
+          puts JSON.pretty_generate(to_update_payload)
           res = client.put(uri, to_update_payload)
           @json = Schedule.new(res).json
         else

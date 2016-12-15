@@ -30,7 +30,7 @@ describe GoodData::Domain do
       args = {
         :domain => ConnectionHelper::DEFAULT_DOMAIN,
         :login => "gemtest_#{rand(1e6)}@gooddata.com",
-        :password => CryptoHelper.generate_password,
+        :password => CryptoHelper.generate_password
       }
 
       @user = GoodData::Domain.add_user(args)
@@ -70,7 +70,7 @@ describe GoodData::Domain do
 
   describe '#create_users' do
     it 'Creates new users from list' do
-      list = (0..1).to_a.map { |i| ProjectHelper.create_random_user(@client) }
+      list = (0..1).to_a.map { ProjectHelper.create_random_user(@client) }
       res = @domain.create_users(list)
 
       # no errors
@@ -90,7 +90,6 @@ describe GoodData::Domain do
       name = user.first_name
       modes = user.authentication_modes
       possible_modes = [:sso, :password]
-
 
       user.first_name = name.reverse
       choice = SpecHelper.random_choice(possible_modes, user.authentication_modes)

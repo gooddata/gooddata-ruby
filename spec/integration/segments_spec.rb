@@ -11,7 +11,7 @@ describe GoodData::Segment do
   TOKEN = 'mustangs'
 
   before(:all) do
-    @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
+    @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false)
     @domain = @client.domain('mustangs')
     GoodData::Segment.all(domain: @domain).each(&:delete)
   end
@@ -40,7 +40,7 @@ describe GoodData::Segment do
 
     it 'Returns specific segment when segment ID passed' do
       s = @domain.segments(@segment_name)
-      @segment.uri == s.uri
+      expect(@segment.uri).to eq s.uri
       expect(s).to be_an_instance_of(GoodData::Segment)
       expect(@segment).to be_an_instance_of(GoodData::Segment)
     end
@@ -51,7 +51,7 @@ describe GoodData::Segment do
       old_count = @domain.segments.count
       s = @domain.segments(@segment_name)
       s.delete
-      expect(@domain.segments.length).to eq (old_count - 1)
+      expect(@domain.segments.length).to eq(old_count - 1)
       # prevent delete attempt in the after hook
       @segment = nil
     end
@@ -73,9 +73,9 @@ describe GoodData::Segment do
 
     it 'cannot update a segment id' do
       @segment.segment_id = 'different_id'
-      expect {
+      expect do
         @segment.save
-      }.to raise_error RestClient::BadRequest
+      end.to raise_error RestClient::BadRequest
     end
   end
 
@@ -118,26 +118,26 @@ describe GoodData::Segment do
 
         client_1 = "client-#{SecureRandom.uuid}"
         client_2 = "client-#{SecureRandom.uuid}"
-        data = [{id: client_1, segment: segment_name_2 },
-                {id: client_2, segment: @segment_name }]
-        res = @domain.update_clients(data)
+        data = [{ id: client_1, segment: segment_name_2 },
+                { id: client_2, segment: @segment_name }]
+        @domain.update_clients(data)
         expect(@domain.segments.map(&:id)).to include(@segment.id, segment_2.id)
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include(client_1, client_2)
+        expect(@domain.segments.pmapcat { |s| s.clients.to_a }.map(&:id)).to include(client_1, client_2)
 
         client_3 = "client-#{SecureRandom.uuid}"
         client_4 = "client-#{SecureRandom.uuid}"
-        data = [{id: client_3, segment: segment_name_2 },
-                {id: client_4, segment: @segment_name }]
-        res = @domain.update_clients(data)
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include(client_1, client_2, client_3, client_4)
+        data = [{ id: client_3, segment: segment_name_2 },
+                { id: client_4, segment: @segment_name }]
+        @domain.update_clients(data)
+        expect(@domain.segments.pmapcat { |s| s.clients.to_a }.map(&:id)).to include(client_1, client_2, client_3, client_4)
 
         # bring the projects
         @domain.synchronize_clients
         @domain.provision_client_projects
-        projects_to_delete = @domain.segments.pmapcat {|s| s.clients.to_a }.select { |c| [client_1, client_2].include?(c.id) }.map(&:project)
-        res = @domain.update_clients(data, delete_extra: true)
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).to include(client_3, client_4)
-        expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).not_to include(client_1, client_2)
+        projects_to_delete = @domain.segments.pmapcat { |s| s.clients.to_a }.select { |c| [client_1, client_2].include?(c.id) }.map(&:project)
+        @domain.update_clients(data, delete_extra: true)
+        expect(@domain.segments.pmapcat { |s| s.clients.to_a }.map(&:id)).to include(client_3, client_4)
+        expect(@domain.segments.pmapcat { |s| s.clients.to_a }.map(&:id)).not_to include(client_1, client_2)
         expect(projects_to_delete.pmap(&:reload!).map(&:state)).to eq [:deleted, :deleted]
       ensure
         master_project_2.delete if master_project_2
