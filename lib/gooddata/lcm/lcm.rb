@@ -27,7 +27,9 @@ module GoodData
         messages
       end
 
-      def transfer_everything(client, domain, migration_spec, filter_on_segment = [], opts = {})
+      def transfer_everything(client, domain, migration_spec, opts = {})
+        filter_on_segment = migration_spec['segments'] || []
+
         puts 'Ensuring Users - warning: works across whole domain not just provided segment(s)'
         ensure_users(domain, migration_spec, filter_on_segment)
 
@@ -37,8 +39,6 @@ module GoodData
           update_preference: opts[:update_preference] || opts['update_preference'],
           maql_replacements: opts[:maql_replacements] || opts['maql_replacements']
         }
-
-        tags = opts[:production_tag] || opts['production_tag']
 
         domain.segments.peach do |segment|
           next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
@@ -76,15 +76,15 @@ module GoodData
             s.update_hidden_params(migration_spec[:additional_hidden_params] || {})
             s.save
           end
-
-          GoodData::Project.transfer_tagged_stuff(segment_master, project, tags) if tags
         end
 
         puts 'Migrating Dashboards'
         if filter_on_segment.empty?
           domain.synchronize_clients
         else
-          filter_on_segment.map { |s| domain.segments(s).synchronize_clients }
+          filter_on_segment.map do |s|
+            domain.segments(s).synchronize_clients
+          end
         end
       end
 

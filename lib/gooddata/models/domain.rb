@@ -391,8 +391,18 @@ module GoodData
     # Runs async process that walks through segments and provisions projects if necessary.
     #
     # @return [Enumerator] Returns Enumerator of results
-    def provision_client_projects
-      res = client.post(segments_uri + '/provisionClientProjects', nil)
+    def provision_client_projects(segments = nil)
+      body = if segments
+               {
+                 provisionClientProjects: {
+                   segments: segments.kind_of?(Array) ? segments : [segments]
+                 }
+               }
+             else
+               nil
+             end
+
+      res = client.post(segments_uri + '/provisionClientProjects', body)
       res = client.poll_on_code(res['asyncTask']['links']['poll'])
       failed_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult failed count), 0)
       created_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult created count), 0)
