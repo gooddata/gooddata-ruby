@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-expectations', '~> 3.5.0'
   s.add_development_dependency 'rubocop', '~> 0.45.0'
   s.add_development_dependency 'ruby-debug-ide', '~> 0.4' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
-  s.add_development_dependency 'simplecov', '~> 0.10.0'
+  s.add_development_dependency 'simplecov', '~> 0.12.0'
   s.add_development_dependency 'webmock', '~> 1.21.0'
   s.add_development_dependency 'yard', '~> 0.8.7.6'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
