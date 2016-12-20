@@ -11,12 +11,12 @@ describe GoodData::Schedule do
   SCHEDULE_ID = ScheduleHelper::SCHEDULE_ID
   SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
-  before(:all) do
-    @client = ConnectionHelper.create_default_connection
-    @project = ProjectHelper.get_default_project(:client => @client)
+  # before(:all) do
+    # @client = ConnectionHelper.create_default_connection
+    # @project = ProjectHelper.get_default_project(:client => @client)
     # ScheduleHelper.remove_old_schedules(@project)
     # ProcessHelper.remove_old_processes(@project)
-  end
+  # end
 
   before(:each) do
     @client = ConnectionHelper.create_default_connection
