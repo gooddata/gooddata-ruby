@@ -28,7 +28,7 @@ module GoodData
       end
 
       def transfer_everything(client, domain, migration_spec, opts = {})
-        filter_on_segment = migration_spec['segments'] || []
+        filter_on_segment = migration_spec[:segments] || migration_spec['segments'] || []
 
         puts 'Ensuring Users - warning: works across whole domain not just provided segment(s)'
         ensure_users(domain, migration_spec, filter_on_segment)
@@ -42,11 +42,17 @@ module GoodData
 
         domain.segments.peach do |segment|
           next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
+
           bp = segment.master_project.blueprint
           segment.clients.each do |c|
             p = c.project
             p.update_from_blueprint(bp, bp_opts)
           end
+
+          target_projects = segment.clients.map(&:project)
+
+          # Transfer metadata objects
+          GoodData::LCM.transfer_meta(segment.master_project, target_projects)
         end
 
         puts 'Migrating Processes and Schedules'
@@ -76,9 +82,6 @@ module GoodData
             s.update_hidden_params(migration_spec[:additional_hidden_params] || {})
             s.save
           end
-
-          # Transfer metadata objects
-          GoodData::LCM.transfer_meta(segment_master, project)
 
           # Transfer label types
           begin
