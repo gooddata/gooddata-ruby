@@ -28,7 +28,7 @@ module GoodData
       end
 
       def transfer_everything(client, domain, migration_spec, opts = {})
-        filter_on_segment = migration_spec['segments'] || []
+        filter_on_segment = migration_spec[:segments] || migration_spec['segments'] || []
 
         puts 'Ensuring Users - warning: works across whole domain not just provided segment(s)'
         ensure_users(domain, migration_spec, filter_on_segment)
@@ -40,13 +40,53 @@ module GoodData
           maql_replacements: opts[:maql_replacements] || opts['maql_replacements']
         }
 
+        #########################################################
+        # New Architecture of Transfer Everything Functionality #
+        #########################################################
+        #
+        # modes = {
+        #   release: [
+        #     self.synchronize_ldm,
+        #     self.synchronize_label_types,
+        #     self.synchronize_meta, # Tag specified? If yes, transfer only tagged stuff. If not transfer all meta.
+        #     self.synchronize_etl, # Processes, Schedules, Additional Params
+        #   ],
+        #   provisioning: [
+        #     # self.ensure_titles # Handled by Provisioning Brick?
+        #     self.ensure_users,
+        #     self.delete_clients,
+        #     self.provision_clients, # LCM API
+        #     self.synchronize_label_types,
+        #     self.synchronize_etl # Processes, Schedules, Additional Params
+        #   ],
+        #   rollout: [ # Works on segments only, not using collect_clients
+        #     self.ensure_users,
+        #     self.synchronize_ldm,
+        #     self.synchronize_label_types,
+        #     self.synchronize_etl, # Processes, Schedules, Additional Params
+        #     self.synchronize_clients
+        #   ]
+        # }
+        #
+        # mode_name = param['mode']
+        # mode_actions = modes[mode_name] || fail("Invalid mode specified: '#{mode_name}'")
+        # messages = mode_actions.map do |action|
+        #   action(params)
+        # end
+
         domain.segments.peach do |segment|
           next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
+
           bp = segment.master_project.blueprint
           segment.clients.each do |c|
             p = c.project
             p.update_from_blueprint(bp, bp_opts)
           end
+
+          # target_projects = segment.clients.map(&:project)
+
+          # Transfer metadata objects
+          # GoodData::LCM.transfer_meta(segment.master_project, target_projects)
         end
 
         puts 'Migrating Processes and Schedules'
@@ -55,12 +95,16 @@ module GoodData
         domain.clients.peach do |c|
           segment = c.segment
           next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
+
           segment_master = segment.master_project
           project = c.project
-          # set metadata
-          project.set_metadata('GOODOT_CUSTOM_PROJECT_ID', c.id)
-          # copy processes
 
+          # set metadata
+          # TODO: Review this and remove if not required or duplicate
+          # FIXME: TMA-210
+          project.set_metadata('GOODOT_CUSTOM_PROJECT_ID', c.id)
+
+          # copy processes
           deployment_client_segment_master = deployment_client.projects(segment_master.pid)
           deployment_client_project = deployment_client.projects(project.pid)
           GoodData::Project.transfer_processes(deployment_client_segment_master, deployment_client_project)
@@ -69,6 +113,7 @@ module GoodData
 
           # Set up unique parameters
           deployment_client_project.schedules.peach do |s|
+            # TODO: Review this and remove if not required or duplicate (GOODOT_CUSTOM_PROJECT_ID vs CLIENT_ID)
             s.update_params('GOODOT_CUSTOM_PROJECT_ID' => c.id)
             s.update_params('CLIENT_ID' => c.id)
             s.update_params('SEGMENT_ID' => segment.id)
@@ -76,24 +121,35 @@ module GoodData
             s.update_hidden_params(migration_spec[:additional_hidden_params] || {})
             s.save
           end
+
+          # Transfer label types
+          begin
+            GoodData::LCM.transfer_label_types(segment_master, project)
+          rescue => e
+            puts "Unable to transfer label_types, reason: #{e.message}"
+          end
+
+          # Transfer tagged objects
+          # FIXME: Make sure it is not duplicate functionality mentioned in TMA-171
+          tag = migration_spec[:production_tag]
+          GoodData::Project.transfer_tagged_stuff(segment_master, project, tag) if tag
         end
 
-        puts 'Migrating Dashboards'
-        if filter_on_segment.empty?
-          domain.synchronize_clients
-        else
-          filter_on_segment.map do |s|
-            domain.segments(s).synchronize_clients
+        do_not_synchronize_clients = migration_spec[:do_not_synchronize_clients]
+        if do_not_synchronize_clients.nil? || !do_not_synchronize_clients
+          puts 'Migrating Dashboards'
+          if filter_on_segment.empty?
+            domain.synchronize_clients
+          else
+            filter_on_segment.map do |s|
+              domain.segments(s).synchronize_clients
+            end
           end
         end
       end
 
       def transfer_label_types(source_project, targets)
         semaphore = Mutex.new
-
-        synchronized_puts = proc do |*args|
-          semaphore.synchronize { puts args }
-        end
 
         # Convert to array
         targets = [targets] unless targets.is_a?(Array)
@@ -118,8 +174,8 @@ module GoodData
         transfer = {}
         display_forms.each { |display_form| transfer[display_form['meta']['identifier']] = display_form['content']['type'] }
 
-        puts 'Transferring label types'
-        puts JSON.pretty_generate(transfer)
+        GoodData.logger.info 'Transferring label types'
+        GoodData.logger.info JSON.pretty_generate(transfer)
 
         # Transfer to target projects
         targets.peach do |target|
@@ -131,16 +187,56 @@ module GoodData
 
             if obj
               if obj.content['type'] != type
-                synchronized_puts.call "Updating #{identifier} -> #{type} in '#{target.title}'"
+                semaphore.synchronize do
+                  GoodData.logger.info "Updating #{identifier} -> #{type} in '#{target.title}'"
+                end
+
                 obj.content['type'] = type
                 obj.save
               else
-                synchronized_puts.call "Identifier #{identifier} in '#{target.title}' already has desired type - #{type}"
+                semaphore.synchronize do
+                  GoodData.logger.info "Identifier #{identifier} in '#{target.title}' already has desired type - #{type}"
+                end
               end
             else
-              synchronized_puts.call "Unable to find #{identifier} in '#{target.title}'"
+              semaphore.synchronize do
+                GoodData.logger.warn "Unable to find #{identifier} in '#{target.title}'"
+              end
             end
           end
+        end
+      end
+
+      # Synchronizes the dashboards tagged with the +$PRODUCTION_TAG+ from development project to master projects
+      # Params:
+      # +source_workspace+:: workspace with the tagged dashboards that are going to be synchronized to the target workspaces
+      # +target_workspaces+:: array of target workspaces where the tagged dashboards are going be synchronized to
+      def transfer_meta(source_workspace, target_workspaces, tag = nil)
+        objects = self.get_dashboards(source_workspace, tag)
+        begin
+          token = source_workspace.objects_export(objects)
+          GoodData.logger.info "Export token: '#{token}'"
+        rescue => e
+          GoodData.logger.error "Export failed, reason: #{e.message}"
+        end
+        target_workspaces.each do |target_workspace|
+          begin
+            target_workspace.objects_import(token)
+          rescue => e
+            GoodData.logger.error "Import failed, reason: #{e.message}"
+          end
+        end
+      end
+
+      # Retrieves all dashboards tagged with the +$PRODUCTION_TAG+ from the +workspace+
+      # Params:
+      # +workspace+:: workspace with the tagged dashboards
+      # Returns enumeration of the tagged dashboards URIs
+      def get_dashboards(workspace, tag = nil)
+        unless tag
+          GoodData::Dashboard.all(project: workspace, client: workspace.client).map { |d| d.uri }
+        else
+          GoodData::Dashboard.find_by_tag(tag, project: workspace, client: workspace.client).map { |d| d.uri }
         end
       end
     end

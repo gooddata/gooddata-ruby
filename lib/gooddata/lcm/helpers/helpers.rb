@@ -4,16 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-class TrueClass
-  # +true+ is not duplicable:
-  #
-  #   true.duplicable? # => false
-  #   true.dup         # => TypeError: can't dup TrueClass
-  def duplicable?
-    false
-  end
+require 'pathname'
 
-  def to_b
-    true
-  end
+base = Pathname(__FILE__).dirname.expand_path
+Dir.glob(base + '*.rb').each do |file|
+  require file
 end

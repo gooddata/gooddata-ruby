@@ -543,6 +543,10 @@ module GoodData
       self
     end
 
+    def is_deleted?
+      self.state == :deleted
+    end
+
     def compute_report(spec = {})
       GoodData::ReportDefinition.execute(spec.merge(client: client, project: self))
     end

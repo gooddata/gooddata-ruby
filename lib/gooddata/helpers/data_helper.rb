@@ -64,7 +64,7 @@ module GoodData
             end
           end
         end
-        puts "Realizing SQL query \"#{query}\" took #{measure.real}"
+        GoodData.logger.info "Realizing SQL query \"#{query}\" took #{measure.real}"
         filename
       end
 

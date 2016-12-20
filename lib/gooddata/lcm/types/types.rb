@@ -4,16 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-class TrueClass
-  # +true+ is not duplicable:
-  #
-  #   true.duplicable? # => false
-  #   true.dup         # => TypeError: can't dup TrueClass
-  def duplicable?
-    false
-  end
+require_relative 'base_type'
 
-  def to_b
-    true
-  end
-end
+require_relative 'scalar/types'
+require_relative 'class/types'
+require_relative 'complex/types'
+require_relative 'special/types'
