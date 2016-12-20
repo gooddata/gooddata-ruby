@@ -44,8 +44,8 @@ describe GoodData::Client do
     end
 
     after(:all) do
-      @segment_client && @segment_client.delete
       @client_project && @client_project.delete
+      @segment_client && @segment_client.delete
     end
 
   end
@@ -63,10 +63,6 @@ describe GoodData::Client do
       expect(@segment.clients.count).to eq 0
       @segment_client = nil
     end
-
-    after(:all) do
-      @segment_client && @segment_client.delete
-    end
   end
 
   describe '#delete' do
@@ -83,10 +79,6 @@ describe GoodData::Client do
       expect(@segment.clients.count).to eq 0
       expect(@client_project.reload!.state).to eq :deleted
       @segment_client = nil
-    end
-
-    after(:all) do
-      @segment_client && @segment_client.delete
     end
   end
 

@@ -395,11 +395,9 @@ module GoodData
       body = if segments
                {
                  provisionClientProjects: {
-                   segments: segments.kind_of?(Array) ? segments : [segments]
+                   segments: segments.is_a?(Array) ? segments : [segments]
                  }
                }
-             else
-               nil
              end
 
       res = client.post(segments_uri + '/provisionClientProjects', body)

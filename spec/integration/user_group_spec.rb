@@ -29,7 +29,7 @@ describe GoodData::UserGroup do
   end
 
   after(:all) do
-    @group && @group.delete
+    # @group && @group.delete
     @project && @project.delete
     @client.disconnect
   end

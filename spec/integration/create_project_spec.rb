@@ -17,8 +17,11 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
 
   it 'Should create project using GoodData::Rest::Client#create_project' do
     project_title = 'Test #create_project'
-    project = @client.create_project(:title => project_title, :auth_token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-    expect(project.title).to eq(project_title)
-    project.delete
+    begin
+      project = @client.create_project(:title => project_title, :auth_token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+      expect(project.title).to eq(project_title)
+    ensure
+      project.delete if project
+    end
   end
 end
