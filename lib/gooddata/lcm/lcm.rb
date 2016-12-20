@@ -78,12 +78,15 @@ module GoodData
           end
         end
 
-        puts 'Migrating Dashboards'
-        if filter_on_segment.empty?
-          domain.synchronize_clients
-        else
-          filter_on_segment.map do |s|
-            domain.segments(s).synchronize_clients
+        do_not_synchronize_clients = migration_spec[:do_not_synchronize_clients]
+        if do_not_synchronize_clients.nil? || !do_not_synchronize_clients
+          puts 'Migrating Dashboards'
+          if filter_on_segment.empty?
+            domain.synchronize_clients
+          else
+            filter_on_segment.map do |s|
+              domain.segments(s).synchronize_clients
+            end
           end
         end
       end
