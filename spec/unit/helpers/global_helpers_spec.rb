@@ -107,5 +107,19 @@ describe GoodData::Helpers do
                              {:id=>"c", :y=>"BAR", :x=>2}]
     end
 
+    it 'should encode secure params' do
+      x = GoodData::Helpers.decode_params({
+        "x" => "y",
+        "d|b|foo" => "bar",
+        "d|b|e|w" => "z",
+        GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b":{"c": "a"}}}',
+        GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"d":{"b":{"e":{"f": "g"}}}}'
+      })
+      expect(x).to eq({
+        "x"=>"y",
+        "d" => { "b" => { "c" => "a", "e" => { "f" => "g", "w" => "z" }, "foo" => "bar" } },
+        "gd_encoded_hidden_params"=>nil
+      })
+    end
   end
 end
