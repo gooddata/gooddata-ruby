@@ -175,7 +175,7 @@ describe "Variables implementation", :constraint => 'slow' do
                   [another_user.login, "[Dev] IN ([tomas@gooddata.com])"])
   end
 
-  it "should be able to update the filter value in place" do
+  it "should be able to update the filter value in place", broken: true do
     pending 'FIXME: We cannot swap filters yet'
 
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com", "jirka@gooddata.com"]]
