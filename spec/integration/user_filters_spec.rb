@@ -209,7 +209,7 @@ describe "User filters implementation", :constraint => 'slow' do
       .to include([ConnectionHelper::DEFAULT_USERNAME, "[Dev] IN ([tomas@gooddata.com])"], [another_user.login, "[Dev] IN ([tomas@gooddata.com])"])
   end
 
-  it "should be able to update the filter value" do
+  it "should be able to update the filter value", broken: true do
     pending 'FIXME: We cannot swap filters yet'
 
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com", "jirka@gooddata.com"]]

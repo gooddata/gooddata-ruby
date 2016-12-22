@@ -44,7 +44,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     ProcessHelper.remove_old_processes(@project)
 
     # @process.delete if @process
-    # @project.delete if @project
+    @project.delete if @project
 
     @client.disconnect
   end
