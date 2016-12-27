@@ -212,8 +212,10 @@ module GoodData
       end
 
       def transfer_processes(from_project, to_project)
-        from_project.processes.each do |process|
-          to_process = to_project.processes.find { |p| p.name == process.name }
+        to_project_processes = to_project.processes
+        from_project.processes.uniq(&:name).each do |process|
+          fail "The process name #{process.name} must be unique in transfered project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
+          to_process = to_project_processes.find { |p| p.name == process.name }
 
           if process.path
             to_process.delete if to_process
