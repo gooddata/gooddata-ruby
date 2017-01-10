@@ -54,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'parseconfig', '~> 1.0', '>= 1.0.6'
   s.add_dependency 'pmap', '~> 1.0', '>= 1.0.2'
   s.add_dependency 'pry', '~> 0.10', '>= 0.10.3'
-  s.add_dependency 'restforce', '~> 2.1', '>= 2.1.1'
+  s.add_dependency 'restforce', '~> 2.4.0'
   s.add_dependency 'rest-client', '~> 1.8', '>= 1.8.0'
   s.add_dependency 'rubyzip', '~> 1.1', '>= 1.1.7'
   s.add_dependency 'salesforce_bulk_query', '~> 0.2', '>= 0.2.0'
