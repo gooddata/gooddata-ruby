@@ -35,4 +35,15 @@ class Hash
   def compact
     select { |_, value| !value.nil? }
   end
+
+  def deep_merge(hash)
+    hash = hash.to_hash
+    merge(hash) do |key, old_val, new_val|
+      if old_val.is_a?(Hash) && new_val.is_a?(Hash)
+        old_val.deep_merge(new_val)
+      else
+        new_val
+      end
+    end
+  end
 end

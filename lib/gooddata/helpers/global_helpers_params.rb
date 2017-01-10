@@ -78,7 +78,7 @@ module GoodData
         parsed_hidden_data_params[ENCODED_HIDDEN_PARAMS_KEY] = nil unless parsed_hidden_data_params.empty?
         params.delete(key)
         params.delete(hidden_key)
-        params.merge(parsed_data_params).merge(parsed_hidden_data_params)
+        params.deep_merge(parsed_data_params).deep_merge(parsed_hidden_data_params)
       end
 
       # A helper which allows you to diff two lists of objects. The objects
