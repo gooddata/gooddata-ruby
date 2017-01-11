@@ -415,4 +415,56 @@ describe GoodData::Schedule do
       expect(schedule.name).to eq 'MY NAME'
     end
   end
+
+  describe '#after' do
+    context 'when after is not set' do
+      it 'returns nil' do
+        schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
+        expect(schedule.after).to be_nil
+      end
+    end
+
+    context 'when after is set' do
+      before do
+        @after_process = @project.deploy_process(
+          './spec/data/hello_world_process/hello_world.rb',
+          type: 'RUBY',
+          name: 'After Process'
+        )
+        @after_schedule = @after_process.create_schedule(
+          @test_cron,
+          @after_process.executables.first
+        )
+        @process = @project.deploy_process(
+          './spec/data/hello_world_process/hello_world.rb',
+          type: 'RUBY',
+          name: 'Main Process'
+        )
+        @schedule = @process.create_schedule(
+          @after_schedule,
+          @process.executables.first
+        )
+      end
+
+      after do
+        [@schedule, @process, @after_schedule, @after_process].each do |e|
+          e && e.delete
+        end
+      end
+
+      it 'returns the after schedule' do
+        expect(@schedule.after).to eq @after_schedule
+      end
+
+      it 'returns an updated after schedule' do
+        new_schedule = @process.create_schedule(
+          '0 0 1 1 *',
+          @process.executables.first
+        )
+        @schedule.after = new_schedule
+        expect(@schedule.after).not_to eq @after_schedule
+        expect(@schedule.after).to eq new_schedule
+      end
+    end
+  end
 end
