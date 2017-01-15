@@ -55,6 +55,26 @@ module GoodData
       # Decodes params as they came from the platform
       # The "data" key is supposed to be json and it's parsed - if this
       def decode_params(params)
+        convert_secure_params = lambda do |args|
+          args = args.select { |k, _| k.include? "|" }
+          lines = args.keys.map do |key|
+            hash = {}
+            last_a = nil
+            last_e = nil
+            key.split("|").reduce(hash) do |a, e|
+              last_a = a
+              last_e = e
+              a[e] = {}
+            end
+            last_a[last_e] = args[key]
+            hash
+          end
+
+          lines.reduce({}) do |a, e|
+            a.deep_merge(e)
+          end
+        end
+
         key = ENCODED_PARAMS_KEY.to_s
         hidden_key = ENCODED_HIDDEN_PARAMS_KEY.to_s
         data_params = params[key] || '{}'
@@ -76,9 +96,11 @@ module GoodData
         # Add the nil on ENCODED_HIDDEN_PARAMS_KEY
         # if the data was retrieved from API You will not have the actual values so encode -> decode is not losless. The nil on the key prevents the server from deleting the key
         parsed_hidden_data_params[ENCODED_HIDDEN_PARAMS_KEY] = nil unless parsed_hidden_data_params.empty?
+        secure_params = convert_secure_params.call(params)
+        params.delete_if { |k, _| k.include? "|" }
         params.delete(key)
         params.delete(hidden_key)
-        params.merge(parsed_data_params).merge(parsed_hidden_data_params)
+        params.deep_merge(parsed_data_params).deep_merge(parsed_hidden_data_params).deep_merge(secure_params)
       end
 
       # A helper which allows you to diff two lists of objects. The objects

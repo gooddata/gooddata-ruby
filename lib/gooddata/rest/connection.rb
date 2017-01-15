@@ -272,8 +272,8 @@ module GoodData
 
         staging_uri = options[:staging_url].to_s
 
-        base_url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
-        url = URI.join(base_url, CGI.escape(what)).to_s
+        base_url = dir.empty? ? staging_uri : URI.join("#{server}", staging_uri, "#{dir}/").to_s
+        url = URI.join("#{server}", base_url, CGI.escape(what)).to_s
 
         b = proc do |f|
           raw = {
@@ -460,12 +460,12 @@ module GoodData
       def upload(file, options = {})
         dir = options[:directory] || ''
         staging_uri = options[:staging_url].to_s
-        url = dir.empty? ? staging_uri : URI.join(staging_uri, "#{dir}/").to_s
+        url = dir.empty? ? staging_uri : URI.join("#{server}", staging_uri, "#{dir}/").to_s
         # Make a directory, if needed
         create_webdav_dir_if_needed url unless dir.empty?
 
         webdav_filename = options[:filename] || File.basename(file)
-        do_stream_file URI.join(url, CGI.escape(webdav_filename)), file
+        do_stream_file URI.join("#{server}", url, CGI.escape(webdav_filename)), file
       end
 
       def generate_request_id

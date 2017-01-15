@@ -23,11 +23,11 @@ describe GoodData::Segment do
   end
 
   after(:each) do
+    @master_project.delete if @master_project
     @segment && @segment.delete(force: true)
   end
 
   after(:all) do
-    @master_project.delete if @master_project
     @client.disconnect
   end
 
@@ -58,12 +58,16 @@ describe GoodData::Segment do
 
   describe '#save' do
     it 'can update a segment master project' do
-      different_master = @client.create_project(title: 'Test project', auth_token: TOKEN)
-      @segment.master_project = different_master
-      @segment.save
-      @segment = @domain.segments(@segment_name)
-      expect(@segment.master_project_uri).not_to eq @master_project.uri
-      expect(@segment.master_project_uri).to eq different_master.uri
+      begin
+        different_master = @client.create_project(title: 'Test project', auth_token: TOKEN)
+        @segment.master_project = different_master
+        @segment.save
+        @segment = @domain.segments(@segment_name)
+        expect(@segment.master_project_uri).not_to eq @master_project.uri
+        expect(@segment.master_project_uri).to eq different_master.uri
+      ensure
+        different_master.delete if different_master
+      end
     end
 
     it 'cannot update a segment id' do
@@ -82,6 +86,7 @@ describe GoodData::Segment do
         expect(segment_client).to be_an_instance_of(GoodData::Client)
         expect(@segment.clients.count).to eq 1
       ensure
+        client_project.delete if client_project
         segment_client && segment_client.delete
       end
     end
@@ -134,6 +139,7 @@ describe GoodData::Segment do
         expect(@domain.segments.pmapcat {|s| s.clients.to_a }.map(&:id)).not_to include(client_1, client_2)
         expect(projects_to_delete.pmap(&:reload!).map(&:state)).to eq [:deleted, :deleted]
       ensure
+        master_project_2.delete if master_project_2
         segment_2.delete(force: true) if segment_2
       end
     end

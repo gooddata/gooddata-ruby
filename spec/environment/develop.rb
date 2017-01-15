@@ -13,19 +13,15 @@ module GoodData
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, '98c836cf-bdf6-405e-bb8a-f4dc201588dd'
-      set_const :DEPLOY_NAME, 'gooddata_version.rb'
+      set_const :PROCESS_ID, '193098ca-7c69-4816-a7b0-4418713a1aea'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'l11tat2c0v4ae6mtxjv74jk8c37xz5ra'
-      set_const :PROJECT_URL, "/gdc/projects/#{PROJECT_ID}"
-      set_const :PROJECT_TITLE, 'GoodTravis'
-      set_const :PROJECT_SUMMARY, 'No summary'
+      set_const :PROJECT_ID, 'n2lyychqhthfb7yc54izgw9p7yov7s21'
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '57f42cfae4b041699a8eb52a'
+      set_const :SCHEDULE_ID, '5849273ae4b0fd665ac24b94'
     end
   end
 end

@@ -18,6 +18,7 @@ module GoodData
           require_relative 'develop'
         end
 
+        GoodData::Environment::ProjectHelper.set_const :PROJECT_URL, "/gdc/projects/#{GoodData::Environment::ProjectHelper::PROJECT_ID}"
         ENV['GD_SERVER'] = GoodData::Environment::ConnectionHelper::DEFAULT_SERVER
       end
     end

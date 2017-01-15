@@ -49,7 +49,6 @@ GoodData::CLI.module_eval do
   on_error do |_exception|
     # Error logic here
     # return false to skip default error handling
-    # binding.pry
     # pp exception.backtrace
     # pp exception
     true
