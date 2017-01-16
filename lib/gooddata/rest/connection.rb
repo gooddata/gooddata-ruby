@@ -208,7 +208,7 @@ module GoodData
           @auth = {}
           refresh_token :dont_reauth => true
         else
-          GoodData.logger.info("Connected using username \"#{username}\" to server #{@server.url}")
+          GoodData.logger.info("Connecting using username \"#{username}\" to server #{@server.url}")
           credentials = Connection.construct_login_payload(username, password)
           generate_session_id
           @auth = post(LOGIN_PATH, credentials, :dont_reauth => true)['userLogin']
