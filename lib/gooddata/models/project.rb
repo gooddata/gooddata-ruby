@@ -1448,9 +1448,9 @@ module GoodData
           a
         end
         mappings.group_by { |_, g| g }.each do |g, mapping|
-          # find group + set users
-          # CARE YOU DO NOT KNOW URI
-          user_groups(g).set_members(mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri })
+          remote_users = mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri }.reject(&:nil?)
+          next if remote_users.empty?
+          user_groups(g).set_members(remote_users)
         end
         mentioned_groups = mappings.map(&:last).uniq
         groups_to_cleanup = user_groups.reject { |g| mentioned_groups.include?(g.name) }
