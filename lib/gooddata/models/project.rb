@@ -298,7 +298,10 @@ module GoodData
             end
             remote_process, process_spec = cache.find { |_remote, _local, schedule| schedule.name == schedule_spec[:name] }
             messages << { message: "Creating schedule #{schedule_spec[:name]} for process #{remote_process.name}" }
-            executable = schedule_spec[:executable] || (process_spec["process_type"] == 'ruby' ? 'main.rb' : 'main.grf')
+            executable = nil
+            if process_spec.type != :dataload
+              executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
+            end
             params = {
               params: schedule_spec[:params].merge('PROJECT_ID' => to_project.pid),
               hidden_params: schedule_spec[:hidden_params],
@@ -320,7 +323,9 @@ module GoodData
             schedule.cron = schedule_spec[:cron] if schedule_spec[:cron]
             schedule.after = schedule_cache[schedule_spec[:after]] if schedule_spec[:after]
             schedule.hidden_params = schedule_spec[:hidden_params] || {}
-            schedule.executable = schedule_spec[:executable] || (process_spec["process_type"] == 'ruby' ? 'main.rb' : 'main.grf')
+            if process_spec.type != :dataload
+              schedule.executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
+            end
             schedule.reschedule = schedule_spec[:reschedule]
             schedule.name = schedule_spec[:name]
             schedule.save
