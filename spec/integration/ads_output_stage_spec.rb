@@ -7,7 +7,7 @@
 require 'gooddata'
 
 describe GoodData::AdsOutputStage, :constraint => 'slow' do
-  before(:each) do
+  before(:all) do
     @client = ConnectionHelper.create_default_connection
     # @ads = GoodData::DataWarehouse.create(client: @client, title: 'Test ADS', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
 
@@ -24,9 +24,8 @@ describe GoodData::AdsOutputStage, :constraint => 'slow' do
     @project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
 
-  after(:each) do
+  after(:all) do
     @project && @project.delete
-    # puts @project.pid if @project
     # @ads && @ads.delete // cannot delete because of c4 still contains the deleted project info
     @client && @client.disconnect
   end
@@ -37,5 +36,9 @@ describe GoodData::AdsOutputStage, :constraint => 'slow' do
     expect(@project.add.output_stage.client_id).to eq 'Client_Id'
     expect(@project.add.process).not_to be_nil
     expect(@project.add.process.type).to eq :dataload
-  end  
+  end
+
+  it 'shoule be able to show the sql diff' do
+    expect(@project.add.output_stage.sql_diff).to eq '-- Output Stage and LDM column mapping matches.'
+  end
 end

@@ -39,7 +39,7 @@ module GoodData
 
     def sql_diff
       res = client.get "#{build_output_stage_path}/sqlDiff"
-      ret = client.get res['asyncTask']['links']['poll']
+      ret = client.poll_on_response(res['asyncTask']['link']['poll']) { |body| body['asyncTask'] }
       ret.freeze
     end
 
