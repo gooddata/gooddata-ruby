@@ -78,6 +78,73 @@ describe GoodData::Helpers do
       result = GoodData::Helpers.decode_params(params)
       expect(result).to eq(expected_result)
     end
+
+    it 'decodes the reference parameters in gd_encoded_params' do
+      params = {
+        'param' => 'value',
+        'number_param' => 5,
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'gd_encoded_params' => '{"login_username": "login_user", "login_password": "${my_password}", "data01": "\\\\${my_password}", "data02":"abc\\\\def"}'
+      }
+      expected_result = {
+        'param' => 'value',
+        'number_param' => 5,
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'login_username' => 'login_user',
+        'login_password' => 'login_123',
+        'data01' => '\\login_123',
+        'data02' => 'abc\\def'
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
+    it 'decodes escape the reference parameters in gd_encoded_params' do
+      params = {
+        'param' => 'value',
+        'number_param' => 5,
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'gd_encoded_params' => '{"login_username": "login_user", "data01": "\\${abc}"}'
+      }
+      expected_result = {
+        'param' => 'value',
+        'number_param' => 5,
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'login_username' => 'login_user',
+        'data01' => '${abc}'
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
+    it 'decodes the reference parameters in nested block in gd_encoded_params' do
+      params = {
+        'param' => 'value',
+        'number_param' => 5,
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'gd_encoded_params' => '{"login_username": "login_user", "login_password": "${my_password}", "ads_client": {"username": "ads_user", "password": "${ads_password}"}}'
+      }
+      expected_result = {
+        'param' => 'value',
+        'number_param' => 5,
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'login_username' => 'login_user',
+        'login_password' => 'login_123',
+        'ads_client' => {
+          'username' => 'ads_user',
+          'password' => 'ads_123'
+        }
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
     it 'throws an error when data params is not a valid json' do
       params = {
         'param' => 'value',

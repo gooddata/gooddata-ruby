@@ -52,9 +52,11 @@ module GoodData
         encode_params(params, ENCODED_HIDDEN_PARAMS_KEY)
       end
 
-      # Decodes params as they came from the platform
-      # The "data" key is supposed to be json and it's parsed - if this
-      def decode_params(params)
+      # Decodes params as they came from the platform.
+      # @params Parameter hash need to be decoded
+      # @option options [Boolean] :resolve_reference_params Resolve reference parameters in gd_encoded_params or not
+      # @return [Hash] Decoded parameters
+      def decode_params(params, options = {})
         convert_secure_params = lambda do |args|
           args = args.select { |k, _| k.include? "|" }
           lines = args.keys.map do |key|
@@ -85,6 +87,21 @@ module GoodData
                              else
                                '{}'
                              end
+
+        # Replace reference parameters by the actual values. Use backslash to escape a reference parameter, e.g: \${not_a_param},
+        # the ${not_a_param} will not be replaced
+        if options[:resolve_reference_params]
+          regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{(\w+)\}/)
+          data_params.gsub!(regexps) do |match|
+            if match =~ /\\\\/
+              '\\\\'
+            elsif match =~ /\\\$/
+              '$'
+            elsif match =~ /\$\{(\w+)\}/
+              params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
+            end
+          end
+        end
 
         begin
           parsed_data_params = data_params.is_a?(Hash) ? data_params : JSON.parse(data_params)

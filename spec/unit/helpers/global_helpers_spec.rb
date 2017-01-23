@@ -108,5 +108,62 @@ describe GoodData::Helpers do
         "gd_encoded_hidden_params" => nil
       )
     end
+
+    it 'should encode reference parameters in gd_encoded_params' do
+      params = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'gd_encoded_params' => '{"login_username": "login_user", "login_password": "abc_${my_password}_123"}'
+      }
+      expected_result = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'login_username' => 'login_user',
+        'login_password' => 'abc_login_123_123'
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
+    it 'should encode escape reference parameters in gd_encoded_params' do
+      params = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'gd_encoded_params' => '{"login_username": "login_user", "data01": "\\${abc}"}'
+      }
+      expected_result = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'login_username' => 'login_user',
+        'data01' => '${abc}'
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
+    it 'should encode reference parameters in nested block in gd_encoded_params' do
+      params = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'gd_encoded_params' => '{"login_username": "login_user", "ads_client": {"username": "ads_user", "password": "${ads_password}"}}'
+      }
+      expected_result = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'my_password' => 'login_123',
+        'login_username' => 'login_user',
+        'ads_client' => {
+          'username' => 'ads_user',
+          'password' => 'ads_123'
+        }
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
   end
 end
