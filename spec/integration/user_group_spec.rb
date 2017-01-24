@@ -124,4 +124,14 @@ describe GoodData::UserGroup do
       expect(@group.description).to eq new_description
     end
   end
+
+  describe '#save' do
+    it 'updates existing group' do
+      new_description = 'This is new description'
+      @group.description = new_description
+      @group.save
+      @group = @project.user_groups(@group.obj_id)
+      expect(@group.description).to eq new_description
+    end
+  end
 end

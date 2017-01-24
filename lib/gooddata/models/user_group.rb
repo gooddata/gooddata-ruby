@@ -36,7 +36,7 @@ module GoodData
     }
 
     class << self
-      # Returns list of all segments or a particular segment
+      # Returns list of all clients or a particular client
       #
       # @param id [String|Symbol] Uri of the segment required or :all for all segments.
       # @return [Array<GoodData::Segment>] List of segments for a particular domain
@@ -184,14 +184,15 @@ module GoodData
     #
     # @return [UserGroup] Created or updated user group
     def save
-      res = if uri
-              # get rid of unsupprted keys
-              data = json['userGroup']
-              client.put(uri, 'userGroup' => data.except('meta', 'links'))
-            else
-              client.post('/gdc/userGroups', @json)
-            end
-      @json = client.get(res['uri'])
+      if uri
+        # get rid of unsupported keys
+        data = json['userGroup']
+        client.put(uri, 'userGroup' => data.except('meta', 'links'))
+        @json = client.get(uri)
+      else
+        response = client.post('/gdc/userGroups', @json)
+        @json = client.get(response['uri'])
+      end
       self
     end
 
