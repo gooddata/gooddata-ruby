@@ -569,4 +569,17 @@ describe "Full project implementation", :constraint => 'slow' do
     dataset.delete_data
     expect(dataset.attributes.first.create_metric.execute).to be_nil
   end
+
+  it 'shoule be able to create project from blueprint support attribute sort order' do
+    begin
+      attr_sort_order_spec = JSON.parse(File.read("./spec/data/blueprints/attribute_sort_order_blueprint.json"), :symbolize_names => true)
+      attr_sort_order_blueprint = GoodData::Model::ProjectBlueprint.new(attr_sort_order_spec)
+
+      project = @client.create_project_from_blueprint(attr_sort_order_blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+      attribute = project.blueprint.datasets('dataset.id').attributes('attr.id.name')
+      expect(attribute.order_by).to eq 'label.id.name.name_label_2 - DESC'
+    ensure
+      project && project.delete
+    end
+  end
 end

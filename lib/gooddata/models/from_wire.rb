@@ -68,12 +68,19 @@ module GoodData
         rl = regular_labels.map do |label|
           parse_label(attribute, label, :label)
         end
+        attr_sort_order = attribute['sortOrder']['attributeSortOrder'] if attribute['sortOrder']
+
         attribute = {}.tap do |a|
           a[:type] = type
           a[:id] = attribute['identifier']
           a[:title] = attribute['title']
           a[:description] = attribute['description']
           a[:folder] = attribute['folder']
+
+          if attr_sort_order
+            a[:order_by] = "#{attr_sort_order['label']} - #{attr_sort_order['direction']}"
+          end
+
           if attribute['grain']
             a[:grain] = attribute['grain'].map do |g|
               case g.keys.first.to_sym

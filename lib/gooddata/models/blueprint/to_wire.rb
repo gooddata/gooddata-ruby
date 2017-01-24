@@ -54,6 +54,17 @@ module GoodData
           a[:attribute][:folder] = attribute[:folder] || dataset[:folder] || GoodData::Model.title(dataset)
           a[:attribute][:labels] = labels unless labels.empty?
           a[:attribute][:description] = GoodData::Model.description(attribute) if GoodData::Model.description(attribute)
+
+          if attribute[:order_by]
+            label, direction = attribute[:order_by].split(' - ')
+            a[:attribute][:sortOrder] = {
+              attributeSortOrder: {
+                label: label,
+                direction: direction
+              }
+            }
+          end
+
           if attribute[:grain]
             a[:attribute][:grain] = attribute[:grain].map do |g|
               case g.keys.first

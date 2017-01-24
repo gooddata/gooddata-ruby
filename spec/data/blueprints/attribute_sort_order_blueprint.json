@@ -1,0 +1,72 @@
+{
+  "datasets": [
+    {
+      "type": "dataset",
+      "title": "TEST",
+      "id": "dataset.id",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.id.id",
+          "title": "ID",
+          "description": null,
+          "folder": "TEST"
+        },
+        {
+          "type": "label",
+          "id": "label.id.id",
+          "reference": "attr.id.id",
+          "title": "ID",
+          "gd_data_type": "VARCHAR(128)",
+          "gd_type": "GDC.text",
+          "default_label": true
+        },
+        {
+          "type": "attribute",
+          "id": "attr.id.name",
+          "title": "NAME",
+          "description": null,
+          "folder": "TEST",
+          "order_by": "label.id.name.name_label_2 - DESC"
+        },
+        {
+          "type": "label",
+          "id": "label.id.name.name_label_3",
+          "reference": "attr.id.name",
+          "title": "NAME_LABEL_3",
+          "gd_data_type": "VARCHAR(128)",
+          "gd_type": "GDC.text",
+          "default_label": true
+        },
+        {
+          "type": "label",
+          "id": "label.id.name.name_label_1",
+          "reference": "attr.id.name",
+          "title": "NAME_LABEL_1",
+          "gd_data_type": "VARCHAR(128)",
+          "gd_type": "GDC.text"
+        },
+        {
+          "type": "label",
+          "id": "label.id.name.name_label_2",
+          "reference": "attr.id.name",
+          "title": "NAME_LABEL_2",
+          "gd_data_type": "VARCHAR(128)",
+          "gd_type": "GDC.link"
+        },
+        {
+          "type": "label",
+          "id": "label.id.name",
+          "reference": "attr.id.name",
+          "title": "NAME",
+          "gd_data_type": "VARCHAR(128)",
+          "gd_type": "GDC.text"
+        }
+      ]
+    }
+  ],
+  "date_dimensions": [
+
+  ],
+  "title": "Attribute sort order"
+}

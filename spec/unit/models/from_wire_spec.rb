@@ -26,6 +26,7 @@ describe GoodData::Model::FromWire do
           title: "Month",
           folder: "Opportunity Benchmark",
           description: nil,
+          order_by: "label.opportunityanalysis.month.monthsortingnew - ASC"
         },
         {
           type: :label,
@@ -102,7 +103,8 @@ describe GoodData::Model::FromWire do
           id: "attr.opportunityanalysis.month",
           title: "Month",
           description: nil,
-          folder: "Opportunity Benchmark"
+          folder: "Opportunity Benchmark",
+          order_by: "label.opportunityanalysis.month.monthsortingnew - ASC"
         },
         {
           type: :label,
