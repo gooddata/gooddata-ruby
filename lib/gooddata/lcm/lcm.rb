@@ -8,7 +8,7 @@ module GoodData
   module LCM
     class << self
       def ensure_users(domain, migration_spec, filter_on_segment = [])
-        messages = []
+        messages = Array.new
         # Ensure technical user is in all projects
         if migration_spec.key?(:technical_user)
           clients = domain.clients
