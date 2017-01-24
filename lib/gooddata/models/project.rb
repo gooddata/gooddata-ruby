@@ -833,7 +833,7 @@ module GoodData
       puts "Inviting #{email}, role: #{role}"
 
       role_url = nil
-      if role.index('/gdc/').nonzero?
+      if role.index('/gdc/').nil?
         tmp = get_role(role)
         role_url = tmp.uri if tmp
       else
