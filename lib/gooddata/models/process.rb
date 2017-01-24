@@ -354,5 +354,13 @@ module GoodData
                     :hiddenParams => GoodData::Helpers.encode_hidden_params(hidden_params)
                   })
     end
+
+    def notification_rules
+      NotificationRule.all(project: project, process: self)
+    end
+
+    def create_notification_rule(opts = {})
+      NotificationRule.create(opts.merge(project: project, process: self, client: client))
+    end
   end
 end
