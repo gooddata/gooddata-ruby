@@ -63,7 +63,11 @@ module GoodData
 
       # Creates new client from parameters passed
       #
+      # @param data [Hash] Data required to create the client
+      # @option data id [String]
+      # @option data project [GoodData::Project]
       # @param options [Hash] Optional options
+      # @option options segment [GoodData::Segment]
       # @return [GoodData::Client] New GoodData::Client instance
       def create(data = {}, options = {})
         segment = options[:segment]
