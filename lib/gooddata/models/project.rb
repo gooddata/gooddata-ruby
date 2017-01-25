@@ -215,13 +215,15 @@ module GoodData
       end
 
       def transfer_processes(from_project, to_project)
-        from_project.processes.each do |process|
-          to_process = to_project.processes.find { |p| p.name == process.name }
+        to_project_processes = to_project.processes
+        from_project.processes.uniq(&:name).each do |process|
+          fail "The process name #{process.name} must be unique in transfered project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
+          to_process = to_project_processes.find { |p| p.name == process.name }
 
           if process.path
             to_process.delete if to_process
             GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
-          else
+          elsif process.type != :dataload
             Dir.mktmpdir('etl_transfer') do |dir|
               dir = Pathname(dir)
               filename = dir + 'process.zip'
@@ -233,9 +235,20 @@ module GoodData
             end
           end
         end
+
+        if from_project.processes.any? { |p| p.type == :dataload }
+          if to_project_processes.any? { |p| p.type == :dataload }
+            to_project.add.output_stage.schema = from_project.add.output_stage.schema
+            to_project.add.output_stage.output_stage_prefix = from_project.add.output_stage.output_stage_prefix
+            to_project.add.output_stage.save
+          else
+            from_prj_output_stage = from_project.add.output_stage
+            to_project.add.output_stage = GoodData::AdsOutputStage.create(client: to_project.client, ads: from_prj_output_stage.schema, client_id: from_prj_output_stage.client_id, output_stage_prefix: from_prj_output_stage.output_stage_prefix, project: to_project)
+          end
+        end
         res = (from_project.processes + to_project.processes).map { |p| [p, p.name, p.type] }
         res.group_by { |x| [x[1], x[2]] }
-          .select { |_, procs| procs.length == 1 }
+          .select { |_, procs| procs.length == 1 && procs[2] != :dataload }
           .flat_map { |_, procs| procs.select { |p| p[0].project.pid == to_project.pid }.map { |p| p[0] } }
           .peach(&:delete)
       end
@@ -285,7 +298,10 @@ module GoodData
             end
             remote_process, process_spec = cache.find { |_remote, _local, schedule| schedule.name == schedule_spec[:name] }
             messages << { message: "Creating schedule #{schedule_spec[:name]} for process #{remote_process.name}" }
-            executable = schedule_spec[:executable] || (process_spec["process_type"] == 'ruby' ? 'main.rb' : 'main.grf')
+            executable = nil
+            if process_spec.type != :dataload
+              executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
+            end
             params = {
               params: schedule_spec[:params].merge('PROJECT_ID' => to_project.pid),
               hidden_params: schedule_spec[:hidden_params],
@@ -307,7 +323,9 @@ module GoodData
             schedule.cron = schedule_spec[:cron] if schedule_spec[:cron]
             schedule.after = schedule_cache[schedule_spec[:after]] if schedule_spec[:after]
             schedule.hidden_params = schedule_spec[:hidden_params] || {}
-            schedule.executable = schedule_spec[:executable] || (process_spec["process_type"] == 'ruby' ? 'main.rb' : 'main.grf')
+            if process_spec.type != :dataload
+              schedule.executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
+            end
             schedule.reschedule = schedule_spec[:reschedule]
             schedule.name = schedule_spec[:name]
             schedule.save
@@ -835,7 +853,7 @@ module GoodData
       puts "Inviting #{email}, role: #{role}"
 
       role_url = nil
-      if role.index('/gdc/').nonzero?
+      if role.index('/gdc/').nil?
         tmp = get_role(role)
         role_url = tmp.uri if tmp
       else
@@ -1572,6 +1590,11 @@ module GoodData
         role.uri
       end
       [user, roles]
+    end
+
+    def add
+      @add ||= GoodData::AutomatedDataDistribution.new(self)
+      @add
     end
 
     private

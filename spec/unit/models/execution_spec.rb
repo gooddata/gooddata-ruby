@@ -32,7 +32,7 @@ describe GoodData::Execution do
 
   describe '#error?' do
     it 'returns true if executione errored out' do
-      expect(@execution.error?).to be_falsy
+      expect(@execution.error?).to be_falsey
     end
   end
 
@@ -64,7 +64,7 @@ describe GoodData::Execution do
 
   describe '#running?' do
     it 'returns false if executione is already finished' do
-      expect(@execution.running?).to be_falsy
+      expect(@execution.running?).to be_falsey
     end
 
     it 'returns true if executione is currently finished' do

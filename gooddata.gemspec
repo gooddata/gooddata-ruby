@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/gooddata/gooddata-ruby'
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'bundler'
+  s.add_development_dependency 'bundler', '~> 1.14'
   s.add_development_dependency 'debase', '~> 0.2' if RUBY_PLATFORM != 'java' && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'license_finder', '~> 2.1'
   s.add_development_dependency 'rake', '~> 11.1'
@@ -42,6 +42,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard', '~> 0.9'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
 
+  s.add_dependency 'nokogiri', '~> 1.6.8'
   s.add_dependency 'aws-sdk-v1', '~> 1.45'
   s.add_dependency 'docile', '~> 1.1.0'
   s.add_dependency 'erubis', '~> 2.7.0'

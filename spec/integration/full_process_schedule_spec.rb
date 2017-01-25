@@ -44,7 +44,8 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     ProcessHelper.remove_old_processes(@project)
 
     # @process.delete if @process
-    # @project.delete if @project
+    @project.delete if @project
+    GoodData::ChannelConfiguration.all.map { |channel| channel.delete }
 
     @client.disconnect
   end
@@ -293,6 +294,75 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       cloned_project && cloned_project.delete
       schedule_first && schedule_first.delete
       schedule_second && schedule_second.delete
+    end
+  end
+
+  it 'should have no notification when creating a new process' do
+    begin
+      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      expect(process.notification_rules).to eq []
+    ensure
+      process && process.delete
+    end
+  end
+
+  it 'should be able to add a notification rule' do
+    begin
+      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      old_notification_rules = process.notification_rules
+      notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
+      expect(notification_rule.class).to be GoodData::NotificationRule
+      expect(old_notification_rules).not_to include(notification_rule)
+      new_notification_rules = process.notification_rules
+      expect(new_notification_rules).to include(notification_rule)
+      expect(old_notification_rules.length + 1).to eq new_notification_rules.length
+    ensure
+      notification_rule && notification_rule.delete
+      process && process.delete
+    end
+  end
+
+  it 'should be able to remove a notification rule' do
+    begin
+      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      old_notification_rules = process.notification_rules
+      notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
+      notification_rule.delete
+      new_notification_rules = process.notification_rules
+      expect(new_notification_rules).to eq old_notification_rules
+    ensure
+      process && process.delete
+    end
+  end
+
+  it 'should be able to edit a notification rule' do
+    begin
+      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
+      expect(notification_rule.email).to eq ConnectionHelper::DEFAULT_USERNAME
+      expect(notification_rule.subject).to eq 'Email subject'
+      expect(notification_rule.body).to eq 'Email body'
+      expect(notification_rule.events).to eq [GoodData::Subscription::PROCESS_SUCCESS_EVENT]
+
+      notification_rule = GoodData::NotificationRule[notification_rule.notification_rule_id, project: @project, process: process]
+      notification_rule.events = [GoodData::Subscription::PROCESS_SUCCESS_EVENT, GoodData::Subscription::PROCESS_STARTED_EVENT]
+      notification_rule.save
+
+      expect(process.notification_rules.first.events).to eq [GoodData::Subscription::PROCESS_SUCCESS_EVENT, GoodData::Subscription::PROCESS_STARTED_EVENT]
+    ensure
+      notification_rule && notification_rule.delete
+      process && process.delete
+    end
+  end
+
+  it 'should be able to get all notification rules' do
+    begin
+      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
+      expect(process.notification_rules).to eq [notification_rule]
+    ensure
+      notification_rule && notification_rule.delete
+      process && process.delete
     end
   end
 end
