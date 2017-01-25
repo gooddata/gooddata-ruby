@@ -13,6 +13,7 @@ describe GoodData::Segment do
   before(:all) do
     @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
     @domain = @client.domain('mustangs')
+    GoodData::Segment.all(domain: @domain).each(&:delete)
   end
 
   before(:each) do
@@ -93,7 +94,7 @@ describe GoodData::Segment do
   end
 
   describe '#provision_client_projects' do
-    it 'can create a new client in a segment without project and then provision', broken: true do
+    it 'can create a new client in a segment without project and then provision' do
       begin
         segment_client = @segment.create_client(id: 'tenant_1')
         expect(segment_client).to be_an_instance_of(GoodData::Client)
@@ -108,7 +109,7 @@ describe GoodData::Segment do
   end
 
   describe '#update_clients' do
-    it 'can create a new client in a segment without project and then provision', broken: true do
+    it 'can create a new client in a segment without project and then provision' do
       begin
         uuid_2 = SecureRandom.uuid
         master_project_2 = @client.create_project(title: "Test MASTER project for #{uuid_2}", auth_token: TOKEN)
