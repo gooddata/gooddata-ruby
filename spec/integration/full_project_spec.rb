@@ -510,6 +510,25 @@ describe "Full project implementation", :constraint => 'slow' do
   it "should be able to clone a project and transfer the data" do
     title = 'My new clone project'
     begin
+      puts "start testing"
+      GoodData.with_project(@project) do |p|
+        # blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
+        commits_data = [
+          ["lines_changed","committed_on","dev_id","repo_id"],
+          [1,"01/01/2014",1,1],
+          [3,"01/02/2014",2,2],
+          [5,"05/02/2014",3,1]]
+        @project.upload(commits_data, @blueprint, 'dataset.commits')
+
+        devs_data = [
+          ["dev_id", "email"],
+          [1, "tomas@gooddata.com"],
+          [2, "petr@gooddata.com"],
+          [3, "jirka@gooddata.com"]]
+        @project.upload(devs_data, @blueprint, 'dataset.devs')
+      end
+      puts @project.facts.first.create_metric.execute
+      puts "end testing"
       cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
       expect(cloned_project.title).to eq title
       expect(cloned_project.facts.first.create_metric.execute).to eq 9

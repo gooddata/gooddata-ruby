@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/gooddata/gooddata-ruby'
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'bundler', "~> 1.13.0"
+  s.add_development_dependency 'bundler', "~> 1.14.0"
   s.add_development_dependency 'debase', '~> 0.1.0' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'license_finder', '~> 2.0.0'
   s.add_development_dependency 'rake', '~> 11.1.0'
