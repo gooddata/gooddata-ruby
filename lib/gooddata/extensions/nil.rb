@@ -12,4 +12,8 @@ class NilClass
   def duplicable?
     false
   end
+
+  def to_b
+    false
+  end
 end

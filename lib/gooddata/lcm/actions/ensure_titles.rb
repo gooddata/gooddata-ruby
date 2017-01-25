@@ -14,9 +14,6 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
-
-        description 'Segments to manage'
-        param :segments, array_of(instance_of(Type::SegmentType)), required: true
       end
 
       class << self
@@ -41,13 +38,13 @@ module GoodData
             segment_id = segment_client.segment
             client_id  = segment_client.id
             project = domain_segments[segment_id][client_id]
-            project.title = segment_client.project_title
+            project.title = segment_client[:project_title]
             project.save
 
             {
               segment: segment_id,
               client: client_id,
-              title: segment_client.project_title
+              title: project.title
             }
           end
         end

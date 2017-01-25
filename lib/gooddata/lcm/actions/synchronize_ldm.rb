@@ -18,9 +18,6 @@ module GoodData
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
 
-        # description 'Segments to manage'
-        # param :segments, array_of(instance_of(Type::SegmentType)), required: true
-
         description 'LDM Update Preference'
         param :update_preference, instance_of(Type::UpdatePreferenceType), required: false
       end

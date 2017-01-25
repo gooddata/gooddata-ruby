@@ -42,11 +42,13 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard', '~> 0.9'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
 
+  s.add_dependency 'aws-sdk', '~> 2.7'
   s.add_dependency 'nokogiri', '~> 1.6.8'
   s.add_dependency 'aws-sdk-v1', '~> 1.45'
   s.add_dependency 'docile', '~> 1.1.0'
   s.add_dependency 'erubis', '~> 2.7.0'
   s.add_dependency 'gli', '~> 2.13.0'
+  s.add_dependency 'gooddata_datawarehouse'
   s.add_dependency 'highline', '~> 1.7'
   s.add_dependency 'json_pure', '~> 1.8.0'
   s.add_dependency 'multi_json', '~> 1.11.0'

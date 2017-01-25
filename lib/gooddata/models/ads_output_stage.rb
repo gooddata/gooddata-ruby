@@ -14,10 +14,16 @@ module GoodData
       def create(opts = { client: GoodData.connection })
         c = client(opts)
         fail ArgumentError, 'No :client specified' unless c
-        [:project, :ads].each { |key| fail "No #{key.inspect} specified" unless opts[key] }
+        [:project, :ads].each do |key|
+          fail "No #{key.inspect} specified" unless opts[key]
+        end
 
         schema = (opts[:ads].respond_to?(:schemas) && opts[:ads].schemas) || opts[:ads]
-        schema = "#{schema}/default"
+
+        unless schema.end_with?('/default')
+          schema += '/default'
+        end
+
         json = {
           'outputStage' => {
             'schema' => schema
@@ -49,7 +55,9 @@ module GoodData
         d['outputStage']['outputStagePrefix'] = output_stage_prefix if output_stage_prefix
         d['outputStage']['schema'] = schema
       end
-      @json = client.put(build_output_stage_path, data_to_send, accept: 'application/json; version=1')
+
+      url = build_output_stage_path
+      @json = client.put(url, data_to_send, accept: 'application/json; version=1')
     end
 
     private

@@ -14,7 +14,21 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: true
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: true
       end
+
+      RESULT_HEADER = [
+        :id,
+        :status,
+        :project_uri,
+        :error,
+        :type
+      ]
 
       class << self
         def call(params)
@@ -25,21 +39,35 @@ module GoodData
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
+          all_segments = domain.segments
 
-          segment_names = params.segment_filter || domain.segments.map(&:segment_id)
-          results = domain.provision_client_projects(nil).map do |m|
-            Hash[m.each_pair.to_a].merge(type: :provision_result)
+          segment_names = params.segments.map do |segment|
+            segment.segment_id.downcase
           end
 
-          domain_segments = domain.segments
-          synchronize_projects = domain_segments.map do |segment|
-            {
-              from: segment.master_project.pid,
-              to: segment.clients.map do |segment_client|
-                segment_client.project.pid
-              end
-            }
+          segments = all_segments.select do |segment|
+            segment_names.include?(segment.segment_id.downcase)
           end
+
+          synchronize_projects = []
+          results = segments.map do |segment|
+            tmp = domain.provision_client_projects(segment.segment_id).map do |m|
+              Hash[m.each_pair.to_a].merge(type: :provision_result)
+            end
+
+            if tmp.length > 0
+              synchronize_projects << {
+                from: segment.master_project.pid,
+                to: tmp.map do |entry|
+                  entry[:project_uri].split('/').last
+                end
+              }
+            end
+
+            tmp
+          end
+
+          results.flatten!
 
           # Return results
           {

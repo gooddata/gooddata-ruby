@@ -200,6 +200,10 @@ module GoodData
         @connection.disconnect
       end
 
+      def warehouses(id = :all)
+        GoodData::DataWarehouse[id, client: self]
+      end
+
       #######################
       # Factory stuff
       ######################

@@ -12,12 +12,24 @@ module GoodData
       DESCRIPTION = 'Purge LCM Clients'
 
       PARAMS = define_params(self) do
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: true
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: true
+
         description 'Delete Extra Clients'
         param :delete_extra, instance_of(Type::BooleanType), required: false, default: false
 
         description 'Physically Delete Client Projects'
         param :delete_projects, instance_of(Type::BooleanType), required: false, default: false
       end
+
+      RESULT_HEADER = [
+        :client_id,
+        :project,
+        :status
+      ]
 
       class << self
         def call(params)
@@ -28,10 +40,17 @@ module GoodData
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-          domain_segments = domain.segments
+          all_segments = domain.segments
 
-          # TODO: Support for 'per segment' purge
-          results = domain_segments.map do |segment|
+          segment_names = params.segments.map do |segment|
+            segment.segment_id.downcase
+          end
+
+          segments = all_segments.select do |segment|
+            segment_names.include?(segment.segment_id.downcase)
+          end
+
+          results = segments.map do |segment|
             segment.clients.map do |client|
               project = client.project
               res = {
@@ -43,7 +62,7 @@ module GoodData
                 client.delete
                 res[:status] = 'purged'
               else
-                res[:status] = 'ok'
+                res[:status] = 'ok - not purged'
               end
 
               res

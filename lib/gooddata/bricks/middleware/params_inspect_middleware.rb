@@ -4,21 +4,17 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'benchmark'
+require 'logger'
+
 require_relative 'base_middleware'
-require 'pp'
 
 module GoodData
   module Bricks
-    class BenchMiddleware < Bricks::Middleware
+    class ParamsInspectMiddleware < Bricks::Middleware
       def call(params)
-        params = params.to_hash
-        puts 'Starting timer'
-        result = nil
-        report = Benchmark.measure { result = @app.call(params) }
-        puts 'Stopping timer'
-        pp report
-        result
+        inspect = params[:inspect_params] || params['inspect_params']
+        puts 'Inspecting Parameters ...'
+        puts JSON.pretty_generate(params) if inspect.to_b
       end
     end
   end

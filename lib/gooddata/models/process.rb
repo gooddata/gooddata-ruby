@@ -26,7 +26,7 @@ module GoodData
     class << self
       def [](id, options = {})
         project = options[:project]
-        c = client(options)
+        c = options[:client] || (project && project.client)
 
         if id == :all && project
           uri = "/gdc/projects/#{project.pid}/dataload/processes"

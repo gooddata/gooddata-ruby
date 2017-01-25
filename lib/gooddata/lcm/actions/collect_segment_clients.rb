@@ -8,8 +8,8 @@ require_relative 'base_action'
 
 module GoodData
   module LCM2
-    class SynchronizeClients < BaseAction
-      DESCRIPTION = 'Synchronize LCM Clients'
+    class CollectSegmentClients < BaseAction
+      DESCRIPTION = 'Collect Clients'
 
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
@@ -17,15 +17,16 @@ module GoodData
 
         description 'Organization Name'
         param :organization, instance_of(Type::StringType), required: true
+
+        description 'ADS Client'
+        param :ads_client, instance_of(Type::AdsClientType), required: true
       end
 
       RESULT_HEADER = [
-        :segment,
-        :successful_count,
-        :failed_count,
-        :master_name,
-        :master_pid,
-        # :details
+        :from_name,
+        :from_pid,
+        :to_name,
+        :to_pid
       ]
 
       DEFAULT_QUERY_SELECT = 'SELECT segment_id, master_project_id, version from lcm_release WHERE segment_id=\'#{segment_id}\';'
@@ -47,31 +48,42 @@ module GoodData
             end
           end
 
-          results = segments.map do |segment|
+          results = []
+          synchronize_clients = segments.map do |segment|
             res = params.ads_client.execute_select(DEFAULT_QUERY_SELECT.gsub('#{segment_id}', segment.segment_id))
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
             master = client.projects(res.first[:master_project_id])
+            master_pid = master.pid
+            master_name = master.title
 
-            segment.master_project = master
-            segment.save
-
-            res = segment.synchronize_clients
-
-            sync_result = res.json['synchronizationResult']
-
-            {
-              segment: segment.id,
-              master_pid: master.pid,
-              master_name: master.title,
-              successful_count: sync_result['successfulClients']['count'],
-              failed_count: sync_result['failedClients']['count'],
-              # details: sync_result['links']['details']
+            sync_info = {
+              from: master_pid,
+              to: segment.clients.map do |client|
+                client_project = client.project
+                to_pid = client_project.pid
+                results << {
+                  from_name: master_name,
+                  from_pid: master_pid,
+                  to_name: client_project.title,
+                  to_pid: to_pid,
+                }
+                to_pid
+              end
             }
+
+            sync_info
           end
 
+          results.flatten!
+
           # Return results
-          results
+          {
+            results: results,
+            params: {
+              synchronize: synchronize_clients
+            }
+          }
         end
       end
     end

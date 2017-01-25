@@ -14,22 +14,51 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
-
-        description 'Segments to manage'
-        param :segments, array_of(instance_of(Type::SegmentType)), required: true
       end
+
+      RESULT_HEADER = [
+        :project,
+        :pid,
+        :login,
+        :role,
+        :result,
+        :url
+      ]
 
       class << self
         def call(params)
           # Check if all required parameters were passed
           BaseAction.check_params(PARAMS, params)
 
-          # Return results
-          [
+          client = params.gdc_gd_client
+
+          technical_users = params.technical_user || []
+          new_users = technical_users.map do |technical_user|
             {
-              msg: 'Not Implemented Yet'
+              login: technical_user,
+              role: 'admin'
             }
-          ]
+          end
+
+          results = params.synchronize.map do |synchronize_info|
+            synchronize_info[:to].map do |pid|
+              project = client.projects(pid)
+              res = project.create_users(new_users)
+
+              new_users.zip(res).map do |f, s|
+                {
+                  project: project.title,
+                  pid: project.pid,
+                  login: f[:login],
+                  role: f[:role],
+                  result: s[:type],
+                  url: s[:user]
+                }
+              end
+            end
+          end
+
+          results.flatten
         end
       end
     end

@@ -193,10 +193,6 @@ module GoodData
 
                 obj.content['type'] = type
                 obj.save
-              else
-                semaphore.synchronize do
-                  GoodData.logger.info "Identifier #{identifier} in '#{target.title}' already has desired type - #{type}"
-                end
               end
             else
               semaphore.synchronize do

@@ -16,12 +16,22 @@ module GoodData
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
       end
 
+      RESULT_HEADER = [
+        :client,
+        :segment_id,
+        :title
+      ]
+
       class << self
         def call(params)
           # Check if all required parameters were passed
           BaseAction.check_params(PARAMS, params)
 
-          clients = self.collect_clients(params)
+          segment_names = params.segments.map do |segment|
+            segment.segment_id
+          end
+
+          clients = self.collect_clients(params, segment_names)
 
           results = clients.map do |client|
             {

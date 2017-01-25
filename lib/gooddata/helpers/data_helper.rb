@@ -13,6 +13,17 @@ module GoodData
     class DataSource
       attr_reader :realized
 
+      class << self
+        def interpolate_sql_params(query, params)
+          keys = query.scan(/\$\{([^\{]+)\}/).flatten
+          keys.reduce(query) do |a, e|
+            key = e
+            raise "Param #{key} is not present in schedule params yet it is expected to be interpolated in the query" unless params.key?(key)
+            a.gsub("${#{key}}", params[key])
+          end
+        end
+      end
+
       def initialize(opts = {})
         opts = opts.is_a?(String) ? { type: :staging, path: opts } : opts
         opts = GoodData::Helpers.symbolize_keys(opts)
@@ -34,7 +45,7 @@ module GoodData
         when 's3'
           realize_s3(params)
         else
-          fail "DataSource does not support type \"#{source}\""
+          raise "DataSource does not support type \"#{source}\""
         end
       end
 
@@ -45,15 +56,13 @@ module GoodData
       private
 
       def realize_query(params)
-        query = @options[:query]
-        dwh = params['ads_client']
-        fail "Data Source needs a client to ads to be able to query the storage but 'ads_client' is empty." unless dwh
+        query = DataSource.interpolate_sql_params(@options[:query], params)
+        dwh = params['ads_client'] || params[:ads_client] || raise("Data Source needs a client to ads to be able to query the storage but 'ads_client' is empty.")
         filename = Digest::SHA256.new.hexdigest(query)
         measure = Benchmark.measure do
           CSV.open(filename, 'w') do |csv|
             header_written = false
             header = nil
-
             dwh.execute_select(query) do |row|
               unless header_written
                 header_written = true
@@ -94,11 +103,11 @@ module GoodData
 
       def realize_s3(params)
         s3_client = params['aws_client'] && params['aws_client']['s3_client']
-        fail 'AWS client not present. Perhaps S3Middleware is missing in the brick definition?' if !s3_client || !s3_client.respond_to?(:buckets)
+        raise 'AWS client not present. Perhaps S3Middleware is missing in the brick definition?' if !s3_client || !s3_client.respond_to?(:buckets)
         bucket_name = @options[:bucket]
         key = @options[:key]
-        fail "Key \"bucket\" is missing in S3 datasource" if bucket_name.blank?
-        fail "Key \"key\" is missing in S3 datasource" if key.blank?
+        raise 'Key "bucket" is missing in S3 datasource' if bucket_name.blank?
+        raise 'Key "key" is missing in S3 datasource' if key.blank?
         puts "Realizing download from S3. Bucket #{bucket_name}, object with key #{key}."
         filename = Digest::SHA256.new.hexdigest(@options.to_json)
         bucket = s3_client.buckets[bucket_name]

@@ -29,7 +29,7 @@ module GoodData
             end
           when 'staging'
             webdav_uri = GoodData.project_webdav_path
-            dav = Net::DAV.new(webdav_uri, :curl => false)
+            dav = Net::DAV.new(webdav_uri, curl: false)
             dav.verify_server = false
             dav.credentials(params['GDC_USERNAME'], params['GDC_PASSWORD'])
             dav.find(path, recursive: true, suppress_errors: true) do |item|

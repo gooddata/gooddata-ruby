@@ -48,45 +48,49 @@ module GoodData
       ## Bricks
 
       release: [
-        CollectSegments,        # TODO: Implement
-        CreateSegmentMasters,   # Done - tested
-        EnsureUsers,            # TODO: Implement
-        SynchronizeLdm,         # Done - tested
-        SynchronizeLabelTypes,  # Done - tested
-        SynchronizeMeta,        # Done - tested
-        SynchronizeProcesses,   # Done - tested
-        SynchronizeSchedules,   # Done - tested
-        SynchronizeNewSegments, # Done - tested
-        UpdateReleaseTable      # Done - tested
+        EnsureReleaseTable,
+        SegmentsFilter,
+        CreateSegmentMasters,
+        EnsureUsers,
+        SynchronizeLdm,
+        SynchronizeLabelTypes,
+        SynchronizeMeta,
+        SynchronizeProcesses,
+        SynchronizeSchedules,
+        SynchronizeNewSegments,
+        UpdateReleaseTable
       ],
 
       provision: [
-        CollectSegments,        # TODO: Implement
-        PurgeClients,           # Done - tested
-        CollectClients,         # Done - tested
-        AssociateClients,       # Done - tested
-        ProvisionClients,       # Done - tested
-        EnsureUsers,            # TODO: Implement
-        EnsureTitles,           # Done - tested
-        SynchronizeLabelTypes,  # Done - tested
-        SynchronizeProcesses,   # Done - tested
-        SynchronizeSchedules,   # Done - tested
+        EnsureReleaseTable,
+        CollectSegments,
+        SegmentsFilter,
+        PurgeClients,
+        CollectClients,
+        AssociateClients,
+        ProvisionClients,
+        EnsureUsers,
+        EnsureTitles,
+        SynchronizeProcesses,
+        SynchronizeSchedules,
       ],
 
       rollout: [
-        CollectSegments,        # TODO: Implement
-        CollectClients,         # Done - tested
-        EnsureUsers,            # TODO: Implement
-        SynchronizeLdm,         # Done - tested
-        SynchronizeLabelTypes,  # Done - tested
-        SynchronizeProcesses,   # Done - tested
-        SynchronizeSchedules,   # Done - tested
-        SynchronizeClients,     # TODO: This is the moment when we update API segments from lcm_release table
+        EnsureReleaseTable,
+        CollectSegments,
+        SegmentsFilter,
+        CollectSegmentClients,
+        EnsureUsers,
+        SynchronizeLdm,
+        SynchronizeLabelTypes,
+        SynchronizeProcesses,
+        SynchronizeSchedules,
+        SynchronizeClients,
       ],
 
       users: [
-        EnsureUsersDomain,
-        EnsureUsersProject,
+        EnsureUsersDomain,  # TODO: Implement
+        EnsureUsersProject, # TODO: Implement
       ]
     }
 
@@ -144,7 +148,13 @@ module GoodData
 
       def print_action_result(action, messages)
         title = "Result of #{action.short_name}"
-        keys = (messages.first && messages.first.keys) || []
+
+        keys = if action.const_defined?('RESULT_HEADER')
+                 action.const_get('RESULT_HEADER')
+               else
+                 (messages.first && messages.first.keys) || []
+               end
+
         headings = keys.map(&:upcase)
 
         rows = messages.map do |message|
@@ -184,10 +194,10 @@ module GoodData
 
         # TODO: Check all action params first
 
+        new_params = params
+
         # Run actions
         results = actions.map do |action|
-          # puts "Performing #{action.name}"
-
           puts
 
           # Invoke action
@@ -217,6 +227,19 @@ module GoodData
           # Print execution summary/results
           self.print_actions_result(actions, results)
         end
+
+        brick_results = {}
+        actions.each_with_index do |action, index|
+          brick_results[action.name.split('::').last.to_s] = results[index]
+        end
+
+        {
+          actions: actions.map do |action|
+            action.name.split('::').last.to_s
+          end,
+          results: brick_results,
+          params: params
+        }
       end
     end
   end

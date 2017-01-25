@@ -14,10 +14,16 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
-
-        description 'Segments to manage'
-        param :segments, array_of(instance_of(Type::SegmentType)), required: true
       end
+
+      RESULT_HEADER = [
+        :from,
+        :to,
+        :process_name,
+        :schedule_name,
+        :type,
+        :state
+      ]
 
       class << self
         def call(params)
@@ -38,13 +44,30 @@ module GoodData
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Transferring Schedules, from project: '#{from.title}', PID: '#{from.pid}', to project: '#{to_project.title}', PID: '#{to_project.pid}'"
-              GoodData::Project.transfer_schedules(from, to_project)
+              res = GoodData::Project.transfer_schedules(from, to_project).sort_by do |item|
+                item[:status]
+              end
 
-              results << {
-                from: from.pid,
-                to: to_project.pid,
-                status: 'ok'
-              }
+              results += res.map do |item|
+                schedule = item[:schedule]
+
+                # TODO: Review this and remove if not required or duplicate (GOODOT_CUSTOM_PROJECT_ID vs CLIENT_ID)
+                # s.update_params('GOODOT_CUSTOM_PROJECT_ID' => c.id)
+                # s.update_params('CLIENT_ID' => c.id)
+                # s.update_params('SEGMENT_ID' => segment.id)
+                schedule.update_params(params.additional_params || {})
+                schedule.update_hidden_params(params.additional_hidden_params || {})
+                schedule.save
+
+                {
+                  from: from.pid,
+                  to: to_project.pid,
+                  process_name: item[:process].name,
+                  schedule_name: schedule.name,
+                  type: item[:process].type,
+                  state: item[:state]
+                }
+              end
             end
           end
 

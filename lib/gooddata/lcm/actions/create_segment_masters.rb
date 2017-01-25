@@ -15,11 +15,14 @@ module GoodData
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: true
+
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
 
         description 'Queries Used'
-        param :segments, instance_of(Type::ReleaseQueryType), required: false
+        param :query, instance_of(Type::ReleaseQueryType), required: false
 
         description 'Segments to manage'
         param :segments, array_of(instance_of(Type::SegmentType)), required: true
@@ -79,8 +82,9 @@ module GoodData
             # If not, create new one
             unless synchronize_info
               synchronize_info = {
+                segment: segment_id,
                 from: development_pid,
-                to: []
+                to: [],
               }
               synchronize_projects << synchronize_info
             end
