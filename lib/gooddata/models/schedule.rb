@@ -118,7 +118,7 @@ module GoodData
     end
 
     def after
-      project.schedules(trigger_id)
+      project.schedules(trigger_id) if trigger_id
     end
 
     def after=(schedule)
