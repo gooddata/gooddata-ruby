@@ -1593,6 +1593,24 @@ module GoodData
       @add
     end
 
+
+    def transfer_etl(target)
+      GoodData::Project.transfer_etl(self.client, self, target)
+    end
+
+    def transfer_processes(target)
+      GoodData::Project.transfer_processes(self, target)
+    end
+
+
+    def transfer_schedules(target)
+      GoodData::Project.transfer_schedules(self, target)
+    end
+
+    def transfer_tagged_stuff(target, tag)
+      GoodData::Project.transfer_tagged_stuff(self, target, tag)
+    end
+
     private
 
     def generate_user_payload(user_uri, status = 'ENABLED', roles_uri = nil)

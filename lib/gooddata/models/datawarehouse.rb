@@ -11,12 +11,16 @@ module GoodData
     class << self
       CREATE_URL = '/gdc/datawarehouse/instances'
 
-      def [](id = :all)
+      def [](id = :all, options = { client: GoodData.client })
+        c = options[:client]
+
         if id == :all
-          data = client.get CREATE_URL
-          data['instances']['items'].map { |ads_data| client.create(DataWarehouse, ads_data) }
+          data = client.get(CREATE_URL)
+          data['instances']['items'].map do |ads_data|
+            c.create(DataWarehouse, ads_data)
+          end
         else
-          client.create(DataWarehouse, client.get("#{CREATE_URL}/#{id}"))
+          c.create(DataWarehouse, c.get("#{CREATE_URL}/#{id}"))
         end
       end
 
