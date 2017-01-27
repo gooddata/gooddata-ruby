@@ -302,12 +302,7 @@ module GoodData
             if process_spec.type != :dataload
               executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
             end
-            params = {
-              params: schedule_spec[:params].merge('PROJECT_ID' => to_project.pid),
-              hidden_params: schedule_spec[:hidden_params],
-              name: schedule_spec[:name],
-              reschedule: schedule_spec[:reschedule]
-            }
+            params = schedule_parameters(to_project.pid, schedule_spec)
             created_schedule = remote_process.create_schedule(schedule_spec[:cron] || schedule_cache[schedule_spec[:after]], executable, params)
             schedule_cache[created_schedule.name] = created_schedule
           else
@@ -349,6 +344,17 @@ module GoodData
         puts JSON.pretty_generate(objects)
 
         from_project.partial_md_export(objects, project: to_project)
+      end
+
+      private
+
+      def schedule_parameters(id, schedule_spec)
+        {
+          params: schedule_spec[:params].merge('PROJECT_ID' => id),
+          hidden_params: schedule_spec[:hidden_params],
+          name: schedule_spec[:name],
+          reschedule: schedule_spec[:reschedule]
+        }
       end
     end
 
