@@ -67,7 +67,8 @@ module GoodData
 
         fail 'Process ID has to be provided' if process_id.blank?
 
-        is_dataload_process = Process[process_id, project: project].type == :dataload
+        is_dataload_process = Process[process_id, project: project, client: c].type == :dataload
+
         if is_dataload_process
           [:dataload_datasets, :de_synchronize_all].each { |param| fail "#{param} has to be provided" unless options[param] }
         else
