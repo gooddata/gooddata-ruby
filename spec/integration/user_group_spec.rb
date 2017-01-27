@@ -134,4 +134,14 @@ describe GoodData::UserGroup do
       expect(@group.description).to eq new_description
     end
   end
+
+  describe '.create' do
+    it 'sets client attribute' do
+      expect(@group.client).not_to be_nil
+    end
+
+    it 'sets project attribute' do
+      expect(@group.project).not_to be_nil
+    end
+  end
 end

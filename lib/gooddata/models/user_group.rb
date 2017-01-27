@@ -54,16 +54,22 @@ module GoodData
 
       # Create new user group
       #
+      # Should not be called directly. Use GoodData::Project.add_user_group.
       # @param data [Hash] Initial data
+      # @option data name [String]
+      # @option data description [String]
+      # @option data project [GoodData::Project]
       # @return [UserGroup] Newly created user group
       def create(data)
         new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['userGroup']['content']['name'] = data[:name]
           d['userGroup']['content']['description'] = data[:description]
-          d['userGroup']['content']['project'] = data[:project].respond_to?(:uri) ? data[:project].uri : data[:project]
+          d['userGroup']['content']['project'] = data[:project].uri
         end
 
-        client.create(GoodData::UserGroup, GoodData::Helpers.deep_stringify_keys(new_data))
+        group = client.create(GoodData::UserGroup, GoodData::Helpers.deep_stringify_keys(new_data))
+        group.project = data[:project]
+        group
       end
 
       # Constructs payload for user management/manipulation
