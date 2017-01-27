@@ -61,11 +61,18 @@ module GoodData
         end
       end
 
-      # Creates new client from parameters passed
+      # Creates new client from parameters passed.
       #
-      # @param options [Hash] Optional options
-      # @return [GoodData::Schedule] New GoodData::Schedule instance
-      def create(data = {}, options = {})
+      # Should not be called directly. Use GoodData::Segment#create_client.
+      #
+      # @param data [Hash] Data required to create the client
+      # @option data id [String]
+      # @option data project [GoodData::Project]
+      # @param options [Hash] Options
+      # @option options segment [GoodData::Segment]
+      # @option options client [GoodData::Rest::Client]
+      # @return [GoodData::Client] New GoodData::Client instance
+      def create(data, options)
         segment = options[:segment]
         domain = segment.domain
         tenant = client.create(GoodData::Client, GoodData::Helpers.deep_stringify_keys(CLIENT_TEMPLATE.merge(domain: domain)), domain: domain)

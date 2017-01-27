@@ -124,4 +124,24 @@ describe GoodData::UserGroup do
       expect(@group.description).to eq new_description
     end
   end
+
+  describe '#save' do
+    it 'updates existing group' do
+      new_description = 'This is new description'
+      @group.description = new_description
+      @group.save
+      @group = @project.user_groups(@group.obj_id)
+      expect(@group.description).to eq new_description
+    end
+  end
+
+  describe '.create' do
+    it 'sets client attribute' do
+      expect(@group.client).not_to be_nil
+    end
+
+    it 'sets project attribute' do
+      expect(@group.project).not_to be_nil
+    end
+  end
 end

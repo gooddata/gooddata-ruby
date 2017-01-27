@@ -133,7 +133,7 @@ module GoodData
       saved? ? client.delete(uri) : nil
     end
 
-    # Is schedule enabled?
+    # Disables the schedule.
     #
     # @return [GoodData::Schedule]
     def disable
@@ -142,7 +142,7 @@ module GoodData
       self
     end
 
-    # Is schedule enabled?
+    # Disables and saves the schedule.
     #
     # @return [Boolean]
     def disable!
