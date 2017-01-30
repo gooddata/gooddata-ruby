@@ -13,15 +13,14 @@ module GoodData
     end
 
     def process
-      GoodData::Process[:all, project: self.project, client: self.project.client].find do |p|
+      GoodData::Process[:all, project: project, client: project.client].find do |p|
         p.type == :dataload
       end
     end
 
     def create_output_stage(ads, client_id, output_stage_prefix)
-      self.output_stage = GoodData::AdsOutputStage.create(ads: ads, project: self.project, client: self.project.client, client_id: client_id, output_stage_prefix: output_stage_prefix)
-      self.output_stage
+      self.output_stage = GoodData::AdsOutputStage.create(ads: ads, project: project, client: project.client, client_id: client_id, output_stage_prefix: output_stage_prefix)
+      output_stage
     end
-
   end
 end

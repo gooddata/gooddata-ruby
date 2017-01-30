@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require_relative '../rest/resource'
+
 module GoodData
   class AdsOutputStage < Rest::Resource
     OUTPUT_STAGE_PATH = '/gdc/dataload/projects/%s/outputStage'
@@ -20,9 +22,7 @@ module GoodData
 
         schema = (opts[:ads].respond_to?(:schemas) && opts[:ads].schemas) || opts[:ads]
 
-        unless schema.end_with?('/default')
-          schema += '/default'
-        end
+        schema += '/default' unless schema.end_with?('/default')
 
         json = {
           'outputStage' => {

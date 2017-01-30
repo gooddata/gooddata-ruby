@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require_relative '../rest/resource'
+
 module GoodData
   class ChannelConfiguration < Rest::Resource
     CHANNEL_CONFIGURATION_PATH = '/gdc/account/profile/%s/channelConfigurations'
