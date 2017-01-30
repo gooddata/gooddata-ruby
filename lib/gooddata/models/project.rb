@@ -1599,15 +1599,13 @@ module GoodData
       @add
     end
 
-
     def transfer_etl(target)
-      GoodData::Project.transfer_etl(self.client, self, target)
+      GoodData::Project.transfer_etl(client, self, target)
     end
 
     def transfer_processes(target)
       GoodData::Project.transfer_processes(self, target)
     end
-
 
     def transfer_schedules(target)
       GoodData::Project.transfer_schedules(self, target)

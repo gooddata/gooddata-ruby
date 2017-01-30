@@ -22,9 +22,7 @@ module GoodData
 
         schema = (opts[:ads].respond_to?(:schemas) && opts[:ads].schemas) || opts[:ads]
 
-        unless schema.end_with?('/default')
-          schema += '/default'
-        end
+        schema += '/default' unless schema.end_with?('/default')
 
         json = {
           'outputStage' => {
