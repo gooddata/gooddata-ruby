@@ -159,4 +159,23 @@ describe GoodData::Project, :constraint => 'slow' do
       end
     end
   end
+
+  describe '#export_clone' do
+    context 'when exclude_schedule is true' do
+      let(:options) { { exclude_schedules: true } }
+      let(:clone) { GoodData::Project.create(title: 'project clone', client: @client) }
+
+      after do
+        clone.delete if clone
+      end
+
+      it 'excludes scheduled emails' do
+        @project.schedule_mail.save
+        export_token = @project.export_clone(options)
+        clone.import_clone(export_token)
+        expect(@project.scheduled_mails.to_a).not_to be_empty
+        expect(clone.scheduled_mails.to_a).to be_empty
+      end
+    end
+  end
 end
