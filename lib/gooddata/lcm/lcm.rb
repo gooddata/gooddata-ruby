@@ -140,8 +140,12 @@ module GoodData
             else
               synchronized_puts.call "Unable to find #{identifier} in '#{target.title}'"
             end
+
+            nil
           end
         end
+
+        nil
       end
     end
   end
