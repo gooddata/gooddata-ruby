@@ -138,7 +138,7 @@ module GoodData
                 obj.content['type'] = type
                 obj.save
               else
-                synchronized_puts.call "Identifier #{identifier} in '#{target.title}' already has desired type - #{type}"
+                # synchronized_puts.call "Identifier #{identifier} in '#{target.title}' already has desired type - #{type}"
               end
             else
               synchronized_puts.call "Unable to find #{identifier} in '#{target.title}'"
