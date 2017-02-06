@@ -27,7 +27,7 @@ module GoodData
         messages
       end
 
-      def transfer_everything(client, domain, migration_spec, filter_on_segment = [], opts = {})
+      def transfer_everything(client, domain, migration_spec, opts = {}, filter_on_segment = [])
         puts 'Ensuring Users - warning: works across whole domain not just provided segment(s)'
         ensure_users(domain, migration_spec, filter_on_segment)
 
