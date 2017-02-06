@@ -18,8 +18,8 @@ module GoodData
       end
     end
 
-    def create_output_stage(ads, client_id, output_stage_prefix)
-      self.output_stage = GoodData::AdsOutputStage.create(ads: ads, project: project, client: project.client, client_id: client_id, output_stage_prefix: output_stage_prefix)
+    def create_output_stage(ads, opts = {})
+      self.output_stage = GoodData::AdsOutputStage.create({ ads: ads, project: project, client: project.client }.merge(opts))
       output_stage
     end
   end

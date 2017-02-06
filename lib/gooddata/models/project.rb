@@ -1615,6 +1615,10 @@ module GoodData
       GoodData::Project.transfer_tagged_stuff(self, target, tag)
     end
 
+    def create_output_stage(ads, opts = {})
+      add.create_output_stage(ads, opts)
+    end
+
     private
 
     def generate_user_payload(user_uri, status = 'ENABLED', roles_uri = nil)
