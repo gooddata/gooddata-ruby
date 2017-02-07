@@ -422,5 +422,13 @@ module GoodData
       end
       tmp
     end
+
+    def create_channel
+      GoodData::ChannelConfiguration.create(to: email, title: email, client: client)
+    end
+
+    def channels
+      GoodData::ChannelConfiguration.all
+    end
   end
 end
