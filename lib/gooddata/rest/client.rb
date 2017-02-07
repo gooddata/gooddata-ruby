@@ -204,6 +204,10 @@ module GoodData
         GoodData::DataWarehouse[id, client: self]
       end
 
+      def create_datawarehouse(opts = {})
+        GoodData::DataWarehouse.create({ client: self }.merge(opts))
+      end
+
       #######################
       # Factory stuff
       ######################
