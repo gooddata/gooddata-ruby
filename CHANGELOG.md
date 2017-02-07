@@ -3,6 +3,7 @@
 ## 0.6.50
 - Add support for Email Notification Rules on Process
 - Add support for exclude_schedules option in Project#export_clone
+- Support for Automated Data Distribution in project
 
 ## 0.6.49
 - Implement Helpers::GD_MAX_RETRY to allow max retries override

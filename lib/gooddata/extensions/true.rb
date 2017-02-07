@@ -12,4 +12,8 @@ class TrueClass
   def duplicable?
     false
   end
+
+  def to_b
+    true
+  end
 end

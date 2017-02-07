@@ -137,13 +137,15 @@ module GoodData
                 synchronized_puts.call "Updating #{identifier} -> #{type} in '#{target.title}'"
                 obj.content['type'] = type
                 obj.save
-              else
-                synchronized_puts.call "Identifier #{identifier} in '#{target.title}' already has desired type - #{type}"
               end
             else
               synchronized_puts.call "Unable to find #{identifier} in '#{target.title}'"
             end
+
+            nil
           end
+
+          nil
         end
       end
     end
