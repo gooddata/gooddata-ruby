@@ -28,7 +28,7 @@ module GoodData
       end
 
       def transfer_everything(client, domain, migration_spec, opts = {})
-        filter_on_segment = migration_spec['segments'] || []
+        filter_on_segment = migration_spec[:segments] || migration_spec['segments'] || []
 
         puts 'Ensuring Users - warning: works across whole domain not just provided segment(s)'
         ensure_users(domain, migration_spec, filter_on_segment)
@@ -42,11 +42,17 @@ module GoodData
 
         domain.segments.peach do |segment|
           next if !filter_on_segment.empty? && !(filter_on_segment.include?(segment.id))
+
           bp = segment.master_project.blueprint
           segment.clients.each do |c|
             p = c.project
             p.update_from_blueprint(bp, bp_opts)
           end
+
+          target_projects = segment.clients.map(&:project)
+
+          # Transfer metadata objects
+          GoodData::LCM.transfer_meta(segment.master_project, target_projects)
         end
 
         puts 'Migrating Processes and Schedules'
@@ -76,6 +82,17 @@ module GoodData
             s.update_hidden_params(migration_spec[:additional_hidden_params] || {})
             s.save
           end
+
+          # Transfer label types
+          begin
+            GoodData::LCM.transfer_label_types(segment_master, project)
+          rescue => e
+            puts "Unable to transfer label_types, reason: #{e.message}"
+          end
+
+          # Transfer tagged objects
+          tag = migration_spec[:production_tag]
+          GoodData::Project.transfer_tagged_stuff(segment_master, project, tag) if tag
         end
 
         do_not_synchronize_clients = migration_spec[:do_not_synchronize_clients]
@@ -146,6 +163,39 @@ module GoodData
           end
 
           nil
+        end
+      end
+
+      # Synchronizes the dashboards tagged with the +$PRODUCTION_TAG+ from development project to master projects
+      # Params:
+      # +source_workspace+:: workspace with the tagged dashboards that are going to be synchronized to the target workspaces
+      # +target_workspaces+:: array of target workspaces where the tagged dashboards are going be synchronized to
+      def transfer_meta(source_workspace, target_workspaces, tag = nil)
+        objects = self.get_dashboards(source_workspace, tag)
+        begin
+          token = source_workspace.objects_export(objects)
+          puts("Export token: '#{token}'")
+        rescue => e
+          puts "Export failed, reason: #{e.message}"
+        end
+        target_workspaces.each do |target_workspace|
+          begin
+            target_workspace.objects_import(token)
+          rescue => e
+            puts "Import failed, reason: #{e.message}"
+          end
+        end
+      end
+
+      # Retrieves all dashboards tagged with the +$PRODUCTION_TAG+ from the +workspace+
+      # Params:
+      # +workspace+:: workspace with the tagged dashboards
+      # Returns enumeration of the tagged dashboards URIs
+      def get_dashboards(workspace, tag = nil)
+        unless tag
+          GoodData::Dashboard.all(project: workspace, client: workspace.client).map { |d| d.uri }
+        else
+          GoodData::Dashboard.find_by_tag(tag, project: workspace, client: workspace.client).map { |d| d.uri }
         end
       end
     end
