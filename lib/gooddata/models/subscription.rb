@@ -41,24 +41,25 @@ module GoodData
     attr_accessor :title, :process, :channels, :message, :subject, :project_events, :timer_event
 
     class << self
-      def [](id = :all, opts = {})
+      def [](id = :all, opts = { client: GoodData.connection })
+        c = GoodData.get_client(opts)
         pid = (opts[:project].respond_to?(:pid) && opts[:project].pid) || opts[:project]
-        uri = SUBSCRIPTION_PATH % [pid, client.user.account_setting_id]
+        uri = SUBSCRIPTION_PATH % [pid, c.user.account_setting_id]
         if id == :all
-          data = client.get uri
-          data['subscriptions']['items'].map { |subscription_data| client.create(Subscription, subscription_data, project: pid) }
+          data = c.get uri
+          data['subscriptions']['items'].map { |subscription_data| c.create(Subscription, subscription_data, project: pid) }
         else
-          client.create(Subscription, client.get("#{uri}/#{id}"), project: pid)
+          c.create(Subscription, c.get("#{uri}/#{id}"), project: pid)
         end
       end
 
-      def all(opts = {})
+      def all(opts = { client: GoodData.connection })
         Subscription[:all, opts]
       end
 
       def create(opts = { client: GoodData.connection })
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' unless c
+        c = GoodData.get_client(opts)
+
         [:project, :channels, :process, :project_events].each { |key| fail "No #{key.inspect} specified" unless opts[key] }
 
         pid = (opts[:project].respond_to?(:pid) && opts[:project].pid) || opts[:project]
@@ -77,7 +78,7 @@ module GoodData
       end
 
       def create_object(data = {})
-        c = client(data)
+        c = GoodData.get_client(data)
 
         new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['subscription']['condition']['condition']['expression'] = data[:condition]

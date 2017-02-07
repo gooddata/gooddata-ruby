@@ -10,7 +10,7 @@ describe GoodData::Subscription, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @channel = GoodData::ChannelConfiguration.create(client: @client)
-    subscriptions = GoodData::Subscription.all(project: ProjectHelper::PROJECT_ID)
+    subscriptions = GoodData::Subscription.all(project: ProjectHelper::PROJECT_ID, client: @client)
     subscriptions.each(&:delete)
   end
 
@@ -40,7 +40,7 @@ describe GoodData::Subscription, :constraint => 'slow' do
       subscription.title = 'My title'
       subscription.save
 
-      expect(GoodData::Subscription[subscription.subscription_id, project: ProjectHelper::PROJECT_ID].title).to eq 'My title'
+      expect(GoodData::Subscription[subscription.subscription_id, project: ProjectHelper::PROJECT_ID, client: @client].title).to eq 'My title'
     ensure
       subscription && subscription.delete
     end
@@ -48,9 +48,9 @@ describe GoodData::Subscription, :constraint => 'slow' do
 
   it 'should be able to list all subscriptions' do
     begin
-      expect(GoodData::Subscription.all(project: ProjectHelper::PROJECT_ID)).to eq []
+      expect(GoodData::Subscription.all(project: ProjectHelper::PROJECT_ID, client: @client)).to eq []
       subscription = GoodData::Subscription.create(client: @client, project: ProjectHelper::PROJECT_ID, channels: @channel, process: ProcessHelper::PROCESS_ID, project_events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
-      expect(GoodData::Subscription.all(project: ProjectHelper::PROJECT_ID)).to eq [subscription]
+      expect(GoodData::Subscription.all(project: ProjectHelper::PROJECT_ID, client: @client)).to eq [subscription]
     ensure
       subscription && subscription.delete
     end

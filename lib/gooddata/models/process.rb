@@ -356,7 +356,7 @@ module GoodData
     end
 
     def notification_rules
-      NotificationRule.all(project: project, process: self)
+      NotificationRule.all(project: project, process: self, client: client)
     end
 
     def create_notification_rule(opts = {})
