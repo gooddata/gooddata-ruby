@@ -5,6 +5,7 @@
 - Add support for exclude_schedules option in Project#export_clone
 - Add support for cross_data_center_export option in Project#export_clone
 - Support for Automated Data Distribution in project
+- Added Dockefile for easy build of dockerized gooddata-ruby
 
 ## 0.6.49
 - Implement Helpers::GD_MAX_RETRY to allow max retries override
