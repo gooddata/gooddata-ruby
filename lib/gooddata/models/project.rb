@@ -480,7 +480,7 @@ module GoodData
     # @param options [Hash] Export options
     # @option options [Boolean] :data Clone project with data
     # @option options [Boolean] :users Clone project with users
-    # @option options [String] :authorized_users Comma separated logins of authorized users. Users that can use the export
+    # @option options [Boolean] :exclude_schedules Specifies whether to include scheduled emails
     # @return [GoodData::Project] Newly created project
     def clone(options = {})
       a_title = options[:title] || "Clone of #{title}"
@@ -518,6 +518,7 @@ module GoodData
     # @option options [Boolean] :data Clone project with data
     # @option options [Boolean] :users Clone project with users
     # @option options [String] :authorized_users Comma separated logins of authorized users. Users that can use the export
+    # @option options [Boolean] :exclude_schedules Specifies whether to include scheduled notifications in the export
     # @return [String] token of the export
     def export_clone(options = {})
       with_data = options[:data].nil? ? true : options[:data]
@@ -530,6 +531,10 @@ module GoodData
         }
       }
       export[:exportProject][:authorizedUsers] = options[:authorized_users] if options[:authorized_users]
+      if options[:exclude_schedules]
+        exclude_notifications = options[:exclude_schedules] ? 1 : 0
+        export[:exportProject][:excludeSchedules] = exclude_notifications
+      end
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
       status_url = result['exportArtifact']['status']['uri']
