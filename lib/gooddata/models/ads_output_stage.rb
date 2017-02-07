@@ -14,8 +14,8 @@ module GoodData
 
     class << self
       def create(opts = { client: GoodData.connection })
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' unless c
+        c = GoodData.get_client(opts)
+
         [:project, :ads].each do |key|
           fail "No #{key.inspect} specified" unless opts[key]
         end

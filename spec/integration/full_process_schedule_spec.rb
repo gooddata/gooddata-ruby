@@ -344,7 +344,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       expect(notification_rule.body).to eq 'Email body'
       expect(notification_rule.events).to eq [GoodData::Subscription::PROCESS_SUCCESS_EVENT]
 
-      notification_rule = GoodData::NotificationRule[notification_rule.notification_rule_id, project: @project, process: process]
+      notification_rule = GoodData::NotificationRule[notification_rule.notification_rule_id, project: @project, process: process, client: @client]
       notification_rule.events = [GoodData::Subscription::PROCESS_SUCCESS_EVENT, GoodData::Subscription::PROCESS_STARTED_EVENT]
       notification_rule.save
 

@@ -428,7 +428,7 @@ module GoodData
     end
 
     def channels
-      GoodData::ChannelConfiguration.all
+      GoodData::ChannelConfiguration.all(client: client)
     end
   end
 end

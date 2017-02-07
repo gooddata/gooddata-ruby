@@ -21,25 +21,24 @@ module GoodData
     attr_reader :subscription, :channels
 
     class << self
-      def [](id = :all, opts = {})
+      def [](id = :all, opts = { client: GoodData.connection })
+        c = GoodData.get_client(opts)
         pid = (opts[:project].respond_to?(:pid) && opts[:project].pid) || opts[:project]
         process_id = (opts[:process].respond_to?(:process_id) && opts[:process].process_id) || opts[:process]
         uri = NOTIFICATION_RULES_PATH % [pid, process_id]
         if id == :all
-          data = client.get uri
-          data['notificationRules']['items'].map { |notification_data| client.create(NotificationRule, notification_data) }
+          data = c.get uri
+          data['notificationRules']['items'].map { |notification_data| c.create(NotificationRule, notification_data) }
         else
-          client.create(NotificationRule, client.get("#{uri}/#{id}"))
+          c.create(NotificationRule, c.get("#{uri}/#{id}"))
         end
       end
 
-      def all(opts = {})
+      def all(opts = { client: GoodData.connection })
         NotificationRule[:all, opts]
       end
 
-      def create(opts = {})
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' unless c
+      def create(opts = { client: GoodData.connection })
         [:email, :events, :project, :process].each { |key| fail "No #{key.inspect} specified" unless opts[key] }
 
         pid = (opts[:project].respond_to?(:pid) && opts[:project].pid) || opts[:project]
@@ -52,7 +51,7 @@ module GoodData
       end
 
       def create_object(data = {})
-        c = client(data)
+        c = GoodData.get_client(data)
 
         new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['notificationRule']['email'] = data[:email]
