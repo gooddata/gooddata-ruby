@@ -177,5 +177,13 @@ describe GoodData::Project, :constraint => 'slow' do
         expect(clone.scheduled_mails.to_a).to be_empty
       end
     end
+
+    context 'when cross_data_center_export is true' do
+      it 'is ok' do
+        # there are no staging environments on other datacenters
+        # so just checking if the parameter gets accepted
+        @project.export_clone(cross_data_center_export: true)
+      end
+    end
   end
 end

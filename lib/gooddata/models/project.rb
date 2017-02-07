@@ -519,6 +519,7 @@ module GoodData
     # @option options [Boolean] :users Clone project with users
     # @option options [String] :authorized_users Comma separated logins of authorized users. Users that can use the export
     # @option options [Boolean] :exclude_schedules Specifies whether to include scheduled notifications in the export
+    # @option options [Boolean] :cross_data_center_export Specifies whether export can be used in any data center
     # @return [String] token of the export
     def export_clone(options = {})
       with_data = options[:data].nil? ? true : options[:data]
@@ -534,6 +535,10 @@ module GoodData
       if options[:exclude_schedules]
         exclude_notifications = options[:exclude_schedules] ? 1 : 0
         export[:exportProject][:excludeSchedules] = exclude_notifications
+      end
+      if options[:cross_data_center_export]
+        cross_data_center = options[:cross_data_center_export] ? 1 : 0
+        export[:exportProject][:crossDataCenterExport] = cross_data_center
       end
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
