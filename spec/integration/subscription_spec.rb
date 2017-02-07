@@ -10,6 +10,8 @@ describe GoodData::Subscription, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @channel = GoodData::ChannelConfiguration.create(client: @client)
+    subscriptions = GoodData::Subscription.all(project: ProjectHelper::PROJECT_ID)
+    subscriptions.each(&:delete)
   end
 
   after(:all) do
