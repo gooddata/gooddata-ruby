@@ -55,9 +55,10 @@ module GoodData
       #
       # @return [Array<Hash>] Returns list of errors as hashes
       def validate
-        validate_presence_of(:id).map do |e|
+        errors = super
+        errors.concat(validate_presence_of(:id).map do |e|
           { type: :error, message: "Field \"#{e}\" is not defined or empty for anchor \"#{id}\"" }
-        end
+        end)
       end
     end
   end
