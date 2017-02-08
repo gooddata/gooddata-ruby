@@ -43,11 +43,11 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'ZenTest', '~> 4.11'
 
-  s.add_dependency 'nokogiri', '~> 1.6'
+  s.add_dependency 'nokogiri', '~> 1.6.8'
   s.add_dependency 'aws-sdk-v1', '~> 1.45'
   s.add_dependency 'docile', '~> 1.1'
   s.add_dependency 'erubis', '~> 2.7'
-  s.add_dependency 'gli', '~> 2.15 '
+  s.add_dependency 'gli', '~> 2.15'
   s.add_dependency 'highline', '~> 1.7'
   s.add_dependency 'json_pure', '~> 1.8'
   s.add_dependency 'multi_json', '~> 1.12'
