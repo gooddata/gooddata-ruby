@@ -543,9 +543,11 @@ module GoodData
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
       status_url = result['exportArtifact']['status']['uri']
-      client.poll_on_response(status_url) do |body|
+      polling_result = client.poll_on_response(status_url) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
+
+      ensure_clone_task_ok(polling_result, GoodData::ExportCloneError)
       result['exportArtifact']['token']
     end
 
@@ -571,9 +573,10 @@ module GoodData
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/import", import)
       status_url = result['uri']
-      client.poll_on_response(status_url, options) do |body|
+      polling_result = client.poll_on_response(status_url, options) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
+      ensure_clone_task_ok(polling_result, GoodData::ImportCloneError)
       self
     end
 
@@ -1644,6 +1647,19 @@ module GoodData
       }
       payload['user']['content']['userRoles'] = roles_uri if roles_uri
       payload
+    end
+
+    # Checks state of an export/import task.
+    # @param response [Hash] Response from API
+    # @param clone_task_error [Error] Error to raise when state is not OK
+    def ensure_clone_task_ok(response, clone_task_error)
+      if response['taskState'].nil?
+        fail clone_task_error, "Clone task failed with unknown response: #{response}"
+      elsif response['taskState']['status'] != 'OK'
+        messages = response['taskState']['messages'] || []
+        interpolated_messages = GoodData::Helpers.interpolate_error_messages(messages).join(' ')
+        fail clone_task_error, "Clone task failed. #{interpolated_messages}"
+      end
     end
   end
 end

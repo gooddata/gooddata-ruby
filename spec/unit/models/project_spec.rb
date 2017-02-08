@@ -185,5 +185,41 @@ describe GoodData::Project, :constraint => 'slow' do
         @project.export_clone(cross_data_center_export: true)
       end
     end
+
+    context 'when export task fails' do
+      let(:fail_response) do
+        response = { taskState: { status: 'ERROR' } }
+        GoodData::Helpers.deep_stringify_keys(response)
+      end
+
+      before do
+        allow(@client)
+          .to receive(:poll_on_response).and_return(fail_response)
+      end
+
+      it 'raises ExportCloneError' do
+        expect { @project.export_clone }.to raise_error(GoodData::ExportCloneError)
+      end
+    end
+  end
+
+  describe '#import_clone' do
+    let(:clone) { GoodData::Project.create(title: 'import clone test', client: @client) }
+    let(:fail_response) do
+      response = { taskState: { status: 'ERROR' } }
+      GoodData::Helpers.deep_stringify_keys(response)
+    end
+
+    after do
+      clone.delete if clone
+    end
+
+    context 'when import task fails' do
+      it 'raises ImportCloneError' do
+        export_token = @project.export_clone
+        allow(@client).to receive(:poll_on_response).and_return(fail_response)
+        expect { clone.import_clone(export_token) }.to raise_error(GoodData::ImportCloneError)
+      end
+    end
   end
 end
