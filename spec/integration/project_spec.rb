@@ -273,4 +273,29 @@ describe GoodData::Project, :constraint => 'slow' do
       expect(user.project).not_to be_nil
     end
   end
+
+  describe 'color palette' do
+    it 'should return empty when project is not set color' do
+      expect(@project.current_color_palette.colors).to eq []
+    end
+
+    it 'should be able to set custom color' do
+      colors = [{ r: 155, g: 255, b: 0 }]
+      @project.create_custom_color_palette(colors)
+      expect(@project.current_color_palette.colors).to eq colors
+    end
+
+    it 'should be able to reset custom color' do
+      colors = [{ r: 155, g: 255, b: 0 }]
+      @project.create_custom_color_palette(colors)
+      @project.reset_color_palette
+      expect(@project.current_color_palette.colors).to eq []
+    end
+
+    it 'should not contains duplicate color' do
+      colors = [{ r: 155, g: 255, b: 0 }, { r: 155, g: 255, b: 0 }]
+      @project.create_custom_color_palette(colors)
+      expect(@project.current_color_palette.colors).to eq [{ r: 155, g: 255, b: 0 }]
+    end
+  end
 end
