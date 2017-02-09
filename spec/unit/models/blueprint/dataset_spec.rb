@@ -7,7 +7,6 @@
 require 'gooddata'
 
 describe GoodData::Model::DatasetBlueprint do
-
   before(:each) do
     @model_view = MultiJson.load(File.read('./spec/data/wire_models/model_view.json'))
     @blueprint = GoodData::Model::FromWire.from_wire(@model_view)
@@ -80,7 +79,7 @@ describe GoodData::Model::DatasetBlueprint do
   describe '#references' do
     it 'should return references on dataset' do
       expect(@dataset.references.count).to eq 2
-      expect(@dataset.references.map {|r| r.data[:dataset]}).to eq [
+      expect(@dataset.references.map { |r| r.data[:dataset] }).to eq [
         'dataset.opp_records',
         'dataset.consolidatedmarketingstatus'
       ]

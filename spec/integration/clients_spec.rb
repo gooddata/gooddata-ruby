@@ -11,7 +11,7 @@ describe GoodData::Client do
   TOKEN = 'mustangs'
 
   before(:all) do
-    @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false )
+    @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false)
     @domain = @client.domain('mustangs')
     @master_project = @client.create_project(title: 'Test project', auth_token: TOKEN)
     @segment_name = "segment-#{SecureRandom.uuid}"
@@ -34,7 +34,7 @@ describe GoodData::Client do
     it 'Returns all clients of a segment' do
       clients = @segment.clients
       expect(clients.to_a).to be_an_instance_of(Array)
-      expect(clients.to_a.count).to eq 1
+      expect(clients.to_a.size).to eq 1
     end
 
     it 'Returns specific tenant when schedule ID passed' do
@@ -47,7 +47,6 @@ describe GoodData::Client do
       @client_project && @client_project.delete
       @segment_client && @segment_client.delete
     end
-
   end
 
   describe '#delete' do
@@ -106,16 +105,16 @@ describe GoodData::Client do
       second_segment = @domain.create_segment(segment_id: second_segment_name, master_project: second_master_project)
       @segment_client.segment = second_segment
 
-      expect {
+      expect do
         @segment_client.save
-      }.to raise_error(RestClient::BadRequest)
+      end.to raise_error(RestClient::BadRequest)
     end
 
     it 'cannot update a client id' do
       @segment_client.client_id = 'different_id'
-      expect {
+      expect do
         @segment_client.save
-      }.to raise_error RestClient::BadRequest
+      end.to raise_error RestClient::BadRequest
     end
 
     after(:all) do

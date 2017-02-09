@@ -9,7 +9,6 @@ require 'gooddata'
 include GoodData::Model
 
 describe GoodData::Model::FromWire do
-
   before(:each) do
     @model_view = MultiJson.load(File.read('./spec/data/wire_models/model_view.json'))
     @blueprint = FromWire.from_wire(@model_view)
@@ -44,7 +43,8 @@ describe GoodData::Model::FromWire do
           title: "MonthSortingNew",
           gd_data_type: "INT",
           gd_type: "GDC.text"
-        }])
+        }
+      ])
     end
 
     it "should be able to parse the anchor" do
@@ -56,7 +56,7 @@ describe GoodData::Model::FromWire do
           id: "attr.opportunityanalysis.techoppanalysis",
           title: "Tech Opp. Analysis",
           folder: "Opportunity Benchmark",
-          description: nil,
+          description: nil
         },
         {
           type: :label,
@@ -66,7 +66,8 @@ describe GoodData::Model::FromWire do
           gd_data_type: "VARCHAR(128)",
           gd_type: "GDC.text",
           default_label: true
-        }])
+        }
+      ])
     end
   end
 
@@ -145,7 +146,7 @@ describe GoodData::Model::FromWire do
     it "should be able to parse the attributes with no labels" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'][7]
       x = FromWire.parse_attributes(model)
-      expect(x.to_set).to eq Set.new()
+      expect(x.to_set).to eq Set.new
     end
   end
 
@@ -153,13 +154,15 @@ describe GoodData::Model::FromWire do
     it "should be able to parse the anchor without label" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'].first
       x = FromWire.parse_anchor(model)
-      expect(x.to_set).to eq Set.new([{
-        type: :anchor,
-        id: "attr.stage_history.factsof",
-        title: "Records of stage_history",
-        description: nil,
-        folder: nil
-      }])
+      expect(x.to_set).to eq Set.new([
+        {
+          type: :anchor,
+          id: "attr.stage_history.factsof",
+          title: "Records of stage_history",
+          description: nil,
+          folder: nil
+        }
+      ])
     end
 
     it "should be able to parse the anchor out of dataset when there are multiple labels" do
@@ -182,7 +185,7 @@ describe GoodData::Model::FromWire do
           gd_type: "GDC.text",
           default_label: true
         },
-        { 
+        {
           type: :label,
           id: "label.opp_records.factsof",
           reference: "attr.opp_records.factsof",
@@ -249,7 +252,7 @@ describe GoodData::Model::FromWire do
   describe '#from_wire' do
     it 'should be able to parse dataset' do
       model_view = MultiJson.load(File.read('./spec/data/wire_models/nu_model.json'))
-      bp = GoodData::Model::FromWire.from_wire(model_view)
+      GoodData::Model::FromWire.from_wire(model_view)
     end
   end
 
@@ -258,7 +261,7 @@ describe GoodData::Model::FromWire do
   end
 
   it "should have a datatype if defined" do
-    dataset = @blueprint.datasets.find {|d| d.id == 'dataset.account' }
+    dataset = @blueprint.datasets.find { |d| d.id == 'dataset.account' }
     dataset.labels_for_attribute('attr.account.accountemployeecount')
 
     dataset = @blueprint.find_dataset('dataset.stage_history')
@@ -292,7 +295,7 @@ describe GoodData::Model::FromWire do
 
   it "should be able to parse description from both attributes and facts" do
     expect(@blueprint.find_dataset('dataset.opportunity').anchor.description).to eq 'This is opportunity attribute description'
-    expect(@blueprint.find_dataset('dataset.stage_history').facts.find {|f| f.id == 'fact.stage_history.stage_velocity'}.description).to eq 'Velocity description'
-    expect(@blueprint.find_dataset('dataset.opp_owner').attributes.find {|f| f.id == 'attr.opp_owner.region'}.description).to eq 'Owner Region description'
+    expect(@blueprint.find_dataset('dataset.stage_history').facts.find { |f| f.id == 'fact.stage_history.stage_velocity' }.description).to eq 'Velocity description'
+    expect(@blueprint.find_dataset('dataset.opp_owner').attributes.find { |f| f.id == 'attr.opp_owner.region' }.description).to eq 'Owner Region description'
   end
 end

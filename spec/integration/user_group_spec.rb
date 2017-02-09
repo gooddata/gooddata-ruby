@@ -11,11 +11,11 @@ describe GoodData::UserGroup do
     @user_group_name = 'My Test Group'
     @user_group_description = 'My Test Description'
 
-    @client = ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
     @project = @client.create_project(title: 'UserGroup Testing Project', token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
-    users = (1..5).to_a.map do |x|
+    users = (1..5).to_a.map do
       {
         user: ProjectHelper.create_random_user(@client),
         role: 'Admin'
@@ -49,7 +49,7 @@ describe GoodData::UserGroup do
       @group.add_member(users)
 
       new_count = @group.members.to_a.length
-      expect(new_count).to eq (old_count + 1)
+      expect(new_count).to eq(old_count + 1)
 
       group_members = @group.members.to_a
 

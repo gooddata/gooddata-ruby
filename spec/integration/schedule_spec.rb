@@ -11,13 +11,6 @@ describe GoodData::Schedule do
   SCHEDULE_ID = ScheduleHelper::SCHEDULE_ID
   SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
-  # before(:all) do
-    # @client = ConnectionHelper.create_default_connection
-    # @project = ProjectHelper.get_default_project(:client => @client)
-    # ScheduleHelper.remove_old_schedules(@project)
-    # ProcessHelper.remove_old_processes(@project)
-  # end
-
   before(:each) do
     @client = ConnectionHelper.create_default_connection
 
@@ -103,9 +96,9 @@ describe GoodData::Schedule do
     it 'Throws exception when no process ID specified' do
       schedule = nil
       begin
-        expect {
+        expect do
           schedule = @project.create_schedule(nil, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
-        }.to raise_error 'Process ID has to be provided'
+        end.to raise_error 'Process ID has to be provided'
       ensure
         schedule && schedule.delete
       end
@@ -114,9 +107,9 @@ describe GoodData::Schedule do
     it 'Throws exception when no executable specified' do
       schedule = nil
       begin
-        expect {
+        expect do
           schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, nil, @test_data)
-        }.to raise_error 'Executable has to be provided'
+        end.to raise_error 'Executable has to be provided'
       ensure
         schedule && schedule.delete
       end
@@ -127,9 +120,9 @@ describe GoodData::Schedule do
       data[:cron] = nil
       schedule = nil
       begin
-        expect {
+        expect do
           schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, nil, ProcessHelper::DEPLOY_NAME, data)
-        }.to raise_error 'Trigger schedule has to be provided'
+        end.to raise_error 'Trigger schedule has to be provided'
       ensure
         schedule && schedule.delete
       end
@@ -140,9 +133,9 @@ describe GoodData::Schedule do
       schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, data)
       schedule.timezone = nil
       begin
-        expect {
+        expect do
           schedule.save
-        }.to raise_error 'A timezone has to be provided'
+        end.to raise_error 'A timezone has to be provided'
       ensure
         schedule && schedule.delete
       end
@@ -154,9 +147,9 @@ describe GoodData::Schedule do
       begin
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, data)
         schedule.type = nil
-        expect {
+        expect do
           schedule.save
-        }.to raise_error 'Schedule type has to be provided'
+        end.to raise_error 'Schedule type has to be provided'
       ensure
         schedule && schedule.delete
       end
@@ -225,9 +218,11 @@ describe GoodData::Schedule do
   describe '#execute' do
     it 'Waits for execution result by default' do
       begin
-        process = @project.deploy_process('./spec/data/gooddata_version_process/gooddata_version.zip',
-                                           type: 'RUBY',
-                                           name: 'Test ETL zipped file GoodData Process')
+        process = @project.deploy_process(
+          './spec/data/gooddata_version_process/gooddata_version.zip',
+          type: 'RUBY',
+          name: 'Test ETL zipped file GoodData Process'
+        )
         schedule = process.create_schedule('0 15 27 7 *', process.executables.first)
         res = schedule.execute
         expect(res).to be_an_instance_of(GoodData::Execution)
@@ -319,7 +314,7 @@ describe GoodData::Schedule do
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         old_params = schedule.hidden_params
 
-        test_parameter = {'test_parameter' => 'just_testing' }
+        test_parameter = { 'test_parameter' => 'just_testing' }
         schedule.set_hidden_parameter(test_parameter.keys.first, test_parameter.values.first)
         expect(schedule.hidden_params).to eq(old_params.merge(test_parameter))
         expect(schedule.dirty).to eq(true)
@@ -335,7 +330,7 @@ describe GoodData::Schedule do
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         old_params = schedule.params
 
-        test_parameter = {'test_parameter' => 'just_testing' }
+        test_parameter = { 'test_parameter' => 'just_testing' }
         schedule.set_parameter(test_parameter.keys.first, test_parameter.values.first)
         expect(schedule.params).to eq(old_params.merge(test_parameter))
         expect(schedule.dirty).to eq(true)
@@ -344,7 +339,6 @@ describe GoodData::Schedule do
       end
     end
   end
-  
 
   describe '#params' do
     it 'Should return execution params as hash' do
@@ -364,7 +358,6 @@ describe GoodData::Schedule do
     it 'Assigns the params and marks the object dirty' do
       begin
         schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
-        old_params = schedule.params
 
         test_params = {
           'some_new_param' => '1-2-3-4'
@@ -602,20 +595,16 @@ describe GoodData::Schedule do
     it 'should preserve the hidden parmeters.' do
       begin
         process = @project.processes(ProcessHelper::PROCESS_ID)
-        schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param.merge({hidden_params: {
-          "a" => {
-            "b" => "c"
-          }
-        }}))
-        
+        schedule = process.create_schedule(
+          @test_cron,
+          ProcessHelper::DEPLOY_NAME,
+          @test_data_with_optional_param.merge(hidden_params: { "a" => { "b" => "c" } })
+        )
+
         schedule.save
-        expect(schedule.hidden_params).to eq({
-          GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil
-        })
+        expect(schedule.hidden_params).to eq(GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil)
         schedule2 = process.schedules.find { |s| s.uri == schedule.uri }
-        expect(schedule2.to_update_payload['schedule']['hiddenParams']).to eq ({
-          GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil
-        })
+        expect(schedule2.to_update_payload['schedule']['hiddenParams']).to eq(GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY => nil)
       ensure
         schedule && schedule.delete
       end

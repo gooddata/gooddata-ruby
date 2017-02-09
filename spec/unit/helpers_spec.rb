@@ -17,14 +17,18 @@ describe GoodData::Helpers do
   describe '#running_on_windows?' do
     it 'works' do
       result = GoodData::Helpers.running_on_windows?
+      # rubocop:disable Style/DoubleNegation
       !!result.should == result
+      # rubocop:enable Style/DoubleNegation
     end
   end
 
   describe '#running_on_mac?' do
     it 'works' do
       result = GoodData::Helpers.running_on_a_mac?
+      # rubocop:disable Style/DoubleNegation
       !!result.should == result
+      # rubocop:enable Style/DoubleNegation
     end
   end
 
@@ -45,7 +49,7 @@ describe GoodData::Helpers do
       params = {
         'param' => 'value',
         'number_param' => 5,
-        'gd_encoded_params' => '{"deep": {"deeper": "deep value"}}',
+        'gd_encoded_params' => '{"deep": {"deeper": "deep value"}}'
       }
       expected_result = {
         'param' => 'value',

@@ -7,19 +7,20 @@
 require 'gooddata/models/schedule'
 
 describe GoodData::Execution do
-
   before(:each) do
-    @data = {"execution"=>
-      {"startTime"=>"2015-02-27T15:44:21.759Z",
-       "endTime"=>"2015-02-27T15:47:49.383Z",
-       "log"=>
-        "/gdc/projects/tk3b994vmdpcb0xjwexc9moen8t5bpiw/dataload/processes/2b031451-b1a2-4039-8e36-0672542a0e60/executions/54f090d5e4b0c9cbdcb0f45b/log",
-       "status"=>"OK",
-       "trigger"=>"MANUAL",
-       "links"=>
-        {"self"=>
-          "/gdc/projects/tk3b994vmdpcb0xjwexc9moen8t5bpiw/schedules/54f08d1de4b0c9cbdcb0f323/executions/54f090d5e4b0c9cbdcb0f45b"},
-       "createdTime"=>"2015-02-27T15:44:21.361Z"}}
+    @data = {
+      "execution" => {
+        "startTime" => "2015-02-27T15:44:21.759Z",
+        "endTime" => "2015-02-27T15:47:49.383Z",
+        "log" => "/gdc/projects/tk3b994vmdpcb0xjwexc9moen8t5bpiw/dataload/processes/2b031451-b1a2-4039-8e36-0672542a0e60/executions/54f090d5e4b0c9cbdcb0f45b/log",
+        "status" => "OK",
+        "trigger" => "MANUAL",
+        "links" => {
+          "self" => "/gdc/projects/tk3b994vmdpcb0xjwexc9moen8t5bpiw/schedules/54f08d1de4b0c9cbdcb0f323/executions/54f090d5e4b0c9cbdcb0f45b"
+        },
+       "createdTime" => "2015-02-27T15:44:21.361Z"
+      }
+    }
     @execution = GoodData::Execution.new(@data)
   end
 

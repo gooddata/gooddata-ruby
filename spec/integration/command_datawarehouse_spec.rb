@@ -16,7 +16,7 @@ describe GoodData::Command::DataWarehouse do
   end
 
   it "Is Possible to create GoodData::Command::DataWarehouse instance" do
-    cmd = GoodData::Command::DataWarehouse.new()
+    cmd = GoodData::Command::DataWarehouse.new
     cmd.should be_a(GoodData::Command::DataWarehouse)
   end
 

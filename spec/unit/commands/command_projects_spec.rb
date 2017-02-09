@@ -16,7 +16,7 @@ describe GoodData::Command::Project do
   end
 
   it "Is Possible to create GoodData::Command::Project instance" do
-    cmd = GoodData::Command::Project.new()
+    cmd = GoodData::Command::Project.new
     cmd.should be_a(GoodData::Command::Project)
   end
 end

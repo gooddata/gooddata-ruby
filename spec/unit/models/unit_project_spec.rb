@@ -8,7 +8,7 @@ require 'gooddata'
 
 describe GoodData::Project do
   before(:all) do
-    @client = ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
     @p = GoodData::Project.create_object(title: 'a', client: @client)
     @domain = @client.domain('dummy_domain')
     @roles = [
@@ -29,7 +29,7 @@ describe GoodData::Project do
                                           })
     ]
     @domain_members = [
-      GoodData::Profile.create_object(login: 'john.doe+in_domain@gooddata.com', uri: '/uri/john_domain'),
+      GoodData::Profile.create_object(login: 'john.doe+in_domain@gooddata.com', uri: '/uri/john_domain')
     ]
     @members = [
       GoodData::Membership.create(login: 'john.doe@goodadta.com', uri: '/uri/john'),
@@ -37,42 +37,42 @@ describe GoodData::Project do
     ]
   end
 
-  describe 'resolve_roles' do    
+  describe 'resolve_roles' do
     it 'Can handle case with user login when user is in the project' do
       # we have to provide users from project to be able to do this by login
       a, b = @p.resolve_roles('john.doe@goodadta.com', 'test_role', project_users: @members, roles: @roles)
       expect(a).to eq "/gdc/account/profile/john.doe@goodadta.com"
       expect(b).to eq ["/roles/1"]
     end
-    
+
     it 'Can handle case with user uri when user is in the project' do
       # we have to provide users from project to be able to do this by login
       a, b = @p.resolve_roles('/uri/john', 'test_role', project_users: @members, roles: @roles)
       expect(a).to eq "/uri/john"
       expect(b).to eq ["/roles/1"]
     end
-    
+
     it 'can handle case with info with uri when user is in the project' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.resolve_roles({uri: '/uri/john', first_name: 'John'}, 'test_role', project_users: @members, roles: @roles)
+      a, b = @p.resolve_roles({ uri: '/uri/john', first_name: 'John' }, 'test_role', project_users: @members, roles: @roles)
       expect(a).to eq "/uri/john"
       expect(b).to eq ["/roles/1"]
     end
-    
+
     it 'can handle case with info with login when he is in the project' do
       # we have to provide users from project to be able to do this by login
       a, b = @p.resolve_roles({ login: 'john.doe@goodadta.com', first_name: 'John' }, 'test_role', project_users: @members, roles: @roles)
       expect(a).to eq "/gdc/account/profile/john.doe@goodadta.com"
       expect(b).to eq ["/roles/1"]
     end
-    
+
     it 'can handle case with member when he is in the project' do
       # we have to provide users from project to be able to do this by login
       a, b = @p.resolve_roles(@members.first, 'test_role_2', project_users: @members, roles: @roles)
       expect(a).to eq "/uri/john"
       expect(b).to eq ["/roles/2"]
     end
-    
+
     it 'can handle case with profile when the user is in the project' do
       # we have to provide users from project to be able to do this by login
       a, b = @p.resolve_roles(@domain_members.first, 'test_role_2', project_users: @members, roles: @roles)
@@ -96,7 +96,7 @@ describe GoodData::Project do
 
     it 'can handle case with info with uri when user is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.resolve_roles({uri: '/uri/john_domain', first_name: 'John'}, 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
+      a, b = @p.resolve_roles({ uri: '/uri/john_domain', first_name: 'John' }, 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
       expect(a).to eq "/uri/john_domain"
       expect(b).to eq ["/roles/1"]
     end
@@ -121,5 +121,5 @@ describe GoodData::Project do
       expect(a).to eq "/uri/john_domain"
       expect(b).to eq ["/roles/2"]
     end
-  end  
+  end
 end

@@ -18,11 +18,7 @@ describe GoodData::Helpers::DataSource do
     allow(@bucket).to receive(:objects) { @objects }
     allow(@objects).to receive(:[]) { StringIO.new('aaa') }
 
-    @ds = GoodData::Helpers::DataSource.new({
-      type: :s3,
-      bucket: 'some_bucket',
-      key: 'some_key'
-    })
+    @ds = GoodData::Helpers::DataSource.new(type: :s3, bucket: 'some_bucket', key: 'some_key')
   end
 
   it 'should be able to handle AWS' do
@@ -34,17 +30,12 @@ describe GoodData::Helpers::DataSource do
 
   it 'should gracefully handle missing aws client' do
     expect do
-      @ds.realize({
-        'aws_client' => nil
-      })
+      @ds.realize('aws_client' => nil)
     end.to raise_exception "AWS client not present. Perhaps S3Middleware is missing in the brick definition?"
   end
 
   it 'should gracefully handle missing data source params - bucket' do
-    ds = GoodData::Helpers::DataSource.new({
-      type: :s3,
-      key: 'some_key'
-    })
+    ds = GoodData::Helpers::DataSource.new(type: :s3, key: 'some_key')
     params = { 'aws_client' => { 's3_client' => @s3_client } }
     expect do
       ds.realize(params)
@@ -52,10 +43,7 @@ describe GoodData::Helpers::DataSource do
   end
 
   it 'should gracefully handle missing data source params - key' do
-    ds = GoodData::Helpers::DataSource.new({
-      type: :s3,
-      bucket: 'some_bucket'
-    })
+    ds = GoodData::Helpers::DataSource.new(type: :s3, bucket: 'some_bucket')
     params = { 'aws_client' => { 's3_client' => @s3_client } }
     expect do
       ds.realize(params)

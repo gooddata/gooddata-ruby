@@ -20,7 +20,6 @@ describe GoodData::Schedule do
   end
 
   before(:each) do
-
     @project_executable = 'graph/graph.grf'
     @test_cron = '0 15 27 7 *'
     @test_data = {
@@ -55,26 +54,23 @@ describe GoodData::Schedule do
     end
 
     it 'Throws exception when no process ID specified' do
-      schedule = nil
-      expect {
-        schedule = GoodData::Schedule.create(nil, @test_cron, @project_executable, @test_data)
-      }.to raise_error 'Process ID has to be provided'
+      expect do
+        GoodData::Schedule.create(nil, @test_cron, @project_executable, @test_data)
+      end.to raise_error 'Process ID has to be provided'
     end
 
     it 'Throws exception when no executable specified' do
-      schedule = nil
-      expect {
-        schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, nil, @test_data)
-      }.to raise_error 'Executable has to be provided'
+      expect do
+        GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, nil, @test_data)
+      end.to raise_error 'Executable has to be provided'
     end
 
     it 'Throws exception when no cron is specified' do
       data = GoodData::Helpers.deep_dup(@test_data)
       data[:cron] = nil
-      schedule = nil
-      expect {
-        schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
-      }.to raise_error 'Trigger schedule has to be provided'
+      expect do
+        GoodData::Schedule.create(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
+      end.to raise_error 'Trigger schedule has to be provided'
     end
   end
 
@@ -169,7 +165,7 @@ describe GoodData::Schedule do
     end
 
     it 'Should return hidden_params as hash. Filled by default if provided.' do
-      schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data.merge(hidden_params: {'a' => 'b'}))
+      schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data.merge(hidden_params: { 'a' => 'b' }))
       res = schedule.hidden_params
       expect(res).not_to be_nil
       expect(res).to be_a_kind_of(Hash)
@@ -199,7 +195,7 @@ describe GoodData::Schedule do
       schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
       old_params = schedule.hidden_params
 
-      test_parameter = {'test_parameter' => 'just_testing' }
+      test_parameter = { 'test_parameter' => 'just_testing' }
       schedule.set_hidden_parameter(test_parameter.keys.first, test_parameter.values.first)
       expect(schedule.hidden_params).to eq(old_params.merge(test_parameter))
       expect(schedule.dirty).to eq(true)
@@ -213,7 +209,7 @@ describe GoodData::Schedule do
       schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
       old_params = schedule.params
 
-      test_parameter = {'test_parameter' => 'just_testing' }
+      test_parameter = { 'test_parameter' => 'just_testing' }
       schedule.set_parameter(test_parameter.keys.first, test_parameter.values.first)
       expect(schedule.params).to eq(old_params.merge(test_parameter))
       expect(schedule.dirty).to eq(true)
@@ -221,7 +217,6 @@ describe GoodData::Schedule do
       expect(schedule.to_update_payload['schedule']['params']).to eq(old_params.merge(test_parameter))
     end
   end
-
 
   describe '#params' do
     it 'Should return execution params as hash' do
@@ -235,7 +230,6 @@ describe GoodData::Schedule do
   describe '#params=' do
     it 'Updates the params and marks the object dirty' do
       schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
-      old_params = schedule.params
 
       test_params = {
         'some_new_param' => '1-2-3-4'
@@ -250,8 +244,7 @@ describe GoodData::Schedule do
 
   describe '#update_params' do
     it 'Updates the params and marks the object dirty' do
-      schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data.merge({ params: { 'a' => 'b' } }))
-      old_params = schedule.params
+      schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data.merge(params: { 'a' => 'b' }))
 
       test_params = {
         'some_new_param' => '1-2-3-4',
@@ -268,23 +261,15 @@ describe GoodData::Schedule do
 
   describe '#update_hidden_params' do
     it 'Updates the hidden params and marks the object dirty' do
-      schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data.merge({ params: { 'a' => 'b' } }))
-      old_params = schedule.hidden_params
+      schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data.merge(params: { 'a' => 'b' }))
 
-      schedule.update_hidden_params({
-        'some_new_param' => '1-2-3-4',
-        'a' => 'c',
-        'x' => ''
-      })
+      schedule.update_hidden_params('some_new_param' => '1-2-3-4', 'a' => 'c', 'x' => '')
       expect(schedule.hidden_params.keys.to_set).to eq(%w(x a some_new_param).to_set)
       expect(schedule.hidden_params['some_new_param']).to eq '1-2-3-4'
       expect(schedule.hidden_params['a']).to eq 'c'
       expect(schedule.dirty).to eq(true)
 
-      schedule.update_hidden_params({
-        'some_new_param' => '1-2-3-4',
-        'a' => 'd'
-      })
+      schedule.update_hidden_params('some_new_param' => '1-2-3-4', 'a' => 'd')
       expect(schedule.hidden_params.keys.to_set).to eq(%w(x a some_new_param).to_set)
       expect(schedule.hidden_params['some_new_param']).to eq '1-2-3-4'
       expect(schedule.hidden_params['a']).to eq 'd'
@@ -316,14 +301,13 @@ describe GoodData::Schedule do
     end
   end
 
-
   describe '#state' do
     it 'Should return schedule state as string' do
       schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
       res = schedule.state
       expect(res).not_to be_nil
       expect(res).to eq 'ENABLED'
-      expect(schedule.to_hash[:state]).to eq  'ENABLED'
+      expect(schedule.to_hash[:state]).to eq 'ENABLED'
       expect(schedule.to_update_payload['schedule']['state']).to eq 'ENABLED'
     end
 
@@ -356,7 +340,7 @@ describe GoodData::Schedule do
       expect(schedule.dirty).to eq(true)
     end
   end
- 
+
   describe '#reschedule' do
     it 'Should return reschedule nil if not provided' do
       schedule = GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, @project_executable, @test_data)
