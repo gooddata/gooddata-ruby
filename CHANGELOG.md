@@ -8,6 +8,7 @@
 - Added Dockefile for easy build of dockerized gooddata-ruby
 - Handle export/import async task errors (TMA-231)
 - Support for custom color palette
+- Support for trasfering attribute drill paths
 
 ## 0.6.49
 - Implement Helpers::GD_MAX_RETRY to allow max retries override

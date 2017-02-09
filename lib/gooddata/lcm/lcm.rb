@@ -239,6 +239,50 @@ module GoodData
           GoodData::Dashboard.all(project: workspace, client: workspace.client).map(&:uri)
         end
       end
+
+      def transfer_attribute_drillpaths(source_project, targets)
+        semaphore = Mutex.new
+
+        synchronized_puts = proc do |*args|
+          semaphore.synchronize { puts args }
+        end
+
+        # Convert to array
+        targets = [targets] unless targets.is_a?(Array)
+
+        # Get attributes from source project
+        attributes = source_project.attributes
+
+        # Generate transfer table
+        drill_paths = attributes.map do |attribute|
+          [attribute.meta['identifier'], attribute.content['drillDownStepAttributeDF']]
+        end
+        transfer = Hash[*drill_paths.flatten].compact
+
+        # Transfer to target projects
+        targets.peach do |target|
+          transfer.peach do |identifier, drill_path|
+            uri = GoodData::MdObject.identifier_to_uri({ project: target, client: target.client }, identifier)
+            next unless uri
+
+            obj = GoodData::MdObject[uri, { project: target, client: target.client }]
+
+            if obj
+              if !obj.content['drillDownStepAttributeDF'] || obj.content['drillDownStepAttributeDF'] != drill_path
+                synchronized_puts.call "Updating drill path of #{identifier} -> #{drill_path} in '#{target.title}'"
+                obj.content['drillDownStepAttributeDF'] = drill_path
+                obj.save
+              end
+            else
+              synchronized_puts.call "Unable to find #{identifier} in '#{target.title}'"
+            end
+
+            nil
+          end
+
+          nil
+        end
+      end
     end
   end
 end
