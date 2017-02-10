@@ -62,7 +62,7 @@ module GoodData
       # Returns an array of all projects accessible by
       # current user
       def all(opts = { client: GoodData.connection })
-        c = client(opts)
+        c = GoodData.get_client(opts)
         c.user.projects
       end
 
@@ -84,9 +84,7 @@ module GoodData
 
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}
 
-          c = client(opts)
-          fail ArgumentError, 'No :client specified' if c.nil?
-
+          c = GoodData.get_client(opts)
           response = c.get(PROJECT_PATH % id)
           c.factory.create(Project, response)
         end
@@ -104,7 +102,7 @@ module GoodData
       end
 
       def create_object(data = {})
-        c = client(data)
+        c = GoodData.get_client(data)
         new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['project']['meta']['title'] = data[:title]
           d['project']['meta']['summary'] = data[:summary] if data[:summary]
@@ -128,9 +126,6 @@ module GoodData
       #
       def create(opts = { client: GoodData.connection }, &block)
         GoodData.logger.info "Creating project #{opts[:title]}"
-
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' if c.nil?
 
         auth_token = opts[:auth_token] || opts[:token]
         if auth_token.nil? || auth_token.empty?
@@ -160,15 +155,16 @@ module GoodData
         project
       end
 
-      def find(_opts = {}, client = GoodData::Rest::Client.client)
-        user = client.user
+      def find(opts = { client: GoodData.connection })
+        c = GoodData.get_client(opts)
+        user = c.user
         user.projects['projects'].map do |project|
-          client.create(GoodData::Project, project)
+          c.create(GoodData::Project, project)
         end
       end
 
       def create_from_blueprint(blueprint, options = {})
-        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, client: GoodData.connection))
+        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, client: client))
       end
 
       # Takes one CSV line and creates hash from data extracted
