@@ -1347,7 +1347,14 @@ module GoodData
           tmp = client.get("/gdc/projects/#{pid}/users", params: { offset: offset, limit: limit })
           tmp['users'].each do |user_data|
             user = client.create(GoodData::Membership, user_data, project: self)
-            y << user if opts[:all] || user && user.enabled?
+
+            if opts[:all]
+              y << user
+            elsif opts[:disabled]
+              y << user if user && user.disabled?
+            else
+              y << user if user && user.enabled?
+            end
           end
           break if tmp['users'].count < limit
           offset += limit
@@ -1448,8 +1455,17 @@ module GoodData
 
       # Remove old users
       to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
-      GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
+      GoodData.logger.warn("Disabling #{to_remove.count} users from project (#{pid})")
       results.concat(disable_users(to_remove, roles: role_list, project_users: whitelisted_users))
+
+      # Remove old users completely
+      if options[:remove_users_from_project]
+        to_remove = (to_remove + users(disabled: true).to_a).map(&:to_hash).uniq do |user|
+          user[:uri]
+        end
+        GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
+        results.concat(remove_users(to_remove))
+      end
 
       # reassign to groups
       mappings = new_users.map(&:to_hash).flat_map do |user|
@@ -1487,6 +1503,21 @@ module GoodData
       payloads.each_slice(100).mapcat do |payload|
         result = client.post(url, 'users' => payload)
         result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, user: x } } }
+      end
+    end
+
+    def remove_users(list)
+      list = list.map(&:to_hash)
+
+      list.pmapcat do |u|
+        u_id = GoodData::Helpers.last_uri_part(u[:uri])
+        url = "#{uri}/users/#{u_id}"
+        begin
+          client.delete(url)
+          [{ type: :successful, operation: :user_deleted_from_project, user: u }]
+        rescue => e
+          [{ type: :failed, message: e.message }]
+        end
       end
     end
 
