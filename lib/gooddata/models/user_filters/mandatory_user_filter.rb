@@ -37,7 +37,7 @@ module GoodData
         mufs = filters.map do |filter_data|
           payload = {
             'expression' => filter_data['userFilter']['content']['expression'],
-            'related' => user_lookup[filter_data['userFilter']['meta']['uri']],
+            'related' => "/gdc/account/profile/#{GoodData::Profile[user_lookup[filter_data['userFilter']['meta']['uri']]].login}",
             'level' => :user,
             'type'  => :filter,
             'uri'   => filter_data['userFilter']['meta']['uri']

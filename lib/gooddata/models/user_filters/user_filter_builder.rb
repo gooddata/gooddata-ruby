@@ -315,10 +315,10 @@ module GoodData
       project_vals_lookup = vals.group_by(&:related_uri)
       user_vals_lookup = user_filters.group_by(&:related_uri)
 
-      a = vals.map { |x| [x.related_uri, x] }
-      b = user_filters.map { |x| [x.related_uri, x] }
+      a = vals.map(&:related_uri)
+      b = user_filters.map(&:related_uri)
 
-      users_to_try = a.map(&:first).concat(b.map(&:first)).uniq
+      users_to_try = (a + b).uniq
       results = users_to_try.map do |user|
         resolve_user_filter(user_vals_lookup[user], project_vals_lookup[user])
       end

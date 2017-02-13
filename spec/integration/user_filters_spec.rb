@@ -64,6 +64,11 @@ describe "User filters implementation", :constraint => 'slow' do
     expect(r.include_column?(['tomas@gooddata.com', 7])).to be_truthy
     expect(r.include_column?(['jirka@gooddata.com', 5])).to be_truthy
     expect(r.include_column?(['petr@gooddata.com', 3])).to be_falsy
+
+    # should not re-create the same MUF for the same user
+    result = @project.add_data_permissions(filters, dry_run: true)
+    expect(result[:created].count).to eq 0
+    expect(result[:deleted].count).to eq 0
   end
 
   it "should return errors when asked to set a user not in project. Some filters are set up though." do
