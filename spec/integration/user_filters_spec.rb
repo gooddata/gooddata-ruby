@@ -243,7 +243,7 @@ describe "User filters implementation", :constraint => 'slow' do
     ]
     results = @project.add_data_permissions(filters)
     expect(results[:results].all? { |r| r[:status] == :successful }).to be_truthy
-    expect(results[:results].select { |r| r[:type] == :create }.count).to eq 1
+    expect(results[:results].select { |r| r[:type] == :create }.count).to eq 0
     expect(@project.data_permissions.count).to eq 1
   end
 

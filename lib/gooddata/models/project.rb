@@ -1608,6 +1608,14 @@ module GoodData
       @add
     end
 
+    def get_profile_from_login(login)
+      user = users.find do |u|
+        u.login == login
+      end
+
+      user.profile_url if user
+    end
+
     def transfer_etl(target)
       GoodData::Project.transfer_etl(client, self, target)
     end
