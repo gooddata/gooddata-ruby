@@ -40,7 +40,7 @@ module GoodData
 
           results = []
 
-          client = params.gdc_gd_client
+          client = params.development_client
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
