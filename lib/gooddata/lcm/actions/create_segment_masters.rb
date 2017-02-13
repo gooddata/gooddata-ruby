@@ -40,7 +40,8 @@ module GoodData
 
           results = []
 
-          client = params.development_client
+          client = params.gdc_gd_client
+          development_client = params.development_client
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
@@ -65,7 +66,7 @@ module GoodData
 
             # Get project instance based on PID. Fail if invalid one was specified.
             # TODO: Use development client for getting project
-            development_project = client.projects(development_pid) || fail("Invalid Development PID specified - #{development_pid}")
+            development_project = development_client.projects(development_pid) || fail("Invalid Development PID specified - #{development_pid}")
             segment = domain_segments.find do |ds|
               ds.segment_id == segment_id
             end
