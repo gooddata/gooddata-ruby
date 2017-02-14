@@ -53,7 +53,6 @@ module GoodData
         CreateSegmentMasters,
         EnsureUsers,
         SynchronizeLdm,
-        SynchronizeLabelTypes,
         SynchronizeMeta,
         SynchronizeProcesses,
         SynchronizeSchedules,
@@ -143,7 +142,7 @@ module GoodData
             t.add_separator if index < rows.length - 1
           end
         end
-        puts table
+        puts "\n#{table}"
       end
 
       def print_action_result(action, messages)
@@ -172,7 +171,7 @@ module GoodData
           end
         end
 
-        puts table
+        puts "\n#{table}"
       end
 
       def print_actions_result(actions, results)
