@@ -16,8 +16,7 @@ module GoodData
         param :ads_client, instance_of(Type::AdsClientType), required: true
       end
 
-      DEFAULT_QUERY_INSERT = 'INSERT INTO lcm_release (segment_id, master_project_id, version) VALUES (\'#{segment_id}\', \'#{master_project_id}\', #{version});'
-      DEFAULT_QUERY_UPDATE = 'UPDATE lcm_release SET master_project_id=\'#{master_project_id}\', version=#{version} WHERE segment_id=\'#{segment_id}\';'
+      DEFAULT_TABLE_NAME = 'LCM_RELEASE'
 
       class << self
         def call(params)
@@ -33,10 +32,11 @@ module GoodData
             segment_id = segment_in.segment_id
 
             placeholders = {
-              '#{segment_id}' => segment_in[:segment_id],
-              '#{master_project_id}' => segment_in[:master_pid],
-              '#{version}' => segment_in[:version],
-              '#{timestamp}' => segment_in[:timestamp]
+              segment_id: segment_in[:segment_id],
+              master_project_id: segment_in[:master_pid],
+              version: segment_in[:version],
+              timestamp: segment_in[:timestamp],
+              table_name: params.release_table_name || DEFAULT_TABLE_NAME
             }
 
             update_release_table(params, placeholders)
@@ -51,15 +51,17 @@ module GoodData
         end
 
         def update_release_table(params, placeholders)
-          query = if placeholders['#{version}'] > 1
-                    (params.query && params.query.update) || DEFAULT_QUERY_UPDATE
-                  else
-                    (params.query && params.query.insert) || DEFAULT_QUERY_INSERT
-                  end
+          query = if placeholders[:version] > 1
+                    path = File.expand_path('../../data/update_lcm_release.sql.erb', __FILE__)
+                    default_query = GoodData::Helpers::ErbHelper.template_file(path, placeholders)
 
-          placeholders.each do |k, v|
-            query = query.gsub(k, v.to_s)
-          end
+                    (params.query && params.query.update) || default_query
+                  else
+                    path = File.expand_path('../../data/insert_into_lcm_release.sql.erb', __FILE__)
+                    default_query = GoodData::Helpers::ErbHelper.template_file(path, placeholders)
+
+                    (params.query && params.query.insert) || default_query
+                  end
 
           params.ads_client.execute(query)
         end

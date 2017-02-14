@@ -58,7 +58,7 @@ module GoodData
                 project: project.pid
               }
 
-              if project.is_deleted?
+              if project.deleted?
                 segment_client.delete
                 res[:status] = 'purged'
               else

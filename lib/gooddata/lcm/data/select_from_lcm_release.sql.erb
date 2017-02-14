@@ -1,0 +1,8 @@
+SELECT
+  segment_id,
+  master_project_id,
+  version
+FROM "<%= table_name || 'LCM_RELEASE' %>"
+WHERE
+  segment_id = '<%= segment_id %>'
+;

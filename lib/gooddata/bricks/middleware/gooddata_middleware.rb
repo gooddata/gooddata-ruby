@@ -58,12 +58,37 @@ module GoodData
         end
 
         returning_value = @app.call(params.merge(new_params))
+
+        # Try to disconnect client
         begin
           client.disconnect
         rescue
-          puts 'Tried to disconnect. Was unsuccessful. Proceeding anyway.'
+          puts 'Tried to disconnect client. Was unsuccessful. Proceeding anyway.'
         end
+
+        # Try to disconnect development_client
+        begin
+          development_client.disconnect if development_client != client
+        rescue
+          puts 'Tried to disconnect development_client. Was unsuccessful. Proceeding anyway.'
+        end
+
         returning_value
+      end
+
+      class << self
+        def connect(protocol, hostname, verify_ssl, username, password, sst_token) # rubocop:disable Metrics/ParameterLists
+          server = "#{protocol}://#{hostname}" if protocol && hostname
+
+          if username.nil? || password.nil?
+            puts "Connecting with SST to server #{server}"
+            raise 'SST (SuperSecureToken) not present in params' if sst_token.nil?
+            GoodData.connect(sst_token: sst_token, server: server, verify_ssl: verify_ssl)
+          else
+            puts "Connecting as #{username} to server #{server}"
+            GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
+          end
+        end
       end
     end
   end

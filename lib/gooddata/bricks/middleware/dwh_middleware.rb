@@ -6,10 +6,7 @@
 
 require_relative 'base_middleware'
 
-if RUBY_PLATFORM == 'java'
-  require 'gooddata_datawarehouse'
-end
-
+require 'gooddata_datawarehouse' if RUBY_PLATFORM == 'java'
 
 module GoodData
   module Bricks

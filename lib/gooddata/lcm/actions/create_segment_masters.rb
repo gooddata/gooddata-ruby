@@ -31,7 +31,7 @@ module GoodData
         param :tokens, instance_of(Type::TokensType), required: true
       end
 
-      DEFAULT_QUERY_SELECT = 'SELECT segment_id, master_project_id, version from lcm_release WHERE segment_id=\'#{segment_id}\';'
+      DEFAULT_TABLE_NAME = 'LCM_RELEASE'
 
       class << self
         def call(params)
@@ -104,7 +104,7 @@ module GoodData
             end
 
             master_project = segment.master_project
-            if master_project.is_deleted?
+            if master_project.deleted?
               segment.master_project = project
               segment.save
               segment_in[:is_new] = true
@@ -140,9 +140,15 @@ module GoodData
         end
 
         def get_project_version(params, segment_id)
-          query = (params.query && params.query.select) || DEFAULT_QUERY_SELECT
+          replacements = {
+            table_name: params.release_table_name || DEFAULT_TABLE_NAME,
+            segment_id: segment_id
+          }
 
-          res = params.ads_client.execute_select(query.gsub('#{segment_id}', segment_id))
+          path = File.expand_path('../../data/select_from_lcm_release.sql.erb', __FILE__)
+          query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
+
+          res = params.ads_client.execute_select(query)
 
           return 0 if res.empty?
 

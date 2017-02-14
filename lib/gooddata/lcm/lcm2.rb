@@ -18,9 +18,13 @@ module GoodData
         key = name.to_s.downcase.to_sym
 
         if key?(key)
-          self[name.to_s.downcase.to_sym]
+          self[key]
         else
-          super
+          begin
+            super
+          rescue
+            nil
+          end
         end
       end
 

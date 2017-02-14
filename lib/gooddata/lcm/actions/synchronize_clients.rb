@@ -28,7 +28,7 @@ module GoodData
         # :details
       ]
 
-      DEFAULT_QUERY_SELECT = 'SELECT segment_id, master_project_id, version from lcm_release WHERE segment_id=\'#{segment_id}\';'
+      DEFAULT_TABLE_NAME = 'LCM_RELEASE'
 
       class << self
         def call(params)
@@ -48,7 +48,15 @@ module GoodData
           end
 
           results = segments.map do |segment|
-            res = params.ads_client.execute_select(DEFAULT_QUERY_SELECT.gsub('#{segment_id}', segment.segment_id))
+            replacements = {
+              table_name: params.release_table_name || DEFAULT_TABLE_NAME,
+              segment_id: segment.segment_id
+            }
+
+            path = File.expand_path('../../data/select_from_lcm_release.sql.erb', __FILE__)
+            query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
+
+            res = params.ads_client.execute_select(query)
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
             master = client.projects(res.first[:master_project_id])
