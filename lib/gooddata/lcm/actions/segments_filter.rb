@@ -29,9 +29,7 @@ module GoodData
 
           filtered_segments = params.segments
           if params.segments_filter
-            segments_filter = params.segments_filter.map do |segment|
-              segment.downcase
-            end
+            segments_filter = params.segments_filter.map(&:downcase)
 
             filtered_segments = params.segments.select do |segment|
               segments_filter.include?(segment.segment_id.downcase)

@@ -13,7 +13,7 @@ module GoodData
         CATEGORY = :scalar
         INTERNAL_TYPE = Integer
 
-        def check(value)
+        def check(_value)
           true
         end
       end

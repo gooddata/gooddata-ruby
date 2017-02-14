@@ -27,7 +27,7 @@ module GoodData
           client = params.gdc_gd_client
 
           domain_name = params.organization || params.domain
-          domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
+          client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
           params.segments.map do |segment_in|
             segment_id = segment_in.segment_id
@@ -36,10 +36,10 @@ module GoodData
               '#{segment_id}' => segment_in[:segment_id],
               '#{master_project_id}' => segment_in[:master_pid],
               '#{version}' => segment_in[:version],
-              '#{timestamp}' => segment_in[:timestamp],
+              '#{timestamp}' => segment_in[:timestamp]
             }
 
-            self.update_release_table(params, placeholders)
+            update_release_table(params, placeholders)
 
             {
               segment: segment_id,

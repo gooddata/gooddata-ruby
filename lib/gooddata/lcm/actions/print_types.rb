@@ -23,17 +23,17 @@ module GoodData
 
           GoodData::LCM2::Dsl::Dsl::TYPES.each_pair do |k, v|
             vals = []
-            v.each_pair do |name, val|
+            v.each_pair do |_name, val|
               vals << val[:type]
             end
 
             required = []
-            v.each_pair do |name, val|
+            v.each_pair do |_name, val|
               required << val[:opts][:required]
             end
 
             defaults = []
-            v.each_pair do |name, val|
+            v.each_pair do |_name, val|
               defaults << val[:opts][:default]
             end
 

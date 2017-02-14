@@ -17,7 +17,7 @@ module GoodData
         end
 
         def check(values)
-          return false unless values.kind_of?(Array)
+          return false unless values.is_a?(Array)
 
           values.each do |value|
             return false unless @type.check(value)
@@ -27,7 +27,7 @@ module GoodData
         end
 
         def to_s
-          "#{self.class.name.split('::').last}<#{@type.to_s}>"
+          "#{self.class.name.split('::').last}<#{@type}>"
         end
       end
     end

@@ -53,20 +53,20 @@ module GoodData
           # Output param with info about which projects should be synchronized
           synchronize_projects = []
 
-          projects = segments.map do |segment_in|
+          segments.map do |segment_in| # rubocop:disable Metrics/BlockLength
             segment_id = segment_in.segment_id
             development_pid = segment_in.development_pid
             driver = segment_in.driver.downcase
             token = params.tokens[driver.to_sym] || fail("Token for driver '#{driver}' was not specified")
 
             # Create master project Postgres
-            version = self.get_project_version(params, segment_id) + 1
+            version = get_project_version(params, segment_id) + 1
 
             master_name = segment_in.master_name.gsub('#{version}', version.to_s)
 
             # Get project instance based on PID. Fail if invalid one was specified.
             # TODO: Use development client for getting project
-            development_project = development_client.projects(development_pid) || fail("Invalid Development PID specified - #{development_pid}")
+            development_client.projects(development_pid) || fail("Invalid Development PID specified - #{development_pid}")
             segment = domain_segments.find do |ds|
               ds.segment_id == segment_id
             end
@@ -85,7 +85,7 @@ module GoodData
               synchronize_info = {
                 segment: segment_id,
                 from: development_pid,
-                to: [],
+                to: []
               }
               synchronize_projects << synchronize_info
             end
@@ -94,13 +94,13 @@ module GoodData
             synchronize_info[:to] << project.pid
 
             # Does segment exists? If not, create new one and set initial master
-            unless segment
+            if segment
+              segment_in[:is_new] = false
+            else
               params.gdc_logger.info "Creating segment #{segment_id}, master #{project.pid}"
               segment = domain.create_segment(segment_id: segment_id, master_project: project)
               segment.synchronize_clients
               segment_in[:is_new] = true
-            else
-              segment_in[:is_new] = false
             end
 
             master_project = segment.master_project
@@ -130,32 +130,6 @@ module GoodData
             project
           end
 
-          # projects = segments.map do |segment_id, props|
-          #   master_project_pid = params['master_project'] || params['development_project'] || fail('Master project PID needs to be passed into a brick as "development_project"')
-          #   project_master = development_client.projects(master_project_pid)
-          #
-          #   # Create master project Postgres
-          #   version = self.get_project_version(params, segment_id) + 1
-          #
-          #   name = props['name'].gsub('#{version}', version.to_s)
-          #   driver = props['driver'].downcase == 'vertica' ? 'vertica' : 'Pg'
-          #   token = params['tokens'][driver] || fail("Token for creating #{driver} project needs to be passed into a brick as tokens['#{driver}'] in gd_encoded_hidden_params")
-          #
-          #   project = client.create_project(title: name, auth_token: token, driver: driver)
-          #   puts JSON.pretty_generate(project.json)
-          #
-          #   segment = domain_segments.find { |ds| ds.segment_id == segment_id }
-          #   if segment
-          #     puts "Updating segment #{segment_id}, master #{project.pid}"
-          #     segment.master_project = project
-          #     segment.save
-          #   else
-          #     puts "Creating segment #{segment_id}, master #{project.pid}"
-          #     segment = domain.create_segment(segment_id: segment_id, master_project: project)
-          #     segment.synchronize_clients
-          #   end
-          # end
-
           # Return results
           {
             results: results,
@@ -170,11 +144,9 @@ module GoodData
 
           res = params.ads_client.execute_select(query.gsub('#{segment_id}', segment_id))
 
-          if res.length < 1
-            return 0
-          end
+          return 0 if res.empty?
 
-          return res[0][:version].to_i
+          res[0][:version].to_i
         end
       end
     end

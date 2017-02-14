@@ -14,7 +14,7 @@ module GoodData
         INTERNAL_TYPE = String
 
         def check(value)
-          value.kind_of?(String)
+          value.is_a?(String)
         end
       end
     end

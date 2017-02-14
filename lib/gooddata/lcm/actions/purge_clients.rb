@@ -51,15 +51,15 @@ module GoodData
           end
 
           results = segments.map do |segment|
-            segment.clients.map do |client|
-              project = client.project
+            segment.clients.map do |segment_client|
+              project = segment_client.project
               res = {
-                client_id: client.client_id,
+                client_id: segment_client.client_id,
                 project: project.pid
               }
 
               if project.is_deleted?
-                client.delete
+                segment_client.delete
                 res[:status] = 'purged'
               else
                 res[:status] = 'ok - not purged'

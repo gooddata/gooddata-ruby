@@ -65,21 +65,6 @@ module GoodData
         end
         returning_value
       end
-
-      class << self
-        def connect(protocol, hostname, verify_ssl, username, password, sst_token)
-          server = "#{protocol}://#{hostname}" if protocol && hostname
-
-          if username.nil? || password.nil?
-            puts "Connecting with SST to server #{server}"
-            raise 'SST (SuperSecureToken) not present in params' if sst_token.nil?
-            GoodData.connect(sst_token: sst_token, server: server, verify_ssl: verify_ssl)
-          else
-            puts "Connecting as #{username} to server #{server}"
-            GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
-          end
-        end
-      end
     end
   end
 end

@@ -40,6 +40,9 @@ module GoodData
 
           sql_result = params.ads_client.execute(query)
 
+          # TODO: Format
+          GoodData.logger.info(JSON.pretty_generate(sql_result))
+
           [
             {
               table_name: replacements[:table_name],

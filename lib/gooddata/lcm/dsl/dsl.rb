@@ -23,7 +23,7 @@ module GoodData
         PARAMS = {}
         TYPES = {}
 
-        def process(klass, type, caption, &block)
+        def process(_klass, type, _caption, &block)
           dsl = type.new
           dsl.instance_eval(&block)
 
@@ -38,11 +38,11 @@ module GoodData
         end
 
         def define_params(klass, &block)
-          PARAMS[klass] = self.process(klass, GoodData::LCM2::Dsl::ParamsDsl, 'PARAMS', &block)
+          PARAMS[klass] = process(klass, GoodData::LCM2::Dsl::ParamsDsl, 'PARAMS', &block)
         end
 
         def define_type(klass, &block)
-          TYPES[klass] = self.process(klass, GoodData::LCM2::Dsl::TypeDsl, 'TYPE', &block)
+          TYPES[klass] = process(klass, GoodData::LCM2::Dsl::TypeDsl, 'TYPE', &block)
         end
       end
     end

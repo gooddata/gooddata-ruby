@@ -212,7 +212,7 @@ module GoodData
       # +source_workspace+:: workspace with the tagged dashboards that are going to be synchronized to the target workspaces
       # +target_workspaces+:: array of target workspaces where the tagged dashboards are going be synchronized to
       def transfer_meta(source_workspace, target_workspaces, tag = nil)
-        objects = self.get_dashboards(source_workspace, tag)
+        objects = get_dashboards(source_workspace, tag)
         begin
           token = source_workspace.objects_export(objects)
           GoodData.logger.info "Export token: '#{token}'"
@@ -233,10 +233,10 @@ module GoodData
       # +workspace+:: workspace with the tagged dashboards
       # Returns enumeration of the tagged dashboards URIs
       def get_dashboards(workspace, tag = nil)
-        unless tag
-          GoodData::Dashboard.all(project: workspace, client: workspace.client).map { |d| d.uri }
+        if tag
+          GoodData::Dashboard.find_by_tag(tag, project: workspace, client: workspace.client).map(&:uri)
         else
-          GoodData::Dashboard.find_by_tag(tag, project: workspace, client: workspace.client).map { |d| d.uri }
+          GoodData::Dashboard.all(project: workspace, client: workspace.client).map(&:uri)
         end
       end
     end

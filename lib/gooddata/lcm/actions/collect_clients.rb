@@ -27,11 +27,9 @@ module GoodData
           # Check if all required parameters were passed
           BaseAction.check_params(PARAMS, params)
 
-          segment_names = params.segments.map do |segment|
-            segment.segment_id
-          end
+          segment_names = params.segments.map(&:segment_id)
 
-          clients = self.collect_clients(params, segment_names)
+          clients = collect_clients(params, segment_names)
 
           results = clients.map do |client|
             {
@@ -71,7 +69,7 @@ module GoodData
             end
           end
 
-          fail 'Empty CSV provided, aborting...' if clients.length < 1
+          fail 'Empty CSV provided, aborting...' if clients.empty?
           clients
         end
       end

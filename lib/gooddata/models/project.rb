@@ -298,7 +298,7 @@ module GoodData
         end
 
         results = []
-        loop do
+        loop do # rubocop:disable Metrics/BlockLength
           break if stack.empty?
           state, changed_schedule = stack.shift
           if state == :added
@@ -621,10 +621,6 @@ module GoodData
       self
     end
 
-    def is_deleted?
-      self.state == :deleted
-    end
-
     def compute_report(spec = {})
       GoodData::ReportDefinition.execute(spec.merge(client: client, project: self))
     end
@@ -844,7 +840,7 @@ module GoodData
       content['environment']
     end
 
-    def is_public?
+    def public?
       content['isPublic']
     end
 

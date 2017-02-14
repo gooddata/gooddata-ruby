@@ -87,7 +87,7 @@ module GoodData
         RestClient::RequestTimeout,
         RestClient::MethodNotAllowed,
         SystemCallError,
-        Timeout::Error,
+        Timeout::Error
       ]
 
       RETRIES_ON_TOO_MANY_REQUESTS_ERROR = 12

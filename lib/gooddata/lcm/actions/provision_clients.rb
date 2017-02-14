@@ -55,7 +55,7 @@ module GoodData
               Hash[m.each_pair.to_a].merge(type: :provision_result)
             end
 
-            if tmp.length > 0
+            unless tmp.empty?
               synchronize_projects << {
                 from: segment.master_project.pid,
                 to: tmp.map do |entry|

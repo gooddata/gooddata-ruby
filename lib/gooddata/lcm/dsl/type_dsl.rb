@@ -14,7 +14,7 @@ module GoodData
         def initialize
           @params = {}
 
-          self.new_param
+          new_param
         end
 
         attr_reader :params
@@ -27,12 +27,12 @@ module GoodData
           type.new
         end
 
-        def one_of(type)
+        def one_of(_type)
           Type::EnumType.new
         end
 
         def new_param
-          @param = Type::Param.new()
+          @param = Type::Param.new
         end
 
         def description(desc)
@@ -53,7 +53,7 @@ module GoodData
           }
 
           # Create new instance of param
-          self.new_param
+          new_param
         end
       end
     end

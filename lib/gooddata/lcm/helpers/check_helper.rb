@@ -20,12 +20,12 @@ module GoodData
                 fail("Mandatory parameter '#{param_name}' of type '#{type}' is not specified")
               end
             else
-              if type.class.const_get(:CATEGORY) == :complex && !value.kind_of?(Hash)
+              if type.class.const_get(:CATEGORY) == :complex && !value.is_a?(Hash)
                 puts JSON.pretty_generate(params)
                 fail "Expected parameter '#{param_name}' to be kind of '#{type}', got '#{value.class.name}'"
               end
 
-              if !type.check(value)
+              unless type.check(value)
                 fail "Parameter '#{param_name}' has invalid type, expected: #{type}"
               end
             end

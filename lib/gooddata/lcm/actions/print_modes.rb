@@ -22,38 +22,38 @@ module GoodData
           results = []
           GoodData::LCM2::MODES.keys.each_with_index do |mode, index|
             actions = GoodData::LCM2::MODES[mode]
-            action_names = actions.map do |k, action|
+            action_names = actions.map do |k, _action|
               params_length = k.const_get(:PARAMS).keys.length
               k.short_name + ("\n" * (params_length > 1 ? params_length - 1 : 0))
             end
 
             params = actions.map do |action|
-              action.const_get(:PARAMS).map do |k, param|
-                res = param[:name]
+              action.const_get(:PARAMS).map do |_k, param|
+                param[:name]
               end
             end
 
             types = actions.map do |action|
-              action.const_get(:PARAMS).map do |k, param|
+              action.const_get(:PARAMS).map do |_k, param|
                 param[:type]
                 # param[:type].class.short_name
               end
             end
 
             required = actions.map do |action|
-              action.const_get(:PARAMS).map do |k, param|
+              action.const_get(:PARAMS).map do |_k, param|
                 param[:opts][:required]
               end
             end
 
             defaults = actions.map do |action|
-              action.const_get(:PARAMS).map do |k, param|
+              action.const_get(:PARAMS).map do |_k, param|
                 param[:opts][:default]
               end
             end
 
             results << {
-              '#': index,
+              '#' => index,
               mode: mode,
               actions: action_names.join("\n"),
               params: params.join("\n"),

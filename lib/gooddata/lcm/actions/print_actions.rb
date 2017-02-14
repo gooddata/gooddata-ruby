@@ -30,15 +30,15 @@ module GoodData
               param
             end
 
-            types = action_params.map do |k, param|
+            types = action_params.map do |_k, param|
               param[:type].class.short_name
             end
 
-            required = action_params.map do |k, param|
+            required = action_params.map do |_k, param|
               param[:opts][:required]
             end
 
-            defaults = action_params.map do |k, param|
+            defaults = action_params.map do |_k, param|
               param[:opts][:default]
             end
 

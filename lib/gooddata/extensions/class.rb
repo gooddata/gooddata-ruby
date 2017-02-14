@@ -1,6 +1,6 @@
 class Class
   def short_name
-    self.name.split('::').last
+    name.split('::').last
   end
 
   def descendants

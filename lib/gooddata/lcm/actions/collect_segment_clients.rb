@@ -59,14 +59,14 @@ module GoodData
 
             sync_info = {
               from: master_pid,
-              to: segment.clients.map do |client|
-                client_project = client.project
+              to: segment.clients.map do |segment_client|
+                client_project = segment_client.project
                 to_pid = client_project.pid
                 results << {
                   from_name: master_name,
                   from_pid: master_pid,
                   to_name: client_project.title,
-                  to_pid: to_pid,
+                  to_pid: to_pid
                 }
                 to_pid
               end

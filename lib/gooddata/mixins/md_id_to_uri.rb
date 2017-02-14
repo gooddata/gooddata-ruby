@@ -13,13 +13,12 @@ module GoodData
       def identifier_to_uri(opts = { :client => GoodData.connection, :project => GoodData.project }, *ids)
         client, project = GoodData.get_client_and_project(opts)
 
-        uri = nil
         response = nil
         begin
-            uri = project.md[IDENTIFIERS_CFG]
-            response = client.post uri, 'identifierToUri' => ids
-        rescue => e
-          raise e
+          uri = project.md[IDENTIFIERS_CFG]
+          response = client.post(uri, 'identifierToUri' => ids)
+        rescue => ex
+          raise ex
         end
 
         if response['identifiers'].empty?

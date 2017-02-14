@@ -14,8 +14,19 @@ require_relative 'helpers/helpers'
 module GoodData
   module LCM2
     class SmartHash < Hash
-      def method_missing(name, *args, &block)
-        self[name.to_s.downcase.to_sym]
+      def method_missing(name, *_args)
+        key = name.to_s.downcase.to_sym
+
+        if key?(key)
+          self[name.to_s.downcase.to_sym]
+        else
+          super
+        end
+      end
+
+      def respond_to_missing?(name)
+        key = name.to_s.downcase.to_sym
+        key?(key)
       end
     end
 
@@ -44,7 +55,6 @@ module GoodData
         PrintTypes
       ],
 
-
       ## Bricks
 
       release: [
@@ -71,7 +81,7 @@ module GoodData
         EnsureUsers,
         EnsureTitles,
         SynchronizeProcesses,
-        SynchronizeSchedules,
+        SynchronizeSchedules
       ],
 
       rollout: [
@@ -84,7 +94,7 @@ module GoodData
         SynchronizeLabelTypes,
         SynchronizeProcesses,
         SynchronizeSchedules,
-        SynchronizeClients,
+        SynchronizeClients
       ],
 
       users: [
@@ -99,23 +109,23 @@ module GoodData
       def convert_params(params)
         # Symbolize all keys
         Hashie.symbolize_keys!(params)
-        self.convert_to_smart_hash(params)
+        convert_to_smart_hash(params)
       end
 
       def convert_to_smart_hash(params)
-        if params.kind_of?(Hash)
+        if params.is_a?(Hash)
           res = SmartHash.new
           params.each_pair do |k, v|
-            if v.kind_of?(Hash) || v.kind_of?(Array)
-              res[k.downcase] = self.convert_to_smart_hash(v)
+            if v.is_a?(Hash) || v.is_a?(Array)
+              res[k.downcase] = convert_to_smart_hash(v)
             else
               res[k.downcase] = v
             end
           end
           res
-        elsif params.kind_of?(Array)
+        elsif params.is_a?(Array)
           params.map do |item|
-            self.convert_to_smart_hash(item)
+            convert_to_smart_hash(item)
           end
         else
           params
@@ -176,20 +186,20 @@ module GoodData
 
       def print_actions_result(actions, results)
         actions.each_with_index do |action, index|
-          self.print_action_result(action, results[index])
+          print_action_result(action, results[index])
           puts
         end
         nil
       end
 
       def perform(mode, params = {})
-        params = self.convert_params(params)
+        params = convert_params(params)
 
         # Get actions for mode specified
-        actions = self.get_mode_actions(mode)
+        actions = get_mode_actions(mode)
 
         # Print name of actions to be performed for debug purposes
-        self.print_action_names(mode, actions)
+        print_action_names(mode, actions)
 
         # TODO: Check all action params first
 
@@ -203,16 +213,16 @@ module GoodData
           out = action.send(:call, params)
 
           # Handle output results and params
-          res = out.kind_of?(Array) ? out : out[:results]
-          out_params = out.kind_of?(Hash) ? out[:params] || {} : {}
-          new_params = self.convert_to_smart_hash(out_params)
+          res = out.is_a?(Array) ? out : out[:results]
+          out_params = out.is_a?(Hash) ? out[:params] || {} : {}
+          new_params = convert_to_smart_hash(out_params)
 
           # Merge with new params
           params.merge!(new_params)
 
           # Print action result
           puts
-          self.print_action_result(action, res)
+          print_action_result(action, res)
 
           # Return result for final summary
           res
@@ -224,7 +234,7 @@ module GoodData
           puts
 
           # Print execution summary/results
-          self.print_actions_result(actions, results)
+          print_actions_result(actions, results)
         end
 
         brick_results = {}

@@ -28,15 +28,13 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_development_dependency 'bundler', "~> 1.14"
-  s.add_development_dependency 'debase', '~> 0.1' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
   s.add_development_dependency 'license_finder', '~> 2.0'
   s.add_development_dependency 'rake', '~> 11.1'
   s.add_development_dependency 'rake-notes', '~> 0.2'
   s.add_development_dependency 'redcarpet', '~> 3.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 3.5'
   s.add_development_dependency 'rspec-expectations', '~> 3.5'
-  s.add_development_dependency 'rubocop', '~> 0.45'
-  s.add_development_dependency 'ruby-debug-ide', '~> 0.4' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
+  s.add_development_dependency 'rubocop', '~> 0.47'
   s.add_development_dependency 'simplecov', '~> 0.12'
   s.add_development_dependency 'webmock', '~> 1.21'
   s.add_development_dependency 'yard', '~> 0.8'
@@ -49,6 +47,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'docile', '~> 1.1'
   s.add_dependency 'erubis', '~> 2.7'
   s.add_dependency 'gli', '~> 2.15'
+  s.add_dependency 'gooddata_datawarehouse'
   s.add_dependency 'highline', '~> 1.7'
   s.add_dependency 'json_pure', '~> 1.8'
   s.add_dependency 'multi_json', '~> 1.12'

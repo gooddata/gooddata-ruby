@@ -16,9 +16,7 @@ module GoodData
           class_params = (self.class.const_defined?(:PARAMS) && self.class.const_get(:PARAMS)) || {}
           params = class_params.keys.map do |key|
             param = class_params[key]
-            if param[:opts][:required]
-              [param[:name], param[:type]]
-            end
+            [param[:name], param[:type]] if param[:opts][:required]
           end
 
           params.compact!
