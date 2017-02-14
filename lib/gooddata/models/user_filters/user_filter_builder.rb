@@ -265,7 +265,7 @@ module GoodData
       create_filter_proc = proc do |login, f|
         expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
         profiles_uri = if options[:type] == :muf
-                         uri = options[:project].get_profile_from_login(login)
+                         uri = options[:project].get_profile_uri_from_login(login)
                          uri.nil? ? ('/gdc/account/profile/' + login) : uri
                        elsif options[:type] == :variable
                          (users_cache[login] && users_cache[login].uri)

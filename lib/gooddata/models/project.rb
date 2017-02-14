@@ -1608,7 +1608,7 @@ module GoodData
       @add
     end
 
-    def get_profile_from_login(login)
+    def get_profile_uri_from_login(login)
       user = users.find do |u|
         u.login == login
       end
