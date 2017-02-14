@@ -141,7 +141,7 @@ module GoodData
     alias_method :master, :master_project
 
     def create_client(data)
-      client = GoodData::Client.create(data, segment: self)
+      client = GoodData::Client.create(data, client: self.client, segment: self)
       client.save
     end
 

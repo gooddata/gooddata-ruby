@@ -67,7 +67,8 @@ module GoodData
 
         fail 'Process ID has to be provided' if process_id.blank?
 
-        is_dataload_process = Process[process_id, project: project].type == :dataload
+        is_dataload_process = Process[process_id, project: project, client: c].type == :dataload
+
         if is_dataload_process
           [:dataload_datasets, :de_synchronize_all].each { |param| fail "#{param} has to be provided" unless options[param] }
         else
@@ -133,7 +134,7 @@ module GoodData
       saved? ? client.delete(uri) : nil
     end
 
-    # Is schedule enabled?
+    # Disables the schedule.
     #
     # @return [GoodData::Schedule]
     def disable
@@ -142,7 +143,7 @@ module GoodData
       self
     end
 
-    # Is schedule enabled?
+    # Disables and saves the schedule.
     #
     # @return [Boolean]
     def disable!
@@ -400,6 +401,7 @@ module GoodData
       fail 'Schedule type has to be provided' if schedule_type.blank?
       if @dirty
         if saved?
+          puts JSON.pretty_generate(to_update_payload)
           res = client.put(uri, to_update_payload)
           @json = Schedule.new(res).json
         else

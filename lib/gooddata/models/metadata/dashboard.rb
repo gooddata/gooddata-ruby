@@ -53,7 +53,7 @@ module GoodData
       end
 
       def create(dashboard = {}, options = { :client => GoodData.client, :project => GoodData.project })
-        client, project = GoodData.get_client_and_project(GoodData::Helpers.stringify_keys(options))
+        client, project = GoodData.get_client_and_project(GoodData::Helpers.symbolize_keys(options))
 
         res = client.create(Dashboard, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)), :project => project)
         dashboard.each do |k, v|

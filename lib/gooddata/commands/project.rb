@@ -44,6 +44,7 @@ module GoodData
         # @option options [String] :data Clone including all the data (default true)
         # @option options [String] :users Clone including all the users (default false)
         # @option options [String] :title Name of the cloned project (default "Clone of {old_project_title}")
+        # @option options [Boolean] :exclude_schedules Specifies whether to include scheduled emails
         # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
         def clone(project_id, options = { client: GoodData.connection })
           client = options[:client]

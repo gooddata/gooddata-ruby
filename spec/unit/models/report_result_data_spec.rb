@@ -7,7 +7,6 @@
 require 'gooddata/models/report_data_result'
 
 describe GoodData::ReportDataResult do
-
   before(:each) do
     data = JSON.parse(File.read('./spec/data/reports/report_1.json'))
     @result = GoodData::ReportDataResult.from_xtab(data)
@@ -29,8 +28,7 @@ describe GoodData::ReportDataResult do
   end
 
   it 'should compute columns' do
-    expect(@result.top_headers).to eq [["kolin", "praha", "varsava"],
-                                       ["sum of Age", "sum of Age", "sum of Age"]]
+    expect(@result.top_headers).to eq [%w(kolin praha varsava), ["sum of Age", "sum of Age", "sum of Age"]]
   end
 
   describe '#slice' do
@@ -50,15 +48,13 @@ describe GoodData::ReportDataResult do
 
     it 'should return data result with correct headers' do
       expect(@result.left_headers).to eq [["jirka"], ["petr"], ["tomas"]]
-      expect(@result.top_headers).to eq [["kolin", "praha", "varsava"],
-                                         ["sum of Age", "sum of Age", "sum of Age"]]
+      expect(@result.top_headers).to eq [%w(kolin praha varsava), ["sum of Age", "sum of Age", "sum of Age"]]
     end
-
   end
 
   describe '#without_left_headers' do
     it 'should return data result without left headers' do
-      expect(@result.without_left_headers.to_a).to eq [["kolin", "praha", "varsava"],
+      expect(@result.without_left_headers.to_a).to eq [%w(kolin praha varsava),
                                                        ["sum of Age", "sum of Age", "sum of Age"],
                                                        [25, nil, nil],
                                                        [nil, nil, 15],
@@ -110,7 +106,7 @@ describe GoodData::ReportDataResult do
     expect(result.size).to eq [2, 4]
     expect(result.data_size).to eq [1, 3]
     expect(result.left_headers).to eq [["Values"]]
-    expect(result.top_headers).to eq [["jirka", "petr", "tomas"]]
+    expect(result.top_headers).to eq [%w(jirka petr tomas)]
   end
 
   it 'should fail when comparing two different reports' do
@@ -154,7 +150,7 @@ describe GoodData::ReportDataResult do
 
   describe '#map' do
     it 'should iterate over rows' do
-      expect(@result.each.map {|row| [1]}).to eq [[1], [1], [1], [1], [1]]
+      expect(@result.each.map { [1] }).to eq [[1], [1], [1], [1], [1]]
     end
   end
 
@@ -175,7 +171,7 @@ describe GoodData::ReportDataResult do
       c = GoodData::ReportDataResult.from_xtab(data)
       data = JSON.parse(File.read('./spec/data/reports/top_attr_report.json'))
       b = GoodData::ReportDataResult.from_xtab(data)
-      expect {a - b}.to raise_exception
+      expect { a - b }.to raise_exception
       expect(a - c).to be_empty
     end
   end
@@ -196,4 +192,3 @@ describe GoodData::ReportDataResult do
     end
   end
 end
-

@@ -38,10 +38,10 @@ describe 'GoodData - project' do
   describe '#project' do
     it 'Returns project assigned' do
       GoodData.project = nil
-      GoodData.project.should == nil
+      expect(GoodData.project).to be_nil
 
       GoodData.use ProjectHelper::PROJECT_ID, client: @client
-      GoodData.project.should_not == nil
+      expect(GoodData.project).not_to be_nil
     end
   end
 

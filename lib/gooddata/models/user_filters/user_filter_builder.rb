@@ -265,7 +265,8 @@ module GoodData
       create_filter_proc = proc do |login, f|
         expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
         profiles_uri = if options[:type] == :muf
-                         '/gdc/account/profile/' + login
+                         uri = options[:project].get_profile_uri_from_login(login)
+                         uri.nil? ? ('/gdc/account/profile/' + login) : uri
                        elsif options[:type] == :variable
                          (users_cache[login] && users_cache[login].uri)
                        else
@@ -315,10 +316,10 @@ module GoodData
       project_vals_lookup = vals.group_by(&:related_uri)
       user_vals_lookup = user_filters.group_by(&:related_uri)
 
-      a = vals.map { |x| [x.related_uri, x] }
-      b = user_filters.map { |x| [x.related_uri, x] }
+      a = vals.map(&:related_uri)
+      b = user_filters.map(&:related_uri)
 
-      users_to_try = a.map(&:first).concat(b.map(&:first)).uniq
+      users_to_try = (a + b).uniq
       results = users_to_try.map do |user|
         resolve_user_filter(user_vals_lookup[user], project_vals_lookup[user])
       end

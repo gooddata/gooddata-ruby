@@ -8,7 +8,7 @@ require 'gooddata'
 
 describe GoodData::Project, :constraint => 'slow' do
   before(:all) do
-    @client = ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
     @project = ProjectHelper.get_default_project(:client => @client)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
   end
@@ -156,6 +156,69 @@ describe GoodData::Project, :constraint => 'slow' do
 
       roles.each do |role|
         expect(role).to be_instance_of(GoodData::ProjectRole)
+      end
+    end
+  end
+
+  describe '#export_clone' do
+    context 'when exclude_schedule is true' do
+      let(:options) { { exclude_schedules: true } }
+      let(:clone) { GoodData::Project.create(title: 'project clone', client: @client) }
+
+      after do
+        clone.delete if clone
+      end
+
+      it 'excludes scheduled emails' do
+        @project.schedule_mail.save
+        export_token = @project.export_clone(options)
+        clone.import_clone(export_token)
+        expect(@project.scheduled_mails.to_a).not_to be_empty
+        expect(clone.scheduled_mails.to_a).to be_empty
+      end
+    end
+
+    context 'when cross_data_center_export is true' do
+      it 'is ok' do
+        # there are no staging environments on other datacenters
+        # so just checking if the parameter gets accepted
+        @project.export_clone(cross_data_center_export: true)
+      end
+    end
+
+    context 'when export task fails' do
+      let(:fail_response) do
+        response = { taskState: { status: 'ERROR' } }
+        GoodData::Helpers.deep_stringify_keys(response)
+      end
+
+      before do
+        allow(@client)
+          .to receive(:poll_on_response).and_return(fail_response)
+      end
+
+      it 'raises ExportCloneError' do
+        expect { @project.export_clone }.to raise_error(GoodData::ExportCloneError)
+      end
+    end
+  end
+
+  describe '#import_clone' do
+    let(:clone) { GoodData::Project.create(title: 'import clone test', client: @client) }
+    let(:fail_response) do
+      response = { taskState: { status: 'ERROR' } }
+      GoodData::Helpers.deep_stringify_keys(response)
+    end
+
+    after do
+      clone.delete if clone
+    end
+
+    context 'when import task fails' do
+      it 'raises ImportCloneError' do
+        export_token = @project.export_clone
+        allow(@client).to receive(:poll_on_response).and_return(fail_response)
+        expect { clone.import_clone(export_token) }.to raise_error(GoodData::ImportCloneError)
       end
     end
   end

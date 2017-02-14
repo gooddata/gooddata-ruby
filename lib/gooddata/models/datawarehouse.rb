@@ -12,10 +12,10 @@ module GoodData
       CREATE_URL = '/gdc/datawarehouse/instances'
 
       def [](id = :all, options = { client: GoodData.client })
-        c = options[:client]
+        c = GoodData.get_client(options)
 
         if id == :all
-          data = client.get(CREATE_URL)
+          data = c.get(CREATE_URL)
           data['instances']['items'].map do |ads_data|
             c.create(DataWarehouse, ads_data)
           end
@@ -24,8 +24,8 @@ module GoodData
         end
       end
 
-      def all
-        DataWarehouse[:all]
+      def all(options = { client: GoodData.client })
+        DataWarehouse[:all, options]
       end
 
       # Create a data warehouse from given attributes
@@ -36,8 +36,7 @@ module GoodData
       def create(opts)
         GoodData.logger.info "Creating warehouse #{opts[:title]}"
 
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' if c.nil?
+        c = GoodData.get_client(opts)
 
         opts = { :auth_token => Helpers::AuthHelper.read_token }.merge(opts)
         auth_token = opts[:auth_token] || opts[:token]

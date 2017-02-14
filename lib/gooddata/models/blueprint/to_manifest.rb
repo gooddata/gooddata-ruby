@@ -125,7 +125,11 @@ module GoodData
         labels = DatasetBlueprint.labels_for_attribute(dataset, a)
 
         label = {}.tap do |l|
-          l['referenceKey'] = 1 if labels.first == label
+          if labels.any? { |lab| lab.key?(:reference_label) } && label[:reference_label] == true
+            l['referenceKey'] = 1
+          elsif labels.all? { |lab| !lab.key?(:reference_label) } && labels.first == label
+            l['referenceKey'] = 1
+          end
           l['populates'] = [label[:id]]
           l['mode'] = mode
           l['columnName'] = label[:column_name] || label[:id]
@@ -168,7 +172,7 @@ module GoodData
       def self.reference_to_manifest(project, _dataset, reference, mode)
         referenced_dataset = ProjectBlueprint.find_dataset(project, reference[:dataset])
         anchor = DatasetBlueprint.anchor(referenced_dataset)
-        label = DatasetBlueprint.labels_for_attribute(referenced_dataset, anchor).first
+        label = DatasetBlueprint.reference_label_for_attribtue(referenced_dataset, anchor)
         [{
           'populates' => [label[:id]],
           'mode' => mode,

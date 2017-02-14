@@ -144,6 +144,11 @@ module GoodData
         find_columns_by_type(dataset, :label)
       end
 
+      def self.reference_label_for_attribtue(dataset, attribute)
+        labels = labels_for_attribute(dataset, attribute)
+        labels.find { |label| label[:reference_label] == true } || labels.first
+      end
+
       # Returns labels for a particular attribute
       #
       # @param dataset [Hash] Dataset blueprint

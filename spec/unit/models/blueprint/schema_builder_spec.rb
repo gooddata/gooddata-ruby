@@ -7,7 +7,6 @@
 require 'gooddata/models/model'
 
 describe GoodData::Model::SchemaBuilder do
-
   it "should create a schema" do
     builder = GoodData::Model::SchemaBuilder.new("a_title")
     blueprint = builder.to_blueprint
@@ -20,7 +19,7 @@ describe GoodData::Model::SchemaBuilder do
     builder.add_fact("amount", :title => "Amount")
 
     blueprint = builder.to_blueprint
-    blueprint.attributes.count == 1
+    expect(blueprint.attributes.count).to eq(1)
   end
 
   it "should be able to create from block" do
@@ -31,7 +30,7 @@ describe GoodData::Model::SchemaBuilder do
     end
 
     blueprint = builder.to_blueprint
-    blueprint.attributes.count == 1
-    blueprint.facts.count == 1
+    expect(blueprint.attributes.count).to eq(1)
+    expect(blueprint.facts.count).to eq(1)
   end
 end

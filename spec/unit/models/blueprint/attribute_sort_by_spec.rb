@@ -7,7 +7,6 @@
 require 'gooddata'
 
 describe GoodData::Model::AttributeBlueprintField do
-
   before(:each) do
     @model_view = MultiJson.load(File.read('./spec/data/wire_models/attribute_sort_by_model.json'))
     @blueprint = GoodData::Model::FromWire.from_wire(@model_view)

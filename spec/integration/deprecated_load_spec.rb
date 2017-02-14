@@ -8,7 +8,7 @@ require 'gooddata'
 
 describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
-    @client = ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_dataset("dataset.repos") do |d|
         d.add_anchor("attr.repository")
@@ -32,10 +32,11 @@ describe "Full project implementation", :constraint => 'slow' do
       ["label.repository.name", "label.attribute1.name", "some_numbers"],
       [1, "tomas@gooddata.com", 10],
       [2, "petr@gooddata.com", 20],
-      [3, "jirka@gooddata.com", 30]]
+      [3, "jirka@gooddata.com", 30]
+    ]
     @project.upload(devs_data, @blueprint, 'dataset.repos')
-    vals = @project.labels('label.repository.name').values.to_a.map {|l| l[:value]}
-    expect(vals).to eq ["1", "2", "3"]
+    vals = @project.labels('label.repository.name').values.to_a.map { |label| label[:value] }
+    expect(vals).to eq %w(1 2 3)
   end
 
   it 'should upload the data when you deprecate attribute with remote blueprint' do
@@ -50,9 +51,10 @@ describe "Full project implementation", :constraint => 'slow' do
       [1, "tomas@gooddata.com", 10],
       [2, "petr@gooddata.com", 20],
       [3, "jirka@gooddata.com", 30],
-      [4, "jindrich@gooddata.com", 40]]
+      [4, "jindrich@gooddata.com", 40]
+    ]
     @project.upload(devs_data, @project.blueprint, 'dataset.repos')
-    vals = @project.labels('label.repository.name').values.to_a.map {|l| l[:value]}
-    expect(vals).to eq ["1", "2", "3", "4"]
+    vals = @project.labels('label.repository.name').values.to_a.map { |label| label[:value] }
+    expect(vals).to eq %w(1 2 3 4)
   end
 end

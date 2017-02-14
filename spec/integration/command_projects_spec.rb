@@ -13,7 +13,7 @@ describe GoodData::Command::Project, :constraint => 'slow' do
 
     @blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/test_project_model_spec.json")
     @module_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json")
-    @project = GoodData::Command::Project.build({:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, :client => @client})
+    @project = GoodData::Command::Project.build(:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, :client => @client)
   end
 
   after(:all) do
@@ -23,10 +23,10 @@ describe GoodData::Command::Project, :constraint => 'slow' do
 
   it "should update the project" do
     @blueprint.merge!(@module_blueprint)
-    @project.blueprint.datasets.count.should == 3
-    @project.blueprint.datasets(:all, :include_date_dimensions => true).count.should == 4
+    expect(@project.blueprint.datasets.count).to eq(3)
+    expect(@project.blueprint.datasets(:all, :include_date_dimensions => true).count).to eq(4)
     @project.update_from_blueprint(@blueprint)
-    @project.blueprint.datasets.count.should == 4
-    @project.blueprint.datasets(:all, :include_date_dimensions => true).count.should == 5
+    expect(@project.blueprint.datasets.count).to eq(4)
+    expect(@project.blueprint.datasets(:all, :include_date_dimensions => true).count).to eq(5)
   end
 end

@@ -10,6 +10,6 @@ require 'gooddata/bricks/middleware/bulk_salesforce_middleware'
 
 describe GoodData::Bricks::BulkSalesforceMiddleware do
   it "Has GoodData::Bricks::BulkSalesforceMiddleware class" do
-    GoodData::Bricks::BulkSalesforceMiddleware.should_not == nil
+    GoodData::Bricks::BulkSalesforceMiddleware.should_not be(nil)
   end
 end

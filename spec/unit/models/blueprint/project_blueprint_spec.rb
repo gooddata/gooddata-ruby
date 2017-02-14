@@ -7,7 +7,6 @@
 require 'gooddata'
 
 describe GoodData::Model::ProjectBlueprint do
-
   before(:each) do
     @blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')
     @invalid_blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/invalid_blueprint.json')
@@ -38,7 +37,7 @@ describe GoodData::Model::ProjectBlueprint do
       end
       expect(bp.valid?).to be_falsey
       errors = bp.validate
-      expect(errors.map {|x| x[:type]}.to_set).to eq [:attribute_without_label, :more_than_on_anchor].to_set
+      expect(errors.map { |x| x[:type] }.to_set).to eq [:attribute_without_label, :more_than_on_anchor].to_set
       expect(errors.count).to eq 2
     end
 
@@ -80,7 +79,7 @@ describe GoodData::Model::ProjectBlueprint do
           d.add_fact('more_numbers')
         end
       end
-      bp.valid?.should == true
+      bp.valid?.should be_truthy
       errors = bp.validate
       expect(errors.count).to eq 0
       facts = bp.to_wire[:diffRequest][:targetModel][:projectModel][:datasets].first[:dataset][:facts]
@@ -92,7 +91,7 @@ describe GoodData::Model::ProjectBlueprint do
       expect(@invalid_blueprint.valid?).to eq false
     end
   end
-  
+
   describe '#validate' do
     it 'valid blueprint should give you empty array of errors' do
       expect(@blueprint.validate).to be_empty
@@ -101,11 +100,13 @@ describe GoodData::Model::ProjectBlueprint do
     it 'invalid blueprint should give you list of violating references' do
       errors = @invalid_blueprint.validate
       expect(errors.size).to eq 1
-      expect(errors).to eq([{
-        :type=>:wrong_label_reference,
-        :label=>"some_label_id",
-        :wrong_reference=>"attr.repos.repo_id                 ERROR"
-        }])
+      expect(errors).to eq([
+        {
+          :type => :wrong_label_reference,
+          :label => "some_label_id",
+          :wrong_reference => "attr.repos.repo_id                 ERROR"
+        }
+      ])
     end
 
     it 'invalid label is caught correctly' do
@@ -124,18 +125,18 @@ describe GoodData::Model::ProjectBlueprint do
       expect(errors.count).to eq 3
       expect(errors).to eq [
         {
-          :type=>:wrong_label_reference,
-          :label=>"label.attribute1.name",
-          :wrong_reference=>"attr.attribute23123"
+          :type => :wrong_label_reference,
+          :label => "label.attribute1.name",
+          :wrong_reference => "attr.attribute23123"
         },
         {
-          :type=>:wrong_label_reference,
-          :label=>"label.attribute1.ssn",
-          :wrong_reference=>"attr.attribute23123"
+          :type => :wrong_label_reference,
+          :label => "label.attribute1.ssn",
+          :wrong_reference => "attr.attribute23123"
         },
         {
-          :type=>:attribute_without_label,
-          :attribute=>"attr.attribute1"
+          :type => :attribute_without_label,
+          :attribute => "attr.attribute1"
         }
       ]
     end
@@ -274,7 +275,7 @@ describe GoodData::Model::ProjectBlueprint do
       expect(@blueprint.facts.count).to eq 1
     end
   end
-  
+
   describe '#labels' do
     it 'Anchor on repos should have a label' do
       expect(@repos.anchor.labels.size).to eq 1
@@ -286,7 +287,7 @@ describe GoodData::Model::ProjectBlueprint do
 
     it "should return labels form all datasets" do
       expect(@blueprint.labels.count).to eq 4
-    end    
+    end
   end
 
   describe '#attributes_and_anchors' do
@@ -297,7 +298,7 @@ describe GoodData::Model::ProjectBlueprint do
 
   describe '#merge' do
     it "should be able to merge models without mutating the original" do
-      additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json") 
+      additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json")
       expect(@blueprint.datasets.count).to eq 3
       new_bp = @blueprint.merge(additional_blueprint)
       expect(@blueprint.datasets.count).to eq 3
@@ -373,15 +374,15 @@ describe GoodData::Model::ProjectBlueprint do
           d.add_date('created_on')
         end
       end
-      expect {
-        c = a.merge(b)
-      }.to raise_exception 'Unable to merge date dimensions created_on with defintion {:type=>:date_dimension, :urn=>nil, :id=>"created_on", :title=>"title B"} with {:type=>:date_dimension, :urn=>nil, :id=>"created_on", :title=>"title A"}'
+      expect do
+        a.merge(b)
+      end.to raise_exception 'Unable to merge date dimensions created_on with defintion {:type=>:date_dimension, :urn=>nil, :id=>"created_on", :title=>"title B"} with {:type=>:date_dimension, :urn=>nil, :id=>"created_on", :title=>"title A"}'
     end
   end
 
   describe '#merge!' do
     it "should be able to merge models" do
-      additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json") 
+      additional_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json")
       expect(@blueprint.datasets.count).to eq 3
       @blueprint.merge!(additional_blueprint)
       expect(@blueprint.datasets.count).to eq 4
@@ -398,8 +399,6 @@ describe GoodData::Model::ProjectBlueprint do
     @blueprint.add_dataset!(dataset)
     expect(@blueprint.datasets.count).to eq 4
   end
-
-
 
   it "should be able to serialize itself to a hash" do
     ser = @blueprint.to_hash
@@ -440,7 +439,7 @@ describe GoodData::Model::ProjectBlueprint do
         d.add_date('opportunity_comitted', dataset: 'committed_on')
       end
     end
-    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map { |a| a.format }).to eq [GoodData::Model::DEFAULT_DATE_FORMAT]
+    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map(&:format)).to eq [GoodData::Model::DEFAULT_DATE_FORMAT]
   end
 
   it 'blueprint can be set with explicit date' do
@@ -458,7 +457,7 @@ describe GoodData::Model::ProjectBlueprint do
       end
     end
     expect(bp.valid?).to be_truthy
-    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map { |a| a.format }).to eq ['yyyy/MM/dd']
+    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map(&:format)).to eq ['yyyy/MM/dd']
   end
 
   describe '#remove' do
@@ -501,21 +500,21 @@ describe GoodData::Model::ProjectBlueprint do
     end
 
     it 'crashes gracefully when nonexistent field is being moved' do
-      expect {
+      expect do
         @blueprint.move!('nonexistent_field', 'dataset.commits', 'dataset.repos')
-      }.to raise_exception 'Column nonexistent_field cannot be found in dataset dataset.commits'
+      end.to raise_exception 'Column nonexistent_field cannot be found in dataset dataset.commits'
     end
 
     it 'crashes gracefully when datasets does not exist' do
-      expect {
+      expect do
         @blueprint.move!('nonexistent_field', 'dataset.A', 'dataset.repos')
-      }.to raise_exception 'Dataset "dataset.A" could not be found'
+      end.to raise_exception 'Dataset "dataset.A" could not be found'
     end
 
     it 'crashes gracefully when datasets does not exist' do
-      expect {
+      expect do
         @blueprint.move!('nonexistent_field', 'dataset.commits', 'dataset.B')
-      }.to raise_exception 'Dataset "dataset.B" could not be found'
+      end.to raise_exception 'Dataset "dataset.B" could not be found'
     end
   end
 

@@ -37,7 +37,8 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
       ['01/01/2011', 'thomas', '2'],
       ['01/01/2011', 'jim', '2'],
       ['01/01/2011', 'peter', '2'],
-      ['01/01/2011', 'john', '3']]
+      ['01/01/2011', 'john', '3']
+    ]
     @project.upload(data, @blueprint, 'dataset.users')
 
     expect(@project.blueprint.datasets.first.count(@project)).to eq 4
@@ -64,7 +65,8 @@ describe 'Create project using GoodData client', :constraint => 'slow' do
       ['01/01/2011', 'thomas', '2'],
       ['01/01/2011', 'jim', '2'],
       ['01/01/2011', 'peter', '2'],
-      ['01/01/2011', 'john', '3']]
+      ['01/01/2011', 'john', '3']
+    ]
     @project.upload(data, @blueprint, 'dataset.users')
 
     expect(@project.blueprint.datasets.first.count(@project)).to eq 5

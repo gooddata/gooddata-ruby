@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require_relative '../rest/resource'
+
 module GoodData
   class ChannelConfiguration < Rest::Resource
     CHANNEL_CONFIGURATION_PATH = '/gdc/account/profile/%s/channelConfigurations'
@@ -24,23 +26,24 @@ module GoodData
     attr_accessor :title, :to
 
     class << self
-      def [](id = :all)
-        uri = CHANNEL_CONFIGURATION_PATH % client.user.account_setting_id
+      def [](id = :all, opts = { client: GoodData.connection })
+        c = GoodData.get_client(opts)
+
+        uri = CHANNEL_CONFIGURATION_PATH % c.user.account_setting_id
         if id == :all
-          data = client.get uri
-          data['channelConfigurations']['items'].map { |channel_data| client.create(ChannelConfiguration, channel_data) }
+          data = c.get uri
+          data['channelConfigurations']['items'].map { |channel_data| c.create(ChannelConfiguration, channel_data) }
         else
-          client.create(ChannelConfiguration, client.get("#{uri}/#{id}"))
+          c.create(ChannelConfiguration, c.get("#{uri}/#{id}"))
         end
       end
 
-      def all
-        ChannelConfiguration[:all]
+      def all(opts = { client: GoodData.connection })
+        ChannelConfiguration[:all, opts]
       end
 
       def create(opts = { client: GoodData.connection })
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' if c.nil?
+        c = GoodData.get_client(opts)
 
         options = { to: c.user.email, title: c.user.email }.merge(opts)
         existing_channel = all.find { |channel| channel.to == options[:to] }
@@ -52,7 +55,7 @@ module GoodData
       end
 
       def create_object(data = {})
-        c = client(data)
+        c = GoodData.get_client(data)
 
         new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['channelConfiguration']['configuration']['emailConfiguration']['to'] = data[:to]

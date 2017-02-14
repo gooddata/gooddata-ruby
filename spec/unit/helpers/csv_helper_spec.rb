@@ -9,7 +9,7 @@ require 'gooddata/helpers/csv_helper'
 describe GoodData::Helpers::Csv do
   describe '#read' do
     it 'Reads data from CSV file' do
-      data = GoodData::Helpers::Csv.read(:path => CsvHelper::CSV_PATH_IMPORT)
+      GoodData::Helpers::Csv.read(:path => CsvHelper::CSV_PATH_IMPORT)
     end
   end
 

@@ -7,9 +7,8 @@
 require 'gooddata'
 
 describe GoodData::Rest::Connection, :constraint => 'slow' do
-
   it "should log in and disconnect" do
-    client = ConnectionHelper::create_default_connection
+    client = ConnectionHelper.create_default_connection
     expect(client).to be_kind_of(GoodData::Rest::Client)
 
     client.get("/gdc/md")
@@ -60,7 +59,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   end
 
   it "should log in and disconnect with SST" do
-    regular_client = ConnectionHelper::create_default_connection
+    regular_client = ConnectionHelper.create_default_connection
     sst = regular_client.connection.sst_token
 
     sst_client = GoodData.connect(sst_token: sst, verify_ssl: false)
@@ -71,7 +70,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   end
 
   it "should log in and disconnect with SST with additional params" do
-    regular_client = ConnectionHelper::create_default_connection
+    regular_client = ConnectionHelper.create_default_connection
     sst = regular_client.connection.sst_token
 
     sst_client = GoodData.connect(sst_token: sst, verify_ssl: false, webdav_server: 'https://some_random_server/')
@@ -83,8 +82,8 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   end
 
   it "should be able to regenerate TT" do
-    regular_client = ConnectionHelper::create_default_connection
-    projects = regular_client.projects
+    regular_client = ConnectionHelper.create_default_connection
+    regular_client.projects
     regular_client.connection.headers.delete(:x_gdc_authtt)
     regular_client.get('/gdc/md')
     expect(regular_client.connection.headers).to have_key :x_gdc_authtt

@@ -199,7 +199,11 @@ module GoodData
                 GoodData.logger.warn "Unable to find #{identifier} in '#{target.title}'"
               end
             end
+
+            nil
           end
+
+          nil
         end
       end
 

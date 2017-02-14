@@ -16,4 +16,8 @@ class TrueClass
   def to_b
     true
   end
+
+  def to_i
+    1
+  end
 end

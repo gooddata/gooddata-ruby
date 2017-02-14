@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 describe Hash do
-
   describe '#deep_dup' do
     it 'should crete a deep copy' do
       x = {
@@ -16,8 +15,8 @@ describe Hash do
       y = x.dup
       deep_y = GoodData::Helpers.deep_dup(x)
 
-      y[:a].object_id.should === x[:a].object_id
-      deep_y[:a].object_id.should_not === x[:a].object_id
+      expect(y[:a].object_id).to be == x[:a].object_id
+      expect(deep_y[:a].object_id).not_to be == x[:a].object_id
     end
   end
 end

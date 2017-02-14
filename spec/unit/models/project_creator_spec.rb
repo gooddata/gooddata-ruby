@@ -7,7 +7,6 @@
 require 'gooddata/models/project_creator'
 
 describe GoodData::Model::ProjectCreator do
-
   before(:each) do
     # Priority is
     #
@@ -19,38 +18,37 @@ describe GoodData::Model::ProjectCreator do
     #
     # The data is ordered in descending priority
     @chunk_a = {
-                'updateScript' => {
-                  'cascadeDrops' => false,
-                  'preserveData' => true,
-                  'maqlDdlChunks' => 'a'
-                }
-              }
+      'updateScript' => {
+        'cascadeDrops' => false,
+        'preserveData' => true,
+        'maqlDdlChunks' => 'a'
+      }
+    }
 
     @chunk_b = {
-                'updateScript' => {
-                  'cascadeDrops' => false,
-                  'preserveData' => false,
-                  'maqlDdlChunks' => 'b'
-                }
-              }
+      'updateScript' => {
+        'cascadeDrops' => false,
+        'preserveData' => false,
+        'maqlDdlChunks' => 'b'
+      }
+    }
     @chunk_c = {
-                'updateScript' => {
-                  'cascadeDrops' => true,
-                  'preserveData' => true,
-                  'maqlDdlChunks' => 'c'
-                }
-              }
+      'updateScript' => {
+        'cascadeDrops' => true,
+        'preserveData' => true,
+        'maqlDdlChunks' => 'c'
+      }
+    }
 
     @chunk_d = {
-                'updateScript' => {
-                  'cascadeDrops' => true,
-                  'preserveData' => false,
-                  'maqlDdlChunks' => 'd'
-                }
-              }
+      'updateScript' => {
+        'cascadeDrops' => true,
+        'preserveData' => false,
+        'maqlDdlChunks' => 'd'
+      }
+    }
 
     @data = [@chunk_a, @chunk_b, @chunk_c, @chunk_d]
-
   end
 
   it 'should pick correct update chunk based on priority' do
@@ -59,7 +57,7 @@ describe GoodData::Model::ProjectCreator do
   end
 
   it 'should pick correct update chunk based on your preference if it is possible to satisfy it' do
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true,  preserve_data: false})
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true, preserve_data: false })
     expect(chunk).to eq [@chunk_d]
   end
 
@@ -69,7 +67,7 @@ describe GoodData::Model::ProjectCreator do
   end
 
   it 'should not pick a chunk if it is not possible to satisfy it based on your preference' do
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true,  preserve_data: false, unmeetable_condition: true})
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true, preserve_data: false, unmeetable_condition: true })
     expect(chunk).to eq []
   end
 end

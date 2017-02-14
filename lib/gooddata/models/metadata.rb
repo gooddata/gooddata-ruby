@@ -229,8 +229,9 @@ module GoodData
     # @return [GoodData::MdObject] MdObject that has been saved as
     def save_as(new_title = nil)
       new_title = "Clone of #{title}" if new_title.nil?
-
+      # rubocop:disable Security/MarshalLoad
       dupped = Marshal.load(Marshal.dump(json))
+      # rubocop:enable Security/MarshalLoad
       dupped[root_key]['meta'].delete('uri')
       dupped[root_key]['meta'].delete('identifier')
       dupped[root_key]['meta']['title'] = new_title

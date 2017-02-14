@@ -62,7 +62,7 @@ module GoodData
       # Returns an array of all projects accessible by
       # current user
       def all(opts = { client: GoodData.connection })
-        c = client(opts)
+        c = GoodData.get_client(opts)
         c.user.projects
       end
 
@@ -84,9 +84,7 @@ module GoodData
 
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}
 
-          c = client(opts)
-          fail ArgumentError, 'No :client specified' if c.nil?
-
+          c = GoodData.get_client(opts)
           response = c.get(PROJECT_PATH % id)
           c.factory.create(Project, response)
         end
@@ -104,7 +102,7 @@ module GoodData
       end
 
       def create_object(data = {})
-        c = client(data)
+        c = GoodData.get_client(data)
         new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['project']['meta']['title'] = data[:title]
           d['project']['meta']['summary'] = data[:summary] if data[:summary]
@@ -128,9 +126,6 @@ module GoodData
       #
       def create(opts = { client: GoodData.connection }, &block)
         GoodData.logger.info "Creating project #{opts[:title]}"
-
-        c = client(opts)
-        fail ArgumentError, 'No :client specified' if c.nil?
 
         auth_token = opts[:auth_token] || opts[:token]
         if auth_token.nil? || auth_token.empty?
@@ -160,15 +155,16 @@ module GoodData
         project
       end
 
-      def find(_opts = {}, client = GoodData::Rest::Client.client)
-        user = client.user
+      def find(opts = { client: GoodData.connection })
+        c = GoodData.get_client(opts)
+        user = c.user
         user.projects['projects'].map do |project|
-          client.create(GoodData::Project, project)
+          c.create(GoodData::Project, project)
         end
       end
 
       def create_from_blueprint(blueprint, options = {})
-        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, client: GoodData.connection))
+        GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, client: client))
       end
 
       # Takes one CSV line and creates hash from data extracted
@@ -321,12 +317,7 @@ module GoodData
             if process_spec.type != :dataload
               executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
             end
-            params = {
-              params: schedule_spec[:params].merge('PROJECT_ID' => to_project.pid),
-              hidden_params: schedule_spec[:hidden_params],
-              name: schedule_spec[:name],
-              reschedule: schedule_spec[:reschedule]
-            }
+            params = schedule_parameters(to_project.pid, schedule_spec)
             created_schedule = remote_process.create_schedule(schedule_spec[:cron] || schedule_cache[schedule_spec[:after]], executable, params)
             schedule_cache[created_schedule.name] = created_schedule
 
@@ -394,6 +385,17 @@ module GoodData
         puts JSON.pretty_generate(objects)
 
         from_project.partial_md_export(objects, project: to_project)
+      end
+
+      private
+
+      def schedule_parameters(id, schedule_spec)
+        {
+          params: schedule_spec[:params].merge('PROJECT_ID' => id),
+          hidden_params: schedule_spec[:hidden_params],
+          name: schedule_spec[:name],
+          reschedule: schedule_spec[:reschedule]
+        }
       end
     end
 
@@ -519,7 +521,7 @@ module GoodData
     # @param options [Hash] Export options
     # @option options [Boolean] :data Clone project with data
     # @option options [Boolean] :users Clone project with users
-    # @option options [String] :authorized_users Comma separated logins of authorized users. Users that can use the export
+    # @option options [Boolean] :exclude_schedules Specifies whether to include scheduled emails
     # @return [GoodData::Project] Newly created project
     def clone(options = {})
       a_title = options[:title] || "Clone of #{title}"
@@ -557,6 +559,8 @@ module GoodData
     # @option options [Boolean] :data Clone project with data
     # @option options [Boolean] :users Clone project with users
     # @option options [String] :authorized_users Comma separated logins of authorized users. Users that can use the export
+    # @option options [Boolean] :exclude_schedules Specifies whether to include scheduled notifications in the export
+    # @option options [Boolean] :cross_data_center_export Specifies whether export can be used in any data center
     # @return [String] token of the export
     def export_clone(options = {})
       with_data = options[:data].nil? ? true : options[:data]
@@ -569,12 +573,22 @@ module GoodData
         }
       }
       export[:exportProject][:authorizedUsers] = options[:authorized_users] if options[:authorized_users]
+      if options[:exclude_schedules]
+        exclude_notifications = options[:exclude_schedules] ? 1 : 0
+        export[:exportProject][:excludeSchedules] = exclude_notifications
+      end
+      if options[:cross_data_center_export]
+        cross_data_center = options[:cross_data_center_export] ? 1 : 0
+        export[:exportProject][:crossDataCenterExport] = cross_data_center
+      end
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/export", export)
       status_url = result['exportArtifact']['status']['uri']
-      client.poll_on_response(status_url) do |body|
+      polling_result = client.poll_on_response(status_url) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
+
+      ensure_clone_task_ok(polling_result, GoodData::ExportCloneError)
       result['exportArtifact']['token']
     end
 
@@ -600,9 +614,10 @@ module GoodData
 
       result = client.post("/gdc/md/#{obj_id}/maintenance/import", import)
       status_url = result['uri']
-      client.poll_on_response(status_url, options) do |body|
+      polling_result = client.poll_on_response(status_url, options) do |body|
         body['taskState']['status'] == 'RUNNING'
       end
+      ensure_clone_task_ok(polling_result, GoodData::ImportCloneError)
       self
     end
 
@@ -1654,15 +1669,21 @@ module GoodData
       @add
     end
 
+    def get_profile_uri_from_login(login)
+      user = users.find do |u|
+        u.login == login
+      end
+
+      user.profile_url if user
+    end
 
     def transfer_etl(target)
-      GoodData::Project.transfer_etl(self.client, self, target)
+      GoodData::Project.transfer_etl(client, self, target)
     end
 
     def transfer_processes(target)
       GoodData::Project.transfer_processes(self, target)
     end
-
 
     def transfer_schedules(target)
       GoodData::Project.transfer_schedules(self, target)
@@ -1670,6 +1691,10 @@ module GoodData
 
     def transfer_tagged_stuff(target, tag)
       GoodData::Project.transfer_tagged_stuff(self, target, tag)
+    end
+
+    def create_output_stage(ads, opts = {})
+      add.create_output_stage(ads, opts)
     end
 
     private
@@ -1687,6 +1712,19 @@ module GoodData
       }
       payload['user']['content']['userRoles'] = roles_uri if roles_uri
       payload
+    end
+
+    # Checks state of an export/import task.
+    # @param response [Hash] Response from API
+    # @param clone_task_error [Error] Error to raise when state is not OK
+    def ensure_clone_task_ok(response, clone_task_error)
+      if response['taskState'].nil?
+        fail clone_task_error, "Clone task failed with unknown response: #{response}"
+      elsif response['taskState']['status'] != 'OK'
+        messages = response['taskState']['messages'] || []
+        interpolated_messages = GoodData::Helpers.interpolate_error_messages(messages).join(' ')
+        fail clone_task_error, "Clone task failed. #{interpolated_messages}"
+      end
     end
   end
 end

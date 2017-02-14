@@ -27,7 +27,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   }
 
   before(:all) do
-    @client = ConnectionHelper::create_default_connection
+    @client = ConnectionHelper.create_default_connection
     @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @process = @project.deploy_process('./spec/data/ruby_process',
                                        type: 'RUBY',
@@ -36,7 +36,6 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     @process_cc = @project.deploy_process('./spec/data/cc',
                                           type: 'graph',
                                           name: 'Test ETL Process (CC)')
-
   end
 
   after(:all) do
@@ -45,7 +44,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
     # @process.delete if @process
     @project.delete if @project
-    GoodData::ChannelConfiguration.all.map { |channel| channel.delete }
+    GoodData::ChannelConfiguration.all.map(&:delete)
 
     @client.disconnect
   end
@@ -64,7 +63,6 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
   end
 
   it "should be able to grab executables" do
-
     expect(@process.executables).to eq ['process.rb']
   end
 
@@ -222,7 +220,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       schedule = process.create_schedule('0 15 27 7 *', process.executables.first, hidden_params: COMPLEX_PARAMS)
       result = schedule.execute
       # expect(result.status).to eq :ok
-      log = result.log
+      result.log
       expect(process.schedules.count).to eq 1
     ensure
       schedule && schedule.delete
@@ -259,9 +257,11 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
   it "should be able to redeploy directly" do
     begin
-      process1 = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
-                                        type: 'RUBY',
-                                        name: 'Test ETL zipped file Process')
+      process1 = @project.deploy_process(
+        './spec/data/hello_world_process/hello_world.zip',
+        type: 'RUBY',
+        name: 'Test ETL zipped file Process'
+      )
 
       process2 = process1.deploy('./spec/data/ruby_process/process.rb')
       expect(process1.executables).not_to eq process2.executables
@@ -279,7 +279,6 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
     end
   end
 
-
   it 'should be able to clone with etl' do
     begin
       # Deploy two schedules
@@ -287,8 +286,8 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       schedule_first = process.create_schedule('0 15 27 7 *', process.executables.first)
       schedule_second = process.create_schedule('0 15 27 8 *', process.executables.first)
       cloned_project = GoodData::Project.clone_with_etl(@project)
-      a = @project.processes.flat_map {|p| p.schedules.map {|s| [p.name, s.name]}}
-      b = cloned_project.processes.flat_map {|p| p.schedules.map {|s| [p.name, s.name]}}
+      a = @project.processes.flat_map { |p| p.schedules.map { |s| [p.name, s.name] } }
+      b = cloned_project.processes.flat_map { |p| p.schedules.map { |s| [p.name, s.name] } }
       expect(a).to eq b
     ensure
       cloned_project && cloned_project.delete
@@ -344,7 +343,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       expect(notification_rule.body).to eq 'Email body'
       expect(notification_rule.events).to eq [GoodData::Subscription::PROCESS_SUCCESS_EVENT]
 
-      notification_rule = GoodData::NotificationRule[notification_rule.notification_rule_id, project: @project, process: process]
+      notification_rule = GoodData::NotificationRule[notification_rule.notification_rule_id, project: @project, process: process, client: @client]
       notification_rule.events = [GoodData::Subscription::PROCESS_SUCCESS_EVENT, GoodData::Subscription::PROCESS_STARTED_EVENT]
       notification_rule.save
 
