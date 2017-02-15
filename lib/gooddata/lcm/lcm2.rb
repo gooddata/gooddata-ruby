@@ -65,7 +65,8 @@ module GoodData
         EnsureReleaseTable,
         SegmentsFilter,
         CreateSegmentMasters,
-        EnsureUsers,
+        EnsureTechnicalUsersDomain,
+        EnsureTechnicalUsersProject,
         SynchronizeLdm,
         SynchronizeMeta,
         SynchronizeProcesses,
@@ -82,7 +83,8 @@ module GoodData
         CollectClients,
         AssociateClients,
         ProvisionClients,
-        EnsureUsers,
+        EnsureTechnicalUsersDomain,
+        EnsureTechnicalUsersProject,
         EnsureTitles,
         SynchronizeProcesses,
         SynchronizeSchedules
@@ -93,17 +95,13 @@ module GoodData
         CollectSegments,
         SegmentsFilter,
         CollectSegmentClients,
-        EnsureUsers,
+        EnsureTechnicalUsersDomain,
+        EnsureTechnicalUsersProject,
         SynchronizeLdm,
         SynchronizeLabelTypes,
         SynchronizeProcesses,
         SynchronizeSchedules,
         SynchronizeClients
-      ],
-
-      users: [
-        EnsureUsersDomain,  # TODO: Implement
-        EnsureUsersProject, # TODO: Implement
       ]
     }
 

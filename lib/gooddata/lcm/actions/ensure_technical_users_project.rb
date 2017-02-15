@@ -8,7 +8,7 @@ require_relative 'base_action'
 
 module GoodData
   module LCM2
-    class EnsureUsers < BaseAction
+    class EnsureTechnicalUsersProject < BaseAction
       DESCRIPTION = 'Ensure Project and/or Domain Users - Based On Input Source Data'
 
       PARAMS = define_params(self) do
