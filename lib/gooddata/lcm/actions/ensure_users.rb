@@ -22,6 +22,7 @@ module GoodData
         :login,
         :role,
         :result,
+        :message,
         :url
       ]
 
@@ -52,6 +53,7 @@ module GoodData
                   login: f[:login],
                   role: f[:role],
                   result: s[:type],
+                  message: s[:message],
                   url: s[:user]
                 }
               end
