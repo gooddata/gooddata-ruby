@@ -9,7 +9,7 @@ require_relative 'base_action'
 module GoodData
   module LCM2
     class EnsureTechnicalUsersDomain < BaseAction
-      DESCRIPTION = 'Ensure Domain Users - Based On Input Source Data'
+      DESCRIPTION = 'Ensure Technical Users in Domain'
 
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
