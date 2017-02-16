@@ -262,10 +262,15 @@ module GoodData
       small_labels = get_small_labels(labels_cache)
       lookups_cache = create_lookups_cache(small_labels)
       attrs_cache = create_attrs_cache(filters, options)
+      users = Hash[
+        options[:project].users.map do |user|
+          [user.login, user.profile_url]
+        end
+      ]
       create_filter_proc = proc do |login, f|
         expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
         profiles_uri = if options[:type] == :muf
-                         uri = options[:project].get_profile_uri_from_login(login)
+                         uri = users[login]
                          uri.nil? ? ('/gdc/account/profile/' + login) : uri
                        elsif options[:type] == :variable
                          (users_cache[login] && users_cache[login].uri)
