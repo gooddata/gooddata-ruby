@@ -8,20 +8,20 @@ module GoodData
   module Environment
     module ConnectionHelper
       set_const :DEFAULT_SERVER, 'https://staging2.intgdc.com'
-      set_const :DEFAULT_USER_URL, '/gdc/account/profile/d8b356b30c0c12d1b4b97f56d6706ef2'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/3713cbb890fdc5e6eddee18e1ccbc89a'
       set_const :STAGING_URI, 'https://na1-staging2-di.intgdc.com/uploads/'
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, 'eddb2d5f-c002-4cb4-a0ba-9b9b32c0a40f'
+      set_const :PROCESS_ID, 'f0aa58a1-2161-471e-bf9e-3cc42b410cd6'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'wrbjys321jmc1ut9tcfode4kh1j2o0k6'
+      set_const :PROJECT_ID, 'f021bilepfg8w7vi3yfms63u2h2oc6mb'
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '583c08e1e4b00e7feeb4a2b3'
+      set_const :SCHEDULE_ID, '58a5bf4de4b09787f5371e0c'
     end
   end
 end
