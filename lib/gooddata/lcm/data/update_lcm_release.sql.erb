@@ -1,0 +1,7 @@
+UPDATE "<%= table_name || 'LCM_RELEASE' %>"
+SET
+  master_project_id = '<%= master_project_id %>',
+  version = <%= version %>
+WHERE
+  segment_id = '<%= segment_id %>'
+;

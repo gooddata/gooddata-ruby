@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'hashie'
+require 'multi_json'
 
 module GoodData
   module Bricks

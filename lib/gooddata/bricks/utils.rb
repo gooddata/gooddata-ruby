@@ -8,9 +8,9 @@ module GoodData
   module Bricks
     module Utils
       def returning(value, &block)
-        fail 'Block was not provided' if block.nil?
+        raise 'Block was not provided' if block.nil?
         return_val = value
-        block.call(value)
+        yield value
         return_val
       end
     end

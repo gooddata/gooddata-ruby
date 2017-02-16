@@ -254,7 +254,14 @@ module GoodData
       # @param client [GoodData::Rest::Client] GoodData client to be used for connection
       # @param from_project [GoodData::Project | GoodData::Segment | GoodData:Client | String] Object to be cloned from. Can be either segment in which case we take the master, client in which case we take its project, string in which case we treat is as an project object or directly project
       def transfer_schedules(from_project, to_project)
-        cache = to_project.processes.sort_by(&:name).zip(from_project.processes.sort_by(&:name)).flat_map { |remote, local| local.schedules.map { |schedule| [remote, local, schedule] } }
+        cache = to_project
+                  .processes.sort_by(&:name)
+                  .zip(from_project.processes.sort_by(&:name))
+                  .flat_map do |remote, local|
+                    local.schedules.map do |schedule|
+                      [remote, local, schedule]
+                    end
+                  end
 
         remote_schedules = to_project.schedules
         remote_stuff = remote_schedules.map do |s|
@@ -277,13 +284,21 @@ module GoodData
         end
 
         diff = GoodData::Helpers.diff(remote_stuff, local_stuff, key: :name, fields: [:name, :cron, :after, :params, :hidden_params, :reschedule])
-        stack = diff[:added].map { |x| [:added, x] } + diff[:changed].map { |x| [:changed, x] }
+        stack = diff[:added].map do |x|
+          [:added, x]
+        end
+
+        stack += diff[:changed].map do |x|
+          [:changed, x]
+        end
+
         schedule_cache = remote_schedules.reduce({}) do |a, e|
           a[e.name] = e
           a
         end
-        messages = []
-        loop do
+
+        results = []
+        loop do # rubocop:disable Metrics/BlockLength
           break if stack.empty?
           state, changed_schedule = stack.shift
           if state == :added
@@ -292,8 +307,12 @@ module GoodData
               stack << [state, schedule_spec]
               next
             end
-            remote_process, process_spec = cache.find { |_remote, _local, schedule| schedule.name == schedule_spec[:name] }
-            messages << { message: "Creating schedule #{schedule_spec[:name]} for process #{remote_process.name}" }
+            remote_process, process_spec = cache.find do |_remote, local, schedule|
+              (schedule_spec[:process_id] == local.process_id) && (schedule.name == schedule_spec[:name])
+            end
+
+            GoodData.logger.info("Creating schedule #{schedule_spec[:name]} for process #{remote_process.name}")
+
             executable = nil
             if process_spec.type != :dataload
               executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
@@ -301,15 +320,27 @@ module GoodData
             params = schedule_parameters(to_project.pid, schedule_spec)
             created_schedule = remote_process.create_schedule(schedule_spec[:cron] || schedule_cache[schedule_spec[:after]], executable, params)
             schedule_cache[created_schedule.name] = created_schedule
+
+            results << {
+              state: :added,
+              process: remote_process,
+              schedule: created_schedule
+            }
           else
             schedule_spec = changed_schedule[:new_obj]
             if schedule_spec[:after] && !schedule_cache[schedule_spec[:after]]
               stack << [state, schedule_spec]
               next
             end
-            remote_process, process_spec = cache.find { |i| i[2].name == schedule_spec[:name] }
+
+            remote_process, process_spec = cache.find do |i|
+              i[2].name == schedule_spec[:name]
+            end
+
             schedule = changed_schedule[:old_obj][:remote_schedule]
-            messages << { message: "Updating schedule #{schedule_spec[:name]} for process #{remote_process.name}" }
+
+            GoodData.logger.info("Updating schedule #{schedule_spec[:name]} for process #{remote_process.name}")
+
             schedule.params = (schedule_spec[:params] || {})
             schedule.cron = schedule_spec[:cron] if schedule_spec[:cron]
             schedule.after = schedule_cache[schedule_spec[:after]] if schedule_spec[:after]
@@ -317,19 +348,33 @@ module GoodData
             if process_spec.type != :dataload
               schedule.executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
             end
+
             schedule.reschedule = schedule_spec[:reschedule]
             schedule.name = schedule_spec[:name]
             schedule.save
             schedule_cache[schedule.name] = schedule
+
+            results << {
+              state: :changed,
+              process: remote_process,
+              schedule: schedule
+            }
           end
         end
 
         diff[:removed].each do |removed_schedule|
-          messages << { message: "Removing schedule #{removed_schedule[:name]}" }
+          GoodData.logger.info("Removing schedule #{removed_schedule[:name]}")
+
           removed_schedule[:remote_schedule].delete
+
+          results << {
+            state: :removed,
+            process: removed_schedule.process,
+            schedule: removed_schedule
+          }
         end
-        messages
-        # messages.map {|m| m.merge({custom_project_id: custom_project_id})}
+
+        results
       end
 
       def transfer_tagged_stuff(from_project, to_project, tag)
@@ -787,8 +832,20 @@ module GoodData
       GoodData.download_from_project_webdav(file, where, project: self)
     end
 
+    def driver
+      content['driver']
+    end
+
     def environment
-      json['project']['content']['environment']
+      content['environment']
+    end
+
+    def public?
+      content['isPublic']
+    end
+
+    def token
+      content['authorizationToken']
     end
 
     # Gets user by its email, full_name, login or uri

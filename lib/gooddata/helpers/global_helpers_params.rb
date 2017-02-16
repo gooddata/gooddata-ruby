@@ -87,8 +87,8 @@ module GoodData
                              end
 
         begin
-          parsed_data_params = JSON.parse(data_params)
-          parsed_hidden_data_params = JSON.parse(hidden_data_params)
+          parsed_data_params = data_params.is_a?(Hash) ? data_params : JSON.parse(data_params)
+          parsed_hidden_data_params = hidden_data_params.is_a?(Hash) ? hidden_data_params : JSON.parse(hidden_data_params)
         rescue JSON::ParserError => e
           raise e.class, "Error reading json from '#{key}' or '#{hidden_key}', reason: #{e.message}"
         end
@@ -97,7 +97,10 @@ module GoodData
         # if the data was retrieved from API You will not have the actual values so encode -> decode is not losless. The nil on the key prevents the server from deleting the key
         parsed_hidden_data_params[ENCODED_HIDDEN_PARAMS_KEY] = nil unless parsed_hidden_data_params.empty?
         secure_params = convert_secure_params.call(params)
-        params.delete_if { |k, _| k.include? "|" }
+        params.delete_if do |k, _|
+          k.include?('|')
+        end
+
         params.delete(key)
         params.delete(hidden_key)
         params.deep_merge(parsed_data_params).deep_merge(parsed_hidden_data_params).deep_merge(secure_params)

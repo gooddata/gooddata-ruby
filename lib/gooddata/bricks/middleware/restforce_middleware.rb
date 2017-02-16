@@ -12,38 +12,38 @@ require_relative 'base_middleware'
 module GoodData
   module Bricks
     class RestForceMiddleware < Bricks::Middleware
-      DEFAULT_VERSION = '29.0'
+      DEFAULT_VERSION = '29.0'.freeze
 
-      def self.create_client(params)
-        downloader_config = params['config']['downloader']['salesforce']
+      def self.prepare_credentials(downloader_config)
         username = downloader_config['username']
         password = downloader_config['password']
         token = downloader_config['token']
-        client_id = downloader_config['client_id']
-        client_secret = downloader_config['client_secret']
         oauth_refresh_token = downloader_config['oauth_refresh_token']
-        host = downloader_config['host']
-        version = downloader_config['api_version'] || DEFAULT_VERSION
 
-        credentials = if username && password && token
-                        {
-                          :username => username,
-                          :password => password,
-                          :security_token => token
-                        }
-                      elsif (oauth_refresh_token) && (!oauth_refresh_token.empty?)
-                        {
-                          :refresh_token => oauth_refresh_token
-                        }
-                      end
+        if username && password && token
+          {
+            username: username,
+            password: password,
+            security_token: token
+          }
+        elsif oauth_refresh_token && !oauth_refresh_token.empty?
+          {
+            refresh_token: oauth_refresh_token
+          }
+        end
+      end
+
+      def self.create_client(params)
+        downloader_config = params['config']['downloader']['salesforce']
+        credentials = prepare_credentials(params)
 
         client = if credentials
-                   credentials.merge!(
-                     :client_id => client_id,
-                     :client_secret => client_secret
-                   )
-                   credentials[:host] = host unless host.nil?
-                   credentials[:api_version] = version
+                   credentials[:client_id] = downloader_config['client_id']
+                   credentials[:client_secret] = downloader_config['client_secret']
+
+                   host = downloader_config['host']
+                   credentials[:host] = host if host
+                   credentials[:api_version] = downloader_config['api_version'] || DEFAULT_VERSION
 
                    Restforce.log = true if params['GDC_LOGGER']
 

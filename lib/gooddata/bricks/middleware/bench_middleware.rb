@@ -6,6 +6,7 @@
 
 require 'benchmark'
 require_relative 'base_middleware'
+require 'pp'
 
 module GoodData
   module Bricks

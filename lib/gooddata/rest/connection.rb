@@ -82,6 +82,7 @@ module GoodData
       }
 
       RETRYABLE_ERRORS = [
+        Net::HTTPBadResponse,
         RestClient::InternalServerError,
         RestClient::RequestTimeout,
         RestClient::MethodNotAllowed,

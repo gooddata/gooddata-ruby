@@ -4,10 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require_relative 'base_downloader'
 require_relative 'utils'
-
 require_relative 'middleware/middleware'
+require_relative 'pipeline'
 
 module GoodData
   module Bricks
@@ -25,7 +24,7 @@ module GoodData
 
       # Version of brick, this should be implemented in subclasses
       def version
-        fail NotImplementedError, 'Method version should be reimplemented'
+        raise NotImplementedError, 'Method version should be reimplemented'
       end
 
       # Bricks implementation which can be 'called'

@@ -1,0 +1,11 @@
+INSERT INTO "<%= table_name || 'LCM_RELEASE' %>"
+(
+  segment_id,
+  master_project_id,
+  version
+)
+VALUES (
+  '<%= segment_id %>',
+  '<%= master_project_id %>',
+  <%= version %>
+);
