@@ -243,10 +243,6 @@ module GoodData
       def transfer_attribute_drillpaths(source_project, targets)
         semaphore = Mutex.new
 
-        synchronized_puts = proc do |*args|
-          semaphore.synchronize { puts args }
-        end
-
         # Convert to array
         targets = [targets] unless targets.is_a?(Array)
 
@@ -269,12 +265,17 @@ module GoodData
 
             if obj
               if !obj.content['drillDownStepAttributeDF'] || obj.content['drillDownStepAttributeDF'] != drill_path
-                synchronized_puts.call "Updating drill path of #{identifier} -> #{drill_path} in '#{target.title}'"
+                semaphore.synchronize do
+                  GoodData.logger.info "Updating drill path of #{identifier} -> #{drill_path} in '#{target.title}'"
+                end
+
                 obj.content['drillDownStepAttributeDF'] = drill_path
                 obj.save
               end
             else
-              synchronized_puts.call "Unable to find #{identifier} in '#{target.title}'"
+              semaphore.synchronize do
+                GoodData.logger.warn "Unable to find #{identifier} in '#{target.title}'"
+              end
             end
 
             nil
