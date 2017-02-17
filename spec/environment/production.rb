@@ -8,20 +8,20 @@ module GoodData
   module Environment
     module ConnectionHelper
       set_const :DEFAULT_SERVER, 'https://secure.gooddata.com'
-      set_const :DEFAULT_USER_URL, '/gdc/account/profile/3cf6a27afeed76b55caedf292691ac8a'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/d389375454af77f1f5a8edaa13ffe0f9'
       set_const :STAGING_URI, 'https://secure-di.gooddata.com/uploads/'
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, 'f1d78cef-5d4a-4436-a63d-c4e1ef4b15b4'
+      set_const :PROCESS_ID, 'f5d48101-c2d5-49ab-9acb-af6f2e51e09c'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'zqeflkdchlzjzigrjjnyy5y9yqcqq8kf'
+      set_const :PROJECT_ID, 'urdbsii7e840wwdpwjd3pu9l1jdbooah'
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '583c08ebe4b0dcdc1a4d9f62'
+      set_const :SCHEDULE_ID, '58a5c0c6e4b0831d95092e4a'
     end
   end
 end
