@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'hashie'
 require 'terminal-table'
 
 require_relative 'actions/actions'
@@ -110,7 +109,7 @@ module GoodData
     class << self
       def convert_params(params)
         # Symbolize all keys
-        Hashie.symbolize_keys!(params)
+        GoodData::Helpers.symbolize_keys!(params)
         convert_to_smart_hash(params)
       end
 
@@ -241,12 +240,12 @@ module GoodData
 
         brick_results = {}
         actions.each_with_index do |action, index|
-          brick_results[action.name.split('::').last.to_s] = results[index]
+          brick_results[action.class.short_name] = results[index]
         end
 
         {
           actions: actions.map do |action|
-            action.name.split('::').last.to_s
+            action.class.short_name
           end,
           results: brick_results,
           params: params

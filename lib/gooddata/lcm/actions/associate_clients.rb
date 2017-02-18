@@ -31,8 +31,8 @@ module GoodData
 
           client = params.gdc_gd_client
 
-          delete_projects = params.delete_projects == 'false' || params.delete_projects == false ? false : true
-          delete_extra = params.delete_extra == 'false' || params.delete_extra == false ? false : true
+          delete_projects = GoodData::Helpers.to_boolean(params.delete_projects)
+          delete_extra = GoodData::Helpers.to_boolean(params.delete_extra)
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")

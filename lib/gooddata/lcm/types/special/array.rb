@@ -27,7 +27,7 @@ module GoodData
         end
 
         def to_s
-          "#{self.class.name.split('::').last}<#{@type}>"
+          "#{self.class.short_name}<#{@type}>"
         end
       end
     end
