@@ -123,7 +123,7 @@ module GoodData
 
         scheduled_mail[:scheduledMail][:content][:attachments] = attachments
 
-        client.create(ScheduledMail, GoodData::Helpers.deep_stringify_keys(scheduled_mail), :project => project)
+        client.create(ScheduledMail, GoodData::Helpers.stringify_keys(scheduled_mail), :project => project)
       end
     end
 

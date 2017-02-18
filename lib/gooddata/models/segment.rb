@@ -73,7 +73,7 @@ module GoodData
         segment_id = data[:segment_id]
         fail 'Custom ID has to be provided' if segment_id.blank?
         client = options[:client]
-        segment = client.create(GoodData::Segment, GoodData::Helpers.deep_stringify_keys(SEGMENT_TEMPLATE).merge('domain' => options[:domain]))
+        segment = client.create(GoodData::Segment, GoodData::Helpers.stringify_keys(SEGMENT_TEMPLATE).merge('domain' => options[:domain]))
         segment.tap do |s|
           s.segment_id = segment_id
           s.master_project = data[:master_project]

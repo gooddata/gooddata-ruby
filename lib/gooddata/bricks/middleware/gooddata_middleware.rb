@@ -17,8 +17,8 @@ module GoodData
         params = params.to_hash
 
         # Transform keys
-        params = GoodData::Helpers.deep_stringify_keys(params)
-        # params = GoodData::Helpers.deep_symbolize_keys(params)
+        params = GoodData::Helpers.stringify_keys(params)
+        # params = GoodData::Helpers.symbolize_keys(params)
 
         # Set logger
         logger = params['GDC_LOGGER']

@@ -25,7 +25,7 @@ module GoodData
 
     class << self
       def create(tab, item)
-        res = GoodData::HeadlineItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        res = GoodData::HeadlineItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.stringify_keys(EMPTY_OBJECT)))
         item.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
         end

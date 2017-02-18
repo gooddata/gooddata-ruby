@@ -75,7 +75,7 @@ module GoodData
       def create(data, options)
         segment = options[:segment]
         domain = segment.domain
-        tenant = client.create(GoodData::Client, GoodData::Helpers.deep_stringify_keys(CLIENT_TEMPLATE.merge(domain: domain)), domain: domain)
+        tenant = client.create(GoodData::Client, GoodData::Helpers.stringify_keys(CLIENT_TEMPLATE.merge(domain: domain)), domain: domain)
         tenant.tap do |s|
           s.project = data[:project]
           s.client_id = data[:id]

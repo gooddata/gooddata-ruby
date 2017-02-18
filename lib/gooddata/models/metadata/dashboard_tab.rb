@@ -38,7 +38,7 @@ module GoodData
 
     class << self
       def create(dashboard, tab)
-        res = GoodData::DashboardTab.new(dashboard, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        res = GoodData::DashboardTab.new(dashboard, GoodData::Helpers.deep_dup(GoodData::Helpers.stringify_keys(EMPTY_OBJECT)))
         tab.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
         end

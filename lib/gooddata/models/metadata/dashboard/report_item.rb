@@ -48,7 +48,7 @@ module GoodData
       end
 
       def create(tab, item)
-        res = GoodData::ReportItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.deep_stringify_keys(EMPTY_OBJECT)))
+        res = GoodData::ReportItem.new(tab, GoodData::Helpers.deep_dup(GoodData::Helpers.stringify_keys(EMPTY_OBJECT)))
         item.each do |k, v|
           res.send("#{k}=", v) if ASSIGNABLE_MEMBERS.include? k
         end

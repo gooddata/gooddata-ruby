@@ -189,7 +189,7 @@ describe GoodData::Project, :constraint => 'slow' do
     context 'when export task fails' do
       let(:fail_response) do
         response = { taskState: { status: 'ERROR' } }
-        GoodData::Helpers.deep_stringify_keys(response)
+        GoodData::Helpers.stringify_keys(response)
       end
 
       before do
@@ -207,7 +207,7 @@ describe GoodData::Project, :constraint => 'slow' do
     let(:clone) { GoodData::Project.create(title: 'import clone test', client: @client) }
     let(:fail_response) do
       response = { taskState: { status: 'ERROR' } }
-      GoodData::Helpers.deep_stringify_keys(response)
+      GoodData::Helpers.stringify_keys(response)
     end
 
     after do
