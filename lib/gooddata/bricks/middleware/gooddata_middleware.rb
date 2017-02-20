@@ -25,9 +25,11 @@ module GoodData
         GoodData.logger = logger
 
         # Connect Client
+        protocol = params['CLIENT_GDC_PROTOCOL'] || DEFAULT_PROTOCOL
+        hostname = params['CLIENT_GDC_HOSTNAME'] || DEFAULT_HOSTNAME
+        server = "#{protocol}://#{hostname}"
         client = GoodDataMiddleware.connect(
-          params['CLIENT_GDC_PROTOCOL'] || DEFAULT_PROTOCOL,
-          params['CLIENT_GDC_HOSTNAME'] || DEFAULT_HOSTNAME,
+          server,
           params['GDC_VERIFY_SSL'].to_b,
           params['GDC_USERNAME'],
           params['GDC_PASSWORD'],
@@ -36,11 +38,18 @@ module GoodData
 
         opts = params['development_client']
         if opts
+          if opts['server']
+            server = opts['server']
+          else
+            protocol = opts['protocol'] || DEFAULT_PROTOCOL
+            hostname = opts['hostname'] || DEFAULT_HOSTNAME
+            server = "#{protocol}://#{hostname}"
+          end
+
           development_client = GoodDataMiddleware.connect(
-            opts['protocol'] || DEFAULT_PROTOCOL,
-            opts['hostname'] || DEFAULT_HOSTNAME,
+            server,
             opts['verify_ssl'].to_b,
-            opts['username'],
+            opts['username'] || opts['login'] || opts['email'],
             opts['password'],
             opts['sst']
           )
@@ -77,9 +86,7 @@ module GoodData
       end
 
       class << self
-        def connect(protocol, hostname, verify_ssl, username, password, sst_token) # rubocop:disable Metrics/ParameterLists
-          server = "#{protocol}://#{hostname}" if protocol && hostname
-
+        def connect(server, verify_ssl, username, password, sst_token) # rubocop:disable Metrics/ParameterLists
           if username.nil? || password.nil?
             puts "Connecting with SST to server #{server}"
             raise 'SST (SuperSecureToken) not present in params' if sst_token.nil?
