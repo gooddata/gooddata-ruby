@@ -387,6 +387,11 @@ module GoodData
         from_project.partial_md_export(objects, project: to_project)
       end
 
+      def transfer_color_palette(from_project, to_project)
+        colors = from_project.current_color_palette
+        to_project.create_custom_color_palette(colors) unless colors.empty?
+      end
+
       private
 
       def schedule_parameters(id, schedule_spec)
@@ -1683,6 +1688,22 @@ module GoodData
 
     def create_output_stage(ads, opts = {})
       add.create_output_stage(ads, opts)
+    end
+
+    def transfer_color_palette(target)
+      GoodData::Project.transfer_color_palette(self, target)
+    end
+
+    def current_color_palette
+      GoodData::StyleSetting.current(client: client, project: self)
+    end
+
+    def create_custom_color_palette(colors)
+      GoodData::StyleSetting.create(colors, client: client, project: self)
+    end
+
+    def reset_color_palette
+      GoodData::StyleSetting.reset(client: client, project: self)
     end
 
     private

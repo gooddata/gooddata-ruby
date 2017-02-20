@@ -71,6 +71,7 @@ module GoodData
         SynchronizeMeta,
         SynchronizeProcesses,
         SynchronizeSchedules,
+        SynchronizeColorPalette,
         SynchronizeNewSegments,
         UpdateReleaseTable
       ],
