@@ -378,13 +378,15 @@ module GoodData
       end
 
       def transfer_tagged_stuff(from_project, to_project, tag)
-        puts "Transferring tagged stuff - #{tag}"
+        GoodData.logger.info("Transferring objects tagged with tag '#{tag}'")
 
         objects = from_project.find_by_tag(tag)
 
-        puts JSON.pretty_generate(objects)
+        GoodData.logger.info(JSON.pretty_generate(objects))
 
         from_project.partial_md_export(objects, project: to_project)
+
+        objects
       end
 
       private
