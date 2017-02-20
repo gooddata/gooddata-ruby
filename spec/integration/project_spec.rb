@@ -90,7 +90,20 @@ describe GoodData::Project, :constraint => 'slow' do
       @project.import_users([bill], domain: @domain, whitelists: [/tester@gooddata.com/])
       expect(@project.members.count).to eq 2
       expect(@project.member?(bill)).to be_truthy
-      expect(@project.members?(users - [bill]).any?).to be_falsey
+      disabled_users = users - [bill]
+      expect(@project.members?(disabled_users).any?).to be_falsey
+      disabled_users.each do |user|
+        expect(@project.users(disabled: true).find { |member| member.login.downcase == user.login.downcase }).not_to be_nil
+      end
+
+      # remove completely everybody but buffalo bill.
+      @project.import_users([bill], domain: @domain, whitelists: [/gem_tester@gooddata.com/], remove_users_from_project: true)
+      expect(@project.members.count).to eq 2
+      expect(@project.member?(bill)).to be_truthy
+      expect(@project.members?(disabled_users).any?).to be_falsey
+      disabled_users.each do |user|
+        expect(@project.users(disabled: true).find { |member| member.login.downcase == user.login.downcase }).to be_nil
+      end
 
       # Add additional user while changing Buffalos surname and role.
       bill.last_name = 'Billie'
