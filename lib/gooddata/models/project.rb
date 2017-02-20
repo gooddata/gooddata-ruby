@@ -389,6 +389,11 @@ module GoodData
         objects
       end
 
+      def transfer_color_palette(from_project, to_project)
+        colors = from_project.current_color_palette
+        to_project.create_custom_color_palette(colors) unless colors.empty?
+      end
+
       private
 
       def schedule_parameters(id, schedule_spec)
@@ -1402,7 +1407,14 @@ module GoodData
           tmp = client.get("/gdc/projects/#{pid}/users", params: { offset: offset, limit: limit })
           tmp['users'].each do |user_data|
             user = client.create(GoodData::Membership, user_data, project: self)
-            y << user if opts[:all] || user && user.enabled?
+
+            if opts[:all]
+              y << user
+            elsif opts[:disabled]
+              y << user if user && user.disabled?
+            else
+              y << user if user && user.enabled?
+            end
           end
           break if tmp['users'].count < limit
           offset += limit
@@ -1503,8 +1515,17 @@ module GoodData
 
       # Remove old users
       to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
-      GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
+      GoodData.logger.warn("Disabling #{to_remove.count} users from project (#{pid})")
       results.concat(disable_users(to_remove, roles: role_list, project_users: whitelisted_users))
+
+      # Remove old users completely
+      if options[:remove_users_from_project]
+        to_remove = (to_remove + users(disabled: true).to_a).map(&:to_hash).uniq do |user|
+          user[:uri]
+        end
+        GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
+        results.concat(remove_users(to_remove))
+      end
 
       # reassign to groups
       mappings = new_users.map(&:to_hash).flat_map do |user|
@@ -1542,6 +1563,21 @@ module GoodData
       payloads.each_slice(100).mapcat do |payload|
         result = client.post(url, 'users' => payload)
         result['projectUsersUpdateResult'].mapcat { |k, v| v.map { |x| { type: k.to_sym, user: x } } }
+      end
+    end
+
+    def remove_users(list)
+      list = list.map(&:to_hash)
+
+      list.pmapcat do |u|
+        u_id = GoodData::Helpers.last_uri_part(u[:uri])
+        url = "#{uri}/users/#{u_id}"
+        begin
+          client.delete(url)
+          [{ type: :successful, operation: :user_deleted_from_project, user: u }]
+        rescue => e
+          [{ type: :failed, message: e.message }]
+        end
       end
     end
 
@@ -1667,14 +1703,6 @@ module GoodData
       @add
     end
 
-    def get_profile_uri_from_login(login)
-      user = users.find do |u|
-        u.login == login
-      end
-
-      user.profile_url if user
-    end
-
     def transfer_etl(target)
       GoodData::Project.transfer_etl(client, self, target)
     end
@@ -1693,6 +1721,22 @@ module GoodData
 
     def create_output_stage(ads, opts = {})
       add.create_output_stage(ads, opts)
+    end
+
+    def transfer_color_palette(target)
+      GoodData::Project.transfer_color_palette(self, target)
+    end
+
+    def current_color_palette
+      GoodData::StyleSetting.current(client: client, project: self)
+    end
+
+    def create_custom_color_palette(colors)
+      GoodData::StyleSetting.create(colors, client: client, project: self)
+    end
+
+    def reset_color_palette
+      GoodData::StyleSetting.reset(client: client, project: self)
     end
 
     private

@@ -67,7 +67,7 @@ describe GoodData::Project, :constraint => 'slow' do
     it "Updates user's name and surname and removes the users" do
       users = (1..2).to_a.map { ProjectHelper.create_random_user(@client) }
       @domain.create_users(users)
-      @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users(users, domain: @domain, whitelists: [/tester@gooddata.com/])
       expect(@domain.members?(users)).to be_truthy
       expect(@project.members?(users)).to be_truthy
       expect(@project.members.count).to eq 3
@@ -76,8 +76,8 @@ describe GoodData::Project, :constraint => 'slow' do
       bill.first_name = 'buffalo'
       bill.last_name = 'bill'
       # import
-      @domain.create_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
-      @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @domain.create_users(users, domain: @domain, whitelists: [/tester@gooddata.com/])
+      @project.import_users(users, domain: @domain, whitelists: [/tester@gooddata.com/])
       # it should be updated
       bill_changed = @domain.get_user(bill)
       expect(bill_changed.first_name).to eq 'buffalo'
@@ -87,10 +87,23 @@ describe GoodData::Project, :constraint => 'slow' do
       expect(@project.member?(bill_changed)).to be_truthy
 
       # remove everybody but buffalo bill.
-      @project.import_users([bill], domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users([bill], domain: @domain, whitelists: [/tester@gooddata.com/])
       expect(@project.members.count).to eq 2
       expect(@project.member?(bill)).to be_truthy
-      expect(@project.members?(users - [bill]).any?).to be_falsey
+      disabled_users = users - [bill]
+      expect(@project.members?(disabled_users).any?).to be_falsey
+      disabled_users.each do |user|
+        expect(@project.users(disabled: true).find { |member| member.login.downcase == user.login.downcase }).not_to be_nil
+      end
+
+      # remove completely everybody but buffalo bill.
+      @project.import_users([bill], domain: @domain, whitelists: [/gem_tester@gooddata.com/], remove_users_from_project: true)
+      expect(@project.members.count).to eq 2
+      expect(@project.member?(bill)).to be_truthy
+      expect(@project.members?(disabled_users).any?).to be_falsey
+      disabled_users.each do |user|
+        expect(@project.users(disabled: true).find { |member| member.login.downcase == user.login.downcase }).to be_nil
+      end
 
       # Add additional user while changing Buffalos surname and role.
       bill.last_name = 'Billie'
@@ -98,7 +111,7 @@ describe GoodData::Project, :constraint => 'slow' do
       additional_batch = [bill, other_guy]
 
       @domain.create_users(additional_batch, domain: @domain)
-      @project.import_users(additional_batch.map { |u| { user: u, role: u.role } }, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users(additional_batch.map { |u| { user: u, role: u.role } }, domain: @domain, whitelists: [/tester@gooddata.com/])
 
       expect(@project.members.count).to eq 3
       expect(@project.member?(bill)).to be_truthy
@@ -108,13 +121,13 @@ describe GoodData::Project, :constraint => 'slow' do
     it "Updates user's role in a project" do
       users = (1..5).to_a.map { ProjectHelper.create_random_user(@client).to_hash }
       @domain.create_users(users, domain: @domain)
-      @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users(users, domain: @domain, whitelists: [/tester@gooddata.com/])
 
       expect(@project.members?(users)).to be_truthy
       user_role_changed = users[1]
       users_unchanged = users - [user_role_changed]
       new_role = users[1][:role] = users[1][:role] == "admin" ? "editor" : "admin"
-      @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users(users, domain: @domain, whitelists: [/tester@gooddata.com/])
       expect(@project.get_user(user_role_changed).role.identifier).to eq "#{new_role}Role"
       expect(users_unchanged.map { |u| @project.get_user(u) }.map(&:role).map(&:title).uniq).to eq ['Editor']
     end
@@ -128,7 +141,7 @@ describe GoodData::Project, :constraint => 'slow' do
       @domain.create_users(users, domain: @domain)
       expect(@project.member?(u)).to be_truthy
       expect(u.role.title).to eq 'Admin'
-      @project.import_users(users, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users(users, domain: @domain, whitelists: [/tester@gooddata.com/])
       expect(@project.member?(u)).to be_truthy
       expect(@project.members?(users).all?).to be_truthy
       expect(@project.get_user(ConnectionHelper::DEFAULT_USERNAME).role.title).to eq 'Admin'
@@ -138,7 +151,7 @@ describe GoodData::Project, :constraint => 'slow' do
   describe '#set_user_roles' do
     it 'Properly updates user roles as needed' do
       users_to_import = @domain.users.drop(rand(100)).take(5).map { |u| { user: u, role: 'admin' } }
-      @project.import_users(users_to_import, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users(users_to_import, domain: @domain, whitelists: [/tester@gooddata.com/])
       users_without_owner = @project.users.reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.pselect { |u| u.role.title == 'Admin' }
 
       user_to_change = users_without_owner.sample
@@ -215,7 +228,7 @@ describe GoodData::Project, :constraint => 'slow' do
         u
       end
       @domain.create_users(users_with_groups, domain: @domain)
-      @project.import_users(users_with_groups, domain: @domain, whitelists: [/gem_tester@gooddata.com/])
+      @project.import_users(users_with_groups, domain: @domain, whitelists: [/tester@gooddata.com/])
       expect(users_with_groups.flat_map { |u| u[:user_group].map { |g| [u[:login], g] } }.all? do |u, g|
         begin
           @project.user_groups(g).member?(@project.member(u).uri)
@@ -229,7 +242,7 @@ describe GoodData::Project, :constraint => 'slow' do
         u
       end
       to_whitelist = @project.user_groups('group_2').members.to_a.sample
-      @project.import_users(users_with_group, domain: @domain, whitelists: [to_whitelist.login, /gem_tester@gooddata.com/])
+      @project.import_users(users_with_group, domain: @domain, whitelists: [to_whitelist.login, /tester@gooddata.com/])
       expect(@project.user_groups('group_2').members.map(&:login)).to eq [to_whitelist.login]
       expect(users_with_group.flat_map { |u| u[:user_group].map { |g| [u[:login], g] } }.all? do |u, g|
         begin
@@ -271,6 +284,31 @@ describe GoodData::Project, :constraint => 'slow' do
       expect(user.enabled?).to be_truthy
       expect(user.disabled?).to be_falsey
       expect(user.project).not_to be_nil
+    end
+  end
+
+  describe 'color palette' do
+    it 'should return empty when project is not set color' do
+      expect(@project.current_color_palette.colors).to eq []
+    end
+
+    it 'should be able to set custom color' do
+      colors = [{ r: 155, g: 255, b: 0 }]
+      @project.create_custom_color_palette(colors)
+      expect(@project.current_color_palette.colors).to eq colors
+    end
+
+    it 'should be able to reset custom color' do
+      colors = [{ r: 155, g: 255, b: 0 }]
+      @project.create_custom_color_palette(colors)
+      @project.reset_color_palette
+      expect(@project.current_color_palette.colors).to eq []
+    end
+
+    it 'should not contains duplicate color' do
+      colors = [{ r: 155, g: 255, b: 0 }, { r: 155, g: 255, b: 0 }]
+      @project.create_custom_color_palette(colors)
+      expect(@project.current_color_palette.colors).to eq [{ r: 155, g: 255, b: 0 }]
     end
   end
 end

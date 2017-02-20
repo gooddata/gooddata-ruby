@@ -37,6 +37,12 @@ module GoodData
       end
     end
 
+    def drill_down(attribute)
+      attribute = Attribute[attribute, client: client, project: project]
+      content['drillDownStepAttributeDF'] = attribute.primary_label.meta['uri']
+      save
+    end
+
     # Returns the labels of an attribute
     # @return [Array<GoodData::Label>]
     def display_forms

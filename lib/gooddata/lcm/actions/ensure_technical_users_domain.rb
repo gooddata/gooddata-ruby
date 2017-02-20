@@ -36,10 +36,8 @@ module GoodData
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
-          domain_users = domain.users
-
           technical_users = params.technical_user || []
-          new_users = technical_users.map do |technical_user|
+          technical_users.map do |technical_user|
             domain_user = domain.users.find do |du|
               du.login == technical_user
             end
