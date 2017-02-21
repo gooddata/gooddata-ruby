@@ -7,21 +7,23 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      set_const :DEFAULT_SERVER, 'https://staging2.intgdc.com'
-      set_const :DEFAULT_USER_URL, '/gdc/account/profile/3713cbb890fdc5e6eddee18e1ccbc89a'
+      set_const :GD_PROJECT_TOKEN, GoodData::Helpers.decrypt("DIRchLbHH1fovLSVEfo3f5aQwHHQ432+PxF3uR5IuNn+iYWz+HZrLtaZ3LVE\n0ZNc\n", ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
+      set_const :DEFAULT_DOMAIN, 'staging2-lcm-prod'
+      set_const :DEFAULT_SERVER, 'https://staging2-lcm-prod.intgdc.com'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa'
       set_const :STAGING_URI, 'https://na1-staging2-di.intgdc.com/uploads/'
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, 'f0aa58a1-2161-471e-bf9e-3cc42b410cd6'
+      set_const :PROCESS_ID, '3dddcd0d-1b56-4508-a94b-abea70c7154d'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'f021bilepfg8w7vi3yfms63u2h2oc6mb'
+      set_const :PROJECT_ID, 'fbhs09oddsgezqtn3um5rp08midmbpg5'
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '58a5bf4de4b09787f5371e0c'
+      set_const :SCHEDULE_ID, '58ad4fbbe4b02e90f6422677'
     end
   end
 end

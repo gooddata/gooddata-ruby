@@ -163,7 +163,7 @@ describe GoodData::Project, :constraint => 'slow' do
   describe '#export_clone' do
     context 'when exclude_schedule is true' do
       let(:options) { { exclude_schedules: true } }
-      let(:clone) { GoodData::Project.create(title: 'project clone', client: @client) }
+      let(:clone) { GoodData::Project.create(title: 'project clone', client: @client, auth_token: ConnectionHelper::GD_PROJECT_TOKEN) }
 
       after do
         clone.delete if clone
@@ -204,7 +204,7 @@ describe GoodData::Project, :constraint => 'slow' do
   end
 
   describe '#import_clone' do
-    let(:clone) { GoodData::Project.create(title: 'import clone test', client: @client) }
+    let(:clone) { GoodData::Project.create(title: 'import clone test', client: @client, auth_token: ConnectionHelper::GD_PROJECT_TOKEN) }
     let(:fail_response) do
       response = { taskState: { status: 'ERROR' } }
       GoodData::Helpers.stringify_keys(response)

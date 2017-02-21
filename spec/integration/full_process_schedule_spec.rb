@@ -285,7 +285,7 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
       process = @project.processes.first
       schedule_first = process.create_schedule('0 15 27 7 *', process.executables.first)
       schedule_second = process.create_schedule('0 15 27 8 *', process.executables.first)
-      cloned_project = GoodData::Project.clone_with_etl(@project)
+      cloned_project = GoodData::Project.clone_with_etl(@project, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
       a = @project.processes.flat_map { |p| p.schedules.map { |s| [p.name, s.name] } }
       b = cloned_project.processes.flat_map { |p| p.schedules.map { |s| [p.name, s.name] } }
       expect(a).to eq b
