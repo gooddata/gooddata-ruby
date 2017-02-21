@@ -253,20 +253,20 @@ module GoodData
       def transfer_user_groups(from_project, to_project)
         from_project.user_groups.each do |ug|
           # migrate groups
-          new_group = to_project.user_groups.select{|group| group.name == ug.name }.first
-          new_group ||= UserGroup.create({:name => ug.name, :description => ug.description, :project => to_project})
+          new_group = to_project.user_groups.select { |group| group.name == ug.name }.first
+          new_group ||= UserGroup.create(:name => ug.name, :description => ug.description, :project => to_project)
           new_group.project = to_project
           new_group.description = ug.description
           new_group.save
           # migrate dashboard "grantees"
           dashboards = from_project.dashboards
           dashboards.each do |dashboard|
-            new_dashboard = to_project.dashboards.select{|dash| dash.title == dashboard.title}.first
+            new_dashboard = to_project.dashboards.select { |dash| dash.title == dashboard.title }.first
             next unless new_dashboard
-            grantee = dashboard.grantees['granteeURIs']['items'].select{|item| item['aclEntryURI']['grantee'].split('/').last == ug.links['self'].split('/').last}.first
+            grantee = dashboard.grantees['granteeURIs']['items'].select { |item| item['aclEntryURI']['grantee'].split('/').last == ug.links['self'].split('/').last }.first
             next unless grantee
             permission = grantee['aclEntryURI']['permission']
-            new_dashboard.grant({:member => new_group, :permission => permission})
+            new_dashboard.grant(:member => new_group, :permission => permission)
           end
         end
       end
@@ -1575,7 +1575,7 @@ module GoodData
         end
         mappings.group_by { |_, g| g }.each do |g, mapping|
           remote_users = mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri }.reject(&:nil?)
-          next if remote_users.empty?
+          next if !remote_users || remote_users.empty?
           user_groups(g).set_members(remote_users)
         end
         mentioned_groups = mappings.map(&:last).uniq
@@ -1785,7 +1785,7 @@ module GoodData
       template = get_email_template(email_options)
       smtp = Net::SMTP.new('relay1.na.intgdc.com', 25)
       smtp.enable_starttls OpenSSL::SSL::SSLContext.new("TLSv1_2_client")
-      smtp.start('notifications.gooddata.com','gdc', password, :plain)
+      smtp.start('notifications.gooddata.com', 'gdc', password, :plain)
       users.each do |user|
         smtp.send_mail(get_email_body(template, user), from, user[:login])
       end

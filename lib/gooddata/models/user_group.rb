@@ -200,7 +200,7 @@ module GoodData
         @json = client.get(response['uri'])
       end
       self
-end
+    end
 
     # Remove member(s) from user group
     #
