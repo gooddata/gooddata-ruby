@@ -1542,7 +1542,7 @@ module GoodData
       results = []
       GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
       results.concat(create_users(u, roles: role_list, project_users: whitelisted_users))
-      send_mail_to_new_users(diff[:added], options[:email_options]) if !options[:email_options].empty? && !diff[:added].empty?
+      send_mail_to_new_users(diff[:added], options[:email_options]) if options[:email_options] && !options[:email_options].empty? && !diff[:added].empty?
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
@@ -1575,7 +1575,7 @@ module GoodData
         end
         mappings.group_by { |_, g| g }.each do |g, mapping|
           remote_users = mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri }.reject(&:nil?)
-          next if !remote_users || remote_users.empty?
+          next if remote_users.empty?
           user_groups(g).set_members(remote_users)
         end
         mentioned_groups = mappings.map(&:last).uniq
