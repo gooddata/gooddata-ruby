@@ -1792,7 +1792,6 @@ module GoodData
     end
 
     def get_email_template(options)
-      puts 'Setting up AWS-S3 connection for downloading email template'
       bucket = options[:email_template_bucket]
       path = options[:email_template_path]
       access_key = options[:email_template_access_key]
