@@ -91,7 +91,7 @@ module GoodData
             end
 
             # Add target project (new master for segment) into synchronization info
-            synchronize_info[:to] << project.pid
+            synchronize_info[:to] << { pid: project.pid }
 
             # Does segment exists? If not, create new one and set initial master
             if segment

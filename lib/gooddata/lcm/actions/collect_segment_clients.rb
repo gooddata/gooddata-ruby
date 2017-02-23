@@ -76,7 +76,11 @@ module GoodData
                   to_name: client_project.title,
                   to_pid: to_pid
                 }
-                to_pid
+
+                {
+                  pid: to_pid,
+                  client_id: segment_client.client_id
+                }
               end
             }
 
