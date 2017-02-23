@@ -76,7 +76,7 @@ module GoodData
         end
         fail 'Trigger schedule has to be provided' if trigger.blank?
 
-        schedule = c.create(GoodData::Schedule, GoodData::Helpers.deep_stringify_keys(GoodData::Helpers.deep_dup(SCHEDULE_TEMPLATE)), client: c, project: project)
+        schedule = c.create(GoodData::Schedule, GoodData::Helpers.stringify_keys(GoodData::Helpers.deep_dup(SCHEDULE_TEMPLATE)), client: c, project: project)
 
         params = { 'PROCESS_ID' => process_id }
         if is_dataload_process
@@ -111,7 +111,7 @@ module GoodData
     # @param json [Object] Raw JSON
     # @return [GoodData::Schedule] New GoodData::Schedule instance
     def initialize(json)
-      json = GoodData::Helpers.deep_stringify_keys(json)
+      json = GoodData::Helpers.stringify_keys(json)
       super
       @json = json
       self.params = GoodData::Helpers.decode_params(json['schedule']['params'] || {})

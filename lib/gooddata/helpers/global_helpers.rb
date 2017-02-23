@@ -14,6 +14,9 @@ require_relative 'global_helpers_params'
 
 module GoodData
   module Helpers
+    extend Hashie::Extensions::StringifyKeys::ClassMethods
+    extend Hashie::Extensions::SymbolizeKeys::ClassMethods
+
     class DeepMergeableHash < Hash
       include Hashie::Extensions::DeepMerge
     end
@@ -152,78 +155,6 @@ module GoodData
         message = error['error']['message']
         params = error['error']['parameters']
         sprintf(message, *params)
-      end
-
-      def transform_keys!(an_object)
-        return enum_for(:transform_keys!) unless block_given?
-        an_object.keys.each do |key|
-          an_object[yield(key)] = an_object.delete(key)
-        end
-        an_object
-      end
-
-      def symbolize_keys!(an_object)
-        transform_keys!(an_object) do |key|
-          begin
-            key.to_sym
-          rescue
-            key
-          end
-        end
-      end
-
-      def symbolize_keys(an_object)
-        transform_keys(an_object) do |key|
-          begin
-            key.to_sym
-          rescue
-            key
-          end
-        end
-      end
-
-      def transform_keys(an_object)
-        return enum_for(:transform_keys) unless block_given?
-        result = an_object.class.new
-        an_object.each_key do |key|
-          result[yield(key)] = an_object[key]
-        end
-        result
-      end
-
-      def deep_symbolize_keys(an_object)
-        deep_transform_keys(an_object) do |key|
-          begin
-            key.to_sym
-          rescue
-            key
-          end
-        end
-      end
-
-      def stringify_keys(an_object)
-        transform_keys(an_object, &:to_s)
-      end
-
-      def deep_stringify_keys(an_object)
-        deep_transform_keys(an_object, &:to_s)
-      end
-
-      def deep_transform_keys(an_object, &block)
-        _deep_transform_keys_in_object(an_object, &block)
-      end
-
-      def _deep_transform_keys_in_object(object, &block)
-        case object
-        when Hash
-          object.each_with_object({}) do |(key, value), result|
-            result[yield(key)] = _deep_transform_keys_in_object(value, &block)
-          end
-        when Array
-          object.map { |e| _deep_transform_keys_in_object(e, &block) }
-        else
-          object
-        end
       end
 
       def deep_dup(an_object)
