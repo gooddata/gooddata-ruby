@@ -10,19 +10,7 @@ require_relative '../dsl/dsl'
 module GoodData
   module LCM2
     module Type
-      class Param
-        def initialize
-          @description = nil
-          @type = nil
-          @name = nil
-          @opts = nil
-        end
-
-        attr_accessor :description
-        attr_accessor :type
-        attr_accessor :name
-        attr_accessor :opts
-      end
+      Param = Struct.new(:description, :type, :name, :opts)
     end
   end
 end

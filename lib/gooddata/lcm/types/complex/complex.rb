@@ -25,7 +25,7 @@ module GoodData
             param.join(': ')
           end
 
-          "#{self.class.name.split('::').last}<#{params.join(', ')}>"
+          "#{self.class.short_name}<#{params.join(', ')}>"
         end
       end
     end
