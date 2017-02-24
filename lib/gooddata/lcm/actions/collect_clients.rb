@@ -53,6 +53,7 @@ module GoodData
           segment_id_column = params.segment_id_column || 'segment_id'
           project_id_column = params.project_id_column || 'project_id'
           project_title_column = params.project_title_column || 'project_title'
+          project_token_column = params.project_token_column || 'project_token'
 
           clients = []
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
@@ -64,7 +65,8 @@ module GoodData
                 id: row[client_id_column],
                 segment: segment_name,
                 project: row[project_id_column],
-                project_title: row[project_title_column]
+                project_title: row[project_title_column],
+                project_token: row[project_token_column]
               }.compact
             end
           end

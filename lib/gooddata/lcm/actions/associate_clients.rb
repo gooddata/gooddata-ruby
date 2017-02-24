@@ -37,6 +37,7 @@ module GoodData
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
+          domain.update_clients_settings(params.clients)
           domain.update_clients(params.clients, delete_extra: delete_extra, delete_projects: delete_projects)
         end
       end
