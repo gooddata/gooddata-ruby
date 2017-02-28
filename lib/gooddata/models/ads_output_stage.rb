@@ -60,6 +60,12 @@ module GoodData
       @json = client.put(url, data_to_send, accept: 'application/json; version=1')
     end
 
+    def delete
+      data_to_send = { 'outputStage' => { 'clientId' => '', 'outputStagePrefix' => '' } }
+      url = build_output_stage_path
+      @json = client.put(url, data_to_send, accept: 'application/json; version=1')
+    end
+
     private
 
     def build_output_stage_path
