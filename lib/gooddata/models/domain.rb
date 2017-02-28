@@ -418,6 +418,27 @@ module GoodData
       end
     end
 
+    def update_clients_settings(data)
+      data.each do |datum|
+        settings_uri = "#{segments_uri}/clients/#{datum[:id]}/settings"
+        body = {
+          setting: {
+            name: 'lcm.token',
+            value: datum[:project_token]
+          }
+        }
+
+        begin
+          client.get("#{settings_uri}/lcm.token")
+          client.put("#{settings_uri}/#{name}", body)
+        rescue
+          client.post(settings_uri, body)
+        end
+      end
+
+      nil
+    end
+
     def update_clients(data, options = {})
       delete_projects = options[:delete_projects] == false ? false : true
       payload = data.map do |datum|
