@@ -59,7 +59,10 @@ module GoodData
               synchronize_projects << {
                 from: segment.master_project.pid,
                 to: tmp.map do |entry|
-                  entry[:project_uri].split('/').last
+                  {
+                    pid: entry[:project_uri].split('/').last,
+                    client_id: entry[:id]
+                  }
                 end
               }
             end
