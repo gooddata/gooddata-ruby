@@ -13,7 +13,13 @@ describe GoodData::Segment do
   before(:all) do
     @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false)
     @domain = @client.domain('mustangs')
-    GoodData::Segment.all(domain: @domain).each(&:delete)
+    GoodData::Segment.all(domain: @domain).each do |segment|
+      begin
+        segment.delete
+      rescue StandardError => e
+        GoodData.logger.warn "Failed to delete segment: #{e}"
+      end
+    end
   end
 
   before(:each) do
