@@ -6,7 +6,19 @@
 
 module GoodData
   class AutomatedDataDistribution < Rest::Resource
-    attr_accessor :output_stage
+    attr_writer :output_stage
+
+    def output_stage
+      if @output_stage
+        @output_stage
+      else
+        url = project.uri.gsub('/gdc/projects/', '/gdc/dataload/projects/') + '/outputStage'
+        data = project.client.get(url)
+        # TODO: We need to pass ADS but how to get it?
+        self.output_stage = GoodData::AdsOutputStage.create(data.merge({project: project, client: project.client}))
+        output_stage
+      end
+    end
 
     def initialize(project)
       self.project = project
