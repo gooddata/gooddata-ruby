@@ -333,7 +333,7 @@ module GoodData
       #
       # @param e [RuntimeException] Exception to log
       # @param uri [String] Uri on which the request failed
-      # @param uri [Hash] Additional params
+      # @param params [Hash] Additional params
       def log_error(e, uri, params, options = {})
         return if e.response && e.response.code == 401 && !uri.include?('token') && !uri.include?('login')
 
@@ -363,7 +363,6 @@ module GoodData
                 @server[uri].post(payload, params)
               end
             rescue RestClient::Exception => e
-              # log the error if it happens
               log_error(e, uri, params, options)
               raise e
             end
@@ -505,8 +504,17 @@ module GoodData
         request.execute
       end
 
-      def format_error(e, params)
-        "#{params[:x_gdc_request]} #{e.inspect}"
+      def format_error(e, params = {})
+        return unless e.respond_to?(:response)
+        error = MultiJson.load(e.response)
+        message = GoodData::Helpers.interpolate_error_message(error)
+        <<-ERR
+
+#{e}: #{message}
+Request ID: #{params[:x_gdc_request]}
+Full response:
+#{JSON.pretty_generate(error)}
+ERR
       end
 
       # generate session id to be passed as the first part to

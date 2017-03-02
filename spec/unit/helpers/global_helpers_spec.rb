@@ -166,4 +166,30 @@ describe GoodData::Helpers do
       expect(result).to eq(expected_result)
     end
   end
+
+  describe '.interpolate_error_message' do
+    let(:error_message) { { 'error' => { 'message' => 'foo %s', 'parameters' => ['bar'] } } }
+
+    before do
+      @message = GoodData::Helpers.interpolate_error_message(error_message)
+    end
+
+    it 'interpolates parameters' do
+      expect(@message).to eq('foo bar')
+    end
+
+    context 'when error parameter is empty' do
+      let(:error_message) { {} }
+      it 'returns nil' do
+        expect(@message).to be_nil
+      end
+    end
+
+    context 'when error key is empty' do
+      let(:error_message) { { 'error' => {} } }
+      it 'returns nil' do
+        expect(@message).to be_nil
+      end
+    end
+  end
 end
