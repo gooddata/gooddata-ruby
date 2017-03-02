@@ -92,15 +92,39 @@ module GoodData
         # the ${not_a_param} will not be replaced
         if options[:resolve_reference_params]
           regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{(\w+)\}/)
-          data_params.gsub!(regexps) do |match|
-            if match =~ /\\\\/
-              '\\\\'
-            elsif match =~ /\\\$/
-              '$'
-            elsif match =~ /\$\{(\w+)\}/
-              params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
+          resolve_reference = lambda do |v|
+            if v.is_a? Hash
+              Hash[
+                v.map do |k, v2|
+                  [k, resolve_reference.call(v2)]
+                end
+              ]
+            elsif v.is_a? Array
+              v.map do |v2|
+                resolve_reference.call(v2)
+              end
+            else
+              v.gsub(regexps) do |match|
+                if match =~ /\\\\/
+                  data_params.is_a?(Hash) ? '\\' : '\\\\' # rubocop: disable Metrics/BlockNesting
+                elsif match =~ /\\\$/
+                  '$'
+                elsif match =~ /\$\{(\w+)\}/
+                  params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
+                end
+              end
             end
           end
+
+          data_params = if data_params.is_a? Hash
+                          Hash[
+                            data_params.map do |k, v|
+                              [k, resolve_reference.call(v)]
+                            end
+                          ]
+                        else
+                          resolve_reference.call(data_params)
+                        end
         end
 
         begin
