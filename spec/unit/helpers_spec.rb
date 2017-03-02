@@ -114,10 +114,10 @@ describe GoodData::Helpers do
         'number_param' => 5,
         'ads_password' => 'ads_123',
         'my_password' => 'login_123',
-        :login_username => 'login_user',
-        :login_password => 'login_123',
-        :data01 => '\\login_123',
-        :data02 => 'abc\\def'
+        'login_username' => 'login_user',
+        'login_password' => 'login_123',
+        'data01' => '\\login_123',
+        'data02' => 'abc\\def'
       }
       result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
       expect(result).to eq(expected_result)
@@ -156,8 +156,8 @@ describe GoodData::Helpers do
         'number_param' => 5,
         'ads_password' => 'ads_123',
         'my_password' => 'login_123',
-        :login_username => 'login_user',
-        :data01 => '${abc}'
+        'login_username' => 'login_user',
+        'data01' => '${abc}'
       }
       result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
       expect(result).to eq(expected_result)
@@ -200,11 +200,11 @@ describe GoodData::Helpers do
         'number_param' => 5,
         'ads_password' => 'ads_123',
         'my_password' => 'login_123',
-        :login_username => 'login_user',
-        :login_password => 'login_123',
-        :ads_client => {
-          :username => 'ads_user',
-          :password => 'ads_123'
+        'login_username' => 'login_user',
+        'login_password' => 'login_123',
+        'ads_client' => {
+          'username' => 'ads_user',
+          'password' => 'ads_123'
         }
       }
       result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
