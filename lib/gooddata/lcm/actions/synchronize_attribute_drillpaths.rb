@@ -36,7 +36,8 @@ module GoodData
             to = info.to
 
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
-            to_projects = to.map do |pid|
+            to_projects = to.map do |entry|
+              pid = entry[:pid]
               client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
             end
 

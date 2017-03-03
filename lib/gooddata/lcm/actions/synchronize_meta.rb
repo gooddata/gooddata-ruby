@@ -31,8 +31,8 @@ module GoodData
             to = info.to
 
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
-            to_projects = to.map do |pid|
-              client.projects(pid)
+            to_projects = to.map do |entry|
+              client.projects(entry[:pid])
             end
 
             GoodData::LCM.transfer_meta(from_project, to_projects)

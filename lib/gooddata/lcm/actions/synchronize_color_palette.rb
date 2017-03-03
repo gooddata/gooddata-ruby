@@ -36,7 +36,8 @@ module GoodData
             to_projects = info.to
 
             from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
-            to_projects.each do |pid|
+            to_projects.each do |entry|
+              pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Transferring Custom Color Palette, from project: '#{from.title}', PID: '#{from.pid}', to project: '#{to_project.title}', PID: '#{to_project.pid}'"

@@ -40,7 +40,8 @@ module GoodData
             params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
 
             blueprint = from.blueprint
-            to_projects.each do |pid|
+            to_projects.each do |entry|
+              pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"

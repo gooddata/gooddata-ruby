@@ -13,6 +13,13 @@ module GoodData
     attr_accessor :client_id, :output_stage_prefix, :schema
 
     class << self
+      def [](opts = { client: GoodData.connection, project: GoodData.project })
+        c, project = GoodData.get_client_and_project(opts)
+        uri = OUTPUT_STAGE_PATH % project.pid
+        data = c.get(uri)
+        c.create(AdsOutputStage, data, opts)
+      end
+
       def create(opts = { client: GoodData.connection })
         c = GoodData.get_client(opts)
 
@@ -41,6 +48,8 @@ module GoodData
       @json = json
 
       @schema = data['schema']
+      @client_id = data['clientId']
+      @output_stage_prefix = data['outputStagePrefix']
     end
 
     def sql_diff

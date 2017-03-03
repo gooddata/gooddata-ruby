@@ -6,7 +6,7 @@
 
 module GoodData
   class AutomatedDataDistribution < Rest::Resource
-    attr_accessor :output_stage
+    attr_writer :output_stage
 
     def initialize(project)
       self.project = project
@@ -21,6 +21,13 @@ module GoodData
     def create_output_stage(ads, opts = {})
       self.output_stage = GoodData::AdsOutputStage.create({ ads: ads, project: project, client: project.client }.merge(opts))
       output_stage
+    end
+
+    def output_stage
+      return @output_stage if @output_stage
+
+      @output_stage = GoodData::AdsOutputStage[project: project, client: project.client]
+      @output_stage
     end
   end
 end
