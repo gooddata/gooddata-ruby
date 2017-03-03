@@ -63,5 +63,9 @@ module GoodData
         }
       end
     end
+
+    def empty?
+      colors.empty?
+    end
   end
 end

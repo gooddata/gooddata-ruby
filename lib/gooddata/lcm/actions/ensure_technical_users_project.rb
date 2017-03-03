@@ -42,8 +42,8 @@ module GoodData
           end
 
           results = params.synchronize.map do |synchronize_info|
-            synchronize_info[:to].map do |pid|
-              project = client.projects(pid)
+            synchronize_info[:to].map do |entry|
+              project = client.projects(entry[:pid])
               res = project.create_users(new_users)
 
               new_users.zip(res).map do |f, s|

@@ -152,6 +152,7 @@ module GoodData
       end
 
       def interpolate_error_message(error)
+        return unless error && error['error'] && error['error']['message']
         message = error['error']['message']
         params = error['error']['parameters']
         sprintf(message, *params)
