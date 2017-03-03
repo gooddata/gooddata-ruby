@@ -70,7 +70,9 @@ module GoodData
         is_dataload_process = Process[process_id, project: project, client: c].type == :dataload
 
         if is_dataload_process
-          [:dataload_datasets, :de_synchronize_all].each { |param| fail "#{param} has to be provided" unless options[param] }
+          [:dataload_datasets, :de_synchronize_all].each do |param|
+            fail "#{param} has to be provided" unless options[param]
+          end
         else
           fail 'Executable has to be provided' if executable.blank?
         end

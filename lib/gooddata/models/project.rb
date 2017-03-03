@@ -382,9 +382,12 @@ module GoodData
 
         objects = from_project.find_by_tag(tag)
 
-        puts JSON.pretty_generate(objects)
-
-        from_project.partial_md_export(objects, project: to_project)
+        if objects.any?
+          puts JSON.pretty_generate(objects)
+          from_project.partial_md_export(objects, project: to_project)
+        else
+          GoodData.logger.info('No tagged objects to transfer')
+        end
       end
 
       def transfer_color_palette(from_project, to_project)

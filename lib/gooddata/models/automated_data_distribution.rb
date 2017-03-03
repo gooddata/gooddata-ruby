@@ -9,15 +9,15 @@ module GoodData
     attr_writer :output_stage
 
     def output_stage
-      if @output_stage
-        @output_stage
-      else
-        url = project.uri.gsub('/gdc/projects/', '/gdc/dataload/projects/') + '/outputStage'
-        data = project.client.get(url)
-        # TODO: We need to pass ADS but how to get it?
-        self.output_stage = GoodData::AdsOutputStage.create(data.merge({project: project, client: project.client}))
-        output_stage
-      end
+      return @output_stage if @output_stage
+
+      url = project.uri.gsub('/gdc/projects/', '/gdc/dataload/projects/') + '/outputStage'
+      data = project.client.get(url)
+      url = data['outputStage']['schema'].sub('/schemas/default', '')
+      instance_data = project.client.get(url)
+      ads = project.client.create(GoodData::DataWarehouse, instance_data, project: project)
+
+      @output_stage = GoodData::AdsOutputStage.create(data.merge({project: project, client: project.client, ads: ads}))
     end
 
     def initialize(project)
@@ -31,8 +31,7 @@ module GoodData
     end
 
     def create_output_stage(ads, opts = {})
-      self.output_stage = GoodData::AdsOutputStage.create({ ads: ads, project: project, client: project.client }.merge(opts))
-      output_stage
+      @output_stage = GoodData::AdsOutputStage.create({ ads: ads, project: project, client: project.client }.merge(opts))
     end
   end
 end
