@@ -25,7 +25,12 @@ module GoodData
     end
 
     def create_output_stage(ads, opts = {})
-      @output_stage = GoodData::AdsOutputStage.create({ads: ads, project: project, client: project.client}.merge(opts))
+      data = {
+        ads: ads,
+        project: project,
+        client: project.client
+      }
+      @output_stage = GoodData::AdsOutputStage.create(data.merge(opts))
     end
   end
 end
