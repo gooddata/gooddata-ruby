@@ -12,7 +12,11 @@ module GoodData
     end
 
     def ==(other)
-      other.class == self.class && other.related_uri == related_uri && other.expression == expression
+      other_related_uri = other.related_uri
+      my_related_uri = related_uri
+      my_related_uri = "/gdc/account/profile/#{GoodData::Profile[my_related_uri].login}" if other_related_uri && !other_related_uri.empty? && other_related_uri.include?('@')
+
+      other.class == self.class && other_related_uri == my_related_uri && other.expression == expression
     end
     alias_method :eql?, :==
 
