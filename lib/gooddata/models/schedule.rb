@@ -84,8 +84,8 @@ module GoodData
 
         params = { 'PROCESS_ID' => process_id }
         if is_dataload_process
-          params['GDC_DATALOAD_DATASETS'] = options[:dataload_datasets]
-          params['GDC_DE_SYNCHRONIZE_ALL'] = options[:de_synchronize_all]
+          params['GDC_DATALOAD_DATASETS'] = dataload_datasets
+          params['GDC_DE_SYNCHRONIZE_ALL'] = de_synchronize_all
         else
           params['EXECUTABLE'] = executable
         end
