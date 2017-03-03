@@ -20,7 +20,7 @@ module GoodData
           param :from, instance_of(Type::StringType), required: true
 
           description 'To which projects'
-          param :to, array_of(instance_of(Type::StringType)), required: true
+          param :to, array_of(instance_of(Type::HashType)), required: true
         end
 
         def check(value)
