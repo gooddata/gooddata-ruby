@@ -185,5 +185,31 @@ module GoodData
       project.delete if project && !project.deleted?
       client.delete(uri) if uri
     end
+
+    def update_setting(name, value)
+      uri = "#{domain.segments_uri}/clients/#{client_id}/settings/#{name}"
+      body = {
+        setting: {
+          name: "#{name}",
+          value: "#{value}"
+        }
+      }
+      client.put(uri, body)
+      nil
+    end
+    alias_method :add_setting, :update_setting
+
+    def settings
+      uri = "#{domain.segments_uri}/clients/#{client_id}/settings"
+      res = client.get(uri)
+      settings = GoodData::Helpers.get_path(res, %w(settingsList items))
+      settings.map do |setting|
+        setting = setting['setting']
+        {
+          name: setting['name'],
+          value: setting['value']
+        }
+      end
+    end
   end
 end
