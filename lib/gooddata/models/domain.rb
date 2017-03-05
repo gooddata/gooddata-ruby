@@ -419,25 +419,23 @@ module GoodData
     end
 
     def update_clients_settings(data)
-      data.each do |datum|
-        settings_uri = "#{segments_uri}/clients/#{datum[:id]}/settings"
-        body = {
-          setting: {
-            name: 'lcm.token',
-            value: datum[:project_token]
-          }
-        }
-
-        begin
-          client.get("#{settings_uri}/lcm.token")
-          client.put("#{settings_uri}/#{name}", body)
-        rescue
-          client.post(settings_uri, body)
-        end
+      data = data.group_by do |datum|
+        datum[:id]
       end
-
+      input_client_ids = data.keys
+      clients
+        .select do |c|
+          input_client_ids.include?(c.client_id)
+        end
+        .each do |c|
+          settings = data[c.client_id][:settings]
+          settings.each do |setting|
+            c.update_setting(setting[:name], setting[:value])
+          end
+        end
       nil
     end
+    alias_method :add_clients_settings, :update_clients_settings
 
     def update_clients(data, options = {})
       delete_projects = options[:delete_projects] == false ? false : true
