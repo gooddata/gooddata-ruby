@@ -39,18 +39,9 @@ module GoodData
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-          all_segments = domain.segments
-
-          segment_names = params.segments.map do |segment|
-            segment.segment_id.downcase
-          end
-
-          segments = all_segments.select do |segment|
-            segment_names.include?(segment.segment_id.downcase)
-          end
 
           synchronize_projects = []
-          results = segments.map do |segment|
+          results = params.segments.map do |segment|
             tmp = domain.provision_client_projects(segment.segment_id).map do |m|
               Hash[m.each_pair.to_a].merge(type: :provision_result)
             end
