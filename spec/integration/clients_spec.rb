@@ -81,6 +81,26 @@ describe GoodData::Client do
     end
   end
 
+  describe '#settings' do
+    before(:all) do
+      @segment_client = @segment.create_client(id: "tenant_#{SecureRandom.uuid}", project: @client_project)
+    end
+
+    it 'can create/update setting' do
+      expect(@segment_client.settings).to eq []
+
+      GoodData::Client.add_setting('lcm.token', 'XXX-lcm-token-XXX', domain: @domain, client_id: @segment_client.client_id)
+      expect(@segment_client.settings).to eq [{ name: 'lcm.token', value: 'XXX-lcm-token-XXX' }]
+
+      GoodData::Client.update_setting('lcm.token', 'XXX-lcm-token-XXX-(updated)', domain: @domain, client_id: @segment_client.client_id)
+      expect(@segment_client.settings).to eq [{ name: 'lcm.token', value: 'XXX-lcm-token-XXX-(updated)' }]
+    end
+
+    after(:all) do
+      @segment_client && @segment_client.delete
+    end
+  end
+
   describe '#save' do
     before(:all) do
       @client_id = SecureRandom.uuid

@@ -66,7 +66,12 @@ module GoodData
                 segment: segment_name,
                 project: row[project_id_column],
                 project_title: row[project_title_column],
-                project_token: row[project_token_column]
+                settings: [
+                  {
+                    name: 'lcm.token',
+                    value: row[project_token_column]
+                  }
+                ]
               }.compact
             end
           end
