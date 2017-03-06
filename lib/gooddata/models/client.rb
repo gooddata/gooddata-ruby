@@ -82,6 +82,21 @@ module GoodData
           s.segment = segment.uri
         end
       end
+
+      def update_setting(name, value, opts = {})
+        domain = opts[:domain]
+        client_id = opts[:client_id]
+        uri = "#{domain.segments_uri}/clients/#{client_id}/settings/#{name}"
+        body = {
+          setting: {
+            name: "#{name}",
+            value: "#{value}"
+          }
+        }
+        domain.client.put(uri, body)
+        nil
+      end
+      alias_method :add_setting, :update_setting
     end
 
     def initialize(data)
@@ -184,6 +199,19 @@ module GoodData
     def delete
       project.delete if project && !project.deleted?
       client.delete(uri) if uri
+    end
+
+    def settings
+      uri = "#{domain.segments_uri}/clients/#{client_id}/settings"
+      res = client.get(uri)
+      settings = GoodData::Helpers.get_path(res, %w(settingsList items))
+      settings.map do |setting|
+        setting = setting['setting']
+        {
+          name: setting['name'],
+          value: setting['value']
+        }
+      end
     end
   end
 end

@@ -420,24 +420,15 @@ module GoodData
 
     def update_clients_settings(data)
       data.each do |datum|
-        settings_uri = "#{segments_uri}/clients/#{datum[:id]}/settings"
-        body = {
-          setting: {
-            name: 'lcm.token',
-            value: datum[:project_token]
-          }
-        }
-
-        begin
-          client.get("#{settings_uri}/lcm.token")
-          client.put("#{settings_uri}/#{name}", body)
-        rescue
-          client.post(settings_uri, body)
+        client_id = datum[:id]
+        settings = datum[:settings]
+        settings.each do |setting|
+          GoodData::Client.update_setting(setting[:name], setting[:value], domain: self, client_id: client_id)
         end
       end
-
       nil
     end
+    alias_method :add_clients_settings, :update_clients_settings
 
     def update_clients(data, options = {})
       delete_projects = options[:delete_projects] == false ? false : true
