@@ -8,11 +8,9 @@ require 'gooddata/models/segment'
 require 'securerandom'
 
 describe GoodData::Segment do
-  TOKEN = 'mustangs'
-
   before(:all) do
-    @client = GoodData.connect('mustang@gooddata.com', 'jindrisska', server: 'https://mustangs.intgdc.com', verify_ssl: false)
-    @domain = @client.domain('mustangs')
+    @client = ConnectionHelper.create_default_connection
+    @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
     GoodData::Segment.all(domain: @domain).each do |segment|
       begin
         segment.delete
@@ -24,7 +22,7 @@ describe GoodData::Segment do
 
   before(:each) do
     @uuid = SecureRandom.uuid
-    @master_project = @client.create_project(title: "Test MASTER project for #{@uuid}", auth_token: TOKEN)
+    @master_project = @client.create_project(title: "Test MASTER project for #{@uuid}", auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
     @segment_name = "segment-#{@uuid}"
     @segment = @domain.create_segment(segment_id: @segment_name, master_project: @master_project)
   end
@@ -66,7 +64,7 @@ describe GoodData::Segment do
   describe '#save' do
     it 'can update a segment master project' do
       begin
-        different_master = @client.create_project(title: 'Test project', auth_token: TOKEN)
+        different_master = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
         @segment.master_project = different_master
         @segment.save
         @segment = @domain.segments(@segment_name)
@@ -88,7 +86,7 @@ describe GoodData::Segment do
   describe '#create_client' do
     it 'can create a new client in a segment' do
       begin
-        client_project = @client.create_project(title: 'client_1 project', auth_token: TOKEN)
+        client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
         segment_client = @segment.create_client(id: 'tenant_1', project: client_project)
         expect(segment_client).to be_an_instance_of(GoodData::Client)
         expect(@segment.clients.count).to eq 1
@@ -118,7 +116,7 @@ describe GoodData::Segment do
     it 'can create a new client in a segment without project and then provision' do
       begin
         uuid_2 = SecureRandom.uuid
-        master_project_2 = @client.create_project(title: "Test MASTER project for #{uuid_2}", auth_token: TOKEN)
+        master_project_2 = @client.create_project(title: "Test MASTER project for #{uuid_2}", auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
         segment_name_2 = "segment-#{uuid_2}"
         segment_2 = @domain.create_segment(segment_id: segment_name_2, master_project: master_project_2)
 

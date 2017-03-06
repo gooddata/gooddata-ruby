@@ -7,21 +7,40 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      set_const :DEFAULT_SERVER, 'https://staging2.intgdc.com'
-      set_const :DEFAULT_USER_URL, '/gdc/account/profile/3713cbb890fdc5e6eddee18e1ccbc89a'
+      # These info is for staging3
+
+      # set_const :GD_PROJECT_TOKEN, GoodData::Helpers.decrypt("cfO9ifFYQVJw3q6Kf8/pVf/uLPLGnUJ/9nfvBxeGf/ILoj8N4ymWGgvryWEK\nHDMu\n", ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
+      # set_const :DEFAULT_DOMAIN, 'staging3-lcm-prod'
+      # set_const :DEFAULT_SERVER, 'https://staging3-lcm-prod.intgdc.com'
+      # set_const :DEFAULT_USER_URL, '/gdc/account/profile/a4c644d7b42b65c34e5a0f46809f7164'
+      # set_const :STAGING_URI, 'https://staging3-lcm-prod.intgdc.com/gdc/uploads/'
+
+      set_const :GD_PROJECT_TOKEN, GoodData::Helpers.decrypt("DIRchLbHH1fovLSVEfo3f5aQwHHQ432+PxF3uR5IuNn+iYWz+HZrLtaZ3LVE\n0ZNc\n", ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
+      set_const :DEFAULT_DOMAIN, 'staging2-lcm-prod'
+      set_const :DEFAULT_SERVER, 'https://staging2-lcm-prod.intgdc.com'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa'
       set_const :STAGING_URI, 'https://na1-staging2-di.intgdc.com/uploads/'
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, 'f0aa58a1-2161-471e-bf9e-3cc42b410cd6'
+      # These info is for staging3
+      # set_const :PROCESS_ID, 'b671fcfe-f6fd-4379-92c1-3db9eceb1c54'
+
+      set_const :PROCESS_ID, '3dddcd0d-1b56-4508-a94b-abea70c7154d'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'f021bilepfg8w7vi3yfms63u2h2oc6mb'
+      # These info is for staging3
+      # set_const :PROJECT_ID, 'rd87oh5rnbf1qhh9vjq5lkgq5v6okei5'
+
+      set_const :PROJECT_ID, 'fbhs09oddsgezqtn3um5rp08midmbpg5'
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '58a5bf4de4b09787f5371e0c'
+      # These info is for staging3
+      # set_const :SCHEDULE_ID, '58ad6260e4b0ee87af79b0b8'
+
+      set_const :SCHEDULE_ID, '58ad4fbbe4b02e90f6422677'
     end
   end
 end

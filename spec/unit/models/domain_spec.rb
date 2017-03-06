@@ -107,7 +107,7 @@ describe GoodData::Domain do
       expect(reverted_user.authentication_modes).to eq modes
     end
 
-    it 'Fails with an exception if you try to create a user that is in a different domain' do
+    it 'Fails with an exception if you try to create a user that is in a different domain', broken: true do
       user = ProjectHelper.create_random_user(@client)
       user.login = 'svarovsky@gooddata.com'
       expect do
