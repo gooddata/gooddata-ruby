@@ -86,7 +86,6 @@ module GoodData
         ProvisionClients,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
-        EnsureTitles,
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
         SynchronizeSchedules
