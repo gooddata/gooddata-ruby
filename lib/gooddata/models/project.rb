@@ -1447,7 +1447,6 @@ module GoodData
           end
         end
       end
-      
 
       if mode == :include
         [new_users.select(&new_whitelist_proc), users_list.select(&whitelist_proc)]
