@@ -52,7 +52,8 @@ module GoodData
                 to: tmp.map do |entry|
                   {
                     pid: entry[:project_uri].split('/').last,
-                    client_id: entry[:id]
+                    client_id: entry[:id],
+                    segment: segment
                   }
                 end
               }

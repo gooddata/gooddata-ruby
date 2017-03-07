@@ -69,8 +69,7 @@ module GoodData
         SynchronizeLdm,
         SynchronizeMeta,
         SynchronizeAttributeDrillpath,
-        SynchronizeProcesses,
-        SynchronizeSchedules,
+        SynchronizeETLs,
         SynchronizeColorPalette,
         SynchronizeNewSegments,
         UpdateReleaseTable
@@ -88,8 +87,7 @@ module GoodData
         EnsureTechnicalUsersProject,
         EnsureTitles,
         SynchronizeAttributeDrillpath,
-        SynchronizeProcesses,
-        SynchronizeSchedules
+        SynchronizeETLs
       ],
 
       rollout: [
@@ -100,10 +98,9 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
-#        SynchronizeLabelTypes,
+        # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
-        SynchronizeProcesses,
-        SynchronizeSchedules,
+        SynchronizeETLs,
         SynchronizeClients
       ]
     }

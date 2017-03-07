@@ -79,7 +79,8 @@ module GoodData
 
                 {
                   pid: to_pid,
-                  client_id: segment_client.client_id
+                  client_id: segment_client.client_id,
+                  segment: segment
                 }
               end
             }
