@@ -40,9 +40,9 @@ module GoodData
           end
         end
 
-        def create_random_user(client)
+        def create_random_user(client, opts = {})
           num = rand(1e7)
-          login = "gemtest#{num}@gooddata.com"
+          login = opts[:login] || "gemtest#{num}@gooddata.com"
 
           opts = {
             email: login,

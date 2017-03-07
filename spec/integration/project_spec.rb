@@ -64,13 +64,22 @@ describe GoodData::Project, :constraint => 'slow' do
   end
 
   describe '#import_users' do
+    it 'should add user which login contains a part of whitelists' do
+      users = [ProjectHelper.create_random_user(@client, login: "#{rand(1e7)}+rubydev+admin@gooddata.com")]
+      @domain.create_users(users)
+      @project.import_users(users, domain: @domain, whitelists: ['rubydev+admin@gooddata.com'])
+      expect(@domain.members?(users)).to be_truthy
+      expect(@project.members?(users)).to be_truthy
+      expect(@project.members.count).to eq 2
+    end
+
     it "Updates user's name and surname and removes the users" do
       users = (1..2).to_a.map { ProjectHelper.create_random_user(@client) }
       @domain.create_users(users)
       @project.import_users(users, domain: @domain, whitelists: [/admin@gooddata.com/])
       expect(@domain.members?(users)).to be_truthy
       expect(@project.members?(users)).to be_truthy
-      expect(@project.members.count).to eq 3
+      expect(@project.members.count).to eq 4
       # update some user stuff
       bill = users[0]
       bill.first_name = 'buffalo'
@@ -83,12 +92,12 @@ describe GoodData::Project, :constraint => 'slow' do
       expect(bill_changed.first_name).to eq 'buffalo'
       expect(bill_changed.last_name).to eq 'bill'
       expect(@project.members?(users)).to be_truthy
-      expect(@project.members.count).to eq 3
+      expect(@project.members.count).to eq 4
       expect(@project.member?(bill_changed)).to be_truthy
 
       # remove everybody but buffalo bill.
       @project.import_users([bill], domain: @domain, whitelists: [/admin@gooddata.com/])
-      expect(@project.members.count).to eq 2
+      expect(@project.members.count).to eq 3
       expect(@project.member?(bill)).to be_truthy
       disabled_users = users - [bill]
       expect(@project.members?(disabled_users).any?).to be_falsey
@@ -98,7 +107,7 @@ describe GoodData::Project, :constraint => 'slow' do
 
       # remove completely everybody but buffalo bill.
       @project.import_users([bill], domain: @domain, whitelists: [/admin@gooddata.com/], remove_users_from_project: true)
-      expect(@project.members.count).to eq 2
+      expect(@project.members.count).to eq 3
       expect(@project.member?(bill)).to be_truthy
       expect(@project.members?(disabled_users).any?).to be_falsey
       disabled_users.each do |user|
@@ -113,7 +122,7 @@ describe GoodData::Project, :constraint => 'slow' do
       @domain.create_users(additional_batch, domain: @domain)
       @project.import_users(additional_batch.map { |u| { user: u, role: u.role } }, domain: @domain, whitelists: [/admin@gooddata.com/])
 
-      expect(@project.members.count).to eq 3
+      expect(@project.members.count).to eq 4
       expect(@project.member?(bill)).to be_truthy
       expect(@project.members?(users - additional_batch).any?).to be_falsey
     end
