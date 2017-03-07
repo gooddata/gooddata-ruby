@@ -1429,12 +1429,25 @@ module GoodData
       return [new_users, users_list] unless whitelist
 
       new_whitelist_proc = proc do |user|
-        whitelist.any? { |wl| wl.is_a?(Regexp) ? user[:login] =~ wl : (user[:login] && user[:login].include?(wl)) }
+        whitelist.any? do |wl| 
+          if wl.is_a?(Regexp) 
+              user[:login] =~ wl
+          else
+            user[:login] && user[:login].eql?(wl)
+          end
+        end
       end
 
       whitelist_proc = proc do |user|
-        whitelist.any? { |wl| wl.is_a?(Regexp) ? user.login =~ wl : (user.login && user.login.include?(wl)) }
+        whitelist.any? do |wl| 
+          if wl.is_a?(Regexp) 
+              user.login =~ wl
+          else
+            user.login && user.login.eql?(wl)
+          end
+        end
       end
+      
 
       if mode == :include
         [new_users.select(&new_whitelist_proc), users_list.select(&whitelist_proc)]
