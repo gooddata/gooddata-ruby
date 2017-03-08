@@ -84,6 +84,7 @@ module GoodData
       end
 
       def update_setting(name, value, opts = {})
+        return nil unless value
         domain = opts[:domain]
         client_id = opts[:client_id]
         uri = "#{domain.segments_uri}/clients/#{client_id}/settings/#{name}"
