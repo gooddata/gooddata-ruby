@@ -92,20 +92,30 @@ module GoodData
         SynchronizeSchedules
       ],
 
-      rollout: [
-        EnsureReleaseTable,
-        CollectSegments,
-        SegmentsFilter,
-        CollectSegmentClients,
-        EnsureTechnicalUsersDomain,
-        EnsureTechnicalUsersProject,
-        SynchronizeLdm,
-#        SynchronizeLabelTypes,
-        SynchronizeAttributeDrillpath,
-        SynchronizeProcesses,
-        SynchronizeSchedules,
-        SynchronizeClients
-      ]
+      rollout: {
+        default: [
+          EnsureReleaseTable,
+          CollectSegments,
+          SegmentsFilter,
+          CollectSegmentClients,
+          EnsureTechnicalUsersDomain,
+          EnsureTechnicalUsersProject,
+          SynchronizeLdm,
+          # SynchronizeLabelTypes,
+          SynchronizeAttributeDrillpath,
+          SynchronizeProcesses,
+          SynchronizeSchedules,
+          SynchronizeClients
+        ],
+
+        processes_n_schedules: [
+          EnsureReleaseTable,
+          CollectSegments,
+          CollectSegmentClients,
+          SynchronizeProcesses,
+          SynchronizeSchedules
+        ]
+      }
     }
 
     MODE_NAMES = MODES.keys
@@ -137,8 +147,15 @@ module GoodData
         end
       end
 
-      def get_mode_actions(mode)
-        MODES[mode.to_sym] || fail("Invalid mode specified '#{mode}', supported modes are: '#{MODE_NAMES.join(', ')}'")
+      def get_mode_actions(mode, opts = {})
+        brick = MODES[mode.to_sym] || fail("Invalid mode specified '#{mode}', supported modes are: '#{MODE_NAMES.join(', ')}'")
+        return brick if brick.is_a?(Array)
+
+        opts = { variant: :default }.merge(opts)
+        variant = opts[:variant].to_sym
+        brick = brick[variant] || fail("Invalid variant specified '#{variant}' for mode '#{mode}', supported variants for '#{mode}' are: '#{brick.keys.join(', ')}'")
+        puts "Using variant '#{variant}' of mode '#{mode}'"
+        brick
       end
 
       def print_action_names(mode, actions)
@@ -201,7 +218,7 @@ module GoodData
         params = convert_params(params)
 
         # Get actions for mode specified
-        actions = get_mode_actions(mode)
+        actions = get_mode_actions(mode, params)
 
         # Print name of actions to be performed for debug purposes
         print_action_names(mode, actions)
