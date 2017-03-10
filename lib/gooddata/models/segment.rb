@@ -200,6 +200,7 @@ module GoodData
 
       uri = '/gdc/internal/lcm/domains/%s/dataproducts/%s/segments/%s/syncProcesses' % [domain.obj_id, options[:dataproduct], id]
       res = client.post(uri, body)
+
       client.poll_on_response(GoodData::Helpers.get_path(res, %w(asyncTask link poll)), sleep_interval: 1) do |r|
         r['syncedResult'].nil?
       end

@@ -48,12 +48,12 @@ module GoodData
 
             unless tmp.empty?
               synchronize_projects << {
-                from: segment.master_project.pid,
+                from: segment.development_pid,
+                segment_id: segment.segment_id,
                 to: tmp.map do |entry|
                   {
                     pid: entry[:project_uri].split('/').last,
-                    client_id: entry[:id],
-                    segment: segment
+                    client_id: entry[:id]
                   }
                 end
               }

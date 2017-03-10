@@ -16,10 +16,8 @@ module GoodData
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
       end
 
+      # will be updated later based on the way etl synchronization
       RESULT_HEADER = [
-        :from,
-        :to,
-        :status
       ]
 
       class << self
@@ -32,6 +30,9 @@ module GoodData
           client = params.gdc_gd_client
           development_client = params.development_client
 
+          domain_name = params.organization || params.domain
+          domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
+
           # we will use client_id to detect the context of etl synchronization. If we don't have client_id, it means we are in Release brick
           has_client_ids = params
                             .synchronize
@@ -39,19 +40,38 @@ module GoodData
                               info[:to].first[:client_id]
                             end
                             .keys
-                            .compacts
-          if has_client_ids
+                            .compact
+          if !has_client_ids.empty?
+            RESULT_HEADER.push(:segment, :master_project, :client_id, :client_project, :status)
+
             synchronize_segments = params.synchronize.group_by do |info|
-              info[:segment]
+              info[:segment_id]
             end
-            synchronize_segments.each do |segment, synchronize|
-              segment.synchronize_processes(
+            synchronize_segments.map do |segment_id, synchronize|
+              segment = domain.segments(segment_id)
+              res = segment.synchronize_processes(
                 synchronize.map do |info|
-                  info[:pid]
-                end
+                  info[:to].map do |to|
+                    to[:pid]
+                  end
+                end.flatten
               )
+
+              res = GoodData::Helpers.symbolize_keys(res)
+              results += res[:syncedResult][:clients].map do |item|
+                item = item[:client]
+                {
+                  segment: segment_id,
+                  master_project: segment.master_project_id,
+                  client_id: item[:id],
+                  client_project: item[:project].split('/').last,
+                  status: 'ok'
+                }
+              end
             end
           else
+            RESULT_HEADER.push(:from, :to, :process_name, :schedule_name, :type, :state)
+
             params.synchronize.each do |info|
               from_project = info.from
               to_projects = info.to
@@ -96,10 +116,10 @@ module GoodData
                 end
               end
             end
-
-            # Return results
-            results
           end
+
+          # Return results
+          results
         end
       end
     end

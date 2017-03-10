@@ -230,14 +230,14 @@ module GoodData
           res
         end
 
-        if actions.length > 1
-          puts
-          puts 'SUMMARY'
-          puts
+        # if actions.length > 1
+        #   puts
+        #   puts 'SUMMARY'
+        #   puts
 
-          # Print execution summary/results
-          print_actions_result(actions, results)
-        end
+        #   # Print execution summary/results
+        #   print_actions_result(actions, results)
+        # end
 
         brick_results = {}
         actions.each_with_index do |action, index|
