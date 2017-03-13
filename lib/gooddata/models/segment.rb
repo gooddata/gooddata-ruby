@@ -180,6 +180,32 @@ module GoodData
       client.create(ClientSynchronizationResult, res)
     end
 
+    def synchronize_processes(projects = [], options = { dataproduct: 'default' })
+      projects = [projects] unless projects.is_a?(Array)
+      projects = projects.map do |p|
+        p = p.pid if p.respond_to?('pid')
+        fail('wrong type of argument. Should be either project ID or path') unless GoodData::Project.project_id_or_path?(p)
+        p.split('/').last
+      end
+
+      unless projects.empty?
+        body = {
+          syncConfig: {
+            filters: {
+              projectIdFilter: projects
+            }
+          }
+        }
+      end
+
+      uri = '/gdc/internal/lcm/domains/%s/dataproducts/%s/segments/%s/syncProcesses' % [domain.obj_id, options[:dataproduct], id]
+      res = client.post(uri, body)
+
+      client.poll_on_response(GoodData::Helpers.get_path(res, %w(asyncTask link poll)), sleep_interval: 1) do |r|
+        r['syncedResult'].nil?
+      end
+    end
+
     # Deletes a segment instance on the API.
     #
     # @return [GoodData::Segment] Segment instance

@@ -66,6 +66,7 @@ module GoodData
             master_name = master.title
 
             sync_info = {
+              segment_id: segment.segment_id,
               from: master_pid,
               to: segment.clients.map do |segment_client|
                 client_project = segment_client.project
