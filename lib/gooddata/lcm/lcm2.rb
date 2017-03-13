@@ -100,7 +100,7 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
-#        SynchronizeLabelTypes,
+        # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
         SynchronizeSchedules,
