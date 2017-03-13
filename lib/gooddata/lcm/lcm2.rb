@@ -141,7 +141,13 @@ module GoodData
       end
 
       def get_mode_actions(mode)
-        MODES[mode.to_sym] || fail("Invalid mode specified '#{mode}', supported modes are: '#{MODE_NAMES.join(', ')}'")
+        mode = mode.to_sym
+        actions = MODES[mode]
+        if mode == :generic_lifecycle
+          []
+        else
+          actions || fail("Invalid mode specified '#{mode}', supported modes are: '#{MODE_NAMES.join(', ')}'")
+        end
       end
 
       def print_action_names(mode, actions)
@@ -205,6 +211,17 @@ module GoodData
 
         # Get actions for mode specified
         actions = get_mode_actions(mode)
+        if params.actions
+          actions = params.actions.map do |action|
+            "GoodData::LCM2::#{action}".split('::').inject(Object) do |o, c|
+              begin
+                o.const_get(c)
+              rescue NameError
+                fail NameError, "Cannot find action 'GoodData::LCM2::#{action}'"
+              end
+            end
+          end
+        end
 
         # Print name of actions to be performed for debug purposes
         print_action_names(mode, actions)
