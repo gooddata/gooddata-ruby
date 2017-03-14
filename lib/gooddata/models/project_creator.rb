@@ -49,7 +49,10 @@ module GoodData
           result = client.post(uri, bp.to_wire)
           response = client.poll_on_code(result['asyncTask']['link']['poll'])
 
-          maqls = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
+          chunks = response['projectModelDiff']['updateScripts']
+          return [] if chunks.empty?
+
+          maqls = pick_correct_chunks(chunks, opts)
           replaced_maqls = apply_replacements_on_maql(maqls, replacements)
 
           unless dry_run
@@ -126,14 +129,31 @@ module GoodData
             { cascade_drops: chunk['updateScript']['cascadeDrops'], preserve_data: chunk['updateScript']['preserveData'], maql: chunk['updateScript']['maqlDdlChunks'], orig: chunk }
           end
 
-          results = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] } || []
+          results_from_api = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] } || []
 
-          preference.each do |k, v|
-            results = results.find_all do |result|
-              result[k] == v
+          if preference.empty?
+            [results_from_api.first[:orig]]
+          else
+            results = results_from_api.dup
+            preference.each do |k, v|
+              results = results.select do |result|
+                result[k] == v
+              end
             end
+            if results.empty?
+              available_chunks = results_from_api
+                                    .map do |result|
+                                      {
+                                        cascade_drops: result[:cascade_drops],
+                                        preserve_data: result[:preserve_data]
+                                      }
+                                    end
+                                    .map(&:to_s)
+                                    .join(', ')
+              fail "Synchronize LDM cannot proceed. Adjust your update_preferences and try again. Available chunks with preference: #{available_chunks}"
+            end
+            results.map { |result| result[:orig] }
           end
-          (preference.empty? ? [results.first].compact : results).map { |result| result[:orig] }
         end
 
         private
