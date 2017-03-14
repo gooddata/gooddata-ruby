@@ -9,6 +9,7 @@
 - Handle export/import async task errors (TMA-231)
 - Support for custom color palette
 - Support for trasfering attribute drill paths
+- Implemented basic version of LCM2 
 
 ## 0.6.49
 - Implement Helpers::GD_MAX_RETRY to allow max retries override
