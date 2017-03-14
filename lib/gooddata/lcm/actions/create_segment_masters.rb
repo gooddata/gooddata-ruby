@@ -103,8 +103,15 @@ module GoodData
               segment_in[:is_new] = true
             end
 
-            master_project = segment.master_project
-            if master_project.deleted?
+            master_project = nil
+
+            begin
+              master_project = segment.master_project
+            rescue => e
+              GoodData.logger.warn "Unable to get segment master, reason: #{e.message}"
+            end
+
+            if master_project.nil? || master_project.deleted?
               segment.master_project = project
               segment.save
               segment_in[:is_new] = true
