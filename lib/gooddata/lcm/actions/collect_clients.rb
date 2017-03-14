@@ -76,7 +76,11 @@ module GoodData
             end
           end
 
-          fail 'Empty CSV provided, aborting...' if clients.empty?
+          if clients.empty?
+            fail "No segments or clients qualify for provisioning. \
+            Please check the input source data, platform segments, and the SEGMENTS_FILTER parameter. \
+            The intersection of these three elements is empty set."
+          end
           clients
         end
       end
