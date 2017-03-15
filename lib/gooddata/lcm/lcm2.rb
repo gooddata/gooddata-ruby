@@ -89,7 +89,8 @@ module GoodData
         EnsureTitles,
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
-        SynchronizeSchedules
+        SynchronizeSchedules,
+        SynchronizeColorPalette
       ],
 
       rollout: [
@@ -104,6 +105,7 @@ module GoodData
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
         SynchronizeSchedules,
+        SynchronizeColorPalette,
         SynchronizeClients
       ]
     }
