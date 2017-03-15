@@ -68,6 +68,7 @@ module GoodData
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
         SynchronizeMeta,
+        SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
         SynchronizeSchedules,
