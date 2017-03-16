@@ -503,7 +503,7 @@ module GoodData
     #
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint(options = {})
-      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true })
+      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true, includeCA: true })
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
       bp = GoodData::Model::FromWire.from_wire(model)
@@ -1682,6 +1682,10 @@ module GoodData
 
     def update_from_blueprint(blueprint, options = {})
       GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
+    end
+
+    def migrate_computed_attributes(blueprint)
+      GoodData::Model::ProjectCreator.migrate_computed_attributes(blueprint, project: self, client: client)
     end
 
     def resolve_roles(login, desired_roles, options = {})

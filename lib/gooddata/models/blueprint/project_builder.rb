@@ -61,6 +61,27 @@ module GoodData
         end
       end
 
+      def add_computed_attribute(id, options = {})
+        metric = options[:metric].identifier
+        attribute = options[:attribute].identifier
+        buckets = options[:buckets].sort_by do |bucket|
+          bucket.length == 2 ? bucket.last : 1 / 0.0
+        end
+
+        last_bucket = buckets.pop
+        relations = buckets.map do |bucket|
+          name, up_to = bucket
+          "when {#{metric}} <= #{up_to} then {#{id}?\"#{name}\"}"
+        end
+        relations += ["when {#{metric}} > #{buckets.last.last} then {#{id}?\"#{last_bucket.first}\"} else {#{id}?\"\"} end"]
+        relations = ["to {#{attribute}} as case #{relations.join(', ')}"]
+
+        add_dataset(id.sub('attr.', 'dataset.'), options) do |d|
+          d.add_anchor(id, options.merge(relations: relations))
+          d.add_label(id.sub('attr.', 'label.'), reference: id, default_label: true)
+        end
+      end
+
       def to_json(options = {})
         eliminate_empty = options[:eliminate_empty] || false
 
