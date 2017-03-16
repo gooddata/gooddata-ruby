@@ -75,11 +75,6 @@ module GoodData
               end
             end
           end
-
-          if attribute[:relations]
-            a[:attribute][:relations] = attribute[:relations]
-          end
-
           default = ls.find { |l| l[:default_label] }
           a[:attribute][:defaultLabel] = (default && default[:id]) || ls.first[:id] unless ls.empty?
         end
@@ -158,9 +153,6 @@ module GoodData
           diffRequest: {
             targetModel: {
               projectModel: {
-                modelMetadata: {
-                  containCA: true
-                },
                 datasets: (what[:datasets] || []).map { |d| dataset_to_wire(what, d) },
                 dateDimensions: (what[:date_dimensions] || []).map { |d| date_dimension_to_wire(what, d) }
               }
