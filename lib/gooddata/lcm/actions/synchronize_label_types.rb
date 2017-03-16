@@ -37,8 +37,8 @@ module GoodData
             to = info.to
 
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
-            to_projects = to.map do |pid|
-              client.projects(pid)
+            to_projects = to.map do |project|
+              client.projects(project.pid)
             end
 
             GoodData::LCM.transfer_label_types(from_project, to_projects)
