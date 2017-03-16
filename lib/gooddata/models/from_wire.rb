@@ -91,8 +91,6 @@ module GoodData
               end
             end
           end
-
-          attribute['relations'] && a[:relations] = attribute['relations']
         end
         [attribute] + pl + rl
       end
