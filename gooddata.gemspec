@@ -40,6 +40,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard', '~> 0.8'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'ZenTest', '~> 4.11'
+  s.add_development_dependency 'pry'
 
   s.add_dependency 'aws-sdk', '~> 2.7'
   s.add_dependency 'nokogiri', '~> 1.6.8'
