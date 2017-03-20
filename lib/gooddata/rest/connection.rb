@@ -505,7 +505,7 @@ module GoodData
       end
 
       def format_error(e, params = {})
-        return unless e.respond_to?(:response)
+        return e unless e.respond_to?(:response)
         error = MultiJson.load(e.response)
         message = GoodData::Helpers.interpolate_error_message(error)
         <<-ERR
@@ -515,6 +515,8 @@ Request ID: #{params[:x_gdc_request]}
 Full response:
 #{JSON.pretty_generate(error)}
 ERR
+      rescue MultiJson::ParseError
+        "Failed to parse #{e}. Raw response: #{e.response}"
       end
 
       # generate session id to be passed as the first part to
