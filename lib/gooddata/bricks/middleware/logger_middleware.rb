@@ -17,9 +17,10 @@ module GoodData
         if params['GDC_LOGGING_OFF']
           logger = NilLogger.new
         else
-          logger = params['GDC_LOGGER'] = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
+          logger = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
           logger.info('Pipeline starts')
         end
+        params['GDC_LOGGER'] = logger
         returning(@app.call(params)) do |_result|
           logger.info('Pipeline ending')
         end

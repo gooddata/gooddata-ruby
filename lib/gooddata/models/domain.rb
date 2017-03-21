@@ -243,17 +243,28 @@ module GoodData
           begin
             user_data = user.to_hash.tap { |uh| uh[:login].downcase! }
             domain_user = domain_users_cache[user_data[:login]]
+            user_login = user_data[:login]
             if !domain_user
               added_user = domain.add_user(user_data, opts)
+              GoodData.logger.info("Added new user=#{user_login} to domain=#{default_domain_name}.")
               [{ type: :successful, :action => :user_added_to_domain, user: added_user }]
             else
+              domain_user_data = domain_user.to_hash
               fields_to_check = opts[:fields_to_check] || user_data.keys
               diff = GoodData::Helpers.diff([domain_user.to_hash], [user_data], key: :login, fields: fields_to_check)
               next [] if diff[:changed].empty?
               updated_user = domain.update_user(domain_user.to_hash.merge(user_data.compact), opts)
+              GoodData.logger.debug "Updated user=#{user_login} from old properties \
+(email=#{domain_user_data[:email]}, sso_provider=#{domain_user_data[:sso_provider]}) \
+to new properties (email=#{user_data[:email]}, sso_provider=#{user_data[:sso_provider]}) in domain=#{default_domain_name}."
               [{ type: :successful, :action => :user_changed_in_domain, user: updated_user }]
             end
           rescue RuntimeError => e
+            if !domain_user
+              GoodData.logger.error("Failed to add user=#{user_login} to domain=#{default_domain_name}. Error: #{e.message}")
+            else
+              GoodData.logger.error("Failed to update user=#{user_login} in domain=#{default_domain_name}. Error: #{e.message}")
+            end
             [{ type: :failed, :user => user, message: e }]
           end
         end

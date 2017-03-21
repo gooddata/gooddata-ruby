@@ -10,6 +10,7 @@
 - Support for custom color palette
 - Support for trasfering attribute drill paths
 - Implemented basic version of LCM2 
+- Add more logging for user, user filter management
 
 ## 0.6.49
 - Implement Helpers::GD_MAX_RETRY to allow max retries override

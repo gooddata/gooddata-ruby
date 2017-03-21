@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require_relative '../project_log_formatter'
+
 module GoodData
   module UserFilterBuilder
     # Main Entry function. Gets values and processes them to get filters
@@ -365,6 +367,7 @@ module GoodData
       ignore_missing_values = options[:ignore_missing_values]
       users_must_exist = options[:users_must_exist] == false ? false : true
       dry_run = options[:dry_run]
+      project_log_formatter = GoodData::ProjectLogFormatter.new(project)
 
       filters = normalize_filters(user_filters)
       user_filters, errors = maqlify_filters(filters, options.merge(users_must_exist: users_must_exist, type: :muf))
@@ -396,6 +399,9 @@ module GoodData
           res['userFiltersUpdateResult'].flat_map { |k, v| v.map { |r| { status: k.to_sym, user: r, type: :create } } }.map { |result| result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result }
         end
       end
+
+      project_log_formatter.log_user_filter_results(create_results, to_create)
+
       delete_results = unless options[:do_not_touch_filters_that_are_not_mentioned]
                          to_delete.each_slice(100).flat_map do |batch|
                            batch.flat_map do |related_uri, group|
@@ -423,6 +429,9 @@ module GoodData
                            end
                          end
                        end
+
+      project_log_formatter.log_user_filter_results(delete_results, to_delete)
+
       { created: to_create, deleted: to_delete, results: create_results + (delete_results || []) }
     end
 
