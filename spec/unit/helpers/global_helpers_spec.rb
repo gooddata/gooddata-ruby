@@ -95,13 +95,14 @@ describe GoodData::Helpers do
     end
 
     it 'should encode secure params' do
-      x = GoodData::Helpers.decode_params(
+      params = {
         "x" => "y",
         "d|b|foo" => "bar",
         "d|b|e|w" => "z",
         GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b":{"c": "a"}}}',
         GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"d":{"b":{"e":{"f": "g"}}}}'
-      )
+      }
+      x = GoodData::Helpers.decode_params(params, convert_pipe_delimited_params: true)
       expect(x).to eq(
         "x" => "y",
         "d" => { "b" => { "c" => "a", "e" => { "f" => "g", "w" => "z" }, "foo" => "bar" } },
