@@ -147,8 +147,8 @@ module GoodData
           end
         end
 
-        puts 'Migrating User Groups'
         # User groups must be migrated after dashboards
+        puts 'Migrating User Groups'
         domain.clients.peach do |c|
           segment = c.segment
           segment_master = segment.master_project
