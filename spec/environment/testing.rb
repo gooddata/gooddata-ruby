@@ -10,7 +10,7 @@ module GoodData
       set_const :GD_PROJECT_TOKEN, GoodData::Helpers.decrypt("DIRchLbHH1fovLSVEfo3f5aQwHHQ432+PxF3uR5IuNn+iYWz+HZrLtaZ3LVE\n0ZNc\n", ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
       set_const :DEFAULT_DOMAIN, 'staging2-lcm-prod'
       set_const :DEFAULT_SERVER, 'https://staging2-lcm-prod.intgdc.com'
-      set_const :DEFAULT_USER_URL, '/gdc/account/profile/f099860dd647395377fbf65ae7a78ed4'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa'
       set_const :STAGING_URI, 'https://na1-staging2-di.intgdc.com/uploads/'
     end
 
