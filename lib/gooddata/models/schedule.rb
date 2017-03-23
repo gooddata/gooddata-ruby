@@ -371,7 +371,7 @@ module GoodData
     #
     # @param new_hidden_param [String] Hidden parameters to be set
     def hidden_params=(new_hidden_params = {})
-      @json['schedule']['hiddenParams'] = stringify_values(new_hidden_params)
+      @json['schedule']['hiddenParams'] = GoodData::Helpers.stringify_values(new_hidden_params)
       @dirty = true
       self
     end
@@ -391,7 +391,7 @@ module GoodData
         'PROCESS_ID' => process_id,
         'EXECUTABLE' => executable
       }
-      @json['schedule']['params'] = default_params.merge(stringify_values(new_params))
+      @json['schedule']['params'] = default_params.merge(GoodData::Helpers.stringify_values(new_params))
       @dirty = true
       self
     end
@@ -530,25 +530,6 @@ module GoodData
       res['schedule']['reschedule'] = reschedule if reschedule
 
       res
-    end
-
-    private
-
-    def stringify_values(hash)
-      Hash[
-        hash.map do |k, v|
-          val = case v
-                when nil
-                  v
-                when Hash
-                  stringify_values(v)
-                else
-                  v.to_s
-                end
-
-          [k, val]
-        end
-      ]
     end
   end
 end

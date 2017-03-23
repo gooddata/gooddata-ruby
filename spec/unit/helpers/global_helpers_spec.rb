@@ -95,13 +95,14 @@ describe GoodData::Helpers do
     end
 
     it 'should encode secure params' do
-      x = GoodData::Helpers.decode_params(
+      params = {
         "x" => "y",
         "d|b|foo" => "bar",
         "d|b|e|w" => "z",
         GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b":{"c": "a"}}}',
         GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => '{"d":{"b":{"e":{"f": "g"}}}}'
-      )
+      }
+      x = GoodData::Helpers.decode_params(params, convert_pipe_delimited_params: true)
       expect(x).to eq(
         "x" => "y",
         "d" => { "b" => { "c" => "a", "e" => { "f" => "g", "w" => "z" }, "foo" => "bar" } },
@@ -163,6 +164,29 @@ describe GoodData::Helpers do
         }
       }
       result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
+    it 'should convert all values into String' do
+      params = {
+        x: true,
+        y: ['hello', false],
+        z: {
+          z1: false,
+          z2: [true],
+          z3: [[[false]]]
+        }
+      }
+      expected_result = {
+        x: 'true',
+        y: %w(hello false),
+        z: {
+          z1: 'false',
+          z2: ['true'],
+          z3: [[['false']]]
+        }
+      }
+      result = GoodData::Helpers.stringify_values(params)
       expect(result).to eq(expected_result)
     end
   end
