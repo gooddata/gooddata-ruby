@@ -166,6 +166,29 @@ describe GoodData::Helpers do
       result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
       expect(result).to eq(expected_result)
     end
+
+    it 'should convert all values into String' do
+      params = {
+        x: true,
+        y: ['hello', false],
+        z: {
+          z1: false,
+          z2: [true],
+          z3: [[[false]]]
+        }
+      }
+      expected_result = {
+        x: 'true',
+        y: %w(hello false),
+        z: {
+          z1: 'false',
+          z2: ['true'],
+          z3: [[['false']]]
+        }
+      }
+      result = GoodData::Helpers.stringify_values(params)
+      expect(result).to eq(expected_result)
+    end
   end
 
   describe '.interpolate_error_message' do
