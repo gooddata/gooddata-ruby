@@ -14,7 +14,7 @@ module GoodData
         params = params.to_hash
 
         # Decode and resolve reference parameters in gd_encoded_params
-        @app.call(GoodData::Helpers.decode_params(params, :resolve_reference_params => true))
+        @app.call(GoodData::Helpers.decode_params(params, resolve_reference_params: true, convert_pipe_delimited_params: true))
       end
     end
   end
