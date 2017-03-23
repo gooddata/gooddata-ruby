@@ -55,10 +55,10 @@ module GoodData
               project = segment_client.project
               res = {
                 client_id: segment_client.client_id,
-                project: project.pid
+                project: project && project.pid
               }
 
-              if project.deleted?
+              if project.nil? || project.deleted?
                 segment_client.delete
                 res[:status] = 'purged'
               else
