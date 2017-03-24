@@ -39,7 +39,6 @@ module GoodData
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-          domain_segments = domain.segments
 
           synchronize_projects = []
           results = params.segments.map do |segment|
@@ -47,7 +46,7 @@ module GoodData
               Hash[m.each_pair.to_a].merge(type: :provision_result)
             end
 
-            segment_master = domain_segments.find(segment.segment_id).first.master_project.pid
+            segment_master = domain.segments(segment.segment_id).master_project.pid
 
             unless tmp.empty?
               synchronize_projects << {
