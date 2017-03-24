@@ -247,13 +247,11 @@ module GoodData
 
         brick_results = {}
         actions.each_with_index do |action, index|
-          brick_results[action.class.short_name] = results[index]
+          brick_results[action.short_name] = results[index]
         end
 
         {
-          actions: actions.map do |action|
-            action.class.short_name
-          end,
+          actions: actions.map(&:short_name),
           results: brick_results,
           params: params
         }
