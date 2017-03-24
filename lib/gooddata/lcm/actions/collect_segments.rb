@@ -30,10 +30,23 @@ module GoodData
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
           domain_segments = domain.segments
 
-          segments = domain_segments.map do |segment|
-            project = segment.master_project
+          if params.segments_filter
+            domain_segments.select! do |segment|
+              params.segments_filter.include?(segment.segment_id)
+            end
+          end
 
-            # TODO: Check if project exists!
+          segments = domain_segments.map do |segment|
+            project = nil
+
+            begin
+              project = segment.master_project
+            rescue RestClient::BadRequest => e
+              params.gdc_logger.error "Failed to retrieve master project for segment #{segment.id}. Error: #{e}"
+              raise
+            end
+
+            raise "Master project for segment #{segment.id} doesn't exist." unless project
 
             {
               segment_id: segment.segment_id,
