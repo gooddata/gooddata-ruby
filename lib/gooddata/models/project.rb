@@ -10,6 +10,7 @@ require 'fileutils'
 require 'multi_json'
 require 'pmap'
 require 'zip'
+require 'net/smtp'
 
 require_relative '../exceptions/no_project_error'
 
@@ -247,6 +248,27 @@ module GoodData
           .select { |_, procs| procs.length == 1 && procs[2] != :dataload }
           .flat_map { |_, procs| procs.select { |p| p[0].project.pid == to_project.pid }.map { |p| p[0] } }
           .peach(&:delete)
+      end
+
+      def transfer_user_groups(from_project, to_project)
+        from_project.user_groups.each do |ug|
+          # migrate groups
+          new_group = to_project.user_groups.select { |group| group.name == ug.name }.first
+          new_group ||= UserGroup.create(:name => ug.name, :description => ug.description, :project => to_project)
+          new_group.project = to_project
+          new_group.description = ug.description
+          new_group.save
+          # migrate dashboard "grantees"
+          dashboards = from_project.dashboards
+          dashboards.each do |dashboard|
+            new_dashboard = to_project.dashboards.select { |dash| dash.title == dashboard.title }.first
+            next unless new_dashboard
+            grantee = dashboard.grantees['granteeURIs']['items'].select { |item| item['aclEntryURI']['grantee'].split('/').last == ug.links['self'].split('/').last }.first
+            next unless grantee
+            permission = grantee['aclEntryURI']['permission']
+            new_dashboard.grant(:member => new_group, :permission => permission)
+          end
+        end
       end
 
       # Clones project along with etl and schedules.
@@ -1520,6 +1542,7 @@ module GoodData
       results = []
       GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
       results.concat(create_users(u, roles: role_list, project_users: whitelisted_users))
+      send_mail_to_new_users(diff[:added], options[:email_options]) if options[:email_options] && !options[:email_options].empty? && !diff[:added].empty?
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
@@ -1551,9 +1574,9 @@ module GoodData
           a
         end
         mappings.group_by { |_, g| g }.each do |g, mapping|
-          # find group + set users
-          # CARE YOU DO NOT KNOW URI
-          user_groups(g).set_members(mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri })
+          remote_users = mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri }.reject(&:nil?)
+          next if remote_users.empty?
+          user_groups(g).set_members(remote_users)
         end
         mentioned_groups = mappings.map(&:last).uniq
         groups_to_cleanup = user_groups.reject { |g| mentioned_groups.include?(g.name) }
@@ -1753,6 +1776,59 @@ module GoodData
     end
 
     private
+
+    def send_mail_to_new_users(users, email_options)
+      password = email_options[:email_password]
+      from = email_options[:email_from]
+      raise 'Missing sender email, please specify parameter "email_from"' unless from
+      raise 'Missing authentication password, please specify parameter "email_password"' unless password
+      template = get_email_template(email_options)
+      smtp = Net::SMTP.new('relay1.na.intgdc.com', 25)
+      smtp.enable_starttls OpenSSL::SSL::SSLContext.new("TLSv1_2_client")
+      smtp.start('notifications.gooddata.com', 'gdc', password, :plain)
+      users.each do |user|
+        smtp.send_mail(get_email_body(template, user), from, user[:login])
+      end
+    end
+
+    def get_email_template(options)
+      bucket = options[:email_template_bucket]
+      path = options[:email_template_path]
+      access_key = options[:email_template_access_key]
+      secret_key = options[:email_template_secret_key]
+      raise "Unable to connect to AWS. Parameter \"email_template_bucket\" seems to be empty" unless bucket
+      raise "Unable to connect to AWS. Parameter \"email_template_path\" is missing" unless path
+      raise "Unable to connect to AWS. Parameter \"email_template_access_key\" is missing" unless access_key
+      raise "Unable to connect to AWS. Parameter \"email_template_secret_key\" is missing" unless secret_key
+      args = {
+        access_key_id: access_key,
+        secret_access_key: secret_key,
+        max_retries: 15,
+        http_read_timeout: 120,
+        http_open_timeout: 120
+      }
+
+      server_side_encryption = options['email_server_side_encryption'] || false
+      args['s3_server_side_encryption'] = :aes256 if server_side_encryption
+
+      s3 = AWS::S3.new(args)
+      bucket = s3.buckets[bucket]
+      process_email_template(bucket, path)
+    end
+
+    def process_email_template(bucket, path)
+      type = path.split('/').last.include?('.html') ? 'html' : 'txt'
+      body = bucket.objects[path].read
+      body.prepend("MIME-Version: 1.0\nContent-type: text/html\n") if type == 'html'
+      body
+    end
+
+    def get_email_body(template, user)
+      template.gsub('${name}', "#{user[:first_name]} #{user[:last_name]}")
+              .gsub('${role}', user[:role_title].count == 1 ? user[:role_title].first : user[:role_title].to_s)
+              .gsub('${user_group}', user[:user_group].count == 1 ? user[:user_group].first : user[:user_group].to_s)
+              .gsub('${project}', Project[user[:pid]].title)
+    end
 
     def generate_user_payload(user_uri, status = 'ENABLED', roles_uri = nil)
       payload = {
