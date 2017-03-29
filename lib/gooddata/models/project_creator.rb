@@ -45,9 +45,13 @@ module GoodData
 
           bp = ProjectBlueprint.new(spec)
 
-          uri = "/gdc/projects/#{project.pid}/model/diff?includeGrain=true"
-          result = client.post(uri, bp.to_wire)
+          uri = "/gdc/projects/#{project.pid}/model/diff"
+          params = { includeGrain: true }
+          params[:includeCA] = true if opts[:include_ca]
+          result = client.post(uri, bp.to_wire, params: params)
           response = client.poll_on_code(result['asyncTask']['link']['poll'])
+
+          ca_chunk = response['projectModelDiff']['computedAttributesScript'] if response['projectModelDiff']['computedAttributesScript']
 
           maqls = pick_correct_chunks(response['projectModelDiff']['updateScripts'], opts)
           replaced_maqls = apply_replacements_on_maql(maqls, replacements)
@@ -68,7 +72,23 @@ module GoodData
               fail "Unable to migrate LDM, reason(s): \n #{messages.join("\n")}"
             end
           end
-          replaced_maqls
+          replaced_maqls + (ca_chunk ? [ca_chunk] : [])
+        end
+
+        def migrate_computed_attributes(spec, opts = {})
+          maqls = migrate_datasets(spec, opts.merge(include_ca: true))
+          project = opts[:project]
+          chunks = maqls.last
+          chunks = chunks['maqlDdlChunks'] if chunks && chunks.key?('maqlDdlChunks')
+          if chunks
+            begin
+              chunks.each do |chunk|
+                project.execute_maql(chunk)
+              end
+            rescue => e
+              fail "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{chunks.inspect}"
+            end
+          end
         end
 
         def migrate_reports(project, spec)
