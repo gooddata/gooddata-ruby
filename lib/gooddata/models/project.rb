@@ -702,7 +702,7 @@ module GoodData
     def delete_all_data(options = {})
       return false unless options[:force]
       begin
-        datasets.pmap(&:delete_data)
+        datasets.reject(&:date_dimension?).pmap(&:delete_data)
       rescue MaqlExecutionError => e
         # This is here so that we do not throw out exceptions on synchornizing date dimensions
         # Currently there is no reliable way how to tell it is a date dimension
