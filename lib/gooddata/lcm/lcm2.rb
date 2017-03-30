@@ -89,8 +89,7 @@ module GoodData
         EnsureTechnicalUsersProject,
         EnsureTitles,
         SynchronizeAttributeDrillpath,
-        SynchronizeProcesses,
-        SynchronizeSchedules,
+        SynchronizeETLsInSegment,
         SynchronizeColorPalette
       ],
 
@@ -104,10 +103,9 @@ module GoodData
         SynchronizeLdm,
         # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
-        SynchronizeProcesses,
-        SynchronizeSchedules,
         SynchronizeColorPalette,
-        SynchronizeClients
+        SynchronizeClients,
+        SynchronizeETLsInSegment
       ]
     }
 

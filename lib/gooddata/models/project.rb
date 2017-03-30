@@ -79,9 +79,7 @@ module GoodData
         if id == :all
           Project.all({ client: GoodData.connection }.merge(opts))
         else
-          if id.to_s !~ %r{^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$}
-            fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
-          end
+          fail(ArgumentError, 'wrong type of argument. Should be either project ID or path') unless project_id_or_path?(id)
 
           id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}
 
@@ -89,6 +87,10 @@ module GoodData
           response = c.get(PROJECT_PATH % id)
           c.factory.create(Project, response)
         end
+      end
+
+      def project_id_or_path?(id)
+        id.to_s =~ %r{^(\/gdc\/(projects|md)\/)?[a-zA-Z\d]+$}
       end
 
       # Clones project along with etl and schedules
@@ -185,6 +187,25 @@ module GoodData
         }
       end
 
+      def transfer_output_stage(from_project, to_project)
+        if from_project.processes.any? { |p| p.type == :dataload }
+          if to_project.processes.any? { |p| p.type == :dataload }
+            to_project.add.output_stage.schema = from_project.add.output_stage.schema
+            to_project.add.output_stage.output_stage_prefix = from_project.add.output_stage.output_stage_prefix
+            to_project.add.output_stage.save
+          else
+            from_prj_output_stage = from_project.add.output_stage
+            to_project.add.output_stage = GoodData::AdsOutputStage.create(
+              client: to_project.client,
+              ads: from_prj_output_stage.schema,
+              client_id: from_prj_output_stage.client_id,
+              output_stage_prefix: from_prj_output_stage.output_stage_prefix,
+              project: to_project
+            )
+          end
+        end
+      end
+
       # Clones project along with etl and schedules.
       #
       # @param client [GoodData::Rest::Client] GoodData client to be used for connection
@@ -233,16 +254,8 @@ module GoodData
           end
         end
 
-        if from_project.processes.any? { |p| p.type == :dataload }
-          if to_project_processes.any? { |p| p.type == :dataload }
-            to_project.add.output_stage.schema = from_project.add.output_stage.schema
-            to_project.add.output_stage.output_stage_prefix = from_project.add.output_stage.output_stage_prefix
-            to_project.add.output_stage.save
-          else
-            from_prj_output_stage = from_project.add.output_stage
-            to_project.add.output_stage = GoodData::AdsOutputStage.create(client: to_project.client, ads: from_prj_output_stage.schema, client_id: from_prj_output_stage.client_id, output_stage_prefix: from_prj_output_stage.output_stage_prefix, project: to_project)
-          end
-        end
+        transfer_output_stage(from_project, to_project)
+
         res = (from_project.processes + to_project.processes).map { |p| [p, p.name, p.type] }
         res.group_by { |x| [x[1], x[2]] }
           .select { |_, procs| procs.length == 1 && procs[2] != :dataload }
