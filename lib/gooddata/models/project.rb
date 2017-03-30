@@ -187,7 +187,7 @@ module GoodData
         }
       end
 
-      def transfer_output_stage(from_project, to_project)
+      def transfer_output_stage(from_project, to_project, options)
         if from_project.processes.any? { |p| p.type == :dataload }
           if to_project.processes.any? { |p| p.type == :dataload }
             to_project.add.output_stage.schema = from_project.add.output_stage.schema
@@ -195,9 +195,18 @@ module GoodData
             to_project.add.output_stage.save
           else
             from_prj_output_stage = from_project.add.output_stage
+            from_server = from_project.client.connection.server.options[:server]
+            to_server = to_project.client.connection.server.options[:server]
+            if from_server != to_server && options[:ads_output_stage_uri].nil?
+              raise 'It is not possible to transfer output stages between ' /
+                    'different domains. Please specify an address of an output ' /
+                    'stage that is in the same domain as the target project ' /
+                    'using the "ads_output_stage_uri" parameter.'
+            end
+
             to_project.add.output_stage = GoodData::AdsOutputStage.create(
               client: to_project.client,
-              ads: from_prj_output_stage.schema,
+              ads: options[:ads_output_stage_uri] || from_prj_output_stage.schema,
               client_id: from_prj_output_stage.client_id,
               output_stage_prefix: from_prj_output_stage.output_stage_prefix,
               project: to_project
@@ -210,6 +219,7 @@ module GoodData
       #
       # @param client [GoodData::Rest::Client] GoodData client to be used for connection
       # @param from_project [GoodData::Project | GoodData::Segment | GoodData:Client | String] Object to be cloned from. Can be either segment in which case we take the master, client in which case we take its project, string in which case we treat is as an project object or directly project
+      # @param to_project [GoodData::Project | GoodData::Segment | GoodData:Client | String]
       def transfer_etl(client, from_project, to_project)
         from_project = case from_project
                        when GoodData::Client
@@ -232,7 +242,12 @@ module GoodData
         transfer_schedules(from_project, to_project)
       end
 
-      def transfer_processes(from_project, to_project)
+      # @param from_project The source project
+      # @param to_project The target project
+      # @param options Optional parameters
+      # @option ads_output_stage_uri Uri of the source output stage. It must be in the same domain as the target project.
+      def transfer_processes(from_project, to_project, options)
+        options = GoodData::Helpers.symbolize_keys(options)
         to_project_processes = to_project.processes
         from_project.processes.uniq(&:name).each do |process|
           fail "The process name #{process.name} must be unique in transfered project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
@@ -254,7 +269,7 @@ module GoodData
           end
         end
 
-        transfer_output_stage(from_project, to_project)
+        transfer_output_stage(from_project, to_project, options)
 
         res = (from_project.processes + to_project.processes).map { |p| [p, p.name, p.type] }
         res.group_by { |x| [x[1], x[2]] }
