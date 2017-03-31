@@ -220,7 +220,10 @@ module GoodData
       # Clones project along with etl and schedules.
       #
       # @param client [GoodData::Rest::Client] GoodData client to be used for connection
-      # @param from_project [GoodData::Project | GoodData::Segment | GoodData:Client | String] Object to be cloned from. Can be either segment in which case we take the master, client in which case we take its project, string in which case we treat is as an project object or directly project
+      # @param from_project [GoodData::Project | GoodData::Segment | GoodData:Client | String]
+      # Object to be cloned from. Can be either segment in which case we
+      # take the master, client in which case we take its project, string
+      # in which case we treat is as an project object or directly project
       # @param to_project [GoodData::Project | GoodData::Segment | GoodData:Client | String]
       def transfer_etl(client, from_project, to_project)
         from_project = case from_project
@@ -304,7 +307,10 @@ module GoodData
       # Clones project along with etl and schedules.
       #
       # @param client [GoodData::Rest::Client] GoodData client to be used for connection
-      # @param from_project [GoodData::Project | GoodData::Segment | GoodData:Client | String] Object to be cloned from. Can be either segment in which case we take the master, client in which case we take its project, string in which case we treat is as an project object or directly project
+      # @param from_project [GoodData::Project | GoodData::Segment | GoodData:Client | String]
+      # Object to be cloned from. Can be either segment in which case we take
+      # the master, client in which case we take its project, string in which
+      # case we treat is as an project object or directly project.
       def transfer_schedules(from_project, to_project)
         cache = to_project
                   .processes.sort_by(&:name)
@@ -1197,7 +1203,10 @@ module GoodData
     # @option options [GoodData::Project | String | Array<String> | Array<GoodData::Project>] :project Project(s) to migrate to
     # @option options [Number] :batch_size Number of projects that are migrated at the same time. Default is 10
     #
-    # @return [Boolean | Array<Hash>] Return either true or throws exception if you passed only one project. If you provided an array returns list of hashes signifying sucees or failure. Take note that in case of list of projects it does not throw exception
+    # @return [Boolean | Array<Hash>] Return either true or throws exception
+    # if you passed only one project. If you provided an array returns list
+    # of hashes signifying sucees or failure. Take note that in case of list
+    # of projects it does not throw exception.
     def partial_md_export(objects, options = {})
       projects = options[:project]
       batch_size = options[:batch_size] || 10
@@ -1699,7 +1708,11 @@ module GoodData
           create_group(name: g, description: g)
         end
       else
-        fail "All groups have to be specified before you try to import users. Groups that are currently in project are #{groups.join(',')} and you asked for #{missing_groups.join(',')}" unless missing_groups.empty?
+        unless missing_groups.empty?
+          fail 'All groups have to be specified before you try to import ' \
+            'users. Groups that are currently in project are ' \
+            "#{groups.join(',')} and you asked for #{missing_groups.join(',')}"
+        end
       end
     end
 
@@ -1748,7 +1761,11 @@ module GoodData
         client.post("#{uri}/users", 'users' => payload)
       end
       # this ugly line turns the hash of errors into list of errors with types so we can process them easily
-      typed_results = results.flat_map { |x| x['projectUsersUpdateResult'].flat_map { |k, v| v.map { |v2| v2.is_a?(String) ? { type: k.to_sym, user: v2 } : GoodData::Helpers.symbolize_keys(v2).merge(type: k.to_sym) } } }
+      typed_results = results.flat_map do |x|
+        x['projectUsersUpdateResult'].flat_map do |k, v|
+          v.map { |v2| v2.is_a?(String) ? { type: k.to_sym, user: v2 } : GoodData::Helpers.symbolize_keys(v2).merge(type: k.to_sym) }
+        end
+      end
       # we have to concat errors from role resolution and API result
       typed_results + (users_by_type[:failed] || [])
     end

@@ -175,7 +175,14 @@ module GoodData
 
     def ==(other)
       return false unless [:project, :title, :process, :channels, :message, :subject, :project_events, :timer_event].all? { |m| other.respond_to?(m) }
-      @project == other.project && @title == other.title && @process == other.process && @channels == other.channels && @message == other.message && @subject == other.subject && @project_events == other.project_events && @timer_event == other.timer_event
+      @project == other.project &&
+        @title == other.title &&
+        @process == other.process &&
+        @channels == other.channels &&
+        @message == other.message &&
+        @subject == other.subject &&
+        @project_events == other.project_events &&
+        @timer_event == other.timer_event
     end
   end
 end

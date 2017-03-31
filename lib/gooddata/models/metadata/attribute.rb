@@ -20,7 +20,10 @@ module GoodData
       # Method intended to get all objects of that type in a specified project
       #
       # @param options [Hash] the options hash
-      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @option options [Boolean] :full if passed true the subclass can decide
+      # to pull in full objects. This is desirable from the usability POV
+      # but unfortunately has negative impact on performance so it is
+      # not the default.
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('attribute', Attribute, options)
@@ -95,12 +98,18 @@ module GoodData
     # Creates the basic count metric with the attribute used. If you need to compute the attribute on a different dataset you can specify that in params. The metric created is not saved.
     # @param [Hash] options the options to pass to the value list
     # @option options [Symbol] :type type of aggregation function.
-    # @option options [Symbol] :attribute Use this attribute if you need to express different dataset for performing the computation on. It basically serves for creating metrics like SELECT COUNT(User, Opportunity).
+    # @option options [Symbol] :attribute Use this attribute if you need to
+    # express different dataset for performing the computation on. It basically
+    # serves for creating metrics like SELECT COUNT(User, Opportunity).
     # @return [GoodData::Metric]
     def create_metric(options = {})
       an_attribute = options[:attribute]
       a_type = options[:type] || :count
-      fail "Suggested aggreagtion function (#{a_type}) does not exist for base metric created out of attribute. You can use only one of #{ATTRIBUTE_BASE_AGGREGATIONS.map { |x| ':' + x.to_s }.join(',')}" unless ATTRIBUTE_BASE_AGGREGATIONS.include?(a_type)
+      unless ATTRIBUTE_BASE_AGGREGATIONS.include?(a_type)
+        fail 'Suggested aggreagtion function (#{a_type}) does not exist for ' \
+             'base metric created out of attribute. You can use only one of' \
+             "#{ATTRIBUTE_BASE_AGGREGATIONS.map { |x| ':' + x.to_s }.join(',')}"
+      end
       a_title = options[:title] || "#{a_type} of #{title}"
       if an_attribute
         project.create_metric("SELECT #{a_type.to_s.upcase}([#{uri}], [#{an_attribute.uri}])", title: a_title, extended_notation: false)
