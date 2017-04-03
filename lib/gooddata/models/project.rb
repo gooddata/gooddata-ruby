@@ -246,7 +246,7 @@ module GoodData
       # @param to_project The target project
       # @param options Optional parameters
       # @option ads_output_stage_uri Uri of the source output stage. It must be in the same domain as the target project.
-      def transfer_processes(from_project, to_project, options)
+      def transfer_processes(from_project, to_project, options = {})
         options = GoodData::Helpers.symbolize_keys(options)
         to_project_processes = to_project.processes
         from_project.processes.uniq(&:name).each do |process|
