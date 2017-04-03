@@ -104,6 +104,7 @@ module GoodData
         SynchronizeLdm,
         # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
+        ApplyCustomMaql,
         SynchronizeProcesses,
         SynchronizeSchedules,
         SynchronizeColorPalette,
