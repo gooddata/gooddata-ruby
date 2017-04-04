@@ -261,6 +261,22 @@ describe GoodData::Project, :constraint => 'slow' do
         end
       end).to be_truthy
     end
+
+    it 'can auto create groups and work with them' do
+      new_group = 'new_group'
+      u = @project.get_user(ConnectionHelper::DEFAULT_USERNAME)
+      uh = u.to_hash
+      uh[:user_group] = [new_group]
+
+      expect(@project.user_groups(new_group)).to be_nil
+      expect do
+        @project.import_users([uh], domain: @domain, whitelists: [/admin@gooddata.com/])
+      end.to raise_exception
+
+      @project.import_users([uh], domain: @domain, whitelists: [/admin@gooddata.com/], create_non_existing_user_groups: true)
+      expect(@project.user_groups(new_group)).not_to be_nil
+      expect(@project.user_groups(new_group).member?(u.uri)).to be_truthy
+    end
   end
 
   describe '#summary' do

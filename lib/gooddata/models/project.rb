@@ -1516,7 +1516,7 @@ module GoodData
       whitelisted_new_users, whitelisted_users = whitelist_users(new_users.map(&:to_hash), users_list, options[:whitelists])
 
       # First check that if groups are provided we have them set up
-      check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq)
+      check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq, options)
 
       # conform the role on list of new users so we can diff them with the users coming from the project
       diffable_new_with_default_role = whitelisted_new_users.map do |u|
@@ -1645,10 +1645,16 @@ module GoodData
       end
     end
 
-    def check_groups(specified_groups)
+    def check_groups(specified_groups, options = {})
       groups = user_groups.map(&:name)
       missing_groups = specified_groups - groups
-      fail "All groups have to be specified before you try to import users. Groups that are currently in project are #{groups.join(',')} and you asked for #{missing_groups.join(',')}" unless missing_groups.empty?
+      if options[:create_non_existing_user_groups]
+        missing_groups.each do |g|
+          create_group(name: g, description: g)
+        end
+      else
+        fail "All groups have to be specified before you try to import users. Groups that are currently in project are #{groups.join(',')} and you asked for #{missing_groups.join(',')}" unless missing_groups.empty?
+      end
     end
 
     # Update user
