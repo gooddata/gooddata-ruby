@@ -221,8 +221,17 @@ module GoodData
 
         new_params = params
 
-        fail_early = params.fail_early.to_b
-        strict_mode = params.strict.to_b
+        fail_early = if params.has_key?(:fail_early)
+                       params.fail_early.to_b
+                     else
+                       true
+                     end
+
+        strict_mode = if params.has_key?(:strict)
+                        params.strict.to_b
+                      else
+                        true
+                      end
 
         # Run actions
         results = actions.map do |action|
