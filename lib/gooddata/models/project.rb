@@ -198,7 +198,8 @@ module GoodData
             from_server = from_project.client.connection.server.url
             to_server = to_project.client.connection.server.url
             if from_server != to_server && options[:ads_output_stage_uri].nil?
-              raise 'It is not possible to transfer output stages between ' \
+              raise "Cannot transfer output stage from #{from_server} to #{to_server}. " \
+                    'It is not possible to transfer output stages between ' \
                     'different domains. Please specify an address of an output ' \
                     'stage that is in the same domain as the target project ' \
                     'using the "ads_output_stage_uri" parameter.'
