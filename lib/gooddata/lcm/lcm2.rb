@@ -16,14 +16,14 @@ module GoodData
       def method_missing(name, *_args)
         key = name.to_s.downcase.to_sym
 
-        if key?(key)
-          self[key]
-        else
-          begin
-            super
-          rescue
-            nil
-          end
+        self.keys.each do |key|
+          return self[key] if key.downcase == name.to_s.downcase.to_sym
+        end
+
+        begin
+          super
+        rescue
+          nil
         end
       end
 
@@ -123,9 +123,9 @@ module GoodData
           res = SmartHash.new
           params.each_pair do |k, v|
             if v.is_a?(Hash) || v.is_a?(Array)
-              res[k.downcase] = convert_to_smart_hash(v)
+              res[k] = convert_to_smart_hash(v)
             else
-              res[k.downcase] = v
+              res[k] = v
             end
           end
           res
