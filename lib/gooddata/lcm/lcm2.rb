@@ -27,6 +27,16 @@ module GoodData
         end
       end
 
+      def has_key?(key)
+        return true if super
+
+        self.keys.each do |k|
+          return true if k.downcase == key.to_s.downcase.to_sym
+        end
+
+        false
+      end
+
       def respond_to_missing?(name, *_args)
         key = name.to_s.downcase.to_sym
         key?(key)
@@ -210,6 +220,18 @@ module GoodData
         # TODO: Check all action params first
 
         new_params = params
+
+        fail_early = if params.has_key?(:fail_early)
+                       params.fail_early.to_b
+                     else
+                       true
+                     end
+
+        strict_mode = if params.has_key?(:strict)
+                        params.strict.to_b
+                      else
+                        true
+                      end
 
         # Run actions
         results = actions.map do |action|
