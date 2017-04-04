@@ -10,6 +10,7 @@ require 'gooddata_datawarehouse' if RUBY_PLATFORM == 'java'
 
 module GoodData
   module Bricks
+    # Connects to the warehouse (ADS) and enriches parameters with GoodData::Datawarehouse
     class WarehouseMiddleware < Bricks::Middleware
       def call(params)
         if params.key?('ads_client') && (RUBY_PLATFORM == 'java')

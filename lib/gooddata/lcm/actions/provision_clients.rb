@@ -46,11 +46,10 @@ module GoodData
               Hash[m.each_pair.to_a].merge(type: :provision_result)
             end
 
-            segment_master = domain.segments(segment.segment_id).master_project.pid
-
             unless tmp.empty?
               synchronize_projects << {
-                from: segment_master,
+                segment_id: segment.segment_id,
+                from: segment.development_pid,
                 to: tmp.map do |entry|
                   {
                     pid: entry[:project_uri].split('/').last,

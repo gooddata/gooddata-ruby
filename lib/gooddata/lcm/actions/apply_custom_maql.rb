@@ -44,7 +44,10 @@ module GoodData
 
           res = []
           domain_segments.peach do |ds|
-            maql = 'CREATE DATASET {dataset.quotes} VISUAL (TITLE "Stock Quotes Data");'
+            release_table_name = params.release_table_name || 'LCM_RELEASE'
+            query = "SELECT maql_ddl from \"#{release_table_name}\" where segment_id = '#{ds.segment_id}'"
+            res = params.ads_client.execute_select(query)
+            maql = res[0][:maql_ddl]
 
             unless maql.empty?
               ds.clients.peach do |dc|

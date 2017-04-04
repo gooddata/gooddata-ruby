@@ -8,6 +8,7 @@ require_relative 'base_middleware'
 
 module GoodData
   module Bricks
+    # Connects to platform and enriches parameters with GoodData::Client
     class GoodDataMiddleware < Bricks::Middleware
       DEFAULT_PROTOCOL = 'https'
       DEFAULT_HOSTNAME = 'secure.gooddata.com'

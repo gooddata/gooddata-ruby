@@ -67,7 +67,8 @@ describe GoodData::Model::ProjectCreator do
   end
 
   it 'should not pick a chunk if it is not possible to satisfy it based on your preference' do
-    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true, preserve_data: false, unmeetable_condition: true })
-    expect(chunk).to eq []
+    expect do
+      GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true, preserve_data: false, unmeetable_condition: true })
+    end.to raise_error
   end
 end

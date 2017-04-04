@@ -146,6 +146,15 @@ module GoodData
             end
           end
         end
+
+        # User groups must be migrated after dashboards
+        puts 'Migrating User Groups'
+        domain.clients.peach do |c|
+          segment = c.segment
+          segment_master = segment.master_project
+          project = c.project
+          GoodData::Project.transfer_user_groups(segment_master, project)
+        end
       end
 
       def transfer_label_types(source_project, targets)

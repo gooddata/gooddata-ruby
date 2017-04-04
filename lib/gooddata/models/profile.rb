@@ -60,7 +60,7 @@ module GoodData
         return id if id.instance_of?(GoodData::Profile) || id.respond_to?(:profile?) && id.profile?
 
         if id.to_s !~ %r{^(\/gdc\/account\/profile\/)?[a-zA-Z\d]+$}
-          fail(ArgumentError, 'wrong type of argument. Should be either project ID or path')
+          fail(ArgumentError, 'wrong type of argument. Should be either profile ID or path')
         end
 
         id = id.match(/[a-zA-Z\d]+$/)[0] if id =~ %r{/}

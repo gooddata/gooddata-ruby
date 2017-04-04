@@ -514,6 +514,7 @@ module GoodData
 Request ID: #{params[:x_gdc_request]}
 Full response:
 #{JSON.pretty_generate(error)}
+Backtrace:\n#{e.backtrace.join("\n")}
 ERR
       rescue MultiJson::ParseError
         "Failed to parse #{e}. Raw response: #{e.response}"
