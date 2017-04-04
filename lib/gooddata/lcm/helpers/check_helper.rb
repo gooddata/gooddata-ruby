@@ -12,7 +12,7 @@ module GoodData
       class << self
         def check_params(specification, params)
           specification.keys.each do |param_name|
-            value = params[param_name]
+            value = params.send(param_name)
             type = specification[param_name][:type]
 
             if value.nil?
