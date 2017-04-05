@@ -371,6 +371,7 @@ module GoodData
 
       fail GoodData::FilterMaqlizationError, errors if !ignore_missing_values && !errors.empty?
       filters = user_filters.map { |data| client.create(MandatoryUserFilter, data, project: project) }
+
       to_create, to_delete = resolve_user_filters(filters, project.data_permissions)
 
       GoodData.logger.warn("Data permissions computed: #{to_create.count} to create and #{to_delete.count} to delete")
@@ -396,33 +397,37 @@ module GoodData
           res['userFiltersUpdateResult'].flat_map { |k, v| v.map { |r| { status: k.to_sym, user: r, type: :create } } }.map { |result| result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result }
         end
       end
-      delete_results = unless options[:do_not_touch_filters_that_are_not_mentioned]
-                         to_delete.each_slice(100).flat_map do |batch|
-                           batch.flat_map do |related_uri, group|
-                             results = []
-                             if related_uri
-                               res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
-                               items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
-                               payload = {
-                                 'userFilters' => {
-                                   'items' => [
-                                     {
-                                       'user' => related_uri,
-                                       'userFilters' => items - group.map(&:uri)
-                                     }
-                                   ]
-                                 }
-                               }
-                               res = client.post("/gdc/md/#{project.pid}/userfilters", payload)
-                               results.concat(res['userFiltersUpdateResult']
-                                 .flat_map { |k, v| v.map { |r| { status: k.to_sym, user: r, type: :delete } } }
-                                 .map { |result| result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result })
-                             end
-                             group.peach(&:delete)
-                             results
-                           end
-                         end
-                       end
+
+      delete_mufs = proc do |detele_filters|
+        unless options[:do_not_touch_filters_that_are_not_mentioned]
+          detele_filters.each_slice(100).flat_map do |batch|
+            batch.flat_map do |related_uri, group|
+              results = []
+              if related_uri
+                res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
+                items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
+                payload = {
+                  'userFilters' => {
+                    'items' => [
+                      {
+                        'user' => related_uri,
+                        'userFilters' => items - group.map(&:uri)
+                      }
+                    ]
+                  }
+                }
+                res = client.post("/gdc/md/#{project.pid}/userfilters", payload)
+                results.concat(res['userFiltersUpdateResult']
+                  .flat_map { |k, v| v.map { |r| { status: k.to_sym, user: r, type: :delete } } }
+                  .map { |result| result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result })
+              end
+              group.peach(&:delete)
+              results
+            end
+          end
+        end
+      end
+      delete_results = options[:mutex] ? options[:mutex].synchronize { delete_mufs.call(to_delete) } : delete_mufs.call(to_delete)
       { created: to_create, deleted: to_delete, results: create_results + (delete_results || []) }
     end
 
