@@ -11,7 +11,7 @@ module GoodData
       # @param maql Input MAQL string
       # @return [Array<Array>] Pairs [attribute, attribute_element]
       def extract_element_uri_pairs(maql)
-        arr = maql.scan(%r{\[([^\[\]]*)\/elements\?id=(\d+)\]}).flatten
+        arr = maql.scan(%r{(\/gdc\/(?:projects|md)\/[a-zA-Z\d]+\/obj\/\d+)\/elements\?id=(\d+)}).flatten
         evens = arr.select.each_with_index { |_, i| i.even? }
         odds = arr.select.each_with_index { |_, i| i.odd? }.map(&:to_i)
         evens.zip(odds)

@@ -1302,14 +1302,16 @@ module GoodData
               GoodData.logger.info "Saving #{new_item.uri}"
               new_item.save
             end
+          else
+            GoodData.logger.info "Ignore #{item.uri}"
           end
         end
       end
 
       GoodData.logger.info 'Replacing hidden metrics'
-      local_metrics = rds.pmapcat { |rd| rd.using('metric') }.select { |m| m['deprecated'] == '1' }
+      local_metrics = mapping.map { |a, _| a }.pmapcat { |a| a.usedby('metric') }.select { |m| m['deprecated'] == '1' }.map { |m| m['link'] }.uniq
       puts "Found #{local_metrics.count} metrics"
-      local_metrics.pmap { |m| metrics(m['link']) }.peach do |item|
+      local_metrics.pmap { |m| metrics(m) }.peach do |item|
         new_item = item.replace(mapping)
         if new_item.json != item.json
           if dry_run
@@ -1318,6 +1320,8 @@ module GoodData
             GoodData.logger.info "Saving #{new_item.uri}"
             new_item.save
           end
+        else
+          GoodData.logger.info "Ignore #{item.uri}"
         end
       end
 
