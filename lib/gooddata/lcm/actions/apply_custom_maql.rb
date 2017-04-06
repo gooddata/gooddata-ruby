@@ -8,12 +8,17 @@ require_relative 'base_action'
 
 module GoodData
   module LCM2
+    # Applies custom MAQL DDL to all client projects so customized
+    # labels and fiscal calendars are not deleted.
+    # To ease up further automation, the MAQL DDL may be
+    # stored in separate field in lcm_release
+    # table as we will need custom Release brick action which will populate it.
     class ApplyCustomMaql < BaseAction
       DESCRIPTION = 'Apply Custom MAQL DDL'
 
       PARAMS = define_params(self) do
         description 'Should be custom MAQL DDL Applied'
-        param :aplly_maql_ddl, instance_of(Type::BooleanType), required: false, default: false
+        param :apply_maql_ddl, instance_of(Type::BooleanType), required: false, default: false
       end
 
       RESULT_HEADER = [
@@ -23,14 +28,8 @@ module GoodData
       ]
 
       class << self
-        def say(msg)
-          puts "#{name}#say - #{msg}"
-        end
-
         def call(params)
-          unless params.apply_maql_ddl.to_b
-            return []
-          end
+          return [] unless params.apply_maql_ddl.to_b
 
           client = params.gdc_gd_client
 
@@ -53,7 +52,6 @@ module GoodData
               ds.clients.peach do |dc|
                 project = dc.project
 
-                # TODO: Apply MAQL here!
                 r = project.execute_maql(maql)
 
                 item = {
