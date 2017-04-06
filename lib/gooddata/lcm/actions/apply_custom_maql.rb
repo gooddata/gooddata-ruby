@@ -28,9 +28,7 @@ module GoodData
         end
 
         def call(params)
-          unless params.apply_maql_ddl.to_b
-            return []
-          end
+          return [] unless params.apply_maql_ddl.to_b
 
           client = params.gdc_gd_client
 
