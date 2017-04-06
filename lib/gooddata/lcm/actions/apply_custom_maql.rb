@@ -51,7 +51,6 @@ module GoodData
               ds.clients.peach do |dc|
                 project = dc.project
 
-                # TODO: Apply MAQL here!
                 r = project.execute_maql(maql)
 
                 item = {
