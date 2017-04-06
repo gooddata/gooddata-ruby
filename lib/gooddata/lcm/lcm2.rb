@@ -234,11 +234,21 @@ module GoodData
                       end
 
         # Run actions
-        results = actions.map do |action|
+        errors = []
+        results = []
+        actions.each do |action|
           puts
 
           # Invoke action
-          out = action.send(:call, params)
+          begin
+            out = action.send(:call, params)
+          rescue => e
+            fail(e) if fail_early
+            errors << {
+                action: action,
+                err: e
+            }
+          end
 
           # Handle output results and params
           res = out.is_a?(Array) ? out : out[:results]
@@ -252,8 +262,8 @@ module GoodData
           puts
           print_action_result(action, res)
 
-          # Return result for final summary
-          res
+          # Store result for final summary
+          results << res
         end
 
         if actions.length > 1
@@ -269,6 +279,9 @@ module GoodData
         actions.each_with_index do |action, index|
           brick_results[action.short_name] = results[index]
         end
+
+        # Fail whole execution if there is any failed action
+        fail(errors) if strict_mode && !errors.empty?
 
         {
           actions: actions.map(&:short_name),
