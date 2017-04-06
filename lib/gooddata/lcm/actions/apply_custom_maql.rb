@@ -28,10 +28,6 @@ module GoodData
       ]
 
       class << self
-        def say(msg)
-          puts "#{name}#say - #{msg}"
-        end
-
         def call(params)
           return [] unless params.apply_maql_ddl.to_b
 
