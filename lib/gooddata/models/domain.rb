@@ -431,6 +431,10 @@ module GoodData
     alias_method :add_clients_settings, :update_clients_settings
 
     def update_clients(data, options = {})
+      if options[:delete_extra] && options[:delete_extra_in_segments]
+        fail 'Options delete_extra and delete_extra_in_segments are mutually exclusive.'
+      end
+
       delete_projects = options[:delete_projects] == false ? false : true
       payload = data.map do |datum|
         {
@@ -444,6 +448,12 @@ module GoodData
       end
       if options[:delete_extra] == true
         res = client.post(segments_uri + '/updateClients?deleteExtra=true', updateClients: { items: payload })
+      elsif options[:delete_extra_in_segments]
+        segments_to_delete_in = options[:delete_extra_in_segments]
+          .map { |segment| CGI.escape(segment) }
+          .join(',')
+        uri = segments_uri + "/updateClients?deleteExtraInSegments=#{segments_to_delete_in}"
+        res = client.post(uri, updateClients: { items: payload })
       else
         res = client.post(segments_uri + '/updateClients', updateClients: { items: payload })
       end
