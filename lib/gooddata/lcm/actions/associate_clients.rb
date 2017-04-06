@@ -31,14 +31,27 @@ module GoodData
 
           client = params.gdc_gd_client
 
-          delete_projects = GoodData::Helpers.to_boolean(params.delete_projects)
-          delete_extra = GoodData::Helpers.to_boolean(params.delete_extra)
-
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
           domain.update_clients_settings(params.clients)
-          domain.update_clients(params.clients, delete_extra: delete_extra, delete_projects: delete_projects)
+
+          delete_projects = GoodData::Helpers.to_boolean(params.delete_projects)
+          delete_extra = GoodData::Helpers.to_boolean(params.delete_extra)
+          options = { delete_projects: delete_projects }
+          options.merge(delete_extra_option(params)) if delete_extra
+
+          domain.update_clients(params.clients, options)
+        end
+
+        private
+
+        def delete_extra_option(params)
+          if params.segments_filter && params.segments_filter.any?
+            { delete_extra_in_segments: params.segments_filter }
+          else
+            { delete_extra: delete_extra }
+          end
         end
       end
     end
