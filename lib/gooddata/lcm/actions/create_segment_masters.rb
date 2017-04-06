@@ -21,8 +21,8 @@ module GoodData
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
 
-        # description 'Queries Used'
-        # param :query, instance_of(Type::ReleaseQueryType), required: false
+        description 'Queries Used'
+        param :query, instance_of(Type::ReleaseQueryType), required: false
 
         description 'Segments to manage'
         param :segments, array_of(instance_of(Type::SegmentType)), required: true

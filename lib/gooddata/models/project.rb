@@ -195,13 +195,12 @@ module GoodData
             to_project.add.output_stage.save
           else
             from_prj_output_stage = from_project.add.output_stage
-            from_server = from_project.client.connection.server.url
-            to_server = to_project.client.connection.server.url
+            from_server = from_project.client.connection.server.options[:server]
+            to_server = to_project.client.connection.server.options[:server]
             if from_server != to_server && options[:ads_output_stage_uri].nil?
-              raise "Cannot transfer output stage from #{from_server} to #{to_server}. " \
-                    'It is not possible to transfer output stages between ' \
-                    'different domains. Please specify an address of an output ' \
-                    'stage that is in the same domain as the target project ' \
+              raise 'It is not possible to transfer output stages between ' /
+                    'different domains. Please specify an address of an output ' /
+                    'stage that is in the same domain as the target project ' /
                     'using the "ads_output_stage_uri" parameter.'
             end
 
@@ -777,7 +776,7 @@ module GoodData
         body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
       if result['wTaskStatus']['status'] == 'ERROR'
-        fail MaqlExecutionError.new("Executionof MAQL '#{maql}' failed in project '#{pid}'", result)
+        fail MaqlExecutionError.new("Execution of MAQL '#{maql}' failed in project '#{pid}'", result)
       end
       result
     end
@@ -1517,7 +1516,7 @@ module GoodData
       whitelisted_new_users, whitelisted_users = whitelist_users(new_users.map(&:to_hash), users_list, options[:whitelists])
 
       # First check that if groups are provided we have them set up
-      check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq, options)
+      check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq)
 
       # conform the role on list of new users so we can diff them with the users coming from the project
       diffable_new_with_default_role = whitelisted_new_users.map do |u|
@@ -1646,16 +1645,10 @@ module GoodData
       end
     end
 
-    def check_groups(specified_groups, options = {})
+    def check_groups(specified_groups)
       groups = user_groups.map(&:name)
       missing_groups = specified_groups - groups
-      if options[:create_non_existing_user_groups]
-        missing_groups.each do |g|
-          create_group(name: g, description: g)
-        end
-      else
-        fail "All groups have to be specified before you try to import users. Groups that are currently in project are #{groups.join(',')} and you asked for #{missing_groups.join(',')}" unless missing_groups.empty?
-      end
+      fail "All groups have to be specified before you try to import users. Groups that are currently in project are #{groups.join(',')} and you asked for #{missing_groups.join(',')}" unless missing_groups.empty?
     end
 
     # Update user

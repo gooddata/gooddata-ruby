@@ -16,25 +16,15 @@ module GoodData
       def method_missing(name, *_args)
         key = name.to_s.downcase.to_sym
 
-        self.keys.each do |key|
-          return self[key] if key.downcase == name.to_s.downcase.to_sym
+        if key?(key)
+          self[key]
+        else
+          begin
+            super
+          rescue
+            nil
+          end
         end
-
-        begin
-          super
-        rescue
-          nil
-        end
-      end
-
-      def has_key?(key)
-        return true if super
-
-        self.keys.each do |k|
-          return true if k.downcase == key.to_s.downcase.to_sym
-        end
-
-        false
       end
 
       def respond_to_missing?(name, *_args)
@@ -113,6 +103,7 @@ module GoodData
         SynchronizeLdm,
         # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
+        ApplyCustomMaql,
         SynchronizeColorPalette,
         SynchronizeClients,
         SynchronizeETLsInSegment
@@ -133,9 +124,9 @@ module GoodData
           res = SmartHash.new
           params.each_pair do |k, v|
             if v.is_a?(Hash) || v.is_a?(Array)
-              res[k] = convert_to_smart_hash(v)
+              res[k.downcase] = convert_to_smart_hash(v)
             else
-              res[k] = v
+              res[k.downcase] = v
             end
           end
           res
@@ -221,18 +212,6 @@ module GoodData
 
         new_params = params
 
-        fail_early = if params.has_key?(:fail_early)
-                       params.fail_early.to_b
-                     else
-                       true
-                     end
-
-        strict_mode = if params.has_key?(:strict)
-                        params.strict.to_b
-                      else
-                        true
-                      end
-
         # Run actions
         results = actions.map do |action|
           puts
@@ -279,3 +258,4 @@ module GoodData
     end
   end
 end
+
