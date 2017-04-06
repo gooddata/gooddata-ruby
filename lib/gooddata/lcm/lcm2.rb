@@ -182,7 +182,7 @@ module GoodData
 
         headings = keys.map(&:upcase)
 
-        rows = messages.map do |message|
+        rows = messages && messages.map do |message|
           row = []
           keys.each do |heading|
             row << message[heading]
@@ -243,11 +243,11 @@ module GoodData
           begin
             out = action.send(:call, params)
           rescue => e
-            fail(e) if fail_early
             errors << {
                 action: action,
                 err: e
             }
+            break if fail_early
           end
 
           # Handle output results and params
