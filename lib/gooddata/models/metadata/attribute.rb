@@ -116,7 +116,7 @@ module GoodData
     # @return [Array] list of values for certain element. Returned in the same order as is the order of labels
     def values_for(element_id)
       # element_id = element_id.is_a?(String) ? element_id.match(/\?id=(\d)/)[1] : element_id
-      labels.map do |label|
+      labels.pmap do |label|
         label.find_element_value(element_id)
       end
     end

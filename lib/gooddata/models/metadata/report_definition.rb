@@ -251,6 +251,7 @@ module GoodData
       x = GoodData::MdObject.replace_quoted(self, mapping)
       x = GoodData::MdObject.replace_bracketed(x, mapping)
       vals = GoodData::MdObject.find_replaceable_values(self, mapping)
+      GoodData::MdObject.replace_quoted(x, vals)
       GoodData::MdObject.replace_bracketed(x, vals)
     end
 
