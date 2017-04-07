@@ -39,7 +39,7 @@ module GoodData
         return true if super
 
         keys.each do |k|
-          return true if  k.to_s.downcase.to_sym == key.to_s.downcase.to_sym
+          return true if k.to_s.downcase.to_sym == key.to_s.downcase.to_sym
         end
 
         false
@@ -250,13 +250,13 @@ module GoodData
 
         new_params = params
 
-        fail_early = if params.has_key?(:fail_early)
+        fail_early = if params.key?(:fail_early)
                        params.fail_early.to_b
                      else
                        true
                      end
 
-        strict_mode = if params.has_key?(:strict)
+        strict_mode = if params.key?(:strict)
                         params.strict.to_b
                       else
                         true
@@ -296,7 +296,7 @@ module GoodData
         end
 
         # Fail whole execution if there is any failed action
-        fail(RuntimeError, JSON.pretty_generate(errors)) if strict_mode && !errors.empty?
+        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
 
         if actions.length > 1
           puts
