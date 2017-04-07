@@ -178,6 +178,7 @@ module GoodData
         keys = if action.const_defined?('RESULT_HEADER')
                  action.const_get('RESULT_HEADER')
                else
+                 GoodData.logger.warn("Action #{action.name} does not have RESULT_HEADERS, inferring headers from results.")
                  (messages.first && messages.first.keys) || []
                end
 
@@ -247,8 +248,8 @@ module GoodData
             out = action.send(:call, params)
           rescue => e
             errors << {
-                action: action,
-                err: e
+              action: action,
+              err: e
             }
             break if fail_early
           end
@@ -269,6 +270,9 @@ module GoodData
           results << res
         end
 
+        # Fail whole execution if there is any failed action
+        fail(RuntimeError, JSON.pretty_generate(errors)) if strict_mode && !errors.empty?
+
         if actions.length > 1
           puts
           puts 'SUMMARY'
@@ -282,9 +286,6 @@ module GoodData
         actions.each_with_index do |action, index|
           brick_results[action.short_name] = results[index]
         end
-
-        # Fail whole execution if there is any failed action
-        fail(errors) if strict_mode && !errors.empty?
 
         {
           actions: actions.map(&:short_name),
