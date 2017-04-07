@@ -777,7 +777,7 @@ module GoodData
         body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
       end
       if result['wTaskStatus']['status'] == 'ERROR'
-        fail MaqlExecutionError.new("Executionof MAQL '#{maql}' failed in project '#{pid}'", result)
+        fail MaqlExecutionError.new("Execution of MAQL '#{maql}' failed in project '#{pid}'", result)
       end
       result
     end

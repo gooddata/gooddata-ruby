@@ -113,6 +113,7 @@ module GoodData
         SynchronizeLdm,
         # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
+        ApplyCustomMaql,
         SynchronizeColorPalette,
         SynchronizeClients,
         SynchronizeETLsInSegment
@@ -279,3 +280,4 @@ module GoodData
     end
   end
 end
+
