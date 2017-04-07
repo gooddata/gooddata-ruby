@@ -16,8 +16,16 @@ module GoodData
       def method_missing(name, *_args)
         key = name.to_s.downcase.to_sym
 
-        if key?(key)
-          self[key]
+        value = nil
+        keys.each do |k|
+          if k.to_s.downcase.to_sym == key
+            value = self[k]
+            break
+          end
+        end
+
+        if value
+          value
         else
           begin
             super
@@ -31,7 +39,7 @@ module GoodData
         return true if super
 
         keys.each do |k|
-          return true if k.downcase == key.to_s.downcase.to_sym
+          return true if  k.to_s.downcase.to_sym == key.to_s.downcase.to_sym
         end
 
         false
