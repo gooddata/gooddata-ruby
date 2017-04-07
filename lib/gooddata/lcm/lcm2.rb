@@ -191,6 +191,8 @@ module GoodData
           row
         end
 
+        rows ||= []
+
         table = Terminal::Table.new :title => title, :headings => headings do |t|
           rows.each_with_index do |row, index|
             t << row
@@ -221,6 +223,18 @@ module GoodData
         # TODO: Check all action params first
 
         new_params = params
+
+        fail_early = if params.has_key?(:fail_early)
+                       params.fail_early.to_b
+                     else
+                       true
+                     end
+
+        strict_mode = if params.has_key?(:strict)
+                        params.strict.to_b
+                      else
+                        true
+                      end
 
         # Run actions
         errors = []
