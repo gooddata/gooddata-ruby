@@ -16,8 +16,16 @@ module GoodData
       def method_missing(name, *_args)
         key = name.to_s.downcase.to_sym
 
-        if key?(key)
-          self[key]
+        value = nil
+        keys.each do |k|
+          if k.to_s.downcase.to_sym == key
+            value = self[k]
+            break
+          end
+        end
+
+        if value
+          value
         else
           begin
             super
@@ -31,7 +39,7 @@ module GoodData
         return true if super
 
         keys.each do |k|
-          return true if k.downcase == key.to_s.downcase.to_sym
+          return true if k.to_s.downcase.to_sym == key.to_s.downcase.to_sym
         end
 
         false
@@ -184,18 +192,21 @@ module GoodData
         keys = if action.const_defined?('RESULT_HEADER')
                  action.const_get('RESULT_HEADER')
                else
+                 GoodData.logger.warn("Action #{action.name} does not have RESULT_HEADERS, inferring headers from results.")
                  (messages.first && messages.first.keys) || []
                end
 
         headings = keys.map(&:upcase)
 
-        rows = messages.map do |message|
+        rows = messages && messages.map do |message|
           row = []
           keys.each do |heading|
             row << message[heading]
           end
           row
         end
+
+        rows ||= []
 
         table = Terminal::Table.new :title => title, :headings => headings do |t|
           rows.each_with_index do |row, index|
@@ -239,12 +250,34 @@ module GoodData
 
         new_params = params
 
+        fail_early = if params.key?(:fail_early)
+                       params.fail_early.to_b
+                     else
+                       true
+                     end
+
+        strict_mode = if params.key?(:strict)
+                        params.strict.to_b
+                      else
+                        true
+                      end
+
         # Run actions
-        results = actions.map do |action|
+        errors = []
+        results = []
+        actions.each do |action|
           puts
 
           # Invoke action
-          out = action.send(:call, params)
+          begin
+            out = action.send(:call, params)
+          rescue => e
+            errors << {
+              action: action,
+              err: e
+            }
+            break if fail_early
+          end
 
           # Handle output results and params
           res = out.is_a?(Array) ? out : out[:results]
@@ -258,9 +291,12 @@ module GoodData
           puts
           print_action_result(action, res)
 
-          # Return result for final summary
-          res
+          # Store result for final summary
+          results << res
         end
+
+        # Fail whole execution if there is any failed action
+        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
 
         if actions.length > 1
           puts
