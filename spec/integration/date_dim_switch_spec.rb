@@ -40,7 +40,7 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :co
     @client.disconnect
   end
 
-  it "should swap the dimension, exhcange all stuff and not break anything" do
+  it "should swap the dimension, exchange all stuffs and not break anything" do
     # WE have 2 date dims
     expect(@blueprint.date_dimensions.map(&:id)).to eq %w(created_on created_on_2)
     # One is connected
@@ -120,14 +120,12 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :co
     # Labels
     GoodData::SmallGoodZilla.get_uris(@metric_2.expression)
     expect(@report.definition.attributes.map(&:identifier)).to eq ["created_on_2.quarter"]
-    ids = GoodData::SmallGoodZilla.get_uris(@report.definition.filters.first).map { |x| x.split('/')[-2..-1].join('/') }
-    expect(ids).to eq ["obj/2286", "2286/elements?id=2015", "2286/elements?id=2016"]
 
     ids = GoodData::SmallGoodZilla.get_uris(@report.definition.filters.first).map { |x| x.split('/')[-2..-1].join('/') }
-    expect(ids).to eq ["obj/2286", "2286/elements?id=2015", "2286/elements?id=2016"]
+    expect(ids).to eq ["obj/281", "281/elements?id=2015", "281/elements?id=2016"]
 
     ids = GoodData::SmallGoodZilla.get_uris(@variable.values.first.expression).map { |v| v.split('/')[-2..-1].join('/') }
-    expect(ids).to eq ["obj/2286", "2286/elements?id=2015", "2286/elements?id=2016"]
+    expect(ids).to eq ["obj/281", "281/elements?id=2015", "281/elements?id=2016"]
 
     # Swap the dims
     bp = @project.blueprint

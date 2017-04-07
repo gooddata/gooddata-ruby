@@ -87,17 +87,22 @@ module GoodData
           from_attribute, to_attribute = mapping.find { |k, _| k.uri == a_uri }
           vals = from_attribute.values_for(id)
           labels = to_attribute.labels
-          results = labels.to_enum.mapcat do |l|
-            vals.map do |v|
-              begin
-                l.find_value_uri(v)
-              rescue
-                nil
+
+          result = nil
+          catch :found_value do
+            labels.each do |l|
+              vals.each do |v|
+                throw :found_value if result
+                result = begin
+                           l.find_value_uri(v)
+                         rescue
+                           nil
+                         end
               end
             end
           end
-          fail "Unable to find replacement for #{a_uri}" if results.compact.empty?
-          [a_uri, id, results.compact.first]
+          fail "Unable to find replacement for #{a_uri}" unless result
+          [a_uri, id, result]
         end
         replaceable_vals.map { |a, id, r| ["#{a}/elements?id=#{id}", r] }
       end
