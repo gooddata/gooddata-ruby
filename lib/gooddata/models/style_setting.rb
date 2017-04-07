@@ -28,11 +28,7 @@ module GoodData
 
       def create(colors, opts = { client: GoodData.connection, project: GoodData.project })
         client, project = GoodData.get_client_and_project(opts)
-        if colors.is_a?(StyleSetting)
-          colors = colors.colors
-        else
-          colors = colors.uniq
-        end
+        colors &= colors # remove duplicate colors
         uri = STYLE_SETTING_PATH % project.pid
         data_to_send = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
           d['styleSettings']['chartPalette'] = colors
