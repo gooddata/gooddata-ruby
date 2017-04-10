@@ -17,6 +17,10 @@ module GoodData
           raise 'Unable to connect to AWS. Parameter "aws_client" seems to be empty' unless params['aws_client']
           raise 'Unable to connect to AWS. Parameter "access_key_id" is missing' if params['aws_client']['access_key_id'].blank?
           raise 'Unable to connect to AWS. Parameter "secret_access_key" is missing' if params['aws_client']['secret_access_key'].blank?
+          if params['aws_client'].key?('use_ssl')
+            params['aws_client']['use_ssl'] =
+              params['aws_client']['use_ssl'].to_b
+          end
           s3 = AWS::S3.new(params['aws_client'])
           params['aws_client']['s3_client'] = s3
         end
