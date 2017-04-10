@@ -39,7 +39,7 @@ module GoodData
           delete_projects = GoodData::Helpers.to_boolean(params.delete_projects)
           delete_extra = GoodData::Helpers.to_boolean(params.delete_extra)
           options = { delete_projects: delete_projects }
-          options.merge(delete_extra_option(params)) if delete_extra
+          options.merge!(delete_extra_option(params)) if delete_extra
 
           domain.update_clients(params.clients, options)
         end
