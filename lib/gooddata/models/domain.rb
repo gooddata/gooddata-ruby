@@ -241,7 +241,7 @@ module GoodData
 
         list.pmapcat do |user|
           begin
-            user_data = user.to_hash.tap { |uh| uh[:login].downcase }
+            user_data = user.to_hash.tap { |uh| uh[:login].downcase! }
             domain_user = domain_users_cache[user_data[:login]]
             if !domain_user
               added_user = domain.add_user(user_data, opts)
