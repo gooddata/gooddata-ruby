@@ -19,5 +19,14 @@ module GoodData
     alias_method :info, :debug
     alias_method :warn, :debug
     alias_method :error, :debug
+
+    def debug?
+      false
+    end
+
+    alias_method :info?, :debug?
+    alias_method :warn?, :debug?
+    alias_method :error?, :debug?
+    alias_method :fatal?, :debug?
   end
 end

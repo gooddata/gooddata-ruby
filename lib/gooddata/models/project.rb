@@ -24,6 +24,7 @@ require_relative '../mixins/uri_getter'
 
 require_relative 'membership'
 require_relative 'process'
+require_relative 'project_log_formatter'
 require_relative 'project_role'
 require_relative 'blueprint/blueprint'
 
@@ -967,6 +968,7 @@ module GoodData
     def initialize(json)
       super
       @json = json
+      @log_formatter = GoodData::ProjectLogFormatter.new(self)
     end
 
     # Invites new user to project
@@ -1532,12 +1534,12 @@ module GoodData
       intermediate_new = diffable_new_with_default_role.map do |u|
         u[:role] = u[:role].map do |r|
           role = get_role(r, role_list)
-          role && role.uri
+          role ? role.uri : r
         end
 
         u[:role_title] = u[:role].map do |r|
           role = get_role(r, role_list)
-          role && role.title
+          role ? role.title : r
         end
 
         if u[:role].all?(&:nil?)
@@ -1570,30 +1572,37 @@ module GoodData
       return diff_results if options[:dry_run]
 
       # Create new users
-      u = diff[:added].map { |x| { user: x, role: x[:role] } }
-
       results = []
       GoodData.logger.warn("Creating #{diff[:added].count} users in project (#{pid})")
-      results.concat(create_users(u, roles: role_list, project_users: whitelisted_users))
+      to_create = diff[:added].map { |x| { user: x, role: x[:role] } }
+      created_users_result = create_users(to_create, roles: role_list, project_users: whitelisted_users)
+      @log_formatter.log_created_users(created_users_result, diff[:added])
+      results.concat(created_users_result)
       send_mail_to_new_users(diff[:added], options[:email_options]) if options[:email_options] && !options[:email_options].empty? && !diff[:added].empty?
 
       # # Update existing users
       GoodData.logger.warn("Updating #{diff[:changed].count} users in project (#{pid})")
-      list = diff[:changed].map { |x| { user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles] } }
-      results.concat(set_users_roles(list, roles: role_list, project_users: whitelisted_users))
+      to_update = diff[:changed].map { |x| { user: x[:new_obj], role: x[:new_obj][:role] || x[:new_obj][:roles] } }
+      updated_users_result = set_users_roles(to_update, roles: role_list, project_users: whitelisted_users)
+      @log_formatter.log_updated_users(updated_users_result, diff[:changed], role_list)
+      results.concat(updated_users_result)
 
       # Remove old users
-      to_remove = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
-      GoodData.logger.warn("Disabling #{to_remove.count} users from project (#{pid})")
-      results.concat(disable_users(to_remove, roles: role_list, project_users: whitelisted_users))
+      to_disable = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
+      GoodData.logger.warn("Disabling #{to_disable.count} users from project (#{pid})")
+      disabled_users_result = disable_users(to_disable, roles: role_list, project_users: whitelisted_users)
+      @log_formatter.log_disabled_users(disabled_users_result)
+      results.concat(disabled_users_result)
 
       # Remove old users completely
       if options[:remove_users_from_project]
-        to_remove = (to_remove + users(disabled: true).to_a).map(&:to_hash).uniq do |user|
+        to_remove = (to_disable + users(disabled: true).to_a).map(&:to_hash).uniq do |user|
           user[:uri]
         end
         GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
-        results.concat(remove_users(to_remove))
+        removed_users_result = remove_users(to_remove)
+        @log_formatter.log_removed_users(removed_users_result)
+        results.concat(removed_users_result)
       end
 
       # reassign to groups
@@ -1645,7 +1654,7 @@ module GoodData
           client.delete(url)
           [{ type: :successful, operation: :user_deleted_from_project, user: u }]
         rescue => e
-          [{ type: :failed, message: e.message }]
+          [{ type: :failed, message: e.message, user: u }]
         end
       end
     end
@@ -1694,7 +1703,7 @@ module GoodData
           login, roles = resolve_roles(user, desired_roles, options.merge(project_users: project_users, roles: role_list))
           [{ :type => :successful, user: login, roles: roles }]
         rescue => e
-          [{ :type => :failed, :reason => e.message, user: login, roles: roles }]
+          [{ :type => :failed, :reason => e.message, user: user, roles: desired_roles }]
         end
       end
 
@@ -1767,7 +1776,7 @@ module GoodData
       desired_roles = Array(desired_roles)
       roles = desired_roles.map do |role_name|
         role = get_role(role_name, role_list)
-        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{user.email}'" if role.nil?
+        fail ArgumentError, "Invalid role '#{role_name}' specified for user '#{GoodData::Helpers.last_uri_part(user)}'" if role.nil?
         role.uri
       end
       [user, roles]
