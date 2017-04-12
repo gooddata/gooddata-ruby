@@ -61,6 +61,26 @@ describe GoodData::Helpers do
       result = GoodData::Helpers.decode_params(params)
       expect(result).to eq(expected_result)
     end
+
+    it 'ignore value of encoded params if its value is not collection or String when resolve reference params' do
+      params = {
+        'param' => 'value',
+        'number_param' => 5,
+        'gd_encoded_params' => { "deep" => { "deeper" => "deep value" }, "bool" => true, "int" => 1 }
+      }
+      expected_result = {
+        'param' => 'value',
+        'number_param' => 5,
+        'deep' => {
+          'deeper' => 'deep value'
+        },
+        "bool" => true,
+        "int" => 1
+      }
+      result = GoodData::Helpers.decode_params(params, resolve_reference_params: true)
+      expect(result).to eq(expected_result)
+    end
+
     it 'decodes the hidden_data in hidden params' do
       params = {
         'param' => 'value',

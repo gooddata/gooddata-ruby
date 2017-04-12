@@ -83,6 +83,8 @@ module GoodData
               v.map do |v2|
                 resolve_reference.call(v2)
               end
+            elsif !v.is_a?(String)
+              v
             else
               v.gsub(regexps) do |match|
                 if match =~ /\\\\/
