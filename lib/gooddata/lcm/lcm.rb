@@ -260,30 +260,39 @@ module GoodData
 
         # Generate transfer table
         drill_paths = attributes.map do |attribute|
-          [attribute.meta['identifier'], attribute.content['drillDownStepAttributeDF']]
+          drill_label_uri = attribute.content['drillDownStepAttributeDF']
+          if drill_label_uri
+            drill_label = source_project.labels(drill_label_uri)
+            [attribute.meta['identifier'], drill_label.identifier]
+          else
+            []
+          end
         end
         transfer = Hash[*drill_paths.flatten].compact
 
         # Transfer to target projects
         targets.peach do |target|
-          transfer.peach do |identifier, drill_path|
-            uri = GoodData::MdObject.identifier_to_uri({ project: target, client: target.client }, identifier)
-            next unless uri
+          transfer.peach do |attr_identifier, drill_path_identifier|
+            attr_uri = GoodData::MdObject.identifier_to_uri({ project: target, client: target.client }, attr_identifier)
+            next unless attr_uri
 
-            obj = GoodData::MdObject[uri, { project: target, client: target.client }]
+            attribute = GoodData::MdObject[attr_uri, project: target, client: target.client]
 
-            if obj
-              if !obj.content['drillDownStepAttributeDF'] || obj.content['drillDownStepAttributeDF'] != drill_path
+            if attribute
+              drill_path = GoodData::MdObject.identifier_to_uri({ project: target, client: target.client }, drill_path_identifier)
+              next unless drill_path
+
+              if !attribute.content['drillDownStepAttributeDF'] || attribute.content['drillDownStepAttributeDF'] != drill_path
                 semaphore.synchronize do
-                  GoodData.logger.info "Updating drill path of #{identifier} -> #{drill_path} in '#{target.title}'"
+                  GoodData.logger.info "Updating drill path of #{attr_identifier} -> #{drill_path} in '#{target.title}'"
                 end
 
-                obj.content['drillDownStepAttributeDF'] = drill_path
-                obj.save
+                attribute.content['drillDownStepAttributeDF'] = drill_path
+                attribute.save
               end
             else
               semaphore.synchronize do
-                GoodData.logger.warn "Unable to find #{identifier} in '#{target.title}'"
+                GoodData.logger.warn "Unable to find #{attr_identifier} in '#{target.title}'"
               end
             end
 
