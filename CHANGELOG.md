@@ -1,5 +1,7 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.52
+
 ## 0.6.50
 - Add support for Email Notification Rules on Process
 - Add support for exclude_schedules option in Project#export_clone
