@@ -105,7 +105,6 @@ module GoodData
         ProvisionClients,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
-        EnsureTitles,
         SynchronizeAttributeDrillpath,
         SynchronizeETLsInSegment,
         SynchronizeColorPalette
