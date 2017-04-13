@@ -1328,6 +1328,23 @@ module GoodData
         end
       end
 
+      GoodData.logger.info 'Replacing dashboard saved views'
+      contexts = mapping.map { |a, _| a }.pmapcat { |a| a.usedby('executionContext') }.map { |a| GoodData::MdObject[a['link'], client: client, project: self] }
+      puts "Found #{contexts.count} dashboard saved views"
+      contexts.peach do |item|
+        new_item = GoodData::MdObject.replace_quoted(item, mapping)
+        if new_item.json != item.json
+          if dry_run
+            GoodData.logger.info "Would save #{new_item.uri}. Running in dry run mode"
+          else
+            GoodData.logger.info "Saving #{new_item.uri}"
+            new_item.save
+          end
+        else
+          GoodData.logger.info "Ignore #{item.uri}"
+        end
+      end
+
       GoodData.logger.info 'Replacing variable values'
       variables.each do |var|
         var.values.peach do |val|
