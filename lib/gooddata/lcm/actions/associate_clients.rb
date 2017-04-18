@@ -34,6 +34,14 @@ module GoodData
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
+          params.clients.group_by { |data| data[:segment] }.each do |segment_name, clients|
+            segment = domain.segments(segment_name)
+            existing_clients = segment.clients.map(&:id)
+            clients.each do |c|
+              segment.create_client(id: c.id) unless existing_clients.include?(c.id)
+            end
+          end
+
           domain.update_clients_settings(params.clients)
 
           delete_projects = GoodData::Helpers.to_boolean(params.delete_projects)
