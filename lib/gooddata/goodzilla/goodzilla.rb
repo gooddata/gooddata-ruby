@@ -96,18 +96,19 @@ module GoodData
         pairs = get_uris(expression).pmap do |uri|
           if uri =~ /elements/
             begin
-              [uri, Attribute.find_element_value(uri, opts)]
+              ['element', uri, Attribute.find_element_value(uri, opts)]
             rescue AttributeElementNotFound
-              [uri, '(empty value)']
+              ['element', uri, '(empty value)']
             end
           else
-            [uri, GoodData::MdObject[uri, opts].title]
+            ['object', uri, GoodData::MdObject[uri, opts].title]
           end
         end
+        pairs.sort_by! { |p| p[0] }
         pairs.each do |el|
-          uri = el[0]
-          obj = el[1]
-          temp.sub!(uri, obj)
+          uri = el[1]
+          obj = el[2]
+          temp.gsub!(uri, obj)
         end
         temp
       end
