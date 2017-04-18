@@ -48,15 +48,20 @@ module GoodData
             )
 
             res = GoodData::Helpers.symbolize_keys(res)
-            res[:syncedResult][:clients].flat_map do |item|
-              item = item[:client]
-              {
-                segment: segment_id,
-                master_project: segment.master_project_id,
-                client_id: item[:id],
-                client_project: item[:project].split('/').last,
-                status: 'ok'
-              }
+
+            if res[:syncedResult][:clients]
+              res[:syncedResult][:clients].flat_map do |item|
+                item = item[:client]
+                {
+                  segment: segment_id,
+                  master_project: segment.master_project_id,
+                  client_id: item[:id],
+                  client_project: item[:project].split('/').last,
+                  status: 'ok'
+                }
+              end
+            else
+              []
             end
           end
 
