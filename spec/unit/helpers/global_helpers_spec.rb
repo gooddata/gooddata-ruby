@@ -110,6 +110,19 @@ describe GoodData::Helpers do
       )
     end
 
+    context 'when hidden parameters contain an invalid json' do
+      let(:invalid_json) { '{"password": "precious_secret"' }
+      let(:params) do
+        { GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => invalid_json }
+      end
+
+      it 'it hides secrets in the error message' do
+        expect { GoodData::Helpers.decode_params(params) }.to raise_error(JSON::ParserError) do |e|
+          expect(e.message).not_to include('precious_secret')
+        end
+      end
+    end
+
     it 'should encode reference parameters in gd_encoded_params' do
       params = {
         'x' => 'y',
