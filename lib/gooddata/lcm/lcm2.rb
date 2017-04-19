@@ -80,7 +80,6 @@ module GoodData
 
       release: [
         EnsureReleaseTable,
-        SegmentsFilter,
         CreateSegmentMasters,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
