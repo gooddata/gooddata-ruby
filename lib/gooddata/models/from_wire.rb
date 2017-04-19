@@ -27,12 +27,13 @@ module GoodData
       #
       # @param wire_model [Hash] Whatever comes from wire
       # @return [GoodData::Model::ProjectBlueprint] Manifest for a particular reference
-      def self.from_wire(wire_model)
+      def self.from_wire(wire_model, options = {})
         model = wire_model['projectModelView']['model']['projectModel']
         datasets = model['datasets'] || []
         dims = model['dateDimensions'] || []
 
         ProjectBlueprint.new(
+          include_ca: options[:include_ca],
           datasets: datasets.map { |ds| dataset_from_wire(ds) },
           date_dimensions: dims.map { |dd| parse_date_dimensions(dd) }
         )
@@ -91,6 +92,8 @@ module GoodData
               end
             end
           end
+
+          attribute['relations'] && a[:relations] = attribute['relations']
         end
         [attribute] + pl + rl
       end

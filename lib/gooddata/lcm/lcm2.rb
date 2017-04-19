@@ -87,7 +87,9 @@ module GoodData
         SynchronizeLdm,
         CollectMeta,
         CollectTaggedObjects,
+        CollectComputedAttributeMetrics,
         ImportObjectCollections,
+        SynchronizeComputedAttributes,
         SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
@@ -125,6 +127,7 @@ module GoodData
         ApplyCustomMaql,
         SynchronizeColorPalette,
         SynchronizeClients,
+        SynchronizeComputedAttributes,
         SynchronizeETLsInSegment
       ]
     }

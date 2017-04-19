@@ -136,5 +136,9 @@ module GoodData
     def label_by_name(name)
       labels.find { |label| label.title =~ /#{name}/ || label.identifier =~ /#{name}/ }
     end
+
+    def computed_attribute?
+      content['rel'] && !content['rel'].empty?
+    end
   end
 end

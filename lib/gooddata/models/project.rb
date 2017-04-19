@@ -535,6 +535,15 @@ module GoodData
       GoodData::Attribute[id, project: self, client: client]
     end
 
+    def computed_attributes(id = :all)
+      attrs = attributes(id)
+      if attrs.is_a?(GoodData::Attribute)
+        attrs.computed_attribute? ? attrs : nil
+      else
+        attrs.select(&:computed_attribute?)
+      end
+    end
+
     def attribute_by_identifier(identifier)
       GoodData::Attribute.find_first_by_identifier(identifier, project: self, client: client)
     end
@@ -555,10 +564,10 @@ module GoodData
     #
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint(options = {})
-      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true })
+      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true, includeCA: true })
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
-      bp = GoodData::Model::FromWire.from_wire(model)
+      bp = GoodData::Model::FromWire.from_wire(model, { include_ca: true }.merge(options))
       bp.title = title
       bp
     end

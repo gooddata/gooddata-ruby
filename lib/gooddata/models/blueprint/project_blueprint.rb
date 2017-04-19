@@ -424,6 +424,7 @@ module GoodData
         (@data[:date_dimensions] || []).each do |d|
           d[:type] = d[:type].to_sym
         end
+        @data[:include_ca] = true if @data[:include_ca].nil?
       end
 
       def id
