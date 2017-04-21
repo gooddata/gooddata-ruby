@@ -12,7 +12,7 @@ module GoodData
         hotfix: 'production'
       }
 
-      def load(env = ENV['GD_ENV'] || 'development')
+      def load(env = ENV['GD_ENV'] || 'testing')
         require_relative 'default'
         env = branch_to_environment(env)
 
