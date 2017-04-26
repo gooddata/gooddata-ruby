@@ -275,7 +275,8 @@ module GoodData
           rescue => e
             errors << {
               action: action,
-              err: e
+              err: e,
+              backtrace: e.backtrace
             }
             break if fail_early
           end
