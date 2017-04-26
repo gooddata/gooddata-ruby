@@ -52,7 +52,7 @@ module GoodData
     #
     # @return [Boolean]
     def date_dimension?
-      attributes.all?(&:date_attribute?) && fact_uris.empty?
+      content['urn'] && !content['urn'].empty? && fact_uris.empty?
     end
 
     # Delete the data in a dataset
