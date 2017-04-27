@@ -20,6 +20,12 @@ module GoodData
 
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: true
+
+        description 'Table Name'
+        param :release_table_name, instance_of(Type::StringType), required: false
       end
 
       RESULT_HEADER = [

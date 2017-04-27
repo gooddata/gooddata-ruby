@@ -15,20 +15,23 @@ module GoodData
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
+        description 'Development Client Used for Connecting to GD'
+        param :development_client, instance_of(Type::GdClientType), required: true
+
         description 'Organization Name'
         param :organization, instance_of(Type::StringType), required: true
 
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
 
-        # description 'Queries Used'
-        # param :query, instance_of(Type::ReleaseQueryType), required: false
-
         description 'Segments to manage'
         param :segments, array_of(instance_of(Type::SegmentType)), required: true
 
         description 'Tokens'
         param :tokens, instance_of(Type::TokensType), required: true
+
+        description 'Table Name'
+        param :release_table_name, instance_of(Type::StringType), required: false
       end
 
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'

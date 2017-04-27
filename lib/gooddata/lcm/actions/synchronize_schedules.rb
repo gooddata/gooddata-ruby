@@ -14,6 +14,18 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Development Client Used for Connecting to GD'
+        param :development_client, instance_of(Type::GdClientType), required: true
+
+        description 'Synchronization Info'
+        param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'Schedule Additional Parameters'
+        param :additional_params, instance_of(Type::HashType), required: false
+
+        description 'Schedule Additional Secure Parameters'
+        param :additional_hidden_params, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = [
