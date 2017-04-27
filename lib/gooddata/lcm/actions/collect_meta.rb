@@ -9,11 +9,15 @@ require_relative 'base_action'
 module GoodData
   module LCM2
     class CollectMeta < BaseAction
-      DESCRIPTION = 'Collect all dashboards with objects inside dashboards (reports, metrics ...) from development projects'
+      DESCRIPTION = "Collect tagged dashboards (or all dashboards if not specify production tag) \
+      with objects inside dashboards (reports, metrics ...) from development projects"
 
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Tag Name'
+        param :production_tag, instance_of(Type::StringType), required: false
       end
 
       class << self
@@ -28,10 +32,14 @@ module GoodData
             from = info.from
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
-            objects = GoodData::Dashboard.all(project: from_project, client: development_client).map(&:uri)
+            if params.production_tag
+              objects = GoodData::Dashboard.find_by_tag(params.production_tag, project: from_project, client: development_client)
+            else
+              objects = GoodData::Dashboard.all(project: from_project, client: development_client)
+            end
 
             info[:transfer_uris] ||= []
-            info[:transfer_uris] += objects
+            info[:transfer_uris] += objects.map(&:uri)
 
             results += objects.map do |uri|
               {
