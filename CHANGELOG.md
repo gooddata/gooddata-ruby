@@ -1,6 +1,7 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.52
+- Add support for computed attribute in blueprint
 
 ## 0.6.50
 - Add support for Email Notification Rules on Process
