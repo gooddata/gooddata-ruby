@@ -52,6 +52,9 @@ module GoodData
           chunks = response['projectModelDiff']['updateScripts']
           return [] if chunks.empty?
 
+          ca_maql = response['projectModelDiff']['computedAttributesScript'] if response['projectModelDiff']['computedAttributesScript']
+          ca_chunks = ca_maql && ca_maql['maqlDdlChunks']
+
           maqls = pick_correct_chunks(chunks, opts)
           replaced_maqls = apply_replacements_on_maql(maqls, replacements)
 
@@ -66,12 +69,22 @@ module GoodData
                 next
               end
             end
+
+            if ca_chunks
+              begin
+                ca_chunks.each { |chunk| project.execute_maql(chunk) }
+              rescue => e
+                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
+                errors << e
+              end
+            end
+
             if (!errors.empty?) && (errors.length == replaced_maqls.length)
-              messages = errors.map { |e| GoodData::Helpers.interpolate_error_messages(e.data['wTaskStatus']['messages']) }
+              messages = errors.map { |err| GoodData::Helpers.interpolate_error_messages(err.data['wTaskStatus']['messages']) }
               fail "Unable to migrate LDM, reason(s): \n #{messages.join("\n")}"
             end
           end
-          replaced_maqls
+          replaced_maqls + (ca_maql ? [ca_maql] : [])
         end
 
         def migrate_reports(project, spec)

@@ -403,7 +403,7 @@ describe GoodData::Model::ProjectBlueprint do
   it "should be able to serialize itself to a hash" do
     ser = @blueprint.to_hash
     ser.is_a?(Hash)
-    expect(ser.keys).to eq [:title, :datasets, :date_dimensions]
+    expect(ser.keys).to eq [:title, :datasets, :date_dimensions, :include_ca]
   end
 
   it "should be able to tell you whether a dataset is referencing any others including date dimensions" do

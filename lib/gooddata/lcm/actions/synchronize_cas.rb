@@ -8,8 +8,8 @@ require_relative 'base_action'
 
 module GoodData
   module LCM2
-    class SynchronizeLdm < BaseAction
-      DESCRIPTION = 'Synchronize Logical Data Model'
+    class SynchronizeComputedAttributes < BaseAction
+      DESCRIPTION = 'Synchronize Computed Attributes'
 
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
@@ -17,45 +17,38 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
-
-        description 'LDM Update Preference'
-        param :update_preference, instance_of(Type::UpdatePreferenceType), required: false
       end
 
       class << self
         def call(params)
-          # Check if all required parameters were passed
           BaseAction.check_params(PARAMS, params)
-
           results = []
-
-          client = params.gdc_gd_client
           development_client = params.development_client
+          client = params.gdc_gd_client
 
           params.synchronize.each do |info|
-            from_project = info.from
+            from = info.from
             to_projects = info.to
 
-            from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
-            params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
+            from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
+            params.gdc_logger.info "Synchronize Computed Attributes, project: '#{from_project.title}', PID: #{from_project.pid}"
 
-            blueprint = from.blueprint(include_ca: false)
+            blueprint = from_project.blueprint
             to_projects.each do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
-              params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
+              params.gdc_logger.info "Synchronizing Computed Attributes from project: '#{to_project.title}', PID: #{pid}"
               to_project.update_from_blueprint(blueprint)
 
               results << {
-                from: from_project,
+                from: from,
                 to: pid,
                 status: 'ok'
               }
             end
           end
 
-          # Return results
           results
         end
       end
