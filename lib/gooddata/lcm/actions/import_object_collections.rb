@@ -18,8 +18,6 @@ module GoodData
 
       class << self
         def call(params)
-          BaseAction.check_params(PARAMS, params)
-
           results = []
 
           client = params.gdc_gd_client

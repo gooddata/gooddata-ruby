@@ -28,9 +28,6 @@ module GoodData
 
       class << self
         def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
           replacements = {
             table_name: params.release_table_name || DEFAULT_TABLE_NAME
           }

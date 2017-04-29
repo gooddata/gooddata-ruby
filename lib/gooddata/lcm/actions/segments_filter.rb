@@ -24,9 +24,6 @@ module GoodData
 
       class << self
         def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
           filtered_segments = params.segments
           if params.segments_filter
             segments_filter = params.segments_filter.map(&:downcase)

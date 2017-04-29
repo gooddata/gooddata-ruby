@@ -25,9 +25,6 @@ module GoodData
         end
 
         def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
           say(params.message)
 
           msg = {

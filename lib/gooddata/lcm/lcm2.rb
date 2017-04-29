@@ -271,6 +271,9 @@ module GoodData
 
           # Invoke action
           begin
+            # Check if all required parameters were passed
+            BaseAction.check_params(action.const_get('PARAMS'), params)
+
             out = action.send(:call, params)
           rescue => e
             errors << {

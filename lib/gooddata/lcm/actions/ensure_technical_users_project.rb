@@ -28,9 +28,6 @@ module GoodData
 
       class << self
         def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
           client = params.gdc_gd_client
 
           technical_users = params.technical_user || []

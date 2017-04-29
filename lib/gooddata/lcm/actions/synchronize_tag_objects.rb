@@ -25,8 +25,6 @@ module GoodData
 
       class << self
         def call(params)
-          BaseAction.check_params(PARAMS, params)
-
           return [] unless params.production_tag
 
           results = []
