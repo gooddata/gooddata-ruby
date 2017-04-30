@@ -50,10 +50,7 @@ module GoodData
           # TODO: Support for 'per segment' provisioning
           segments = params.segments
 
-          # Output param with info about which projects should be synchronized
-          synchronize_projects = []
-
-          segments.map do |segment_in| # rubocop:disable Metrics/BlockLength
+          synchronize_projects = segments.map do |segment_in| # rubocop:disable Metrics/BlockLength
             segment_id = segment_in.segment_id
             development_pid = segment_in.development_pid
             driver = segment_in.driver.downcase
@@ -75,32 +72,16 @@ module GoodData
             params.gdc_logger.info "Creating master project - name: '#{master_name}' development_project: '#{development_pid}', segment: '#{segment_id}', driver: '#{driver}'"
             project = client.create_project(title: master_name, auth_token: token, driver: driver == 'vertica' ? 'vertica' : 'Pg')
 
-            # Do we have hash with synchronization info for current development project?
-            synchronize_info = synchronize_projects.find do |info|
-              info[:from] == development_pid
-            end
-
-            # If not, create new one
-            unless synchronize_info
-              synchronize_info = {
-                segment: segment_id,
-                from: development_pid,
-                to: []
-              }
-              synchronize_projects << synchronize_info
-            end
-
-            # Add target project (new master for segment) into synchronization info
-            synchronize_info[:to] << { pid: project.pid }
-
             # Does segment exists? If not, create new one and set initial master
             if segment
               segment_in[:is_new] = false
+              status = 'untouched'
             else
               params.gdc_logger.info "Creating segment #{segment_id}, master #{project.pid}"
               segment = domain.create_segment(segment_id: segment_id, master_project: project)
               segment.synchronize_clients
               segment_in[:is_new] = true
+              status = 'created'
             end
 
             master_project = nil
@@ -115,6 +96,7 @@ module GoodData
               segment.master_project = project
               segment.save
               segment_in[:is_new] = true
+              status = 'modified'
             end
 
             segment_in[:master_pid] = project.pid
@@ -131,10 +113,14 @@ module GoodData
               development_pid: development_pid,
               master_pid: project.pid,
               driver: driver,
-              status: 'created'
+              status: status
             }
 
-            project
+            {
+              segment: segment_id,
+              from: development_pid,
+              to: [{ pid: project.pid }]
+            }
           end
 
           # Return results
