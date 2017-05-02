@@ -68,7 +68,7 @@ module GoodData
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
               to_project.schedules.each do |schedule|
-                schedule.update_params(params.additional_params || {})
+                schedule.update_params((params.additional_params || {}).merge(CLIENT_ID: entry[:client_id]))
                 schedule.update_hidden_params(params.additional_hidden_params || {})
                 schedule.save
               end
