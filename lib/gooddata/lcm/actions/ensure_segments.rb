@@ -20,7 +20,7 @@ module GoodData
       end
 
       class << self
-        def call(params)
+        def call(_params)
           results = []
 
           # Return results
