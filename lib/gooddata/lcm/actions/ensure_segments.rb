@@ -20,10 +20,7 @@ module GoodData
       end
 
       class << self
-        def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
+        def call(_params)
           results = []
 
           # Return results

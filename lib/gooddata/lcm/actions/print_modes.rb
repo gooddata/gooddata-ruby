@@ -16,9 +16,6 @@ module GoodData
 
       class << self
         def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
           results = []
           GoodData::LCM2::MODES.keys.each_with_index do |mode, index|
             actions = GoodData::LCM2::MODES[mode]

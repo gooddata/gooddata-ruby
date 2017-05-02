@@ -15,10 +15,7 @@ module GoodData
       }
 
       class << self
-        def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
+        def call(_params)
           results = []
 
           GoodData::LCM2::Dsl::Dsl::TYPES.each_pair do |k, v|

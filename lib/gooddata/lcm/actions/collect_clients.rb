@@ -24,9 +24,6 @@ module GoodData
 
       class << self
         def call(params)
-          # Check if all required parameters were passed
-          BaseAction.check_params(PARAMS, params)
-
           segment_names = params.segments.map(&:segment_id)
 
           clients = collect_clients(params, segment_names)
