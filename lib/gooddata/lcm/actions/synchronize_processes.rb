@@ -38,13 +38,13 @@ module GoodData
           client = params.gdc_gd_client
           development_client = params.development_client
 
-          params.synchronize.each do |info|
+          params.synchronize.peach do |info|
             from_project = info.from
             to_projects = info.to
 
             from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
 
-            to_projects.each do |to|
+            to_projects.peach do |to|
               pid = to[:pid]
               client_id = to[:client_id]
 

@@ -36,7 +36,7 @@ module GoodData
             end
           end
 
-          segments = domain_segments.map do |segment|
+          segments = domain_segments.pmap do |segment|
             project = nil
 
             begin

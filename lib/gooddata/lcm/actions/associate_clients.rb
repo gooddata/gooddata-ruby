@@ -48,9 +48,8 @@ module GoodData
 
           params.clients.group_by { |data| data[:segment] }.each do |segment_name, clients|
             segment = domain.segments(segment_name)
-            existing_clients = segment.clients.map(&:id)
-            clients.each do |c|
-              segment.create_client(id: c.id) unless existing_clients.include?(c.id)
+            (clients.map(&:id) - segment.clients.map(&:id)).each do |c|
+              segment.create_client(id: c)
             end
           end
 

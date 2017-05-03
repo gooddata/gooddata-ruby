@@ -46,7 +46,7 @@ module GoodData
             info[:segment_id]
           end
 
-          results = synchronize_segments.flat_map do |segment_id, synchronize|
+          results = synchronize_segments.pmap do |segment_id, synchronize|
             segment = domain.segments(segment_id)
             res = segment.synchronize_processes(
               synchronize.flat_map do |info|
@@ -74,9 +74,9 @@ module GoodData
             end
           end
 
-          params.synchronize.each do |info|
+          params.synchronize.peach do |info|
             to_projects = info.to
-            to_projects.each do |entry|
+            to_projects.peach do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
               to_project.schedules.each do |schedule|
@@ -92,7 +92,7 @@ module GoodData
             end
           end
 
-          results
+          results.flatten
         end
       end
     end

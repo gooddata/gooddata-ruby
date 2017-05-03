@@ -1128,7 +1128,10 @@ module GoodData
     def objects_export(objs, options = {})
       fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objs.nil?
       objs = Array(objs)
-      fail 'Nothing to migrate. The list you provided is empty' if objs.empty?
+      if objs.empty?
+        GoodData.logger.warn 'Nothing to migrate.'
+        return
+      end
 
       objs = objs.pmap { |obj| [obj, objects(obj)] }
       fail ObjectsExportError, "Exporting objects failed with messages. Object #{objs.select { |_, obj| obj.nil? }.map { |o, _| o }.join(', ')} could not be found." if objs.any? { |_, obj| obj.nil? }
@@ -1197,6 +1200,7 @@ module GoodData
       projects = options[:project]
       batch_size = options[:batch_size] || 10
       token = objects_export(objects)
+      return if token.nil?
 
       if projects.is_a?(Array)
         projects.each_slice(batch_size).flat_map do |batch|
