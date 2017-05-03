@@ -68,7 +68,12 @@ module GoodData
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
               to_project.schedules.each do |schedule|
-                schedule.update_params((params.additional_params || {}).merge(CLIENT_ID: entry[:client_id]))
+                additional_params = (params.additional_params || {})
+                additional_params.merge(
+                  CLIENT_ID: entry[:client_id], # needed for ADD and CloudConnect ETL
+                  GOODOT_CUSTOM_PROJECT_ID: entry[:client_id] # TMA-210
+                )
+                schedule.update_params(additional_params)
                 schedule.update_hidden_params(params.additional_hidden_params || {})
                 schedule.save
               end
