@@ -102,7 +102,6 @@ module GoodData
       provision: [
         EnsureReleaseTable,
         CollectSegments,
-        SegmentsFilter,
         PurgeClients,
         CollectClients,
         AssociateClients,
@@ -117,7 +116,6 @@ module GoodData
       rollout: [
         EnsureReleaseTable,
         CollectSegments,
-        SegmentsFilter,
         CollectSegmentClients,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
