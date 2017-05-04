@@ -55,7 +55,7 @@ module GoodData
           if params.segments_filter && params.segments_filter.any?
             { delete_extra_in_segments: params.segments_filter }
           else
-            { delete_extra: delete_extra }
+            { delete_extra: GoodData::Helpers.to_boolean(params.delete_extra) }
           end
         end
       end
