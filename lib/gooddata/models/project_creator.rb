@@ -49,6 +49,7 @@ module GoodData
           result = client.post(uri, bp.to_wire)
           response = client.poll_on_code(result['asyncTask']['link']['poll'])
 
+          GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
           chunks = response['projectModelDiff']['updateScripts']
           return [] if chunks.empty?
 
@@ -124,7 +125,9 @@ module GoodData
         end
 
         def pick_correct_chunks(chunks, opts = {})
+          GoodData.logger.debug("update_preference") { opts[:update_preference].pretty_inspect }
           preference = GoodData::Helpers.symbolize_keys(opts[:update_preference] || {})
+          preference = Hash[preference.map { |k, v| [k, GoodData::Helpers.to_boolean(v)] }]
 
           # first is cascadeDrops, second is preserveData
           rules = [
