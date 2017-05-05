@@ -48,6 +48,9 @@ module GoodData
                 segment_id: segment.segment_id,
                 from: segment.development_pid,
                 to: tmp.map do |entry|
+                  unless entry[:project_uri]
+                    raise "Provisioning project for client id #{entry[:id]} has error: #{entry[:error]}"
+                  end
                   {
                     pid: entry[:project_uri].split('/').last,
                     client_id: entry[:id]
