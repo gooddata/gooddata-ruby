@@ -17,6 +17,9 @@ module GoodData
 
         description 'Organization Name'
         param :organization, instance_of(Type::StringType), required: true
+
+        description 'Segments to provision'
+        param :segments_filter, array_of(instance_of(Type::StringType)), required: false
       end
 
       class << self

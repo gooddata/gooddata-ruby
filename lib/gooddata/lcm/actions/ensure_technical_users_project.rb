@@ -14,6 +14,12 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Technical users'
+        param :technical_user, array_of(instance_of(Type::StringType)), required: false
+
+        description 'Synchronization Info'
+        param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
       end
 
       RESULT_HEADER = [

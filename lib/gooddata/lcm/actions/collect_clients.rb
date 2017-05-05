@@ -14,6 +14,27 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: true
+
+        description 'Client Id Column'
+        param :client_id_column, instance_of(Type::StringType), required: false
+
+        description 'Segment Id Column'
+        param :segment_id_column, instance_of(Type::StringType), required: false
+
+        description 'Project Id Column'
+        param :project_id_column, instance_of(Type::StringType), required: false
+
+        description 'Client Project Title Column'
+        param :project_title_column, instance_of(Type::StringType), required: false
+
+        description 'Client Project Token Column'
+        param :project_token_column, instance_of(Type::StringType), required: false
+
+        description 'Input Source'
+        param :input_source, instance_of(Type::HashType), required: true
       end
 
       RESULT_HEADER = [

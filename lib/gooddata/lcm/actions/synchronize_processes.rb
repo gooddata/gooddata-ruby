@@ -14,8 +14,15 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
         description 'Uri of the source output stage. It must be in the same domain as the target project.'
         param :ads_output_stage_uri, instance_of(Type::StringType), required: false
+
+        description 'Development Client Used for Connecting to GD'
+        param :development_client, instance_of(Type::GdClientType), required: true
+
+        description 'Synchronization Info'
+        param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
       end
 
       RESULT_HEADER = [

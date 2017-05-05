@@ -17,6 +17,9 @@ module GoodData
 
         description 'Organization Name'
         param :organization, instance_of(Type::StringType), required: true
+
+        description 'Technical users'
+        param :technical_user, array_of(instance_of(Type::StringType)), required: false
       end
 
       RESULT_HEADER = [

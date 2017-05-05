@@ -17,6 +17,15 @@ module GoodData
       DESCRIPTION = 'Apply Custom MAQL DDL'
 
       PARAMS = define_params(self) do
+        description 'Client Used for Connecting to GD'
+        param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: true
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: true
+
         description 'Should be custom MAQL DDL Applied'
         param :apply_maql_ddl, instance_of(Type::BooleanType), required: false, default: false
       end

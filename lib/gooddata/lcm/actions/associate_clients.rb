@@ -14,6 +14,21 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: true
+
+        description 'Delete Extra Clients'
+        param :delete_extra, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Physically Delete Client Projects'
+        param :delete_projects, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Clients'
+        param :clients, array_of(instance_of(Type::HashType)), required: true, generated: true
+
+        description 'Segments to provision'
+        param :segments_filter, array_of(instance_of(Type::StringType)), required: false
       end
 
       RESULT_HEADER = [
