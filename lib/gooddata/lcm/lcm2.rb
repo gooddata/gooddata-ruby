@@ -108,9 +108,7 @@ module GoodData
         ProvisionClients,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
-        SynchronizeAttributeDrillpath,
-        SynchronizeETLsInSegment,
-        SynchronizeColorPalette
+        SynchronizeETLsInSegment
       ],
 
       rollout: [
