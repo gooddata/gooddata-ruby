@@ -36,7 +36,7 @@ If you are using gems just
     gem install gooddata
 
 ## Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
@@ -47,15 +47,19 @@ If you are using gems just
 * run `rake cop` and make sure you did not introduce any new coding rules issues
 * Send us a pull request. Bonus points for topic branches.
 
+## Contributing
+
+See our [contribution guidelines](/CONTRIBUTING.md).
+
 ## Credits
 
 **Originally started by**
 
-Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ] 
+Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ]
 
 **Actively developed and maintained by**
 
-- [Tomas Korcak](https://github.com/korczis) [ <mailto:korczis@gmail.com> / [@korczis](http://twitter.com/korczis) ] 
+- [Tomas Korcak](https://github.com/korczis) [ <mailto:korczis@gmail.com> / [@korczis](http://twitter.com/korczis) ]
 - [Tomas Svarovsky](https://github.com/fluke777) [ <mailto:svarovsky.tomas@gmail.com> / [@fluke777](http://twitter.com/fluke777) ]
 
 **Contributors**
@@ -72,4 +76,3 @@ For full contributor info see [contributors page](https://github.com/gooddata/go
 ## Copyright
 
 Copyright (c) 2010 - 2015 GoodData Corporation and Thomas Watson Steen. See LICENSE for details.
-
