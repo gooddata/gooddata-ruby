@@ -30,7 +30,7 @@ module GoodData
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
           domain_segments = domain.segments
 
-          params.segments.map do |segment_in|
+          params.segments.pmap do |segment_in|
             segment_id = segment_in.segment_id
 
             segment = domain_segments.find do |ds|

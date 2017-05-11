@@ -44,7 +44,7 @@ module GoodData
             segment_names.include?(segment.segment_id.downcase)
           end
 
-          results = segments.map do |segment|
+          results = segments.pmap do |segment|
             segment.clients.map do |segment_client|
               project = segment_client.project
               res = {

@@ -29,14 +29,14 @@ module GoodData
           client = params.gdc_gd_client
           development_client = params.development_client
 
-          params.synchronize.each do |info|
+          params.synchronize.peach do |info|
             from = info.from
             to_projects = info.to
             transfer_uris = info.transfer_uris
 
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
-            to_projects.each do |entry|
+            to_projects.peach do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 

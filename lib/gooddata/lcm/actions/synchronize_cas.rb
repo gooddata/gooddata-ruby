@@ -26,7 +26,7 @@ module GoodData
           development_client = params.development_client
           client = params.gdc_gd_client
 
-          params.synchronize.each do |info|
+          params.synchronize.peach do |info|
             from = info.from
             to_projects = info.to
 
@@ -34,7 +34,7 @@ module GoodData
             params.gdc_logger.info "Synchronize Computed Attributes, project: '#{from_project.title}', PID: #{from_project.pid}"
 
             blueprint = from_project.blueprint
-            to_projects.each do |entry|
+            to_projects.peach do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 

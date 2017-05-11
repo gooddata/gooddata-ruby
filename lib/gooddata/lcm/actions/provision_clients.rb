@@ -38,8 +38,8 @@ module GoodData
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
           synchronize_projects = []
-          results = params.segments.map do |segment|
-            tmp = domain.provision_client_projects(segment.segment_id).map do |m|
+          results = params.segments.pmap do |segment|
+            tmp = domain.provision_client_projects(segment.segment_id).pmap do |m|
               Hash[m.each_pair.to_a].merge(type: :provision_result)
             end
 

@@ -259,7 +259,7 @@ module GoodData
         attributes = source_project.attributes
 
         # Generate transfer table
-        drill_paths = attributes.map do |attribute|
+        drill_paths = attributes.pmap do |attribute|
           drill_label_uri = attribute.content['drillDownStepAttributeDF']
           if drill_label_uri
             drill_label = source_project.labels(drill_label_uri)

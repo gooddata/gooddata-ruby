@@ -22,7 +22,7 @@ module GoodData
           results = []
           development_client = params.development_client
 
-          synchronize = params.synchronize.map do |info|
+          synchronize = params.synchronize.pmap do |info|
             from = info.from
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
