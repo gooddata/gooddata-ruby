@@ -263,16 +263,18 @@ module GoodData
           drill_label_uri = attribute.content['drillDownStepAttributeDF']
           if drill_label_uri
             drill_label = source_project.labels(drill_label_uri)
-            [attribute.meta['identifier'], drill_label.identifier]
+            [attribute.uri, attribute.meta['identifier'], drill_label_uri, drill_label.identifier]
           else
             []
           end
         end
-        transfer = Hash[*drill_paths.flatten].compact
+        drill_paths.reject!(&:empty?)
 
         # Transfer to target projects
         targets.peach do |target|
-          transfer.peach do |attr_identifier, drill_path_identifier|
+          drill_paths.peach do |drill_path_info|
+            src_attr_uri, attr_identifier, drill_label_uri, drill_path_identifier = drill_path_info
+
             attr_uri = GoodData::MdObject.identifier_to_uri({ project: target, client: target.client }, attr_identifier)
             next unless attr_uri
 
@@ -284,6 +286,22 @@ module GoodData
 
               if !attribute.content['drillDownStepAttributeDF'] || attribute.content['drillDownStepAttributeDF'] != drill_path
                 semaphore.synchronize do
+                  GoodData.logger.debug <<-DEBUG
+Transfer from:
+{
+  attr_uri: #{src_attr_uri},
+  attr_identifier: #{attr_identifier},
+  drill_label_uri: #{drill_label_uri},
+  drill_label_identifier: #{drill_path_identifier}
+}
+To:
+{
+  attr_uri: #{attr_uri},
+  attr_identifier: #{attr_identifier},
+  drill_label_uri: #{drill_path},
+  drill_label_identifier: #{drill_path_identifier}
+}
+DEBUG
                   GoodData.logger.info "Updating drill path of #{attr_identifier} -> #{drill_path} in '#{target.title}'"
                 end
 
