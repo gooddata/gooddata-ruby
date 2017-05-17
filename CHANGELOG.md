@@ -3,6 +3,7 @@
 ## 0.6.52
 - Add support for computed attribute in blueprint
 - Fix bug with transfering schedules without their state
+- Support segment-specific production tags
 
 ## 0.6.50
 - Add support for Email Notification Rules on Process

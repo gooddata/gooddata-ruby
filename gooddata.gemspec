@@ -61,4 +61,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'salesforce_bulk_query', '~> 0.2'
   s.add_dependency 'terminal-table', '~> 1.7'
   s.add_dependency 'thread_safe'
+  s.add_dependency 'backports'
 end

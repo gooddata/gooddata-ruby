@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require_relative '../helpers/helpers'
 
 module GoodData
   module LCM2
@@ -20,20 +21,25 @@ module GoodData
 
         description 'Tag Name'
         param :production_tag, instance_of(Type::StringType), required: false
+
+        description 'Segments to search for segment-specific production tags'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: false
       end
 
       class << self
         def call(params)
           results = []
-          return results unless params.production_tag
-
+          segments_to_tags = Helpers.segment_production_tags(params.segments)
+          return results unless params.production_tag || segments_to_tags.any?
           development_client = params.development_client
 
           synchronize = params.synchronize.pmap do |info|
             from = info.from
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
-            objects = from_project.find_by_tag(params.production_tag)
+            segment_tags = segments_to_tags[info.segment]
+            production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
+            objects = from_project.find_by_tag(production_tags)
 
             info[:transfer_uris] ||= []
             info[:transfer_uris] += objects
@@ -47,7 +53,6 @@ module GoodData
 
             info
           end
-
           {
             results: results,
             params: {

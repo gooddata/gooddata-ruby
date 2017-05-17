@@ -31,3 +31,4 @@ require_relative 'gooddata/version'
 
 # Extensions
 require_relative 'gooddata/extensions/extensions'
+require 'backports/2.1.0/array/to_h'

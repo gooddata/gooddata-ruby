@@ -13,7 +13,7 @@ module GoodData
       with objects inside dashboards (reports, metrics ...) from development projects"
 
       PARAMS = define_params(self) do
-        description 'Tag Name'
+        description 'Production Tag Name'
         param :production_tag, instance_of(Type::StringType), required: false
 
         description 'Development Client Used for Connecting to GD'
@@ -21,6 +21,9 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'Segments to search for segment-specific production tags'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: false
       end
 
       class << self
@@ -28,15 +31,25 @@ module GoodData
           results = []
 
           development_client = params.development_client
+          segments_to_tags = Helpers.segment_production_tags(params.segments)
 
           synchronize = params.synchronize.pmap do |info|
             from = info.from
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
-            if params.production_tag
-              objects = GoodData::Dashboard.find_by_tag(params.production_tag, project: from_project, client: development_client)
+            segment_tags = segments_to_tags[info.segment]
+            production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
+            if production_tags.any?
+              objects = GoodData::Dashboard.find_by_tag(
+                production_tags,
+                project: from_project,
+                client: development_client
+              )
             else
-              objects = GoodData::Dashboard.all(project: from_project, client: development_client)
+              objects = GoodData::Dashboard.all(
+                project: from_project,
+                client: development_client
+              )
             end
 
             info[:transfer_uris] ||= []
