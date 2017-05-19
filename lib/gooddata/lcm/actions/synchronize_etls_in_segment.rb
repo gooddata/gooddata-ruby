@@ -58,6 +58,11 @@ module GoodData
 
             res = GoodData::Helpers.symbolize_keys(res)
 
+            if res[:syncedResult][:errors]
+              params.gdc_logger.error "Error: #{res[:syncedResult][:errors].pretty_inspect}"
+              fail "Failed to sync processes/schedules for segment #{segment_id}"
+            end
+
             if res[:syncedResult][:clients]
               res[:syncedResult][:clients].flat_map do |item|
                 item = item[:client]
