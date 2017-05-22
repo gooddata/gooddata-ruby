@@ -335,7 +335,7 @@ module GoodData
           v.compact
         end
 
-        diff = GoodData::Helpers.diff(remote_stuff, local_stuff, key: :name, fields: [:name, :cron, :after, :params, :hidden_params, :reschedule])
+        diff = GoodData::Helpers.diff(remote_stuff, local_stuff, key: :name, fields: [:name, :cron, :after, :params, :hidden_params, :reschedule, :state])
         stack = diff[:added].map do |x|
           [:added, x]
         end
@@ -403,6 +403,7 @@ module GoodData
 
             schedule.reschedule = schedule_spec[:reschedule]
             schedule.name = schedule_spec[:name]
+            schedule.state = schedule_spec[:state]
             schedule.save
             schedule_cache[schedule.name] = schedule
 
@@ -454,7 +455,8 @@ module GoodData
           params: schedule_spec[:params].merge('PROJECT_ID' => id),
           hidden_params: schedule_spec[:hidden_params],
           name: schedule_spec[:name],
-          reschedule: schedule_spec[:reschedule]
+          reschedule: schedule_spec[:reschedule],
+          state: schedule_spec[:state]
         }
       end
     end
