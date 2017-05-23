@@ -40,7 +40,9 @@ module GoodData
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
-              from_project.partial_md_export(transfer_uris, project: to_project)
+              if transfer_uris.any?
+                from_project.partial_md_export(transfer_uris, project: to_project)
+              end
 
               results << {
                 from: from,
