@@ -118,12 +118,14 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
+        CollectComputedAttributeMetrics,
+        ImportObjectCollections,
+        SynchronizeComputedAttributes, # need to sync CA here to maintain the drill path after that
         # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         ApplyCustomMaql,
         SynchronizeColorPalette,
         SynchronizeClients,
-        SynchronizeComputedAttributes,
         SynchronizeETLsInSegment
       ]
     }
