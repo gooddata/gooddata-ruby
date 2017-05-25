@@ -11,7 +11,7 @@ module GoodData
       set_const :DEFAULT_DOMAIN, 'staging2-lcm-prod'
       set_const :DEFAULT_SERVER, 'https://staging2-lcm-prod.intgdc.com'
       set_const :DEFAULT_USER_URL, '/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa'
-      set_const :STAGING_URI, 'https://na1-staging2-di.intgdc.com/uploads/'
+      set_const :STAGING_URI, 'https://staging2-lcm-prod.intgdc.com/gdc/uploads/'
     end
 
     module ProcessHelper
