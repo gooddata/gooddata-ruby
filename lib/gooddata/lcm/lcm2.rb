@@ -201,6 +201,10 @@ module GoodData
         headings = keys.map(&:upcase)
 
         rows = messages && messages.map do |message|
+          unless message
+            GoodData.logger.warn("Found an empty message in the results of the #{action.name} action")
+            next
+          end
           row = []
           keys.each do |heading|
             row << message[heading]
