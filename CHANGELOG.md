@@ -3,6 +3,7 @@
 ## 0.6.52
 - Add support for computed attribute in blueprint
 - Fix bug with transfering schedules without their state
+- Rewrite deprecated schedule parameter "GRAPH" (TMA-453)
 
 ## 0.6.50
 - Add support for Email Notification Rules on Process
@@ -13,7 +14,7 @@
 - Handle export/import async task errors (TMA-231)
 - Support for custom color palette
 - Support for trasfering attribute drill paths
-- Implemented basic version of LCM2 
+- Implemented basic version of LCM2
 - Add more logging for user, user filter management
 
 ## 0.6.49
