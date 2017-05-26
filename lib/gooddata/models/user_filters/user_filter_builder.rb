@@ -280,7 +280,7 @@ module GoodData
                          fail 'Unsuported type in maqlify_filters.'
                        end
 
-        if profiles_uri && expression
+        if profiles_uri && expression && expression != 'TRUE'
           [create_user_filter(expression, profiles_uri)] + errors
         else
           [] + errors
