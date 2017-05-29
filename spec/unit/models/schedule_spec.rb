@@ -451,4 +451,35 @@ describe GoodData::Schedule do
       end
     end
   end
+
+  describe '#save' do
+    let(:model) do
+      {
+        schedule: {
+          params: { GRAPH: 'graph.grf' },
+          cron: 'foo',
+          timezone: 'bar',
+          type: 'baz',
+          links: { self: 'qux' }
+        }
+      }
+    end
+    let(:client) { double('client') }
+
+    subject { GoodData::Schedule.new(model) }
+
+    before do
+      allow(subject).to receive(:client)
+        .and_return(client)
+    end
+
+    it 'rewrites deprecated parameter GRAPH' do
+      expect(client).to receive(:put) do |_, body|
+        executable = body['schedule']['params']['EXECUTABLE']
+        expect(executable).to eq('graph.grf')
+        model
+      end
+      subject.save
+    end
+  end
 end
