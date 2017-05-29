@@ -37,10 +37,12 @@ module GoodData
         items.pmap { |item| self[item.uri, options] unless item.nil? }
       end
 
-      def find_by_tag(tag, opts = { :client => GoodData.connection, :project => GoodData.project })
+      def find_by_tag(tags, opts = { :client => GoodData.connection, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(opts)
+        tags = tags.split(',').map(&:strip) unless tags.is_a?(Array)
 
-        self[:all, client: client, project: project].select { |r| r.tag_set.include?(tag) }
+        self[:all, client: client, project: project]
+          .select { |r| (r.tag_set & tags).any? }
       end
 
       # Finds a specific type of the object by title. Returns first match. Returns full object.

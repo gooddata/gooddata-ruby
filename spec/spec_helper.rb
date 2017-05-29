@@ -9,6 +9,7 @@ require 'pmap'
 require 'rspec'
 require 'pathname'
 require 'webmock/rspec'
+require 'gooddata'
 
 WebMock.disable!
 

@@ -3,6 +3,7 @@
 ## 0.6.52
 - Add support for computed attribute in blueprint
 - Fix bug with transfering schedules without their state
+- Support segment-specific production tags (TMA-309)
 - Rewrite deprecated schedule parameter "GRAPH" (TMA-453)
 
 ## 0.6.50

@@ -103,4 +103,38 @@ describe GoodData::MdObject do
       expect(@instance.unlisted?).to be_falsey
     end
   end
+
+  describe '#find_by_tag' do
+    let(:tagged_metadata) { double('tagged_metadata') }
+
+    before do
+      allow(GoodData).to receive(:get_client_and_project)
+      allow(tagged_metadata).to receive(:tag_set).and_return(['tag1'])
+      allow(GoodData::MdObject).to receive(:[]).and_return([tagged_metadata])
+    end
+
+    context 'when the specified tag is present' do
+      it 'finds metadata by a single tag' do
+        result = GoodData::MdObject.find_by_tag('tag1')
+        expect(result).to eq [tagged_metadata]
+      end
+
+      it 'finds metadata by a comma-separated list of tags' do
+        result = GoodData::MdObject.find_by_tag('tag1, tag2')
+        expect(result).to eq [tagged_metadata]
+      end
+
+      it 'finds metadata by a an array of tags' do
+        result = GoodData::MdObject.find_by_tag(%w(tag1 tag2))
+        expect(result).to eq [tagged_metadata]
+      end
+    end
+
+    context 'when the specified tag is not present' do
+      it 'returns an empty array' do
+        result = GoodData::MdObject.find_by_tag('unknown_tag')
+        expect(result).to be_empty
+      end
+    end
+  end
 end
