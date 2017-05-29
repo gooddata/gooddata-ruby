@@ -26,7 +26,7 @@ module GoodData
         GoodData.logger = logger
 
         # Connect Client
-        protocol = params['CLIENT_GDC_PROTOCOL'] || DEFAULT_PROTOCOL
+        protocol = params['CLIENT_GDC_PROTOCOL'] || params['GDC_PROTOCOL'] || DEFAULT_PROTOCOL
         hostname = params['CLIENT_GDC_HOSTNAME'] || params['GDC_HOSTNAME'] || DEFAULT_HOSTNAME
         server = "#{protocol}://#{hostname}"
         client = GoodDataMiddleware.connect(
