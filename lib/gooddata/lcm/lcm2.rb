@@ -118,12 +118,14 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
+        CollectComputedAttributeMetrics,
+        ImportObjectCollections,
+        SynchronizeComputedAttributes, # need to sync CA here to maintain the drill path after that
         # SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         ApplyCustomMaql,
         SynchronizeColorPalette,
         SynchronizeClients,
-        SynchronizeComputedAttributes,
         SynchronizeETLsInSegment
       ]
     }
@@ -243,6 +245,8 @@ module GoodData
           end
         end
 
+        check_unused_params(actions, params)
+
         # Print name of actions to be performed for debug purposes
         print_action_names(mode, actions)
 
@@ -321,6 +325,43 @@ module GoodData
           results: brick_results,
           params: params
         }
+      end
+
+      def check_unused_params(actions, params)
+        default_params = [
+          :client_gdc_hostname,
+          :client_gdc_protocol,
+          :fail_early,
+          :gdc_logger,
+          :gdc_password,
+          :gdc_username,
+          :strict
+        ]
+
+        action_params = actions.map do |action|
+          action.const_get(:PARAMS).keys.map(&:downcase)
+        end
+
+        action_params.flatten!.uniq!
+
+        param_names = params.keys.map(&:downcase)
+
+        unused_params = param_names - (action_params + default_params)
+
+        if unused_params.any?
+          GoodData.logger.warn("Following params are not used by any action: #{JSON.pretty_generate(unused_params)}")
+
+          rows = []
+          actions.each do |action|
+            action_params = action.const_get(:PARAMS)
+            action_params.each do |_k, v|
+              rows << [action.short_name, v[:name], v[:description], v[:type].class.short_name]
+            end
+          end
+
+          table = Terminal::Table.new :headings => ['Action', 'Parameter', 'Description', 'Parameter Type'], :rows => rows
+          puts table.to_s
+        end
       end
     end
   end

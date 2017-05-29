@@ -62,6 +62,16 @@ describe GoodData::Helpers do
       expect(result).to eq(expected_result)
     end
 
+    it 'should not show reference parameter values when get error' do
+      params = {
+        'secret' => 'you will not see it',
+        'gd_encoded_params' => "{\"abc\": \"${secret}\",}"
+      }
+      expect { GoodData::Helpers.decode_params(params, resolve_reference_params: true) }.to raise_error do |e|
+        expect(e.message).not_to include('you will not see it')
+      end
+    end
+
     it 'ignore value of encoded params if its value is not collection or String when resolve reference params' do
       params = {
         'param' => 'value',

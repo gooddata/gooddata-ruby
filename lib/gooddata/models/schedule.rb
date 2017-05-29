@@ -396,6 +396,10 @@ module GoodData
       self
     end
 
+    def rewrite_deprecated_params
+      params['EXECUTABLE'] = params.delete('GRAPH') if params['GRAPH']
+    end
+
     # Saves object if dirty
     #
     # @return [Boolean] True if saved
@@ -403,6 +407,7 @@ module GoodData
       fail 'trigger schedule has to be provided' if cron.blank? && trigger_id.blank?
       fail 'A timezone has to be provided' if timezone.blank?
       fail 'Schedule type has to be provided' if schedule_type.blank?
+      rewrite_deprecated_params
       if @dirty
         if saved?
           res = client.put(uri, to_update_payload)

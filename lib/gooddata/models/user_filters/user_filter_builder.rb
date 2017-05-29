@@ -376,7 +376,11 @@ module GoodData
       filters = user_filters.map { |data| client.create(MandatoryUserFilter, data, project: project) }
       to_create, to_delete = resolve_user_filters(filters, project.data_permissions)
 
-      GoodData.logger.warn("Data permissions computed: #{to_create.count} to create and #{to_delete.count} to delete")
+      if options[:do_not_touch_filters_that_are_not_mentioned]
+        GoodData.logger.warn("Data permissions computed: #{to_create.count} to create")
+      else
+        GoodData.logger.warn("Data permissions computed: #{to_create.count} to create and #{to_delete.count} to delete")
+      end
       return { created: to_create, deleted: to_delete } if dry_run
 
       create_results = to_create.each_slice(100).flat_map do |batch|
