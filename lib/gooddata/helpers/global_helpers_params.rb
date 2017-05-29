@@ -68,6 +68,7 @@ module GoodData
                                '{}'
                              end
 
+        reference_values = []
         # Replace reference parameters by the actual values. Use backslash to escape a reference parameter, e.g: \${not_a_param},
         # the ${not_a_param} will not be replaced
         if options[:resolve_reference_params]
@@ -92,7 +93,9 @@ module GoodData
                 elsif match =~ /\\\$/
                   '$'
                 elsif match =~ /\$\{(\w+)\}/
-                  params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
+                  val = params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
+                  reference_values << val
+                  val
                 end
               end
             end
@@ -112,7 +115,9 @@ module GoodData
         begin
           parsed_data_params = data_params.is_a?(Hash) ? data_params : JSON.parse(data_params)
         rescue JSON::ParserError => exception
-          raise exception.class, "Error reading json from '#{key}', reason: #{exception.message}"
+          reason = exception.message
+          reference_values.each { |secret_value| reason.gsub!("\"#{secret_value}\"", '"***"') }
+          raise exception.class, "Error reading json from '#{key}', reason: #{reason}"
         end
 
         begin
