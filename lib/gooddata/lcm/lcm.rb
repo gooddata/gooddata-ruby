@@ -249,14 +249,14 @@ module GoodData
         end
       end
 
-      def transfer_attribute_drillpaths(source_project, targets)
+      def transfer_attribute_drillpaths(source_project, targets, attributes)
         semaphore = Mutex.new
 
         # Convert to array
         targets = [targets] unless targets.is_a?(Array)
 
         # Get attributes from source project
-        attributes = source_project.attributes
+        attributes |= source_project.attributes
 
         # Generate transfer table
         drill_paths = attributes.pmap do |attribute|

@@ -45,7 +45,8 @@ module GoodData
               client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
             end
 
-            GoodData::LCM.transfer_attribute_drillpaths(from_project, to_projects)
+            attributes = from_project.attributes
+            GoodData::LCM.transfer_attribute_drillpaths(from_project, to_projects, attributes)
 
             to_projects.each do |project|
               results << {
