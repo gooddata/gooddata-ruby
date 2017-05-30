@@ -74,7 +74,6 @@ module GoodData
           dataload_datasets = '[]' unless dataload_datasets
 
           de_synchronize_all = options[:de_synchronize_all] || options['GDC_DE_SYNCHRONIZE_ALL']
-          de_synchronize_all = 'true' unless de_synchronize_all
         else
           fail 'Executable has to be provided' if executable.blank?
         end
@@ -85,7 +84,7 @@ module GoodData
         params = { 'PROCESS_ID' => process_id }
         if is_dataload_process
           params['GDC_DATALOAD_DATASETS'] = dataload_datasets
-          params['GDC_DE_SYNCHRONIZE_ALL'] = de_synchronize_all
+          params['GDC_DE_SYNCHRONIZE_ALL'] = de_synchronize_all if de_synchronize_all
         else
           params['EXECUTABLE'] = executable
         end
