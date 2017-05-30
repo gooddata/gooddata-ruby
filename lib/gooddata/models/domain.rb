@@ -306,7 +306,7 @@ to new properties (email=#{user_data[:email]}, sso_provider=#{user_data[:sso_pro
       if id == :all
         res_clients.map { |res_client| client.create(GoodData::Client, res_client) }
       else
-        find_result = res_clients.find { |c| c['client']['id'] == id }
+        find_result = res_clients.find { |c| c['client']['id'] == id.to_s }
         fail "Client with id #{id} was not found" unless find_result
         client.create(GoodData::Client, find_result)
       end
