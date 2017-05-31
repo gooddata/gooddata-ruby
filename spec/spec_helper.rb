@@ -11,6 +11,10 @@ require 'pathname'
 require 'webmock/rspec'
 require 'gooddata'
 
+logger = Logger.new(STDOUT)
+logger.level = Logger::WARN
+GoodData.logger = logger
+
 WebMock.disable!
 
 # Automagically include all helpers/*_helper.rb
@@ -44,36 +48,6 @@ RSpec.configure do |config|
   config.filter_run_excluding :broken => true
 
   config.fail_fast = false
-
-  config.before(:all) do
-    # TODO: Move this to some method.
-    # TODO Make more intelligent so two test suites can run at the same time.
-    # ConnectionHelper.create_default_connection
-    # users = GoodData::Domain.users(ConnectionHelper::DEFAULT_DOMAIN)
-    # users.pmap do |user|
-    #   user.delete if user.email != ConnectionHelper::DEFAULT_USERNAME
-    # end
-
-    # TODO: Fully setup global environment
-    # $stdout.sync=true
-    # $stderr.sync=true
-
-    GoodData.logging_off
-    GoodData.stats_off
-  end
-
-  config.after(:all) do
-    # TODO: Fully setup global environment
-  end
-
-  config.before(:suite) do
-    # TODO: Setup test project
-    GoodData.logging_off
-  end
-
-  config.after(:suite) do
-    # TODO: Delete test project
-  end
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
