@@ -25,6 +25,12 @@ module GoodData
         logger = params['GDC_LOGGER']
         GoodData.logger = logger
 
+        # Set parallelism
+        max_concurrency = params['max_concurrency'] || params['MAX_CONCURRENCY']
+        if max_concurrency && max_concurrency.to_i > 0
+          $pmap_default_thread_count = max_concurrency.to_i
+        end
+
         # Connect Client
         protocol = params['CLIENT_GDC_PROTOCOL'] || DEFAULT_PROTOCOL
         hostname = params['CLIENT_GDC_HOSTNAME'] || DEFAULT_HOSTNAME
