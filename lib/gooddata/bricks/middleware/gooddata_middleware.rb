@@ -28,7 +28,7 @@ module GoodData
         # Set parallelism
         max_concurrency = params['max_concurrency'] || params['MAX_CONCURRENCY']
         if max_concurrency && max_concurrency.to_i > 0
-          $pmap_default_thread_count = max_concurrency.to_i
+          $pmap_default_thread_count = max_concurrency.to_i # rubocop:disable GlobalVars
         end
 
         # Connect Client
