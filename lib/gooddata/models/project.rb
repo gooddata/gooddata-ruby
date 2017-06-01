@@ -369,7 +369,7 @@ module GoodData
             if process_spec.type != :dataload
               executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
             end
-            params = schedule_parameters(to_project.pid, schedule_spec)
+            params = schedule_parameters(schedule_spec)
             created_schedule = remote_process.create_schedule(schedule_spec[:cron] || schedule_cache[schedule_spec[:after]], executable, params)
             schedule_cache[created_schedule.name] = created_schedule
 
@@ -450,9 +450,9 @@ module GoodData
 
       private
 
-      def schedule_parameters(id, schedule_spec)
+      def schedule_parameters(schedule_spec)
         {
-          params: schedule_spec[:params].merge('PROJECT_ID' => id),
+          params: schedule_spec[:params],
           hidden_params: schedule_spec[:hidden_params],
           name: schedule_spec[:name],
           reschedule: schedule_spec[:reschedule],
