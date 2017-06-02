@@ -32,8 +32,8 @@ module GoodData
         end
 
         # Connect Client
-        protocol = params['CLIENT_GDC_PROTOCOL'] || DEFAULT_PROTOCOL
-        hostname = params['CLIENT_GDC_HOSTNAME'] || DEFAULT_HOSTNAME
+        protocol = params['CLIENT_GDC_PROTOCOL'] || params['GDC_PROTOCOL'] || DEFAULT_PROTOCOL
+        hostname = params['CLIENT_GDC_HOSTNAME'] || params['GDC_HOSTNAME'] || DEFAULT_HOSTNAME
         server = "#{protocol}://#{hostname}"
         client = GoodDataMiddleware.connect(
           server,
