@@ -122,7 +122,7 @@ module GoodData
         CollectComputedAttributeMetrics,
         ImportObjectCollections,
         SynchronizeComputedAttributes, # need to sync CA here to maintain the drill path after that
-        # SynchronizeLabelTypes,
+        SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         ApplyCustomMaql,
         SynchronizeColorPalette,
