@@ -46,7 +46,7 @@ module GoodData
             info[:segment_id]
           end
 
-          results = synchronize_segments.pmap do |segment_id, synchronize|
+          results = synchronize_segments.map do |segment_id, synchronize|
             segment = domain.segments(segment_id)
             res = segment.synchronize_processes(
               synchronize.flat_map do |info|
