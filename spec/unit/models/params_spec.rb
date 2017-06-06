@@ -17,8 +17,8 @@ describe 'GoodData::Schedule::Params' do
     @project = ProjectHelper.get_default_project
 
     @process = @project.deploy_process('./spec/data/cc/graph/graph.grf',
-                                       type: 'GRAPH',
-                                       name: 'Test ETL Process')
+                                      type: 'GRAPH',
+                                      name: 'Test ETL Process')
   end
 
   after(:all) do

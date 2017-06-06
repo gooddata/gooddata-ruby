@@ -102,10 +102,10 @@ module GoodData
               vals.each do |v|
                 throw :found_value if result
                 result = begin
-                           l.find_value_uri(v)
-                         rescue
-                           nil
-                         end
+                          l.find_value_uri(v)
+                        rescue
+                          nil
+                        end
               end
             end
           end

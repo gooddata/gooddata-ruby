@@ -227,22 +227,22 @@ module GoodData
       # @param to_project [GoodData::Project | GoodData::Segment | GoodData:Client | String]
       def transfer_etl(client, from_project, to_project)
         from_project = case from_project
-                       when GoodData::Client
-                         from_project.project
-                       when GoodData::Segment
-                         from_project.master_project
-                       else
-                         client.projects(from_project)
-                       end
+                      when GoodData::Client
+                        from_project.project
+                      when GoodData::Segment
+                        from_project.master_project
+                      else
+                        client.projects(from_project)
+                      end
 
         to_project = case to_project
-                     when GoodData::Client
-                       to_project.project
-                     when GoodData::Segment
-                       to_project.master_project
-                     else
-                       client.projects(to_project)
-                     end
+                    when GoodData::Client
+                      to_project.project
+                    when GoodData::Segment
+                      to_project.master_project
+                    else
+                      client.projects(to_project)
+                    end
         transfer_processes(from_project, to_project)
         transfer_schedules(from_project, to_project)
       end
@@ -871,10 +871,10 @@ module GoodData
       role_name.downcase!
       role_list.each do |role|
         return role if role.uri == role_name ||
-                       role.identifier.downcase == role_name ||
-                       role.identifier.downcase.gsub(/role$/, '') == role_name ||
-                       role.title.downcase == role_name ||
-                       role.summary.downcase == role_name
+                      role.identifier.downcase == role_name ||
+                      role.identifier.downcase.gsub(/role$/, '') == role_name ||
+                      role.title.downcase == role_name ||
+                      role.summary.downcase == role_name
       end
       nil
     end
@@ -1414,12 +1414,12 @@ module GoodData
       data_to_send['project']['content'].delete('isPublic')
       data_to_send['project']['content'].delete('state')
       response = if uri
-                   client.post(PROJECT_PATH % pid, data_to_send)
-                   client.get uri
-                 else
-                   result = client.post(PROJECTS_PATH, data_to_send)
-                   client.get result['uri']
-                 end
+                  client.post(PROJECT_PATH % pid, data_to_send)
+                  client.get uri
+                else
+                  result = client.post(PROJECTS_PATH, data_to_send)
+                  client.get result['uri']
+                end
       @json = response
       self
     end
@@ -1806,20 +1806,20 @@ module GoodData
 
     def resolve_roles(login, desired_roles, options = {})
       user = if login.is_a?(String) && login.include?('@')
-               '/gdc/account/profile/' + login
-             elsif login.is_a?(String)
-               login
-             elsif login.is_a?(Hash) && login[:login]
-               '/gdc/account/profile/' + login[:login]
-             elsif login.is_a?(Hash) && login[:uri]
-               login[:uri]
-             elsif login.respond_to?(:uri) && login.uri
-               login.uri
-             elsif login.respond_to?(:login) && login.login
-               '/gdc/account/profile/' + login.login
-             else
-               fail "Unsupported user specification #{login}"
-             end
+              '/gdc/account/profile/' + login
+            elsif login.is_a?(String)
+              login
+            elsif login.is_a?(Hash) && login[:login]
+              '/gdc/account/profile/' + login[:login]
+            elsif login.is_a?(Hash) && login[:uri]
+              login[:uri]
+            elsif login.respond_to?(:uri) && login.uri
+              login.uri
+            elsif login.respond_to?(:login) && login.login
+              '/gdc/account/profile/' + login.login
+            else
+              fail "Unsupported user specification #{login}"
+            end
 
       role_list = options[:roles] || roles
       desired_roles = Array(desired_roles)

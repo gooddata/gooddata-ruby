@@ -275,10 +275,10 @@ module GoodData
           end
           unless columns_that_failed_to_merge.empty?
             fail "Columns #{columns_that_failed_to_merge.first} failed to " \
-                 "merge. There are #{columns_that_failed_to_merge[1]} " \
-                 "conflicting columns. #{columns_that_failed_to_merge[2]} " \
-                 "When merging columns with the same name they have to be " \
-                 "identical."
+                "merge. There are #{columns_that_failed_to_merge[1]} " \
+                "conflicting columns. #{columns_that_failed_to_merge[2]} " \
+                "When merging columns with the same name they have to be " \
+                "identical."
           end
         end
         d

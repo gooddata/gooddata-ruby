@@ -225,22 +225,22 @@ module GoodData
 
     def execute(opts = {})
       result = if saved?
-                 pars = {
-                   'report_req' => { 'reportDefinition' => uri }
-                 }
-                 client.post '/gdc/xtab2/executor3', pars
-               else
-                 data = {
-                   report_req: {
-                     definitionContent: {
-                       content: to_hash,
-                       projectMetadata: project.links['metadata']
-                     }
-                   }
-                 }
-                 uri = "/gdc/app/projects/#{project.pid}/execute"
-                 client.post(uri, data)
-               end
+                pars = {
+                  'report_req' => { 'reportDefinition' => uri }
+                }
+                client.post '/gdc/xtab2/executor3', pars
+              else
+                data = {
+                  report_req: {
+                    definitionContent: {
+                      content: to_hash,
+                      projectMetadata: project.links['metadata']
+                    }
+                  }
+                }
+                uri = "/gdc/app/projects/#{project.pid}/execute"
+                client.post(uri, data)
+              end
       GoodData::Report.data_result(result, opts.merge(client: client))
     end
 

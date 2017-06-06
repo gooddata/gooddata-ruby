@@ -129,32 +129,32 @@ module GoodData
 
     def save
       response = if uri
-                   data_to_send = GoodData::Helpers.deep_dup(raw_data).tap do |d|
-                     d['subscription']['condition']['condition']['expression'] = "params.PROCESS_ID=='#{(process.respond_to?(:process_id) && process.process_id) || process}'"
-                     d['subscription']['message']['template']['expression'] = message
-                     d['subscription']['subject']['template']['expression'] = subject
-                     d['subscription']['meta']['title'] = title
-                     d['subscription']['channels'] = ((channels.respond_to?(:each) && channels) || [channels]).map { |channel| channel.respond_to?(:uri) && channel.uri || channel }
+                  data_to_send = GoodData::Helpers.deep_dup(raw_data).tap do |d|
+                    d['subscription']['condition']['condition']['expression'] = "params.PROCESS_ID=='#{(process.respond_to?(:process_id) && process.process_id) || process}'"
+                    d['subscription']['message']['template']['expression'] = message
+                    d['subscription']['subject']['template']['expression'] = subject
+                    d['subscription']['meta']['title'] = title
+                    d['subscription']['channels'] = ((channels.respond_to?(:each) && channels) || [channels]).map { |channel| channel.respond_to?(:uri) && channel.uri || channel }
 
-                     triggers = []
-                     triggers << {
-                       'projectEventTrigger' => {
-                         'types' => (project_events.respond_to?(:each) && project_events) || [project_events]
-                       }
-                     }
-                     if timer_event
-                       triggers << {
-                         'timerEvent' => {
-                           'cronExpression' => timer_event
-                         }
-                       }
-                     end
-                     d['subscription']['triggers'] = triggers
-                   end
-                   client.put(uri, data_to_send)
-                 else
-                   client.post(SUBSCRIPTION_PATH % [project, client.user.account_setting_id], raw_data)
-                 end
+                    triggers = []
+                    triggers << {
+                      'projectEventTrigger' => {
+                        'types' => (project_events.respond_to?(:each) && project_events) || [project_events]
+                      }
+                    }
+                    if timer_event
+                      triggers << {
+                        'timerEvent' => {
+                          'cronExpression' => timer_event
+                        }
+                      }
+                    end
+                    d['subscription']['triggers'] = triggers
+                  end
+                  client.put(uri, data_to_send)
+                else
+                  client.post(SUBSCRIPTION_PATH % [project, client.user.account_setting_id], raw_data)
+                end
       @json = client.get response['subscription']['meta']['uri']
       self
     end

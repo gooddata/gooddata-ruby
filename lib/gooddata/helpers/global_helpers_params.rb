@@ -61,12 +61,12 @@ module GoodData
         hidden_key = ENCODED_HIDDEN_PARAMS_KEY.to_s
         data_params = params[key] || '{}'
         hidden_data_params = if params.key?(hidden_key) && params[hidden_key].nil?
-                               "{\"#{hidden_key}\" : null}"
-                             elsif params.key?(hidden_key)
-                               params[hidden_key]
-                             else
-                               '{}'
-                             end
+                              "{\"#{hidden_key}\" : null}"
+                            elsif params.key?(hidden_key)
+                              params[hidden_key]
+                            else
+                              '{}'
+                            end
 
         reference_values = []
         # Replace reference parameters by the actual values. Use backslash to escape a reference parameter, e.g: \${not_a_param},

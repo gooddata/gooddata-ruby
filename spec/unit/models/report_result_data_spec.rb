@@ -55,10 +55,10 @@ describe GoodData::ReportDataResult do
   describe '#without_left_headers' do
     it 'should return data result without left headers' do
       expect(@result.without_left_headers.to_a).to eq [%w(kolin praha varsava),
-                                                       ["sum of Age", "sum of Age", "sum of Age"],
-                                                       [25, nil, nil],
-                                                       [nil, nil, 15],
-                                                       [nil, 25, nil]]
+                                                      ["sum of Age", "sum of Age", "sum of Age"],
+                                                      [25, nil, nil],
+                                                      [nil, nil, 15],
+                                                      [nil, 25, nil]]
     end
 
     it 'should return correct size' do
@@ -131,8 +131,8 @@ describe GoodData::ReportDataResult do
     it 'should return just data portion' do
       expect(@result.data.is_a?(GoodData::ReportDataResult)).to be_truthy
       expect(@result.data.to_a).to eq [[25, nil, nil],
-                                       [nil, nil, 15],
-                                       [nil, 25, nil]]
+                                      [nil, nil, 15],
+                                      [nil, 25, nil]]
     end
   end
 

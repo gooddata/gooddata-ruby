@@ -83,11 +83,11 @@ module GoodData
       def dependency?(type, uri, target_uri, opts = { :client => GoodData.connection, :project => GoodData.project })
         uri = uri.respond_to?(:uri) ? uri.uri : uri
         objs = case type
-               when :usedby
-                 usedby(uri, nil, opts)
-               when :using
-                 using(uri, nil, opts)
-               end
+              when :usedby
+                usedby(uri, nil, opts)
+              when :using
+                using(uri, nil, opts)
+              end
 
         target_uri = target_uri.respond_to?(:uri) ? target_uri.uri : target_uri
         objs.any? do |obj|

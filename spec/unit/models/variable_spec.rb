@@ -72,9 +72,9 @@ describe "DSL" do
       "tomas@gooddata.com" => [
         { :label => "label/34", :values => %w(US CZ KZ), :over => nil, :to => nil }
       ],
-     "petr@gooddata.com" => [
-       { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
-       { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil }
+    "petr@gooddata.com" => [
+      { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
+      { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil }
       ]
     }
   end
@@ -90,9 +90,9 @@ describe "DSL" do
       "tomas@gooddata.com" => [
         { :label => "label/34", :values => ["US"], :over => nil, :to => nil }
       ],
-     "petr@gooddata.com" => [
-       { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
-       { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil }
+    "petr@gooddata.com" => [
+      { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
+      { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil }
       ]
     }
   end
@@ -109,11 +109,11 @@ describe "DSL" do
         { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
         { :label => "label/99", :values => [14], :over => nil, :to => nil }
       ],
-     "petr@gooddata.com" => [
-       { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
-       { :label => "label/99", :values => [19], :over => nil, :to => nil },
-       { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil },
-       { :label => "label/99", :values => [30], :over => nil, :to => nil }
+    "petr@gooddata.com" => [
+      { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
+      { :label => "label/99", :values => [19], :over => nil, :to => nil },
+      { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil },
+      { :label => "label/99", :values => [30], :over => nil, :to => nil }
       ]
     }
   end

@@ -90,8 +90,8 @@ describe GoodData::Helpers do
 
       results = GoodData::Helpers.join(master, lookup, [:x], [:id])
       expect(results).to eq [{ :id => "a", :y => "FOO", :x => 1 },
-                             { :id => "b", :y => "FOO", :x => 1 },
-                             { :id => "c", :y => "BAR", :x => 2 }]
+                            { :id => "b", :y => "FOO", :x => 1 },
+                            { :id => "c", :y => "BAR", :x => 2 }]
     end
 
     it 'should encode secure params' do

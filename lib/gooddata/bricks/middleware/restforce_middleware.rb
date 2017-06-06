@@ -38,17 +38,17 @@ module GoodData
         credentials = prepare_credentials(params)
 
         client = if credentials
-                   credentials[:client_id] = downloader_config['client_id']
-                   credentials[:client_secret] = downloader_config['client_secret']
+                  credentials[:client_id] = downloader_config['client_id']
+                  credentials[:client_secret] = downloader_config['client_secret']
 
-                   host = downloader_config['host']
-                   credentials[:host] = host if host
-                   credentials[:api_version] = downloader_config['api_version'] || DEFAULT_VERSION
+                  host = downloader_config['host']
+                  credentials[:host] = host if host
+                  credentials[:api_version] = downloader_config['api_version'] || DEFAULT_VERSION
 
-                   Restforce.log = true if params['GDC_LOGGER']
+                  Restforce.log = true if params['GDC_LOGGER']
 
-                   Restforce.new(credentials)
-                 end
+                  Restforce.new(credentials)
+                end
         params.merge('salesforce_client' => client)
       end
 

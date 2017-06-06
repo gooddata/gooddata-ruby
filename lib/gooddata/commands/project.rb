@@ -74,10 +74,10 @@ module GoodData
 
           content = File.read(spec_path)
           spec = if spec_path.extname == '.rb'
-                   eval(content)
-                 elsif spec_path.extname == '.json'
-                   JSON.parse(spec_path, :symbolize_names => true)
-                 end
+                  eval(content)
+                elsif spec_path.extname == '.json'
+                  JSON.parse(spec_path, :symbolize_names => true)
+                end
           [spec, goodfile[:project_id]]
         end
 

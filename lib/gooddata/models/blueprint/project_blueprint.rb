@@ -260,10 +260,10 @@ module GoodData
         from_dataset = find_dataset(from_dataset)
         to_dataset = find_dataset(to_dataset)
         column = if col.is_a?(String)
-                   from_dataset.find_column_by_id(col)
-                 else
-                   from_dataset.find_column(col)
-                 end
+                  from_dataset.find_column_by_id(col)
+                else
+                  from_dataset.find_column(col)
+                end
         fail "Column #{col} cannot be found in dataset #{from_dataset.id}" unless column
         stuff = case column.type
                 when :attribute
@@ -285,10 +285,10 @@ module GoodData
         from_dataset = find_dataset(from_dataset)
         to_dataset = find_dataset(to_dataset)
         column = if col.is_a?(String)
-                   from_dataset.find_column_by_id(col)
-                 else
-                   from_dataset.find_column(col)
-                 end
+                  from_dataset.find_column_by_id(col)
+                else
+                  from_dataset.find_column(col)
+                end
         fail "Column #{col} cannot be found in dataset #{from_dataset.id}" unless column
         stuff = case column.type
                 when :attribute
@@ -564,8 +564,8 @@ module GoodData
 
             attrs.each do |attr|
               a << GoodData::Report.create(:title => 'Fantastic report',
-                                           :top => [attr],
-                                           :left => metric)
+                                          :top => [attr],
+                                          :left => metric)
             end
             a
           end

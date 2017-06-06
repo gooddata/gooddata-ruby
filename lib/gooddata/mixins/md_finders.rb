@@ -15,10 +15,10 @@ module GoodData
       def find_first_by_identifier(identifier, options = { :client => GoodData.connection, :project => GoodData.project })
         all = self[:all, options.merge(full: false)]
         item = if identifier.is_a?(Regexp)
-                 all.find { |r| r.identifier =~ identifier }
-               else
-                 all.find { |r| r.identifier == identifier }
-               end
+                all.find { |r| r.identifier =~ identifier }
+              else
+                all.find { |r| r.identifier == identifier }
+              end
         self[item.uri, options] unless item.nil?
       end
 
@@ -53,10 +53,10 @@ module GoodData
       def find_first_by_title(title, options = { :client => GoodData.connection, :project => GoodData.project })
         all = self[:all, options]
         item = if title.is_a?(Regexp)
-                 all.find { |r| r.title =~ title }
-               else
-                 all.find { |r| r.title == title }
-               end
+                all.find { |r| r.title =~ title }
+              else
+                all.find { |r| r.title == title }
+              end
         self[item.uri, options] unless item.nil?
       end
 

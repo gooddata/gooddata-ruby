@@ -107,8 +107,8 @@ module GoodData
       a_type = options[:type] || :count
       unless ATTRIBUTE_BASE_AGGREGATIONS.include?(a_type)
         fail 'Suggested aggreagtion function (#{a_type}) does not exist for ' \
-             'base metric created out of attribute. You can use only one of' \
-             "#{ATTRIBUTE_BASE_AGGREGATIONS.map { |x| ':' + x.to_s }.join(',')}"
+            'base metric created out of attribute. You can use only one of' \
+            "#{ATTRIBUTE_BASE_AGGREGATIONS.map { |x| ':' + x.to_s }.join(',')}"
       end
       a_title = options[:title] || "#{a_type} of #{title}"
       if an_attribute

@@ -404,12 +404,12 @@ to new properties (email=#{user_data[:email]}, sso_provider=#{user_data[:sso_pro
     # @return [Enumerator] Returns Enumerator of results
     def provision_client_projects(segments = nil)
       body = if segments
-               {
-                 provisionClientProjects: {
-                   segments: segments.is_a?(Array) ? segments : [segments]
-                 }
-               }
-             end
+              {
+                provisionClientProjects: {
+                  segments: segments.is_a?(Array) ? segments : [segments]
+                }
+              }
+            end
 
       res = client.post(segments_uri + '/provisionClientProjects', body)
       res = client.poll_on_code(res['asyncTask']['links']['poll'])

@@ -176,9 +176,9 @@
 - Implemented retry on connection related issues
 - All executions should use latest resource version
 - Uploading files to webdav should use streaming and be more memory efficient
-- Ability to pass absolute path to file upload  
+- Ability to pass absolute path to file upload
 - Allowing special chars in uploaded file
-- GooddataMiddleware doesn't require username+password, when it has SST  
+- GooddataMiddleware doesn't require username+password, when it has SST
 
 ## 0.6.10
 

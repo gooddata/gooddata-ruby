@@ -18,7 +18,7 @@ describe GoodData::Execution do
         "links" => {
           "self" => "/gdc/projects/tk3b994vmdpcb0xjwexc9moen8t5bpiw/schedules/54f08d1de4b0c9cbdcb0f323/executions/54f090d5e4b0c9cbdcb0f45b"
         },
-       "createdTime" => "2015-02-27T15:44:21.361Z"
+      "createdTime" => "2015-02-27T15:44:21.361Z"
       }
     }
     @execution = GoodData::Execution.new(@data)

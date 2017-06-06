@@ -78,14 +78,14 @@ module GoodData
 
     def save
       response = if uri
-                   data_to_send = GoodData::Helpers.deep_dup(raw_data).tap do |d|
-                     d['channelConfiguration']['configuration']['emailConfiguration']['to'] = to
-                     d['channelConfiguration']['meta']['title'] = title
-                   end
-                   client.put(uri, data_to_send)
-                 else
-                   client.post(CHANNEL_CONFIGURATION_PATH % client.user.account_setting_id, raw_data)
-                 end
+                  data_to_send = GoodData::Helpers.deep_dup(raw_data).tap do |d|
+                    d['channelConfiguration']['configuration']['emailConfiguration']['to'] = to
+                    d['channelConfiguration']['meta']['title'] = title
+                  end
+                  client.put(uri, data_to_send)
+                else
+                  client.post(CHANNEL_CONFIGURATION_PATH % client.user.account_setting_id, raw_data)
+                end
       @json = client.get response['channelConfiguration']['meta']['uri']
       self
     end

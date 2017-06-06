@@ -139,10 +139,10 @@ module GoodData
 
       def interpolate_metric(metric, dictionary, options = { :client => GoodData.connection, :project => GoodData.project })
         interpolated = interpolate({
-                                     :facts => GoodData::SmallGoodZilla.get_facts(metric),
-                                     :attributes => GoodData::SmallGoodZilla.get_attributes(metric),
-                                     :metrics => GoodData::SmallGoodZilla.get_metrics(metric)
-                                   }, dictionary)
+                                    :facts => GoodData::SmallGoodZilla.get_facts(metric),
+                                    :attributes => GoodData::SmallGoodZilla.get_attributes(metric),
+                                    :metrics => GoodData::SmallGoodZilla.get_metrics(metric)
+                                  }, dictionary)
 
         ids = GoodData::SmallGoodZilla.get_ids(metric)
         interpolated_ids = ids.zip(Array(interpolate_ids(options, ids)))

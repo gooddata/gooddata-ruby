@@ -193,11 +193,11 @@ module GoodData
         title = "Result of #{action.short_name}"
 
         keys = if action.const_defined?('RESULT_HEADER')
-                 action.const_get('RESULT_HEADER')
-               else
-                 GoodData.logger.warn("Action #{action.name} does not have RESULT_HEADERS, inferring headers from results.")
-                 (messages.first && messages.first.keys) || []
-               end
+                action.const_get('RESULT_HEADER')
+              else
+                GoodData.logger.warn("Action #{action.name} does not have RESULT_HEADERS, inferring headers from results.")
+                (messages.first && messages.first.keys) || []
+              end
 
         headings = keys.map(&:upcase)
 
@@ -260,10 +260,10 @@ module GoodData
         new_params = params
 
         fail_early = if params.key?(:fail_early)
-                       params.fail_early.to_b
-                     else
-                       true
-                     end
+                      params.fail_early.to_b
+                    else
+                      true
+                    end
 
         strict_mode = if params.key?(:strict)
                         params.strict.to_b

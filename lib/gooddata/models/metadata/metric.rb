@@ -48,25 +48,25 @@ module GoodData
         end
 
         expression = if extended_notation
-                       dict = {
-                         :facts => project.facts.reduce({}) do |memo, item|
-                           memo[item.title] = item.uri
-                           memo
-                         end,
-                         :attributes => project.attributes.reduce({}) do |memo, item|
-                           memo[item.title] = item.uri
-                           memo
-                         end,
-                         :metrics => project.metrics.reduce({}) do |memo, item|
-                           memo[item.title] = item.uri
-                           memo
-                         end
-                       }
-                       interpolated_metric = GoodData::SmallGoodZilla.interpolate_metric(expression, dict, options)
-                       interpolated_metric
-                     else
-                       expression
-                     end
+                      dict = {
+                        :facts => project.facts.reduce({}) do |memo, item|
+                          memo[item.title] = item.uri
+                          memo
+                        end,
+                        :attributes => project.attributes.reduce({}) do |memo, item|
+                          memo[item.title] = item.uri
+                          memo
+                        end,
+                        :metrics => project.metrics.reduce({}) do |memo, item|
+                          memo[item.title] = item.uri
+                          memo
+                        end
+                      }
+                      interpolated_metric = GoodData::SmallGoodZilla.interpolate_metric(expression, dict, options)
+                      interpolated_metric
+                    else
+                      expression
+                    end
 
         metric = {
           'metric' => {

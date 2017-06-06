@@ -96,7 +96,7 @@ application.
 
 <a name="bundler"></a>
 ### bundler v1.11.2 (development)
-#### 
+####
 
 unknown manually approved
 
@@ -125,7 +125,7 @@ unknown manually approved
 ><cite>  2016-02-22</cite>
 
   >> puts "this is red".red
- 
+
   >> puts "this is red with a blue background (read: ugly)".red_on_blue
 
   >> puts "this is red with an underline".red.underline
@@ -306,7 +306,7 @@ Guard::RSpec automatically run your specs (much like autotest).
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> whitelisted
 
- HashDiff is a diff lib to compute the smallest difference between two hashes. 
+ HashDiff is a diff lib to compute the smallest difference between two hashes.
 
 <a name="hashie"></a>
 ### <a href="https://github.com/intridea/hashie">hashie</a> v3.4.3
@@ -419,7 +419,7 @@ registered MIME media types plus any security updates that may be required.
 If the loss of the deprecated data matters, be sure to set your dependency
 appropriately:
 
-   gem 'mime-types', '~> 2.6, < 2.99'
+    gem 'mime-types', '~> 2.6, < 2.99'
 
 <a name="mini_portile2"></a>
 ### <a href="http://github.com/flavorjones/mini_portile">mini_portile2</a> v2.0.0

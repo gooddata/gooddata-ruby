@@ -273,7 +273,7 @@ describe "User filters implementation", :constraint => 'slow' do
 
     # lets restrict tomas to goodot only
     filters = [[u.login, @label.uri, 'tomas@gooddata.com'],
-               [u.login, repo_label.uri, 'goodot']]
+              [u.login, repo_label.uri, 'goodot']]
     @project.add_data_permissions(filters)
     expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [
       [u.login, "[Dev] IN ([tomas@gooddata.com])"],
@@ -285,7 +285,7 @@ describe "User filters implementation", :constraint => 'slow' do
 
     # Now lets change repo to bam
     filters = [[u.login, @label.uri, 'tomas@gooddata.com'],
-               [u.login, repo_label.uri, 'bam']]
+              [u.login, repo_label.uri, 'bam']]
     @project.add_data_permissions(filters)
 
     expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [

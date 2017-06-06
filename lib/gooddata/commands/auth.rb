@@ -71,10 +71,10 @@ module GoodData
           credentials = ask_for_credentials
 
           ovewrite = if File.exist?(credentials_file_path)
-                       GoodData::CLI.terminal.ask('Overwrite existing stored credentials (y/n)')
-                     else
-                       'y'
-                     end
+                      GoodData::CLI.terminal.ask('Overwrite existing stored credentials (y/n)')
+                    else
+                      'y'
+                    end
 
           if ovewrite == 'y'
             Helpers::AuthHelper.write_credentials(credentials, credentials_file_path)

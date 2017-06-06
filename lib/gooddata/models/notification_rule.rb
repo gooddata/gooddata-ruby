@@ -86,16 +86,16 @@ module GoodData
 
     def save
       response = if uri
-                   data_to_send = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
-                     d['notificationRule']['email'] = email
-                     d['notificationRule']['subject'] = subject
-                     d['notificationRule']['body'] = body
-                     d['notificationRule']['events'] = (events.respond_to?(:each) && events) || events
-                   end
-                   client.put(uri, data_to_send)
-                 else
-                   client.post(NOTIFICATION_RULES_PATH % [project, process], raw_data)
-                 end
+                  data_to_send = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
+                    d['notificationRule']['email'] = email
+                    d['notificationRule']['subject'] = subject
+                    d['notificationRule']['body'] = body
+                    d['notificationRule']['events'] = (events.respond_to?(:each) && events) || events
+                  end
+                  client.put(uri, data_to_send)
+                else
+                  client.post(NOTIFICATION_RULES_PATH % [project, process], raw_data)
+                end
       @json = client.get response['notificationRule']['links']['self']
       @subscription = data['links']['subscription']
       @channels = data['links']['channels']
