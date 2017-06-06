@@ -92,6 +92,7 @@ module GoodData
                 )
                 schedule.update_params(additional_params)
                 schedule.update_hidden_params(params.additional_hidden_params || {})
+                schedule.enable
                 schedule.save
               end
             end
