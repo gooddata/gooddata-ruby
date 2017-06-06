@@ -273,7 +273,13 @@ module GoodData
             GoodData.logger.error "Columns #{error[0]} failed to merge. There are #{error[1]} conflicting columns. When merging columns with the same name they have to be identical."
             GoodData.logger.error error[2]
           end
-          fail "Columns #{columns_that_failed_to_merge.first} failed to merge. There are #{columns_that_failed_to_merge[1]} conflicting columns. #{columns_that_failed_to_merge[2]} When merging columns with the same name they have to be identical." unless columns_that_failed_to_merge.empty?
+          unless columns_that_failed_to_merge.empty?
+            fail "Columns #{columns_that_failed_to_merge.first} failed to " \
+                 "merge. There are #{columns_that_failed_to_merge[1]} " \
+                 "conflicting columns. #{columns_that_failed_to_merge[2]} " \
+                 "When merging columns with the same name they have to be " \
+                 "identical."
+          end
         end
         d
       end

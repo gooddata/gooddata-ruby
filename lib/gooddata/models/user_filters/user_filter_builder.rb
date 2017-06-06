@@ -400,7 +400,13 @@ module GoodData
           res = client.post("/gdc/md/#{project.pid}/userfilters", payload)
 
           # turn the errors from hashes into array of hashes
-          res['userFiltersUpdateResult'].flat_map { |k, v| v.map { |r| { status: k.to_sym, user: r, type: :create } } }.map { |result| result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result }
+          update_result = res['userFiltersUpdateResult'].flat_map do |k, v|
+            v.map { |r| { status: k.to_sym, user: r, type: :create } }
+          end
+
+          update_result.map do |result|
+            result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result
+          end
         end
       end
 

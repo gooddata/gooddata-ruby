@@ -404,7 +404,10 @@ module GoodData
 
       # Constructor
       #
-      # @param init_data [ProjectBlueprint | Hash] Blueprint or a blueprint definition. If passed a hash it is used as data for new instance. If there is a ProjectBlueprint passed it is duplicated and a new instance is created.
+      # @param init_data [ProjectBlueprint | Hash] Blueprint or a blueprint
+      # definition. If passed a hash it is used as data for new instance.
+      # If there is a ProjectBlueprint passed it is duplicated and a new
+      # instance is created.
       # @return [ProjectBlueprint] A new project blueprint instance
       def initialize(init_data)
         some_data = if init_data.respond_to?(:project_blueprint?) && init_data.project_blueprint?
