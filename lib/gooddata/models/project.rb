@@ -1375,6 +1375,27 @@ module GoodData
           val.replace(mapping).save unless dry_run
         end
       end
+
+      {
+        visualizations: MdObject.query('visualization', MdObject, client: client, project: self),
+        visualization_widgets: MdObject.query('visualizationWidget', MdObject, client: client, project: self),
+        kpis: MdObject.query('kpi', MdObject, client: client, project: self)
+      }.each do |key, collection|
+        GoodData.logger.info "Replacing #{key}"
+        collection.each do |item|
+          new_item = MdObject.replace_quoted(item, mapping)
+          if new_item.json != item.json
+            if dry_run
+              GoodData.logger.info "Would save #{new_item.uri}. Running in dry run mode"
+            else
+              GoodData.logger.info "Saving #{new_item.uri}"
+              new_item.save
+            end
+          else
+            GoodData.logger.info "Ignore #{item.uri}"
+          end
+        end
+      end
       nil
     end
 
