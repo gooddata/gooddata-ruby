@@ -29,8 +29,12 @@ module GoodData
     include Mixin::MdGrantees
 
     class << self
-      # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
-      # representation and returns a new one with object references changed according to mapping. The references an be found either in the object structure or in the MAQL in bracketed form. This implementation takes care only of those in bracketed form.
+      # Method used for replacing objects like Attribute, Fact or Metric.
+      # It takes the object. Scans its JSON representation and returns
+      # a new one with object references changed according to mapping.
+      # The references an be found either in the object structure or in
+      # the MAQL in bracketed form. This implementation takes care only
+      # of those in bracketed form.
       #
       # @param obj [GoodData::MdObject] what Object that should be replaced
       # @param mapping [Array[Array]] Array of mapping pairs.
@@ -39,8 +43,12 @@ module GoodData
         replace(obj, mapping) { |e, a, b| e.gsub("[#{a}]", "[#{b}]") }
       end
 
-      # Method used for replacing objects like Attribute, Fact or Metric. It takes the object. Scans its JSON
-      # representation and returns a new one with object references changed according to mapping. The references an be found either in the object structure or in the MAQL in bracketed form. This implementation takes care only of those in object structure where they are as a string in JSON.
+      # Method used for replacing objects like Attribute, Fact or Metric.
+      # It takes the object. Scans its JSON representation and returns
+      # a new one with object references changed according to mapping.
+      # The references an be found either in the object structure or in the MAQL
+      # in bracketed form. This implementation takes care only of those
+      # in object structure where they are as a string in JSON.
       #
       # @param obj [GoodData::MdObject] Object that should be replaced
       # @param mapping [Array[Array]] Array of mapping pairs.

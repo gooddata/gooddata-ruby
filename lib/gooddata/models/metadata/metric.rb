@@ -18,7 +18,10 @@ module GoodData
       # Method intended to get all objects of that type in a specified project
       #
       # @param options [Hash] the options hash
-      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @option options [Boolean] :full if passed true the subclass can decide
+      # to pull in full objects. This is desirable from the usability POV
+      # but unfortunately has negative impact on performance so it is not
+      # the default.
       # @return [Array<GoodData::MdObject> | Array<Hash>] Return the appropriate metadata objects or their representation
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('metric', Metric, options)
@@ -139,7 +142,10 @@ module GoodData
       true
     end
 
-    # Checks that the expression contains certain metadata object. The difference between this and used_by using is in the fact that this is not a transitive closure. it searches only inside the expression
+    # Checks that the expression contains certain metadata object.
+    # The difference between this and used_by using is in the fact that this
+    # is not a transitive closure. it searches only inside the expression
+    #
     # @param [GoodData::MdObject] item Object that is going to be looked up
     # @return [Boolean]
     def contain?(item)

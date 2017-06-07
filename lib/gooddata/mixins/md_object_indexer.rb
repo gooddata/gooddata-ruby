@@ -9,12 +9,22 @@ module GoodData
     module MdObjectIndexer
       MD_OBJ_CTG = 'obj'
 
-      # Returns either list of objects or a specific object. This method is reimplemented in subclasses to leverage specific implementation for specific type of objects. Options is used in subclasses specifically to provide shorthand for getting a full objects after getting a list of hashes from query resource
+      # Returns either list of objects or a specific object.
+      # This method is reimplemented in subclasses to leverage specific
+      # implementation for specific type of objects. Options is used in
+      # subclasses specifically to provide shorthand for getting a full
+      # objects after getting a list of hashes from query resource.
       # @param [Object] id id can be either a number a String (as a URI). Subclasses should also be abel to deal with getting the instance of MdObject already and a :all symbol
       # @param [Hash] options the options hash
-      # @option options [Boolean] :full if passed true the subclass can decide to pull in full objects. This is desirable from the usability POV but unfortunately has negative impact on performance so it is not the default
+      # @option options [Boolean] :full if passed true the subclass can decide
+      # to pull in full objects. This is desirable from the usability POV
+      # but unfortunately has negative impact on performance so it is not
+      # the default.
       # @return [MdObject] if id is a String or number single object is returned
-      # @return [Array] if :all was provided as an id, list of objects should be returned. Note that this is implemented only in the subclasses. MdObject does not support this since API has no means to return list of all types of objects
+      # @return [Array] if :all was provided as an id, list of objects should
+      # be returned. Note that this is implemented only in the subclasses.
+      # MdObject does not support this since API has no means to return list
+      # of all types of objects.
       def [](id, options = { :client => GoodData.connection, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
