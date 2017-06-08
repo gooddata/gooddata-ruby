@@ -144,9 +144,7 @@ describe GoodData::Domain do
   describe '#clients' do
     subject { GoodData::Domain.new('my_domain') }
     let(:client) { double('client') }
-    let(:clients_response) do
-      { 'clients' => { 'items' => [{ 'client' => { 'id' => '123' } }] } }
-    end
+    let(:clients_response) { { 'client' => { 'id' => '123' } } }
 
     before do
       allow(client).to receive(:get).and_return(clients_response)
@@ -156,7 +154,7 @@ describe GoodData::Domain do
     it 'accepts an integer as the id parameter' do
       expect(client).to receive(:create).with(
         GoodData::Client,
-        clients_response['clients']['items'].first
+        clients_response
       )
       subject.clients(123)
     end
