@@ -508,6 +508,9 @@ module GoodData
         return e unless e.respond_to?(:response)
         error = MultiJson.load(e.response)
         message = GoodData::Helpers.interpolate_error_message(error)
+        if error && error['error'] && error['error']['errorClass'] == 'com.gooddata.security.authorization.AuthorizationFailedException'
+          message = "#{message}, accessing with #{user['accountSetting']['login']}"
+        end
         <<-ERR
 
 #{e}: #{message}
