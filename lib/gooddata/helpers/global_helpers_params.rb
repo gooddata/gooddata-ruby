@@ -72,44 +72,8 @@ module GoodData
         # Replace reference parameters by the actual values. Use backslash to escape a reference parameter, e.g: \${not_a_param},
         # the ${not_a_param} will not be replaced
         if options[:resolve_reference_params]
-          regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{(\w+)\}/)
-          resolve_reference = lambda do |v|
-            if v.is_a? Hash
-              Hash[
-                v.map do |k, v2|
-                  [k, resolve_reference.call(v2)]
-                end
-              ]
-            elsif v.is_a? Array
-              v.map do |v2|
-                resolve_reference.call(v2)
-              end
-            elsif !v.is_a?(String)
-              v
-            else
-              v.gsub(regexps) do |match|
-                if match =~ /\\\\/
-                  data_params.is_a?(Hash) ? '\\' : '\\\\' # rubocop: disable Metrics/BlockNesting
-                elsif match =~ /\\\$/
-                  '$'
-                elsif match =~ /\$\{(\w+)\}/
-                  val = params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
-                  reference_values << val
-                  val
-                end
-              end
-            end
-          end
-
-          data_params = if data_params.is_a? Hash
-                          Hash[
-                            data_params.map do |k, v|
-                              [k, resolve_reference.call(v)]
-                            end
-                          ]
-                        else
-                          resolve_reference.call(data_params)
-                        end
+          data_params, reference_values = resolve_reference_params(data_params, params)
+          hidden_data_params, = resolve_reference_params(hidden_data_params, params)
         end
 
         begin
@@ -269,6 +233,50 @@ module GoodData
         else
           value.to_s
         end
+      end
+
+      private
+
+      def resolve_reference_params(data_params, params)
+        reference_values = []
+        regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{(\w+)\}/)
+        resolve_reference = lambda do |v|
+          if v.is_a? Hash
+            Hash[
+              v.map do |k, v2|
+                [k, resolve_reference.call(v2)]
+              end
+            ]
+          elsif v.is_a? Array
+            v.map do |v2|
+              resolve_reference.call(v2)
+            end
+          elsif !v.is_a?(String)
+            v
+          else
+            v.gsub(regexps) do |match|
+              if match =~ /\\\\/
+                data_params.is_a?(Hash) ? '\\' : '\\\\' # rubocop: disable Metrics/BlockNesting
+              elsif match =~ /\\\$/
+                '$'
+              elsif match =~ /\$\{(\w+)\}/
+                val = params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
+                reference_values << val
+                val
+              end
+            end
+          end
+        end
+
+        data_params = if data_params.is_a? Hash
+                        Hash[data_params.map do |k, v|
+                          [k, resolve_reference.call(v)]
+                        end]
+                      else
+                        resolve_reference.call(data_params)
+                      end
+
+        [data_params, reference_values]
       end
     end
   end
