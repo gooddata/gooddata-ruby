@@ -5,6 +5,7 @@
 - Fix bug with transfering schedules without their state
 - Support segment-specific production tags (TMA-309)
 - Rewrite deprecated schedule parameter "GRAPH" (TMA-453)
+- Support integer type id in Domain#clients (TMA-450)
 
 ## 0.6.50
 - Add support for Email Notification Rules on Process
