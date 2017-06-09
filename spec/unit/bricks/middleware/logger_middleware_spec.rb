@@ -12,4 +12,19 @@ describe GoodData::Bricks::LoggerMiddleware do
   it "Has GoodData::Bricks::LoggerMiddleware class" do
     GoodData::Bricks::LoggerMiddleware.should_not be(nil)
   end
+
+  context 'when HTTP_LOGGING parameter set to true' do
+    let(:params) { { 'HTTP_LOGGING' => 'true' } }
+    let(:app) { double(:app) }
+
+    before do
+      subject.app = app
+      allow(app).to receive(:call)
+    end
+
+    it 'turns http logging on' do
+      expect(GoodData).to receive(:logging_http_on)
+      subject.call(params)
+    end
+  end
 end
