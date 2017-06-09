@@ -75,7 +75,11 @@ describe GoodData::Model::ToManifest do
         d.add_column(type: :date_fact, id: 'dt.date_fact')
       end
     end
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts']).to include("referenceKey" => 1, "populates" => ["repo_label_1"], "mode" => "FULL", "columnName" => "repo_label_1")
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'])
+      .to include("referenceKey" => 1,
+                  "populates" => ["repo_label_1"],
+                  "mode" => "FULL",
+                  "columnName" => "repo_label_1")
 
     blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
@@ -97,7 +101,11 @@ describe GoodData::Model::ToManifest do
       end
     end
 
-    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts']).to include("referenceKey" => 1, "populates" => ["repo_label_2"], "mode" => "FULL", "columnName" => "repo_label_2")
+    expect(blueprint.to_manifest.first['dataSetSLIManifest']['parts'])
+      .to include("referenceKey" => 1,
+                  "populates" => ["repo_label_2"],
+                  "mode" => "FULL",
+                  "columnName" => "repo_label_2")
     expect(blueprint.to_manifest[1]['dataSetSLIManifest']['parts']).to include("populates" => ["repo_label_2"], "mode" => "FULL", "columnName" => "repos", "referenceKey" => 1)
   end
 

@@ -267,10 +267,15 @@ module GoodData
         d = GoodData::Helpers.deep_dup(a_schema_blueprint)
         d[:columns] = d[:columns] + b_schema_blueprint[:columns]
         d[:columns].uniq!
-        columns_that_failed_to_merge = d[:columns].group_by { |x| [:reference, :date].include?(x[:type]) ? x[:dataset] : x[:id] }.map { |k, v| [k, v.count, v] }.select { |x| x[1] > 1 }
+        columns_that_failed_to_merge = d[:columns]
+          .group_by { |x| [:reference, :date].include?(x[:type]) ? x[:dataset] : x[:id] }
+          .map { |k, v| [k, v.count, v] }.select { |x| x[1] > 1 }
         unless columns_that_failed_to_merge.empty?
           columns_that_failed_to_merge.each do |error|
-            GoodData.logger.error "Columns #{error[0]} failed to merge. There are #{error[1]} conflicting columns. When merging columns with the same name they have to be identical."
+            message = "Columns #{error[0]} failed to merge. There are " \
+                      "#{error[1]} conflicting columns. When merging columns " \
+                      "with the same name they have to be identical."
+            GoodData.logger.error message
             GoodData.logger.error error[2]
           end
           unless columns_that_failed_to_merge.empty?

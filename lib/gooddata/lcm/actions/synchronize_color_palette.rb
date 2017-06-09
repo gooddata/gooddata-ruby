@@ -44,7 +44,11 @@ module GoodData
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
-              params.gdc_logger.info "Transferring Custom Color Palette, from project: '#{from.title}', PID: '#{from.pid}', to project: '#{to_project.title}', PID: '#{to_project.pid}'"
+              params.gdc_logger.info(
+                "Transferring Custom Color Palette, from project: " \
+                "'#{from.title}', PID: '#{from.pid}', to project: " \
+                "'#{to_project.title}', PID: '#{to_project.pid}'"
+              )
               GoodData::Project.transfer_color_palette(from, to_project)
 
               results << {

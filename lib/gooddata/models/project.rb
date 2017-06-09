@@ -140,7 +140,9 @@ module GoodData
 
         project = create_object(opts)
         project.save
-        # until it is enabled or deleted, recur. This should still end if there is a exception thrown out from RESTClient. This sometimes happens from WebApp when request is too long
+        # until it is enabled or deleted, recur. This should still end if there
+        # is a exception thrown out from RESTClient. This sometimes happens from
+        # WebApp when request is too long
         while project.state.to_s != 'enabled'
           if project.deleted?
             # if project is switched to deleted state, fail. This is usually problem of creating a template which is invalid.
@@ -1142,7 +1144,12 @@ module GoodData
       end
 
       objs = objs.pmap { |obj| [obj, objects(obj)] }
-      fail ObjectsExportError, "Exporting objects failed with messages. Object #{objs.select { |_, obj| obj.nil? }.map { |o, _| o }.join(', ')} could not be found." if objs.any? { |_, obj| obj.nil? }
+      if objs.any? { |_, obj| obj.nil? }
+        object = objs.select { |_, obj| obj.nil? }.map { |o, _| o }.join(', ')
+        error_message = "Exporting objects failed with messages. " \
+                        "Object #{object} could not be found."
+        fail ObjectsExportError, error_message
+      end
       export_payload = {
         :partialMDExport => {
           :uris => objs.map { |_, obj| obj.uri },
@@ -1293,7 +1300,9 @@ module GoodData
       self
     end
 
-    # Method used for walking through objects in project and trying to replace all occurences of some object for another object. This is typically used as a means for exchanging Date dimensions.
+    # Method used for walking through objects in project and trying to
+    # replace all occurences of some object for another object. This is
+    # typically used as a means for exchanging Date dimensions.
     #
     # @param mapping [Array<Array>] Mapping specifying what should be exchanged for what. As mapping should be used output of GoodData::Helpers.prepare_mapping.
     def replace_from_mapping(mapping, opts = {})

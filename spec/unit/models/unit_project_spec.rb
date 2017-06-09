@@ -103,7 +103,12 @@ describe GoodData::Project do
 
     it 'can handle case with info with login when he is in the domain' do
       # we have to provide users from project to be able to do this by login
-      a, b = @p.resolve_roles({ login: 'john.doe+in_domain@gooddata.com', first_name: 'John' }, 'test_role', project_users: [], domain_users: @domain_members, roles: @roles, domain: @domain)
+      login = { login: 'john.doe+in_domain@gooddata.com', first_name: 'John' }
+      a, b = @p.resolve_roles(login, 'test_role',
+                              project_users: [],
+                              domain_users: @domain_members,
+                              roles: @roles,
+                              domain: @domain)
       expect(a).to eq "/gdc/account/profile/john.doe+in_domain@gooddata.com"
       expect(b).to eq ["/roles/1"]
     end

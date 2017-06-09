@@ -11,8 +11,12 @@ module GoodData
 
     class << self
       # Encodes parameters for passing them to GD execution platform.
-      # Core types are kept and complex types (arrays, structures, etc) are JSON encoded into key hash "gd_encoded_params" or "gd_encoded_hidden_params", depending on the 'hidden' method param.
-      # The two different keys are used because the params and hidden params are merged by the platform and if we use the same key, the param would be overwritten.
+      # Core types are kept and complex types (arrays, structures, etc) are
+      # JSON encoded into key hash "gd_encoded_params" or
+      # "gd_encoded_hidden_params", depending on the 'hidden' method param.
+      # The two different keys are used because the params and hidden params
+      # are merged by the platform and if we use the same key,
+      # the param would be overwritten.
       #
       # Core types are following:
       # - Boolean (true, false)
