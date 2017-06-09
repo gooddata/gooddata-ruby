@@ -300,15 +300,15 @@ to new properties (email=#{user_data[:email]}, sso_provider=#{user_data[:sso_pro
     # @return [Object] Raw response
     #
     def clients(id = :all)
-      clients_uri = "/gdc/domains/#{name}/clients"
-      res = client.get(clients_uri)
-      res_clients = (res['clients'] && res['clients']['items']) || []
       if id == :all
+        res = client.get("/gdc/domains/#{name}/clients")
+        res_clients = (res['clients'] && res['clients']['items']) || []
         res_clients.map { |res_client| client.create(GoodData::Client, res_client) }
       else
-        find_result = res_clients.find { |c| c['client']['id'] == id }
-        fail "Client with id #{id} was not found" unless find_result
-        client.create(GoodData::Client, find_result)
+        res = client.get("/gdc/domains/#{name}/clients/#{id}")
+        error = GoodData::Helpers.interpolate_error_message(res)
+        raise error if error
+        client.create(GoodData::Client, res)
       end
     end
 

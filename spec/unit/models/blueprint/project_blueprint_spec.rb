@@ -376,7 +376,11 @@ describe GoodData::Model::ProjectBlueprint do
       end
       expect do
         a.merge(b)
-      end.to raise_exception 'Unable to merge date dimensions created_on with defintion {:type=>:date_dimension, :urn=>nil, :id=>"created_on", :title=>"title B"} with {:type=>:date_dimension, :urn=>nil, :id=>"created_on", :title=>"title A"}'
+      end.to raise_exception "Unable to merge date dimensions created_on " \
+                             'with defintion {:type=>:date_dimension, ' \
+                             ':urn=>nil, :id=>"created_on", :title=>"title ' \
+                             'B"} with {:type=>:date_dimension, :urn=>nil, ' \
+                             ':id=>"created_on", :title=>"title A"}'
     end
   end
 

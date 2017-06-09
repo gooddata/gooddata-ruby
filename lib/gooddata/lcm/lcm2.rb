@@ -85,11 +85,12 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
-        CollectMeta,
-        CollectTaggedObjects,
         CollectComputedAttributeMetrics,
         ImportObjectCollections,
         SynchronizeComputedAttributes,
+        CollectMeta,
+        CollectTaggedObjects,
+        ImportObjectCollections,
         SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
@@ -121,7 +122,7 @@ module GoodData
         CollectComputedAttributeMetrics,
         ImportObjectCollections,
         SynchronizeComputedAttributes, # need to sync CA here to maintain the drill path after that
-        # SynchronizeLabelTypes,
+        SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         ApplyCustomMaql,
         SynchronizeColorPalette,
@@ -216,7 +217,7 @@ module GoodData
 
         table = Terminal::Table.new :title => title, :headings => headings do |t|
           rows.each_with_index do |row, index|
-            t << row
+            t << (row || [])
             t.add_separator if index < rows.length - 1
           end
         end

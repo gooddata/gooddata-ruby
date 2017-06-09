@@ -133,6 +133,12 @@ describe "User filters implementation", :constraint => 'slow' do
     expect(@project.data_permissions.count).to eq 0
   end
 
+  it 'should drop the filter when none of filter values is found' do
+    filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value']]
+    @project.add_data_permissions(filters, ignore_missing_values: true)
+    expect(@project.data_permissions.count).to eq 0
+  end
+
   it "should add a filter with nonexistent values when asked" do
     filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value', 'jirka@gooddata.com']]
     @project.add_data_permissions(filters, ignore_missing_values: true)

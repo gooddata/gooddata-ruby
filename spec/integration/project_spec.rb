@@ -155,6 +155,13 @@ describe GoodData::Project, :constraint => 'slow' do
       expect(@project.members?(users).all?).to be_truthy
       expect(@project.get_user(ConnectionHelper::DEFAULT_USERNAME).role.title).to eq 'Admin'
     end
+
+    it 'should downcase login' do
+      users = [ProjectHelper.create_random_user(@client, login: "#{rand(1e7)}+TMA-445+RubyDev+Admin@gooddata.com")]
+      @domain.create_users(users)
+      @project.import_users(users, domain: @domain, whitelists: ['rubydev+admin@gooddata.com'])
+      expect(@project.members?(users.map(&:to_hash).map { |u| u[:login].downcase! })).to be_truthy
+    end
   end
 
   describe '#set_user_roles' do

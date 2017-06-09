@@ -25,9 +25,15 @@ module GoodData
         logger = params['GDC_LOGGER']
         GoodData.logger = logger
 
+        # Set parallelism
+        max_concurrency = params['max_concurrency'] || params['MAX_CONCURRENCY']
+        if max_concurrency && max_concurrency.to_i > 0
+          $pmap_default_thread_count = max_concurrency.to_i # rubocop:disable GlobalVars
+        end
+
         # Connect Client
-        protocol = params['CLIENT_GDC_PROTOCOL'] || DEFAULT_PROTOCOL
-        hostname = params['CLIENT_GDC_HOSTNAME'] || DEFAULT_HOSTNAME
+        protocol = params['CLIENT_GDC_PROTOCOL'] || params['GDC_PROTOCOL'] || DEFAULT_PROTOCOL
+        hostname = params['CLIENT_GDC_HOSTNAME'] || params['GDC_HOSTNAME'] || DEFAULT_HOSTNAME
         server = "#{protocol}://#{hostname}"
         client = GoodDataMiddleware.connect(
           server,

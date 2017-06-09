@@ -140,4 +140,23 @@ describe GoodData::Domain do
       expect(@domain.find_user_by_login(user.login).sso_provider).to eq old_sso_provider
     end
   end
+
+  describe '#clients' do
+    subject { GoodData::Domain.new('my_domain') }
+    let(:client) { double('client') }
+    let(:clients_response) { { 'client' => { 'id' => '123' } } }
+
+    before do
+      allow(client).to receive(:get).and_return(clients_response)
+      allow(subject).to receive(:client).and_return(client)
+    end
+
+    it 'accepts an integer as the id parameter' do
+      expect(client).to receive(:create).with(
+        GoodData::Client,
+        clients_response
+      )
+      subject.clients(123)
+    end
+  end
 end
