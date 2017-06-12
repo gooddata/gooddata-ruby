@@ -125,7 +125,6 @@ module GoodData
         SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         ApplyCustomMaql,
-        SynchronizeColorPalette,
         SynchronizeClients,
         SynchronizeETLsInSegment
       ]
