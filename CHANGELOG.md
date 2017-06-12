@@ -6,6 +6,7 @@
 - Support segment-specific production tags (TMA-309)
 - Rewrite deprecated schedule parameter "GRAPH" (TMA-453)
 - Add parameter HTTP_LOGGING to LoggerMiddleware
+- Resolve also hidden reference parameters (TMA-411)
 - Support integer type id in Domain#clients (TMA-450)
 
 ## 0.6.50

@@ -15,8 +15,15 @@ module GoodData
       def call(params)
         if params.key?('ads_client') && (RUBY_PLATFORM == 'java')
           GoodData.logger.info "Setting up ADS connection to #{params['ads_client']['ads_id'] || params['ads_client']['jdbc_url']}"
-          raise "ADS middleware needs username either as part of ads_client spec or as a global 'GDC_USERNAME' parameter" unless params['ads_client']['username'] || params['GDC_USERNAME']
-          raise "ADS middleware needs password either as part of ads_client spec or as a global 'GDC_PASSWORD' parameter" unless params['ads_client']['password'] || params['GDC_PASSWORD']
+          unless params['ads_client']['username'] || params['GDC_USERNAME']
+            raise "ADS middleware needs username either as part of " \
+                  "ads_client spec or as a global 'GDC_USERNAME' parameter"
+          end
+
+          unless params['ads_client']['password'] || params['GDC_PASSWORD']
+            raise "ADS middleware needs password either as part of " \
+                  "ads_client spec or as a global 'GDC_PASSWORD' parameter"
+          end
 
           ads = GoodData::Datawarehouse.new(
             params['ads_client']['username'] || params['GDC_USERNAME'],

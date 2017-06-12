@@ -95,7 +95,9 @@ module GoodData
     end
     alias_method :primary_label, :primary_display_form
 
-    # Creates the basic count metric with the attribute used. If you need to compute the attribute on a different dataset you can specify that in params. The metric created is not saved.
+    # Creates the basic count metric with the attribute used. If you need to
+    # compute the attribute on a different dataset you can specify that in
+    # params. The metric created is not saved.
     # @param [Hash] options the options to pass to the value list
     # @option options [Symbol] :type type of aggregation function.
     # @option options [Symbol] :attribute Use this attribute if you need to

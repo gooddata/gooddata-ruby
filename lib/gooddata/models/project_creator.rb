@@ -142,10 +142,19 @@ module GoodData
           end
 
           stuff = stuff.map do |chunk|
-            { cascade_drops: chunk['updateScript']['cascadeDrops'], preserve_data: chunk['updateScript']['preserveData'], maql: chunk['updateScript']['maqlDdlChunks'], orig: chunk }
+            { cascade_drops: chunk['updateScript']['cascadeDrops'],
+              preserve_data: chunk['updateScript']['preserveData'],
+              maql: chunk['updateScript']['maqlDdlChunks'],
+              orig: chunk }
           end
 
-          results_from_api = GoodData::Helpers.join(rules, stuff, [:cascade_drops, :preserve_data], [:cascade_drops, :preserve_data], inner: true).sort_by { |l| l[:priority] } || []
+          results_from_api = GoodData::Helpers.join(
+            rules,
+            stuff,
+            [:cascade_drops, :preserve_data],
+            [:cascade_drops, :preserve_data],
+            inner: true
+          ).sort_by { |l| l[:priority] } || []
 
           if preference.empty?
             [results_from_api.first[:orig]]

@@ -130,7 +130,11 @@ module GoodData
           next true if domain_user
           false
         end
-        fail "#{missing_users.count} users are not part of the project and variable cannot be resolved since :users_must_exist is set to true (#{missing_users.join(', ')})" unless missing_users.empty?
+        unless missing_users.empty?
+          fail "#{missing_users.count} users are not part of the project and " \
+               "variable cannot be resolved since :users_must_exist is set " \
+               "to true (#{missing_users.join(', ')})"
+        end
       end
     end
 

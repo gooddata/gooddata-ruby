@@ -125,7 +125,6 @@ module GoodData
         SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         ApplyCustomMaql,
-        SynchronizeColorPalette,
         SynchronizeClients,
         SynchronizeETLsInSegment
       ]
@@ -214,6 +213,7 @@ module GoodData
         end
 
         rows ||= []
+        rows.compact!
 
         table = Terminal::Table.new :title => title, :headings => headings do |t|
           rows.each_with_index do |row, index|

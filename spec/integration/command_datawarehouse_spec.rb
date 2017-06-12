@@ -26,7 +26,13 @@ describe GoodData::Command::DataWarehouse do
     dwh = nil
 
     begin
-      dwh = GoodData::Command::DataWarehouse.create(title: title, summary: summary, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, client: @client)
+      dwh = GoodData::Command::DataWarehouse.create(
+        title: title,
+        summary: summary,
+        token: ConnectionHelper::GD_PROJECT_TOKEN,
+        environment: ProjectHelper::ENVIRONMENT,
+        client: @client
+      )
 
       expect(dwh.title).to eq(title)
       expect(dwh.summary).to eq(summary)

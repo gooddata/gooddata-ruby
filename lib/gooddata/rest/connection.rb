@@ -19,7 +19,11 @@ module RestClient
   module AbstractResponse
     alias_method :old_follow_redirection, :follow_redirection
     def follow_redirection(request = nil, result = nil, &block)
-      fail 'Using monkey patched version of RestClient::AbstractResponse#follow_redirection which is guaranteed to be compatible only with RestClient 1.8.0' if RestClient::VERSION != '1.8.0'
+      if RestClient::VERSION != '1.8.0'
+        fail 'Using monkey patched version of RestClient::AbstractResponse#' \
+             'follow_redirection which is guaranteed to be compatible only ' \
+             'with RestClient 1.8.0'
+      end
 
       new_args = @args.dup
 
