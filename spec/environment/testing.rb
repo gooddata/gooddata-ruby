@@ -7,7 +7,10 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      set_const :GD_PROJECT_TOKEN, GoodData::Helpers.decrypt("DIRchLbHH1fovLSVEfo3f5aQwHHQ432+PxF3uR5IuNn+iYWz+HZrLtaZ3LVE\n0ZNc\n", ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
+      set_const :GD_PROJECT_TOKEN, GoodData::Helpers.decrypt(
+        "DIRchLbHH1fovLSVEfo3f5aQwHHQ432+PxF3uR5IuNn+iYWz+HZrLtaZ3LVE\n0ZNc\n",
+        ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
+      )
       set_const :DEFAULT_DOMAIN, 'staging2-lcm-prod'
       set_const :DEFAULT_SERVER, 'https://staging2-lcm-prod.intgdc.com'
       set_const :DEFAULT_USER_URL, '/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa'

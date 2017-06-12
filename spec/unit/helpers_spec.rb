@@ -223,7 +223,14 @@ describe GoodData::Helpers do
         'number_param' => 5,
         'ads_password' => 'ads_123',
         'my_password' => 'login_123',
-        'gd_encoded_params' => { "login_username" => "login_user", "login_password" => "${my_password}", "ads_client" => { "username" => "ads_user", "password" => "${ads_password}" } }
+        'gd_encoded_params' => {
+          "login_username" => "login_user",
+          "login_password" => "${my_password}",
+          "ads_client" => {
+            "username" => "ads_user",
+            "password" => "${ads_password}"
+          }
+        }
       }
       expected_result = {
         'param' => 'value',

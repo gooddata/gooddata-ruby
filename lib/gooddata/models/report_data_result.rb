@@ -180,7 +180,9 @@ module GoodData
 
     # Allows you to test if a report contains a row.
     #
-    # @param [Array<String | Number>] row Row that you want to test. It is looking for the whole row. If the headers are getting in the way use #without_left_headers or #without_top_headers
+    # @param [Array<String | Number>] row Row that you want to test.
+    # It is looking for the whole row. If the headers are getting in the way
+    # use #without_left_headers or #without_top_headers
     # @return [Array] Returns true if data are inside a report
     def include_row?(row)
       @data.include?(row)
@@ -188,7 +190,9 @@ module GoodData
 
     # Allows you to test if a report contains a column.
     #
-    # @param [Array<String | Number>] row Row that you want to test. It is looking for the whole row. If the headers are getting in the way use #without_left_headers or #without_top_headers
+    # @param [Array<String | Number>] row Row that you want to test.
+    # It is looking for the whole row. If the headers are getting in the way
+    # use #without_left_headers or #without_top_headers
     # @return [Array] Returns true if data are inside a report
     def include_column?(col)
       transpose.include_row?(col)
