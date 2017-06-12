@@ -67,6 +67,7 @@ module GoodData
                 # s.update_params('SEGMENT_ID' => segment.id)
                 schedule.update_params(params.additional_params || {})
                 schedule.update_hidden_params(params.additional_hidden_params || {})
+                schedule.disable
                 schedule.save
 
                 {
