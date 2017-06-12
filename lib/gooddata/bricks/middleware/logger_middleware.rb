@@ -22,6 +22,8 @@ module GoodData
           logger.info('Pipeline starts')
         end
         params['GDC_LOGGER'] = logger
+        GoodData.logging_http_on if params['HTTP_LOGGING'] && params['HTTP_LOGGING'].to_b
+
         returning(@app.call(params)) do |_result|
           logger.info('Pipeline ending')
         end
