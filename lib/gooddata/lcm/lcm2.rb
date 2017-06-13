@@ -272,6 +272,11 @@ module GoodData
                         true
                       end
 
+        skip_actions = (params.skip_actions || [])
+        actions = actions.reject do |action|
+          skip_actions.include?(action.to_s)
+        end
+
         # Run actions
         errors = []
         results = []
