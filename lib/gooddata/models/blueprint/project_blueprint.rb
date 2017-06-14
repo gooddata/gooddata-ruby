@@ -51,9 +51,12 @@ module GoodData
       #
       # @param project [Hash | GoodData::Model::ProjectBlueprint] Project blueprint
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Hash] new project with removed dataset
-      def self.remove_dataset(project, dataset_id)
-        dataset = dataset_id.is_a?(String) ? find_dataset(project, dataset_id) : dataset_name
+      def self.remove_dataset(project, dataset_id, options = {})
+        dataset = dataset_id.is_a?(String) ? find_dataset(project, dataset_id, options) : dataset_name
         index = project[:datasets].index(dataset)
         dupped_project = GoodData::Helpers.deep_dup(project)
         dupped_project[:datasets].delete_at(index)
@@ -66,10 +69,13 @@ module GoodData
       #
       # @param project [Hash | GoodData::Model::ProjectBlueprint] Project blueprint
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Hash] project with removed dataset
-      def self.remove_dataset!(project, dataset_id)
+      def self.remove_dataset!(project, dataset_id, options = {})
         project = project.to_hash
-        dataset = dataset_id.is_a?(String) ? find_dataset(project, dataset_id) : dataset_id
+        dataset = dataset_id.is_a?(String) ? find_dataset(project, dataset_id, options) : dataset_id
         index = project[:datasets].index(dataset)
         project[:datasets].delete_at(index)
         project
@@ -80,6 +86,8 @@ module GoodData
       #
       # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
       # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Array<Hash>]
       def self.datasets(project_blueprint, options = {})
         project_blueprint = project_blueprint.to_hash
@@ -110,6 +118,9 @@ module GoodData
       #
       # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
       # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Boolean]
       def self.dataset?(project, name, options = {})
         find_dataset(project, name, options)
@@ -123,6 +134,8 @@ module GoodData
       # @param project [GoodData::Model::ProjectBlueprint | Hash] Project blueprint
       # @param obj [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
       # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [GoodData::Model::DatasetBlueprint]
       def self.find_dataset(project_blueprint, obj, options = {})
         return obj.to_hash if DatasetBlueprint.dataset_blueprint?(obj)
@@ -189,6 +202,8 @@ module GoodData
       # date dimensions
       #
       # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Array<GoodData::Model::DatasetBlueprint>]
       def datasets(id = :all, options = {})
         id = id.respond_to?(:id) ? id.id : id
@@ -335,6 +350,9 @@ module GoodData
       # Returns true if a dataset contains a particular dataset false otherwise
       #
       # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
+      # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Boolean]
       def dataset?(name, options = {})
         ProjectBlueprint.dataset?(to_hash, name, options)
@@ -377,6 +395,8 @@ module GoodData
       #
       # @param name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset
       # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [GoodData::Model::DatasetBlueprint]
       def find_dataset(name, options = {})
         ds = datasets(name, options)
@@ -514,9 +534,12 @@ module GoodData
       # or a DatasetBlueprint or a Hash representation.
       #
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Hash] project with removed dataset
-      def remove_dataset(dataset_name)
-        ProjectBlueprint.remove_dataset(to_hash, dataset_name)
+      def remove_dataset(dataset_name, options = {})
+        ProjectBlueprint.remove_dataset(to_hash, dataset_name, options)
         self
       end
 
@@ -524,9 +547,12 @@ module GoodData
       # or a DatasetBlueprint or a Hash representation.
       #
       # @param dataset_name [GoodData::Model::DatasetBlueprint | String | Hash] Dataset to be removed
+      # @param options [Hash] options
+      # @option options [Boolean] :include_date_dimensions Specifies whether to include date dimensions
+      # @option options [Boolean] :dd Specifies whether to include date dimensions
       # @return [Hash] project with removed dataset
-      def remove_dataset!(dataset_id)
-        ProjectBlueprint.remove_dataset!(to_hash, dataset_id)
+      def remove_dataset!(dataset_id, options = {})
+        ProjectBlueprint.remove_dataset!(to_hash, dataset_id, options)
         self
       end
 
@@ -644,8 +670,8 @@ module GoodData
         end
         a_blueprint.date_dimensions.each do |dd|
           if temp_blueprint.dataset?(dd.id, dd: true)
-            local_dim = temp_blueprint.find_dataset(dd.id, dd: true)
-            fail "Unable to merge date dimensions #{dd.id} with defintion #{dd.data} with #{local_dim.data}" unless local_dim.data == dd.data
+            local_dim = temp_blueprint.data[:date_dimensions].find { |d| d[:id] == dd.id }
+            local_dim[:urn] = dd.urn
           else
             temp_blueprint.add_date_dimension!(dd.dup)
           end
