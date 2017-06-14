@@ -32,6 +32,7 @@ module GoodData
     # @return [GoodData::Project | GoodData::Profile] Related object
     def related
       uri = related_uri
+      return unless uri
       level == :project ? client.projects(uri) : client.create(GoodData::Profile, client.get(uri))
     end
 
