@@ -1938,14 +1938,14 @@ module GoodData
       server_side_encryption = options['email_server_side_encryption'] || false
       args['s3_server_side_encryption'] = :aes256 if server_side_encryption
 
-      s3 = AWS::S3.new(args)
-      bucket = s3.buckets[bucket]
+      s3 = Aws::S3::Resource.new(args)
+      bucket = s3.bucket(bucket)
       process_email_template(bucket, path)
     end
 
     def process_email_template(bucket, path)
       type = path.split('/').last.include?('.html') ? 'html' : 'txt'
-      body = bucket.objects[path].read
+      body = bucket.object(path).read
       body.prepend("MIME-Version: 1.0\nContent-type: text/html\n") if type == 'html'
       body
     end

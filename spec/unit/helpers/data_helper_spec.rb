@@ -9,14 +9,12 @@ require 'gooddata/helpers/data_helper'
 describe GoodData::Helpers::DataSource do
   before :each do
     @s3_client = double('s3_client')
-    @buckets = double('buckets')
     @bucket = double('bucket')
     @objects = double('objects')
 
-    allow(@s3_client).to receive(:buckets) { @buckets }
-    allow(@buckets).to receive(:[]) { @bucket }
-    allow(@bucket).to receive(:objects) { @objects }
-    allow(@objects).to receive(:[]) { StringIO.new('aaa') }
+    allow(@s3_client).to receive(:bucket) { @bucket }
+    allow(@bucket).to receive(:object) { @objects }
+    allow(@objects).to receive(:get) { StringIO.new('aaa') }
 
     @ds = GoodData::Helpers::DataSource.new(type: :s3, bucket: 'some_bucket', key: 'some_key')
   end
