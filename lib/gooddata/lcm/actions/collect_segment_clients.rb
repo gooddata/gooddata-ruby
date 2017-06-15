@@ -53,6 +53,11 @@ module GoodData
 
           results = []
           synchronize_clients = segments.map do |segment|
+            segment_clients = segment.clients
+            missing_project_clients = segment_clients.reject(&:project?).map(&:client_id)
+
+            raise "Client(s) missing workspace: #{missing_project_clients.join(', ')}. Please make sure all clients have workspace." unless missing_project_clients.empty?
+
             replacements = {
               table_name: params.release_table_name || DEFAULT_TABLE_NAME,
               segment_id: segment.segment_id
@@ -71,7 +76,7 @@ module GoodData
             sync_info = {
               segment_id: segment.segment_id,
               from: master_pid,
-              to: segment.clients.map do |segment_client|
+              to: segment_clients.map do |segment_client|
                 client_project = segment_client.project
                 to_pid = client_project.pid
                 results << {
