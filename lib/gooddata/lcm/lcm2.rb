@@ -293,6 +293,9 @@ module GoodData
             break if fail_early
           end
 
+          # in case fail_early = false, we need to execute another action
+          next unless out
+
           # Handle output results and params
           res = out.is_a?(Array) ? out : out[:results]
           out_params = out.is_a?(Hash) ? out[:params] || {} : {}
