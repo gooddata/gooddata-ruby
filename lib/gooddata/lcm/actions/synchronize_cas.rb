@@ -21,25 +21,29 @@ module GoodData
 
       class << self
         def call(params)
-          BaseAction.check_params(PARAMS, params)
           results = []
-          development_client = params.development_client
           client = params.gdc_gd_client
 
-          params.synchronize.peach do |info|
+          params.synchronize.each do |info|
             from = info.from
             to_projects = info.to
 
-            from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
-            params.gdc_logger.info "Synchronize Computed Attributes, project: '#{from_project.title}', PID: #{from_project.pid}"
+            params.gdc_logger.info "Synchronize Computed Attributes from project pid: #{from}"
 
-            blueprint = from_project.blueprint
             to_projects.peach do |entry|
-              pid = entry[:pid]
-              to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+              ca_scripts = entry[:ca_scripts]
+              next unless ca_scripts
 
-              params.gdc_logger.info "Synchronizing Computed Attributes from project: '#{to_project.title}', PID: #{pid}"
-              to_project.update_from_blueprint(blueprint)
+              pid = entry[:pid]
+              ca_chunks = ca_scripts['maqlDdlChunks']
+              to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+              params.gdc_logger.info "Synchronizing Computed Attributes to project: '#{to_project.title}', PID: #{pid}"
+
+              begin
+                ca_chunks.each { |chunk| to_project.execute_maql(chunk) }
+              rescue => e
+                raise "Error occured when executing MAQL, project: \"#{to_project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
+              end
 
               results << {
                 from: from,

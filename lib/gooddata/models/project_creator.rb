@@ -14,7 +14,7 @@ module GoodData
     class ProjectCreator
       class << self
         def migrate(opts = {})
-          opts = { client: GoodData.connection }.merge(opts)
+          opts = { client: GoodData.connection, execute_ca_scripts: true }.merge(opts)
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -25,15 +25,13 @@ module GoodData
 
           project = opts[:project] || client.create_project(opts.merge(:title => opts[:title] || spec[:title], :client => client, :environment => opts[:environment]))
 
-          begin
-            migrate_datasets(spec, opts.merge(project: project, client: client))
-            load(p, spec)
-            migrate_metrics(p, spec[:metrics] || [])
-            migrate_reports(p, spec[:reports] || [])
-            migrate_dashboards(p, spec[:dashboards] || [])
-            execute_tests(p, spec[:assert_tests] || [])
-            project
-          end
+          maqls = migrate_datasets(spec, opts.merge(project: project, client: client))
+          load(p, spec)
+          migrate_metrics(p, spec[:metrics] || [])
+          migrate_reports(p, spec[:reports] || [])
+          migrate_dashboards(p, spec[:dashboards] || [])
+          execute_tests(p, spec[:assert_tests] || [])
+          opts[:execute_ca_scripts] ? project : maqls.find { |maql| maql.key?('maqlDdlChunks') }
         end
 
         def migrate_datasets(spec, opts = {})
@@ -71,7 +69,7 @@ module GoodData
               end
             end
 
-            if ca_chunks
+            if ca_chunks && opts[:execute_ca_scripts]
               begin
                 ca_chunks.each { |chunk| project.execute_maql(chunk) }
               rescue => e

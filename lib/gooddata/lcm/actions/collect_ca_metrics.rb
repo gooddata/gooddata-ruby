@@ -18,7 +18,6 @@ module GoodData
 
       class << self
         def call(params)
-          BaseAction.check_params(PARAMS, params)
           results = []
           development_client = params.development_client
 

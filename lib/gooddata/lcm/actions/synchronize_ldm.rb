@@ -32,31 +32,40 @@ module GoodData
           client = params.gdc_gd_client
           development_client = params.development_client
 
-          params.synchronize.peach do |info|
+          synchronize = params.synchronize.map do |info|
             from_project = info.from
             to_projects = info.to
 
             from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
             params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
 
-            blueprint = from.blueprint(include_ca: false)
-            to_projects.peach do |entry|
+            blueprint = from.blueprint
+            info[:to] = to_projects.pmap do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
-              to_project.update_from_blueprint(blueprint, update_preference: params.update_preference)
+              ca_scripts = to_project.update_from_blueprint(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
+
+              entry[:ca_scripts] = ca_scripts
 
               results << {
                 from: from_project,
                 to: pid,
                 status: 'ok'
               }
+              entry
             end
+
+            info
           end
 
-          # Return results
-          results
+          {
+            results: results,
+            params: {
+              synchronize: synchronize
+            }
+          }
         end
       end
     end
