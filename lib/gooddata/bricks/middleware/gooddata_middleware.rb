@@ -97,11 +97,14 @@ module GoodData
           if username.nil? || password.nil?
             puts "Connecting with SST to server #{server}"
             raise 'SST (SuperSecureToken) not present in params' if sst_token.nil?
-            GoodData.connect(sst_token: sst_token, server: server, verify_ssl: verify_ssl)
+            conn = GoodData.connect(sst_token: sst_token, server: server, verify_ssl: verify_ssl)
           else
             puts "Connecting as #{username} to server #{server}"
-            GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
+            conn = GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
           end
+          conn.stats_on
+
+          conn
         end
       end
     end
