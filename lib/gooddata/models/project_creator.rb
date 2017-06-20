@@ -39,13 +39,11 @@ module GoodData
           dry_run = opts[:dry_run]
           replacements = opts['maql_replacements'] || opts[:maql_replacements] || {}
 
-          client, project = GoodData.get_client_and_project(opts)
+          _, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
 
-          uri = "/gdc/projects/#{project.pid}/model/diff?includeGrain=true"
-          result = client.post(uri, bp.to_wire)
-          response = client.poll_on_code(result['asyncTask']['link']['poll'])
+          response = project.maql_diff(blueprint: bp, params: [:includeGrain])
 
           GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
           chunks = response['projectModelDiff']['updateScripts']

@@ -1902,6 +1902,22 @@ module GoodData
       GoodData::StyleSetting.reset(client: client, project: self)
     end
 
+    # get maql diff from another project or blueprint to current project
+    #
+    # @param options [Hash] options
+    # @option options [GoodData::Project] :project source project
+    # @option options [GoodData::Model::ProjectBlueprint] :blueprint blueprint of source project
+    # @option options [Array] :params additional parameters for diff api
+    # @return [Hash] project model diff
+    def maql_diff(options = {})
+      fail "No :project or :blueprint specified" unless options[:blueprint] || options[:project]
+      bp = options[:blueprint] || options[:project].blueprint
+      uri = "/gdc/projects/#{pid}/model/diff"
+      params = Hash[(options[:params] || []).map { |i| [i, true] }]
+      result = client.post(uri, bp.to_wire, params: params)
+      client.poll_on_code(result['asyncTask']['link']['poll'])
+    end
+
     private
 
     def send_mail_to_new_users(users, email_options)
