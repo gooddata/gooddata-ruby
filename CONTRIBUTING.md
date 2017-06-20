@@ -20,5 +20,6 @@
    only one working on your feature branch, otherwise, merge `master`).
 1. If the pull request adds any new libraries, they should be in line with our
    [license](/LICENSE).
+1. Use `GoodData.logger` for logging instead of `puts`.
 
 _Based on [GitLab's contribution guide](https://github.com/gitlabhq/gitlabhq/blob/master/CONTRIBUTING.md)._
