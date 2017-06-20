@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require_relative '../helpers/helpers'
 
 module GoodData
   module LCM2
@@ -92,9 +93,11 @@ module GoodData
                   GOODOT_CUSTOM_PROJECT_ID: entry[:client_id] # TMA-210
                 )
                 additional_hidden_params = params.additional_hidden_params || {}
-                sanitize_hidden_params(schedule,
-                                       additional_hidden_params,
-                                       logger)
+                Helpers.sanitize_hidden_params_for_transfer(
+                  schedule,
+                  additional_hidden_params,
+                  logger
+                )
                 schedule.update_params(additional_params)
                 schedule.update_hidden_params(additional_hidden_params)
                 schedule.enable
@@ -104,20 +107,6 @@ module GoodData
           end
 
           results.flatten
-        end
-
-        private
-
-        def sanitize_hidden_params(schedule, additional_hidden_params, logger)
-          hidden_params = schedule.hidden_params
-          complement = hidden_params.keys - additional_hidden_params.keys
-          if complement.any?
-            logger.warn("Hidden parameter(s) #{complement.join(', ')} are " \
-                        'present in the schedule but not in ' \
-                        'additional_hidden_params. They will not be ' \
-                        'transferred.')
-            schedule.hidden_params = hidden_params.except(*complement)
-          end
         end
       end
     end
