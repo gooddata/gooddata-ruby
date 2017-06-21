@@ -81,11 +81,25 @@ module GoodData
             end
           end
 
+          full_process_sync = GoodData::Helpers.to_boolean(params.full_process_sync)
+
           params.synchronize.peach do |info|
+            if full_process_sync
+              from_project = client.projects(info.from) || fail("Invalid 'from' project specified - '#{info.from}'")
+              from_project_process_names = from_project.processes.map(&:name)
+            end
+
             to_projects = info.to
             to_projects.peach do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+
+              if full_process_sync
+                to_project.processes.each do |process|
+                  process.delete unless from_project_process_names.include?(process.name)
+                end
+              end
+
               to_project.schedules.each do |schedule|
                 additional_params = (params.additional_params || {})
                 additional_params.merge!(
