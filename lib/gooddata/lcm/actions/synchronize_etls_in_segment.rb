@@ -79,13 +79,42 @@ module GoodData
             end
           end
 
+          delete_extra_process_schedule = GoodData::Helpers.to_boolean(params.delete_extra_process_schedule)
+
           params.synchronize.peach do |info|
+            if delete_extra_process_schedule
+              from_project = client.projects(info.from) || fail("Invalid 'from' project specified - '#{info.from}'")
+              from_project_processes = from_project.processes
+              from_project_process_id_names = Hash[from_project_processes.map { |process| [process.process_id, process.name] }]
+              from_project_process_names = from_project_processes.map(&:name)
+              from_project_schedule_names = from_project.schedules.map { |schedule| [schedule.name, from_project_process_id_names[schedule.process_id]] }
+            end
+
             to_projects = info.to
             to_projects.peach do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+
+              if delete_extra_process_schedule
+                to_project_process_id_names = {}
+                to_project.processes.each do |process|
+                  if from_project_process_names.include?(process.name)
+                    to_project_process_id_names[process.process_id] = process.name
+                  else
+                    process.delete
+                  end
+                end
+              end
+
               to_project.schedules.each do |schedule|
-                additional_params = (params.additional_params || {})
+                if delete_extra_process_schedule
+                  unless from_project_schedule_names.include?([schedule.name, to_project_process_id_names[schedule.process_id]])
+                    schedule.delete
+                    next
+                  end
+                end
+
+                additional_params = params.additional_params || {}
                 additional_params.merge!(
                   CLIENT_ID: entry[:client_id], # needed for ADD and CloudConnect ETL
                   GOODOT_CUSTOM_PROJECT_ID: entry[:client_id] # TMA-210
