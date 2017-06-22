@@ -40,7 +40,6 @@ module GoodData
       class << self
         def call(params)
           client = params.gdc_gd_client
-          logger = params.gdc_logger
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
           synchronize_segments = params.synchronize.group_by do |info|
@@ -60,7 +59,7 @@ module GoodData
             res = GoodData::Helpers.symbolize_keys(res)
 
             if res[:syncedResult][:errors]
-              logger.error "Error: #{res[:syncedResult][:errors].pretty_inspect}"
+              params.gdc_logger.error "Error: #{res[:syncedResult][:errors].pretty_inspect}"
               fail "Failed to sync processes/schedules for segment #{segment_id}"
             end
 
@@ -91,12 +90,8 @@ module GoodData
                   CLIENT_ID: entry[:client_id], # needed for ADD and CloudConnect ETL
                   GOODOT_CUSTOM_PROJECT_ID: entry[:client_id] # TMA-210
                 )
-                additional_hidden_params = params.additional_hidden_params || {}
-                sanitize_hidden_params(schedule,
-                                       additional_hidden_params,
-                                       logger)
                 schedule.update_params(additional_params)
-                schedule.update_hidden_params(additional_hidden_params)
+                schedule.update_hidden_params(params.additional_hidden_params || {})
                 schedule.enable
                 schedule.save
               end
@@ -104,20 +99,6 @@ module GoodData
           end
 
           results.flatten
-        end
-
-        private
-
-        def sanitize_hidden_params(schedule, additional_hidden_params, logger)
-          hidden_params = schedule.hidden_params
-          complement = hidden_params.keys - additional_hidden_params.keys
-          if complement.any?
-            logger.warn("Hidden parameter(s) #{complement.join(', ')} are " \
-                        'present in the schedule but not in ' \
-                        'additional_hidden_params. They will not be ' \
-                        'transferred.')
-            schedule.hidden_params = hidden_params.except(*complement)
-          end
         end
       end
     end
