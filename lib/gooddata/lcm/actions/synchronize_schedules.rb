@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require_relative '../helpers/helpers'
 
 module GoodData
   module LCM2
@@ -61,12 +62,15 @@ module GoodData
               results += res.map do |item|
                 schedule = item[:schedule]
 
-                # TODO: Review this and remove if not required or duplicate (GOODOT_CUSTOM_PROJECT_ID vs CLIENT_ID)
-                # s.update_params('GOODOT_CUSTOM_PROJECT_ID' => c.id)
-                # s.update_params('CLIENT_ID' => c.id)
-                # s.update_params('SEGMENT_ID' => segment.id)
+                additional_hidden_params = params.additional_hidden_params || {}
+
+                Helpers.sanitize_hidden_params_for_transfer(
+                  schedule,
+                  additional_hidden_params,
+                  params.gdc_logger
+                )
                 schedule.update_params(params.additional_params || {})
-                schedule.update_hidden_params(params.additional_hidden_params || {})
+                schedule.update_hidden_params(additional_hidden_params)
                 schedule.disable
                 schedule.save
 
@@ -82,7 +86,6 @@ module GoodData
             end
           end
 
-          # Return results
           results
         end
       end

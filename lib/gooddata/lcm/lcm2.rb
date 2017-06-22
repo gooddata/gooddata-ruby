@@ -85,12 +85,11 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
+        CollectMeta,
+        CollectTaggedObjects,
         CollectComputedAttributeMetrics,
         ImportObjectCollections,
         SynchronizeComputedAttributes,
-        CollectMeta,
-        CollectTaggedObjects,
-        ImportObjectCollections,
         SynchronizeLabelTypes,
         SynchronizeAttributeDrillpath,
         SynchronizeProcesses,
@@ -119,13 +118,10 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
-        CollectComputedAttributeMetrics,
-        ImportObjectCollections,
-        SynchronizeComputedAttributes, # need to sync CA here to maintain the drill path after that
         SynchronizeLabelTypes,
-        SynchronizeAttributeDrillpath,
         ApplyCustomMaql,
         SynchronizeClients,
+        SynchronizeComputedAttributes,
         SynchronizeETLsInSegment
       ]
     }
@@ -270,6 +266,11 @@ module GoodData
                       else
                         true
                       end
+
+        skip_actions = (params.skip_actions || [])
+        actions = actions.reject do |action|
+          skip_actions.include?(action.to_s)
+        end
 
         # Run actions
         errors = []
