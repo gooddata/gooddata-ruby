@@ -82,6 +82,7 @@ module GoodData
           s.segment = segment.uri
         end
       end
+      alias_method :associate, :create
 
       def update_setting(name, value, opts = {})
         return nil unless value
@@ -199,6 +200,11 @@ module GoodData
     # @return [GoodData::Client] Segment instance
     def delete
       project.delete if project && !project.deleted?
+      dissociate
+    end
+
+    # Deletes a client but maintain their project
+    def dissociate
       client.delete(uri) if uri
     end
 

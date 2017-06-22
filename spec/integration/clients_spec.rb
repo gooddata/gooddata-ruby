@@ -62,6 +62,27 @@ describe GoodData::Client do
     end
   end
 
+  describe '#dissociate' do
+    before(:all) do
+      client_id = SecureRandom.uuid
+      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @segment_client = @segment.create_client(id: "tenant_#{client_id}", project: @client_project)
+    end
+
+    after(:all) do
+      @client_project && @client_project.delete
+    end
+
+    it 'Dissociate particular client and their project is not cleaned up' do
+      expect(@segment.clients.count).to eq 1
+      s = @segment.clients(@segment_client)
+      s.dissociate
+      expect(@segment.clients.count).to eq 0
+      expect(@client_project.reload!.state).to eq :enabled
+      @segment_client = nil
+    end
+  end
+
   describe '#delete' do
     before(:all) do
       client_id = SecureRandom.uuid
