@@ -107,6 +107,7 @@ module GoodData
           d[:type] = :date_dimension
           d[:id] = date_dim['dateDimension']['name']
           d[:title] = date_dim['dateDimension']['title']
+          d[:urn] = date_dim['dateDimension']['urn']
         end
       end
 

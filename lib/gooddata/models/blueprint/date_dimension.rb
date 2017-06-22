@@ -9,6 +9,12 @@ require_relative 'schema_blueprint'
 module GoodData
   module Model
     class DateDimension < GoodData::Model::SchemaBlueprint
+      # Returns urn of the date dataset
+      #
+      # @return [String]
+      def urn
+        data[:urn]
+      end
     end
   end
 end

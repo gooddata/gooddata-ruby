@@ -356,32 +356,6 @@ describe GoodData::Model::ProjectBlueprint do
       expect(b_a.valid?).to eq true
       expect(b_a).to eq a_b
     end
-
-    it "should fail if unable to merge date dimensions (they are different)." do
-      a = GoodData::Model::ProjectBlueprint.build("p") do |p|
-        p.add_date_dimension("created_on", title: 'title A')
-        p.add_dataset('stuff') do |d|
-          d.add_anchor('stuff_id')
-          d.add_label('name', reference: 'stuff_id')
-          d.add_date('created_on')
-        end
-      end
-      b = GoodData::Model::ProjectBlueprint.build("p") do |p|
-        p.add_date_dimension("created_on", title: 'title B')
-        p.add_dataset('stuff') do |d|
-          d.add_attribute('attr_id')
-          d.add_label('attr_name', reference: 'attr_id')
-          d.add_date('created_on')
-        end
-      end
-      expect do
-        a.merge(b)
-      end.to raise_exception "Unable to merge date dimensions created_on " \
-                             'with defintion {:type=>:date_dimension, ' \
-                             ':urn=>nil, :id=>"created_on", :title=>"title ' \
-                             'B"} with {:type=>:date_dimension, :urn=>nil, ' \
-                             ':id=>"created_on", :title=>"title A"}'
-    end
   end
 
   describe '#merge!' do
