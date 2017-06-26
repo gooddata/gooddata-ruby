@@ -174,7 +174,7 @@ module GoodData
         false
       end
     end
-    alias_method :deprecated?, :deprecated
+    alias_method :production?, :production
 
     def production=(flag)
       if flag
@@ -189,6 +189,7 @@ module GoodData
     def restricted
       get_flag('restricted')
     end
+    alias_method :restricted?, :restricted
 
     def restricted=(flag)
       set_flag('restricted', flag)
