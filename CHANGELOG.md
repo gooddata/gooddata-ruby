@@ -8,7 +8,9 @@
 - Add parameter HTTP_LOGGING to LoggerMiddleware
 - Resolve also hidden reference parameters (TMA-411)
 - Support integer type id in Domain#clients (TMA-450)
+- Support urn for date dimension (TMA-221)
 - Implement "skip_actions" for LCM2
+- Support MAQL DIFF API (TMA-219)
 
 ## 0.6.50
 - Add support for Email Notification Rules on Process

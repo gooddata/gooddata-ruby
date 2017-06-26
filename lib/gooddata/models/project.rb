@@ -1902,6 +1902,22 @@ module GoodData
       GoodData::StyleSetting.reset(client: client, project: self)
     end
 
+    # get maql diff from another project or blueprint to current project
+    #
+    # @param options [Hash] options
+    # @option options [GoodData::Project] :project source project
+    # @option options [GoodData::Model::ProjectBlueprint] :blueprint blueprint of source project
+    # @option options [Array] :params additional parameters for diff api
+    # @return [Hash] project model diff
+    def maql_diff(options = {})
+      fail "No :project or :blueprint specified" unless options[:blueprint] || options[:project]
+      bp = options[:blueprint] || options[:project].blueprint
+      uri = "/gdc/projects/#{pid}/model/diff"
+      params = Hash[(options[:params] || []).map { |i| [i, true] }]
+      result = client.post(uri, bp.to_wire, params: params)
+      client.poll_on_code(result['asyncTask']['link']['poll'])
+    end
+
     private
 
     def send_mail_to_new_users(users, email_options)
@@ -1938,14 +1954,14 @@ module GoodData
       server_side_encryption = options['email_server_side_encryption'] || false
       args['s3_server_side_encryption'] = :aes256 if server_side_encryption
 
-      s3 = AWS::S3.new(args)
-      bucket = s3.buckets[bucket]
+      s3 = Aws::S3::Resource.new(args)
+      bucket = s3.bucket(bucket)
       process_email_template(bucket, path)
     end
 
     def process_email_template(bucket, path)
       type = path.split('/').last.include?('.html') ? 'html' : 'txt'
-      body = bucket.objects[path].read
+      body = bucket.object(path).read
       body.prepend("MIME-Version: 1.0\nContent-type: text/html\n") if type == 'html'
       body
     end
