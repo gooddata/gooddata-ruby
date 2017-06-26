@@ -97,7 +97,10 @@ module GoodData
             title: GoodData::Model.title(dataset),
             anchor: anchor_to_wire(project, dataset),
             attributes: attributes_to_wire(project, dataset),
-            facts: DatasetBlueprint.facts(dataset).map { |f| fact_to_wire(dataset, f) },
+            facts: DatasetBlueprint.facts(dataset).map do |f|
+              res = fact_to_wire(dataset, f)
+              res
+            end,
             references: references_to_wire(project, dataset)
           }
         }
@@ -133,6 +136,7 @@ module GoodData
         }
         payload.tap do |p|
           p[:fact][:description] = GoodData::Model.description(fact) if GoodData::Model.description(fact)
+          p[:fact][:restricted] = fact[:restricted] if fact[:restricted]
         end
       end
 

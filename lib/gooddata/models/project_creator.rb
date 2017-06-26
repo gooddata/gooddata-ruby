@@ -44,7 +44,9 @@ module GoodData
           bp = ProjectBlueprint.new(spec)
 
           uri = "/gdc/projects/#{project.pid}/model/diff?includeGrain=true"
-          result = client.post(uri, bp.to_wire)
+          payload = bp.to_wire
+          GoodData.logger.debug(JSON.pretty_generate(payload))
+          result = client.post(uri, payload)
           response = client.poll_on_code(result['asyncTask']['link']['poll'])
 
           GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
@@ -61,7 +63,10 @@ module GoodData
             errors = []
             replaced_maqls.each do |replaced_maql_chunks|
               begin
-                replaced_maql_chunks['updateScript']['maqlDdlChunks'].each { |chunk| project.execute_maql(chunk) }
+                replaced_maql_chunks['updateScript']['maqlDdlChunks'].each do |chunk|
+                  GoodData.logger.debug(chunk)
+                  project.execute_maql(chunk)
+                end
               rescue => e
                 puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
                 errors << e
