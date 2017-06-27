@@ -1,4 +1,4 @@
-  # encoding: UTF-8
+# encoding: UTF-8
 #
 # Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -123,7 +123,7 @@ module GoodData
                 client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
               end
 
-       File.delete(deployed_path) if File.exist?(deployed_path)
+        File.delete(deployed_path) if File.exist?(deployed_path)
 
         process = client.create(Process, res, project: project)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
@@ -216,7 +216,7 @@ module GoodData
         Zip::File.open(zip_filename, Zip::File::CREATE) do |zipfile|
           yield zipfile
         end
-        res = client.upload_to_user_webdav(zip_filename, opts)
+        client.upload_to_user_webdav(zip_filename, opts)
         zip_filename
       end
 
