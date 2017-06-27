@@ -123,7 +123,7 @@ module GoodData
                 client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
               end
 
-       File.delete(deployed_path)
+       File.delete(deployed_path) if File.exist?(deployed_path)
 
         process = client.create(Process, res, project: project)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
