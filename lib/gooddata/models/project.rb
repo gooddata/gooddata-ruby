@@ -1658,22 +1658,24 @@ module GoodData
       @log_formatter.log_updated_users(updated_users_result, diff[:changed], role_list)
       results.concat(updated_users_result)
 
-      # Remove old users
-      to_disable = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
-      GoodData.logger.warn("Disabling #{to_disable.count} users from project (#{pid})")
-      disabled_users_result = disable_users(to_disable, roles: role_list, project_users: whitelisted_users)
-      @log_formatter.log_disabled_users(disabled_users_result)
-      results.concat(disabled_users_result)
+      unless options[:do_not_touch_users_that_are_not_mentioned]
+        # Remove old users
+        to_disable = diff[:removed].reject { |user| user[:status] == 'DISABLED' || user[:status] == :disabled }
+        GoodData.logger.warn("Disabling #{to_disable.count} users from project (#{pid})")
+        disabled_users_result = disable_users(to_disable, roles: role_list, project_users: whitelisted_users)
+        @log_formatter.log_disabled_users(disabled_users_result)
+        results.concat(disabled_users_result)
 
-      # Remove old users completely
-      if options[:remove_users_from_project]
-        to_remove = (to_disable + users(disabled: true).to_a).map(&:to_hash).uniq do |user|
-          user[:uri]
+        # Remove old users completely
+        if options[:remove_users_from_project]
+          to_remove = (to_disable + users(disabled: true).to_a).map(&:to_hash).uniq do |user|
+            user[:uri]
+          end
+          GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
+          removed_users_result = remove_users(to_remove)
+          @log_formatter.log_removed_users(removed_users_result)
+          results.concat(removed_users_result)
         end
-        GoodData.logger.warn("Removing #{to_remove.count} users from project (#{pid})")
-        removed_users_result = remove_users(to_remove)
-        @log_formatter.log_removed_users(removed_users_result)
-        results.concat(removed_users_result)
       end
 
       # reassign to groups
