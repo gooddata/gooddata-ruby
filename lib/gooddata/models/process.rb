@@ -123,6 +123,8 @@ module GoodData
                 client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
               end
 
+        File.delete(deployed_path) if File.exist?(deployed_path)
+
         process = client.create(Process, res, project: project)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
@@ -207,16 +209,15 @@ module GoodData
 
       def with_zip(opts = {})
         client = opts[:client]
-        Tempfile.open('deploy-graph-archive') do |temp|
-          zip_filename = temp.path
-          File.open(zip_filename, 'w') do |zip|
-            Zip::File.open(zip.path, Zip::File::CREATE) do |zipfile|
-              yield zipfile
-            end
-          end
-          client.upload_to_user_webdav(temp.path, opts)
-          temp.path
+        temp = Tempfile.new(['deploy-graph-archive', '.zip'])
+        zip_filename = temp.path
+
+        temp.close!
+        Zip::File.open(zip_filename, Zip::File::CREATE) do |zipfile|
+          yield zipfile
         end
+        client.upload_to_user_webdav(zip_filename, opts)
+        zip_filename
       end
 
       def zip_and_upload(path, files_to_exclude, opts = {})

@@ -12,6 +12,7 @@
 - Implement "skip_actions" for LCM2
 - Support MAQL DIFF API (TMA-219)
 - Support for restricted flag
+- Fix deployment via SDK on Windows
 
 ## 0.6.50
 - Add support for Email Notification Rules on Process
