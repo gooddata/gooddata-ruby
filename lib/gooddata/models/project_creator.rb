@@ -44,9 +44,6 @@ module GoodData
           bp = ProjectBlueprint.new(spec)
 
           uri = "/gdc/projects/#{project.pid}/model/diff?includeGrain=true"
-          payload = bp.to_wire
-          GoodData.logger.debug(JSON.pretty_generate(payload))
-          result = client.post(uri, payload)
           response = project.maql_diff(blueprint: bp, params: [:includeGrain])
 
           GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
