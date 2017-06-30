@@ -24,6 +24,9 @@ module GoodData
 
         description 'Segments to search for segment-specific production tags'
         param :segments, array_of(instance_of(Type::SegmentType)), required: false
+
+        description 'Flag to mark if we need to transfer all objects'
+        param :transfer_all, instance_of(Type::BooleanType), required: false, default: false
       end
 
       class << self
@@ -32,6 +35,7 @@ module GoodData
 
           development_client = params.development_client
           segments_to_tags = Helpers.segment_production_tags(params.segments)
+          transfer_all = GoodData::Helpers.to_boolean(params.transfer_all)
 
           synchronize = params.synchronize.pmap do |info|
             from = info.from
@@ -39,14 +43,15 @@ module GoodData
 
             segment_tags = segments_to_tags[info.segment]
             production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
-            if production_tags.any?
-              objects = GoodData::Dashboard.find_by_tag(
-                production_tags,
+
+            if transfer_all || production_tags.empty?
+              objects = GoodData::Dashboard.all(
                 project: from_project,
                 client: development_client
               )
             else
-              objects = GoodData::Dashboard.all(
+              objects = GoodData::Dashboard.find_by_tag(
+                production_tags,
                 project: from_project,
                 client: development_client
               )

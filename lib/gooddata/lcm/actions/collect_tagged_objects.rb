@@ -24,13 +24,17 @@ module GoodData
 
         description 'Segments to search for segment-specific production tags'
         param :segments, array_of(instance_of(Type::SegmentType)), required: false
+
+        description 'Flag to mark if we need to transfer all objects'
+        param :transfer_all, instance_of(Type::BooleanType), required: false, default: false
       end
 
       class << self
         def call(params)
           results = []
           segments_to_tags = Helpers.segment_production_tags(params.segments)
-          return results unless params.production_tag || segments_to_tags.any?
+          transfer_all = GoodData::Helpers.to_boolean(params.transfer_all)
+          return results unless params.production_tag || segments_to_tags.any? || transfer_all
           development_client = params.development_client
 
           synchronize = params.synchronize.pmap do |info|
@@ -39,7 +43,11 @@ module GoodData
 
             segment_tags = segments_to_tags[info.segment]
             production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
-            objects = from_project.find_by_tag(production_tags)
+            if production_tags.any?
+              objects = from_project.find_by_tag(production_tags)
+            else
+              objects = (from_project.reports.to_a + from_project.metrics.to_a + from_project.variables.to_a).map(&:uri)
+            end
 
             info[:transfer_uris] ||= []
             info[:transfer_uris] += objects
