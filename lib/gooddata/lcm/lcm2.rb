@@ -118,7 +118,6 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
-        SynchronizeLabelTypes,
         ApplyCustomMaql,
         SynchronizeClients,
         SynchronizeComputedAttributes,
