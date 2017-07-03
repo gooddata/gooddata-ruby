@@ -147,11 +147,7 @@ module GoodData
     end
 
     def deprecated
-      if meta['deprecated'] == '1' || get_flag('deprecated')
-        true
-      else
-        false
-      end
+      meta['deprecated'] == '1' || get_flag?('deprecated')
     end
     alias_method :deprecated?, :deprecated
 
@@ -168,7 +164,7 @@ module GoodData
     end
 
     def production
-      meta['isProduction'] == '1' || get_flag('production')
+      meta['isProduction'] == '1' || get_flag?('production')
     end
     alias_method :production?, :production
 
@@ -183,7 +179,7 @@ module GoodData
     end
 
     def restricted
-      get_flag('restricted')
+      get_flag?('restricted')
     end
     alias_method :restricted?, :restricted
 
@@ -309,9 +305,10 @@ module GoodData
       true
     end
 
-    def get_flag(flag)
+    def get_flag?(flag)
       meta['flags'] && meta['flags'].include?(flag)
     end
+    alias_method :has_flag?, :get_flag?
 
     def set_flag(flag, value)
       meta['flags'] = [] unless meta['flags']
