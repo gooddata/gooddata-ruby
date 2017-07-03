@@ -1185,7 +1185,8 @@ module GoodData
         :partialMDImport => {
           :token => token,
           :overwriteNewer => '1',
-          :updateLDMObjects => '0'
+          :updateLDMObjects => '0',
+          :importAttributeProperties => '1'
         }
       }
 
