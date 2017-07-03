@@ -1,5 +1,7 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.53
+
 ## 0.6.52
 - Add support for computed attribute in blueprint
 - Fix bug with transfering schedules without their state
