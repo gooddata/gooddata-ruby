@@ -168,11 +168,7 @@ module GoodData
     end
 
     def production
-      if meta['isProduction'] == '1' || get_flag('production')
-        true
-      else
-        false
-      end
+      meta['isProduction'] == '1' || get_flag('production')
     end
     alias_method :production?, :production
 
