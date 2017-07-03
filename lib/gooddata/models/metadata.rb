@@ -314,13 +314,13 @@ module GoodData
     end
 
     def get_flag(flag)
-      meta['flags'] && meta['flags'][flag]
+      meta['flags'] && meta['flags'].include?(flag)
     end
 
     def set_flag(flag, value)
       meta['flags'] = [] unless meta['flags']
 
-      if value && !meta['flags'].include?(flag)
+      if (value == '1' || value == 1 || value == true) && !meta['flags'].include?(flag)
         meta['flags'].push(flag)
         meta['flags'].sort!
       elsif !value && meta['flags'].include?(flag)
