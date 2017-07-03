@@ -42,8 +42,6 @@ module GoodData
           _, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
-
-          uri = "/gdc/projects/#{project.pid}/model/diff?includeGrain=true"
           response = project.maql_diff(blueprint: bp, params: [:includeGrain])
 
           GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
