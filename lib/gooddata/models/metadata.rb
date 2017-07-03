@@ -313,10 +313,10 @@ module GoodData
     def set_flag(flag, value)
       meta['flags'] = [] unless meta['flags']
 
-      if (value == '1' || value == 1 || value == true) && !meta['flags'].include?(flag)
+      if (value == '1' || value == 1 || value == true) && !has_flag?(flag)
         meta['flags'].push(flag)
         meta['flags'].sort!
-      elsif !value && meta['flags'].include?(flag)
+      elsif !value && has_flag?(flag)
         meta['flags'].delete(flag)
       end
     end
