@@ -97,10 +97,7 @@ module GoodData
             title: GoodData::Model.title(dataset),
             anchor: anchor_to_wire(project, dataset),
             attributes: attributes_to_wire(project, dataset),
-            facts: DatasetBlueprint.facts(dataset).map do |f|
-              res = fact_to_wire(dataset, f)
-              res
-            end,
+            facts: DatasetBlueprint.facts(dataset).map { |f| fact_to_wire(dataset, f) },
             references: references_to_wire(project, dataset)
           }
         }
