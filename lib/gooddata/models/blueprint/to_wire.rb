@@ -133,6 +133,7 @@ module GoodData
         }
         payload.tap do |p|
           p[:fact][:description] = GoodData::Model.description(fact) if GoodData::Model.description(fact)
+          p[:fact][:restricted] = fact[:restricted] if fact[:restricted]
         end
       end
 

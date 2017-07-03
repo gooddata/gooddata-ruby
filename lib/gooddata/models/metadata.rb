@@ -147,11 +147,7 @@ module GoodData
     end
 
     def deprecated
-      if meta['deprecated'] == '1'
-        true
-      else
-        false
-      end
+      meta['deprecated'] == '1' || get_flag?('deprecated')
     end
     alias_method :deprecated?, :deprecated
 
@@ -163,6 +159,32 @@ module GoodData
       else
         fail 'You have to provide flag as either 1 or "1" or 0 or "0" or true/false'
       end
+
+      set_flag('deprecated', flag)
+    end
+
+    def production
+      meta['isProduction'] == '1' || get_flag?('production')
+    end
+    alias_method :production?, :production
+
+    def production=(flag)
+      if flag
+        meta['isProduction'] = '1'
+      else
+        meta['isProduction'] == '0'
+      end
+
+      set_flag('production', flag)
+    end
+
+    def restricted
+      get_flag?('restricted')
+    end
+    alias_method :restricted?, :restricted
+
+    def restricted=(flag)
+      set_flag('restricted', flag)
     end
 
     def project
@@ -281,6 +303,22 @@ module GoodData
 
     def validate
       true
+    end
+
+    def get_flag?(flag)
+      meta['flags'] && meta['flags'].include?(flag)
+    end
+    alias_method :has_flag?, :get_flag?
+
+    def set_flag(flag, value)
+      meta['flags'] = [] unless meta['flags']
+
+      if (value == '1' || value == 1 || value == true) && !has_flag?(flag)
+        meta['flags'].push(flag)
+        meta['flags'].sort!
+      elsif !value && has_flag?(flag)
+        meta['flags'].delete(flag)
+      end
     end
   end
 end

@@ -42,7 +42,6 @@ module GoodData
           _, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
-
           response = project.maql_diff(blueprint: bp, params: [:includeGrain])
 
           GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
@@ -59,7 +58,10 @@ module GoodData
             errors = []
             replaced_maqls.each do |replaced_maql_chunks|
               begin
-                replaced_maql_chunks['updateScript']['maqlDdlChunks'].each { |chunk| project.execute_maql(chunk) }
+                replaced_maql_chunks['updateScript']['maqlDdlChunks'].each do |chunk|
+                  GoodData.logger.debug(chunk)
+                  project.execute_maql(chunk)
+                end
               rescue => e
                 puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
                 errors << e
