@@ -46,7 +46,9 @@ module GoodData
             if production_tags.any?
               objects = from_project.find_by_tag(production_tags)
             else
-              objects = (from_project.reports.to_a + from_project.metrics.to_a + from_project.variables.to_a).map(&:uri)
+              vizs = MdObject.query('visualization', MdObject, client: development_client, project: from_project)
+              viz_widgets = MdObject.query('visualizationWidget', MdObject, client: development_client, project: from_project)
+              objects = (from_project.reports.to_a + from_project.metrics.to_a + from_project.variables.to_a + vizs.to_a + viz_widgets.to_a).map(&:uri)
             end
 
             info[:transfer_uris] ||= []
