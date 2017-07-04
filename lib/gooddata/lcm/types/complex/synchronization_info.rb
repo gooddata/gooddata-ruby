@@ -21,6 +21,9 @@ module GoodData
 
           description 'To which projects'
           param :to, array_of(instance_of(Type::HashType)), required: true
+
+          description 'Uri of the source output stage. It must be in the same domain as the target project.'
+          param :ads_output_stage_uri, instance_of(Type::StringType), required: false
         end
 
         def check(value)
