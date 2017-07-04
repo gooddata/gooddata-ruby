@@ -45,10 +45,12 @@ module GoodData
             production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
 
             if transfer_all || production_tags.empty?
-              objects = GoodData::Dashboard.all(
+              old_dashboards = GoodData::Dashboard.all(
                 project: from_project,
                 client: development_client
               )
+              kpi_dashboards = MdObject.query('analyticalDashboard', MdObject, client: development_client, project: from_project)
+              objects = old_dashboards.to_a + kpi_dashboards.to_a
             else
               objects = GoodData::Dashboard.find_by_tag(
                 production_tags,

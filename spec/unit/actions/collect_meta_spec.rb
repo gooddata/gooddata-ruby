@@ -26,6 +26,7 @@ describe GoodData::LCM2::CollectMeta do
 
     it 'retrieves all dashboards' do
       expect(GoodData::Dashboard).to receive(:all).and_return({})
+      expect(GoodData::MdObject).to receive(:query).and_return({})
       subject.class.call(params)
     end
   end
