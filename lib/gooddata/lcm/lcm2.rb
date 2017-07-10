@@ -313,15 +313,6 @@ module GoodData
         # Fail whole execution if there is any failed action
         fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
 
-        if actions.length > 1
-          puts
-          puts 'SUMMARY'
-          puts
-
-          # Print execution summary/results
-          print_actions_result(actions, results)
-        end
-
         brick_results = {}
         actions.each_with_index do |action, index|
           brick_results[action.short_name] = results[index]
