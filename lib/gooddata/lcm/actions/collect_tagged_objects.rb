@@ -43,12 +43,13 @@ module GoodData
 
             segment_tags = segments_to_tags[info.segment]
             production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
-            if production_tags.any?
-              objects = from_project.find_by_tag(production_tags)
-            else
+            objects = []
+            if transfer_all
               vizs = MdObject.query('visualization', MdObject, client: development_client, project: from_project)
               viz_widgets = MdObject.query('visualizationWidget', MdObject, client: development_client, project: from_project)
               objects = (from_project.reports.to_a + from_project.metrics.to_a + from_project.variables.to_a + vizs.to_a + viz_widgets.to_a).map(&:uri)
+            elsif production_tags.any?
+              objects = from_project.find_by_tag(production_tags)
             end
 
             info[:transfer_uris] ||= []
