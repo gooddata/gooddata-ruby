@@ -26,6 +26,7 @@ module GoodData
         'position' => nil,
         'timezone' => nil,
         'updated' => nil,
+        'language' => nil,
         'links' => {
           'projects' => nil,
           'self' => nil
@@ -44,7 +45,8 @@ module GoodData
       :last_name,
       :phone,
       :position,
-      :timezone
+      :timezone,
+      :language
     ]
 
     PROFILE_PATH = '/gdc/account/profile/%s'

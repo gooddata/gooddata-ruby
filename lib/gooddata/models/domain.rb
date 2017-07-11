@@ -16,6 +16,17 @@ module GoodData
 
     ProvisioningResult = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
 
+    USER_LANGUAGES = {
+      'en-US' => 'English',
+      'nl-NL' => 'Dutch',
+      'es-ES' => 'Spanish',
+      'pt-BR' => 'Portuguese/Brazil',
+      'pt-PT' => 'Portuguese/Portugal',
+      'fr-FR' => 'French',
+      'de-DE' => 'German',
+      'ja-JP' => 'Japanese'
+    }
+
     class << self
       # Looks for domain
       #
@@ -44,7 +55,8 @@ module GoodData
           :lastName => user_data[:last_name] || 'LastName',
           :password => user_data[:password] || generated_pass,
           :verifyPassword => user_data[:password] || generated_pass,
-          :email => user_data[:email] || user_data[:login]
+          :email => user_data[:email] || user_data[:login],
+          :language => ensure_user_language(user_data)
         }
 
         # Optional authentication modes
@@ -124,7 +136,8 @@ module GoodData
         data = {
           :firstName => user_data[:first_name] || 'FirstName',
           :lastName => user_data[:last_name] || 'LastName',
-          :email => user_data[:email]
+          :email => user_data[:email],
+          :language => ensure_user_language(user_data)
         }
 
         # Optional authentication modes
@@ -268,6 +281,19 @@ to new properties (email=#{user_data[:email]}, sso_provider=#{user_data[:sso_pro
             [{ type: :failed, :user => user, message: e }]
           end
         end
+      end
+
+      private
+
+      def ensure_user_language(user_data)
+        language = user_data[:language] || 'en-US'
+        unless USER_LANGUAGES.keys.include?(language)
+          available_languages = USER_LANGUAGES.map { |k, v| "#{k} (#{v})" }.join(', ')
+          GoodData.logger.warn "The language for user '#{user_data[:login]}' will be English because '#{language}' is an invalid value. \
+Available values for setting language are: #{available_languages}."
+          language = 'en-US'
+        end
+        language
       end
     end
 
