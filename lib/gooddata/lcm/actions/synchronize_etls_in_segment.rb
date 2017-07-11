@@ -114,13 +114,14 @@ module GoodData
                   end
                 end
 
-                additional_params = params.additional_params || {}
-                additional_params.merge!(
+                schedule.update_params(params.additional_params) if params.additional_params
+
+                schedule.update_params(
                   CLIENT_ID: entry[:client_id], # needed for ADD and CloudConnect ETL
                   GOODOT_CUSTOM_PROJECT_ID: entry[:client_id] # TMA-210
                 )
-                schedule.update_params(additional_params)
-                schedule.update_hidden_params(params.additional_hidden_params || {})
+
+                schedule.update_hidden_params(params.additional_hidden_params) if params.additional_hidden_params
                 schedule.enable
                 schedule.save
               end
