@@ -1,6 +1,7 @@
 # GoodData Ruby SDK Changelog
 
 ## 0.6.53
+- TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
 
 ## 0.6.52
 - Add support for computed attribute in blueprint
