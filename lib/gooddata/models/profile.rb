@@ -160,6 +160,21 @@ module GoodData
       @json['accountSetting']['companyName'] = val
     end
 
+    # Gets the language
+    #
+    # @return [String] Language
+    def language
+      @json['accountSetting']['language'] || 'en-US'
+    end
+
+    # Set the language
+    #
+    # @param val [String] Language to be set
+    def language=(val)
+      @dirty ||= language != val
+      @json['accountSetting']['language'] = val
+    end
+
     # Gets the country
     #
     # @return [String] Country
