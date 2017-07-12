@@ -26,6 +26,7 @@ module GoodData
         'position' => nil,
         'timezone' => nil,
         'updated' => nil,
+        'language' => nil,
         'links' => {
           'projects' => nil,
           'self' => nil
@@ -44,7 +45,8 @@ module GoodData
       :last_name,
       :phone,
       :position,
-      :timezone
+      :timezone,
+      :language
     ]
 
     PROFILE_PATH = '/gdc/account/profile/%s'
@@ -156,6 +158,21 @@ module GoodData
     def company=(val)
       @dirty ||= company != val
       @json['accountSetting']['companyName'] = val
+    end
+
+    # Gets the language
+    #
+    # @return [String] Language
+    def language
+      @json['accountSetting']['language'] || 'en-US'
+    end
+
+    # Set the language
+    #
+    # @param val [String] Language to be set
+    def language=(val)
+      @dirty ||= language != val
+      @json['accountSetting']['language'] = val
     end
 
     # Gets the country
