@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require_relative 'purge_clients'
 
 module GoodData
   module LCM2
@@ -38,28 +39,37 @@ module GoodData
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
           synchronize_projects = []
-          results = params.segments.pmap do |segment|
-            tmp = domain.provision_client_projects(segment.segment_id).pmap do |m|
-              Hash[m.each_pair.to_a].merge(type: :provision_result)
-            end
 
-            unless tmp.empty?
-              synchronize_projects << {
-                segment_id: segment.segment_id,
-                from: segment.development_pid,
-                to: tmp.map do |entry|
-                  unless entry[:project_uri]
-                    raise "Provisioning project for client id #{entry[:id]} has error: #{entry[:error]}"
+          begin
+            results = params.segments.pmap do |segment|
+              tmp = domain.provision_client_projects(segment.segment_id).pmap do |m|
+                Hash[m.each_pair.to_a].merge(type: :provision_result)
+              end
+
+              unless tmp.empty?
+                synchronize_projects << {
+                  segment_id: segment.segment_id,
+                  from: segment.development_pid,
+                  to: tmp.map do |entry|
+                    unless entry[:project_uri]
+                      raise "Provisioning project for client id #{entry[:id]} has error: #{entry[:error]}"
+                    end
+                    {
+                      pid: entry[:project_uri].split('/').last,
+                      client_id: entry[:id]
+                    }
                   end
-                  {
-                    pid: entry[:project_uri].split('/').last,
-                    client_id: entry[:id]
-                  }
-                end
-              }
-            end
+                }
+              end
 
-            tmp
+              tmp
+            end
+          rescue => e
+            params.gdc_logger.error "Problem occurs when provisioning clients. Purge all invalid clients now ..."
+            res = PurgeClients.send(:call, params)
+            deleted_client_ids = res.select { |r| r[:status] == 'purged' }.map { |r| r[:client_id] }
+            params.gdc_logger.error "Deleted clients: #{deleted_client_ids.join(', ')}"
+            raise e
           end
 
           results.flatten!
