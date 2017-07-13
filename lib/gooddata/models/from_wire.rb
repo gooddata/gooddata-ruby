@@ -108,6 +108,7 @@ module GoodData
           d[:id] = date_dim['dateDimension']['name']
           d[:title] = date_dim['dateDimension']['title']
           d[:urn] = date_dim['dateDimension']['urn']
+          d[:identifier_prefix] = date_dim['dateDimension']['identifierPrefix']
         end
       end
 
