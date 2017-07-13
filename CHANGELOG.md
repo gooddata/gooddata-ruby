@@ -1,5 +1,7 @@
 # GoodData Ruby SDK Changelog
 
+## 0.6.54
+
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
 
