@@ -126,6 +126,7 @@ module GoodData
             f[:description] = fact['fact']['description'] if fact['fact']['description']
             f[:folder] = fact['fact']['folder']
             f[:gd_data_type] = fact['fact']['dataType'] || GoodData::Model::DEFAULT_FACT_DATATYPE
+            f[:restricted] = fact['fact']['restricted'] if fact['fact']['restricted']
           end
         end
       end
