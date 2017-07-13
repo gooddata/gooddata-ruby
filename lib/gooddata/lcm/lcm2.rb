@@ -130,6 +130,12 @@ module GoodData
       def convert_params(params)
         # Symbolize all keys
         GoodData::Helpers.symbolize_keys!(params)
+        params.keys.each do |k|
+          params[k.downcase] = params[k]
+        end
+        params.reject! do |k, _|
+          k.downcase != k
+        end
         convert_to_smart_hash(params)
       end
 
