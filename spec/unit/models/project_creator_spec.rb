@@ -71,4 +71,20 @@ describe GoodData::Model::ProjectCreator do
       GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { cascade_drops: true, preserve_data: false, unmeetable_condition: true })
     end.to raise_error
   end
+
+  it 'should pick correct update chunks based on new parameter "allow_cascade_drops" in your preference' do
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { allow_cascade_drops: false })
+    expect(chunk).to eq [@chunk_a]
+  end
+
+  it 'should pick correct update chunks based on new parameter "keep_data" in your preference' do
+    chunk = GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { keep_data: false })
+    expect(chunk).to eq [@chunk_a, @chunk_b]
+  end
+
+  it 'should raise error when mixing new parameters with the old ones in your preference' do
+    expect do
+      GoodData::Model::ProjectCreator.pick_correct_chunks(@data, update_preference: { allow_cascade_drops: true, cascade_drops: false })
+    end.to raise_error('Please do not mix old parameters (:cascade_drops, :preserve_data) with the new ones (:allow_cascade_drops, :keep_data).')
+  end
 end

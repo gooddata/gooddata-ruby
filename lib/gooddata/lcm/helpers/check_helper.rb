@@ -25,6 +25,10 @@ module GoodData
                 fail "Expected parameter '#{param_name}' to be kind of '#{type}', got '#{value.class.name}'"
               end
 
+              if specification[param_name][:opts][:deprecated]
+                puts "WARNING: Parameter '#{param_name}' is deprecated. Please use '#{specification[param_name][:opts][:replacement]}' instead."
+              end
+
               unless type.check(value)
                 fail "Parameter '#{param_name}' has invalid type, expected: #{type}"
               end

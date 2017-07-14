@@ -127,6 +127,19 @@ module GoodData
           preference = GoodData::Helpers.symbolize_keys(opts[:update_preference] || {})
           preference = Hash[preference.map { |k, v| [k, GoodData::Helpers.to_boolean(v)] }]
 
+          # will use new parameters instead of the old ones
+          if preference.empty? || [:allow_cascade_drops, :keep_data].any? { |k| preference.key?(k) }
+            if [:cascade_drops, :preserve_data].any? { |k| preference.key?(k) }
+              fail "Please do not mix old parameters (:cascade_drops, :preserve_data) with the new ones (:allow_cascade_drops, :keep_data)."
+            end
+            preference = { allow_cascade_drops: false, keep_data: true }.merge(preference)
+
+            new_preference = {}
+            new_preference[:cascade_drops] = false unless preference[:allow_cascade_drops]
+            new_preference[:preserve_data] = true if preference[:keep_data]
+            preference = new_preference
+          end
+
           # first is cascadeDrops, second is preserveData
           rules = [
             { priority: 1, cascade_drops: false, preserve_data: true },
