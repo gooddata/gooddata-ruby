@@ -75,11 +75,29 @@ module GoodData
         'validity' => ts
       }
 
-      crypto = GPGME::Crypto.new
-      signed_content = crypto.sign(obj, sign_options(opts[:sso_signer_email], opts[:sso_signer_password])).to_s
-      encrypted_content = crypto.encrypt(signed_content, encrypt_options(opts[:recipients])).to_s
+      json_data = JSON.pretty_generate(obj) + "\n"
 
-      "#{GoodData::Helpers::AuthHelper.read_server}/gdc/account/customerlogin?sessionId=#{CGI.escape(encrypted_content)}&serverURL=#{CGI.escape(provider)}&targetURL=#{CGI.escape(opts[:url])}"
+      file_json = Tempfile.new('gooddata-sso-json')
+      file_json.write(json_data)
+
+      file_json.rewind
+      file_signed = Tempfile.new('gooddata-sso-signed')
+
+      cmd = "gpg --no-tty --armor --yes -u #{opts[:sso_signer_email]} --passphrase #{opts[:sso_signer_password]} --output #{file_signed.path} --sign #{file_json.path}"
+      res = system(cmd)
+      fail 'Unable to sign json' unless res
+
+      file_signed.rewind
+      file_final = Tempfile.new('gooddata-sso-final')
+
+      cmd = "gpg --yes --no-tty --trust-model always --armor --output #{file_final.path} --encrypt --recipient security@gooddata.com #{file_signed.path}"
+      res = system(cmd)
+      fail 'Unable to encrypt json' unless res
+
+      file_final.rewind
+      final = file_final.read
+
+      "#{GoodData::Helpers::AuthHelper.read_server}/gdc/account/customerlogin?sessionId=#{CGI.escape(final)}&serverURL=#{CGI.escape(provider)}&targetURL=#{CGI.escape(opts[:url])}"
     end
 
     # Connect to GoodData using SSO
