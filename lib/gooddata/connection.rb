@@ -123,13 +123,5 @@ module GoodData
         Rest::Client.connect_sso(:sst_token => URI.decode(response.cookies['GDCAuthSST']))
       end
     end
-
-    def sign_options(signer, password)
-      { armor: true, signer: signer, password: password }
-    end
-
-    def encrypt_options(recipients)
-      { recipients: recipients, armor: true, always_trust: true }
-    end
   end
 end
