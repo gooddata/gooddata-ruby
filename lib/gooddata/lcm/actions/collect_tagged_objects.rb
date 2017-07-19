@@ -19,8 +19,11 @@ module GoodData
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
 
-        description 'Tag Name'
-        param :production_tag, instance_of(Type::StringType), required: false
+        description 'Production Tag Names'
+        param :production_tags, array_of(instance_of(Type::StringType)), required: false
+
+        description 'Production Tag Names'
+        param :production_tag, instance_of(Type::StringType), required: false, deprecated: true, replacement: :production_tags
 
         description 'Segments to search for segment-specific production tags'
         param :segments, array_of(instance_of(Type::SegmentType)), required: false
@@ -34,7 +37,7 @@ module GoodData
           results = []
           segments_to_tags = Helpers.segment_production_tags(params.segments)
           transfer_all = GoodData::Helpers.to_boolean(params.transfer_all)
-          return results unless params.production_tag || segments_to_tags.any? || transfer_all
+          return results unless params.production_tags || params.production_tag || segments_to_tags.any? || transfer_all
           development_client = params.development_client
 
           synchronize = params.synchronize.pmap do |info|
@@ -42,7 +45,7 @@ module GoodData
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
             segment_tags = segments_to_tags[info.segment]
-            production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
+            production_tags = Helpers.parse_production_tags(params.production_tags || params.production_tag, segment_tags)
             objects = []
             if transfer_all
               vizs = MdObject.query('visualization', MdObject, client: development_client, project: from_project)

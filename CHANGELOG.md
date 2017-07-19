@@ -7,6 +7,7 @@
 - TMA-542 - Release: Should fail when segments contains duplicated ids
 - TMA-536 - Release: transfer Dataset and Fact Tags in ImportObjectCollection
 - TMA-532 - Rollout: Improve behavior of update_preferences: introduce 2 paramameters allow_cascade_drops and keep_data
+- TMA-537 - Release: rename parameter production_tag to production_tags and support passing Array value
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
