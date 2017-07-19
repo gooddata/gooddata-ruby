@@ -8,8 +8,8 @@ require_relative 'base_action'
 
 module GoodData
   module LCM2
-    class CollectAttributes < BaseAction
-      DESCRIPTION = "Collect all attributes (include CAs) to transfer label type and drill path"
+    class CollectLdmObjects < BaseAction
+      DESCRIPTION = "Collect all objects in LDM: attributes (include CAs), facts, datasets"
 
       PARAMS = define_params(self) do
         description 'Development Client Used for Connecting to GD'
@@ -28,7 +28,7 @@ module GoodData
           synchronize = params.synchronize.pmap do |info|
             from = info.from
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
-            objects = (from_project.attributes.to_a + from_project.labels.to_a).map(&:uri)
+            objects = (from_project.attributes.to_a + from_project.labels.to_a + from_project.datasets.to_a + from_project.facts.to_a).map(&:uri)
 
             info[:transfer_uris] ||= []
             info[:transfer_uris] += objects
