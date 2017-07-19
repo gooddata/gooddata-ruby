@@ -1,4 +1,4 @@
 # Test
 
-This is test of CI
+This is test of CI #2
 
