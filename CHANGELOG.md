@@ -2,6 +2,7 @@
 
 ## 0.6.54
 - TMA-506 - Add option :time to report.execute to force platform simulate the result of report at that time
+- TMA-509 - Provisioning: Should clean all zombie clients when project creation limit reached
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
