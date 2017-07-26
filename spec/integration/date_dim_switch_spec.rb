@@ -40,6 +40,19 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :co
     @client.disconnect
   end
 
+  it 'should not get error when execute report with timestamp' do
+    metric = @project.attributes('created_on.date').create_metric(title: 'test_metric')
+    metric.save
+
+    report = @project.create_report(
+      left: metric,
+      top: ['created_on.quarter'],
+      filters: [['created_on.year', 2015, 2016]],
+      title: 'test_report'
+    )
+    report.execute(time: Time.now)
+  end
+
   it "should swap the dimension, exchange all stuffs and not break anything" do
     # WE have 2 date dims
     expect(@blueprint.date_dimensions.map(&:id)).to eq %w(created_on created_on_2)
