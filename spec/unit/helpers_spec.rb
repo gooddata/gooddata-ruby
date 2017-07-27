@@ -38,12 +38,6 @@ describe GoodData::Helpers do
     end
   end
 
-  describe '#find_goodfile' do
-    it 'works' do
-      GoodData::Helpers.find_goodfile.should_not be_nil
-    end
-  end
-
   describe "#decode_params" do
     it 'decodes the data params from json' do
       params = {
