@@ -144,10 +144,16 @@ module GoodData
 
     # Computes the report and returns the result. If it is not computable returns nil.
     #
+    # @option options [Time] :time Force the platform to simutale the result at this time
     # @return [GoodData::DataResult] Returns the result
     def execute(options = {})
+      time = options[:time]
+
+      report_req = { 'report' => uri }
+      report_req['timestamp'] = time.strftime('%s') if time
+
       fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
-      result = client.post '/gdc/xtab2/executor3', 'report_req' => { 'report' => uri }
+      result = client.post '/gdc/xtab2/executor3', 'report_req' => report_req
       GoodData::Report.data_result(result, options.merge(client: client))
     end
 
