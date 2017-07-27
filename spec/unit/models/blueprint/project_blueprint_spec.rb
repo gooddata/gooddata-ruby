@@ -417,7 +417,7 @@ describe GoodData::Model::ProjectBlueprint do
         d.add_date('opportunity_comitted', dataset: 'committed_on')
       end
     end
-    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map(&:format)).to eq [GoodData::Model::DEFAULT_DATE_FORMAT]
+    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map { |d| d.data[:format] }).to eq [GoodData::Model::DEFAULT_DATE_FORMAT]
   end
 
   it 'blueprint can be set with explicit date' do
@@ -435,7 +435,7 @@ describe GoodData::Model::ProjectBlueprint do
       end
     end
     expect(bp.valid?).to be_truthy
-    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map(&:format)).to eq ['yyyy/MM/dd']
+    expect(bp.datasets.flat_map { |d| d.find_columns_by_type(:date) }.map { |d| d.data[:format] }).to eq ['yyyy/MM/dd']
   end
 
   describe '#remove' do
