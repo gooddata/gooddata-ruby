@@ -167,6 +167,7 @@ module GoodData
 
         # create a temporary zip file
         dir = Dir.mktmpdir
+        base_dir = File.basename(dir)
         begin
           Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
             # TODO: make sure schema columns match CSV column names
@@ -192,12 +193,12 @@ module GoodData
                 zip.add(filename, path)
               end
 
-              csv_headers << csv_header
+              csv_headers << csv_header.map(&:strip)
             end
           end
 
           # upload it
-          client.upload_to_user_webdav("#{dir}/upload.zip", :directory => File.basename(dir), :client => options[:client], :project => options[:project])
+          client.upload_to_user_webdav("#{dir}/upload.zip", :directory => base_dir, :client => options[:client], :project => options[:project])
         ensure
           FileUtils.rm_rf dir
         end
@@ -219,6 +220,7 @@ module GoodData
 
           messages = res['wTaskStatus']['messages'] || []
           messages.each do |msg|
+            GoodData.logger.error(msg['error']['message'] % msg['error']['parameters'])
             GoodData.logger.error(JSON.pretty_generate(msg))
           end
 
@@ -252,9 +254,31 @@ module GoodData
           m += "Columns that should be there (manifest) but aren't in uploaded csv: #{manifest_extra}\n" unless manifest_extra.empty?
           m += "Columns that are in csv but shouldn't be there (manifest): #{csv_extra}\n" unless csv_extra.empty?
           m += "Columns in the uploaded csv: #{csv_headers}\n"
-          m += "Columns in the manifest: #{manifest_cols}\n"
+          m += "Columns in the manifest:     #{manifest_cols}\n"
           m += "Original message:\n#{JSON.pretty_generate(js)}\n"
           m += "Manifest used for uploading:\n#{JSON.pretty_generate(manifest)}"
+
+          logs = js['uploads'].flatten.map do |upload|
+            error_parts = upload['parts'].select { |p| p['status'] == 'ERROR' }
+            error_parts.map do |part|
+              file = Tempfile.new
+
+              project.client.download_from_user_webdav("#{base_dir}/#{part['logName']}", file.path)
+              log = File.read(file.path)
+
+              {
+                part: part['fileName'],
+                log: log
+              }
+            end
+          end
+
+          logs.flatten.each do |log|
+            puts "FILE: #{log[:part]}"
+            puts log[:log]
+            puts
+          end
+
           fail m
         end
 
