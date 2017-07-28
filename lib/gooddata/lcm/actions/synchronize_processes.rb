@@ -25,6 +25,7 @@ module GoodData
       RESULT_HEADER = [
         :from,
         :to,
+        :name,
         :status
       ]
 
@@ -48,20 +49,16 @@ module GoodData
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Transferring processes, from project: '#{from.title}', PID: '#{from.pid}', to project: '#{to_project.title}', PID: '#{to_project.pid}'"
-              GoodData::Project.transfer_processes(from, to_project, ads_output_stage_uri: info.ads_output_stage_uri)
+              res = GoodData::Project.transfer_processes(from, to_project, ads_output_stage_uri: info.ads_output_stage_uri)
 
               to_project.add.output_stage.client_id = client_id if client_id && to_project.add.output_stage
 
-              results << {
-                from: from.pid,
-                to: to_project.pid,
-                status: 'ok'
-              }
+              results << res
             end
           end
 
           # Return results
-          results
+          results.flatten
         end
       end
     end

@@ -256,33 +256,53 @@ module GoodData
       def transfer_processes(from_project, to_project, options = {})
         options = GoodData::Helpers.symbolize_keys(options)
         to_project_processes = to_project.processes
-        from_project.processes.uniq(&:name).each do |process|
+        result = from_project.processes.uniq(&:name).map do |process|
           fail "The process name #{process.name} must be unique in transfered project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
+          next if process.type == :dataload
           to_process = to_project_processes.find { |p| p.name == process.name }
 
-          if process.path
-            to_process.delete if to_process
-            GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
-          elsif process.type != :dataload
-            Dir.mktmpdir('etl_transfer') do |dir|
-              dir = Pathname(dir)
-              filename = dir + 'process.zip'
-              File.open(filename, 'w') do |f|
-                f << process.download
-              end
+          to_process = if process.path
+                         to_process.delete if to_process
+                         GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
+                       else
+                         Dir.mktmpdir('etl_transfer') do |dir|
+                           dir = Pathname(dir)
+                           filename = dir + 'process.zip'
+                           File.open(filename, 'w') do |f|
+                             f << process.download
+                           end
 
-              to_process ? to_process.deploy(filename, type: process.type, name: process.name) : to_project.deploy_process(filename, type: process.type, name: process.name)
-            end
-          end
+                           if to_process
+                             to_process.deploy(filename, type: process.type, name: process.name)
+                           else
+                             to_project.deploy_process(filename, type: process.type, name: process.name)
+                           end
+                         end
+                       end
+
+          {
+            from: from_project.pid,
+            to: to_project.pid,
+            name: process.name,
+            status: to_process ? 'successful' : 'failed'
+          }
         end
 
         transfer_output_stage(from_project, to_project, options)
+        result << {
+          from: from_project.pid,
+          to: to_project.pid,
+          name: 'Automated Data Distribution',
+          status: 'successful'
+        }
 
         res = (from_project.processes + to_project.processes).map { |p| [p, p.name, p.type] }
         res.group_by { |x| [x[1], x[2]] }
           .select { |_, procs| procs.length == 1 && procs[2] != :dataload }
           .flat_map { |_, procs| procs.select { |p| p[0].project.pid == to_project.pid }.map { |p| p[0] } }
           .peach(&:delete)
+
+        result.compact
       end
 
       def transfer_user_groups(from_project, to_project)
@@ -314,9 +334,14 @@ module GoodData
       # the master, client in which case we take its project, string in which
       # case we treat is as an project object or directly project.
       def transfer_schedules(from_project, to_project)
-        cache = to_project
-                  .processes.sort_by(&:name)
-                  .zip(from_project.processes.sort_by(&:name))
+        to_project_processes = to_project.processes.sort_by(&:name)
+        from_project_processes = from_project.processes.sort_by(&:name)
+
+        GoodData.logger.debug("Processes in from project #{from_project.pid}: #{from_project_processes.map(&:name).join(', ')}")
+        GoodData.logger.debug("Processes in to project #{to_project.pid}: #{to_project_processes.map(&:name).join(', ')}")
+
+        cache = to_project_processes
+                  .zip(from_project_processes)
                   .flat_map do |remote, local|
                     local.schedules.map do |schedule|
                       [remote, local, schedule]
