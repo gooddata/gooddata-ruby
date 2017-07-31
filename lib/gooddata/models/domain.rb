@@ -12,6 +12,8 @@ require_relative '../rest/object'
 
 module GoodData
   class Domain < Rest::Resource
+    DATA_PRODUCTS_PATH = '/gdc/domains/%s/dataproducts'
+
     attr_reader :name
 
     ProvisioningResult = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
@@ -342,6 +344,16 @@ Available values for setting language are: #{available_languages}."
 
     def create_users(list, options = {})
       GoodData::Domain.create_users(list, name, { client: client }.merge(options))
+    end
+
+    def data_products
+      data_products_uri = DATA_PRODUCTS_PATH % name
+
+      data_products_json = client.get(data_products_uri)
+
+      data_products_json['dataProducts']['items'].map do |dp|
+        client.create(GoodData::DataProduct, dp, domain: self)
+      end
     end
 
     def segments(id = :all)
