@@ -22,6 +22,12 @@ module GoodData
       class << self
         def call(params)
           filtered_segments = params.segments
+
+          segment_ids = filtered_segments.map(&:segment_id)
+          downcase_segment_ids = segment_ids.map(&:downcase)
+          duplicated_segment_ids = segment_ids.select { |e| downcase_segment_ids.count(e.downcase) > 1 }.uniq
+          fail "Parameter 'segments' contains duplicate segment id(s): #{duplicated_segment_ids.join(', ')}" if duplicated_segment_ids.any?
+
           if params.segments_filter
             segments_filter = params.segments_filter.map(&:downcase)
 
