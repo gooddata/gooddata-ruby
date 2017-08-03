@@ -27,12 +27,27 @@ describe GoodData::LCM2::CollectClients do
       GoodData::LCM2.convert_to_smart_hash(params)
     end
 
-    it 'collects all clients' do
+    it 'collects clients from the specified segment' do
       result = subject.class.call(params)
       expected = [{ client: 'client_foo',
                     segment_id: 'segment_foo',
                     title: nil }]
       expect(result[:results]).to eq(expected)
+    end
+  end
+
+  context 'when segment_names is an empty array' do
+    let(:params) do
+      params = {
+        segments: [],
+        input_source: {}
+      }
+      GoodData::LCM2.convert_to_smart_hash(params)
+    end
+
+    it 'collects clients from all segments' do
+      result = subject.class.call(params)
+      expect(result[:results].length).to be 2
     end
   end
 end

@@ -82,7 +82,7 @@ module GoodData
             GoodData.logger.debug("Processing row: #{row}")
             segment_name = row[segment_id_column]
             GoodData.logger.debug("Segment name: #{segment_name}")
-            if segment_names.nil? || segment_names.include?(segment_name)
+            if segment_names.nil? || segment_names.empty? || segment_names.include?(segment_name)
               clients << {
                 id: row[client_id_column],
                 segment: segment_name,
