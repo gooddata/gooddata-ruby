@@ -325,22 +325,57 @@ describe GoodData::Project, :constraint => 'slow' do
     end
 
     it 'should be able to set custom color' do
-      colors = [{ r: 155, g: 255, b: 0 }]
+      colors = [
+        {
+          guid: 'first',
+          fill: {
+            r: 155,
+            g: 255,
+            b: 0
+          }
+        }
+      ]
       @project.create_custom_color_palette(colors)
-      expect(@project.current_color_palette.colors).to eq colors
+      expect(@project.current_color_palette.colors).to eq colors.map { |color| GoodData::Helpers.stringify_keys(color) }
     end
 
     it 'should be able to reset custom color' do
-      colors = [{ r: 155, g: 255, b: 0 }]
+      colors = [
+        {
+          guid: 'first',
+          fill: {
+            r: 155,
+            g: 255,
+            b: 0
+          }
+        }
+      ]
       @project.create_custom_color_palette(colors)
       @project.reset_color_palette
       expect(@project.current_color_palette.colors).to eq []
     end
 
     it 'should not contains duplicate color' do
-      colors = [{ r: 155, g: 255, b: 0 }, { r: 155, g: 255, b: 0 }]
+      colors = [
+        {
+          guid: 'first',
+          fill: {
+            r: 155,
+            g: 255,
+            b: 0
+          }
+        },
+        {
+          guid: 'first',
+          fill: {
+            r: 155,
+            g: 255,
+            b: 0
+          }
+        }
+      ]
       @project.create_custom_color_palette(colors)
-      expect(@project.current_color_palette.colors).to eq [{ r: 155, g: 255, b: 0 }]
+      expect(@project.current_color_palette.colors).to eq [{ "guid" => "first", "fill" => { "r" => 155, "g" => 255, "b" => 0 } }]
     end
   end
 end
