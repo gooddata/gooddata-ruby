@@ -85,7 +85,7 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
-        CollectAttributes,
+        CollectLdmObjects,
         CollectMeta,
         CollectTaggedObjects,
         CollectComputedAttributeMetrics,
