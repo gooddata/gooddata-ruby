@@ -29,8 +29,10 @@ module GoodData
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
           domain_segments = domain.segments
+          params.gdc_logger.info("Domain segments: #{domain_segments}")
 
           if params.segments_filter
+            params.gdc_logger.info("Segments filter: #{params.segments_filter}")
             domain_segments.select! do |segment|
               params.segments_filter.include?(segment.segment_id)
             end
