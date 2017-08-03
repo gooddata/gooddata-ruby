@@ -37,8 +37,18 @@ describe GoodData::LCM, :constraint => 'slow' do
   end
 
   it 'should be able to transfer color palette' do
-    @source_project.create_custom_color_palette([{ r: 155, g: 255, b: 0 }])
+    color_palettes = [
+      {
+        guid: 'hello',
+        fill: {
+          r: 155,
+          g: 255,
+          b: 0
+        }
+      }
+    ]
+    @source_project.create_custom_color_palette(color_palettes)
     GoodData::Project.transfer_color_palette(@source_project, @target_project)
-    expect(@target_project.current_color_palette.colors).to eq [{ r: 155, g: 255, b: 0 }]
+    expect(@target_project.current_color_palette.colors).to eq color_palettes.map { |color| GoodData::Helpers.stringify_keys(color) }
   end
 end

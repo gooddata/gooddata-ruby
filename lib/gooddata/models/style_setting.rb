@@ -35,14 +35,7 @@ module GoodData
         end
         uri = STYLE_SETTING_PATH % project.pid
         data_to_send = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
-          d['styleSettings']['chartPalette'] = colors
-                                                .each_with_index
-                                                .map do |color, index|
-                                                  {
-                                                    'guid' => "guid#{index + 1}",
-                                                    'fill' => GoodData::Helpers.stringify_keys(color)
-                                                  }
-                                                end
+          d['styleSettings']['chartPalette'] = colors.map { |color| GoodData::Helpers.stringify_keys(color) }
         end
         style = client.create(StyleSetting, data_to_send)
         client.put(uri, data_to_send)
@@ -59,13 +52,7 @@ module GoodData
     def initialize(json)
       super
       @json = json
-      @colors = (json ? data['chartPalette'] : []).map do |color|
-        {
-          r: color['fill']['r'],
-          g: color['fill']['g'],
-          b: color['fill']['b']
-        }
-      end
+      @colors = json ? data['chartPalette'] : []
     end
 
     def empty?
