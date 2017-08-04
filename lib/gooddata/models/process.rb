@@ -125,6 +125,10 @@ module GoodData
 
         File.delete(deployed_path) if File.exist?(deployed_path)
 
+        if res['asyncTask']
+          res = client.poll_on_response(res['asyncTask']['links']['poll']) { |body| body['asyncTask'] }
+        end
+
         process = client.create(Process, res, project: project)
         puts HighLine.color("Deploy DONE #{path}", HighLine::GREEN) if verbose
         process
