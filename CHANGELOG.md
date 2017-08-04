@@ -5,6 +5,8 @@
 - TMA-506 - Add option :time to report.execute to force platform simulate the result of report at that time
 - TMA-509 - Provisioning: Should clean all zombie clients when project creation limit reached
 - TMA-299 - Use Data Product in LCM bricks
+- TMA-542 - Release: Should fail when segments contains duplicated ids
+- TMA-536 - Release: transfer Dataset and Fact Tags in ImportObjectCollection
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
