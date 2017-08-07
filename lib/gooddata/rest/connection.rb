@@ -505,7 +505,13 @@ module GoodData
                                           :verify_ssl => verify_ssl,
                                           :headers => @webdav_headers.merge(:x_gdc_authtt => headers[:x_gdc_authtt]),
                                           :payload => File.new(filename, 'rb'))
-        request.execute
+
+        begin
+          request.execute
+        rescue => e
+          GoodData.logger.error("Error when uploading file #{filename}", e)
+          raise e
+        end
       end
 
       def format_error(e, params = {})
