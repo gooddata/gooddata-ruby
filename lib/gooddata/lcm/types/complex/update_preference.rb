@@ -17,10 +17,16 @@ module GoodData
 
         PARAMS = define_type(self) do
           description 'Cascade Drop'
-          param :cascade_drops, instance_of(Type::BooleanType), required: false, default: nil
+          param :cascade_drops, instance_of(Type::BooleanType), required: false, default: nil, deprecated: true, replacement: :allow_cascade_drops
 
           description 'Preserve Data'
-          param :preserve_data, instance_of(Type::BooleanType), required: false, default: nil
+          param :preserve_data, instance_of(Type::BooleanType), required: false, default: nil, deprecated: true, replacement: :keep_data
+
+          description 'Allow Cascade Drop'
+          param :allow_cascade_drops, instance_of(Type::BooleanType), required: false, default: false
+
+          description 'Keep Data'
+          param :keep_data, instance_of(Type::BooleanType), required: false, default: true
         end
 
         def check(value)
