@@ -13,8 +13,11 @@ module GoodData
       with objects inside dashboards (reports, metrics ...) from development projects"
 
       PARAMS = define_params(self) do
-        description 'Production Tag Name'
-        param :production_tag, instance_of(Type::StringType), required: false
+        description 'Production Tag Names'
+        param :production_tags, array_of(instance_of(Type::StringType)), required: false
+
+        description 'Production Tag Names'
+        param :production_tag, instance_of(Type::StringType), required: false, deprecated: true, replacement: :production_tags
 
         description 'Development Client Used for Connecting to GD'
         param :development_client, instance_of(Type::GdClientType), required: true
@@ -42,7 +45,7 @@ module GoodData
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
             segment_tags = segments_to_tags[info.segment]
-            production_tags = Helpers.parse_production_tags(params.production_tag, segment_tags)
+            production_tags = Helpers.parse_production_tags(params.production_tags || params.production_tag, segment_tags)
 
             if transfer_all || production_tags.empty?
               old_dashboards = GoodData::Dashboard.all(

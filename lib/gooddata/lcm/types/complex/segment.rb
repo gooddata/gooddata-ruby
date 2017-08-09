@@ -26,6 +26,9 @@ module GoodData
 
           description 'Master Project Name'
           param :master_name, instance_of(Type::StringType), required: true
+
+          description 'Production Tag Names'
+          param :production_tags, array_of(instance_of(Type::StringType)), required: false
         end
 
         def check(value)

@@ -71,7 +71,7 @@ describe GoodData::LCM2::CollectTaggedObjects do
         params = {
           development_client: development_client,
           synchronize: [{ from: 'some_development_project_id' }],
-          segments: [{ production_tag: 'production_tag' }, {}]
+          segments: [{ production_tags: 'production_tag' }, {}]
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -85,7 +85,7 @@ describe GoodData::LCM2::CollectTaggedObjects do
           development_client: development_client,
           synchronize: [{ from: 'some_development_project_id' }],
           segments: [{}],
-          production_tag: 'production_tag'
+          production_tags: 'production_tag'
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -98,13 +98,29 @@ describe GoodData::LCM2::CollectTaggedObjects do
         params = {
           development_client: development_client,
           synchronize: [{ from: 'some_development_project_id' }],
-          segments: [{ production_tag: 'production_tag' }, {}],
-          production_tag: 'global_production_tag'
+          segments: [{ production_tags: 'production_tag' }, {}],
+          production_tags: 'global_production_tag'
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
 
       it_behaves_like 'a tagged object collector'
+    end
+
+    context 'when using multi tags' do
+      let(:params) do
+        params = {
+          development_client: development_client,
+          synchronize: [{ from: 'some_development_project_id' }],
+          segments: [{ production_tags: %w(production_tag prod_tag2) }, {}]
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      it 'finds projects by the specified tags' do
+        expect(development_project).to receive(:find_by_tag).with(%w(production_tag prod_tag2))
+        subject.class.call(params)
+      end
     end
   end
 end

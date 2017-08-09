@@ -14,8 +14,8 @@ module GoodData
         def segment_production_tags(segments)
           return {} unless segments
           segments
-            .reject { |s| s.production_tag.nil? }
-            .map { |s| [s.segment_id, s.production_tag] }
+            .reject { |s| s.production_tags.nil? }
+            .map { |s| [s.segment_id, s.production_tags] }
             .to_h
         end
 
@@ -27,7 +27,8 @@ module GoodData
           separator = ','
           tags = segment_production_tags || production_tags
           return [] unless tags
-          tags.split(separator).map(&:strip)
+          tags = tags.split(separator).map(&:strip) unless tags.is_a?(Array)
+          tags
         end
       end
     end
