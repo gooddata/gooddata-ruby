@@ -47,7 +47,8 @@ module GoodData
         def call(params)
           segment_names = params.segments.map(&:segment_id)
 
-          clients = collect_clients(params, segment_names)
+          clients, errors = collect_clients(params, segment_names)
+          fail "These are errors while collecting clients from input data:\n#{errors.join("\n")}" unless errors.empty?
 
           results = clients.map do |client|
             {
@@ -57,7 +58,6 @@ module GoodData
             }
           end
 
-          # Return results
           {
             results: results,
             params: {
@@ -72,8 +72,10 @@ module GoodData
           project_id_column = params.project_id_column || 'project_id'
           project_title_column = params.project_title_column || 'project_title'
           project_token_column = params.project_token_column || 'project_token'
+          client = params.gdc_gd_client
 
           clients = []
+          errors = []
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
           input_data = File.open(data_source.realize(params), 'r:UTF-8')
           GoodData.logger.debug("Input data: #{input_data.read}")
@@ -83,10 +85,22 @@ module GoodData
             segment_name = row[segment_id_column]
             GoodData.logger.debug("Segment name: #{segment_name}")
             if segment_names.nil? || segment_names.include?(segment_name)
+              client_id = row[client_id_column]
+              pid = row[project_id_column]
+
+              if pid
+                begin
+                  errors << "Project #{pid} of client #{client_id} is deleted." if client.projects(pid).deleted?
+                rescue
+                  errors << "Seems like you (user executing the script - #{client.user.login}) \
+                  do not have access to project \"#{pid}\" of client \"#{client_id}\""
+                end
+              end
+
               clients << {
-                id: row[client_id_column],
+                id: client_id,
                 segment: segment_name,
-                project: row[project_id_column],
+                project: pid,
                 settings: [
                   {
                     name: 'lcm.token',
@@ -102,11 +116,11 @@ module GoodData
           end
 
           if clients.empty?
-            fail "No segments or clients qualify for provisioning. \
+            errors << "No segments or clients qualify for provisioning. \
             Please check the input source data, platform segments, and the SEGMENTS_FILTER parameter. \
             The intersection of these three elements is empty set."
           end
-          clients
+          [clients, errors]
         end
       end
     end
