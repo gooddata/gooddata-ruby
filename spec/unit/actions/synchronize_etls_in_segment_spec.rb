@@ -12,6 +12,11 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
   let(:domain) { double('domain') }
   let(:segment) { double('segment') }
 
+  before do
+    allow(gdc_gd_client).to receive(:domain) { domain }
+    allow(domain).to receive(:segments) { segment }
+  end
+
   context 'when sync processes/schedules has problem' do
     let(:result) do
       {
@@ -39,13 +44,156 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
     end
 
     before do
-      allow(gdc_gd_client).to receive(:domain) { domain }
-      allow(domain).to receive(:segments) { segment }
       allow(segment).to receive(:synchronize_processes) { result }
     end
 
     it 'raise error' do
       expect { subject.class.call(params) }.to raise_error
+    end
+  end
+
+  context 'when user passes dynamic schedule parameters' do
+    let(:project) { double(:project) }
+    let(:schedule1) { double(:schedule1) }
+    let(:schedule2) { double(:schedule2) }
+
+    before do
+      allow(segment).to receive(:synchronize_processes).and_return(
+        syncedResult: {
+          clients: [
+            client: {
+              id: 'foo',
+              project: 'bar'
+            }
+          ]
+        }
+      )
+      allow(segment).to receive(:master_project_id)
+      allow(schedule1).to receive(:update_hidden_params)
+      allow(schedule1).to receive(:enable)
+      allow(schedule1).to receive(:save)
+      allow(schedule1).to receive(:name) { 'Schedule1' }
+      allow(schedule2).to receive(:update_hidden_params)
+      allow(schedule2).to receive(:enable)
+      allow(schedule2).to receive(:save)
+      allow(schedule2).to receive(:name) { 'Schedule2' }
+      allow(project).to receive(:schedules) { [schedule1, schedule2] }
+      allow(gdc_gd_client).to receive(:projects) { project }
+    end
+
+    context 'to each schedules' do
+      let(:params) do
+        params = {
+          gdc_gd_client: gdc_gd_client,
+          organization: domain,
+          synchronize: [
+            {
+              segment_id: 'some_segment_ids',
+              from: 'from project',
+              to: [
+                pid: '123',
+                client_id: 'foo'
+              ]
+            }
+          ],
+          schedule_params: {
+            nil => {
+              'Schedule1' => {
+                'HELLO' => 'hi'
+              },
+              'Schedule2' => {
+                'BYE' => 'bye'
+              }
+            }
+          }
+
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      it 'each schedules must have different parameters' do
+        schedule1.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
+        schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        schedule2.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
+        schedule2.should_receive(:update_params).once.ordered.with('BYE' => 'bye')
+        subject.class.call(params)
+      end
+    end
+
+    context 'to all schedules' do
+      let(:params) do
+        params = {
+          gdc_gd_client: gdc_gd_client,
+          organization: domain,
+          synchronize: [
+            {
+              segment_id: 'some_segment_ids',
+              from: 'from project',
+              to: [
+                pid: '123',
+                client_id: 'foo'
+              ]
+            }
+          ],
+          schedule_params: {
+            nil => {
+              nil => {
+                'HELLO' => 'hi'
+              }
+            }
+          }
+
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      it 'all schedules must have the parameter' do
+        schedule1.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
+        schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        schedule2.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
+        schedule2.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        subject.class.call(params)
+      end
+    end
+
+    context 'to each schedules in each clients' do
+      let(:params) do
+        params = {
+          gdc_gd_client: gdc_gd_client,
+          organization: domain,
+          synchronize: [
+            {
+              segment_id: 'some_segment_ids',
+              from: 'from project',
+              to: [
+                pid: '123',
+                client_id: 'foo'
+              ]
+            }
+          ],
+          schedule_params: {
+            'foo' => {
+              'Schedule1' => {
+                'HELLO' => 'hi'
+              }
+            },
+            'bar' => {
+              'Schedule2' => {
+                'BYE' => 'bye'
+              }
+            }
+          }
+
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      it 'parameters should be passed to the correct client project and schedule' do
+        schedule1.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
+        schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        schedule2.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
+        subject.class.call(params)
+      end
     end
   end
 end

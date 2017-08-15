@@ -80,15 +80,12 @@ module GoodData
           end
 
           delete_extra_process_schedule = GoodData::Helpers.to_boolean(params.delete_extra_process_schedule)
+          schedule_params = params.schedule_params
+          params_for_all_projects = schedule_params[nil] || {}
+          params_for_all_schedules_in_all_projects = params_for_all_projects[nil]
 
           params.synchronize.peach do |info|
-            if delete_extra_process_schedule
-              from_project = client.projects(info.from) || fail("Invalid 'from' project specified - '#{info.from}'")
-              from_project_processes = from_project.processes
-              from_project_process_id_names = Hash[from_project_processes.map { |process| [process.process_id, process.name] }]
-              from_project_process_names = from_project_processes.map(&:name)
-              from_project_schedule_names = from_project.schedules.map { |schedule| [schedule.name, from_project_process_id_names[schedule.process_id]] }
-            end
+            from_project_etl_names = get_process_n_schedule_names(client, info.from) if delete_extra_process_schedule
 
             to_projects = info.to
             to_projects.peach do |entry|
@@ -98,7 +95,7 @@ module GoodData
               if delete_extra_process_schedule
                 to_project_process_id_names = {}
                 to_project.processes.each do |process|
-                  if from_project_process_names.include?(process.name)
+                  if from_project_etl_names[:processes].include?(process.name)
                     to_project_process_id_names[process.process_id] = process.name
                   else
                     process.delete
@@ -106,9 +103,12 @@ module GoodData
                 end
               end
 
+              params_for_this_client = schedule_params[entry[:client_id]] || {}
+              params_for_all_schedules_in_this_client = params_for_this_client[nil]
+
               to_project.schedules.each do |schedule|
                 if delete_extra_process_schedule
-                  unless from_project_schedule_names.include?([schedule.name, to_project_process_id_names[schedule.process_id]])
+                  unless from_project_etl_names[:schedules].include?([schedule.name, to_project_process_id_names[schedule.process_id]])
                     schedule.delete
                     next
                   end
@@ -121,6 +121,11 @@ module GoodData
                   GOODOT_CUSTOM_PROJECT_ID: entry[:client_id] # TMA-210
                 )
 
+                schedule.update_params(params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
+                schedule.update_params(params_for_all_projects[schedule.name]) if params_for_all_projects[schedule.name]
+                schedule.update_params(params_for_all_schedules_in_this_client) if params_for_all_schedules_in_this_client
+                schedule.update_params(params_for_this_client[schedule.name]) if params_for_this_client[schedule.name]
+
                 schedule.update_hidden_params(params.additional_hidden_params) if params.additional_hidden_params
                 schedule.enable
                 schedule.save
@@ -129,6 +134,19 @@ module GoodData
           end
 
           results.flatten
+        end
+
+        private
+
+        def get_process_n_schedule_names(client, project_id)
+          project = client.projects(project_id) || fail("Invalid 'from' project specified - '#{project_id}'")
+          processes = project.processes
+          process_id_names = Hash[processes.map { |process| [process.process_id, process.name] }]
+
+          {
+            processes: processes.map(&:name),
+            schedules: project.schedules.map { |schedule| [schedule.name, process_id_names[schedule.process_id]] }
+          }
         end
       end
     end
