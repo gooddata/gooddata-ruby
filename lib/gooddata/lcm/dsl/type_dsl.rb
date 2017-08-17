@@ -6,6 +6,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../types/param'
+require_relative '../types/special/types'
 
 module GoodData
   module LCM2
