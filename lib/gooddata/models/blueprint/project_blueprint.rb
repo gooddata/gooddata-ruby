@@ -742,11 +742,26 @@ module GoodData
         stuff.map { |r| { type: :bad_reference, reference: r.data, referencing_dataset: r.data[:dataset] } }
       end
 
+      # Validate the blueprint in particular if all ids must be unique and valid.
+      #
+      # @return [Array] array of errors
+      def validate_identifiers
+        ids = datasets.flat_map { |dataset| dataset.columns.map(&:id) }.compact
+
+        duplicated_ids = ids.select { |id| ids.count(id) > 1 }.uniq
+        errors = duplicated_ids.map { |id| { type: :duplicated_identifier, id: id } } || []
+
+        ids.uniq.each { |id| errors << { type: :invalid_identifier, id: id } if id !~ /^[\w.]+$/ }
+
+        errors
+      end
+
       # Validate the blueprint and all its datasets return array of errors that are found.
       #
       # @return [Array] array of errors
       def validate
         errors = []
+        errors.concat validate_identifiers
         errors.concat validate_references
         errors.concat datasets.reduce([]) { |acc, elem| acc.concat(elem.validate) }
         errors.concat datasets.reduce([]) { |acc, elem| acc.concat(elem.validate_gd_data_type_errors) }
