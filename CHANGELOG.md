@@ -8,6 +8,10 @@
 - TMA-536 - Release: transfer Dataset and Fact Tags in ImportObjectCollection
 - TMA-532 - Rollout: Improve behavior of update_preferences: introduce 2 paramameters allow_cascade_drops and keep_data
 - TMA-537 - Release: rename parameter production_tag to production_tags and support passing Array value
+- TMA-572 - Improve API call statistics log: add grouping on CLIENT_ID
+- TMA-563 - Provisioning brick doesn't verify status of project_id
+- TMA-502 - User and User Filters brick: multiple_projects_column = client_id should be default for client modes
+- TMA-565 - Provisioning brick doesn't add technical users when input source contains project_id
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
