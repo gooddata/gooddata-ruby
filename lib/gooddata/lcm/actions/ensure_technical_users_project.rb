@@ -46,24 +46,32 @@ module GoodData
 
           results = params.synchronize.pmap do |synchronize_info|
             synchronize_info[:to].pmap do |entry|
-              project = client.projects(entry[:pid])
-              res = project.create_users(new_users)
-
-              new_users.zip(res).map do |f, s|
-                {
-                  project: project.title,
-                  pid: project.pid,
-                  login: f[:login],
-                  role: f[:role],
-                  result: s[:type],
-                  message: s[:message],
-                  url: s[:user]
-                }
-              end
+              ensure_users(client, entry[:pid], new_users)
             end
-          end
+          end.flatten
 
-          results.flatten
+          results += params.clients.pmap { |input_client| input_client[:project] }.compact.pmap { |pid| ensure_users(client, pid, new_users) }.flatten if params.clients
+
+          results
+        end
+
+        private
+
+        def ensure_users(client, project_id, new_users)
+          project = client.projects(project_id)
+          res = project.create_users(new_users)
+
+          new_users.zip(res).map do |f, s|
+            {
+              project: project.title,
+              pid: project.pid,
+              login: f[:login],
+              role: f[:role],
+              result: s[:type],
+              message: s[:message],
+              url: s[:user]
+            }
+          end
         end
       end
     end
