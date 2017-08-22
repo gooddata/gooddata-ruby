@@ -103,8 +103,11 @@ module GoodData
                 end
               end
 
-              params_for_this_client = schedule_params[entry[:client_id]] || {}
+              client_id = entry[:client_id]
+              params_for_this_client = schedule_params[client_id] || {}
               params_for_all_schedules_in_this_client = params_for_this_client[nil]
+
+              to_project.set_metadata('GOODOT_CUSTOM_PROJECT_ID', client_id) # TMA-210
 
               to_project.schedules.each do |schedule|
                 if delete_extra_process_schedule
@@ -115,10 +118,9 @@ module GoodData
                 end
 
                 schedule.update_params(params.additional_params) if params.additional_params
-
                 schedule.update_params(
-                  CLIENT_ID: entry[:client_id], # needed for ADD and CloudConnect ETL
-                  GOODOT_CUSTOM_PROJECT_ID: entry[:client_id] # TMA-210
+                  CLIENT_ID: client_id, # needed for ADD and CloudConnect ETL
+                  GOODOT_CUSTOM_PROJECT_ID: client_id # TMA-210
                 )
 
                 schedule.update_params(params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
