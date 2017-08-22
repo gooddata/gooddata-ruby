@@ -13,14 +13,14 @@ describe GoodData::LCM2::SegmentsFilter do
       params = {
         segments: [
           { segment_id: 'segment_foo' },
-          { segment_id: 'segment_foo' }
+          { segment_id: 'Segment_foo' }
         ]
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end
 
     it 'raise error' do
-      expect { subject.class.call(params) }.to raise_error(/segment_foo/)
+      expect { subject.class.call(params) }.to raise_error(/segment_foo/, /Segment_foo/)
     end
   end
 end

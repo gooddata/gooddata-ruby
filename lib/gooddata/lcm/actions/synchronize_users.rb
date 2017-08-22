@@ -1,0 +1,260 @@
+# encoding: UTF-8
+#
+# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
+require_relative 'base_action'
+
+module GoodData
+  module LCM2
+    class SynchronizeUsers < BaseAction
+      DESCRIPTION = 'Synchronizes users between projects'
+
+      PARAMS = define_params(self) do
+        description 'Client Used for Connecting to GD'
+        param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Input Source'
+        param :input_source, instance_of(Type::HashType), required: true
+
+        description 'Synchronization Mode (e.g. sync_one_project_based_on_pid)'
+        param :sync_mode, instance_of(Type::StringType), required: false
+
+        description 'Column that contains target project IDs'
+        param :multiple_projects_column, instance_of(Type::StringType), required: false
+
+        # gdc_project/gdc_project_id, required: true
+        # organization/domain, required: true
+      end
+
+      class << self
+        MODES = [
+          "add_to_organization",
+          "sync_project",
+          "sync_domain_and_project",
+          "sync_multiple_projects_based_on_pid",
+          "sync_one_project_based_on_pid",
+          "sync_one_project_based_on_custom_id",
+          "sync_multiple_projects_based_on_custom_id",
+          "sync_domain_client_workspaces"
+        ]
+
+        def version
+          '0.0.1'
+        end
+
+      def call(params)
+        client = params.gdc_gd_client
+        domain_name = params.organization || params.domain
+        project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
+        data_source = GoodData::Helpers::DataSource.new(params.input_source)
+        mode = params.sync_mode
+        unless mode.nil? || MODES.include?(mode)
+          fail "The parameter \"sync_mode\" has to have one of the values #{MODES.map(&:to_s).join(', ')} or has to be empty."
+        end
+
+        whitelists = Set.new(params.whitelists || []) + Set.new((params.regexp_whitelists || []).map {|r| /#{r}/}) + Set.new([client.user.login])
+
+        multiple_projects_column = params.multiple_projects_column
+        unless multiple_projects_column
+          client_modes = ['sync_domain_client_workspaces', 'sync_one_project_based_on_custom_id', 'sync_multiple_projects_based_on_custom_id']
+          multiple_projects_column = if client_modes.include?(mode)
+                                       'client_id'
+                                     else
+                                       'project_id'
+                                     end
+        end
+
+        # Check mandatory columns and parameters
+        mandatory_params = [domain_name, data_source]
+
+        mandatory_params.each do |param|
+          fail param + ' is required in the block parameters.' unless param
+        end
+
+        domain = client.domain(domain_name)
+
+        first_name_column           = params.first_name_column || 'first_name'
+        last_name_column            = params.last_name_column || 'last_name'
+        login_column                = params.login_column || 'login'
+        password_column             = params.password_column || 'password'
+        email_column                = params.email_column || 'email'
+        role_column                 = params.role_column || 'role'
+        sso_provider_column         = params.sso_provider_column || 'sso_provider'
+        authentication_modes_column = params.authentication_modes_column || 'authentication_modes'
+        user_groups_column          = params.user_groups_column || 'user_groups'
+        language_column             = params.language_column || 'language'
+
+        sso_provider = params.sso_provider
+        authentication_modes = params.authentication_modes || []
+        ignore_failures = GoodData::Helpers.to_boolean(params.ignore_failures)
+        remove_users_from_project = GoodData::Helpers.to_boolean(params.remove_users_from_project)
+        do_not_touch_users_that_are_not_mentioned = GoodData::Helpers.to_boolean(params.do_not_touch_users_that_are_not_mentioned)
+
+        new_users = []
+
+
+        # params.delete('GDC_SST')
+
+        data = nil
+        dwh = params.ads_client
+        if dwh
+          data = dwh.execute_select(params.input_source.query)
+        else
+          tmp = File.open(data_source.realize(params), 'r:UTF-8')
+          data = CSV.read(tmp, headers: true)
+        end
+
+        data.each do |row|
+          modes = if authentication_modes.empty?
+            row[authentication_modes_column] || row[authentication_modes_column.to_sym] || []
+          else
+            authentication_modes
+          end
+
+          modes = modes.split(',').map(&:strip).map {|x| x.to_s.upcase} if !modes.is_a? Array
+
+          new_users << {
+            :first_name => row[first_name_column] || row[first_name_column.to_sym],
+            :last_name => row[last_name_column] || row[last_name_column.to_sym],
+            :login => row[login_column] || row[login_column.to_sym],
+            :password => row[password_column] || row[password_column.to_sym],
+            :email => row[email_column] || row[login_column] || row[email_column.to_sym] || row[login_column.to_sym],
+            :role => row[role_column] || row[role_column.to_sym],
+            :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
+            :authentication_modes => modes,
+            user_group: row[user_groups_column] && row[user_groups_column].split(',').map(&:strip),
+            :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
+            :language => row[language_column] || row[language_column.to_sym]
+          }.compact
+        end
+
+        # There are several scenarios we want to provide with this brick
+        # 1) Sync only domain
+        # 2) Sync both domain and project
+        # 3) Sync multiple projects. Sync them by using one file. The file has to
+        #     contain additional column that contains the PID of the project so the
+        #     process can partition the users correctly. The column is configurable
+        # 4) Sync one project the users are filtered based on a column in the data
+        #     that should contain pid of the project
+        # 5) Sync one project. The users are filtered form a given file based on the
+        #     value in the file. The value is compared against the value
+        #     GOODOT_CUSTOM_PROJECT_ID that is saved in project metadata. This is
+        #     aiming at solving the problem that the customer cannot give us the
+        #     value of a project id in the data since he does not know it upfront
+        #     and we cannot influence its value.
+        results = case mode
+                  when 'add_to_organization'
+                    domain.create_users(new_users.uniq { |u| u[:login] || u[:email] })
+                  when 'sync_project'
+                    project.import_users(new_users, domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                  when 'sync_multiple_projects_based_on_pid'
+                    new_users.group_by { |u| u[:pid] }.flat_map do |project_id, users|
+                      begin
+                        project = client.projects(project_id)
+                        fail "You (user executing the script - #{client.user.login}) is not admin in project \"#{project_id}\"." unless project.am_i_admin?
+                        project.import_users(users, domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                      rescue RestClient::ResourceNotFound
+                        fail "Project \"#{project_id}\" was not found. Please check your project ids in the source file"
+                      rescue RestClient::Gone
+                        fail "Seems like you (user executing the script - #{client.user.login}) do not have access to project \"#{project_id}\""
+                      rescue RestClient::Forbidden
+                        fail "User #{client.user.login} is not enabled within project \"#{project_id}\""
+                      end
+                    end
+                  when 'sync_one_project_based_on_pid'
+                    filtered_users = new_users.select { |u| u[:pid] == project.pid }
+                    project.import_users(filtered_users, domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                  when 'sync_one_project_based_on_custom_id'
+                    md = project.metadata
+                    goodot_id = md['GOODOT_CUSTOM_PROJECT_ID'].to_s
+
+                    filtered_users = new_users.select do |u|
+                      fail "Column for determining the project assignement is empty for \"#{u[:login]}\"" if u[:pid].blank?
+                      client_id = u[:pid].to_s
+                      (goodot_id && client_id == goodot_id) || domain.clients(client_id).project_uri == project.uri
+                    end
+
+                    if filtered_users.empty?
+                      fail "Project \"#{project.pid}\" does not match with any client ids in input source (both GOODOT_CUSTOM_PROJECT_ID and SEGMENT/CLIENT). \
+We are unable to get the value to filter users."
+                    end
+
+                    puts "Project #{project.pid} will receive #{filtered_users.count} from #{new_users.count} users"
+                    project.import_users(filtered_users, domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                  when 'sync_multiple_projects_based_on_custom_id'
+                    new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
+                      fail "Client id cannot be empty" if client_id.blank?
+                      project = domain.clients(client_id).project
+                      fail "Client #{client_id} does not have project." unless project
+                      puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
+                      project.import_users(users, domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                    end
+                  when 'sync_domain_client_workspaces'
+                    domain_clients = domain.clients
+                    if params.segments_filter
+                      segments_filter = params.segments_filter.map { |seg| "/gdc/domains/#{domain.name}/segments/#{seg}" }
+                      domain_clients.select! { |c| segments_filter.include?(c.segment_uri) }
+                    end
+                    working_client_ids = []
+                    res = []
+                    res += new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
+                      fail "Client id cannot be empty" if client_id.blank?
+                      c = domain.clients(client_id)
+                      if params.segments_filter && !segments_filter.include?(c.segment_uri)
+                        puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
+                        next
+                      end
+                      project = c.project
+                      fail "Client #{client_id} does not have project." unless project
+                      working_client_ids << client_id
+                      puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
+                      project.import_users(users, domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                    end
+
+                    unless do_not_touch_users_that_are_not_mentioned
+                      domain_clients.each do |c|
+                        next if working_client_ids.include?(c.client_id)
+                        begin
+                          project = c.project
+                        rescue => e
+                          puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
+                          next
+                        end
+                        unless project
+                          puts "Client #{c.client_id} has no project."
+                          next
+                        end
+                        if project.deleted?
+                          puts "Project #{project.pid} of client #{c.client_id} is deleted."
+                          next
+                        end
+                        puts "Synchronizing all users in project #{project.pid} of client #{c.client_id}"
+                        res += project.import_users([], domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                      end
+                    end
+
+                    res
+                  else
+                    domain.create_users(new_users, ignore_failures: ignore_failures)
+                    project.import_users(new_users, domain: domain, whitelists: whitelists, ignore_failures: ignore_failures, remove_users_from_project: remove_users_from_project, do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                  end
+
+        results.compact!
+        counts = results.group_by { |r| r[:type] }.map { |g, r| [g, r.count] }
+        counts.each do |category, count|
+          puts "There were #{count} events of type #{category}"
+        end
+        errors = results.select { |r| r[:type] == :error || r[:type] == :failed }
+        return if errors.empty?
+
+        puts "Printing 10 first errors"
+        puts "========================"
+        pp errors.take(10)
+        fail 'There was an error syncing users'
+      end
+      end
+    end
+  end
+end

@@ -60,4 +60,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'terminal-table', '~> 1.7'
   s.add_dependency 'thread_safe'
   s.add_dependency 'backports'
+  s.add_dependency 'activesupport', '~> 4.2.9'
 end

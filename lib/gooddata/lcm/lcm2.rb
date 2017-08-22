@@ -121,6 +121,14 @@ module GoodData
         SynchronizeClients,
         SynchronizeComputedAttributes,
         SynchronizeETLsInSegment
+      ],
+
+      users: [
+        SynchronizeUsers
+      ],
+
+      user_filters: [
+        SynchronizeUserFilters
       ]
     }
 
