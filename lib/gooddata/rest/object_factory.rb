@@ -18,25 +18,6 @@ module GoodData
       attr_accessor :objects
       attr_accessor :resources
 
-      #################################
-      # Class methods
-      #################################
-      class << self
-        # Gets list of all GoodData::Rest::Object subclasses
-        #
-        # @return [Array<GoodData::Rest::Object>] Subclasses of GoodData::Rest::Object
-        def objects
-          ObjectSpace.each_object(Class).select { |klass| klass < GoodData::Rest::Object }
-        end
-
-        # Gets list of all GoodData::Rest::Resource subclasses
-        #
-        # @return [Array<GoodData::Rest::Resource>] Subclasses of GoodData::Rest::Resource
-        def resources
-          ObjectSpace.each_object(Class).select { |klass| klass < GoodData::Rest::Resource }
-        end
-      end
-
       # Initializes instance of factory
       #
       # @param connection [GoodData::Rest::Connection] Connection used by factory
@@ -48,12 +29,6 @@ module GoodData
 
         # Set connection used by factory
         @connection = @client.connection
-
-        # Initialize internal factory map of GoodData::Rest::Object instances
-        @objects = ObjectFactory.objects
-
-        # Initialize internal factory map of GoodData::Rest::Resource instances
-        @resources = ObjectFactory.resources
       end
 
       def create(type, data = {}, opts = {})
