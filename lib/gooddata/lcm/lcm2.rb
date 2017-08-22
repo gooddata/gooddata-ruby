@@ -107,6 +107,7 @@ module GoodData
         ProvisionClients,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
+        CollectDymanicScheduleParams,
         SynchronizeETLsInSegment
       ],
 
@@ -120,6 +121,7 @@ module GoodData
         ApplyCustomMaql,
         SynchronizeClients,
         SynchronizeComputedAttributes,
+        CollectDymanicScheduleParams,
         SynchronizeETLsInSegment
       ],
 
