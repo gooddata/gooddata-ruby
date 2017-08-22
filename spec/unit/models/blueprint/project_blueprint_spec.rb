@@ -99,12 +99,29 @@ describe GoodData::Model::ProjectBlueprint do
 
     it 'invalid blueprint should give you list of violating references' do
       errors = @invalid_blueprint.validate
-      expect(errors.size).to eq 1
-      expect(errors).to eq([
+      expect(errors.size).to eq 5
+      expect(errors).to match_array([
         {
           :type => :wrong_label_reference,
           :label => "some_label_id",
           :wrong_reference => "attr.repos.repo_id                 ERROR"
+        },
+        {
+          type: :invalid_identifier,
+          id: 'some_attr_id(hello)'
+        },
+        {
+          type: :duplicated_identifier,
+          id: 'some_label_id'
+        },
+        {
+          type: :wrong_label_reference,
+          label: "some_label_id",
+          wrong_reference: "some_attr_id"
+        },
+        {
+          type: :attribute_without_label,
+          attribute: "some_attr_id(hello)"
         }
       ])
     end
