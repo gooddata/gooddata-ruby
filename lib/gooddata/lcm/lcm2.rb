@@ -101,9 +101,11 @@ module GoodData
       provision: [
         EnsureReleaseTable,
         CollectSegments,
+        CollectClientProjects,
         PurgeClients,
         CollectClients,
         AssociateClients,
+        RenameExistingClientProjects,
         ProvisionClients,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
