@@ -85,6 +85,11 @@ module GoodData
         authentication_modes_column = params.authentication_modes_column || 'authentication_modes'
         user_groups_column          = params.user_groups_column || 'user_groups'
         language_column             = params.language_column || 'language'
+        company_column              = params.company_column || 'company'
+        position_column             = params.position_column || 'position'
+        country_column              = params.country_column || 'country'
+        phone_column                = params.phone_column || 'phone'
+        ip_whitelist_column         = params.ip_whitelist_column || 'ip_whitelist'
 
         sso_provider = params.sso_provider
         authentication_modes = params.authentication_modes || []
@@ -93,7 +98,6 @@ module GoodData
         do_not_touch_users_that_are_not_mentioned = GoodData::Helpers.to_boolean(params.do_not_touch_users_that_are_not_mentioned)
 
         new_users = []
-
 
         # params.delete('GDC_SST')
 
@@ -115,6 +119,9 @@ module GoodData
 
           modes = modes.split(',').map(&:strip).map {|x| x.to_s.upcase} if !modes.is_a? Array
 
+          ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
+          ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
+
           new_users << {
             :first_name => row[first_name_column] || row[first_name_column.to_sym],
             :last_name => row[last_name_column] || row[last_name_column.to_sym],
@@ -124,9 +131,14 @@ module GoodData
             :role => row[role_column] || row[role_column.to_sym],
             :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
             :authentication_modes => modes,
-            user_group: row[user_groups_column] && row[user_groups_column].split(',').map(&:strip),
+            :user_group => row[user_groups_column] && row[user_groups_column].split(',').map(&:strip),
             :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
-            :language => row[language_column] || row[language_column.to_sym]
+            :language => row[language_column] || row[language_column.to_sym],
+            :company => row[company_column] || row[company_column.to_sym],
+            :position => row[position_column] || row[position_column.to_sym],
+            :country => row[country_column] || row[country_column.to_sym],
+            :phone => row[phone_column] || row[phone_column.to_sym],
+            :ip_whitelist => ip_whitelist
           }.compact
         end
 

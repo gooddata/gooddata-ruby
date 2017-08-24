@@ -14,6 +14,7 @@
 - TMA-565 - Provisioning brick doesn't add technical users when input source contains project_id
 - TMA-547 - Provisioning brick: sync client workspace title
 - TMA-301 - Make it possible to pass dynamic parameters to schedules
+- TMA-568 - Users Brick: add support for other user's attributes
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule

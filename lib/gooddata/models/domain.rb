@@ -95,6 +95,10 @@ module GoodData
         tmp = user_data[:timezone]
         data[:timezone] = tmp if tmp && !tmp.empty?
 
+        # Optional ip whitelist
+        tmp = user_data[:ip_whitelist]
+        data[:ipWhitelist] = tmp if tmp
+
         c = client(opts)
 
         # TODO: It will be nice if the API will return us user just newly created
