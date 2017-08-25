@@ -11,10 +11,34 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
   let(:gdc_gd_client) { double('gdc_gd_client') }
   let(:domain) { double('domain') }
   let(:segment) { double('segment') }
+  let(:project) { double('project') }
+  let(:result) { { syncedResult: {} } }
+  let(:client_id) { 'foo_client' }
+  let(:params) do
+    params = {
+      gdc_gd_client: gdc_gd_client,
+      organization: domain,
+      synchronize: [{
+        segment_id: 'some_segment_ids',
+        to: [{ pid: 'foo', client_id: client_id }]
+      }]
+    }
+    GoodData::LCM2.convert_to_smart_hash(params)
+  end
 
   before do
     allow(gdc_gd_client).to receive(:domain) { domain }
+    allow(gdc_gd_client).to receive(:projects) { project }
+    allow(project).to receive(:schedules) { [] }
     allow(domain).to receive(:segments) { segment }
+    allow(segment).to receive(:synchronize_processes) { result }
+    allow(project).to receive(:set_metadata)
+  end
+
+  it 'adds GOODOT_CUSTOM_PROJECT_ID to metadata' do
+    expect(project).to receive(:set_metadata)
+      .with('GOODOT_CUSTOM_PROJECT_ID', client_id)
+    subject.class.call(params)
   end
 
   context 'when sync processes/schedules has problem' do
@@ -31,20 +55,6 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
           ]
         }
       }
-    end
-
-    let(:params) do
-      params = {
-        gdc_gd_client: gdc_gd_client,
-        organization: domain,
-        synchronize: [{ segment_id: 'some_segment_ids' }]
-
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
-    end
-
-    before do
-      allow(segment).to receive(:synchronize_processes) { result }
     end
 
     it 'raise error' do
