@@ -133,6 +133,10 @@ module GoodData
 
       user_filters: [
         SynchronizeUserFilters
+      ],
+
+      schedules_execution: [
+        ExecuteSchedules
       ]
     }
 
