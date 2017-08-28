@@ -264,9 +264,14 @@ module GoodData
               elsif match =~ /\\\$/
                 '$'
               elsif match =~ /\$\{(\w+)\}/
-                val = params["#{$1}"] || raise("The gd_encoded_params parameter contains unknow reference #{$1}") # rubocop: disable Style/PerlBackrefs
-                reference_values << val
-                val
+                val = params["#{$1}"]
+                if val
+                  reference_values << val
+                  val
+                else
+                  GoodData.logger.warn "Reference '#{$1}' is not found!"
+                  match
+                end
               end
             end
           end

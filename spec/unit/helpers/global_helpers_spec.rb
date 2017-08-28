@@ -123,6 +123,22 @@ describe GoodData::Helpers do
       end
     end
 
+    it 'should not throw error if missing reference parameter placeholder' do
+      params = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'gd_encoded_params' => '{"login_username": "login_user", "login_password": "${my_password}"}'
+      }
+      expected_result = {
+        'x' => 'y',
+        'ads_password' => 'ads_123',
+        'login_username' => 'login_user',
+        'login_password' => '${my_password}'
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
     it 'should encode reference parameters in gd_encoded_params' do
       params = {
         'x' => 'y',
