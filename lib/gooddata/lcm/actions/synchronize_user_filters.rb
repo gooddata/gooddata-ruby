@@ -9,10 +9,10 @@ require_relative 'base_action'
 module GoodData
   module LCM2
     class SynchronizeUserFilters < BaseAction
-      DESCRIPTION = 'Synchronizes user permissions between projects'
+      DESCRIPTION = 'Synchronizes User Permissions Between Projects'
 
       PARAMS = define_params(self) do
-        description 'Client Used for Connecting to GD'
+        description 'Client Used For Connecting To GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
         description 'Input Source'
@@ -21,22 +21,22 @@ module GoodData
         description 'Synchronization Mode (e.g. sync_one_project_based_on_pid)'
         param :sync_mode, instance_of(Type::StringType), required: false
 
-        description 'Column that contains target project IDs'
+        description 'Column That Contains Target Project IDs'
         param :multiple_projects_column, instance_of(Type::StringType), required: false
 
         description 'Filters Config'
         param :filters_config, instance_of(Type::HashType), required: true
 
-        description 'true/false'
+        description 'Input Source Contains CSV Headers?'
         param :csv_headers, instance_of(Type::StringType), required: false
 
-        description 'true/false'
+        description 'Restrict If Missing Values In Input Source'
         param :restrict_if_missing_all_values, instance_of(Type::StringType), required: false
 
-        description 'true/false'
+        description 'Ignore Missing Values In Input Source'
         param :ignore_missing_values, instance_of(Type::StringType), required: false
 
-        description 'true/false'
+        description 'Do Not Touch Filters That Are Not Mentioned'
         param :do_not_touch_filters_that_are_not_mentioned, instance_of(Type::StringType), required: false
 
         description 'Restricts synchronization to specified segments'
@@ -66,19 +66,19 @@ module GoodData
           filters = []
 
           csv_with_headers = if GoodData::UserFilterBuilder.row_based?(symbolized_config)
-            false
-          else
-            headers_in_options
-          end
+                               false
+                             else
+                               headers_in_options
+                             end
 
           multiple_projects_column = params.multiple_projects_column
           unless multiple_projects_column
-            client_modes = ['sync_domain_client_workspaces', 'sync_one_project_based_on_custom_id', 'sync_multiple_projects_based_on_custom_id']
+            client_modes = %w(sync_domain_client_workspaces sync_one_project_based_on_custom_id sync_multiple_projects_based_on_custom_id)
             multiple_projects_column = if client_modes.include?(mode)
-              'client_id'
-            else
-              'project_id'
-            end
+                                         'client_id'
+                                       else
+                                         'project_id'
+                                       end
           end
 
           run_params = {
@@ -95,14 +95,14 @@ module GoodData
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row
             end
-            filters_to_load = GoodData::UserFilterBuilder::get_filters(filters, symbolized_config)
+            filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
             puts "Synchronizing #{filters_to_load.count} filters"
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_one_project_based_on_pid'
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row if row[multiple_projects_column] == project.pid
             end
-            filters_to_load = GoodData::UserFilterBuilder::get_filters(filters, symbolized_config)
+            filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
             puts "Synchronizing #{filters_to_load.count} filters"
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_multiple_projects_based_on_pid'
@@ -112,7 +112,7 @@ module GoodData
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |project_id, new_filters|
               fail "Project id cannot be empty" if project_id.blank?
               project = client.projects(project_id)
-              filters_to_load = GoodData::UserFilterBuilder::get_filters(new_filters, symbolized_config)
+              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid}"
               project.add_data_permissions(filters_to_load, run_params)
             end
@@ -132,7 +132,7 @@ module GoodData
               We are unable to get the value to filter users."
             end
 
-            filters_to_load = GoodData::UserFilterBuilder::get_filters(filters, symbolized_config)
+            filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
             puts "Synchronizing #{filters_to_load.count} filters"
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_multiple_projects_based_on_custom_id'
@@ -143,7 +143,7 @@ module GoodData
               fail "Client id cannot be empty" if client_id.blank?
               project = domain.clients(client_id).project
               fail "Client #{client_id} does not have project." unless project
-              filters_to_load = GoodData::UserFilterBuilder::get_filters(new_filters, symbolized_config)
+              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
               project.add_data_permissions(filters_to_load, run_params)
             end
@@ -171,7 +171,7 @@ module GoodData
               project = c.project
               fail "Client #{client_id} does not have project." unless project
               working_client_ids << client_id
-              filters_to_load = GoodData::UserFilterBuilder::get_filters(new_filters, symbolized_config)
+              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
               project.add_data_permissions(filters_to_load, run_params)
             end
