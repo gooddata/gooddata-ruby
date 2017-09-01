@@ -1100,7 +1100,7 @@ module GoodData
     # @param [String] key key of the value to be stored
     # @return [String] val value to be stored
     def set_metadata(key, val)
-      GoodData::ProjectMetadata[key, client: client, project: self] = val
+      GoodData::ProjectMetadata.[]=(key, { client: client, project: self }, val)
     end
 
     # Helper for getting metrics of a project
