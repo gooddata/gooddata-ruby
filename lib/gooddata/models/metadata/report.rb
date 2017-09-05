@@ -153,7 +153,7 @@ module GoodData
       report_req['timestamp'] = time.strftime('%s') if time
 
       fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
-      result = client.post '/gdc/xtab2/executor3', 'report_req' => report_req
+      result = client.post "/gdc/projects/#{project.pid}/execute", 'report_req' => report_req
       GoodData::Report.data_result(result, options.merge(client: client))
     end
 
@@ -170,7 +170,7 @@ module GoodData
     # @return [String] Returns data
     def export(format, options = {})
       result = client.post('/gdc/xtab2/executor3', 'report_req' => { 'report' => uri })
-      result1 = client.post('/gdc/exporter/executor', :result_req => { :format => format, :result => result })
+      result1 = client.post("/gdc/projects/#{project.pid}/execute", :result_req => { :format => format, :result => result })
       client.poll_on_code(result1['uri'], options.merge(process: false))
     end
 
