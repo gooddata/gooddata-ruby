@@ -559,7 +559,7 @@ describe "Full project implementation", :constraint => 'slow' do
     r = @project.create_report(top: [m], title: 'Report to export')
     r.save
     r.export(:csv)
-    # r.export(:pdf)
+    r.export(:pdf)
     r.delete
   end
 
