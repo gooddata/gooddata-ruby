@@ -150,7 +150,7 @@ module GoodData
       time = options[:time]
 
       report_req = { 'report' => uri }
-      report_req['timestamp'] = time.strftime('%s') if time
+      report_req['timestamp'] = time.to_i if time
 
       fail 'You have to save the report before executing. If you do not want to do that please use GoodData::ReportDefinition' unless saved?
       result = client.post "/gdc/projects/#{project.pid}/execute", 'report_req' => report_req
