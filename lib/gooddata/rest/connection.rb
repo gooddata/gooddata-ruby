@@ -639,7 +639,7 @@ ERR
         ['/gdc/account/domains/{id}/users?login={login}', %r{/gdc/account/domains/[\w\d-]+/users\?login=[^&$]+}],
         ['/gdc/account/domains/{id}', %r{/gdc/account/domains/[\w\d-]+}],
 
-        ['/gdc/app/projects/{id}/execute', %r{/gdc/app/projects/[\w]+/execute}],
+        ['/gdc/projects/{id}/execute', %r{/gdc/projects/[\w]+/execute}],
 
         ['/gdc/datawarehouse/instances/{id}', %r{/gdc/datawarehouse/instances/[\w]+}],
         ['/gdc/datawarehouse/executions/{id}', %r{/gdc/datawarehouse/executions/[\w]+}],

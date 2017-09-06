@@ -228,7 +228,7 @@ module GoodData
                  pars = {
                    'report_req' => { 'reportDefinition' => uri }
                  }
-                 client.post '/gdc/xtab2/executor3', pars
+                 client.post "/gdc/projects/#{project.pid}/execute", pars
                else
                  data = {
                    report_req: {
@@ -238,7 +238,7 @@ module GoodData
                      }
                    }
                  }
-                 uri = "/gdc/app/projects/#{project.pid}/execute"
+                 uri = "/gdc/projects/#{project.pid}/execute"
                  client.post(uri, data)
                end
       GoodData::Report.data_result(result, opts.merge(client: client))
