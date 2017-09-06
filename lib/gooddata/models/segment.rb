@@ -71,7 +71,7 @@ module GoodData
       # @return [GoodData::Segment] New Segment instance
       def create(data = {}, options = {})
         segment_id = data[:segment_id]
-        fail 'Custom ID has to be provided' if segment_id.blank?
+        fail 'segment_id has to be provided' if segment_id.blank?
         client = options[:client]
         segment = client.create(GoodData::Segment, GoodData::Helpers.stringify_keys(SEGMENT_TEMPLATE).merge('domain' => options[:domain]))
         segment.tap do |s|
