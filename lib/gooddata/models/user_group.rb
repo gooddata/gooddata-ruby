@@ -67,6 +67,8 @@ module GoodData
           d['userGroup']['content']['project'] = data[:project].uri
         end
 
+        client = data[:project].client
+
         group = client.create(GoodData::UserGroup, GoodData::Helpers.stringify_keys(new_data))
         group.project = data[:project]
         group

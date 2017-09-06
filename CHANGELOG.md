@@ -15,6 +15,7 @@
 - TMA-547 - Provisioning brick: sync client workspace title
 - TMA-301 - Make it possible to pass dynamic parameters to schedules
 - TMA-568 - Users Brick: add support for other user's attributes
+- TMA-195 - LCM bricks should transfer permissions and groups
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
