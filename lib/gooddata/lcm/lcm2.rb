@@ -94,6 +94,7 @@ module GoodData
         SynchronizeProcesses,
         SynchronizeSchedules,
         SynchronizeColorPalette,
+        SynchronizeUserGroups,
         SynchronizeNewSegments,
         UpdateReleaseTable
       ],

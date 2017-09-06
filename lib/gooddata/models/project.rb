@@ -306,9 +306,10 @@ module GoodData
       end
 
       def transfer_user_groups(from_project, to_project)
-        from_project.user_groups.each do |ug|
+        from_project.user_groups.map do |ug|
           # migrate groups
           new_group = to_project.user_groups.select { |group| group.name == ug.name }.first
+          new_group_status = new_group ? 'modified' : 'created'
           new_group ||= UserGroup.create(:name => ug.name, :description => ug.description, :project => to_project)
           new_group.project = to_project
           new_group.description = ug.description
@@ -323,6 +324,13 @@ module GoodData
             permission = grantee['aclEntryURI']['permission']
             new_dashboard.grant(:member => new_group, :permission => permission)
           end
+
+          {
+            from: from_project.pid,
+            to: to_project.pid,
+            user_group: new_group.name,
+            status: new_group_status
+          }
         end
       end
 
