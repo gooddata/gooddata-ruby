@@ -1,0 +1,34 @@
+version: '2'
+services:
+  gooddata-ruby:
+    image: gooddata/ruby
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby
+    environment:
+      - PRONTO_GITHUB_ACCESS_TOKEN
+      - PRONTO_PULL_REQUEST_ID
+      - GD_ENV
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - .:/var/lib/jenkins-slave
+    volumes_from:
+      - bundle
+  gooddata-jruby:
+    image: gooddata/jruby
+    build:
+      context: .
+      dockerfile: Dockerfile.jruby
+    environment:
+      - GD_PROJECT_TOKEN
+      - GD_SPEC_PASSWORD
+      - GD_ENV
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - .:/var/lib/jenkins-slave
+    volumes_from:
+      - bundle
+  bundle:
+    image: busybox
+    volumes:
+      - /bundle
