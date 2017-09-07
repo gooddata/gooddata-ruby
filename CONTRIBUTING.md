@@ -1,4 +1,17 @@
-### Contribution acceptance criteria
+# Contributing
+
+## Static analysis
+We use [Pronto](https://github.com/prontolabs/pronto) to detect code smells using static analysis. Comments are automatically created on pull requests when code smells are found.
+
+#### Running locally
+`bundle exec pronto run --unstaged -c upstream/develop`
+
+#### Editor integrations:
+- [Rubocop](https://rubocop.readthedocs.io/en/latest/integration_with_other_tools/)
+- [Reek](https://github.com/troessner/reek#editor-integrations)
+- [Flay](https://github.com/seattlerb/flay)
+
+## Acceptance criteria
 
 1. The change is as small as possible. It fixes one specific issue or implements
    one specific feature. Do not combine things, send separate pull requests if needed.
