@@ -245,7 +245,7 @@ module GoodData
                         end
                         project = c.project
                         fail "Client #{client_id} does not have project." unless project
-                        working_client_ids << client_id
+                        working_client_ids << client_id.to_s
                         puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
                         project.import_users(users,
                                              domain: domain,
@@ -255,9 +255,11 @@ module GoodData
                                              do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
                       end
 
+                      params.gdc_logger.debug("Working client ids are: #{working_client_ids.join(', ')}")
+
                       unless do_not_touch_users_that_are_not_mentioned
                         domain_clients.each do |c|
-                          next if working_client_ids.include?(c.client_id)
+                          next if working_client_ids.include?(c.client_id.to_s)
                           begin
                             project = c.project
                           rescue => e
