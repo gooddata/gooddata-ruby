@@ -35,7 +35,7 @@ namespace :test do
 
   namespace :integration do
     task :docker do
-      system('docker-compose run gooddata-jruby bundle exec rake test:integration') ||
+      system('docker-compose run -u 1002:1002 -e HOME=/var/lib/jenkins-slave gooddata-jruby bundle exec rake test:integration') ||
         fail('Test execution failed!')
     end
   end
