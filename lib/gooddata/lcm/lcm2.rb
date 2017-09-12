@@ -301,6 +301,8 @@ module GoodData
 
           # Invoke action
           begin
+            GoodData.logger.info("Running #{action.name} action ...")
+
             # Check if all required parameters were passed
             BaseAction.check_params(action.const_get('PARAMS'), params)
 
