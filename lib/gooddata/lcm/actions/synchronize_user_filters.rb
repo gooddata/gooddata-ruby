@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require 'thread_safe'
 
 module GoodData
   module LCM2
@@ -89,32 +90,34 @@ module GoodData
             dry_run: false
           }
 
-          puts "Synchronizing in mode \"#{mode}\""
+          semaphore = Mutex.new
+
+          params.gdc_logger.info("Synchronizing in mode \"#{mode}\"")
           case mode
           when 'sync_project'
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row
             end
             filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
-            puts "Synchronizing #{filters_to_load.count} filters"
+            params.gdc_logger.info("Synchronizing #{filters_to_load.count} filters")
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_one_project_based_on_pid'
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row if row[multiple_projects_column] == project.pid
             end
             filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
-            puts "Synchronizing #{filters_to_load.count} filters"
+            params.gdc_logger.info("Synchronizing #{filters_to_load.count} filters")
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_multiple_projects_based_on_pid'
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row.to_hash
             end
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |project_id, new_filters|
+            filters.group_by { |filter| filter[multiple_projects_column] }.flat_pmap do |project_id, new_filters|
               fail "Project id cannot be empty" if project_id.blank?
-              project = client.projects(project_id)
-              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid}"
-              project.add_data_permissions(filters_to_load, run_params)
+              client_project = client.projects(project_id)
+              Thread.current['filters_to_load'] = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
+              semaphore.synchronize { params.gdc_logger.info("Synchronizing #{Thread.current['filters_to_load'].count} filters in project #{client_project.pid}") }
+              client_project.add_data_permissions(Thread.current['filters_to_load'], run_params)
             end
           when 'sync_one_project_based_on_custom_id'
             md = project.metadata
@@ -133,19 +136,23 @@ module GoodData
             end
 
             filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
-            puts "Synchronizing #{filters_to_load.count} filters"
+            params.gdc_logger.info("Synchronizing #{filters_to_load.count} filters")
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_multiple_projects_based_on_custom_id'
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row.to_hash
             end
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
+            filters.group_by { |filter| filter[multiple_projects_column] }.flat_pmap do |client_id, new_filters|
+              semaphore.synchronize { params.gdc_logger.debug("Client id #{client_id} with input data #{new_filters}") }
               fail "Client id cannot be empty" if client_id.blank?
-              project = domain.clients(client_id).project
-              fail "Client #{client_id} does not have project." unless project
-              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
-              project.add_data_permissions(filters_to_load, run_params)
+              client_project = domain.clients(client_id).project
+              fail "Client #{client_id} does not have project." unless client_project
+              Thread.current['filters_to_load'] = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
+              semaphore.synchronize do
+                params.gdc_logger.debug("Filters to load: #{Thread.current['filters_to_load']}")
+                params.gdc_logger.info("Synchronizing #{Thread.current['filters_to_load'].count} filters in project #{client_project.pid} of client #{client_id}")
+              end
+              client_project.add_data_permissions(Thread.current['filters_to_load'], run_params)
             end
           when 'sync_domain_client_workspaces'
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
@@ -159,46 +166,50 @@ module GoodData
               domain_clients.select! { |c| segments_filter.include?(c.segment_uri) }
             end
 
-            working_client_ids = []
+            working_client_ids = ThreadSafe::Array.new
 
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
+            filters.group_by { |filter| filter[multiple_projects_column] }.flat_pmap do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
-              c = domain.clients(client_id)
-              if params.segments_filter && !segments_filter.include?(c.segment_uri)
-                puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
+              segment_client = domain_clients.find { |c| c.client_id.to_s == client_id.to_s }
+              if params.segments_filter && !segments_filter.include?(segment_client.segment_uri)
+                semaphore.synchronize { params.gdc_logger.warn("Client #{client_id} is outside segments_filter #{params.segments_filter}") }
                 next
               end
-              project = c.project
-              fail "Client #{client_id} does not have project." unless project
-              working_client_ids << client_id
-              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
-              project.add_data_permissions(filters_to_load, run_params)
+              client_project = segment_client.project
+              fail "Client #{client_id} does not have project." unless client_project
+              working_client_ids << client_id.to_s
+              Thread.current['filters_to_load'] = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
+              semaphore.synchronize do
+                params.gdc_logger.info("Synchronizing #{Thread.current['filters_to_load'].count} filters in project #{client_project.pid} of client #{client_id}")
+              end
+              client_project.add_data_permissions(Thread.current['filters_to_load'], run_params)
             end
 
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
-              domain_clients.each do |c|
-                next if working_client_ids.include?(c.client_id)
+              domain_clients.peach do |domain_client|
+                next if working_client_ids.include?(domain_client.client_id.to_s)
                 begin
-                  project = c.project
+                  clean_up_project = domain_client.project
                 rescue => e
-                  puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
+                  semaphore.synchronize { params.gdc_logger.warn("Error when accessing project of client #{domain_client.client_id}. Error: #{e}") }
                   next
                 end
-                unless project
-                  puts "Client #{c.client_id} has no project."
+                unless clean_up_project
+                  semaphore.synchronize { params.gdc_logger.warn("Client #{domain_client.client_id} has no project.") }
                   next
                 end
-                if project.deleted?
-                  puts "Project #{project.pid} of client #{c.client_id} is deleted."
+                if clean_up_project.deleted?
+                  semaphore.synchronize { params.gdc_logger.warn("Project #{clean_up_project.pid} of client #{domain_client.client_id} is deleted.") }
                   next
                 end
 
-                puts "Delete all filters in project #{project.pid} of client #{c.client_id}"
-                project.add_data_permissions([], run_params)
+                semaphore.synchronize { params.gdc_logger.info("Delete all filters in project #{clean_up_project.pid} of client #{domain_client.client_id}") }
+                clean_up_project.add_data_permissions([], run_params)
               end
             end
           end
+
+          return # rubocop:disable Style/RedundantReturn
         end
       end
     end

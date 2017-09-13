@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require 'thread_safe'
 
 module GoodData
   module LCM2
@@ -148,6 +149,10 @@ module GoodData
             }.compact
           end
 
+          semaphore = Mutex.new
+
+          params.gdc_logger.info("Synchronizing in mode \"#{mode}\"")
+
           # There are several scenarios we want to provide with this brick
           # 1) Sync only domain
           # 2) Sync both domain and project
@@ -174,17 +179,16 @@ module GoodData
                                            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_pid'
-                      new_users.group_by { |u| u[:pid] }.flat_map do |project_id, users|
+                      new_users.group_by { |user| user[:pid] }.flat_pmap do |project_id, users|
                         begin
-                          project = client.projects(project_id)
-                          fail "You (user executing the script - #{client.user.login}) is not admin in project \"#{project_id}\"." unless project.am_i_admin?
-                          project.import_users(users,
-                                               domain: domain,
-                                               whitelists: whitelists,
-                                               ignore_failures: ignore_failures,
-                                               remove_users_from_project: remove_users_from_project,
-                                               do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
-                                               create_non_existing_user_groups: create_non_existing_user_groups)
+                          client_project = client.projects(project_id)
+                          fail "You (user executing the script - #{client.user.login}) is not admin in project \"#{project_id}\"." unless client_project.am_i_admin?
+                          client_project.import_users(users,
+                                                      domain: domain,
+                                                      whitelists: whitelists,
+                                                      ignore_failures: ignore_failures,
+                                                      remove_users_from_project: remove_users_from_project,
+                                                      do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
                         rescue RestClient::ResourceNotFound
                           fail "Project \"#{project_id}\" was not found. Please check your project ids in the source file"
                         rescue RestClient::Gone
@@ -217,7 +221,7 @@ module GoodData
   We are unable to get the value to filter users."
                       end
 
-                      puts "Project #{project.pid} will receive #{filtered_users.count} from #{new_users.count} users"
+                      params.gdc_logger.info("Project #{project.pid} will receive #{filtered_users.count} from #{new_users.count} users")
                       project.import_users(filtered_users,
                                            domain: domain,
                                            whitelists: whitelists,
@@ -226,18 +230,17 @@ module GoodData
                                            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_custom_id'
-                      new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
+                      new_users.group_by { |user| user[:pid] }.flat_pmap do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
-                        project = domain.clients(client_id).project
-                        fail "Client #{client_id} does not have project." unless project
-                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
-                        project.import_users(users,
-                                             domain: domain,
-                                             whitelists: whitelists,
-                                             ignore_failures: ignore_failures,
-                                             remove_users_from_project: remove_users_from_project,
-                                             do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
-                                             create_non_existing_user_groups: create_non_existing_user_groups)
+                        client_project = domain.clients(client_id).project
+                        fail "Client #{client_id} does not have project." unless client_project
+                        semaphore.synchronize { params.gdc_logger.info("Project #{client_project.pid} of client #{client_id} will receive #{users.count} users") }
+                        client_project.import_users(users,
+                                                    domain: domain,
+                                                    whitelists: whitelists,
+                                                    ignore_failures: ignore_failures,
+                                                    remove_users_from_project: remove_users_from_project,
+                                                    do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
                       end
                     when 'sync_domain_client_workspaces'
                       domain_clients = domain.clients
@@ -245,55 +248,53 @@ module GoodData
                         segments_filter = params.segments_filter.map { |seg| "/gdc/domains/#{domain.name}/segments/#{seg}" }
                         domain_clients.select! { |c| segments_filter.include?(c.segment_uri) }
                       end
-                      working_client_ids = []
-                      res = []
-                      res += new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
+                      working_client_ids = ThreadSafe::Array.new
+                      res = ThreadSafe::Array.new
+                      res += new_users.group_by { |user| user[:pid] }.flat_pmap do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
-                        c = domain.clients(client_id)
-                        if params.segments_filter && !segments_filter.include?(c.segment_uri)
-                          puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
+                        segment_client = domain_clients.find { |domain_client| domain_client.client_id.to_s == client_id.to_s }
+                        if params.segments_filter && !segments_filter.include?(segment_client.segment_uri)
+                          semaphore.synchronize { params.gdc_logger.warn("Client #{client_id} is outside segments_filter #{params.segments_filter}") }
                           next
                         end
-                        project = c.project
-                        fail "Client #{client_id} does not have project." unless project
+                        client_project = segment_client.project
+                        fail "Client #{client_id} does not have project." unless client_project
                         working_client_ids << client_id.to_s
-                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
-                        project.import_users(users,
-                                             domain: domain,
-                                             whitelists: whitelists,
-                                             ignore_failures: ignore_failures,
-                                             remove_users_from_project: remove_users_from_project,
-                                             do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
-                                             create_non_existing_user_groups: create_non_existing_user_groups)
+                        semaphore.synchronize { params.gdc_logger.info("Project #{client_project.pid} of client #{client_id} will receive #{users.count} users") }
+                        client_project.import_users(users,
+                                                    domain: domain,
+                                                    whitelists: whitelists,
+                                                    ignore_failures: ignore_failures,
+                                                    remove_users_from_project: remove_users_from_project,
+                                                    do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
                       end
 
                       params.gdc_logger.debug("Working client ids are: #{working_client_ids.join(', ')}")
 
                       unless do_not_touch_users_that_are_not_mentioned
-                        domain_clients.each do |c|
-                          next if working_client_ids.include?(c.client_id.to_s)
+                        domain_clients.peach do |domain_client|
+                          next if working_client_ids.include?(domain_client.client_id.to_s)
                           begin
-                            project = c.project
+                            clean_up_project = domain_client.project
                           rescue => e
-                            puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
+                            semaphore.synchronize { params.gdc_logger.warn("Error when accessing project of client #{domain_client.client_id}. Error: #{e}") }
                             next
                           end
-                          unless project
-                            puts "Client #{c.client_id} has no project."
+                          unless clean_up_project
+                            semaphore.synchronize { params.gdc_logger.warn("Client #{domain_client.client_id} has no project.") }
                             next
                           end
-                          if project.deleted?
-                            puts "Project #{project.pid} of client #{c.client_id} is deleted."
+                          if clean_up_project.deleted?
+                            semaphore.synchronize { params.gdc_logger.warn("Project #{clean_up_project.pid} of client #{domain_client.client_id} is deleted.") }
                             next
                           end
-                          puts "Synchronizing all users in project #{project.pid} of client #{c.client_id}"
-                          res += project.import_users([],
-                                                      domain: domain,
-                                                      whitelists: whitelists,
-                                                      ignore_failures: ignore_failures,
-                                                      remove_users_from_project: remove_users_from_project,
-                                                      do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
-                                                      create_non_existing_user_groups: create_non_existing_user_groups)
+                          semaphore.synchronize { params.gdc_logger.info("Synchronizing all users in project #{clean_up_project.pid} of client #{domain_client.client_id}") }
+                          res += clean_up_project.import_users([],
+                                                               domain: domain,
+                                                               whitelists: whitelists,
+                                                               ignore_failures: ignore_failures,
+                                                               remove_users_from_project: remove_users_from_project,
+                                                               do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
                         end
                       end
 
@@ -312,13 +313,13 @@ module GoodData
           results.compact!
           counts = results.group_by { |r| r[:type] }.map { |g, r| [g, r.count] }
           counts.each do |category, count|
-            puts "There were #{count} events of type #{category}"
+            params.gdc_logger.info("There were #{count} events of type #{category}")
           end
           errors = results.select { |r| r[:type] == :error || r[:type] == :failed }
           return if errors.empty?
 
-          puts "Printing 10 first errors"
-          puts "========================"
+          params.gdc_logger.info("Printing 10 first errors")
+          params.gdc_logger.info("========================")
           pp errors.take(10)
           fail 'There was an error syncing users'
         end

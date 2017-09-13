@@ -1620,7 +1620,7 @@ module GoodData
     # Imports users
     def import_users(new_users, options = {})
       role_list = roles
-      users_list = users
+      users_list = users.to_a
       new_users = new_users.map { |x| ((x.is_a?(Hash) && x[:user] && x[:user].to_hash.merge(role: x[:role])) || x.to_hash).tap { |u| u[:login].downcase! } }
 
       GoodData.logger.warn("Importing users to project (#{pid})")

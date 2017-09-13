@@ -25,6 +25,7 @@ describe GoodData::LCM2::SynchronizeUsers do
     allow(GoodData::Helpers::DataSource).to receive(:new)
       .and_return(data_source)
     allow(logger).to receive(:debug)
+    allow(logger).to receive(:info)
   end
 
   context 'when multiple_projects_column not specified' do

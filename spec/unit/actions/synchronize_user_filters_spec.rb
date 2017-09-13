@@ -8,6 +8,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
   let(:domain) { double('domain') }
   let(:project) { double('project') }
   let(:organization) { double('organization') }
+  let(:logger) { double('logger') }
 
   before do
     allow(client).to receive(:projects).and_return(project)
@@ -22,6 +23,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
     allow(user).to receive(:login).and_return('my_login')
     allow(GoodData::Helpers::DataSource).to receive(:new)
       .and_return(data_source)
+    allow(logger).to receive(:info)
   end
 
   context 'when multiple_projects_column not specified' do
@@ -32,6 +34,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
           input_source: 'foo',
           domain: 'bar',
           filters_config: { labels: [] },
+          gdc_logger: logger,
           sync_mode: 'sync_one_project_based_on_custom_id'
         }
         GoodData::LCM2.convert_to_smart_hash(params)
@@ -54,6 +57,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
           input_source: 'foo',
           domain: 'bar',
           filters_config: { labels: [] },
+          gdc_logger: logger,
           sync_mode: 'sync_one_project_based_on_pid'
         }
         GoodData::LCM2.convert_to_smart_hash(params)
