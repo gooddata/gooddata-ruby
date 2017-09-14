@@ -96,6 +96,7 @@ module GoodData
           ignore_failures = GoodData::Helpers.to_boolean(params.ignore_failures)
           remove_users_from_project = GoodData::Helpers.to_boolean(params.remove_users_from_project)
           do_not_touch_users_that_are_not_mentioned = GoodData::Helpers.to_boolean(params.do_not_touch_users_that_are_not_mentioned)
+          create_non_existing_user_groups = GoodData::Helpers.to_boolean(params.create_non_existing_user_groups || true)
 
           new_users = []
 
@@ -111,6 +112,8 @@ module GoodData
           end
 
           data.each do |row|
+            params.gdc_logger.debug("Processing row: #{row}")
+
             modes = if authentication_modes.empty?
                       row[authentication_modes_column] || row[authentication_modes_column.to_sym] || []
                     else
@@ -118,6 +121,9 @@ module GoodData
                     end
 
             modes = modes.split(',').map(&:strip).map { |x| x.to_s.upcase } unless modes.is_a? Array
+
+            user_group = row[user_groups_column] || row[user_groups_column.to_sym]
+            user_group = user_group.split(',').map(&:strip) if user_group
 
             ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
             ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
@@ -131,7 +137,7 @@ module GoodData
               :role => row[role_column] || row[role_column.to_sym],
               :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
               :authentication_modes => modes,
-              :user_group => row[user_groups_column] && row[user_groups_column].split(',').map(&:strip),
+              :user_group => user_group,
               :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
               :language => row[language_column] || row[language_column.to_sym],
               :company => row[company_column] || row[company_column.to_sym],
@@ -165,7 +171,8 @@ module GoodData
                                            whitelists: whitelists,
                                            ignore_failures: ignore_failures,
                                            remove_users_from_project: remove_users_from_project,
-                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                           create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_pid'
                       new_users.group_by { |u| u[:pid] }.flat_map do |project_id, users|
                         begin
@@ -176,7 +183,8 @@ module GoodData
                                                whitelists: whitelists,
                                                ignore_failures: ignore_failures,
                                                remove_users_from_project: remove_users_from_project,
-                                               do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                               do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                               create_non_existing_user_groups: create_non_existing_user_groups)
                         rescue RestClient::ResourceNotFound
                           fail "Project \"#{project_id}\" was not found. Please check your project ids in the source file"
                         rescue RestClient::Gone
@@ -192,7 +200,8 @@ module GoodData
                                            whitelists: whitelists,
                                            ignore_failures: ignore_failures,
                                            remove_users_from_project: remove_users_from_project,
-                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                           create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_one_project_based_on_custom_id'
                       md = project.metadata
                       goodot_id = md['GOODOT_CUSTOM_PROJECT_ID'].to_s
@@ -214,7 +223,8 @@ module GoodData
                                            whitelists: whitelists,
                                            ignore_failures: ignore_failures,
                                            remove_users_from_project: remove_users_from_project,
-                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                           create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_custom_id'
                       new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
@@ -226,7 +236,8 @@ module GoodData
                                              whitelists: whitelists,
                                              ignore_failures: ignore_failures,
                                              remove_users_from_project: remove_users_from_project,
-                                             do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                             do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                             create_non_existing_user_groups: create_non_existing_user_groups)
                       end
                     when 'sync_domain_client_workspaces'
                       domain_clients = domain.clients
@@ -252,7 +263,8 @@ module GoodData
                                              whitelists: whitelists,
                                              ignore_failures: ignore_failures,
                                              remove_users_from_project: remove_users_from_project,
-                                             do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                             do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                             create_non_existing_user_groups: create_non_existing_user_groups)
                       end
 
                       params.gdc_logger.debug("Working client ids are: #{working_client_ids.join(', ')}")
@@ -280,7 +292,8 @@ module GoodData
                                                       whitelists: whitelists,
                                                       ignore_failures: ignore_failures,
                                                       remove_users_from_project: remove_users_from_project,
-                                                      do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                                      do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                                      create_non_existing_user_groups: create_non_existing_user_groups)
                         end
                       end
 
@@ -292,7 +305,8 @@ module GoodData
                                            whitelists: whitelists,
                                            ignore_failures: ignore_failures,
                                            remove_users_from_project: remove_users_from_project,
-                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned)
+                                           do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
+                                           create_non_existing_user_groups: create_non_existing_user_groups)
                     end
 
           results.compact!
