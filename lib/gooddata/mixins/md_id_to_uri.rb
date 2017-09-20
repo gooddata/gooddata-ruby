@@ -9,7 +9,6 @@ module GoodData
     module MdIdToUri
       IDENTIFIERS_CFG = 'instance-identifiers'
 
-      # TODO: Add test
       def identifier_to_uri(opts = { :client => GoodData.connection, :project => GoodData.project }, *ids)
         client, project = GoodData.get_client_and_project(opts)
 
