@@ -5,16 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'gooddata'
+require 'tempfile'
 
 describe "Full project implementation", :constraint => 'slow' do
   before(:all) do
-    @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprints/invalid_blueprint.json"), :symbolize_names => true)
-    @client = ConnectionHelper.create_default_connection
-    @blueprint = GoodData::Model::ProjectBlueprint.new(@spec)
     @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
-
-    @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @client = ConnectionHelper.create_default_connection
+    @project, @blueprint, @spec = ProjectHelper.load_full_project_implementation(@client)
   end
 
   after(:all) do
