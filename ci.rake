@@ -5,9 +5,14 @@ namespace :docker do
   end
 
   desc 'Bundles gems using cache'
-  task :bundle do
-    system('docker-compose run gooddata-ruby bundle')
-    system('docker-compose run gooddata-jruby bundle')
+  namespace :bundle do
+    task :ruby do
+      system('docker-compose run gooddata-ruby bundle')
+    end
+
+    task :jruby do
+      system('docker-compose run gooddata-jruby bundle')
+    end
   end
 end
 
