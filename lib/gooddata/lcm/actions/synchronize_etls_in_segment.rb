@@ -118,10 +118,6 @@ module GoodData
                 end
 
                 schedule.update_params(params.additional_params) if params.additional_params
-                schedule.update_params(
-                  CLIENT_ID: client_id, # needed for ADD and CloudConnect ETL
-                  GOODOT_CUSTOM_PROJECT_ID: client_id # TMA-210
-                )
 
                 schedule.update_params(params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
                 schedule.update_params(params_for_all_projects[schedule.name]) if params_for_all_projects[schedule.name]
