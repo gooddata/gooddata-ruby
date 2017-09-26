@@ -125,9 +125,7 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
       end
 
       it 'each schedules must have different parameters' do
-        schedule1.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
         schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
-        schedule2.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
         schedule2.should_receive(:update_params).once.ordered.with('BYE' => 'bye')
         subject.class.call(params)
       end
@@ -161,9 +159,7 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
       end
 
       it 'all schedules must have the parameter' do
-        schedule1.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
         schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
-        schedule2.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
         schedule2.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
         subject.class.call(params)
       end
@@ -202,9 +198,7 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
       end
 
       it 'parameters should be passed to the correct client project and schedule' do
-        schedule1.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
         schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
-        schedule2.should_receive(:update_params).once.ordered.with(CLIENT_ID: 'foo', GOODOT_CUSTOM_PROJECT_ID: 'foo')
         subject.class.call(params)
       end
     end
