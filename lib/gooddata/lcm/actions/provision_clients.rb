@@ -67,7 +67,8 @@ module GoodData
           rescue => e
             params.gdc_logger.error "Problem occurs when provisioning clients. Purge all invalid clients now ..."
             res = PurgeClients.send(:call, params)
-            deleted_client_ids = res.select { |r| r[:status] == 'purged' }.map { |r| r[:client_id] }
+            params.gdc_logger.debug "Purge clients result: #{res}"
+            deleted_client_ids = res[:results].select { |r| r[:status] == 'purged' }.map { |r| r[:client_id] }
             params.gdc_logger.error "Deleted clients: #{deleted_client_ids.join(', ')}"
             raise e
           end
