@@ -60,6 +60,8 @@ module GoodData
             md_class = GoodData::ReportDefinition
           when 'dataSet'
             md_class = GoodData::Dataset
+          when 'domain'
+            md_class = GoodData::ReportFolder
           else
             md_class = self
           end

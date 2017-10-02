@@ -248,6 +248,22 @@ describe "Full project implementation", :constraint => 'slow' do
     expect(r.definitions.count).to eq 2
   end
 
+  it 'should be able to create report in specified folder' do
+    expect(@project.report_folders.to_a.length).to eq 0
+    folder = @project.create_report_folder('testing')
+    expect(@project.report_folders.to_a.length).to eq 1
+
+    fact = @project.fact_by_title('Lines Changed')
+    metric = @project.create_metric("SELECT SUM(#\"#{fact.title}\")", title: 'test metric').save
+    report = @project.create_report(top: [metric], title: 'xy', folder: folder)
+
+    expect(@project.report_folders.first.reports.map(&:uri)).to eq [report.uri]
+
+    expect(@project.favorite_reports.length).to eq 0
+    report.favorite
+    expect(@project.favorite_reports.length).to eq 1
+  end
+
   it "should be able to clean colors from a chart report def" do
     f = @project.fact_by_title('Lines Changed')
     m = @project.create_metric("SELECT SUM(#\"#{f.title}\")", title: 'test metric').save

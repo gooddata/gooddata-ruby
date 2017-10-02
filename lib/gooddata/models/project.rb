@@ -563,6 +563,25 @@ module GoodData
 
     alias_method :create_report_definition, :add_report_definition
 
+    # Creates new instance of report folder in context of project
+    #
+    # @param [title] String folder title
+    # @param [options] Optional folder options
+    # @return [GoodData::ReportFolder] Instance of new report folder
+    def add_report_folder(title, options = {})
+      folder = GoodData::ReportFolder.create(title, options.merge(client: client, project: self))
+      folder.save
+    end
+
+    alias_method :create_report_folder, :add_report_folder
+
+    # Get all favorite reports
+    #
+    # @return [Array<GoodData::Report>]  List of reports
+    def favorite_reports
+      GoodData::Report.favorites(client: client, project: self)
+    end
+
     # Returns an indication whether current user is admin in this project
     #
     # @return [Boolean] True if user has admin role in the project, false otherwise.
@@ -1458,7 +1477,7 @@ module GoodData
       GoodData::ReportDefinition[id, options.merge(project: self, client: client)]
     end
 
-    # Gets the list or project roles
+    # Gets the list of project roles
     #
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
@@ -1469,6 +1488,14 @@ module GoodData
         json = client.get role_url
         client.create(GoodData::ProjectRole, json, project: self)
       end
+    end
+
+    # Helper for getting report folders of a project
+    #
+    # @param [String | Number | Object] Anything that you can pass to GoodData::ReportFolder[id]
+    # @return [GoodData::ReportFolder | Array<GoodData::ReportFolder>] report folder instance or list
+    def report_folders(id = :all)
+      GoodData::ReportFolder[id, project: self, client: client]
     end
 
     # Saves project

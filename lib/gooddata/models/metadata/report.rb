@@ -31,6 +31,11 @@ module GoodData
         fail 'Report needs a title specified' unless title
         summary = options[:summary] || ''
 
+        if options[:folder]
+          folder = options[:folder]
+          folder = folder.uri if folder.respond_to?(:uri)
+        end
+
         options_rd = options.dup
         options_rd.delete(:identifier)
 
@@ -51,6 +56,7 @@ module GoodData
             }
           }
         }
+        report['report']['content']['domains'] << folder if folder
         # TODO: write test for report definitions with explicit identifiers
         report['report']['meta']['identifier'] = options[:identifier] if options[:identifier]
         client.create(Report, report, :project => project)
@@ -76,6 +82,19 @@ module GoodData
           ReportDataResult.new(data: [], top: 0, left: 0)
         else
           ReportDataResult.from_xtab(result)
+        end
+      end
+
+      # Get all favorite reports in a specified project
+      #
+      # @param options [Hash] the options hash
+      # @return [Array<GoodData::Report>]  List of reports
+      def favorites(options = { client: GoodData.connection, project: GoodData.project })
+        client, project = GoodData.get_client_and_project(options)
+
+        result = client.get "/gdc/md/#{project.pid}/favorites"
+        result['entries'].pmap do |entry|
+          GoodData::Report[entry['link'], client: client, project: project]
         end
       end
     end
@@ -187,6 +206,16 @@ module GoodData
       self
     end
 
+    # Add to specified folder
+    #
+    # @param folder [String | GoodData::ReportFolder] folder will contains this report
+    def add_to_folder!(folder)
+      folder_uri = folder.respond_to?(:uri) ? folder.uri : folder
+      json['report']['content']['domains'] << folder_uri
+      save
+      self
+    end
+
     # Removes definition from the report. The definition to remove can be passed in any form that is accepted by
     # GoodData::ReportDefintion[]
     #
@@ -253,6 +282,11 @@ module GoodData
       end
 
       repdef
+    end
+
+    # Make a report become favorite and can be found in Favorite folder
+    def favorite
+      client.put "/gdc/md/#{project.pid}/favorite/#{obj_id}", favorite: 1
     end
   end
 end
