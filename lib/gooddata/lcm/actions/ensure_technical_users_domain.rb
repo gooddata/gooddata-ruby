@@ -19,7 +19,10 @@ module GoodData
         param :organization, instance_of(Type::StringType), required: true
 
         description 'Technical users'
-        param :technical_user, array_of(instance_of(Type::StringType)), required: false
+        param :technical_user, array_of(instance_of(Type::StringType)), required: false, deprecated: true
+
+        description 'Technical users'
+        param :technical_users, array_of(instance_of(Type::StringType)), required: false
       end
 
       RESULT_HEADER = [
@@ -36,7 +39,7 @@ module GoodData
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
-          technical_users = (params.technical_user || []).uniq
+          technical_users = (params.technical_users || params.technical_user || []).uniq
           technical_users.pmap do |technical_user|
             domain_user = domain.users.find do |du|
               du.login == technical_user
