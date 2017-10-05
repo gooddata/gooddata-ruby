@@ -7,15 +7,15 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      encrypted_token = 'YC+foKO2M8rIfB5gxF/sVvop5dRA7d/zLO/zzUlBr9ZimnoYe' \
-                           'LFyAqU20U4k\ncRYb\n'
+      encrypted_token = "YC+foKO2M8rIfB5gxF/sVvop5dRA7d/zLO/zzUlBr9ZimnoYe" \
+                        "LFyAqU20U4k\ncRYb\n"
       key = ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
       token = GoodData::Helpers.decrypt(encrypted_token, key)
       set_const :GD_PROJECT_TOKEN, token
       set_const :DEFAULT_DOMAIN, 'staging-lcm-prod'
       set_const :DEFAULT_SERVER, 'https://staging-lcm-prod.intgdc.com'
       set_const :DEFAULT_USER_URL, '/gdc/account/profile/e306b64fb4178785c9cf29c29b5e498a'
-      set_const :STAGING_URI, 'https://ea-di.staging.intgdc.com/uploads/'
+      set_const :STAGING_URI, 'https://staging-lcm-prod.intgdc.com/gdc/uploads/'
     end
 
     module ProcessHelper

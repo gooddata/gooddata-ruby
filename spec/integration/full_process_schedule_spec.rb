@@ -272,10 +272,10 @@ describe "Full process and schedule exercise", :constraint => 'slow' do
 
   it 'should be able to deploy from app_store' do
     begin
-      process = @project.deploy_process('https://github.com/gooddata/app_store/tree/sfdc_downloader_brick-v0.0.4/apps/ads_integrator_brick')
+      process = @project.deploy_process('${PRODUCTION_APPSTORE}:branch/master:/apps/hello_world_brick', name: 'hello_world_brick')
       expect(process.class).to eq GoodData::Process
     ensure
-      process.delete
+      process.delete if process
     end
   end
 
