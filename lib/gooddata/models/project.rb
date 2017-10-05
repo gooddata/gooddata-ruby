@@ -763,6 +763,7 @@ module GoodData
     def data_permissions(id = :all)
       GoodData::MandatoryUserFilter[id, client: client, project: self]
     end
+    alias_method :user_filters, :data_permissions
 
     # Deletes project
     def delete
@@ -1543,18 +1544,6 @@ module GoodData
 
     def uri
       data['links']['self'] if data && data['links'] && data['links']['self']
-    end
-
-    # List of user filters within this project
-    #
-    # @return [Array<GoodData::MandatoryUserFilter>] List of mandatory user
-    def user_filters
-      url = "/gdc/md/#{pid}/userfilters"
-
-      tmp = client.get(url)
-      tmp['userFilters']['items'].pmap do |filter|
-        client.create(GoodData::MandatoryUserFilter, filter, project: self)
-      end
     end
 
     # List of users in project
