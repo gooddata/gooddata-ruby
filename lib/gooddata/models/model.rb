@@ -170,7 +170,7 @@ module GoodData
         begin
           Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
             # TODO: make sure schema columns match CSV column names
-            zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(manifest) }
+            zip.get_output_stream('upload_info.json') { |f| f.puts MultiJson.dump(manifest, :pretty => true) }
 
             data.zip(manifest['dataSetSLIManifestList']).each do |item|
               path = item[0][:data]
@@ -219,7 +219,7 @@ module GoodData
 
           messages = res['wTaskStatus']['messages'] || []
           messages.each do |msg|
-            GoodData.logger.error(JSON.pretty_generate(msg))
+            GoodData.logger.error(MultiJson.dump(msg, :pretty => true))
           end
 
           begin
@@ -253,8 +253,8 @@ module GoodData
           m += "Columns that are in csv but shouldn't be there (manifest): #{csv_extra}\n" unless csv_extra.empty?
           m += "Columns in the uploaded csv: #{csv_headers}\n"
           m += "Columns in the manifest: #{manifest_cols}\n"
-          m += "Original message:\n#{JSON.pretty_generate(js)}\n"
-          m += "Manifest used for uploading:\n#{JSON.pretty_generate(manifest)}"
+          m += "Original message:\n#{MultiJson.dump(js, :pretty => true)}\n"
+          m += "Manifest used for uploading:\n#{MultiJson.dump(manifest, :pretty => true)}"
           fail m
         end
 

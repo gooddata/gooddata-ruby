@@ -248,7 +248,7 @@ describe GoodData::Helpers do
         'number_param' => 5,
         'gd_encoded_params' => 'This is no json.'
       }
-      expect { GoodData::Helpers.decode_params(params) }.to raise_error(JSON::ParserError)
+      expect { GoodData::Helpers.decode_params(params) }.to raise_error(MultiJson::ParseError)
     end
   end
 end

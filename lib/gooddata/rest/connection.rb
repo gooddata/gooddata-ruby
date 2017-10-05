@@ -526,7 +526,7 @@ module GoodData
 #{e}: #{message}
 Request ID: #{params[:x_gdc_request]}
 Full response:
-#{JSON.pretty_generate(error)}
+#{MultiJson.dump(error, :pretty => true)}
 Backtrace:\n#{e.backtrace.join("\n")}
 ERR
       rescue MultiJson::ParseError

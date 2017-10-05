@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require 'multi_json'
+
 module GoodData
   module Helpers
     ENCODED_PARAMS_KEY = 'gd_encoded_params'
@@ -81,16 +83,16 @@ module GoodData
         end
 
         begin
-          parsed_data_params = data_params.is_a?(Hash) ? data_params : JSON.parse(data_params)
-        rescue JSON::ParserError => exception
+          parsed_data_params = data_params.is_a?(Hash) ? data_params : MultiJson.decode(data_params)
+        rescue MultiJson::ParseError => exception
           reason = exception.message
           reference_values.each { |secret_value| reason.gsub!("\"#{secret_value}\"", '"***"') }
           raise exception.class, "Error reading json from '#{key}', reason: #{reason}"
         end
 
         begin
-          parsed_hidden_data_params = hidden_data_params.is_a?(Hash) ? hidden_data_params : JSON.parse(hidden_data_params)
-        rescue JSON::ParserError => exception
+          parsed_hidden_data_params = hidden_data_params.is_a?(Hash) ? hidden_data_params : MultiJson.decode(hidden_data_params)
+        rescue MultiJson::ParseError => exception
           raise exception.class, "Error reading json from '#{hidden_key}'"
         end
 

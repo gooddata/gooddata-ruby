@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require 'multi_json'
+
 require_relative 'base_action'
 
 module GoodData
@@ -38,7 +40,7 @@ module GoodData
           sql_result = params.ads_client.execute(query)
 
           # TODO: Format
-          GoodData.logger.info(JSON.pretty_generate(sql_result))
+          GoodData.logger.info(MultiJson.dump(sql_result, :pretty => true))
 
           [
             {

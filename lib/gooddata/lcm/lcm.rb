@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require 'multi_json'
+
 module GoodData
   module LCM
     class << self
@@ -184,7 +186,7 @@ module GoodData
         display_forms.each { |display_form| transfer[display_form['meta']['identifier']] = display_form['content']['type'] }
 
         GoodData.logger.info 'Transferring label types'
-        GoodData.logger.info JSON.pretty_generate(transfer)
+        GoodData.logger.info MultiJson.dump(transfer, :pretty => true)
 
         # Transfer to target projects
         targets.peach do |target|

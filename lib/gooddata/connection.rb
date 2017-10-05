@@ -6,6 +6,8 @@
 
 require 'uri'
 
+require 'multi_json'
+
 require_relative 'core/logging'
 
 require_relative 'rest/rest'
@@ -75,7 +77,7 @@ module GoodData
         'validity' => ts
       }
 
-      json_data = JSON.pretty_generate(obj) + "\n"
+      json_data = MultiJson.dump(obj, :pretty => true) + "\n"
 
       file_json = Tempfile.new('gooddata-sso-json')
       file_json.write(json_data)

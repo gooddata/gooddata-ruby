@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'fileutils'
-require 'json'
+require 'multi_json'
 
 require_relative 'global_helpers'
 
@@ -61,7 +61,7 @@ module GoodData
         # Writes credentials
         def write_credentials(credentials, credentials_file_path = credentials_file)
           File.open(credentials_file_path, 'w', 0o600) do |f|
-            f.puts JSON.pretty_generate(credentials)
+            f.puts MultiJson.dump(credentials, :pretty => true)
           end
           credentials
         end

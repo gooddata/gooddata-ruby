@@ -74,7 +74,7 @@ module GoodData
       end
 
       def to_json
-        JSON.pretty_generate(to_hash)
+        MultiJson.dump(to_hash, :pretty => true)
       end
 
       def to_hash

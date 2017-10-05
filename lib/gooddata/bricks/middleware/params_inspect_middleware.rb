@@ -6,6 +6,8 @@
 
 require 'logger'
 
+require 'multi_json'
+
 require_relative 'base_middleware'
 
 module GoodData
@@ -14,7 +16,7 @@ module GoodData
       def call(params)
         inspect = params[:inspect_params] || params['inspect_params']
         puts 'Inspecting Parameters ...'
-        puts JSON.pretty_generate(params) if inspect.to_b
+        puts MultiJson.dump(params, :pretty => true) if inspect.to_b
       end
     end
   end

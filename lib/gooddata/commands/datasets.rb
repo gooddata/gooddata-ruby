@@ -6,6 +6,8 @@
 
 require 'date'
 
+require 'multi_json'
+
 require_relative '../data/guesser'
 require_relative '../extract'
 require_relative '../exceptions/command_failed'
@@ -50,7 +52,7 @@ module GoodData
         name = extract_option('--name') || ask('Enter the dataset name')
         output = extract_option('--output') || ask('Enter path to the file where to save the model description', :default => "#{name}.json")
         open output, 'w' do |f|
-          f << JSON.pretty_generate(:title => name, :columns => columns) + "\n"
+          f << MultiJson.dump({:title => name, :columns => columns}, :pretty => true) + "\n"
           f.flush
         end
       end
@@ -77,7 +79,7 @@ module GoodData
 
           fail(CommandFailed, "Usage: #{$PROGRAM_NAME} <dataset config>") unless cfg_file
           config = begin
-            JSON.parse open(cfg_file)
+            MultiJson.decode open(cfg_file)
           rescue
             raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
           end
@@ -103,7 +105,7 @@ module GoodData
           file, cfg_file = args
           fail(CommandFailed, "Usage: #{$PROGRAM_NAME} datasets:load <file> <dataset config>") unless cfg_file
           begin
-            config = JSON.parse open(cfg_file)
+            config = MultiJson.decode open(cfg_file)
           rescue
             raise(CommandFailed, "Error reading dataset config file '#{cfg_file}'")
           end

@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'terminal-table'
+require 'multi_json'
 
 require_relative 'actions/actions'
 require_relative 'dsl/dsl'
@@ -336,7 +337,7 @@ module GoodData
         end
 
         # Fail whole execution if there is any failed action
-        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
+        fail(MultiJson.dump(errors, :pretty => true)) if strict_mode && errors.any?
 
         brick_results = {}
         actions.each_with_index do |action, index|
@@ -372,7 +373,7 @@ module GoodData
         unused_params = param_names - (action_params + default_params)
 
         if unused_params.any?
-          GoodData.logger.warn("Following params are not used by any action: #{JSON.pretty_generate(unused_params)}")
+          GoodData.logger.warn("Following params are not used by any action: #{MultiJson.dump(unused_params, :pretty => true)}")
 
           rows = []
           actions.each do |action|

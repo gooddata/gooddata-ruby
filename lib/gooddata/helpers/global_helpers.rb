@@ -8,6 +8,7 @@ require 'base64'
 require 'pathname'
 require 'hashie'
 require 'openssl'
+require 'multi_json'
 
 require_relative '../extensions/object'
 require_relative 'global_helpers_params'
@@ -182,7 +183,7 @@ module GoodData
       end
 
       def parse_http_exception(e)
-        JSON.parse(e.response)
+        MultiJson.decode(e.response)
       end
 
       # Creates a matrix with zeroes in all places. It is implemented as an Array of Arrays. First rows then columns.

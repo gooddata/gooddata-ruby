@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require 'multi_json'
+
 require_relative 'base_action'
 
 module GoodData
@@ -105,7 +107,7 @@ module GoodData
             segment_in[:timestamp] = Time.now.utc.iso8601
 
             # Show new project
-            params.gdc_logger.info JSON.pretty_generate(project.json)
+            params.gdc_logger.info MultiJson.dump(project.json, :pretty => true)
 
             # Add new segment master project with additional info into output results
             results << {

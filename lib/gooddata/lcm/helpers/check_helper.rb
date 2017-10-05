@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'json'
+require 'multi_json'
 
 module GoodData
   module LCM2
@@ -21,7 +21,7 @@ module GoodData
               end
             else
               if type.class.const_get(:CATEGORY) == :complex && !value.is_a?(Hash)
-                puts JSON.pretty_generate(params)
+                puts MultiJson.dump(params, :pretty => true)
                 fail "Expected parameter '#{param_name}' to be kind of '#{type}', got '#{value.class.name}'"
               end
 

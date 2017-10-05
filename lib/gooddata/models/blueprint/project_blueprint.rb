@@ -684,7 +684,7 @@ module GoodData
       # @param filename [String] Name of the file where the blueprint should be stored
       def store_to_file(filename)
         File.open(filename, 'w') do |f|
-          f << JSON.pretty_generate(to_hash)
+          f << MultiJson.dump(to_hash, :pretty => true)
         end
       end
 

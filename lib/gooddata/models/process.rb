@@ -6,6 +6,7 @@
 
 require 'zip'
 require 'uri'
+require 'multi_json'
 
 require_relative '../helpers/global_helpers'
 require_relative '../rest/resource'
@@ -201,7 +202,7 @@ module GoodData
           end
 
         if res.keys.first == 'asyncTask'
-          res = JSON.parse(client.poll_on_code(res['asyncTask']['links']['poll'], options.merge(process: false)))
+          res = MultiJson.decode(client.poll_on_code(res['asyncTask']['links']['poll'], options.merge(process: false)))
         end
 
         process = client.create(Process, res, project: project)

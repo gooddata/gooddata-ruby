@@ -85,9 +85,9 @@ module GoodData
         eliminate_empty = options[:eliminate_empty] || false
 
         if eliminate_empty
-          JSON.pretty_generate(to_hash.reject { |_k, v| v.is_a?(Enumerable) && v.empty? })
+          MultiJson.dump(to_hash.reject { |_k, v| v.is_a?(Enumerable) && v.empty? }, :pretty => true)
         else
-          JSON.pretty_generate(to_hash)
+          MultiJson.dump(to_hash, :pretty => true)
         end
       end
 

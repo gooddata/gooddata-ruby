@@ -117,7 +117,7 @@ describe GoodData::Helpers do
       end
 
       it 'hides secrets in the error message' do
-        expect { GoodData::Helpers.decode_params(params) }.to raise_error(JSON::ParserError) do |e|
+        expect { GoodData::Helpers.decode_params(params) }.to raise_error(MultiJson::ParseError) do |e|
           expect(e.message).not_to include('precious_secret')
         end
       end

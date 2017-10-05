@@ -477,7 +477,7 @@ module GoodData
         objects = from_project.find_by_tag(tag)
 
         if objects.any?
-          puts JSON.pretty_generate(objects)
+          puts MultiJson.dump(objects, :pretty => true)
           from_project.partial_md_export(objects, project: to_project)
         else
           GoodData.logger.info('No tagged objects to transfer')

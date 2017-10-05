@@ -64,7 +64,7 @@ module GoodData
             body && body['taskState'] && body['taskState']['status'] == 'WAIT'
           end
         rescue RestClient::BadRequest => e
-          resp = JSON.parse(e.response)
+          resp = MultiJson.decode(e.response)
           if GoodData::Helpers.get_path(resp, %w(error component)) == 'MD::DataResult'
             raise GoodData::UncomputableReport
           else
