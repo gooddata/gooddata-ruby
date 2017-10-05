@@ -16,6 +16,7 @@ describe GoodData::LCM2::ProvisionClients do
 
   before do
     allow(gdc_gd_client).to receive(:domain).and_return(domain)
+    allow(logger).to receive(:debug)
     allow(logger).to receive(:error).and_return({})
     allow(segment).to receive(:segment_id).and_return({})
     allow(domain).to receive(:provision_client_projects).and_raise('limit reached')
@@ -34,7 +35,7 @@ describe GoodData::LCM2::ProvisionClients do
     end
 
     it 'clean all zombie clients ' do
-      expect(GoodData::LCM2::PurgeClients).to receive(:call).and_return({})
+      expect(GoodData::LCM2::PurgeClients).to receive(:call).and_return(results: [], params: { client_projects: [] })
       expect { subject.class.call(params) }.to raise_error('limit reached')
     end
   end
