@@ -19,7 +19,7 @@ module GoodData
           param :segment_id, instance_of(Type::StringType), required: true
 
           description 'PID of Development Project'
-          param :development_pid, instance_of(Type::StringType), required: true
+          param :master_pid, instance_of(Type::StringType), required: true
 
           description 'Storage Driver'
           param :driver, instance_of(Type::StringType), required: true # required: false, , default: 'pg'
