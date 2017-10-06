@@ -16,7 +16,10 @@ module GoodData
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
         description 'Technical users'
-        param :technical_user, array_of(instance_of(Type::StringType)), required: false
+        param :technical_user, array_of(instance_of(Type::StringType)), required: false, deprecated: true
+
+        description 'Technical users'
+        param :technical_users, array_of(instance_of(Type::StringType)), required: false
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
@@ -36,7 +39,7 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
 
-          technical_users = params.technical_user || []
+          technical_users = params.technical_users || params.technical_user || []
           new_users = technical_users.map do |technical_user|
             {
               login: technical_user,
