@@ -32,6 +32,9 @@ module GoodData
 
         description 'Table Name'
         param :release_table_name, instance_of(Type::StringType), required: false
+
+        description 'Project Environment'
+        param :project_environment, instance_of(Type::StringType), required: false
       end
 
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'
@@ -71,7 +74,7 @@ module GoodData
 
             # Create new master project
             params.gdc_logger.info "Creating master project - name: '#{master_name}' development_project: '#{development_pid}', segment: '#{segment_id}', driver: '#{driver}'"
-            project = client.create_project(title: master_name, auth_token: token, driver: driver == 'vertica' ? 'vertica' : 'Pg')
+            project = client.create_project(title: master_name, auth_token: token, driver: driver == 'vertica' ? 'vertica' : 'Pg', environment: params.project_environment)
 
             # Does segment exists? If not, create new one and set initial master
             if segment
