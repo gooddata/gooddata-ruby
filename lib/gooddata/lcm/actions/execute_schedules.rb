@@ -38,9 +38,6 @@ module GoodData
 
         description 'Domain'
         param :domain, instance_of(Type::StringType), required: false
-
-        description 'Number Of Threads'
-        param :number_of_threads, instance_of(Type::StringType), required: false, default: '5'
       end
 
       class << self
@@ -60,8 +57,6 @@ module GoodData
           segment_list = params.segment_list
           domain_name  = params.domain
           fail "In case that you are using SEGMENT_LIST parameter, you need to fill out DOMAIN parameter" if !segment_list.nil? && domain_name.nil?
-
-          number_of_threads = Integer(params.number_of_threads || '5')
 
           # The WORK_DONE_IDENTIFICATOR is flag which tells the executor to execute the schedules
           # It could have special value IGNORE. In this case all corresponding schedules will be started during every run of this brick
@@ -99,7 +94,7 @@ module GoodData
             schedules_to_start.each_slice(number_of_schedules_in_batch).each_with_index do |batch_schedules, batch_index|
               batch_number = batch_index + 1
               logger.info "Starting batch number #{batch_number}. Number of schedules in batch #{batch_schedules.count}."
-              batch_schedules.peach(number_of_threads) do |schedule|
+              batch_schedules.peach do |schedule|
                 begin
                   tries ||= 5
                   logger.info "Starting schedule for project #{schedule.project.pid} - #{schedule.project.title}. Schedule ID is #{schedule.obj_id}"

@@ -7,7 +7,7 @@
 require 'terminal-table'
 require 'securerandom'
 require 'monitor'
-require 'thread_safe'
+require 'concurrent'
 require 'rest-client'
 
 require_relative '../version'
@@ -167,7 +167,7 @@ module GoodData
 
       def initialize(opts)
         super()
-        @stats = ThreadSafe::Hash.new
+        @stats = Concurrent::Hash.new
 
         headers = opts[:headers] || {}
         @webdav_headers = DEFAULT_WEBDAV_HEADERS.merge(headers)

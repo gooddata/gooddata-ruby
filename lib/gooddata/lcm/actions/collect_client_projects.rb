@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
-require 'thread_safe'
+require 'concurrent'
 
 module GoodData
   module LCM2
@@ -43,7 +43,7 @@ module GoodData
             segment_names.include?(segment.segment_id.downcase)
           end
 
-          client_projects = ThreadSafe::Hash.new
+          client_projects = Concurrent::Hash.new
 
           results = segments.pmap do |segment|
             segment.clients.map do |segment_client|

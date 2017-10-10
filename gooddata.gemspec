@@ -57,12 +57,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'json_pure', '~> 1.8'
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'parseconfig', '~> 1.0'
-  s.add_dependency 'pmap', '~> 1.1'
   s.add_dependency 'restforce', '~> 2.4'
   s.add_dependency 'rest-client', '~> 2.0'
   s.add_dependency 'rubyzip', '~> 1.2'
   s.add_dependency 'salesforce_bulk_query', '~> 0.2'
   s.add_dependency 'terminal-table', '~> 1.7'
-  s.add_dependency 'thread_safe'
   s.add_dependency 'backports'
+
+  s.add_runtime_dependency 'concurrent-ruby', '~> 1.0', '>= 1.0.5'
 end

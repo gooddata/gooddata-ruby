@@ -4,12 +4,13 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'pmap'
-$pmap_default_thread_count = 20 # rubocop:disable GlobalVars
-
 # GoodData Module
 module GoodData
 end
+
+# Extensions
+require_relative 'gooddata/extensions/extensions'
+require 'backports/2.1.0/array/to_h'
 
 # Modules
 require_relative 'gooddata/bricks/bricks'
@@ -28,7 +29,3 @@ require_relative 'gooddata/client'
 require_relative 'gooddata/connection'
 require_relative 'gooddata/extract'
 require_relative 'gooddata/version'
-
-# Extensions
-require_relative 'gooddata/extensions/extensions'
-require 'backports/2.1.0/array/to_h'

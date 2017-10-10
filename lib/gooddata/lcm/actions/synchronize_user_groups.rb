@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
-require 'thread_safe'
+require 'concurrent'
 
 module GoodData
   module LCM2
@@ -25,7 +25,7 @@ module GoodData
 
       class << self
         def call(params)
-          results = ThreadSafe::Array.new
+          results = Concurrent::Array.new
 
           client = params.gdc_gd_client
           development_client = params.development_client
