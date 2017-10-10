@@ -6,7 +6,6 @@
 
 # Global requires
 require 'multi_json'
-require 'pmap'
 
 # Local requires
 require 'gooddata/models/models'

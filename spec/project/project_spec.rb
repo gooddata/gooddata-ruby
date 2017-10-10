@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'pmap'
 require 'gooddata'
 
 require_relative '../integration/shared_contexts_for_deterministic_random_data'

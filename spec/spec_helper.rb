@@ -24,7 +24,6 @@ unless RUBY_PLATFORM =~ /java/
   end
 end
 
-require 'pmap'
 require 'rspec'
 require 'pathname'
 require 'gooddata'

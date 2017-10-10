@@ -8,7 +8,6 @@ require 'csv'
 require 'zip'
 require 'fileutils'
 require 'multi_json'
-require 'pmap'
 require 'zip'
 require 'net/smtp'
 

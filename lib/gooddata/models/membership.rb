@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'multi_json'
-require 'pmap'
 
 require_relative 'project'
 require_relative 'project_role'
