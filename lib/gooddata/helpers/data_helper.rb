@@ -113,8 +113,10 @@ module GoodData
         filename = Digest::SHA256.new.hexdigest(@options.to_json)
         bucket = s3_client.bucket(bucket_name)
         obj = bucket.object(key)
+        GoodData.logger.debug("Contents of file from S3:")
         File.open(filename, 'wb') do |file|
           obj.get do |chunk|
+            GoodData.logger.debug("chunk: '#{chunk}'")
             file.write(chunk)
           end
         end
