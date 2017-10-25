@@ -259,7 +259,7 @@ describe "User filters implementation", :constraint => 'slow' do
 
     # we want to compute stuff on different user than we are setting it on
     u = @domain.users.find { |user| user.login != ConnectionHelper::DEFAULT_USERNAME }
-    password = 'abcd1234'
+    password = 'si@gFG593fo'
     u.json['accountSetting']['password'] = password
     @domain.update_user(u)
     @project.add_user(u, 'admin')
