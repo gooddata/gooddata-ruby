@@ -17,6 +17,8 @@ GoodData.logger = logger
 
 WebMock.disable!
 
+SimpleCov.start
+
 # Automagically include all helpers/*_helper.rb
 
 require_relative 'environment/environment'
