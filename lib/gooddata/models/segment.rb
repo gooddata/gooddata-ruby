@@ -18,6 +18,7 @@ module GoodData
     SYNCHRONIZE_URI = '/gdc/domains/%s/segments/%s/synchronizeClients'
 
     attr_accessor :domain
+    attr_writer :data_product
 
     data_property_reader 'id'
 
@@ -84,7 +85,17 @@ module GoodData
     def initialize(data)
       super
       @domain = data.delete('domain')
+      @data_product = nil
       @json = data
+    end
+
+    def data_product
+      if @data_product
+        @data_product
+      else
+        json = client.get(data['links']['dataProduct'])
+        @data_product = client.create(GoodData::DataProduct, json)
+      end
     end
 
     # Segment id getter for the Segment. Called segment_id since id is a reserved word in ruby world

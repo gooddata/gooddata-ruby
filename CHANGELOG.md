@@ -4,6 +4,7 @@
 - TMA-512 - Fix invalid data type issue in blueprint when a field has > 255 characters
 - TMA-506 - Add option :time to report.execute to force platform simulate the result of report at that time
 - TMA-509 - Provisioning: Should clean all zombie clients when project creation limit reached
+- TMA-299 - Use Data Product in LCM bricks
 - TMA-542 - Release: Should fail when segments contains duplicated ids
 - TMA-536 - Release: transfer Dataset and Fact Tags in ImportObjectCollection
 - TMA-532 - Rollout: Improve behavior of update_preferences: introduce 2 paramameters allow_cascade_drops and keep_data
