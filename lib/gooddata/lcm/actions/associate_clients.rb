@@ -45,12 +45,21 @@ module GoodData
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
+          data_product = params.data_product
+
+          segments = {}
 
           params.clients.group_by { |data| data[:segment] }.each do |segment_name, clients|
-            segment = domain.segments(segment_name)
+            segment = domain.segments(segment_name, data_product)
+            segments[segment_name] = segment
             (clients.map(&:id) - segment.clients.map(&:id)).each do |c|
               segment.create_client(id: c)
             end
+          end
+
+          params.clients.map! do |data|
+            data[:data_product_id] = segments[data[:segment]].data_product.data_product_id
+            data
           end
 
           domain.update_clients_settings(params.clients)

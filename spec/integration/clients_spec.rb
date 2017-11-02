@@ -38,7 +38,7 @@ describe GoodData::Client do
     it 'Returns specific tenant when schedule ID passed' do
       client = @segment.clients(@segment_client)
       expect(client).to be_an_instance_of(GoodData::Client)
-      expect(client.uri).to eq @segment_client.uri
+      expect(client.client_id).to eq @segment_client.client_id
     end
 
     after(:all) do

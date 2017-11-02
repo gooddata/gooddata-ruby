@@ -33,7 +33,9 @@ module GoodData
           client = params.gdc_gd_client
 
           domain = client.domain(params.organization) || fail("Invalid domain name specified - #{params.organization}")
-          all_segments = domain.segments
+
+          data_product = params.data_product
+          all_segments = domain.segments(:all, data_product)
 
           segment_names = params.segments.map do |segment|
             segment.segment_id.downcase

@@ -7,8 +7,8 @@
 module GoodData
   module Mixin
     module MdJson
-      def to_json
-        json.to_json
+      def to_json(*args)
+        json.to_json(*args)
       end
     end
   end

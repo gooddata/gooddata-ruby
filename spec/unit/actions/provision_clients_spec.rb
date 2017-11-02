@@ -13,13 +13,15 @@ describe GoodData::LCM2::ProvisionClients do
   let(:domain) { double('domain') }
   let(:logger) { double('logger') }
   let(:segment) { double('segment') }
+  let(:data_product) { double('data_product') }
 
   before do
     allow(gdc_gd_client).to receive(:domain).and_return(domain)
     allow(logger).to receive(:debug)
     allow(logger).to receive(:error).and_return({})
     allow(segment).to receive(:segment_id).and_return({})
-    allow(domain).to receive(:provision_client_projects).and_raise('limit reached')
+    allow(segment).to receive(:provision_client_projects).and_raise('limit reached')
+    allow(domain).to receive(:segments) { segment }
   end
 
   context 'when provisioning get errors' do
@@ -29,7 +31,8 @@ describe GoodData::LCM2::ProvisionClients do
         gdc_logger: logger,
         segments: [
           segment
-        ]
+        ],
+        data_product: data_product
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end

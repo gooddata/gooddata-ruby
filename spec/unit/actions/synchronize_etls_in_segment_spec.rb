@@ -14,6 +14,7 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
   let(:project) { double('project') }
   let(:result) { { syncedResult: {} } }
   let(:client_id) { 'foo_client' }
+  let(:data_product) { double('data_product') }
   let(:params) do
     params = {
       gdc_gd_client: gdc_gd_client,
@@ -21,7 +22,8 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
       synchronize: [{
         segment_id: 'some_segment_ids',
         to: [{ pid: 'foo', client_id: client_id }]
-      }]
+      }],
+      data_product: data_product
     }
     GoodData::LCM2.convert_to_smart_hash(params)
   end
@@ -30,9 +32,10 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
     allow(gdc_gd_client).to receive(:domain) { domain }
     allow(gdc_gd_client).to receive(:projects) { project }
     allow(project).to receive(:schedules) { [] }
-    allow(domain).to receive(:segments) { segment }
+    allow(data_product).to receive(:segments) { [segment] }
     allow(segment).to receive(:synchronize_processes) { result }
     allow(project).to receive(:set_metadata)
+    allow(segment).to receive(:segment_id) { 'some_segment_ids' }
   end
 
   it 'adds GOODOT_CUSTOM_PROJECT_ID to metadata' do
@@ -115,8 +118,8 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
                 'BYE' => 'bye'
               }
             }
-          }
-
+          },
+          data_product: data_product
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -151,8 +154,8 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
                 'HELLO' => 'hi'
               }
             }
-          }
-
+          },
+          data_product: data_product
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -192,8 +195,8 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
                 'BYE' => 'bye'
               }
             }
-          }
-
+          },
+          data_product: data_product
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
