@@ -40,14 +40,13 @@ module GoodData
       class << self
         def call(params)
           client = params.gdc_gd_client
-          domain_name = params.organization || params.domain
-          domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
+          data_product = params.data_product
           synchronize_segments = params.synchronize.group_by do |info|
             info[:segment_id]
           end
 
           results = synchronize_segments.pmap do |segment_id, synchronize|
-            segment = domain.segments(segment_id)
+            segment = data_product.segments.find { |s| s.segment_id == segment_id }
             res = segment.synchronize_processes(
               synchronize.flat_map do |info|
                 info[:to].flat_map do |to|

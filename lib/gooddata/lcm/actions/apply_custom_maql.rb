@@ -44,9 +44,10 @@ module GoodData
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
+          data_product = params.data_product
 
           segment_ids = params.segments.map(&:segment_id)
-          domain_segments = domain.segments.select do |ds|
+          domain_segments = domain.segments(:all, data_product).select do |ds|
             segment_ids.include?(ds.segment_id)
           end
 
