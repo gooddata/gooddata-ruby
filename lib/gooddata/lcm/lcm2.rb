@@ -80,6 +80,8 @@ module GoodData
 
       release: [
         EnsureReleaseTable,
+        EnsureDataProduct,
+        CollectDataProduct,
         SegmentsFilter,
         CreateSegmentMasters,
         EnsureTechnicalUsersDomain,
@@ -101,6 +103,7 @@ module GoodData
 
       provision: [
         EnsureReleaseTable,
+        CollectDataProduct,
         CollectSegments,
         CollectClientProjects,
         PurgeClients,
@@ -116,6 +119,7 @@ module GoodData
 
       rollout: [
         EnsureReleaseTable,
+        CollectDataProduct,
         CollectSegments,
         CollectSegmentClients,
         EnsureTechnicalUsersDomain,

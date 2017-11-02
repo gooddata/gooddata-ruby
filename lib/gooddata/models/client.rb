@@ -39,7 +39,9 @@ module GoodData
         fail ArgumentError, 'No client specified' if client.nil?
 
         if id == :all
-          tenants_uri = domain.segments_uri + "/clients?segment=#{CGI.escape(segment.segment_id)}"
+          data_product = segment.data_product
+          tenants_uri = GoodData::DataProduct::ONE_DATA_PRODUCT_PATH % { domain_name: domain.name, id: data_product.data_product_id }
+          tenants_uri += "/clients?segment=#{CGI.escape(segment.segment_id)}"
           Enumerator.new do |y|
             loop do
               res = client.get tenants_uri
@@ -88,17 +90,27 @@ module GoodData
         return nil unless value
         domain = opts[:domain]
         client_id = opts[:client_id]
-        uri = "#{domain.segments_uri}/clients/#{client_id}/settings/#{name}"
+        data_product_id = opts[:data_product_id]
+        uri = data_product_id ? GoodData::DataProduct::ONE_DATA_PRODUCT_PATH % { domain_name: domain.name, id: data_product_id } : domain.segments_uri
         body = {
           setting: {
             name: "#{name}",
             value: "#{value}"
           }
         }
-        domain.client.put(uri, body)
+        domain.client.put(uri + "/clients/#{client_id}/settings/#{name}", body)
         nil
       end
       alias_method :add_setting, :update_setting
+
+      def base_uri(domain, data_product)
+        if data_product
+          uri = GoodData::DataProduct::ONE_DATA_PRODUCT_PATH % { domain_name: domain.name, id: data_product.data_product_id }
+        else
+          uri = domain.segments_uri
+        end
+        uri + '/clients'
+      end
     end
 
     def initialize(data)
@@ -189,7 +201,8 @@ module GoodData
       if uri
         client.put(uri, json)
       else
-        res = client.post(domain.segments_uri + '/clients', json)
+        data_product = segment.data_product
+        res = client.post(self.class.base_uri(domain, data_product), json)
         @json = res
       end
       self
@@ -209,8 +222,8 @@ module GoodData
     end
 
     def settings
-      uri = "#{domain.segments_uri}/clients/#{client_id}/settings"
-      res = client.get(uri)
+      data_product = segment.data_product
+      res = client.get(base_uri(domain, data_product) + "/#{client_id}/settings")
       settings = GoodData::Helpers.get_path(res, %w(settingsList items))
       settings.map do |setting|
         setting = setting['setting']

@@ -15,9 +15,14 @@ require_relative '../mixins/uri_getter'
 
 module GoodData
   class Segment < Rest::Resource
-    SYNCHRONIZE_URI = '/gdc/domains/%s/segments/%s/synchronizeClients'
+    SYNCHRONIZE_URI = '/gdc/domains/%s/dataproducts/%s/segments/%s/synchronizeClients'
+
+    #
+    ProvisioningResult = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
 
     attr_accessor :domain
+
+    attr_writer :data_product
 
     data_property_reader 'id'
 
@@ -43,10 +48,12 @@ module GoodData
         client = domain.client
         fail ArgumentError, 'No client specified' if client.nil?
 
+        data_product = opts[:data_product]
+
         if id == :all
           GoodData::Segment.all(opts)
         else
-          result = client.get(domain.segments_uri + "/segments/#{CGI.escape(id)}")
+          result = client.get(base_uri(domain, data_product) + "/segments/#{CGI.escape(id)}")
           client.create(GoodData::Segment, result.merge('domain' => domain))
         end
       end
@@ -60,8 +67,17 @@ module GoodData
         fail 'Domain has to be passed in options' unless domain
         client = domain.client
 
-        results = client.get(domain.segments_uri + '/segments')
-        GoodData::Helpers.get_path(results, %w(segments items)).map { |i| client.create(GoodData::Segment, i.merge('domain' => domain)) }
+        data_product = opts[:data_product]
+        results = client.get(base_uri(domain, data_product) + '/segments')
+        GoodData::Helpers.get_path(results, %w(segments items)).map { |i| client.create(GoodData::Segment, i, domain: domain) }
+      end
+
+      def base_uri(domain, data_product)
+        if data_product
+          GoodData::DataProduct::ONE_DATA_PRODUCT_PATH % { domain_name: domain.name, id: data_product.data_product_id }
+        else
+          domain.segments_uri
+        end
       end
 
       # Creates new segment from parameters passed
@@ -73,7 +89,7 @@ module GoodData
         segment_id = data[:segment_id]
         fail 'segment_id has to be provided' if segment_id.blank?
         client = options[:client]
-        segment = client.create(GoodData::Segment, GoodData::Helpers.stringify_keys(SEGMENT_TEMPLATE).merge('domain' => options[:domain]))
+        segment = client.create(GoodData::Segment, GoodData::Helpers.stringify_keys(SEGMENT_TEMPLATE), options)
         segment.tap do |s|
           s.segment_id = segment_id
           s.master_project = data[:master_project]
@@ -84,7 +100,17 @@ module GoodData
     def initialize(data)
       super
       @domain = data.delete('domain')
+      @data_product = nil
       @json = data
+    end
+
+    def data_product
+      if @data_product
+        @data_product
+      else
+        json = client.get(data['links']['dataProduct'])
+        @data_product = client.create(GoodData::DataProduct, json)
+      end
     end
 
     # Segment id getter for the Segment. Called segment_id since id is a reserved word in ruby world
@@ -159,17 +185,17 @@ module GoodData
       if uri
         client.put(uri, json)
       else
-        res = client.post(domain.segments_uri + '/segments', json)
+        res = client.post(self.class.base_uri(domain, @data_product ? data_product : nil) + '/segments', json)
         @json = res
       end
       self
     end
 
-    # Runs async process that walks thorugh segments and provisions projects if necessary.
+    # Runs async process that walks through segments and provisions projects if necessary.
     #
     # @return [Array] Returns array of results
     def synchronize_clients
-      sync_uri = SYNCHRONIZE_URI % [domain.obj_id, id]
+      sync_uri = SYNCHRONIZE_URI % [domain.obj_id, data_product.data_product_id, id]
       res = client.post sync_uri, nil
 
       # wait until the instance is created
@@ -180,7 +206,7 @@ module GoodData
       client.create(ClientSynchronizationResult, res)
     end
 
-    def synchronize_processes(projects = [], options = { dataproduct: 'default' })
+    def synchronize_processes(projects = [])
       projects = [projects] unless projects.is_a?(Array)
       projects = projects.map do |p|
         p = p.pid if p.respond_to?('pid')
@@ -198,7 +224,8 @@ module GoodData
         }
       end
 
-      uri = '/gdc/internal/lcm/domains/%s/dataproducts/%s/segments/%s/syncProcesses' % [domain.obj_id, options[:dataproduct], id]
+      uri = '/gdc/internal/lcm/domains/%{domain}/dataproducts/%{dataproduct}/segments/%{segment}/syncProcesses'
+      uri = uri % { domain: domain.name, dataproduct: data_product.data_product_id, segment: segment_id }
       res = client.post(uri, body)
 
       client.poll_on_response(GoodData::Helpers.get_path(res, %w(asyncTask link poll)), sleep_interval: 1) do |r|
@@ -216,11 +243,31 @@ module GoodData
       self
     rescue RestClient::BadRequest => e
       payload = GoodData::Helpers.parse_http_exception(e)
-      case GoodData::Helpers.get_path(payload)
-      when 'gdc.c4.conflict.domain.segment.contains_clients'
-        throw SegmentNotEmpty
-      else
-        raise e
+      e = SegmentNotEmpty if GoodData::Helpers.get_path(payload) == 'gdc.c4.conflict.domain.segment.contains_clients'
+      raise e
+    end
+
+    def provision_client_projects(segments = [])
+      body = {
+        provisionClientProjects: {
+          segments: segments.empty? ? [segment_id] : segments
+        }
+      }
+      res = client.post(GoodData::DataProduct::ONE_DATA_PRODUCT_PATH % { domain_name: domain.name, id: data_product.data_product_id } + '/provisionClientProjects', body)
+      res = client.poll_on_code(res['asyncTask']['links']['poll'])
+      failed_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult failed count), 0)
+      created_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult created count), 0)
+      return Enumerator.new([]) if (failed_count + created_count).zero?
+      Enumerator.new do |y|
+        uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))
+        loop do
+          result = client.get(uri)
+          (GoodData::Helpers.get_path(result, %w(clientProjectProvisioningResultDetails items)) || []).each do |item|
+            y << ProvisioningResult.new(item['id'], item['status'], item['project'], item['error'])
+          end
+          uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResultDetails paging next))
+          break if uri.nil?
+        end
       end
     end
   end
