@@ -9,16 +9,6 @@ require 'gooddata'
 describe GoodData::AdsOutputStage, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
-
-    # try to delete all posible ads
-    GoodData::DataWarehouse.all.map do |ads|
-      begin
-        ads.delete
-      rescue => e
-        puts "Cannot delete ads #{ads.id}. Reason: #{e.message}"
-      end
-    end
-
     @ads = GoodData::DataWarehouse.create(client: @client, title: 'Test ADS', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
   end
