@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'redcarpet', '~> 3.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 3.5'
   s.add_development_dependency 'rspec-expectations', '~> 3.5'
+  s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
   s.add_development_dependency 'rubocop', '< 0.48' # TODO: remove it after dealing with new rules introduced in 0.48 version
   s.add_development_dependency 'simplecov', '~> 0.12'
   s.add_development_dependency 'webmock', '~> 1.21'
