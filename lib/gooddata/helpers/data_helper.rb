@@ -114,7 +114,6 @@ module GoodData
         bucket = s3_client.bucket(bucket_name)
         obj = bucket.object(key)
         obj.get(response_target: filename, bucket: bucket_name, key: key)
-
         puts 'Done downloading file.'
         filename
       end

@@ -16,6 +16,7 @@ describe GoodData::LCM2::CreateSegmentMasters do
   let(:domain) { double('domain') }
   let(:segment) { double('segment') }
   let(:segments) { [segment] }
+  let(:data_product) { double('data_product') }
 
   context 'when parametrizing project environment' do
     let(:params) do
@@ -27,7 +28,8 @@ describe GoodData::LCM2::CreateSegmentMasters do
         ads_client: ads_client,
         development_client: development_client,
         gdc_logger: gdc_logger,
-        project_environment: 'DEVELOPMENT'
+        project_environment: 'DEVELOPMENT',
+        data_product: data_product
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end
@@ -41,11 +43,12 @@ describe GoodData::LCM2::CreateSegmentMasters do
       allow(project).to receive(:pid) { '123' }
       allow(project).to receive(:json) { {} }
       allow(domain).to receive(:segments) { [] }
-      allow(domain).to receive(:create_segment) { segment }
-      allow(segment).to receive(:synchronize_clients) {}
+      allow(domain).to receive(:create_segment) {}
       allow(segment).to receive(:master_project) {}
       allow(segment).to receive(:master_project=) {}
       allow(segment).to receive(:save) {}
+      allow(segment).to receive(:synchronize_clients) {}
+      allow(data_product).to receive(:create_segment) { segment }
     end
 
     it 'passes the argument to create_project' do
