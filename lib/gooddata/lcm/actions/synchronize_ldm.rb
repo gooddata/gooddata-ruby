@@ -23,10 +23,19 @@ module GoodData
 
         description 'LDM Update Preference'
         param :update_preference, instance_of(Type::UpdatePreferenceType), required: false
+
+        description 'Specifies whether to transfer computed attributes'
+        param :include_computed_attributes, instance_of(Type::BooleanType), required: false, default: true
       end
 
       class << self
         def call(params)
+          # set default value for include_computed_attributes
+          # (we won't have to do this after TMA-690)
+          include_ca = params.include_computed_attributes
+          include_ca = true if include_ca.nil?
+          include_ca = include_ca.to_b
+
           results = []
 
           client = params.gdc_gd_client
@@ -39,7 +48,7 @@ module GoodData
             from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
             params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
 
-            blueprint = from.blueprint
+            blueprint = from.blueprint(include_ca: include_ca)
             info[:to] = to_projects.pmap do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")

@@ -17,11 +17,22 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'Specifies whether to transfer computed attributes'
+        param :include_computed_attributes, instance_of(Type::BooleanType), required: false, default: true
       end
 
       class << self
         def call(params)
+          # set default value for include_computed_attributes
+          # (we won't have to do this after TMA-690)
+          include_ca = params.include_computed_attributes
+          include_ca = true if include_ca.nil?
+          include_ca = include_ca.to_b
+
           results = []
+          return results unless include_ca
+
           client = params.gdc_gd_client
 
           params.synchronize.each do |info|
