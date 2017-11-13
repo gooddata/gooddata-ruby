@@ -29,16 +29,9 @@ module GoodData
           fail "Parameter 'segments' contains duplicate segment id(s): #{duplicated_segment_ids.join(', ')}" if duplicated_segment_ids.any?
 
           if params.segments_filter
-            data_product = params.data_product
-            data_product_segments_ids = data_product.segments.map(&:segment_id)
-
-            filtered_segments = filtered_segments.select do |segment|
-              data_product_segments_ids.include?(segment.segment_id.downcase)
-            end
-
             segments_filter = params.segments_filter.map(&:downcase)
 
-            filtered_segments = filtered_segments.select do |segment|
+            filtered_segments = params.segments.select do |segment|
               segments_filter.include?(segment.segment_id.downcase)
             end
           end
