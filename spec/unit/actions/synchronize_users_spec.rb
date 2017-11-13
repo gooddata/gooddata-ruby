@@ -1,5 +1,6 @@
 require 'active_support/core_ext/hash'
 require 'gooddata/lcm/lcm2'
+require_relative 'shared_examples_for_user_actions'
 
 describe GoodData::LCM2::SynchronizeUsers do
   let(:client) { double('client') }
@@ -40,13 +41,8 @@ describe GoodData::LCM2::SynchronizeUsers do
         GoodData::LCM2.convert_to_smart_hash(params)
       end
 
-      before do
-        allow(File).to receive(:open).and_return("client_id\nclient123")
-      end
-
-      it 'uses client_id column' do
-        expect(domain).to receive(:clients).with('client123')
-        subject.class.call(params)
+      it_behaves_like 'a user action' do
+        let(:client_id) { '123456789' }
       end
     end
 

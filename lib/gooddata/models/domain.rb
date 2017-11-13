@@ -325,19 +325,11 @@ Available values for setting language are: #{available_languages}."
     # if it exists.
     #
     # @param id [String] Id of client that you are looking for
+    # @param data_product [DataProduct] data product object in which the clients are located
     # @return [Object] Raw response
     #
-    def clients(id = :all)
-      if id == :all
-        res = client.get("/gdc/domains/#{name}/clients")
-        res_clients = (res['clients'] && res['clients']['items']) || []
-        res_clients.map { |res_client| client.create(GoodData::Client, res_client) }
-      else
-        res = client.get("/gdc/domains/#{name}/clients/#{id}")
-        error = GoodData::Helpers.interpolate_error_message(res)
-        raise error if error
-        client.create(GoodData::Client, res)
-      end
+    def clients(id = :all, data_product = nil)
+      GoodData::Client[id, data_product: data_product, domain: self]
     end
 
     alias_method :create_user, :add_user

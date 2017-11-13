@@ -52,6 +52,7 @@ module GoodData
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) if domain_name
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
+          data_product = params.data_product
 
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
 
@@ -120,7 +121,7 @@ module GoodData
             md = project.metadata
             goodot_id = md['GOODOT_CUSTOM_PROJECT_ID'].to_s
 
-            client = domain.clients.find { |c| c.project_uri == project.uri }
+            client = domain.clients(:all, data_product).find { |c| c.project_uri == project.uri }
             if goodot_id.empty? && client.nil?
               fail "Project \"#{project.pid}\" metadata does not contain key GOODOT_CUSTOM_PROJECT_ID neither is it mapped \
                   to a client_id in LCM metadata. We are unable to get the values for user filters."
@@ -153,7 +154,7 @@ module GoodData
             end
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
-              project = domain.clients(client_id).project
+              project = domain.clients(client_id, data_product).project
               fail "Client #{client_id} does not have project." unless project
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
@@ -164,7 +165,7 @@ module GoodData
               filters << row.to_hash
             end
 
-            domain_clients = domain.clients
+            domain_clients = domain.clients(:all, data_product)
             params.segments_filter ||= params.segments_filter
             if params.segments_filter
               segments_filter = params.segments_filter.map { |seg| "/gdc/domains/#{domain.name}/segments/#{seg}" }
@@ -175,7 +176,7 @@ module GoodData
 
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
-              c = domain.clients(client_id)
+              c = domain.clients(client_id, data_product)
               if params.segments_filter && !segments_filter.include?(c.segment_uri)
                 puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
                 next

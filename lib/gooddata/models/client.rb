@@ -33,15 +33,13 @@ module GoodData
         domain = opts[:domain]
         segment = opts[:segment]
         fail ArgumentError, 'No :domain specified' if domain.nil?
-        fail ArgumentError, 'No :segment specified' if domain.nil?
-
         client = domain.client
         fail ArgumentError, 'No client specified' if client.nil?
+        data_product = opts[:data_product] || segment ? segment.data_product : nil
 
         if id == :all
-          data_product = segment.data_product
-          tenants_uri = GoodData::DataProduct::ONE_DATA_PRODUCT_PATH % { domain_name: domain.name, id: data_product.data_product_id }
-          tenants_uri += "/clients?segment=#{CGI.escape(segment.segment_id)}"
+          tenants_uri = base_uri(domain, data_product)
+          tenants_uri += "?segment=#{CGI.escape(segment.segment_id)}" if segment
           Enumerator.new do |y|
             loop do
               res = client.get tenants_uri
@@ -58,7 +56,8 @@ module GoodData
           end
         else
           id = id.respond_to?(:client_id) ? id.client_id : id
-          data = client.get(domain.segments_uri + "/clients/#{CGI.escape(id)}")
+          tenant_uri = base_uri(domain, data_product)
+          data = client.get(tenant_uri + "/#{CGI.escape(id)}")
           client.create(GoodData::Client, data.merge('domain' => domain))
         end
       end

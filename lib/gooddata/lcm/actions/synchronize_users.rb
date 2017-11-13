@@ -49,6 +49,7 @@ module GoodData
           domain_name = params.organization || params.domain
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
+          data_product = params.data_product
           mode = params.sync_mode
           unless mode.nil? || MODES.include?(mode)
             fail "The parameter \"sync_mode\" has to have one of the values #{MODES.map(&:to_s).join(', ')} or has to be empty."
@@ -56,97 +57,18 @@ module GoodData
 
           whitelists = Set.new(params.whitelists || []) + Set.new((params.regexp_whitelists || []).map { |r| /#{r}/ }) + Set.new([client.user.login])
 
-          multiple_projects_column = params.multiple_projects_column
-          unless multiple_projects_column
-            client_modes = %w(sync_domain_client_workspaces sync_one_project_based_on_custom_id sync_multiple_projects_based_on_custom_id)
-            multiple_projects_column = if client_modes.include?(mode)
-                                         'client_id'
-                                       else
-                                         'project_id'
-                                       end
-          end
-
-          # Check mandatory columns and parameters
-          mandatory_params = [domain_name, data_source]
-
-          mandatory_params.each do |param|
+          [domain_name, data_source].each do |param|
             fail param + ' is required in the block parameters.' unless param
           end
 
           domain = client.domain(domain_name)
 
-          first_name_column           = params.first_name_column || 'first_name'
-          last_name_column            = params.last_name_column || 'last_name'
-          login_column                = params.login_column || 'login'
-          password_column             = params.password_column || 'password'
-          email_column                = params.email_column || 'email'
-          role_column                 = params.role_column || 'role'
-          sso_provider_column         = params.sso_provider_column || 'sso_provider'
-          authentication_modes_column = params.authentication_modes_column || 'authentication_modes'
-          user_groups_column          = params.user_groups_column || 'user_groups'
-          language_column             = params.language_column || 'language'
-          company_column              = params.company_column || 'company'
-          position_column             = params.position_column || 'position'
-          country_column              = params.country_column || 'country'
-          phone_column                = params.phone_column || 'phone'
-          ip_whitelist_column         = params.ip_whitelist_column || 'ip_whitelist'
-
-          sso_provider = params.sso_provider
-          authentication_modes = params.authentication_modes || []
           ignore_failures = GoodData::Helpers.to_boolean(params.ignore_failures)
           remove_users_from_project = GoodData::Helpers.to_boolean(params.remove_users_from_project)
           do_not_touch_users_that_are_not_mentioned = GoodData::Helpers.to_boolean(params.do_not_touch_users_that_are_not_mentioned)
           create_non_existing_user_groups = GoodData::Helpers.to_boolean(params.create_non_existing_user_groups || true)
 
-          new_users = []
-
-          # params.delete('GDC_SST')
-
-          data = nil
-          dwh = params.ads_client
-          if dwh
-            data = dwh.execute_select(params.input_source.query)
-          else
-            tmp = File.open(data_source.realize(params), 'r:UTF-8')
-            data = CSV.read(tmp, headers: true)
-          end
-
-          data.each do |row|
-            params.gdc_logger.debug("Processing row: #{row}")
-
-            modes = if authentication_modes.empty?
-                      row[authentication_modes_column] || row[authentication_modes_column.to_sym] || []
-                    else
-                      authentication_modes
-                    end
-
-            modes = modes.split(',').map(&:strip).map { |x| x.to_s.upcase } unless modes.is_a? Array
-
-            user_group = row[user_groups_column] || row[user_groups_column.to_sym]
-            user_group = user_group.split(',').map(&:strip) if user_group
-
-            ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
-            ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
-
-            new_users << {
-              :first_name => row[first_name_column] || row[first_name_column.to_sym],
-              :last_name => row[last_name_column] || row[last_name_column.to_sym],
-              :login => row[login_column] || row[login_column.to_sym],
-              :password => row[password_column] || row[password_column.to_sym],
-              :email => row[email_column] || row[login_column] || row[email_column.to_sym] || row[login_column.to_sym],
-              :role => row[role_column] || row[role_column.to_sym],
-              :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
-              :authentication_modes => modes,
-              :user_group => user_group,
-              :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
-              :language => row[language_column] || row[language_column.to_sym],
-              :company => row[company_column] || row[company_column.to_sym],
-              :position => row[position_column] || row[position_column.to_sym],
-              :country => row[country_column] || row[country_column.to_sym],
-              :phone => row[phone_column] || row[phone_column.to_sym],
-              :ip_whitelist => ip_whitelist
-            }.compact
-          end
+          new_users = load_data(params, data_source).compact
 
           # There are several scenarios we want to provide with this brick
           # 1) Sync only domain
@@ -209,7 +131,7 @@ module GoodData
                       filtered_users = new_users.select do |u|
                         fail "Column for determining the project assignement is empty for \"#{u[:login]}\"" if u[:pid].blank?
                         client_id = u[:pid].to_s
-                        (goodot_id && client_id == goodot_id) || domain.clients(client_id).project_uri == project.uri
+                        (goodot_id && client_id == goodot_id) || domain.clients(client_id, data_product).project_uri == project.uri
                       end
 
                       if filtered_users.empty?
@@ -228,7 +150,12 @@ module GoodData
                     when 'sync_multiple_projects_based_on_custom_id'
                       new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
-                        project = domain.clients(client_id).project
+                        begin
+                          project = domain.clients(client_id, data_product).project
+                        rescue RestClient::BadRequest => e
+                          raise e unless /does not exist in data product/ =~ e.response
+                          fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\""
+                        end
                         fail "Client #{client_id} does not have project." unless project
                         puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
                         project.import_users(users,
@@ -240,20 +167,12 @@ module GoodData
                                              create_non_existing_user_groups: create_non_existing_user_groups)
                       end
                     when 'sync_domain_client_workspaces'
-                      domain_clients = domain.clients
-                      if params.segments_filter
-                        segments_filter = params.segments_filter.map { |seg| "/gdc/domains/#{domain.name}/segments/#{seg}" }
-                        domain_clients.select! { |c| segments_filter.include?(c.segment_uri) }
-                      end
+                      domain_clients = domain.clients(:all, data_product)
                       working_client_ids = []
                       res = []
                       res += new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
-                        c = domain.clients(client_id)
-                        if params.segments_filter && !segments_filter.include?(c.segment_uri)
-                          puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
-                          next
-                        end
+                        c = domain.clients(client_id, data_product)
                         project = c.project
                         fail "Client #{client_id} does not have project." unless project
                         working_client_ids << client_id.to_s
@@ -298,7 +217,7 @@ module GoodData
                       end
 
                       res
-                    else
+                    when 'sync_domain_and_project'
                       domain.create_users(new_users, ignore_failures: ignore_failures)
                       project.import_users(new_users,
                                            domain: domain,
@@ -317,10 +236,87 @@ module GoodData
           errors = results.select { |r| r[:type] == :error || r[:type] == :failed }
           return if errors.empty?
 
-          puts "Printing 10 first errors"
-          puts "========================"
+          puts 'Printing 10 first errors'
+          puts '========================'
           pp errors.take(10)
           fail 'There was an error syncing users'
+        end
+
+        def load_data(params, data_source)
+          first_name_column           = params.first_name_column || 'first_name'
+          last_name_column            = params.last_name_column || 'last_name'
+          login_column                = params.login_column || 'login'
+          password_column             = params.password_column || 'password'
+          email_column                = params.email_column || 'email'
+          role_column                 = params.role_column || 'role'
+          sso_provider_column         = params.sso_provider_column || 'sso_provider'
+          authentication_modes_column = params.authentication_modes_column || 'authentication_modes'
+          user_groups_column          = params.user_groups_column || 'user_groups'
+          language_column             = params.language_column || 'language'
+          company_column              = params.company_column || 'company'
+          position_column             = params.position_column || 'position'
+          country_column              = params.country_column || 'country'
+          phone_column                = params.phone_column || 'phone'
+          ip_whitelist_column         = params.ip_whitelist_column || 'ip_whitelist'
+          mode                        = params.sync_mode
+
+          sso_provider = params.sso_provider
+          authentication_modes = params.authentication_modes || []
+
+          multiple_projects_column = params.multiple_projects_column
+          unless multiple_projects_column
+            client_modes = %w(sync_domain_client_workspaces sync_one_project_based_on_custom_id sync_multiple_projects_based_on_custom_id)
+            multiple_projects_column = if client_modes.include?(mode)
+                                         'client_id'
+                                       else
+                                         'project_id'
+                                       end
+          end
+
+          dwh = params.ads_client
+          if dwh
+            data = dwh.execute_select(params.input_source.query)
+          else
+            tmp = File.open(data_source.realize(params), 'r:UTF-8')
+            data = CSV.read(tmp, headers: true)
+          end
+
+          data.map do |row|
+            params.gdc_logger.debug("Processing row: #{row}")
+
+            modes = if authentication_modes.empty?
+                      row[authentication_modes_column] || row[authentication_modes_column.to_sym] || []
+                    else
+                      authentication_modes
+                    end
+
+            modes = modes.split(',').map(&:strip).map { |x| x.to_s.upcase } unless modes.is_a? Array
+
+            user_group = row[user_groups_column] || row[user_groups_column.to_sym]
+            user_group = user_group.split(',').map(&:strip) if user_group
+
+            ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
+            ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
+
+            {
+              :first_name => row[first_name_column] || row[first_name_column.to_sym],
+              :last_name => row[last_name_column] || row[last_name_column.to_sym],
+              :login => row[login_column] || row[login_column.to_sym],
+              :password => row[password_column] || row[password_column.to_sym],
+              :email => row[email_column] || row[login_column] || row[email_column.to_sym] || row[login_column.to_sym],
+              :role => row[role_column] || row[role_column.to_sym],
+              :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
+              :authentication_modes => modes,
+              :user_group => user_group,
+              :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
+              :language => row[language_column] || row[language_column.to_sym],
+              :company => row[company_column] || row[company_column.to_sym],
+              :position => row[position_column] || row[position_column.to_sym],
+              :country => row[country_column] || row[country_column.to_sym],
+              :phone => row[phone_column] || row[phone_column.to_sym],
+              :ip_whitelist => ip_whitelist
+            }
+          end
         end
       end
     end

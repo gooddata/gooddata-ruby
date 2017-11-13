@@ -133,10 +133,13 @@ module GoodData
       ],
 
       users: [
+        CollectDataProduct,
+        CollectSegments,
         SynchronizeUsers
       ],
 
       user_filters: [
+        CollectDataProduct,
         SynchronizeUserFilters
       ],
 
