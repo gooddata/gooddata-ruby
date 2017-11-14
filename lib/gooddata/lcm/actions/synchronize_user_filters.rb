@@ -82,9 +82,9 @@ module GoodData
           end
 
           run_params = {
-            restrict_if_missing_all_values: params.restrict_if_missing_all_values == 'true' ? true : false,
-            ignore_missing_values: params.ignore_missing_values == 'true' ? true : false,
-            do_not_touch_filters_that_are_not_mentioned: params.do_not_touch_filters_that_are_not_mentioned == 'true' ? true : false,
+            restrict_if_missing_all_values: params.restrict_if_missing_all_values == 'true',
+            ignore_missing_values: params.ignore_missing_values == 'true',
+            do_not_touch_filters_that_are_not_mentioned: params.do_not_touch_filters_that_are_not_mentioned == 'true',
             domain: domain,
             dry_run: false
           }
@@ -120,16 +120,28 @@ module GoodData
             md = project.metadata
             goodot_id = md['GOODOT_CUSTOM_PROJECT_ID'].to_s
 
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+            client = domain.clients.find { |c| c.project_uri == project.uri }
+            if goodot_id.empty? && client.nil?
+              fail "Project \"#{project.pid}\" metadata does not contain key GOODOT_CUSTOM_PROJECT_ID neither is it mapped \
+                  to a client_id in LCM metadata. We are unable to get the values for user filters."
+            end
+
+            unless goodot_id.empty? || client.nil? || (goodot_id == client.id)
+              fail "GOODOT_CUSTOM_PROJECT_ID metadata key is provided for project \"#{project.pid}\" but doesn't match \
+                    client id assigned to the project in LCM metadata. Please resolve the conflict."
+            end
+
+            filter_value = goodot_id.empty? ? client.id : goodot_id
+
+            filepath = File.open(data_source.realize(params), 'r:UTF-8')
+            CSV.foreach(filepath, headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               client_id = row[multiple_projects_column].to_s
-              if (goodot_id && client_id == goodot_id) || domain.clients(client_id).project_uri == project.uri
-                filters << row
-              end
+              filters << row if client_id == filter_value
             end
 
             if filters.empty?
-              fail "Project \"#{project.pid}\" does not match with any client ids in input source (both GOODOT_CUSTOM_PROJECT_ID and SEGMENT/CLIENT). \
-              We are unable to get the value to filter users."
+              params.gdc_logger.warn "Project \"#{project.pid}\" does not match with any client ids in input source (both GOODOT_CUSTOM_PROJECT_ID and SEGMENT/CLIENT). \
+                                      Unable to get the value to filter users."
             end
 
             filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
