@@ -1598,12 +1598,14 @@ module GoodData
     def send_mail_to_new_users(users, email_options)
       password = email_options[:email_password]
       from = email_options[:email_from]
+      relay = email_options[:email_relay]
+      user = email_options[:email_user]
       raise 'Missing sender email, please specify parameter "email_from"' unless from
       raise 'Missing authentication password, please specify parameter "email_password"' unless password
       template = get_email_template(email_options)
-      smtp = Net::SMTP.new('relay1.na.intgdc.com', 25)
+      smtp = Net::SMTP.new(relay, 25)
       smtp.enable_starttls OpenSSL::SSL::SSLContext.new("TLSv1_2_client")
-      smtp.start('notifications.gooddata.com','gdc', password, :plain)
+      smtp.start('notifications.gooddata.com',user, password, :plain)
       users.each do |user|
         smtp.send_mail(get_email_body(template, user), from, user[:login])
       end
