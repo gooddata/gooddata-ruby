@@ -1596,6 +1596,7 @@ module GoodData
     private
 
     def send_mail_to_new_users(users, email_options)
+      puts 'Sending email to new users'
       password = email_options[:email_password]
       from = email_options[:email_from]
       relay = email_options[:email_relay]
@@ -1607,6 +1608,7 @@ module GoodData
       smtp.enable_starttls OpenSSL::SSL::SSLContext.new("TLSv1_2_client")
       smtp.start('notifications.gooddata.com',user, password, :plain)
       users.each do |user|
+        puts "Sending email to #{user[:login]}"
         smtp.send_mail(get_email_body(template, user), from, user[:login])
       end
     end
