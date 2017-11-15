@@ -29,13 +29,14 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       allow(organization).to receive(:find)
     end
     context 'when mode requires client_id' do
+      let(:mode) { 'sync_one_project_based_on_pid' }
       let(:params) do
         params = {
           GDC_GD_CLIENT: client,
           input_source: 'foo',
           domain: 'bar',
           filters_config: { labels: [] },
-          sync_mode: 'sync_one_project_based_on_pid'
+          sync_mode: mode
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -52,6 +53,20 @@ describe GoodData::LCM2::SynchronizeUserFilters do
           []
         end
         subject.class.call(params)
+      end
+
+      context 'when mode is sync_domain_client_workspaces' do
+        let(:mode) { 'sync_domain_client_workspaces' }
+        let(:clients) { [] }
+        before do
+          allow(domain).to receive(:clients).with(no_args).and_return(clients)
+          allow(organization).to receive(:project).and_return(project)
+          allow(File).to receive(:open).and_return("client_id\n123456789")
+        end
+        it 'returns results' do
+          result = subject.class.call(params)
+          expect(result).to eq(results: [])
+        end
       end
     end
   end
