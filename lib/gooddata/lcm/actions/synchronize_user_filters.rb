@@ -188,6 +188,7 @@ module GoodData
               project.add_data_permissions(filters_to_load, run_params)
             end
 
+            results = []
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
               domain_clients.each do |c|
                 next if working_client_ids.include?(c.client_id)
@@ -207,9 +208,13 @@ module GoodData
                 end
 
                 puts "Delete all filters in project #{project.pid} of client #{c.client_id}"
-                project.add_data_permissions([], run_params)
+                results << project.add_data_permissions([], run_params)
               end
             end
+
+            {
+              results: results
+            }
           end
         end
       end
