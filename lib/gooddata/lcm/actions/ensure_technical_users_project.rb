@@ -16,7 +16,8 @@ module GoodData
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
         description 'Technical users'
-        param :technical_user, array_of(instance_of(Type::StringType)), required: false, deprecated: true
+        param :technical_user, array_of(instance_of(Type::StringType)),
+              required: false, deprecated: true, replacement: :technical_users
 
         description 'Technical users'
         param :technical_users, array_of(instance_of(Type::StringType)), required: false
