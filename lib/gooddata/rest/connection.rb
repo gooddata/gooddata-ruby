@@ -581,7 +581,6 @@ ERR
         merge_headers! response.headers
         content_type = response.headers[:content_type]
         return response if process == false
-
         if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
           result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
           GoodData.rest_logger.debug "Request ID: #{response.headers[:x_gdc_request]} - Response: #{result.inspect}"
@@ -597,6 +596,10 @@ ERR
         elsif response.code == 204
           result = nil
           GoodData.rest_logger.debug 'Response: 204 no content'
+        elsif response.code == 200 && content_type.nil? && response.body.empty?
+          result = nil
+          # TMA-696
+          GoodData.rest_logger.warn 'Got response status 200 but no content-type and body.'
         else
           fail "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
         end

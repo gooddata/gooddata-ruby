@@ -72,7 +72,7 @@ module GoodData
           end
         end
 
-        if result.empty?
+        if result.to_s.empty?
           ReportDataResult.new(data: [], top: 0, left: 0)
         else
           ReportDataResult.from_xtab(result)
