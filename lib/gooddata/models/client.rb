@@ -35,7 +35,7 @@ module GoodData
         fail ArgumentError, 'No :domain specified' if domain.nil?
         client = domain.client
         fail ArgumentError, 'No client specified' if client.nil?
-        data_product = opts[:data_product] || segment ? segment.data_product : nil
+        data_product = opts[:data_product] || (segment ? segment.data_product : nil)
 
         if id == :all
           tenants_uri = base_uri(domain, data_product)
