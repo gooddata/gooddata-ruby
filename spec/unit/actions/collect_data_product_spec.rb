@@ -11,29 +11,28 @@ describe GoodData::LCM2::CollectDataProduct do
 
   let(:client) { double(:client) }
   let(:domain) { double(:domain) }
-  let(:data_product) { GoodData::DataProduct.new({}) }
   let(:gdc_logger) { double(:gdc_logger) }
+  let(:data_product) { GoodData::DataProduct.new({}) }
 
   before do
     allow(client).to receive(:domain) { domain }
-    allow(gdc_logger).to receive(:info) {}
+    allow(gdc_logger).to receive(:info)
+    allow(domain).to receive(:data_products) { data_product }
   end
 
   context 'when data_product parameter is passed' do
+    let(:data_product_id) { 'data-product' }
     let(:params) do
       params = {
         gdc_gd_client: client,
         gdc_logger: gdc_logger,
-        data_product: "data-product-#{SecureRandom.uuid}"
+        data_product: data_product_id
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end
 
-    before do
-      allow(domain).to receive(:data_products) { data_product }
-    end
-
-    it 'hydrates the data_product object into params and runs the app' do
+    it 'collects the specified data_product object' do
+      expect(domain).to receive(:data_products).with(data_product_id)
       result = subject.class.call(params)
       expect(result[:params][:data_product]).to be_a GoodData::DataProduct
     end
@@ -48,17 +47,10 @@ describe GoodData::LCM2::CollectDataProduct do
       GoodData::LCM2.convert_to_smart_hash(params)
     end
 
-    it 'fallbacks to the only data_product if only one exists in the domain' do
-      allow(domain).to receive(:data_products) { [data_product] }
-
+    it "collects the 'default' data_product" do
+      expect(domain).to receive(:data_products).with('default')
       result = subject.class.call(params)
       expect(result[:params][:data_product]).to be_a GoodData::DataProduct
-    end
-
-    it 'fails when multiple data_products are available to fallback on' do
-      allow(domain).to receive(:data_products) { [data_product, GoodData::DataProduct.new({})] }
-
-      expect { subject.class.call(params) }.to raise_error
     end
   end
 end
