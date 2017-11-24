@@ -48,7 +48,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         GoodData::LCM2.convert_to_smart_hash(params)
       end
 
-      it_behaves_like 'a user action' do
+      it_behaves_like 'a user action reading client_id' do
         let(:client_id) { '123456789' }
       end
 
@@ -66,6 +66,10 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         it 'returns results' do
           result = subject.class.call(params)
           expect(result).to eq(results: [[{}]])
+        end
+
+        it_behaves_like 'a user action filtering segments' do
+          let(:message_for_project) { :add_data_permissions }
         end
       end
     end
