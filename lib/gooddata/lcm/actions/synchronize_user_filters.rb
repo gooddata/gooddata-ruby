@@ -166,10 +166,9 @@ module GoodData
             end
 
             domain_clients = domain.clients(:all, data_product)
-            params.segments_filter ||= params.segments_filter
             if params.segments_filter
-              segments_filter = params.segments_filter.map { |seg| "/gdc/domains/#{domain.name}/segments/#{seg}" }
-              domain_clients.select! { |c| segments_filter.include?(c.segment_uri) }
+              segment_uris = params.segments_filter.map(&:uri)
+              domain_clients.select! { |c| segment_uris.include?(c.segment_uri) }
             end
 
             working_client_ids = []
@@ -177,7 +176,7 @@ module GoodData
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
               c = domain.clients(client_id, data_product)
-              if params.segments_filter && !segments_filter.include?(c.segment_uri)
+              if params.segments_filter && !segment_uris.include?(c.segment_uri)
                 puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
                 next
               end
