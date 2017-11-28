@@ -87,7 +87,8 @@ module GoodData
             ignore_missing_values: params.ignore_missing_values == 'true',
             do_not_touch_filters_that_are_not_mentioned: params.do_not_touch_filters_that_are_not_mentioned == 'true',
             domain: domain,
-            dry_run: false
+            dry_run: false,
+            users_brick_input: params.users_brick_users
           }
 
           puts "Synchronizing in mode \"#{mode}\""
