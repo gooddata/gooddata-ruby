@@ -271,14 +271,9 @@ module GoodData
       create_filter_proc = proc do |login, f|
         expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
         profiles_uri = if options[:type] == :muf
-<<<<<<< HEAD
                          project_user = project_users.find { |u| u.login == login }
 
                          project_user.nil? ? ('/gdc/account/profile/' + login) : project_user.profile_url
-=======
-                         uri = project_users.find { |u| u.login == login }.profile_url
-                         uri.nil? ? ('/gdc/account/profile/' + login) : uri
->>>>>>> TMA-638: Fix removing user with MUFs
                        elsif options[:type] == :variable
                          (users_cache[login] && users_cache[login].uri)
                        else
