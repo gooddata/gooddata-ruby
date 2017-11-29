@@ -141,6 +141,7 @@ module GoodData
       user_filters: [
         CollectDataProduct,
         CollectUsersBrickUsers,
+        CollectSegments,
         SynchronizeUserFilters
       ],
 

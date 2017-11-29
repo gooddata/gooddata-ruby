@@ -168,8 +168,8 @@ module GoodData
                       end
                     when 'sync_domain_client_workspaces'
                       domain_clients = domain.clients(:all, data_product)
-                      if params.segments_filter
-                        segment_uris = params.segments_filter.map(&:uri)
+                      if params.segments
+                        segment_uris = params.segments.map(&:uri)
                         domain_clients.select! { |c| segment_uris.include?(c.segment_uri) }
                       end
                       working_client_ids = []
@@ -177,8 +177,8 @@ module GoodData
                       res += new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
                         c = domain.clients(client_id, data_product)
-                        if params.segments_filter && !segment_uris.include?(c.segment_uri)
-                          puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
+                        if params.segments && !segment_uris.include?(c.segment_uri)
+                          puts "Client #{client_id} is outside segments_filter #{params.segments}"
                           next
                         end
                         project = c.project

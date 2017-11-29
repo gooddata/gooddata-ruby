@@ -51,7 +51,8 @@ module GoodData
               segment_id: segment.segment_id,
               development_pid: project.pid,
               driver: project.driver.downcase,
-              master_name: project.title
+              master_name: project.title,
+              uri: segment.uri
             }
           end
 
