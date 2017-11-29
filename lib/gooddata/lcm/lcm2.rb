@@ -140,6 +140,7 @@ module GoodData
 
       user_filters: [
         CollectDataProduct,
+        CollectSegments,
         SynchronizeUserFilters
       ],
 
