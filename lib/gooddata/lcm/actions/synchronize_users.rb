@@ -170,7 +170,7 @@ module GoodData
                       domain_clients = domain.clients(:all, data_product)
                       if params.segments
                         segment_uris = params.segments.map(&:uri)
-                        domain_clients.select! { |c| segment_uris.include?(c.segment_uri) }
+                        domain_clients = domain_clients.select { |c| segment_uris.include?(c.segment_uri) }
                       end
                       working_client_ids = []
                       res = []
