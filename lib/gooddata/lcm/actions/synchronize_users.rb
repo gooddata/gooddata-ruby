@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require_relative '../user_bricks_helper'
 
 module GoodData
   module LCM2
@@ -125,18 +126,21 @@ module GoodData
                                            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_one_project_based_on_custom_id'
-                      md = project.metadata
-                      goodot_id = md['GOODOT_CUSTOM_PROJECT_ID'].to_s
+                      filter_value = UserBricksHelper.resolve_client_id(domain, project, data_product)
 
                       filtered_users = new_users.select do |u|
                         fail "Column for determining the project assignement is empty for \"#{u[:login]}\"" if u[:pid].blank?
                         client_id = u[:pid].to_s
-                        (goodot_id && client_id == goodot_id) || domain.clients(client_id, data_product).project_uri == project.uri
+                        client_id == filter_value
                       end
 
                       if filtered_users.empty?
-                        fail "Project \"#{project.pid}\" does not match with any client ids in input source (both GOODOT_CUSTOM_PROJECT_ID and SEGMENT/CLIENT). \
-  We are unable to get the value to filter users."
+                        params.gdc_logger.warn(
+                          "Project \"#{project.pid}\" does not match " \
+                          "any client ids in input source (both " \
+                          "GOODOT_CUSTOM_PROJECT_ID and SEGMENT/CLIENT). " \
+                          "We are unable to get the value to filter users."
+                        )
                       end
 
                       puts "Project #{project.pid} will receive #{filtered_users.count} from #{new_users.count} users"
