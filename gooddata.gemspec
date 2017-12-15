@@ -54,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'gli', '~> 2.15'
   s.add_dependency 'gooddata_datawarehouse' if RUBY_PLATFORM == 'java'
   s.add_dependency 'gooddata-dss-jdbc', '0.1.12' if RUBY_PLATFORM == 'java'
-  s.add_dependency 'highline', '~> 1.7'
+  s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
   s.add_dependency 'json_pure', '~> 1.8'
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'parseconfig', '~> 1.0'
