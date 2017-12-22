@@ -174,6 +174,16 @@ module GoodData
       client.poll_on_code(result1['uri'], options.merge(process: false))
     end
 
+    # Exports a report too large to be computed on the UI. It executes in raw form.
+    # Saves the result into file.
+    #
+    # @param filename [String] Filename to save into
+    # @return [Net::HTTPResponse] Returns HTTP status
+    def export_raw(filename)
+      result = client.post("/gdc/app/projects/#{project.pid}/execute/raw", 'report_req' => { 'report' => uri })
+      client.download(result['uri'], filename)
+    end
+
     # Returns the newest (current version) report definition uri
     #
     # @return [String] Returns uri of the newest report defintion

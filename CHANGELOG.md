@@ -1,22 +1,22 @@
 # GoodData Ruby SDK Changelog
 ## 0.6.54
- - Generating changelog automatically from git
- - Fix resolving dataproduct
- - TMA-685: User filters and users bricks support data product
- - TMA-700: Fix executing empty report
- - TMA-696: Handle status 200 with no content type
- - TMA-632: Fix result for sync_domain_client_workspaces
- - TMA-680: Add option include_computed_attributes
- - mdidtouri spec has correct data types
- - TMA-686: filtering segments in release brick
- - TMA-663: synchronize_user_filters does not fail if the client set is empty
- - TMA-299: Data Product used in bricks
- - removed unused class params_inspect_middleware
- - Update list of dependencies
- - TMA-666: Generate junit-formatted test results
- - simplecov has to be initialized before any other code
- - enabling code coverage calculation during tests
- - TMA-366: Indicate replacement for technical_user
+- Generating changelog automatically from git
+- Fix resolving dataproduct
+- TMA-685: User filters and users bricks support data product
+- TMA-700: Fix executing empty report
+- TMA-696: Handle status 200 with no content type
+- TMA-632: Fix result for sync_domain_client_workspaces
+- TMA-680: Add option include_computed_attributes
+- mdidtouri spec has correct data types
+- TMA-686: filtering segments in release brick
+- TMA-663: synchronize_user_filters does not fail if the client set is empty
+- TMA-299: Data Product used in bricks
+- removed unused class params_inspect_middleware
+- Update list of dependencies
+- TMA-666: Generate junit-formatted test results
+- simplecov has to be initialized before any other code
+- enabling code coverage calculation during tests
+- TMA-366: Indicate replacement for technical_user
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule
