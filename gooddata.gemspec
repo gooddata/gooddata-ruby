@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'redcarpet', '~> 3.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 3.5'
   s.add_development_dependency 'rspec-expectations', '~> 3.5'
+  s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
   s.add_development_dependency 'rubocop', '< 0.48' # TODO: remove it after dealing with new rules introduced in 0.48 version
   s.add_development_dependency 'simplecov', '~> 0.12'
   s.add_development_dependency 'webmock', '~> 1.21'
@@ -53,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'gli', '~> 2.15'
   s.add_dependency 'gooddata_datawarehouse' if RUBY_PLATFORM == 'java'
   s.add_dependency 'gooddata-dss-jdbc', '0.1.12' if RUBY_PLATFORM == 'java'
-  s.add_dependency 'highline', '~> 1.7'
+  s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
   s.add_dependency 'json_pure', '~> 1.8'
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'parseconfig', '~> 1.0'

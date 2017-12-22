@@ -52,6 +52,7 @@ module GoodData
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) if domain_name
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
+          data_product = params.data_product
 
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
 
@@ -82,11 +83,12 @@ module GoodData
           end
 
           run_params = {
-            restrict_if_missing_all_values: params.restrict_if_missing_all_values == 'true' ? true : false,
-            ignore_missing_values: params.ignore_missing_values == 'true' ? true : false,
-            do_not_touch_filters_that_are_not_mentioned: params.do_not_touch_filters_that_are_not_mentioned == 'true' ? true : false,
+            restrict_if_missing_all_values: params.restrict_if_missing_all_values == 'true',
+            ignore_missing_values: params.ignore_missing_values == 'true',
+            do_not_touch_filters_that_are_not_mentioned: params.do_not_touch_filters_that_are_not_mentioned == 'true',
             domain: domain,
-            dry_run: false
+            dry_run: false,
+            users_brick_input: params.users_brick_users
           }
 
           puts "Synchronizing in mode \"#{mode}\""
@@ -117,19 +119,17 @@ module GoodData
               project.add_data_permissions(filters_to_load, run_params)
             end
           when 'sync_one_project_based_on_custom_id'
-            md = project.metadata
-            goodot_id = md['GOODOT_CUSTOM_PROJECT_ID'].to_s
+            filter_value = UserBricksHelper.resolve_client_id(domain, project, data_product)
 
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+            filepath = File.open(data_source.realize(params), 'r:UTF-8')
+            CSV.foreach(filepath, headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               client_id = row[multiple_projects_column].to_s
-              if (goodot_id && client_id == goodot_id) || domain.clients(client_id).project_uri == project.uri
-                filters << row
-              end
+              filters << row if client_id == filter_value
             end
 
             if filters.empty?
-              fail "Project \"#{project.pid}\" does not match with any client ids in input source (both GOODOT_CUSTOM_PROJECT_ID and SEGMENT/CLIENT). \
-              We are unable to get the value to filter users."
+              params.gdc_logger.warn "Project \"#{project.pid}\" does not match with any client ids in input source (both GOODOT_CUSTOM_PROJECT_ID and SEGMENT/CLIENT). \
+                                      Unable to get the value to filter users."
             end
 
             filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
@@ -141,7 +141,7 @@ module GoodData
             end
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
-              project = domain.clients(client_id).project
+              project = domain.clients(client_id, data_product).project
               fail "Client #{client_id} does not have project." unless project
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
@@ -152,20 +152,19 @@ module GoodData
               filters << row.to_hash
             end
 
-            domain_clients = domain.clients
-            params.segments_filter ||= params.segments_filter
-            if params.segments_filter
-              segments_filter = params.segments_filter.map { |seg| "/gdc/domains/#{domain.name}/segments/#{seg}" }
-              domain_clients.select! { |c| segments_filter.include?(c.segment_uri) }
+            domain_clients = domain.clients(:all, data_product)
+            if params.segments
+              segment_uris = params.segments.map(&:uri)
+              domain_clients = domain_clients.select { |c| segment_uris.include?(c.segment_uri) }
             end
 
             working_client_ids = []
 
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
-              c = domain.clients(client_id)
-              if params.segments_filter && !segments_filter.include?(c.segment_uri)
-                puts "Client #{client_id} is outside segments_filter #{params.segments_filter}"
+              c = domain.clients(client_id, data_product)
+              if params.segments && !segment_uris.include?(c.segment_uri)
+                puts "Client #{client_id} is outside segments_filter #{params.segments}"
                 next
               end
               project = c.project
@@ -176,6 +175,7 @@ module GoodData
               project.add_data_permissions(filters_to_load, run_params)
             end
 
+            results = []
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
               domain_clients.each do |c|
                 next if working_client_ids.include?(c.client_id)
@@ -195,9 +195,13 @@ module GoodData
                 end
 
                 puts "Delete all filters in project #{project.pid} of client #{c.client_id}"
-                project.add_data_permissions([], run_params)
+                results << project.add_data_permissions([], run_params)
               end
             end
+
+            {
+              results: results
+            }
           end
         end
       end

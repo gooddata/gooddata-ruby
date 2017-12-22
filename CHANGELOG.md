@@ -1,22 +1,22 @@
 # GoodData Ruby SDK Changelog
-
 ## 0.6.54
-- TMA-512 - Fix invalid data type issue in blueprint when a field has > 255 characters
-- TMA-506 - Add option :time to report.execute to force platform simulate the result of report at that time
-- TMA-509 - Provisioning: Should clean all zombie clients when project creation limit reached
-- TMA-542 - Release: Should fail when segments contains duplicated ids
-- TMA-536 - Release: transfer Dataset and Fact Tags in ImportObjectCollection
-- TMA-532 - Rollout: Improve behavior of update_preferences: introduce 2 paramameters allow_cascade_drops and keep_data
-- TMA-537 - Release: rename parameter production_tag to production_tags and support passing Array value
-- TMA-572 - Improve API call statistics log: add grouping on CLIENT_ID
-- TMA-563 - Provisioning brick doesn't verify status of project_id
-- TMA-502 - User and User Filters brick: multiple_projects_column = client_id should be default for client modes
-- TMA-565 - Provisioning brick doesn't add technical users when input source contains project_id
-- TMA-547 - Provisioning brick: sync client workspace title
-- TMA-301 - Make it possible to pass dynamic parameters to schedules
-- TMA-568 - Users Brick: add support for other user's attributes
-- TMA-195 - LCM bricks should transfer permissions and groups
-- TMA-575 - Add support for raw export-report API
+- Generating changelog automatically from git
+- Fix resolving dataproduct
+- TMA-685: User filters and users bricks support data product
+- TMA-700: Fix executing empty report
+- TMA-696: Handle status 200 with no content type
+- TMA-632: Fix result for sync_domain_client_workspaces
+- TMA-680: Add option include_computed_attributes
+- mdidtouri spec has correct data types
+- TMA-686: filtering segments in release brick
+- TMA-663: synchronize_user_filters does not fail if the client set is empty
+- TMA-299: Data Product used in bricks
+- removed unused class params_inspect_middleware
+- Update list of dependencies
+- TMA-666: Generate junit-formatted test results
+- simplecov has to be initialized before any other code
+- enabling code coverage calculation during tests
+- TMA-366: Indicate replacement for technical_user
 
 ## 0.6.53
 - TMA-522 - Rollout: Incorrect CLIENT_ID assigned to client schedule

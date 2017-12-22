@@ -48,7 +48,8 @@ module GoodData
 
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-          domain_segments = domain.segments
+          data_product = params.data_product
+          domain_segments = domain.segments(:all, data_product)
 
           # TODO: Support for 'per segment' provisioning
           segments = params.segments
@@ -82,7 +83,7 @@ module GoodData
               status = 'untouched'
             else
               params.gdc_logger.info "Creating segment #{segment_id}, master #{project.pid}"
-              segment = domain.create_segment(segment_id: segment_id, master_project: project)
+              segment = data_product.create_segment(segment_id: segment_id, master_project: project)
               segment.synchronize_clients
               segment_in[:is_new] = true
               status = 'created'

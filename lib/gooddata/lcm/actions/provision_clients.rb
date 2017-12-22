@@ -33,16 +33,16 @@ module GoodData
 
       class << self
         def call(params)
+          synchronize_projects = []
+          data_product = params.data_product
           client = params.gdc_gd_client
-
           domain_name = params.organization || params.domain
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
-          synchronize_projects = []
-
           begin
-            results = params.segments.pmap do |segment|
-              tmp = domain.provision_client_projects(segment.segment_id).pmap do |m|
+            results = params.segments.map do |segment|
+              segment_object = domain.segments(segment.segment_id, data_product)
+              tmp = segment_object.provision_client_projects.map do |m|
                 Hash[m.each_pair.to_a].merge(type: :provision_result)
               end
 

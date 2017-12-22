@@ -24,12 +24,14 @@ describe GoodData::Mixin::MdIdToUri do
 
   it 'should throw BadRequest for -1' do
     expect do
-      SomeTestClass.identifier_to_uri(@opts, -1)
-    end.to raise_error(RestClient::BadRequest)
+      SomeTestClass.identifier_to_uri(@opts, '-1')
+    end.to raise_error(RestClient::BadRequest) { |error|
+      error.response.should match(/does not match with value '-1'/)
+    }
   end
 
   it 'should return nil for unknown id' do
-    expect(SomeTestClass.identifier_to_uri(@opts, 0)).to be_nil
+    expect(SomeTestClass.identifier_to_uri(@opts, '0')).to be_nil
   end
 
   it 'should get json containing correct id' do

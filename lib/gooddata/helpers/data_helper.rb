@@ -97,7 +97,7 @@ module GoodData
             open(link) { |rf| f.write(rf.read) }
           end
         end
-        puts "Realizing web download from \"#{link}\" took #{measure.real}"
+        GoodData.logger.info("Realizing web download from \"#{link}\" took #{measure.real}")
         filename
       end
 
@@ -109,13 +109,19 @@ module GoodData
         key = @options[:key]
         raise 'Key "bucket" is missing in S3 datasource' if bucket_name.blank?
         raise 'Key "key" is missing in S3 datasource' if key.blank?
-        puts "Realizing download from S3. Bucket #{bucket_name}, object with key #{key}."
+        GoodData.logger.info("Realizing download from S3. Bucket #{bucket_name}, object with key #{key}.")
         filename = Digest::SHA256.new.hexdigest(@options.to_json)
         bucket = s3_client.bucket(bucket_name)
         obj = bucket.object(key)
         obj.get(response_target: filename, bucket: bucket_name, key: key)
-
-        puts 'Done downloading file.'
+        s3_size = obj.size
+        actual_size = File.size(filename)
+        GoodData.logger.info("File size in S3: #{s3_size}")
+        GoodData.logger.info("Downloaded file size: #{actual_size}")
+        unless s3_size == actual_size
+          fail "Error downloading file #{key}. Expected size #{s3_size}, got #{actual_size}."
+        end
+        GoodData.logger.info('Done downloading file.')
         filename
       end
     end

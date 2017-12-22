@@ -14,8 +14,6 @@ module GoodData
   class Domain < Rest::Resource
     attr_reader :name
 
-    ProvisioningResult = Struct.new('ProvisioningResult', :id, :status, :project_uri, :error)
-
     USER_LANGUAGES = {
       'en-US' => 'English',
       'nl-NL' => 'Dutch',
@@ -327,19 +325,11 @@ Available values for setting language are: #{available_languages}."
     # if it exists.
     #
     # @param id [String] Id of client that you are looking for
+    # @param data_product [DataProduct] data product object in which the clients are located
     # @return [Object] Raw response
     #
-    def clients(id = :all)
-      if id == :all
-        res = client.get("/gdc/domains/#{name}/clients")
-        res_clients = (res['clients'] && res['clients']['items']) || []
-        res_clients.map { |res_client| client.create(GoodData::Client, res_client) }
-      else
-        res = client.get("/gdc/domains/#{name}/clients/#{id}")
-        error = GoodData::Helpers.interpolate_error_message(res)
-        raise error if error
-        client.create(GoodData::Client, res)
-      end
+    def clients(id = :all, data_product = nil)
+      GoodData::Client[id, data_product: data_product, domain: self]
     end
 
     alias_method :create_user, :add_user
@@ -348,8 +338,17 @@ Available values for setting language are: #{available_languages}."
       GoodData::Domain.create_users(list, name, { client: client }.merge(options))
     end
 
-    def segments(id = :all)
-      GoodData::Segment[id, domain: self]
+    def data_products(id = :all)
+      GoodData::DataProduct[id, domain: self]
+    end
+
+    def create_data_product(data)
+      data_product = GoodData::DataProduct.create(data, domain: self, client: client)
+      data_product.save
+    end
+
+    def segments(id = :all, data_product = nil)
+      GoodData::Segment[id, data_product: data_product, domain: self]
     end
 
     # Creates new segment in current domain from parameters passed
@@ -433,29 +432,10 @@ Available values for setting language are: #{available_languages}."
     #
     # @return [Enumerator] Returns Enumerator of results
     def provision_client_projects(segments = nil)
-      body = if segments
-               {
-                 provisionClientProjects: {
-                   segments: segments.is_a?(Array) ? segments : [segments]
-                 }
-               }
-             end
-
-      res = client.post(segments_uri + '/provisionClientProjects', body)
-      res = client.poll_on_code(res['asyncTask']['links']['poll'])
-      failed_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult failed count), 0)
-      created_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult created count), 0)
-      return Enumerator.new([]) if failed_count + created_count == 0 # rubocop:disable Style/NumericPredicate
-      Enumerator.new do |y|
-        uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))
-        loop do
-          result = client.get(uri)
-          (GoodData::Helpers.get_path(result, %w(clientProjectProvisioningResultDetails items)) || []).each do |item|
-            y << ProvisioningResult.new(item['id'], item['status'], item['project'], item['error'])
-          end
-          uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResultDetails paging next))
-          break if uri.nil?
-        end
+      segments = segments.is_a?(Array) ? segments : [segments]
+      segments.each do |segment_id|
+        segment = segments(segment_id)
+        segment.provision_client_projects
       end
     end
 
@@ -464,7 +444,7 @@ Available values for setting language are: #{available_languages}."
         client_id = datum[:id]
         settings = datum[:settings]
         settings.each do |setting|
-          GoodData::Client.update_setting(setting[:name], setting[:value], domain: self, client_id: client_id)
+          GoodData::Client.update_setting(setting[:name], setting[:value], domain: self, client_id: client_id, data_product_id: datum[:data_product_id])
         end
       end
       nil
@@ -472,39 +452,9 @@ Available values for setting language are: #{available_languages}."
     alias_method :add_clients_settings, :update_clients_settings
 
     def update_clients(data, options = {})
-      if options[:delete_extra] && options[:delete_extra_in_segments]
-        fail 'Options delete_extra and delete_extra_in_segments are mutually exclusive.'
-      end
-
-      delete_projects = options[:delete_projects] == false ? false : true
-      payload = data.map do |datum|
-        {
-          :client => {
-            :id => datum[:id],
-            :segment => segments_uri + '/segments/' + datum[:segment]
-          }
-        }.tap do |h|
-          h[:client][:project] = datum[:project] if datum.key?(:project)
-        end
-      end
-      if options[:delete_extra] == true
-        res = client.post(segments_uri + '/updateClients?deleteExtra=true', updateClients: { items: payload })
-      elsif options[:delete_extra_in_segments]
-        segments_to_delete_in = options[:delete_extra_in_segments]
-          .map { |segment| CGI.escape(segment) }
-          .join(',')
-        uri = segments_uri + "/updateClients?deleteExtraInSegments=#{segments_to_delete_in}"
-        res = client.post(uri, updateClients: { items: payload })
-      else
-        res = client.post(segments_uri + '/updateClients', updateClients: { items: payload })
-      end
-      data = GoodData::Helpers.get_path(res, ['updateClientsResponse'])
-      if data
-        result = data.flat_map { |k, v| v.map { |h| GoodData::Helpers.symbolize_keys(h.merge('type' => k)) } }
-        result.select { |r| r[:status] == 'DELETED' }.peach { |r| r[:originalProject] && client.delete(r[:originalProject]) } if delete_projects
-        result
-      else
-        []
+      data.group_by(&:data_product_id).each do |data_product_id, client_update_data|
+        data_product = data_products(data_product_id)
+        data_product.update_clients(client_update_data, options)
       end
     end
 

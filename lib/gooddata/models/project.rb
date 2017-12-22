@@ -607,10 +607,11 @@ module GoodData
     #
     # @return [GoodData::ProjectRole] Project role if found
     def blueprint(options = {})
-      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true, includeCA: true })
+      options = { include_ca: true }.merge(options)
+      result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true, includeCA: options[:include_ca] })
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
-      bp = GoodData::Model::FromWire.from_wire(model, { include_ca: true }.merge(options))
+      bp = GoodData::Model::FromWire.from_wire(model, options)
       bp.title = title
       bp
     end

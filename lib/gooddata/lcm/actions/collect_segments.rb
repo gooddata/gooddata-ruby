@@ -24,21 +24,18 @@ module GoodData
 
       class << self
         def call(params)
-          client = params.gdc_gd_client
-
-          domain_name = params.organization || params.domain
-          domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-          domain_segments = domain.segments
-          params.gdc_logger.info("Domain segments: #{domain_segments}")
+          data_product = params.data_product
+          data_product_segments = data_product.segments
+          params.gdc_logger.info("Domain segments: #{data_product_segments}")
 
           if params.segments_filter
             params.gdc_logger.info("Segments filter: #{params.segments_filter}")
-            domain_segments.select! do |segment|
+            data_product_segments.select! do |segment|
               params.segments_filter.include?(segment.segment_id)
             end
           end
 
-          segments = domain_segments.pmap do |segment|
+          segments = data_product_segments.pmap do |segment|
             project = nil
 
             begin
@@ -54,7 +51,8 @@ module GoodData
               segment_id: segment.segment_id,
               development_pid: project.pid,
               driver: project.driver.downcase,
-              master_name: project.title
+              master_name: project.title,
+              uri: segment.uri
             }
           end
 

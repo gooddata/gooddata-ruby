@@ -144,7 +144,7 @@ describe GoodData::Domain do
   describe '#clients' do
     subject { GoodData::Domain.new('my_domain') }
     let(:client) { double('client') }
-    let(:clients_response) { { 'client' => { 'id' => '123' } } }
+    let(:clients_response) { { 'client' => { 'id' => '123' }, 'domain' => subject } }
 
     before do
       allow(client).to receive(:get).and_return(clients_response)
@@ -156,7 +156,7 @@ describe GoodData::Domain do
         GoodData::Client,
         clients_response
       )
-      subject.clients(123)
+      subject.clients('123')
     end
   end
 end
