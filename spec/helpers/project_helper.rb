@@ -55,6 +55,19 @@ module GoodData
           }
           GoodData::Membership.create(opts, client: client)
         end
+
+        def load_full_project_implementation(client)
+          spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
+          blueprint = GoodData::Model::ProjectBlueprint.new(spec)
+
+          project = client.create_project_from_blueprint(
+            blueprint,
+            token: ConnectionHelper::GD_PROJECT_TOKEN,
+            environment: ProjectHelper::ENVIRONMENT
+          )
+
+          [project, blueprint, spec]
+        end
       end
     end
   end

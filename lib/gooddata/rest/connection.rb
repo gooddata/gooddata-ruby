@@ -59,6 +59,9 @@ end
 
 module GoodData
   module Rest
+    class RestRetryError < StandardError
+    end
+
     # Wrapper of low-level HTTP/REST client/library
     class Connection
       include MonitorMixin
@@ -250,6 +253,9 @@ module GoodData
         reset_headers!
       end
 
+      # @param what Address of the remote file.
+      # @param where Full path to the target file.
+      # @option [Bool] :url_encode ('true') URL encode the address.
       def download(what, where, options = {})
         # handle the path (directory) given in what
         ilast_slash = what.rindex('/')
@@ -278,7 +284,8 @@ module GoodData
         staging_uri = options[:staging_url].to_s
 
         base_url = dir.empty? ? staging_uri : URI.join("#{server}", staging_uri, "#{dir}/").to_s
-        url = URI.join("#{server}", base_url, CGI.escape(what)).to_s
+        sanitized_what = options[:url_encode] == false ? what : CGI.escape(what)
+        url = URI.join("#{server}", base_url, sanitized_what).to_s
 
         b = proc do |f|
           raw = {
@@ -288,14 +295,16 @@ module GoodData
             :verify_ssl => verify_ssl
           }
           RestClient::Request.execute(raw) do |chunk, _x, response|
-            if response.code.to_s != '200'
+            if response.code.to_s == '202'
+              fail RestRetryError, 'Got 202, retry'
+            elsif response.code.to_s != '200'
               fail ArgumentError, "Error downloading #{url}. Got response: #{response.code} #{response} #{response.body}"
             end
             f.write chunk
           end
         end
 
-        GoodData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
+        GoodData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }, :on => RestRetryError) do
           if where.is_a?(IO) || where.is_a?(StringIO)
             b.call(where)
           else
@@ -590,6 +599,9 @@ ERR
         elsif content_type == 'application/zip'
           result = response
           GoodData.rest_logger.debug 'Response: a zipped stream'
+        elsif content_type == 'text/csv'
+          result = response
+          GoodData.rest_logger.debug 'Response: CSV text'
         elsif response.headers[:content_length].to_s == '0'
           result = nil
           GoodData.rest_logger.debug 'Response: Empty response possibly 204'
