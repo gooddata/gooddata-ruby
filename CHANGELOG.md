@@ -1,4 +1,11 @@
 # GoodData Ruby SDK Changelog
+## 1.0.0
+ - TMA-575: Add support for raw export-report API
+ - TMA-738: Update highline to v2
+ - TMA-711: segments filter works correctly in users brick
+ - TMA-662: Users Brick passes with empty input source
+ - Rename travis.yml to .travis.yml
+
 ## 0.6.54
  - Generating changelog automatically from git
  - Fix resolving dataproduct
