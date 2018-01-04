@@ -54,13 +54,14 @@ module GoodData
           maqls = pick_correct_chunks(chunks, opts)
           replaced_maqls = apply_replacements_on_maql(maqls, replacements)
 
+          to_poll = []
           unless dry_run
             errors = []
             replaced_maqls.each do |replaced_maql_chunks|
               begin
                 replaced_maql_chunks['updateScript']['maqlDdlChunks'].each do |chunk|
                   GoodData.logger.debug(chunk)
-                  project.execute_maql(chunk)
+                  to_poll << project.execute_maql_async(chunk)
                 end
               rescue => e
                 puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
@@ -83,7 +84,7 @@ module GoodData
               fail "Unable to migrate LDM, reason(s): \n #{messages.join("\n")}"
             end
           end
-          replaced_maqls + (ca_maql ? [ca_maql] : [])
+          to_poll
         end
 
         def migrate_reports(project, spec)

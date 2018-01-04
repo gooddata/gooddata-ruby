@@ -49,12 +49,14 @@ module GoodData
             params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
 
             blueprint = from.blueprint(include_ca: include_ca)
+            to_poll = []
             info[:to] = to_projects.pmap do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
-              ca_scripts = to_project.update_from_blueprint(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
+              polling_addresses = to_project.update_from_blueprint(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
+              to_poll.concat(polling_addresses)
 
               entry[:ca_scripts] = ca_scripts
 
@@ -67,6 +69,15 @@ module GoodData
             end
 
             info
+          end
+
+          to_poll.each do |polling_uri|
+            result = client.poll_on_response(polling_uri, options) do |body|
+              body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+            end
+            if result['wTaskStatus']['status'] == 'ERROR'
+              fail MaqlExecutionError.new("Executionof MAQL '#{maql}' failed in project '#{pid}'", result)
+            end
           end
 
           {
