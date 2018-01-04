@@ -38,8 +38,6 @@ describe GoodData::UserFilterBuilder do
     before do
       allow(project).to receive(:labels)
         .and_return([label])
-      allow(project).to receive(:labels)
-        .and_return([label])
       allow(project).to receive(:attributes)
       allow(project).to receive(:users).and_return(project_users)
       allow(project).to receive(:data_permissions).and_return([existing_filter])

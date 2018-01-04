@@ -1553,26 +1553,27 @@ module GoodData
     # @return [Array<GoodData::User>] List of users
     def users(opts = {})
       client = client(opts)
-      Enumerator.new do |y|
-        offset = opts[:offset] || 0
-        limit = opts[:limit] || 1_000
-        loop do
-          tmp = client.get("/gdc/projects/#{pid}/users", params: { offset: offset, limit: limit })
-          tmp['users'].each do |user_data|
-            user = client.create(GoodData::Membership, user_data, project: self)
+      res = []
+      offset = opts[:offset] || 0
+      limit = opts[:limit] || 1_000
 
-            if opts[:all]
-              y << user
-            elsif opts[:disabled]
-              y << user if user && user.disabled?
-            else
-              y << user if user && user.enabled?
-            end
+      loop do
+        tmp = client.get("/gdc/projects/#{pid}/users", params: { offset: offset, limit: limit })
+        tmp['users'].each do |user_data|
+          user = client.create(GoodData::Membership, user_data, project: self)
+
+          if opts[:all]
+            res << user
+          elsif opts[:disabled]
+            res << user if user && user.disabled?
+          else
+            res << user if user && user.enabled?
           end
-          break if tmp['users'].count < limit
-          offset += limit
         end
+        break if tmp['users'].count < limit
+        offset += limit
       end
+      res
     end
 
     alias_method :members, :users

@@ -4,7 +4,6 @@ module GoodData
   class ProjectLogFormatter
     def initialize(project)
       @project = project
-      @users_cache = nil
     end
 
     # Log created users
@@ -165,11 +164,9 @@ module GoodData
         if status == :successful
           filter_uris = user_filters[user_profile_url].map(&:uri)
           if operator == :create && GoodData.logger.info?
-            readable_user_login = users_cache[user_profile_url] || user_profile_url
-            GoodData.logger.info "Created user-filter=#{filter_uris} for user=#{readable_user_login} in project=#{@project.pid}"
+            GoodData.logger.info "Created user-filter=#{filter_uris} for user=#{user_profile_url} in project=#{@project.pid}"
           elsif operator == :delete && GoodData.logger.warn?
-            readable_user_login = users_cache[user_profile_url] || user_profile_url
-            GoodData.logger.warn "Deleted user-filter=#{filter_uris} of user=#{readable_user_login} in project=#{@project.pid}"
+            GoodData.logger.warn "Deleted user-filter=#{filter_uris} of user=#{user_profile_url} in project=#{@project.pid}"
           end
         else
           error_message = result[:message]
@@ -183,13 +180,6 @@ module GoodData
     end
 
     private
-
-    def users_cache
-      if @users_cache.nil?
-        @users_cache = Hash[@project.users.map { |user| [user.profile_url, user.login] }]
-      end
-      @users_cache
-    end
 
     def to_user_login(user)
       if user.is_a?(String) && user.start_with?('/gdc/account/profile/')
