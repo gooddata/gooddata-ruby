@@ -1871,6 +1871,10 @@ module GoodData
       GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
     end
 
+    def update_from_blueprint_async(blueprint, options = {})
+      GoodData::Model::ProjectCreator.migrate_async(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
+    end
+
     def resolve_roles(login, desired_roles, options = {})
       user = if login.is_a?(String) && login.include?('@')
                '/gdc/account/profile/' + login

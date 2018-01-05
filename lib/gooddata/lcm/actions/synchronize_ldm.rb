@@ -57,7 +57,7 @@ module GoodData
                 to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
                 params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
-                polling_addresses = to_project.update_from_blueprint(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
+                polling_addresses = to_project.update_from_blueprint_async(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
                 to_poll.concat(polling_addresses)
 
                 entry[:ca_scripts] = ca_scripts
