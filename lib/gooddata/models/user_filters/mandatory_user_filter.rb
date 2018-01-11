@@ -69,7 +69,7 @@ module GoodData
           }
         }
       }
-      res = client.post(project.md['obj'], data)
+      res = client.post("/gdc/md/#{project.pid}/obj", data)
       @json[:uri] = res['uri']
     end
   end
