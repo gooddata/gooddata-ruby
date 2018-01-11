@@ -234,8 +234,7 @@ module GoodData
           fail "Identifier '#{explicit_identifier}' already in use"
         end
 
-        req_uri = project.md['obj']
-        result = client.post(req_uri, to_json)
+        result = client.post("/gdc/md/#{project.pid}/obj", to_json)
         saved_object = self.class[result['uri'], opts]
         # TODO: add test for explicitly provided identifier
 
