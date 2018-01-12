@@ -276,11 +276,6 @@ module GoodData
           end
         end
 
-        check_unused_params(actions, params)
-
-        # Print name of actions to be performed for debug purposes
-        print_action_names(mode, actions)
-
         # TODO: Check all action params first
 
         new_params = params
@@ -299,8 +294,11 @@ module GoodData
 
         skip_actions = (params.skip_actions || [])
         actions = actions.reject do |action|
-          skip_actions.include?(action.to_s)
+          skip_actions.include?(action.name.split('::').last)
         end
+
+        check_unused_params(actions, params)
+        print_action_names(mode, actions)
 
         # Run actions
         errors = []
