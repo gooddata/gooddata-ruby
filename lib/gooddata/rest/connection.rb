@@ -193,6 +193,9 @@ module GoodData
         headers = options[:headers] || {}
 
         options = options.merge(headers)
+        cert_store = OpenSSL::X509::Store.new
+        cert_store.set_default_paths
+        options[:cert_store] = cert_store
         @server = RestClient::Resource.new server, options
 
         # Install at_exit handler first
