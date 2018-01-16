@@ -110,6 +110,10 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :co
     expect(as.pmapcat { |a| a.usedby('metric') }).to be_empty
     expect(as.pmapcat { |a| a.usedby('dashboard') }).to be_empty
 
+    year_obj_id = @project.attributes
+                          .find { |a| a.identifier == 'created_on_2.year' }
+                          .obj_id
+
     # replace values
     mapping = GoodData::Helpers.prepare_mapping(suggest_mapping('created_on', 'created_on_2', @project), project: @project)
     @project.replace_from_mapping(mapping)
@@ -135,10 +139,10 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :co
     expect(@report.definition.attributes.map(&:identifier)).to eq ["created_on_2.quarter"]
 
     ids = GoodData::SmallGoodZilla.get_uris(@report.definition.filters.first).map { |x| x.split('/')[-2..-1].join('/') }
-    expect(ids).to eq ["obj/281", "281/elements?id=2015", "281/elements?id=2016"]
+    expect(ids).to eq ["obj/#{year_obj_id}", "#{year_obj_id}/elements?id=2015", "#{year_obj_id}/elements?id=2016"]
 
     ids = GoodData::SmallGoodZilla.get_uris(@variable.values.first.expression).map { |v| v.split('/')[-2..-1].join('/') }
-    expect(ids).to eq ["obj/281", "281/elements?id=2015", "281/elements?id=2016"]
+    expect(ids).to eq ["obj/#{year_obj_id}", "#{year_obj_id}/elements?id=2015", "#{year_obj_id}/elements?id=2016"]
 
     # Swap the dims
     bp = @project.blueprint
