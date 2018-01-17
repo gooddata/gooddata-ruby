@@ -837,6 +837,17 @@ module GoodData
       result
     end
 
+    # Executes MAQL expression
+    #
+    # @param maql [String] MAQL expression
+    # @return [String] URI to poll
+    def execute_maql_async(maql, options = {})
+      ldm_links = client.get(md[GoodData::Model::LDM_CTG])
+      ldm_uri = Links.new(ldm_links)[GoodData::Model::LDM_MANAGE_CTG]
+      response = client.post(ldm_uri, manage: { maql: maql })
+      response['entries'].first['link']
+    end
+
     # Helper for getting facts of a project
     #
     # @param [String | Number | Object] Anything that you can pass to GoodData::Fact[id]
@@ -1858,6 +1869,10 @@ module GoodData
 
     def update_from_blueprint(blueprint, options = {})
       GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
+    end
+
+    def update_from_blueprint_async(blueprint, options = {})
+      GoodData::Model::ProjectCreator.migrate_async(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
     end
 
     def resolve_roles(login, desired_roles, options = {})

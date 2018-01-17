@@ -41,32 +41,49 @@ module GoodData
           client = params.gdc_gd_client
           development_client = params.development_client
 
-          synchronize = params.synchronize.map do |info|
-            from_project = info.from
-            to_projects = info.to
+          synchronize = []
+          params.synchronize.each_slice(100) do |slice|
+            synchronize_result = slice.synchronize.map do |info|
+              from_project = info.from
+              to_projects = info.to
 
-            from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
-            params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
+              from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
+              params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
 
-            blueprint = from.blueprint(include_ca: include_ca)
-            info[:to] = to_projects.pmap do |entry|
-              pid = entry[:pid]
-              to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+              blueprint = from.blueprint(include_ca: include_ca)
+              to_poll = []
+              info[:to] = to_projects.pmap do |entry|
+                pid = entry[:pid]
+                to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
-              params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
-              ca_scripts = to_project.update_from_blueprint(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
+                params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
+                polling_addresses = to_project.update_from_blueprint_async(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
+                to_poll.concat(polling_addresses)
 
-              entry[:ca_scripts] = ca_scripts
+                entry[:ca_scripts] = ca_scripts
 
-              results << {
-                from: from_project,
-                to: pid,
-                status: 'ok'
-              }
-              entry
+                results << {
+                  from: from_project,
+                  to: pid,
+                  status: 'ok'
+                }
+                entry
+              end
+
+              info
             end
 
-            info
+            to_poll.each do |polling_uri|
+              result = client.poll_on_response(polling_uri, options) do |body|
+                body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+              end
+              if result['wTaskStatus']['status'] == 'ERROR'
+                fail MaqlExecutionError.new("Executionof MAQL '#{maql}' failed in project '#{pid}'", result)
+              end
+              params.gdc_logger.info("Finished updating blueprint: #{polling_uri}")
+            end
+
+            synchronize.concat(synchronize_result)
           end
 
           {

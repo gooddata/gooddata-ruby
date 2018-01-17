@@ -13,6 +13,27 @@ module GoodData
   module Model
     class ProjectCreator
       class << self
+        def migrate_async(opts = {})
+          opts = { client: GoodData.connection, execute_ca_scripts: true }.merge(opts)
+          client = opts[:client]
+          fail ArgumentError, 'No :client specified' if client.nil?
+
+          spec = opts[:spec] || fail('You need to provide spec for migration')
+          bp = ProjectBlueprint.new(spec)
+          fail GoodData::ValidationError, "Blueprint is invalid #{bp.validate.inspect}" unless bp.valid?
+          spec = bp.to_hash
+
+          project = opts[:project] || client.create_project(opts.merge(:title => opts[:title] || spec[:title], :client => client, :environment => opts[:environment]))
+
+          to_poll = migrate_datasets_async(spec, opts.merge(project: project, client: client))
+          load(p, spec)
+          migrate_metrics(p, spec[:metrics] || [])
+          migrate_reports(p, spec[:reports] || [])
+          migrate_dashboards(p, spec[:dashboards] || [])
+          execute_tests(p, spec[:assert_tests] || [])
+          to_poll
+        end
+
         def migrate(opts = {})
           opts = { client: GoodData.connection, execute_ca_scripts: true }.merge(opts)
           client = opts[:client]
@@ -84,6 +105,59 @@ module GoodData
             end
           end
           replaced_maqls + (ca_maql ? [ca_maql] : [])
+        end
+
+        def migrate_datasets_async(spec, opts = {})
+          opts = { client: GoodData.connection }.merge(opts)
+          dry_run = opts[:dry_run]
+          replacements = opts['maql_replacements'] || opts[:maql_replacements] || {}
+
+          _, project = GoodData.get_client_and_project(opts)
+
+          bp = ProjectBlueprint.new(spec)
+          response = project.maql_diff(blueprint: bp, params: [:includeGrain])
+
+          GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
+          chunks = response['projectModelDiff']['updateScripts']
+          return [] if chunks.empty?
+
+          ca_maql = response['projectModelDiff']['computedAttributesScript'] if response['projectModelDiff']['computedAttributesScript']
+          ca_chunks = ca_maql && ca_maql['maqlDdlChunks']
+
+          maqls = pick_correct_chunks(chunks, opts)
+          replaced_maqls = apply_replacements_on_maql(maqls, replacements)
+
+          to_poll = []
+          unless dry_run
+            errors = []
+            replaced_maqls.each do |replaced_maql_chunks|
+              begin
+                replaced_maql_chunks['updateScript']['maqlDdlChunks'].each do |chunk|
+                  GoodData.logger.debug(chunk)
+                  to_poll << project.execute_maql_async(chunk)
+                end
+              rescue => e
+                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
+                errors << e
+                next
+              end
+            end
+
+            if ca_chunks && opts[:execute_ca_scripts]
+              begin
+                ca_chunks.each { |chunk| project.execute_maql(chunk) }
+              rescue => e
+                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
+                errors << e
+              end
+            end
+
+            if (!errors.empty?) && (errors.length == replaced_maqls.length)
+              messages = errors.map { |err| GoodData::Helpers.interpolate_error_messages(err.data['wTaskStatus']['messages']) }
+              fail "Unable to migrate LDM, reason(s): \n #{messages.join("\n")}"
+            end
+          end
+          to_poll
         end
 
         def migrate_reports(project, spec)
