@@ -538,6 +538,8 @@ module GoodData
     end
 
     # Removes MUFs from to_delete unless in user is in users_brick_input
+    # if this does not happen, users that are about to be deleted by users_brick
+    # would have all their filters removed now, which is not desirable
     def self.sanitize_filters_to_delete(to_delete, users_brick_input, project_users)
       return to_delete unless users_brick_input && users_brick_input.any?
       user_profiles = users_brick_input.map do |user|
@@ -545,6 +547,7 @@ module GoodData
         next unless result
         result.profile_url
       end.compact
+      return to_delete unless user_profiles.any?
       to_delete.reject do |_, value|
         user_profiles.none? { |profile| profile == value.first.json[:related] }
       end
