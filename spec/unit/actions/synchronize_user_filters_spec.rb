@@ -3,6 +3,20 @@ require 'gooddata/lcm/lcm2'
 
 require_relative 'shared_examples_for_user_actions'
 
+shared_context 'using mode with custom_id' do
+  let(:CSV) { double('CSV') }
+
+  before do
+    allow(project).to receive(:metadata).and_return(
+      'GOODOT_CUSTOM_PROJECT_ID' => 'project-123'
+    )
+    allow(project).to receive(:uri).and_return('project-uri')
+    allow(project).to receive(:add_data_permissions)
+    allow(domain).to receive(:clients).and_return([])
+    allow(data_source).to receive(:realize).and_return('filepath')
+  end
+end
+
 describe GoodData::LCM2::SynchronizeUserFilters do
   let(:client) { double('client') }
   let(:user) { double('user') }
@@ -76,6 +90,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
   end
 
   context 'when using sync_one_project_based_on_custom_id mode with multiple_projects_column' do
+    include_context 'using mode with custom_id'
     let(:params) do
       params = {
         GDC_GD_CLIENT: client,
@@ -87,17 +102,6 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         gdc_logger: logger
       }
       GoodData::LCM2.convert_to_smart_hash(params)
-    end
-    let(:CSV) { double('CSV') }
-
-    before do
-      allow(project).to receive(:metadata).and_return(
-        'GOODOT_CUSTOM_PROJECT_ID' => 'project-123'
-      )
-      allow(project).to receive(:uri).and_return('project-uri')
-      allow(project).to receive(:add_data_permissions)
-      allow(domain).to receive(:clients).and_return([])
-      allow(data_source).to receive(:realize).and_return('filepath')
     end
 
     context 'when params do not match client data in domain' do
@@ -157,7 +161,6 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end
-
     before do
       allow(project).to receive(:metadata).and_return(
         'GOODOT_CUSTOM_PROJECT_ID' => 'project-123'
@@ -171,6 +174,27 @@ describe GoodData::LCM2::SynchronizeUserFilters do
 
     it 'fails' do
       expect { subject.class.call(params) }.to raise_error
+    end
+  end
+
+  context 'when using sync_multiple_projects_based_on_custom_id mode' do
+    include_context 'using mode with custom_id'
+    let(:params) do
+      params = {
+        input_source: 'foo',
+        domain: 'bar',
+        multiple_projects_column: 'id_column',
+        sync_mode: 'sync_multiple_projects_based_on_custom_id',
+        gdc_logger: logger,
+        GDC_GD_CLIENT: client,
+        filters_config: { labels: [] }
+      }
+      GoodData::LCM2.convert_to_smart_hash(params)
+    end
+    it 'fails if the MUF set is empty' do
+      expect(File).to receive(:open)
+      expect(CSV).to receive(:foreach)
+      expect { subject.class.call(params) }.to raise_error(/The filter set can not be empty/)
     end
   end
 end
