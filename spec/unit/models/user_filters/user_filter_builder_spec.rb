@@ -36,10 +36,10 @@ describe GoodData::UserFilterBuilder do
     let(:profile_url) { '/gdc/account/profile/foo' }
 
     before do
-      allow(project).to receive(:labels).with(label_uri)
-        .and_return(label)
-      allow(project).to receive(:labels).with("label.csv_policies.state")
-        .and_return(label)
+      allow(project).to receive(:labels)
+        .and_return([label])
+      allow(project).to receive(:labels)
+        .and_return([label])
       allow(project).to receive(:attributes)
       allow(project).to receive(:users).and_return(project_users)
       allow(project).to receive(:data_permissions).and_return([existing_filter])
@@ -48,6 +48,7 @@ describe GoodData::UserFilterBuilder do
       allow(label).to receive(:uri).and_return(label_uri)
       allow(label).to receive(:find_value_uri).with('Washington').and_return('foo')
       allow(label).to receive(:attribute_uri).and_return('bar')
+      allow(label).to receive(:identifier).and_return(label_id)
       allow(client).to receive(:create).and_return(filter)
       allow(client).to receive(:get)
         .and_return('userFilters' => { 'items' => [] })

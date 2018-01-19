@@ -140,10 +140,11 @@ module GoodData
 
     def self.create_label_cache(result, options = {})
       project = options[:project]
+      project_labels = project.labels
 
       result.reduce({}) do |a, e|
         e[:filters].map do |filter|
-          a[filter[:label]] = project.labels(filter[:label]) unless a.key?(filter[:label])
+          a[filter[:label]] = project_labels.find { |l| (l.identifier == filter[:label]) || (l.uri == filter[:label]) } unless a.key?(filter[:label])
         end
         a
       end
