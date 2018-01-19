@@ -75,18 +75,10 @@ module GoodData
         end
 
         def update_release_table(params, placeholders)
-          query = if placeholders[:version] > 1
-                    path = File.expand_path('../../data/update_lcm_release.sql.erb', __FILE__)
-                    default_query = GoodData::Helpers::ErbHelper.template_file(path, placeholders)
-
-                    temp_query = (params.query && params.query[:update]) || default_query
-                    replace_placeholders(temp_query, placeholders)
-                  else
-                    path = File.expand_path('../../data/insert_into_lcm_release.sql.erb', __FILE__)
-                    default_query = GoodData::Helpers::ErbHelper.template_file(path, placeholders)
-                    temp_query = (params.query && params.query.insert) || default_query
-                    replace_placeholders(temp_query, placeholders)
-                  end
+          path = File.expand_path('../../data/insert_into_lcm_release.sql.erb', __FILE__)
+          default_query = GoodData::Helpers::ErbHelper.template_file(path, placeholders)
+          temp_query = (params.query && params.query.insert) || default_query
+          query = replace_placeholders(temp_query, placeholders)
 
           params.ads_client.execute(query)
         end

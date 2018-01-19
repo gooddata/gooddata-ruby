@@ -76,14 +76,20 @@ module GoodData
 
             res = params.ads_client.execute_select(query)
 
+            sorted = res.sort_by { |row| row[:version] }
+              .map { |row| row[:master_project_id] }
+            current_master = client.projects(sorted[-1])
+            previous_master = nil
+            previous_master = client.projects(sorted[-2]) if sorted.length > 1
+
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
-            master = client.projects(res.first[:master_project_id])
-            master_pid = master.pid
-            master_name = master.title
+            master_pid = current_master.pid
+            master_name = current_master.title
 
             sync_info = {
               segment_id: segment.segment_id,
               from: master_pid,
+              diff_ldm_against: previous_master,
               to: segment_clients.map do |segment_client|
                 client_project = segment_client.project
                 to_pid = client_project.pid
@@ -91,7 +97,8 @@ module GoodData
                   from_name: master_name,
                   from_pid: master_pid,
                   to_name: client_project.title,
-                  to_pid: to_pid
+                  to_pid: to_pid,
+                  diff_ldm_against: previous_master && previous_master.pid
                 }
 
                 {
