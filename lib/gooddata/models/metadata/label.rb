@@ -21,7 +21,7 @@ module GoodData
       if items.empty?
         fail(AttributeElementNotFound, value)
       else
-        items.first['element']['uri']
+        items.find { |i| i['element']['title'] == value }['element']['uri']
       end
     end
 
@@ -47,7 +47,7 @@ module GoodData
 
       if url_or_params.is_a?(Hash)
         default_params = {
-          limit: 1,
+          limit: 100_000,
           offset: 0,
           order: 'asc'
         }
