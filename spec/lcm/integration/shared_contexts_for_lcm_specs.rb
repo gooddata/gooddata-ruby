@@ -54,6 +54,7 @@ shared_context 'provisioning brick' do
     @brick_result = GoodData::Bricks::Pipeline.provisioning_brick_pipeline.call(params)
     client_pids = @brick_result[:params][:synchronize].first[:to].map(&:pid)
     $client_projects = client_pids.map { |id| @prod_rest_client.projects(id) }
+    $conflicting_ldm_project ||= $client_projects.find { |p| p.title.include?('Client With Conflicting LDM Changes') }
     pp @brick_result
   end
 end
@@ -164,6 +165,13 @@ shared_context 'lcm bricks' do
       }
     end
 
+    $conflicting_client_id = "CLIENT_WITH_CONFLICTING_LDM_CHANGES_#{@suffix}"
+    @workspaces << {
+      client_id: $conflicting_client_id,
+      segment_id: segments.first[:segment_id],
+      title: "Client With Conflicting LDM Changes #{@suffix}"
+    }
+
     s3_endpoint = 'http://localstack:4572'
     workspace_csv = LcmHelper.create_workspace_csv(
         @workspaces,
@@ -208,9 +216,9 @@ shared_context 'lcm bricks' do
 
   after(:all) do
     projects_to_delete =
-        $master_projects +
-        $client_projects +
-        [@prod_output_stage_project]
+      $master_projects +
+      $client_projects +
+      [@prod_output_stage_project]
 
     projects_to_delete += [@project] unless ENV['REUSE_PROJECT']
 

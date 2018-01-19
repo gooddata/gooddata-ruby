@@ -8,7 +8,7 @@ module GoodData
   class MaqlExecutionError < RuntimeError
     attr_accessor :data
 
-    def initialize(message, data)
+    def initialize(message, data = nil)
       super(message || 'Execution of maql failed')
       @data = data
     end

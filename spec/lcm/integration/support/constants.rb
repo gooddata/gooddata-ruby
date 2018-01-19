@@ -6,6 +6,7 @@ module Support
 
   DATASET_IDENTIFIER = 'dataset.csv_policies'
   FACT_IDENTIFIER = 'fact.csv_policies.customer_lifetime_value'
+  FACT_IDENTIFIER_RENAMED = 'fact.csv_policies.customer_lifetime_value.renamed'
   DATA_FILE = './spec/lcm/integration/data/policies.csv'
 
   CC_PROCESS_ARCHIVE = './spec/lcm/integration/data/cc_process.zip'
@@ -20,7 +21,7 @@ module Support
   RUBY_PARAMS = { param_1: 'a', param_2: 'b' }
   RUBY_SECURE_PARAMS = { secure_param_1: 'secretive_baz', secure_param_2: 'secretive_qux' }
 
-  PRODUCTION_TAGGED_METRIC = 'metric.total.claim.amount'
+  PRODUCTION_TAGGED_METRIC = 'metric.max.claim.amount'
 
   CUSTOM_CLIENT_ID_COLUMN = 'custom_client_id_column'
 
