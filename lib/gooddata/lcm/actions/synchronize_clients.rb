@@ -74,13 +74,19 @@ module GoodData
             res = segment.synchronize_clients
 
             sync_result = res.json['synchronizationResult']
+            failed_count = sync_result['failedClients']['count']
+
+            if(failed_count.to_i > 0)
+              params.gdc_logger.warn("#{failed_count} clients failed to synchronize.")
+              params.gdc_logger.warn("Response: #{res.json}")
+            end
 
             {
               segment: segment.id,
               master_pid: master.pid,
               master_name: master.title,
               successful_count: sync_result['successfulClients']['count'],
-              failed_count: sync_result['failedClients']['count'],
+              failed_count: failed_count,
               # details: sync_result['links']['details']
             }
           end
