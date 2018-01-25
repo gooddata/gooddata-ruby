@@ -27,17 +27,17 @@ describe GoodData::Model::LabelBlueprintField do
     end
   end
 
-  describe '#gd_type' do
-    it 'should return attribute on label' do
-      label = @blueprint.datasets('dataset.opportunityanalysis').labels('label.opportunityanalysis.techoppanalysis')
-      expect(label.gd_type).to eq 'GDC.text'
+  context 'reading the label' do
+    before do
+      @label = @blueprint.datasets('dataset.opportunityanalysis').labels('label.opportunityanalysis.techoppanalysis')
     end
-  end
 
-  describe '#gd_datatype' do
     it 'should return attribute on label' do
-      label = @blueprint.datasets('dataset.opportunityanalysis').labels('label.opportunityanalysis.techoppanalysis')
-      expect(label.gd_data_type).to eq 'VARCHAR(128)'
+      expect(@label.gd_type).to eq 'GDC.text'
+    end
+
+    it 'should return attribute on label' do
+      expect(@label.gd_data_type).to eq 'VARCHAR(128)'
     end
   end
 end
