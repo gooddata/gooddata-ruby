@@ -31,10 +31,8 @@ module GoodData
       RESULT_HEADER = [
         :segment,
         :successful_count,
-        :failed_count,
         :master_name,
-        :master_pid,
-        # :details
+        :master_pid
       ]
 
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'
@@ -74,14 +72,18 @@ module GoodData
             res = segment.synchronize_clients
 
             sync_result = res.json['synchronizationResult']
+            failed_count = sync_result['failedClients']['count']
+
+            if failed_count.to_i > 0
+              fail("#{failed_count} clients failed to synchronize. " \
+                   "Details: #{sync_result['links']['details']}")
+            end
 
             {
               segment: segment.id,
               master_pid: master.pid,
               master_name: master.title,
-              successful_count: sync_result['successfulClients']['count'],
-              failed_count: sync_result['failedClients']['count'],
-              # details: sync_result['links']['details']
+              successful_count: sync_result['successfulClients']['count']
             }
           end
 
