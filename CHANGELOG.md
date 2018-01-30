@@ -1,4 +1,13 @@
 # GoodData Ruby SDK Changelog
+## 1.0.1
+ - Bump version to 1.0.1
+ - TMA-776: Improve error handling of sync clients
+ - TMA-775: platform agnostic lookup of label
+ - TMA-762: Fix test for swapping date dimensions
+ - TMA-494: Support for java platform
+ - fix skip actions for bricks
+ - move PH_MAP to separate file
+
 ## 1.0.0
  - TMA-575: Add support for raw export-report API
  - TMA-738: Update highline to v2
