@@ -35,11 +35,12 @@ namespace :gem do
     gem = "gooddata-#{GoodData::VERSION}.gem"
 
     puts "Building #{gem} ..."
-    res = system('gem build ./gooddata.gemspec')
-    next unless res
+    res = `gem build ./gooddata.gemspec`
+    file = res.match('File: (.*)')[1]
+    next unless file
 
-    puts "Pushing #{gem} ..."
-    system("gem push #{gem}")
+    puts "Pushing #{file} ..."
+    system("gem push #{file}")
   end
 end
 
