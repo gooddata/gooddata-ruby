@@ -52,5 +52,16 @@ describe GoodData::LCM2::CollectDataProduct do
       result = subject.class.call(params)
       expect(result[:params][:data_product]).to be_a GoodData::DataProduct
     end
+
+    context 'when default data product does not exist in domain' do
+      before do
+        allow(domain).to receive(:data_products) { nil }
+      end
+
+      it 'collects nil for backwards compatibility' do
+        result = subject.class.call(params)
+        expect(result[:params][:data_product]).to be_nil
+      end
+    end
   end
 end
