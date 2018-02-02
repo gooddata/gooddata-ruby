@@ -31,13 +31,21 @@ module GoodData
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
           if params.key?(:data_product)
-            data_product_id = params.data_product
+            data_product = domain.data_products(params.data_product)
           else
             params.gdc_logger.info "Using data product 'default' since none was specified in brick parameters"
-            data_product_id = 'default'
+            begin
+              data_product = domain.data_products('default')
+            rescue RestClient::Exception => e
+              if e.response =~ /Data product '%s' does not exist in domain/
+                params.gdc_logger.info "The 'default' data product does not exist in domain, using none instead"
+                data_product = nil
+              else
+                raise e
+              end
+            end
           end
 
-          data_product = domain.data_products(data_product_id)
           results = [
             {
               data_product: data_product

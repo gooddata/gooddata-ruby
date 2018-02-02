@@ -25,6 +25,14 @@ module GoodData
       class << self
         def call(params)
           data_product = params.data_product
+          unless data_product
+            return {
+              results: [],
+              params: {
+                segments: []
+              }
+            }
+          end
           data_product_segments = data_product.segments
           params.gdc_logger.info("Domain segments: #{data_product_segments}")
 
