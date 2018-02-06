@@ -147,34 +147,6 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       end
     end
   end
-
-  context 'when using unsuported sync_mode' do
-    let(:params) do
-      params = {
-        GDC_GD_CLIENT: client,
-        input_source: 'foo',
-        domain: 'bar',
-        filters_config: { labels: [] },
-        multiple_projects_column: 'id_column',
-        sync_mode: 'unsuported_sync_mode', # sync_one_project_based_on_custom_id
-        gdc_logger: logger
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
-    end
-    before do
-      allow(project).to receive(:metadata).and_return(
-        'GOODOT_CUSTOM_PROJECT_ID' => 'project-123'
-      )
-      allow(project).to receive(:uri).and_return('project-uri')
-      allow(project).to receive(:add_data_permissions)
-      allow(domain).to receive(:clients).and_return([])
-      allow(data_source).to receive(:realize).and_return('filepath')
-      allow(File).to receive(:open).and_return("client_id\n123456789")
-    end
-
-    it_should_behave_like 'when using unsuported sync_mode'
-  end
-
   context 'when using sync_multiple_projects_based_on_custom_id mode' do
     include_context 'using mode with custom_id'
     let(:params) do
