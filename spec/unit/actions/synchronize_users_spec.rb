@@ -46,11 +46,11 @@ describe GoodData::LCM2::SynchronizeUsers do
 
       let(:params) do
         params = {
+          sync_mode: 'sync_one_project_based_on_custom_id',
           GDC_GD_CLIENT: client,
           input_source: 'foo',
           domain: 'bar',
           gdc_logger: logger,
-          sync_mode: 'sync_one_project_based_on_custom_id'
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -75,11 +75,11 @@ describe GoodData::LCM2::SynchronizeUsers do
     context 'when mode requires client_id' do
       let(:params) do
         params = {
+          sync_mode: 'sync_one_project_based_on_pid',
           GDC_GD_CLIENT: client,
           input_source: 'foo',
           domain: 'bar',
-          gdc_logger: logger,
-          sync_mode: 'sync_one_project_based_on_pid'
+          gdc_logger: logger
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -129,6 +129,23 @@ describe GoodData::LCM2::SynchronizeUsers do
       it_behaves_like 'a user action filtering segments' do
         let(:message_for_project) { :import_users }
       end
+    end
+    context 'when using mistyped mode' do
+      let(:params) do
+        params = {
+          GDC_GD_CLIENT: client,
+          input_source: 'foo',
+          domain: 'bar',
+          gdc_logger: logger,
+          sync_mode: 'unsuported_sync_mode' # sync_one_project_based_on_pid
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      before do
+        allow(domain).to receive(:clients).and_return(organization)
+      end
+      it_should_behave_like 'when using unsuported sync_mode'
     end
   end
 end
