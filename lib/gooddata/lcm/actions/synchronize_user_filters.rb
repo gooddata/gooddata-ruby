@@ -139,6 +139,7 @@ module GoodData
             CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row.to_hash
             end
+            fail 'The filter set can not be empty when using sync_multiple_projects_based_on_custom_id mode' if filters.empty?
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
               project = domain.clients(client_id, data_product).project
