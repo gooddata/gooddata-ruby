@@ -156,7 +156,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         domain: 'bar',
         filters_config: { labels: [] },
         multiple_projects_column: 'id_column',
-        sync_mode: 'unsuported_sync_mode',
+        sync_mode: 'unsuported_sync_mode', # sync_one_project_based_on_custom_id
         gdc_logger: logger
       }
       GoodData::LCM2.convert_to_smart_hash(params)
@@ -172,9 +172,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       allow(File).to receive(:open).and_return("client_id\n123456789")
     end
 
-    it 'fails' do
-      expect { subject.class.call(params) }.to raise_error
-    end
+    it_should_behave_like 'when using unsuported sync_mode'
   end
 
   context 'when using sync_multiple_projects_based_on_custom_id mode' do
@@ -196,5 +194,21 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       expect(CSV).to receive(:foreach)
       expect { subject.class.call(params) }.to raise_error(/The filter set can not be empty/)
     end
+  end
+  context 'when using unsuported sync_mode' do
+    let(:params) do
+      params = {
+        filters_config: { labels: [] },
+        GDC_GD_CLIENT: client,
+        input_source: 'foo',
+        domain: 'bar',
+        multiple_projects_column: 'id_column',
+        sync_mode: 'unsuported_sync_mode', # sync_one_project_based_on_custom_id
+        gdc_logger: logger
+      }
+      GoodData::LCM2.convert_to_smart_hash(params)
+    end
+
+    it_should_behave_like 'when using unsuported sync_mode'
   end
 end
