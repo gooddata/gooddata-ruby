@@ -130,5 +130,28 @@ describe GoodData::LCM2::SynchronizeUsers do
         let(:message_for_project) { :import_users }
       end
     end
+
+    context 'when using unsuported mode' do 
+      let(:params) do
+        params = {
+          GDC_GD_CLIENT: client,
+          input_source: 'foo',
+          domain: 'bar',
+          gdc_logger: logger,
+          sync_mode: 'unsuported_sync_mode'
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      before do
+        allow(File).to receive(:open).and_return("client_id\n123456789")
+      end
+        
+      it 'fails' do
+        expect { subject.class.call(params) }.to raise_error
+      end
+
+    end
+
   end
 end
