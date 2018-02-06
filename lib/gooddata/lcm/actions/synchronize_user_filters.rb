@@ -19,7 +19,7 @@ module GoodData
         param :input_source, instance_of(Type::HashType), required: true
 
         description 'Synchronization Mode (e.g. sync_one_project_based_on_pid)'
-        param :sync_mode, instance_of(Type::StringType), required: false
+        param :sync_mode, instance_of(Type::StringType), required: false, default: 'sync_project'
 
         description 'Column That Contains Target Project IDs'
         param :multiple_projects_column, instance_of(Type::StringType), required: false
@@ -47,6 +47,17 @@ module GoodData
       end
 
       class << self
+        MODES = %w(
+          add_to_organization
+          sync_project
+          sync_domain_and_project
+          sync_multiple_projects_based_on_pid
+          sync_one_project_based_on_pid
+          sync_one_project_based_on_custom_id
+          sync_multiple_projects_based_on_custom_id
+          sync_domain_client_workspaces
+        )
+
         def call(params)
           client = params.gdc_gd_client
           domain_name = params.organization || params.domain
@@ -63,7 +74,10 @@ module GoodData
           symbolized_config[:labels] = symbolized_config[:labels].map { |l| GoodData::Helpers.symbolize_keys(l) }
           headers_in_options = params.csv_headers == 'false' || true
 
-          mode = params.sync_mode || 'sync_project'
+          mode = params.sync_mode
+          unless mode.nil? || MODES.include?(mode)
+            fail "The parameter \"sync_mode\" has to have one of the values #{MODES.map(&:to_s).join(', ')} or has to be empty."
+          end
           filters = []
 
           csv_with_headers = if GoodData::UserFilterBuilder.row_based?(symbolized_config)
