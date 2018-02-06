@@ -147,7 +147,6 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       end
     end
   end
-
   context 'when using sync_multiple_projects_based_on_custom_id mode' do
     include_context 'using mode with custom_id'
     let(:params) do
@@ -162,11 +161,26 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end
-
     it 'fails if the MUF set is empty' do
       expect(File).to receive(:open)
       expect(CSV).to receive(:foreach)
       expect { subject.class.call(params) }.to raise_error(/The filter set can not be empty/)
     end
+  end
+  context 'when using unsuported sync_mode' do
+    let(:params) do
+      params = {
+        filters_config: { labels: [] },
+        GDC_GD_CLIENT: client,
+        input_source: 'foo',
+        domain: 'bar',
+        multiple_projects_column: 'id_column',
+        sync_mode: 'unsuported_sync_mode', # sync_one_project_based_on_custom_id
+        gdc_logger: logger
+      }
+      GoodData::LCM2.convert_to_smart_hash(params)
+    end
+
+    it_should_behave_like 'when using unsuported sync_mode'
   end
 end
