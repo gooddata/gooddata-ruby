@@ -40,7 +40,7 @@ module GoodData
           data_product = domain.data_products(data_product_id)
           results = [
             {
-              data_product: data_product
+              data_product: data_product_id
             }
           ]
 
