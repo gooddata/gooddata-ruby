@@ -85,24 +85,24 @@ module GoodData
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
     def values(options = {})
-      Enumerator.new do |y|
-        offset = options[:offset] || 0
-        page_limit = options[:limit] || 100
-        loop do
-          results = get_valid_elements(limit: page_limit, offset: offset)
+      result = []
+      offset = options[:offset] || 0
+      page_limit = options[:limit] || 100
+      loop do
+        results = get_valid_elements(limit: page_limit, offset: offset)
 
-          elements = results['validElements']
-          elements['items'].map do |el|
-            v = el['element']
-            y << {
-              :value => v['title'],
-              :uri => v['uri']
-            }
-          end
-          break if elements['items'].count < page_limit
-          offset += page_limit
+        elements = results['validElements']
+        elements['items'].map do |el|
+          v = el['element']
+          result << {
+            :value => v['title'],
+            :uri => v['uri']
+          }
         end
+        break if elements['items'].count < page_limit
+        offset += page_limit
       end
+      result
     end
 
     def values_count
