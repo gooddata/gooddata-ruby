@@ -45,7 +45,9 @@ module GoodData
 
         offset = 0
         page_limit = 50
-        Enumerator.new do |y|
+        # quickfix - we could potentially always return Arrays and minimize API misuse by bad usage of the SDK
+        # we should do this after we have reliable performance tests
+        getter_proc = proc do |y|
           loop do
             result = client.get(project.md['objects'] + '/query', params: { category: query_obj_type, limit: page_limit, offset: offset })
             result['objects']['items'].each do |item|
@@ -53,6 +55,15 @@ module GoodData
             end
             break if result['objects']['paging']['count'] < page_limit
             offset += page_limit
+          end
+        end
+        if klass == GoodData::Attribute
+          arr = []
+          getter_proc.call(arr)
+          return arr
+        else
+          Enumerator.new do |y|
+            getter_proc.call(y)
           end
         end
       end
