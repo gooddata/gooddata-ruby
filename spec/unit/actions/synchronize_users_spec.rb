@@ -163,14 +163,14 @@ describe GoodData::LCM2::SynchronizeUsers do
         allow(domain).to receive(:clients).and_return(organization)
       end
       before do
+        allow(data_source).to receive(:realize).and_return('filepath')
+        allow(File).to receive(:open).and_return("client_id\n123456789")
         allow(project).to receive(:metadata).and_return(
           'GOODOT_CUSTOM_PROJECT_ID' => 'project-123'
         )
         allow(project).to receive(:uri).and_return('project-uri')
         allow(project).to receive(:add_data_permissions)
         allow(domain).to receive(:clients).and_return([])
-        allow(data_source).to receive(:realize).and_return('filepath')
-        allow(File).to receive(:open).and_return("client_id\n123456789")
       end
 
       it 'fails' do

@@ -14,7 +14,7 @@ module GoodData
           specification.keys.each do |param_name|
             value = params.send(param_name)
             type = specification[param_name][:type]
-            if value.nil? or ( value.is_a? String and value.empty? )
+            if value.nil? || ((value.is_a? String) && value.empty?)
               if specification[param_name][:opts][:default]
                 params[param_name] = specification[param_name][:opts][:default]
               elsif specification[param_name][:opts][:required]

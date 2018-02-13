@@ -18,40 +18,31 @@ describe 'GoodData::LCM2::Helpers::Checkout' do
     GoodData::LCM2.convert_to_smart_hash(params)
   end
   it 'verifies required' do
-    PARAMS = GoodData::LCM2::BaseAction::define_params(self) do
+    PARAMS = GoodData::LCM2::BaseAction.define_params(self) do
       description 'Testing param one'
       param :test_param_one, instance_of(GoodData::LCM2::Type::StringType), required: true
-
-      description 'Testing param two'
-      param :test_param_two, instance_of(GoodData::LCM2::Type::StringType), required: false
     end
-    expect { GoodData::LCM2::Helpers::check_params(PARAMS, params) }.to raise_error(/Mandatory/)
-    
+    expect { GoodData::LCM2::Helpers.check_params(PARAMS, params) }.to raise_error(/Mandatory/)
   end
 
   it 'fills default' do
-    PARAMS_2 = GoodData::LCM2::BaseAction::define_params(self) do
+    PARAMS_2 = GoodData::LCM2::BaseAction.define_params(self) do
       description 'Testing param one'
       param :test_param_one, instance_of(GoodData::LCM2::Type::StringType), required: true, default: 'filled_default_value'
 
       description 'Testing param two'
       param :test_param_two, instance_of(GoodData::LCM2::Type::StringType), required: false
     end
-    GoodData::LCM2::Helpers::check_params(PARAMS_2, params)
+    GoodData::LCM2::Helpers.check_params(PARAMS_2, params)
     expect(params[:test_param_one]).to match(/filled_default_value/)
-    
   end
 
   it 'checks types' do
-    PARAMS_3 = GoodData::LCM2::BaseAction::define_params(self) do
-      description 'Testing param one'
-      param :test_param_one, instance_of(GoodData::LCM2::Type::StringType), required: true, default: 'filled_default_value'
-
-      description 'Testing param two'
+    PARAMS_3 = GoodData::LCM2::BaseAction.define_params(self) do
+      description 'Testing param four'
       param :test_param_four, instance_of(GoodData::LCM2::Type::StringType), required: false
     end
-    expect { GoodData::LCM2::Helpers::check_params(PARAMS_3, params) }.to raise_error(/has invalid type/)
-    
+    expect { GoodData::LCM2::Helpers.check_params(PARAMS_3, params) }.to raise_error(/has invalid type/)
   end
   # describe '#read' do
   #   it 'Reads data from CSV file' do
