@@ -14,6 +14,9 @@ module GoodData
       PARAMS = define_params(self) do
         description 'Clients'
         param :clients, array_of(instance_of(Type::HashType)), required: true, generated: true
+
+        description 'Client projects'
+        param :client_projects, instance_of(Type::GdSmartHashType), required: false
       end
 
       RESULT_HEADER = [

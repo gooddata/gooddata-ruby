@@ -31,6 +31,7 @@ describe GoodData::LCM2::EnsureTechnicalUsersDomain do
     let(:params) do
       params = {
         gdc_gd_client: gdc_gd_client,
+        domain: domain,
         technical_user: ['foo@bar.com']
       }
       GoodData::LCM2.convert_to_smart_hash(params)
@@ -42,6 +43,7 @@ describe GoodData::LCM2::EnsureTechnicalUsersDomain do
     let(:params) do
       params = {
         gdc_gd_client: gdc_gd_client,
+        domain: domain,
         technical_users: ['foo@bar.com']
       }
       GoodData::LCM2.convert_to_smart_hash(params)

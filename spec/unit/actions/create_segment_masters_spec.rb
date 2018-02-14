@@ -26,6 +26,7 @@ describe GoodData::LCM2::CreateSegmentMasters do
         segments: [{ segment_id: 'segment_foo', driver: 'Pg', master_name: 'name' }],
         tokens: { pg: 'pgtoken' },
         ads_client: ads_client,
+        domain: domain,
         development_client: development_client,
         gdc_logger: gdc_logger,
         project_environment: 'DEVELOPMENT',

@@ -17,6 +17,15 @@ module GoodData
 
         description 'DataProduct to ensure'
         param :data_product, instance_of(Type::StringType), required: false
+
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       RESULT_HEADER = [
@@ -28,6 +37,7 @@ module GoodData
           params = params.to_hash
           client = params.gdc_gd_client
           domain_name = params.organization || params.domain
+          fail "Either organisation or domain has to be specified in params" unless domain_name
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
           if params.key?(:data_product)

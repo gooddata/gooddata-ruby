@@ -34,7 +34,8 @@ describe GoodData::LCM2::AssociateClients do
         gdc_gd_client: gdc_gd_client,
         clients: [
           { segment: segment }
-        ]
+        ],
+        domain: domain
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end

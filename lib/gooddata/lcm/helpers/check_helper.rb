@@ -30,7 +30,7 @@ module GoodData
               end
 
               unless type.check(value)
-                fail "Parameter '#{param_name}' has invalid type, expected: #{type}"
+                fail "Parameter '#{param_name}' has invalid type, expected: #{type}, got #{value.class}"
               end
             end
           end
