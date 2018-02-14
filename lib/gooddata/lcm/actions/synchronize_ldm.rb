@@ -26,6 +26,12 @@ module GoodData
 
         description 'Specifies whether to transfer computed attributes'
         param :include_computed_attributes, instance_of(Type::BooleanType), required: false, default: true
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'Additional Hidden Parameters'
+        param :additional_hidden_params, instance_of(Type::HashType), required: false
       end
 
       class << self

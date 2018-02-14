@@ -18,6 +18,7 @@ describe GoodData::LCM2::EnsureDataProduct do
       params = {
         data_product: "data-product-#{SecureRandom.uuid}",
         gdc_gd_client: client,
+        domain: domain,
         gdc_logger: gdc_logger
       }
       GoodData::LCM2.convert_to_smart_hash(params)

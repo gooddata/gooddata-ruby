@@ -42,6 +42,67 @@ module GoodData
         description 'Restricts synchronization to specified segments'
         param :segments_filter, array_of(instance_of(Type::StringType)), required: false
 
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
+
+        description 'DataProduct to manage'
+        param :data_product, instance_of(Type::GdProductType), required: true
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: false
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'GDC Project'
+        param :gdc_project, instance_of(Type::GdProjectType), required: false
+
+        description 'GDC Project Id'
+        param :gdc_project_id, instance_of(Type::StringType), required: false
+
+        description 'User brick users'
+        param :users_brick_users, instance_of(Type::ObjectType), required: false
+
+        description 'Fail Early'
+        param :fail_early, instance_of(Type::BooleanType), required: false
+
+        description 'Strict'
+        param :strict, instance_of(Type::BooleanType), required: false
+
+        description 'Username'
+        param :username, instance_of(Type::StringType), required: false
+
+        description 'Password'
+        param :password, instance_of(Type::StringType), required: false
+
+        description 'AWS Client'
+        param :aws_client, instance_of(Type::GdSmartHashType), required: false
+
+        description 'Input source of the Users Brick. Needed to prevent ' \
+                    'deletion of filters for a user that is to be removed.'
+        param :users_brick_config, instance_of(Type::UsersBrickConfig), required: true
+
+        description 'Development Client Used for Connecting to GD'
+        param :development_client, instance_of(Type::GdClientType), required: true
+
+        description 'GDC client protocol'
+        param :client_gdc_protocol, instance_of(Type::StringType), required: false
+
+        description 'GDC client hostname'
+        param :client_gdc_hostname, instance_of(Type::StringType), required: false
+
+        description 'GDC password'
+        param :gdc_password, instance_of(Type::StringType), required: false
+
+        description 'GDC username'
+        param :gdc_username, instance_of(Type::StringType), required: false
+
+        description 'Additional Hidden Parameters'
+        param :additional_hidden_params, instance_of(Type::HashType), required: false
+
         # gdc_project/gdc_project_id, required: true
         # organization/domain, required: true
       end
@@ -61,8 +122,10 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
           domain_name = params.organization || params.domain
+          fail "Either organisation or domain has to be specified in params" unless domain_name
           domain = client.domain(domain_name) if domain_name
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
+          fail "Either project or project_id has to be specified in params" unless project
           data_product = params.data_product
 
           data_source = GoodData::Helpers::DataSource.new(params.input_source)

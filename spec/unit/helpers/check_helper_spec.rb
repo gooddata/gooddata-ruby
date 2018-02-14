@@ -7,7 +7,7 @@ require 'gooddata/lcm/actions/base_action'
 require 'gooddata/lcm/helpers/check_helper'
 require 'gooddata/lcm/types/types'
 
-describe 'GoodData::LCM2::Helpers::Checkout' do
+describe 'GoodData::LCM2::Helpers::Check' do
   let(:params) do
     params = {
       # test_param_one: 'Testing param one',
@@ -44,16 +44,10 @@ describe 'GoodData::LCM2::Helpers::Checkout' do
     end
     expect { GoodData::LCM2::Helpers.check_params(PARAMS_3, params) }.to raise_error(/has invalid type/)
   end
-  # describe '#read' do
-  #   it 'Reads data from CSV file' do
-  #     GoodData::Helpers::Csv.read(:path => CsvHelper::CSV_PATH_IMPORT)
-  #   end
-  # end
 
-  # describe '#write' do
-  #   it 'Writes data to CSV' do
-  #     data = []
-  #     GoodData::Helpers::Csv.write(:path => CsvHelper::CSV_PATH_EXPORT, :data => data)
-  #   end
-  # end
+  it 'fails when unspecified variable is acessed' do
+    GoodData::LCM2::Helpers.check_params(PARAMS_2, params)
+    params.setup_filters(PARAMS_2)
+    expect { params[:test_param_three] }.to raise_error(/not defined in the specification/)
+  end
 end

@@ -12,6 +12,8 @@ module GoodData
       DESCRIPTION = 'Purge LCM Clients'
 
       PARAMS = define_params(self) do
+        description 'Client projects'
+        param :client_projects, instance_of(Type::GdSmartHashType), required: false
       end
 
       RESULT_HEADER = [

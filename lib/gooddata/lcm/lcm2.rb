@@ -13,6 +13,7 @@ require_relative 'helpers/helpers'
 module GoodData
   module LCM2
     class SmartHash < Hash
+      @specification = nil
       def method_missing(name, *_args)
         key = name.to_s.downcase.to_sym
 
@@ -33,6 +34,19 @@ module GoodData
             nil
           end
         end
+      end
+
+      def [](variable)
+        fail "Param #{variable} is not defined in the specification" if @specification && !@specification[variable] && !@specification[variable.to_sym]
+        super(variable)
+      end
+
+      def clear_filters
+        @specification = nil
+      end
+
+      def setup_filters(filter)
+        @specification = filter
       end
 
       def key?(key)
@@ -311,9 +325,11 @@ module GoodData
             GoodData.logger.info("Running #{action.name} action ...")
 
             # Check if all required parameters were passed
+            params.clear_filters
             BaseAction.check_params(action.const_get('PARAMS'), params)
-
+            params.setup_filters(action.const_get('PARAMS'))
             out = action.send(:call, params)
+            params.clear_filters
           rescue => e
             errors << {
               action: action,
