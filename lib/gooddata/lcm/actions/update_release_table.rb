@@ -14,6 +14,24 @@ module GoodData
       PARAMS = define_params(self) do
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
+
+        description 'Client Used for Connecting to GD'
+        param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: true
+
+        description 'Table Name'
+        param :release_table_name, instance_of(Type::StringType), required: false
+
+        description 'Query'
+        param :query, instance_of(Type::GdSmartHashType), required: false
       end
 
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'
@@ -23,6 +41,7 @@ module GoodData
           client = params.gdc_gd_client
 
           domain_name = params.organization || params.domain
+          fail "Either organisation or domain has to be specified in params" unless domain_name
           client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
 
           params.segments.map do |segment_in|

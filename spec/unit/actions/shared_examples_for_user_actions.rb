@@ -24,3 +24,20 @@ shared_examples 'a user action filtering segments' do
     subject.class.call(params)
   end
 end
+
+shared_examples 'when using unsuported sync_mode' do
+  before do
+    allow(project).to receive(:metadata).and_return(
+      'GOODOT_CUSTOM_PROJECT_ID' => 'project-123'
+    )
+    allow(project).to receive(:uri).and_return('project-uri')
+    allow(data_source).to receive(:realize).and_return('filepath')
+    allow(File).to receive(:open).and_return("client_id\n123456789")
+    allow(project).to receive(:add_data_permissions)
+    allow(domain).to receive(:clients).and_return([])
+  end
+
+  it 'fails' do
+    expect { subject.class.call(params) }.to raise_error(/sync_mode/)
+  end
+end

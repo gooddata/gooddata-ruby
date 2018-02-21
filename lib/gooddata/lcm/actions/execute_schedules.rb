@@ -41,6 +41,15 @@ module GoodData
 
         description 'Number Of Threads'
         param :number_of_threads, instance_of(Type::StringType), required: false, default: '5'
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'GDC Project'
+        param :gdc_project, instance_of(Type::GdProjectType), required: false
+
+        description 'GDC Project Id'
+        param :gdc_project_id, instance_of(Type::StringType), required: false
       end
 
       class << self
@@ -49,6 +58,7 @@ module GoodData
 
           client = params.gdc_gd_client
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
+          fail "Either project or project_id has to be specified in params" unless project
 
           list_of_modes = params.list_of_modes.split('|').map(&:strip)
           work_done_identificator = params.work_done_identificator

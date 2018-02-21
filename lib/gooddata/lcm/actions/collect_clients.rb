@@ -35,6 +35,88 @@ module GoodData
 
         description 'Input Source'
         param :input_source, instance_of(Type::HashType), required: true
+
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
+
+        description 'Associate clients'
+        param :associate, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Provision clients'
+        param :provision, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Table Name'
+        param :release_table_name, instance_of(Type::StringType), required: false
+
+        description 'Physically Delete Client Projects'
+        param :delete_projects, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Delete extra'
+        param :delete_extra, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Fail Early'
+        param :fail_early, instance_of(Type::BooleanType), required: false
+
+        description 'Strict'
+        param :strict, instance_of(Type::BooleanType), required: false
+
+        description 'Username'
+        param :username, instance_of(Type::StringType), required: false
+
+        description 'Password'
+        param :password, instance_of(Type::StringType), required: false
+
+        description 'Technical users'
+        param :technical_user, array_of(instance_of(Type::StringType)),
+              required: false, deprecated: true, replacement: :technical_users
+
+        description 'Technical users'
+        param :technical_users, array_of(instance_of(Type::StringType)), required: false
+
+        description 'Additional Parameters'
+        param :additional_params, instance_of(Type::HashType), required: false
+
+        description 'AWS Client'
+        param :aws_client, instance_of(Type::GdSmartHashType), required: false
+
+        description 'Additional Hidden Parameters'
+        param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'GD encoded Hidden Parameters'
+        param :gd_encoded_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'Development Client Used for Connecting to GD'
+        param :development_client, instance_of(Type::GdClientType), required: false
+
+        description 'ADS Client'
+        param :ads_client, instance_of(Type::AdsClientType), required: false
+
+        description 'GDC client protocol'
+        param :client_gdc_protocol, instance_of(Type::StringType), required: false
+
+        description 'GDC client hostname'
+        param :client_gdc_hostname, instance_of(Type::StringType), required: false
+
+        description 'GDC password'
+        param :gdc_password, instance_of(Type::StringType), required: false
+
+        description 'GDC username'
+        param :gdc_username, instance_of(Type::StringType), required: false
+
+        description 'Segments filter'
+        param :segments_filter, array_of(instance_of(Type::StringType)), required: false
+
+        description 'DataProduct'
+        param :data_product, instance_of(Type::GdProductType), required: false
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'Client projects'
+        param :client_projects, instance_of(Type::GdSmartHashType), required: false
       end
 
       RESULT_HEADER = [

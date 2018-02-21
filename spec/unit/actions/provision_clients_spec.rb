@@ -32,6 +32,7 @@ describe GoodData::LCM2::ProvisionClients do
         segments: [
           segment
         ],
+        domain: domain,
         data_product: data_product
       }
       GoodData::LCM2.convert_to_smart_hash(params)

@@ -26,6 +26,12 @@ module GoodData
 
         description 'Schedule Additional Secure Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'DataProduct to manage'
+        param :data_product, instance_of(Type::GdProductType), required: false
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       # will be updated later based on the way etl synchronization

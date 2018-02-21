@@ -14,9 +14,10 @@ module GoodData
           specification.keys.each do |param_name|
             value = params.send(param_name)
             type = specification[param_name][:type]
-
-            if value.nil?
-              if specification[param_name][:opts][:required]
+            if value.nil? || ((value.is_a? String) && value.empty?)
+              if specification[param_name][:opts][:default]
+                params[param_name] = specification[param_name][:opts][:default]
+              elsif specification[param_name][:opts][:required]
                 fail("Mandatory parameter '#{param_name}' of type '#{type}' is not specified")
               end
             else
@@ -30,7 +31,7 @@ module GoodData
               end
 
               unless type.check(value)
-                fail "Parameter '#{param_name}' has invalid type, expected: #{type}"
+                fail "Parameter '#{param_name}' has invalid type, expected: #{type}, got #{value.class}"
               end
             end
           end

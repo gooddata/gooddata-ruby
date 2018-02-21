@@ -20,6 +20,12 @@ module GoodData
 
         description 'Segments to provision'
         param :segments_filter, array_of(instance_of(Type::StringType)), required: false
+
+        description 'DataProduct'
+        param :data_product, instance_of(Type::GdProductType), required: false
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       class << self
