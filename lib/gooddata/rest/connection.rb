@@ -17,48 +17,6 @@ require_relative '../helpers/global_helpers'
 
 require_relative 'phmap'
 
-module RestClient
-  module AbstractResponse
-    alias_method :old_follow_redirection, :follow_redirection
-    def follow_redirection(request = nil, result = nil, &block)
-      if RestClient::VERSION != '1.8.0'
-        fail 'Using monkey patched version of RestClient::AbstractResponse#' \
-             'follow_redirection which is guaranteed to be compatible only ' \
-             'with RestClient 1.8.0'
-      end
-
-      new_args = @args.dup
-
-      url = headers[:location]
-      url = URI.parse(request.url).merge(url).to_s if url !~ /^http/
-
-      new_args[:url] = url
-      if request
-        fail MaxRedirectsReached if request.max_redirects.zero?
-        new_args[:password] = request.password
-        new_args[:user] = request.user
-        new_args[:headers] = request.headers
-        new_args[:max_redirects] = request.max_redirects - 1
-
-        # TODO: figure out what to do with original :cookie, :cookies values
-        new_args[:cookies] = get_redirection_cookies(request, result, new_args)
-      end
-
-      Request.execute(new_args, &block)
-    end
-
-    # Returns cookies which should be passed when following redirect
-    #
-    # @param request [RestClient::Request] Original request
-    # @param result [Net::HTTPResponse] Response
-    # @param args [Hash] Original arguments
-    # @return [Hash] Cookies to be passsed when following redirect
-    def get_redirection_cookies(request, _result, _args)
-      request.cookies
-    end
-  end
-end
-
 module GoodData
   module Rest
     class RestRetryError < StandardError
@@ -210,10 +168,20 @@ module GoodData
 
         # Reset old cookies first
         if options[:sst_token]
-          merge_headers!(:x_gdc_authsst => options[:sst_token])
+          headers = {
+            :x_gdc_authsst => options[:sst_token],
+            :x_gdc_authtt => options[:tt_token]
+          }
+          merge_headers!(headers)
           get('/gdc/account/token', @request_params)
 
           @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
+          GoodData.logger.info("Connected using SST to server #{@server.url} to profile \"#{@user['accountSetting']['login']}\"")
+          @auth = {}
+          refresh_token :dont_reauth => true
+        elsif  options[:headers][:x_gdc_authsst]
+          @request_params = options[:headers]
+          @user = get('/gdc/app/account/bootstrap')['bootstrapResource']
           GoodData.logger.info("Connected using SST to server #{@server.url} to profile \"#{@user['accountSetting']['login']}\"")
           @auth = {}
           refresh_token :dont_reauth => true

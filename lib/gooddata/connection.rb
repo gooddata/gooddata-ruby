@@ -66,7 +66,7 @@ module GoodData
     # @param [Hash] opts Additional options
     # @option opts [Fixnum] :validity Validity in seconds from 'now'
     # @return [String] URL which can be used for SSO logging in
-    def sso_url(login, provider, opts = DEFAULT_SSO_OPTIONS)
+    def sso_url(login, provider, url = GoodData::Rest::Connection::DEFAULT_URL, opts = DEFAULT_SSO_OPTIONS)
       opts = DEFAULT_SSO_OPTIONS.merge(opts)
 
       ts = DateTime.now.strftime('%s').to_i + opts[:valid]
@@ -83,21 +83,27 @@ module GoodData
       file_json.rewind
       file_signed = Tempfile.new('gooddata-sso-signed')
 
-      cmd = "gpg --no-tty --armor --yes -u #{login} --output #{file_signed.path} --sign #{file_json.path}"
+      cmd = "gpg --yes --no-tty --armor -u #{login} --output #{file_signed.path} --sign #{file_json.path}"
       res = system(cmd)
       fail 'Unable to sign json' unless res
 
       file_signed.rewind
       file_final = Tempfile.new('gooddata-sso-final')
 
-      cmd = "gpg --yes --no-tty --trust-model always --armor --output #{file_final.path} --encrypt --recipient security@gooddata.com #{file_signed.path}"
+      recipient = url == GoodData::Rest::Connection::DEFAULT_URL ? 'secure@gooddata.com' : 'test@gooddata.com'
+      cmd = "gpg --yes --no-tty --trust-model always --armor --output #{file_final.path} --encrypt --recipient #{recipient} #{file_signed.path}"
       res = system(cmd)
       fail 'Unable to encrypt json' unless res
 
       file_final.rewind
       final = file_final.read
 
-      "#{GoodData::Helpers::AuthHelper.read_server}/gdc/account/customerlogin?sessionId=#{CGI.escape(final)}&serverURL=#{CGI.escape(provider)}&targetURL=#{CGI.escape(opts[:url])}"
+      params = {
+        targetUrl: opts[:url],
+        ssoProvider: provider,
+        encryptedClaims: final
+      }
+      [url + '/gdc/account/customerlogin', params]
     end
 
     # Connect to GoodData using SSO
@@ -112,15 +118,19 @@ module GoodData
     # @param [String] login Email address used for logging into gooddata
     # @param [String] provider Name of SSO provider
     # @return [GoodData::Rest::Client] Instance of REST client
-    def connect_sso(login, provider)
-      url = sso_url(login, provider)
+    def connect_sso(login, provider, url, opts)
+      url, params = sso_url(login, provider, url)
 
-      params = {
-        :x_gdc_request => "#{GoodData::Rest::Connection.generate_string}:#{GoodData::Rest::Connection.generate_string}"
-      }
-
-      RestClient.get url, params do |response, _request, _result|
-        Rest::Client.connect_sso(:sst_token => URI.decode(response.cookies['GDCAuthSST']))
+      RestClient::Request.execute(opts.merge(method: :post, url: url, payload: params)) do |response, _request, _result|
+        return Rest::Client.connect_sso(
+          opts.merge(
+            headers:
+               {
+                 x_gdc_authsst: response.cookies['GDCAuthSST'],
+                 x_gdc_authtt: response.cookies['GDCAuthTT']
+               }
+          )
+        )
       end
     end
   end
