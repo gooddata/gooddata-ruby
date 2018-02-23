@@ -46,11 +46,11 @@ describe GoodData::LCM2::SynchronizeUsers do
 
       let(:params) do
         params = {
+          sync_mode: 'sync_one_project_based_on_custom_id',
           GDC_GD_CLIENT: client,
           input_source: 'foo',
           domain: 'bar',
           gdc_logger: logger,
-          sync_mode: 'sync_one_project_based_on_custom_id'
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -75,11 +75,11 @@ describe GoodData::LCM2::SynchronizeUsers do
     context 'when mode requires client_id' do
       let(:params) do
         params = {
+          sync_mode: 'sync_one_project_based_on_pid',
           GDC_GD_CLIENT: client,
           input_source: 'foo',
           domain: 'bar',
-          gdc_logger: logger,
-          sync_mode: 'sync_one_project_based_on_pid'
+          gdc_logger: logger
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -128,6 +128,52 @@ describe GoodData::LCM2::SynchronizeUsers do
 
       it_behaves_like 'a user action filtering segments' do
         let(:message_for_project) { :import_users }
+      end
+    end
+    context 'when using mistyped mode' do
+      let(:params) do
+        params = {
+          GDC_GD_CLIENT: client,
+          input_source: 'foo',
+          domain: 'bar',
+          gdc_logger: logger,
+          sync_mode: 'unsuported_sync_mode'
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      before do
+        allow(domain).to receive(:clients).and_return(organization)
+      end
+      it_should_behave_like 'when using unsuported sync_mode'
+    end
+    context 'when using no mode' do
+      let(:params) do
+        params = {
+          GDC_GD_CLIENT: client,
+          input_source: 'foo',
+          domain: 'bar',
+          gdc_logger: logger
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      before do
+        allow(domain).to receive(:clients).and_return(organization)
+      end
+      before do
+        allow(data_source).to receive(:realize).and_return('filepath')
+        allow(File).to receive(:open).and_return("client_id\n123456789")
+        allow(project).to receive(:metadata).and_return(
+          'GOODOT_CUSTOM_PROJECT_ID' => 'project-123'
+        )
+        allow(project).to receive(:uri).and_return('project-uri')
+        allow(project).to receive(:add_data_permissions)
+        allow(domain).to receive(:clients).and_return([])
+      end
+
+      it 'fails' do
+        expect { subject.class.call(params) }.to raise_error(/sync_mode/)
       end
     end
   end
