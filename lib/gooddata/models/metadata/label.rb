@@ -47,7 +47,7 @@ module GoodData
 
       if url_or_params.is_a?(Hash)
         default_params = {
-          limit: 100_000,
+          limit: 50_000,
           offset: 0,
           order: 'asc'
         }
