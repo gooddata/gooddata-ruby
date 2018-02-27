@@ -107,7 +107,7 @@ module GoodData
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
           data_product = params.data_product
           mode = params.sync_mode
-          unless mode.nil? || MODES.include?(mode)
+          unless MODES.include?(mode)
             fail "The parameter \"sync_mode\" has to have one of the values #{MODES.map(&:to_s).join(', ')} or has to be empty."
           end
 

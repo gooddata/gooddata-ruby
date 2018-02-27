@@ -23,6 +23,19 @@ describe 'GoodData::LCM2::Helpers::Check' do
     end
     expect { GoodData::LCM2::Helpers.check_params(PARAMS, params) }.to raise_error(/Mandatory/)
   end
+
+  it 'fills default' do
+    PARAMS_2 = GoodData::LCM2::BaseAction.define_params(self) do
+      description 'Testing param one'
+      param :test_param_one, instance_of(GoodData::LCM2::Type::StringType), required: true, default: 'filled_default_value'
+
+      description 'Testing param two'
+      param :test_param_two, instance_of(GoodData::LCM2::Type::StringType), required: false
+    end
+    GoodData::LCM2::Helpers.check_params(PARAMS_2, params)
+    expect(params[:test_param_one]).to match(/filled_default_value/)
+  end
+
   it 'checks types' do
     PARAMS_3 = GoodData::LCM2::BaseAction.define_params(self) do
       description 'Testing param four'
