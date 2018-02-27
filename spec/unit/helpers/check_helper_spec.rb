@@ -7,7 +7,7 @@ require 'gooddata/lcm/actions/base_action'
 require 'gooddata/lcm/helpers/check_helper'
 require 'gooddata/lcm/types/types'
 
-describe 'GoodData::LCM2::Helpers::Checkout' do
+describe 'GoodData::LCM2::Helpers::Check' do
   let(:params) do
     params = {
       test_param_two: 'Testing param two',
@@ -42,5 +42,10 @@ describe 'GoodData::LCM2::Helpers::Checkout' do
       param :test_param_four, instance_of(GoodData::LCM2::Type::StringType), required: false
     end
     expect { GoodData::LCM2::Helpers.check_params(PARAMS_3, params) }.to raise_error(/has invalid type/)
+  end
+
+  it 'fails when unspecified variable is acessed' do
+    params.setup_filters(PARAMS_3)
+    expect { params[:test_param_three] }.to raise_error(/not defined in the specification/)
   end
 end

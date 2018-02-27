@@ -17,6 +17,16 @@ module GoodData
         def check_params(specification, params)
           Helpers.check_params(specification, params)
         end
+
+        # This method is used to enable the possibility to read keys of params object
+        # which are not specified in the specification constant
+        # typically in case when method access params dynamically based on user input
+        def without_check(specification, params)
+          params.clear_filters # disables params validation
+          result = yield
+          params.setup_filters(specification) # enables params validation
+          result
+        end
       end
     end
   end

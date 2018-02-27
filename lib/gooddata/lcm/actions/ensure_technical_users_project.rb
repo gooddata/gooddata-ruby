@@ -24,6 +24,9 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'Clients'
+        param :clients, array_of(instance_of(Type::HashType)), required: false
       end
 
       RESULT_HEADER = [

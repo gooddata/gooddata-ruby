@@ -21,6 +21,9 @@ module GoodData
 
         description 'Segments to manage'
         param :segments, array_of(instance_of(Type::SegmentType)), required: true
+
+        description 'DataProduct to manage'
+        param :data_product, instance_of(Type::GDDataProductType), required: false
       end
 
       RESULT_HEADER = [

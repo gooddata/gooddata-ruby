@@ -13,7 +13,13 @@ module GoodData
 
       PARAMS = define_params(self) do
         description 'Client Used for Connecting to GD'
-        param :gdc_gd_client, instance_of(Type::GdClientType), required: true
+        param :gdc_gd_client, instance_of(Type::GdClientType), required: false
+
+        description 'Client used to connecting to development domain'
+        param :development_client, instance_of(Type::GdClientType), required: true
+
+        description 'Synchronization Info'
+        param :synchronize, array_of(instance_of(Type::AnyType)), required: true, generated: true
       end
 
       class << self

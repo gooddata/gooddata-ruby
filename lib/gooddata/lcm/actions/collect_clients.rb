@@ -77,7 +77,9 @@ module GoodData
           clients = []
           errors = []
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
-          input_data = File.open(data_source.realize(params), 'r:UTF-8')
+          input_data = without_check(PARAMS, params) do
+            File.open(data_source.realize(params), 'r:UTF-8')
+          end
           GoodData.logger.debug("Input data: #{input_data.read}")
           GoodData.logger.debug("Segment names: #{segment_names}")
           CSV.foreach(input_data, :headers => true, :return_headers => false, encoding: 'utf-8') do |row|

@@ -16,7 +16,10 @@ module GoodData
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
         description 'Organization Name'
-        param :organization, instance_of(Type::StringType), required: true
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
 
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
@@ -26,6 +29,9 @@ module GoodData
 
         description 'Table Name'
         param :release_table_name, instance_of(Type::StringType), required: false
+
+        description 'DataProduct'
+        param :data_product, instance_of(Type::GDDataProductType), required: false
       end
 
       RESULT_HEADER = [
@@ -42,6 +48,7 @@ module GoodData
           client = params.gdc_gd_client
 
           domain_name = params.organization || params.domain
+          fail "Either organisation or domain has to be specified in params" unless domain_name
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
           data_product = params.data_product
           domain_segments = domain.segments(:all, data_product)

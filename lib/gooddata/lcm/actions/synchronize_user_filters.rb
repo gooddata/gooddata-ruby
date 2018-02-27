@@ -42,8 +42,29 @@ module GoodData
         description 'Restricts synchronization to specified segments'
         param :segments_filter, array_of(instance_of(Type::StringType)), required: false
 
-        # gdc_project/gdc_project_id, required: true
-        # organization/domain, required: true
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
+
+        description 'DataProduct to manage'
+        param :data_product, instance_of(Type::GDDataProductType), required: true
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'GDC Project'
+        param :gdc_project, instance_of(Type::GdProjectType), required: false
+
+        description 'GDC Project Id'
+        param :gdc_project_id, instance_of(Type::StringType), required: false
+
+        description 'User brick users'
+        param :users_brick_users, instance_of(Type::ObjectType), required: false
       end
 
       class << self
@@ -61,8 +82,10 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
           domain_name = params.organization || params.domain
+          fail "Either organisation or domain has to be specified in params" unless domain_name
           domain = client.domain(domain_name) if domain_name
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
+          fail "Either project or project_id has to be specified in params" unless project
           data_product = params.data_product
 
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
@@ -108,22 +131,28 @@ module GoodData
           puts "Synchronizing in mode \"#{mode}\""
           case mode
           when 'sync_project'
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
-              filters << row
+            without_check(PARAMS, params) do
+              CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+                filters << row
+              end
             end
             filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
             puts "Synchronizing #{filters_to_load.count} filters"
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_one_project_based_on_pid'
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
-              filters << row if row[multiple_projects_column] == project.pid
+            without_check(PARAMS, params) do
+              CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+                filters << row if row[multiple_projects_column] == project.pid
+              end
             end
             filters_to_load = GoodData::UserFilterBuilder.get_filters(filters, symbolized_config)
             puts "Synchronizing #{filters_to_load.count} filters"
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_multiple_projects_based_on_pid'
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
-              filters << row.to_hash
+            without_check(PARAMS, params) do
+              CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+                filters << row.to_hash
+              end
             end
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |project_id, new_filters|
               fail "Project id cannot be empty" if project_id.blank?
@@ -135,7 +164,9 @@ module GoodData
           when 'sync_one_project_based_on_custom_id'
             filter_value = UserBricksHelper.resolve_client_id(domain, project, data_product)
 
-            filepath = File.open(data_source.realize(params), 'r:UTF-8')
+            filepath = without_check(PARAMS, params) do
+              File.open(data_source.realize(params), 'r:UTF-8')
+            end
             CSV.foreach(filepath, headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               client_id = row[multiple_projects_column].to_s
               filters << row if client_id == filter_value
@@ -150,8 +181,10 @@ module GoodData
             puts "Synchronizing #{filters_to_load.count} filters"
             project.add_data_permissions(filters_to_load, run_params)
           when 'sync_multiple_projects_based_on_custom_id'
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
-              filters << row.to_hash
+            without_check(PARAMS, params) do
+              CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+                filters << row.to_hash
+              end
             end
             fail 'The filter set can not be empty when using sync_multiple_projects_based_on_custom_id mode' if filters.empty?
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
@@ -163,8 +196,10 @@ module GoodData
               project.add_data_permissions(filters_to_load, run_params)
             end
           when 'sync_domain_client_workspaces'
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
-              filters << row.to_hash
+            without_check(PARAMS, params) do
+              CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+                filters << row.to_hash
+              end
             end
 
             domain_clients = domain.clients(:all, data_product)
