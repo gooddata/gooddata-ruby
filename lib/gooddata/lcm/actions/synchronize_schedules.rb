@@ -26,6 +26,9 @@ module GoodData
 
         description 'Schedule Additional Secure Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       RESULT_HEADER = [

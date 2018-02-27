@@ -9,13 +9,14 @@ require 'gooddata/lcm/lcm2'
 describe 'GoodData::LCM2' do
   describe '#skip_actions' do
     let(:client) { double(:client) }
-    let(:domain) { double(:domain) }
-    let(:logger) { double(:logger) }
+    let(:domain) { 'domain' }
+    let(:logger) { GoodData.logger }
     let(:params) do
       params = {
         skip_actions: %w(CollectSegments SynchronizeUsers),
         GDC_GD_CLIENT: client,
-        GDC_LOGGER: logger
+        GDC_LOGGER: logger,
+        domain: domain
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end

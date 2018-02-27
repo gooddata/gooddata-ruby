@@ -17,6 +17,15 @@ module GoodData
 
         description 'Dynamic Params'
         param :dynamic_params, instance_of(Type::HashType), required: false
+
+        description 'Client Id Column'
+        param :client_id_column, instance_of(Type::StringType), required: false
+
+        description 'Name Column'
+        param :param_name_column, instance_of(Type::StringType), required: false
+
+        description 'Value Column'
+        param :param_value_column, instance_of(Type::StringType), required: false
       end
 
       class << self

@@ -20,6 +20,12 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'DataLogger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'Additional Hidden Parameters'
+        param :additional_hidden_params, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = [

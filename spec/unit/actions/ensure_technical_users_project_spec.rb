@@ -25,6 +25,7 @@ end
 describe GoodData::LCM2::EnsureTechnicalUsersProject do
   let(:gdc_gd_client) { double(:gdc_gd_client) }
   let(:project) { double(:project) }
+  let(:domain) { double(:domain) }
   before do
     allow(project).to receive(:title) { 'foo project' }
     allow(project).to receive(:pid) { 'abcdefg' }
@@ -38,6 +39,7 @@ describe GoodData::LCM2::EnsureTechnicalUsersProject do
         gdc_gd_client: gdc_gd_client,
         technical_users: ['foo@bar.com'],
         synchronize: [],
+        domain: domain,
         clients: [{ project: 'abcdefg' }]
       }
       GoodData::LCM2.convert_to_smart_hash(params)
@@ -51,6 +53,7 @@ describe GoodData::LCM2::EnsureTechnicalUsersProject do
       params = {
         gdc_gd_client: gdc_gd_client,
         technical_user: ['foo@bar.com'],
+        domain: domain,
         synchronize: [{ to: [{ pid: 'qux' }] }]
       }
       GoodData::LCM2.convert_to_smart_hash(params)
@@ -62,6 +65,7 @@ describe GoodData::LCM2::EnsureTechnicalUsersProject do
     let(:params) do
       params = {
         gdc_gd_client: gdc_gd_client,
+        domain: domain,
         technical_users: ['foo@bar.com'],
         synchronize: [{ to: [{ pid: 'qux' }] }]
       }
