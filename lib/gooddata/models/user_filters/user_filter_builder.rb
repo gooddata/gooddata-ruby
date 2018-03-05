@@ -437,7 +437,11 @@ module GoodData
                                  .flat_map { |k, v| v.map { |r| { status: k.to_sym, user: r, type: :delete } } }
                                  .map { |result| result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result })
                              end
-                             group.peach(&:delete)
+                             dups = group.group_by(&:itself).select { |_,v| v.size > 1 }.map(&:first)
+                             GoodData.logger.warn("Duplicate MUFs present: #{dups}") if dups.length
+                             group.uniq.each do |i|
+                              i.delete
+                             end
                              results
                            end
                          end
