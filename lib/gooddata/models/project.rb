@@ -1422,7 +1422,7 @@ module GoodData
       end
 
       {
-        visualizations: MdObject.query('visualization', MdObject, client: client, project: self),
+        visualizations: MdObject.query('visualizationObject', MdObject, client: client, project: self),
         visualization_widgets: MdObject.query('visualizationWidget', MdObject, client: client, project: self),
         kpis: MdObject.query('kpi', MdObject, client: client, project: self)
       }.each do |key, collection|
