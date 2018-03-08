@@ -168,6 +168,18 @@ describe "User filters implementation", :constraint => 'slow' do
     expect(pretty).to eq [[ConnectionHelper::DEFAULT_USERNAME, "[Dev] IN ([tomas@gooddata.com])"]]
   end
 
+  it 'works with filters from .get_filters' do
+    filters = GoodData::UserFilterBuilder.get_filters(
+      File.expand_path('../../data/user_filters.csv', __FILE__),
+      :type => :filter,
+      :labels => [{ :label => @label, :column => 'filter' }]
+    )
+    @project.add_data_permissions(filters)
+    permissions = @project.data_permissions
+    pretty = permissions.first.pretty_expression
+    expect(pretty).to eq('[Dev] IN ([tomas@gooddata.com])')
+  end
+
   it "sets up mandatory users based on the state given as an end state by default." do
     # first let's prepare some user filters
     user_with_already_set_up_filter = @project.get_user(ConnectionHelper::DEFAULT_USERNAME)
