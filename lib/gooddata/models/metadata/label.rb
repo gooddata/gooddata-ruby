@@ -21,7 +21,7 @@ module GoodData
       if items.empty?
         fail(AttributeElementNotFound, value)
       else
-        items.first['element']['uri']
+        items.find { |i| i['element']['title'] == value }['element']['uri']
       end
     end
 
@@ -40,19 +40,30 @@ module GoodData
       end
     end
 
-    # Gets valid elements using /validElements? API
+    # Gets valid elements using /validElements API
     # @return [Array] Results
-    def get_valid_elements(*args)
-      results, params = valid_elements(*args)
-      # TMA-775 - the validElements API can possibly return more matches than requested (usually 1)
-      # so we do a preliminary first request to check and then increase the limit if needed
-      if results['validElements']['paging']['total'].to_i != params[:limit]
-        params[:limit] = 100_000
-        results, = valid_elements params
-        if params[:filter]
-          results['validElements']['items'] = results['validElements']['items'].reject do |i|
-            i['element']['title'] != params[:filter]
-          end
+    def get_valid_elements(url_or_params = {}, request_payload = {})
+      final_url = url_or_params
+
+      if url_or_params.is_a?(Hash)
+        default_params = {
+          limit: 50_000,
+          offset: 0,
+          order: 'asc'
+        }
+        params = default_params.merge(url_or_params).map { |x, v| "#{x}=#{CGI.escape(v.to_s)}" }.reduce { |acc, elem| "#{acc}&#{elem}" }
+        final_url = "#{uri}/validElements?#{params}"
+      end
+
+      results = client.post(final_url, 'validElementsRequest' => request_payload)
+
+      # Implementation of polling is based on
+      # https://opengrok.intgdc.com/source/xref/gdc-backend/src/test/java/com/gooddata/service/dao/ValidElementsDaoTest.java
+      status_url = results['uri']
+      if status_url
+        results = client.poll_on_response(status_url) do |body|
+          status = body['taskState'] && body['taskState']['status']
+          status == 'RUNNING' || status == 'PREPARED'
         end
       end
 
@@ -95,7 +106,7 @@ module GoodData
     end
 
     def values_count
-      results, = valid_elements
+      results = get_valid_elements
       count = GoodData::Helpers.get_path(results, %w(validElements paging total))
       count && count.to_i
     end
@@ -110,37 +121,6 @@ module GoodData
     # @return [GoodData::Attibute]
     def attribute_uri
       content['formOf']
-    end
-
-    private
-
-    def valid_elements(url_or_params = {}, request_payload = {})
-      final_url = url_or_params
-
-      if url_or_params.is_a?(Hash)
-        default_params = {
-          limit: 1,
-          offset: 0,
-          order: 'asc'
-        }
-        params = default_params.merge(url_or_params)
-        query_params = params.map { |x, v| "#{x}=#{CGI.escape(v.to_s)}" }.reduce { |acc, elem| "#{acc}&#{elem}" }
-        final_url = "#{uri}/validElements?#{query_params}"
-      end
-
-      results = client.post(final_url, 'validElementsRequest' => request_payload)
-
-      # Implementation of polling is based on
-      # https://opengrok.intgdc.com/source/xref/gdc-backend/src/test/java/com/gooddata/service/dao/ValidElementsDaoTest.java
-      status_url = results['uri']
-      if status_url
-        results = client.poll_on_response(status_url) do |body|
-          status = body['taskState'] && body['taskState']['status']
-          status == 'RUNNING' || status == 'PREPARED'
-        end
-      end
-
-      [results, params]
     end
   end
 end
