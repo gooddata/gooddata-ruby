@@ -1,4 +1,13 @@
 # GoodData Ruby SDK Changelog
+## 1.0.2
+ - TMA-775: smart attribute polling
+ - TMA-809: Fix new visualization object in bricks
+ - TMA-809: new visualizationObject in replace_from_mapping
+ - TMA-690 && TMA-633 tests now verify that synchronize users action fails when supplied with unsupported sync_mode param
+ - deprecations.txt is in .gitignore file
+ - TMA-691 colect data product action has human readable output
+ - TMA-732: fix edge cases for user input sanitized MUFs
+
 ## 1.0.1
  - Bump version to 1.0.1
  - TMA-776: Improve error handling of sync clients
