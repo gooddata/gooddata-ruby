@@ -4,6 +4,14 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+shared_examples 'a user filter deleter' do
+  it 'deletes the filter' do
+    expect(existing_filter).to receive(:delete)
+    result = subject.execute_mufs(filter_definitions, options)
+    expect(result[:deleted].length).to be(1)
+  end
+end
+
 describe GoodData::UserFilterBuilder do
   describe '.execute_mufs' do
     let(:login) { 'rubydev+admin@gooddata.com' }
@@ -88,10 +96,10 @@ describe GoodData::UserFilterBuilder do
           allow(existing_filter).to receive(:json)
             .and_return(related: profile_url)
         end
-        it 'deletes the filter' do
-          expect(existing_filter).to receive(:delete)
-          result = subject.execute_mufs(filter_definitions, options)
-          expect(result[:deleted].length).to be(1)
+        it_behaves_like 'a user filter deleter'
+        context 'when users_brick_input has symbols as keys' do
+          let(:users_brick_input) { [{ login: login }] }
+          it_behaves_like 'a user filter deleter'
         end
       end
 

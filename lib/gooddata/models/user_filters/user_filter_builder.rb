@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../project_log_formatter'
+require 'active_support/core_ext/hash/indifferent_access'
 
 module GoodData
   module UserFilterBuilder
@@ -542,7 +543,7 @@ module GoodData
     def self.sanitize_filters_to_delete(to_delete, users_brick_input, project_users)
       return to_delete unless users_brick_input && users_brick_input.any?
       user_profiles = users_brick_input.map do |user|
-        result = project_users.find { |u| u.login == user['login'] }
+        result = project_users.find { |u| u.login == user.with_indifferent_access['login'] }
         next unless result
         result.profile_url
       end.compact
