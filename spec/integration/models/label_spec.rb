@@ -37,4 +37,13 @@ describe GoodData::Label do
       end
     end
   end
+
+  context 'updating metadata' do
+    it 'sets the label as deprecated' do
+      @label.meta['deprecated'] = 1
+      @label.save
+      @label.reload!
+      expect(@label.meta['deprecated']).to eq("1")
+    end
+  end
 end
