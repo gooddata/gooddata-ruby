@@ -15,8 +15,9 @@ describe GoodData::LCM2::SynchronizeLdm do
   let(:gdc_gd_client) { double(GoodData::Rest::Client) }
   let(:logger) { double(Logger) }
   let(:project) { double(GoodData::Project) }
+  let(:target_project) { double(GoodData::Project) }
   let(:synchronize) do
-    [{ from: 'foo', to: [] }]
+    [{ from: 'from_pid', to: [{ pid: 'to_pid' }] }]
   end
   let(:basic_params) do
     {
@@ -31,15 +32,18 @@ describe GoodData::LCM2::SynchronizeLdm do
   end
 
   before do
-    allow(gdc_gd_client).to receive(:projects).and_return(project)
+    allow(gdc_gd_client).to receive(:projects)
+      .with('from_pid')
+      .and_return(project)
+    allow(gdc_gd_client).to receive(:projects)
+      .with('to_pid')
+      .and_return(target_project)
     allow(project).to receive(:title)
     allow(project).to receive(:pid)
+    allow(project).to receive(:blueprint)
     allow(logger).to receive(:info)
-  end
-
-  context 'when include_computed_attributes is not specified' do
-    let(:params) { basic_params }
-    it_behaves_like 'a computed attributes synchronizer'
+    allow(target_project).to receive(:title)
+    allow(target_project).to receive(:update_from_blueprint)
   end
 
   context 'when include_computed_attributes is true' do
@@ -51,6 +55,15 @@ describe GoodData::LCM2::SynchronizeLdm do
     let(:params) { basic_params.merge(include_computed_attributes: 'false') }
     it 'diffs LDM without computed attributes' do
       expect(project).to receive(:blueprint).with(include_ca: false)
+      subject.class.call(converted_params)
+    end
+  end
+
+  context 'when exclude_fact_rule is true' do
+    let(:params) { basic_params.merge(exclude_fact_rule: 'true') }
+    it 'calls update_from_blueprint with exclude_fact_rule option' do
+      expect(target_project).to receive(:update_from_blueprint)
+        .with(any_args, hash_including(exclude_fact_rule: true))
       subject.class.call(converted_params)
     end
   end
