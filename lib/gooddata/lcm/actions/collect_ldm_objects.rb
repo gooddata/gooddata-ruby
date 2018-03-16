@@ -28,7 +28,11 @@ module GoodData
           synchronize = params.synchronize.pmap do |info|
             from = info.from
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
-            objects = (from_project.attributes.to_a + from_project.labels.to_a + from_project.datasets.to_a + from_project.facts.to_a).map(&:uri)
+            datasets = from_project.datasets.to_a
+            # TMA-836 - reading objects from datasets includes deprecated ones
+            attributes = datasets.map(&:attribute_uris).flatten
+            facts = datasets.map(&:fact_uris).flatten
+            objects = (from_project.labels.to_a + datasets).map(&:uri) + attributes + facts
 
             info[:transfer_uris] ||= []
             info[:transfer_uris] += objects
