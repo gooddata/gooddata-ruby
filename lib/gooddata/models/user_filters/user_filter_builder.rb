@@ -415,6 +415,8 @@ module GoodData
       end
 
       project_log_formatter.log_user_filter_results(create_results, to_create)
+      create_errors = create_results.select { |r| r[:status] == :failed }
+      fail "Creating MUFs resulted in errors: #{create_errors}" if create_errors.any?
 
       delete_results = unless options[:do_not_touch_filters_that_are_not_mentioned]
                          to_delete.each_slice(100).flat_map do |batch|
@@ -445,6 +447,8 @@ module GoodData
                        end
 
       project_log_formatter.log_user_filter_results(delete_results, to_delete)
+      delete_errors = delete_results.select { |r| r[:status] == :failed } if delete_results
+      fail "Deleting MUFs resulted in errors: #{delete_errors}" if delete_errors && delete_errors.any?
 
       { created: to_create, deleted: to_delete, results: create_results + (delete_results || []) }
     end

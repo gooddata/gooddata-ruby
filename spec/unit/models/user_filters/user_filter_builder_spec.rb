@@ -115,5 +115,16 @@ describe GoodData::UserFilterBuilder do
         end
       end
     end
+
+    context 'when creating MUFs results in errors' do
+      before do
+        allow(client).to receive(:post)
+          .and_return 'userFiltersUpdateResult' => { 'failed' => [{ status: :failed }] }
+      end
+
+      it 'fails' do
+        expect { subject.execute_mufs(filter_definitions, options) }.to raise_error(/Creating MUFs resulted in errors/)
+      end
+    end
   end
 end
