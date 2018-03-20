@@ -15,7 +15,7 @@ module GoodData
       set_const :GD_MAX_RETRY, Helpers::GD_MAX_RETRY
 
       set_const :DEFAULT_USERNAME, "rubydev+admin@gooddata.com"
-      set_const :DEFAULT_PASSWORD, GoodData::Helpers.decrypt('9m5Fe6WIxtkoG9vi2CanKm/CmZMLTpGYzr2duXh75m8=\n', ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
+      set_const :DEFAULT_PASSWORD, GoodData::Helpers.decrypt("ciUFzs6Cm6GTsoS/tp1n491b8ouhfble5dv1zF4IZGs=\n", ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
       set_const :DEFAULT_DOMAIN, ''
       set_const :DEFAULT_USER_URL, ''
 
