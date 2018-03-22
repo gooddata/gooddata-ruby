@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../project_log_formatter'
+require 'active_support/core_ext/hash/indifferent_access'
 
 module GoodData
   module UserFilterBuilder
@@ -140,11 +141,10 @@ module GoodData
 
     def self.create_label_cache(result, options = {})
       project = options[:project]
-      project_labels = project.labels
 
       result.reduce({}) do |a, e|
         e[:filters].map do |filter|
-          a[filter[:label]] = project_labels.find { |l| (l.identifier == filter[:label]) || (l.uri == filter[:label]) } unless a.key?(filter[:label])
+          a[filter[:label]] = project.labels(filter[:label]) unless a.key?(filter[:label])
         end
         a
       end
@@ -415,6 +415,8 @@ module GoodData
       end
 
       project_log_formatter.log_user_filter_results(create_results, to_create)
+      create_errors = create_results.select { |r| r[:status] == :failed }
+      fail "Creating MUFs resulted in errors: #{create_errors}" if create_errors.any?
 
       delete_results = unless options[:do_not_touch_filters_that_are_not_mentioned]
                          to_delete.each_slice(100).flat_map do |batch|
@@ -445,6 +447,8 @@ module GoodData
                        end
 
       project_log_formatter.log_user_filter_results(delete_results, to_delete)
+      delete_errors = delete_results.select { |r| r[:status] == :failed } if delete_results
+      fail "Deleting MUFs resulted in errors: #{delete_errors}" if delete_errors && delete_errors.any?
 
       { created: to_create, deleted: to_delete, results: create_results + (delete_results || []) }
     end
@@ -544,7 +548,7 @@ module GoodData
     def self.sanitize_filters_to_delete(to_delete, users_brick_input, project_users)
       return to_delete unless users_brick_input && users_brick_input.any?
       user_profiles = users_brick_input.map do |user|
-        result = project_users.find { |u| u.login == user['login'] }
+        result = project_users.find { |u| u.login == user.with_indifferent_access['login'] }
         next unless result
         result.profile_url
       end.compact

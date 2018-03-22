@@ -76,8 +76,7 @@ describe "User filters implementation", :constraint => 'slow' do
       ['nonexistent_user@gooddata.com', @label.uri, "tomas@gooddata.com"],
       [ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com"]
     ]
-    results = @project.add_data_permissions(filters)
-    expect(results[:results].any? { |r| r[:status] == :failed }).to be_truthy
+    expect { @project.add_data_permissions(filters) }.to raise_exception(/Creating MUFs resulted in errors/)
     expect(@project.data_permissions.count).to eq 2
   end
 
@@ -95,7 +94,7 @@ describe "User filters implementation", :constraint => 'slow' do
       [ConnectionHelper::DEFAULT_USERNAME, @label.uri, 'tomas@gooddata.com']
     ]
     # note that filters will be set up even for nonexistent users but they will not be assigned
-    @project.add_data_permissions(filters, users_must_exist: false)
+    expect { @project.add_data_permissions(filters, users_must_exist: false) }.to raise_exception(/Creating MUFs resulted in errors/)
     expect(@project.data_permissions.select(&:related_uri).count).to eq 1
     expect(@project.data_permissions.select(&:related_uri).first.pretty_expression).to eq "[Dev] IN ([tomas@gooddata.com])"
   end
@@ -236,17 +235,10 @@ describe "User filters implementation", :constraint => 'slow' do
   end
 
   it 'should not create any superfluous filters if things go well' do
-    # first create some filters. This will error out and some filters will stay there
-    filters = [
-      ['nonexistent_user@gooddata.com', @label.uri, "tomas@gooddata.com"],
-      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com"]
-    ]
+    filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com"]]
     @project.add_data_permissions(filters)
 
-    # now let's do a correct run
-    filters = [
-      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com"]
-    ]
+    filters = [[ConnectionHelper::DEFAULT_USERNAME, @label.uri, "tomas@gooddata.com"]]
     results = @project.add_data_permissions(filters)
     expect(results[:results].all? { |r| r[:status] == :successful }).to be_truthy
     expect(results[:results].select { |r| r[:type] == :create }.count).to eq 0

@@ -32,15 +32,15 @@ module GoodData
 
         description 'Additional Hidden Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'Allows to have facts with higher precision decimals'
+        param :exclude_fact_rule, instance_of(Type::BooleanType), required: false, default: false
       end
 
       class << self
         def call(params)
-          # set default value for include_computed_attributes
-          # (we won't have to do this after TMA-690)
-          include_ca = params.include_computed_attributes
-          include_ca = true if include_ca.nil?
-          include_ca = include_ca.to_b
+          include_ca = params.include_computed_attributes.to_b
+          exclude_fact_rule = params.exclude_fact_rule.to_b
 
           results = []
 
@@ -60,7 +60,12 @@ module GoodData
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
-              ca_scripts = to_project.update_from_blueprint(blueprint, update_preference: params.update_preference, execute_ca_scripts: false)
+              ca_scripts = to_project.update_from_blueprint(
+                blueprint,
+                update_preference: params.update_preference,
+                execute_ca_scripts: false,
+                exclude_fact_rule: exclude_fact_rule
+              )
 
               entry[:ca_scripts] = ca_scripts
 
