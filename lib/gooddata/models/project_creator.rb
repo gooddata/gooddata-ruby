@@ -42,7 +42,9 @@ module GoodData
           _, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
-          response = project.maql_diff(blueprint: bp, params: [:includeGrain])
+          maql_diff_params = [:includeGrain]
+          maql_diff_params << :excludeFactRule if opts[:exclude_fact_rule]
+          response = project.maql_diff(blueprint: bp, params: maql_diff_params)
 
           GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
           chunks = response['projectModelDiff']['updateScripts']
