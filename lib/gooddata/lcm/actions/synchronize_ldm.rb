@@ -15,7 +15,7 @@ module GoodData
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
-        description 'Development Client Used for Connecting to GD'
+        description 'Client used to connecting to development domain'
         param :development_client, instance_of(Type::GdClientType), required: true
 
         description 'Synchronization Info'
@@ -26,6 +26,12 @@ module GoodData
 
         description 'Specifies whether to transfer computed attributes'
         param :include_computed_attributes, instance_of(Type::BooleanType), required: false, default: true
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'Additional Hidden Parameters'
+        param :additional_hidden_params, instance_of(Type::HashType), required: false
 
         description 'Allows to have facts with higher precision decimals'
         param :exclude_fact_rule, instance_of(Type::BooleanType), required: false, default: false

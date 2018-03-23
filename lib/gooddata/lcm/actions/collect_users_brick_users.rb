@@ -15,6 +15,9 @@ module GoodData
         description 'Input source of the Users Brick. Needed to prevent ' \
                     'deletion of filters for a user that is to be removed.'
         param :users_brick_config, instance_of(Type::UsersBrickConfig), required: true
+
+        description 'Input Source'
+        param :input_source, instance_of(Type::HashType), required: false
       end
 
       class << self
@@ -22,10 +25,13 @@ module GoodData
           users_brick_users = []
           login_column = params.users_brick_config.login_column || 'login'
           users_brick_data_source = GoodData::Helpers::DataSource.new(params.users_brick_config.input_source)
-          users_brick_data_source_file = File.open(
-            users_brick_data_source.realize(params),
-            'r:UTF-8'
-          )
+
+          users_brick_data_source_file = without_check(PARAMS, params) do
+            File.open(
+              users_brick_data_source.realize(params),
+              'r:UTF-8'
+            )
+          end
           CSV.foreach(users_brick_data_source_file,
                       headers: true,
                       return_headers: false,

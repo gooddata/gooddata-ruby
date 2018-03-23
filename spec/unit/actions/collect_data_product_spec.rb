@@ -24,6 +24,7 @@ describe GoodData::LCM2::CollectDataProduct do
     let(:data_product_id) { 'data-product' }
     let(:params) do
       params = {
+        domain: domain,
         gdc_gd_client: client,
         gdc_logger: gdc_logger,
         data_product: data_product_id
@@ -42,7 +43,8 @@ describe GoodData::LCM2::CollectDataProduct do
     let(:params) do
       params = {
         gdc_gd_client: client,
-        gdc_logger: gdc_logger
+        gdc_logger: gdc_logger,
+        domain: domain
       }
       GoodData::LCM2.convert_to_smart_hash(params)
     end

@@ -15,9 +15,6 @@ module GoodData
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
-        description 'Organization Name'
-        param :organization, instance_of(Type::StringType), required: true
-
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
 
@@ -26,6 +23,12 @@ module GoodData
 
         description 'Schedule Additional Secure Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'DataProduct to manage'
+        param :data_product, instance_of(Type::GDDataProductType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       # will be updated later based on the way etl synchronization

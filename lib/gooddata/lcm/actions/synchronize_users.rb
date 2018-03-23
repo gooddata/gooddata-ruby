@@ -25,8 +25,29 @@ module GoodData
         description 'Column That Contains Target Project IDs'
         param :multiple_projects_column, instance_of(Type::StringType), required: false
 
-        # gdc_project/gdc_project_id, required: true
-        # organization/domain, required: true
+        description 'DataProduct to manage'
+        param :data_product, instance_of(Type::GDDataProductType), required: false
+
+        description 'Organization Name'
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'GDC Project'
+        param :gdc_project, instance_of(Type::GdProjectType), required: false
+
+        description 'GDC Project Id'
+        param :gdc_project_id, instance_of(Type::StringType), required: false
+
+        description 'Segments to manage'
+        param :segments, array_of(instance_of(Type::SegmentType)), required: false
+
+        description 'Additional Hidden Parameters'
+        param :additional_hidden_params, instance_of(Type::HashType), required: false
       end
 
       class << self
@@ -48,7 +69,9 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
           domain_name = params.organization || params.domain
+          fail "Either organisation or domain has to be specified in params" unless domain_name
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
+          fail "Either project or project_id has to be specified in params" unless project
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
           data_product = params.data_product
           mode = params.sync_mode
@@ -289,7 +312,9 @@ module GoodData
           if dwh
             data = dwh.execute_select(params.input_source.query)
           else
-            tmp = File.open(data_source.realize(params), 'r:UTF-8')
+            tmp = without_check(PARAMS, params) do
+              File.open(data_source.realize(params), 'r:UTF-8')
+            end
             data = CSV.read(tmp, headers: true)
           end
 

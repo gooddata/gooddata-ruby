@@ -15,11 +15,14 @@ module GoodData
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
-        description 'Development Client Used for Connecting to GD'
+        description 'Client used to connecting to development domain'
         param :development_client, instance_of(Type::GdClientType), required: true
 
         description 'Organization Name'
-        param :organization, instance_of(Type::StringType), required: true
+        param :organization, instance_of(Type::StringType), required: false
+
+        description 'Domain'
+        param :domain, instance_of(Type::StringType), required: false
 
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
@@ -35,6 +38,12 @@ module GoodData
 
         description 'Project Environment'
         param :project_environment, instance_of(Type::StringType), required: false
+
+        description 'DataProduct to manage'
+        param :data_product, instance_of(Type::GDDataProductType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'
@@ -47,6 +56,7 @@ module GoodData
           development_client = params.development_client
 
           domain_name = params.organization || params.domain
+          fail "Either organisation or domain has to be specified in params" unless domain_name
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
           data_product = params.data_product
           domain_segments = domain.segments(:all, data_product)

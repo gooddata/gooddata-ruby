@@ -57,6 +57,7 @@ describe GoodData::LCM2::CollectSegmentClients do
         gdc_gd_client: gdc_gd_client,
         synchronize: [{}],
         segments: [segment],
+        domain: domain,
         ads_client: ads_client
       }
       GoodData::LCM2.convert_to_smart_hash(params)

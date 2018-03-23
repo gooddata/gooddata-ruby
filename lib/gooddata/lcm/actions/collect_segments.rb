@@ -12,14 +12,15 @@ module GoodData
       DESCRIPTION = 'Collect Segments from API'
 
       PARAMS = define_params(self) do
-        description 'Client Used for Connecting to GD'
-        param :gdc_gd_client, instance_of(Type::GdClientType), required: true
-
-        description 'Organization Name'
-        param :organization, instance_of(Type::StringType), required: true
 
         description 'Segments to provision'
         param :segments_filter, array_of(instance_of(Type::StringType)), required: false
+
+        description 'DataProduct'
+        param :data_product, instance_of(Type::GDDataProductType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       class << self

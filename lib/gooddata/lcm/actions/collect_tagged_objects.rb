@@ -13,7 +13,7 @@ module GoodData
       DESCRIPTION = 'Collect all objects tagged with the +$PRODUCTION_TAG+ from development projects'
 
       PARAMS = define_params(self) do
-        description 'Development Client Used for Connecting to GD'
+        description 'Client used to connecting to development domain'
         param :development_client, instance_of(Type::GdClientType), required: true
 
         description 'Synchronization Info'

@@ -19,7 +19,7 @@ module GoodData
         description 'Production Tag Names'
         param :production_tag, instance_of(Type::StringType), required: false, deprecated: true, replacement: :production_tags
 
-        description 'Development Client Used for Connecting to GD'
+        description 'Client used to connecting to development domain'
         param :development_client, instance_of(Type::GdClientType), required: true
 
         description 'Synchronization Info'

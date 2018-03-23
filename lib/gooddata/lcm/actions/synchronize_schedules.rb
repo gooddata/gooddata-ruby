@@ -15,7 +15,7 @@ module GoodData
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
-        description 'Development Client Used for Connecting to GD'
+        description 'Client used to connecting to development domain'
         param :development_client, instance_of(Type::GdClientType), required: true
 
         description 'Synchronization Info'
@@ -26,6 +26,9 @@ module GoodData
 
         description 'Schedule Additional Secure Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
       RESULT_HEADER = [
