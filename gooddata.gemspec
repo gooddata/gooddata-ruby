@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop', '< 0.48' # TODO: remove it after dealing with new rules introduced in 0.48 version
   s.add_development_dependency 'simplecov', '~> 0.12'
   s.add_development_dependency 'webmock', '~> 1.21'
-  s.add_development_dependency 'yard', '~> 0.8'
+  s.add_development_dependency 'yard', '~> 0.9.11'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'ZenTest', '~> 4.11'
   s.add_development_dependency 'pry'
