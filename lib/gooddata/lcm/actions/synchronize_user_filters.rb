@@ -154,6 +154,10 @@ module GoodData
                 filters << row.to_hash
               end
             end
+            if filters.empty?
+              fail 'The filter set can not be empty when using sync_multiple_projects_* mode as the filters contain \
+                    the project ids in which the permissions should be changed'
+            end
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |project_id, new_filters|
               fail "Project id cannot be empty" if project_id.blank?
               project = client.projects(project_id)
@@ -186,7 +190,10 @@ module GoodData
                 filters << row.to_hash
               end
             end
-            fail 'The filter set can not be empty when using sync_multiple_projects_based_on_custom_id mode' if filters.empty?
+            if filters.empty?
+              fail 'The filter set can not be empty when using sync_multiple_projects_* mode as the filters contain \
+                    the project ids in which the permissions should be changed'
+            end
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
               project = domain.clients(client_id, data_product).project
