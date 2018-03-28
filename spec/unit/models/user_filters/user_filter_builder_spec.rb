@@ -71,10 +71,10 @@ describe GoodData::UserFilterBuilder do
     end
 
     it 'resolves mufs to be created/deleted' do
-      expect(existing_filter).to receive(:delete)
+      expect(existing_filter).to_not receive(:delete)
       result = subject.execute_mufs(filter_definitions, options)
       expect(result[:created].length).to be(1)
-      expect(result[:deleted].length).to be(1)
+      expect(result[:deleted].length).to be(0)
     end
 
     context 'when users_brick_input option specified' do
