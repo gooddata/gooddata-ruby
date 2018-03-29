@@ -7,7 +7,7 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      encrypted_token = "c2LNH4s9X32uXC/JT+RROhjss+ZbQpo42sGZFKCYE2U7M1ryQD7bEJjax0gO\ntL8E\n"
+      encrypted_token = "2OSh3iq0CJqJMbRJY5VvB9k1AaOus2YOEweAoat+neY=\n"
       key = ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
       token = GoodData::Helpers.decrypt(encrypted_token, key)
       set_const :GD_PROJECT_TOKEN, token
