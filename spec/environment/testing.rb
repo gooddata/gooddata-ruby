@@ -8,7 +8,7 @@ module GoodData
   module Environment
     module ConnectionHelper
       set_const :GD_PROJECT_TOKEN, GoodData::Helpers.decrypt(
-        "vYKgLZMDFvdPszlCSddiQQ50sYzpiDTiKwB8zVXGQGdPB67Yuw0Z/ZZeuYhm\nbsuF\n",
+        "n968RZTTh4VLLrVveEdjD32/6uSXTw8H+nDbmT51j/s=\n",
         ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
       )
       set_const :DEFAULT_DOMAIN, 'staging2-lcm-prod'
