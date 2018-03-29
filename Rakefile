@@ -7,7 +7,7 @@ require 'bundler/cli'
 require 'bundler/gem_tasks'
 
 require 'rake/testtask'
-require 'rake/notes/rake_task'
+# require 'rake/notes/rake_task'
 require 'rspec/core/rake_task'
 
 require 'yard'
