@@ -31,7 +31,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bundler', "~> 1.14"
   s.add_development_dependency 'license_finder', '~> 2.0'
   s.add_development_dependency 'rake', '~> 11.1'
-  s.add_development_dependency 'rake-notes', '~> 0.2'
   s.add_development_dependency 'redcarpet', '~> 3.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 3.5'
   s.add_development_dependency 'rspec-expectations', '~> 3.5'
