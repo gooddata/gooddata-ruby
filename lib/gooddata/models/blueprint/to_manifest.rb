@@ -36,9 +36,7 @@ module GoodData
         case c[:type].to_sym
         when :label
           label_to_manifest(project, dataset, c, mode)
-        when :fact
-          fact_to_manifest(project, dataset, c, mode)
-        when :date_fact
+        when :fact, :date_fact, :hll
           fact_to_manifest(project, dataset, c, mode)
         when :reference
           reference_to_manifest(project, dataset, c, mode)

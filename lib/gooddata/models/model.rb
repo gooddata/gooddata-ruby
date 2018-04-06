@@ -86,7 +86,7 @@ module GoodData
       'GDC.time.day_us_noleading', # M/d/yy
     ]
 
-    GD_DATA_TYPES = ['BIGINT', 'DOUBLE', 'INTEGER', 'INT', /^VARCHAR\(([1-9]\d{0,3}|10000)\)$/i, /^DECIMAL\(\d{1,3},\s*\d{1,3}\)$/i]
+    GD_DATA_TYPES = ['BIGINT', 'DOUBLE', 'INTEGER', 'INT', 'HLL', /^VARCHAR\(([1-9]\d{0,3}|10000)\)$/i, /^DECIMAL\(\d{1,3},\s*\d{1,3}\)$/i]
 
     DEFAULT_FACT_DATATYPE = 'DECIMAL(12,2)'
     DEFAULT_ATTRIBUTE_DATATYPE = 'VARCHAR(128)'

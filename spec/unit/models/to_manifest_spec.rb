@@ -18,6 +18,35 @@ describe GoodData::Model::ToManifest do
     expect(ToManifest.to_manifest(@spec)).to eq @result
   end
 
+  context 'when HLL fact is in the spec' do
+    let(:hll_fact) do
+      {
+        type: "hll",
+        id: 'fact.commits.lines_added',
+        column_name: 'lines_added',
+        title: 'Lines Added'
+      }
+    end
+
+    let(:spec) do
+      hll_spec = @spec
+      hll_spec[:datasets]
+        .find { |d| d[:id] == 'dataset.commits' }[:columns] << hll_fact
+      hll_spec
+    end
+
+    it "converts the HLL fact to manifest" do
+      actual = ToManifest.to_manifest(spec)
+      expected = {
+        'populates' => ['fact.commits.lines_added'],
+        'mode' => 'FULL',
+        'columnName' => 'lines_added'
+      }
+      parts = actual[2]['dataSetSLIManifest']['parts']
+      expect(parts).to include(expected)
+    end
+  end
+
   it 'blueprint can be set with date reference and default format is set' do
     blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|
       p.add_date_dimension("committed_on")
