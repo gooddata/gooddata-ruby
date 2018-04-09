@@ -149,6 +149,10 @@ module GoodData
         labels.find { |label| label[:reference_label] == true } || labels.first
       end
 
+      def self.reference_label_for_attribtue(dataset, attribute)
+        reference_label_for_attribute(dataset, attribute)
+      end
+
       # Returns labels for a particular attribute
       #
       # @param dataset [Hash] Dataset blueprint
