@@ -177,7 +177,7 @@ describe GoodData::ReportDataResult do
   end
 
   describe 'one line reports' do
-    it 'should work with one line metric. No attribtues.' do
+    it 'should work with one line metric. No attributes.' do
       data = JSON.parse(File.read('./spec/data/reports/metric_only_one_line.json'))
       a = GoodData::ReportDataResult.from_xtab(data)
       expect(a.to_a).to eq [[nil, "sum of Age"],

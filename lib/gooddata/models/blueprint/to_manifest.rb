@@ -172,7 +172,7 @@ module GoodData
       def self.reference_to_manifest(project, _dataset, reference, mode)
         referenced_dataset = ProjectBlueprint.find_dataset(project, reference[:dataset])
         anchor = DatasetBlueprint.anchor(referenced_dataset)
-        label = DatasetBlueprint.reference_label_for_attribtue(referenced_dataset, anchor)
+        label = DatasetBlueprint.reference_label_for_attribute(referenced_dataset, anchor)
         [{
           'populates' => [label[:id]],
           'mode' => mode,

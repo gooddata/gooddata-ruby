@@ -21,7 +21,7 @@ describe GoodData::Model::AttributeBlueprintField do
   end
 
   describe '#dataset' do
-    it 'should return dataset of the attribtue field' do
+    it 'should return dataset of the attribute field' do
       expect(@attribute.dataset_blueprint).to eq @dataset
     end
   end

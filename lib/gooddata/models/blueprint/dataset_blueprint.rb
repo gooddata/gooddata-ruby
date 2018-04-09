@@ -82,7 +82,7 @@ module GoodData
         find_column_by_type(dataset, :date_fact)
       end
 
-      # Returns label that is marked as default for a particular attribtue.
+      # Returns label that is marked as default for a particular attribute.
       # This does not necessarily need to be the first one. This is a default label
       # in terms of what is displayed on the UI
       #
@@ -144,7 +144,7 @@ module GoodData
         find_columns_by_type(dataset, :label)
       end
 
-      def self.reference_label_for_attribtue(dataset, attribute)
+      def self.reference_label_for_attribute(dataset, attribute)
         labels = labels_for_attribute(dataset, attribute)
         labels.find { |label| label[:reference_label] == true } || labels.first
       end
