@@ -12,7 +12,8 @@ describe 'GoodData::LCM2::Helpers::Check' do
     params = {
       test_param_two: 'Testing param two',
       test_param_three: 'Testing param three',
-      test_param_four: 4
+      test_param_four: 4,
+      UPPER_case_param: 'qux'
     }
     GoodData::LCM2.convert_to_smart_hash(params)
   end
@@ -47,5 +48,23 @@ describe 'GoodData::LCM2::Helpers::Check' do
   it 'fails when unspecified variable is acessed' do
     params.setup_filters(PARAMS_3)
     expect { params[:test_param_three] }.to raise_error(/not defined in the specification/)
+  end
+
+  context 'when key contains upper-case letters' do
+    let(:spec) do
+      GoodData::LCM2::BaseAction.define_params(self) do
+        description 'Testing param'
+        param :upper_case_param, instance_of(GoodData::LCM2::Type::StringType)
+      end
+    end
+
+    before { params.setup_filters(spec) }
+
+    it 'fetching works with both lower case and original case' do
+      expect(params['upper_case_param']).to eq('qux')
+      expect(params[:upper_case_param]).to eq('qux')
+      expect(params['UPPER_case_param']).to eq('qux')
+      expect(params[:UPPER_case_param]).to eq('qux')
+    end
   end
 end
