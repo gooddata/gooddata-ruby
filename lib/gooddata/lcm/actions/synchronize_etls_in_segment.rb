@@ -24,11 +24,17 @@ module GoodData
         description 'Schedule Additional Secure Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
 
+        description 'Schedule Parameters'
+        param :schedule_params, instance_of(Type::HashType), required: false, default: {}
+
         description 'DataProduct to manage'
         param :data_product, instance_of(Type::GDDataProductType), required: false
 
         description 'Logger'
         param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'Delete extra process schedule flag'
+        param :delete_extra_process_schedule, instance_of(Type::BooleanType), required: false, default: true
       end
 
       # will be updated later based on the way etl synchronization

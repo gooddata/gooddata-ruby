@@ -52,7 +52,7 @@ module GoodData
               next unless ca_scripts
 
               pid = entry[:pid]
-              ca_chunks = ca_scripts['maqlDdlChunks']
+              ca_chunks = ca_scripts[:maqlDdlChunks]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
               params.gdc_logger.info "Synchronizing Computed Attributes to project: '#{to_project.title}', PID: #{pid}"
 
