@@ -27,7 +27,7 @@ module GoodData
 
     module ProcessHelper
       set_const :PROCESS_ID, ''
-      set_const :DEPLOY_NAME, 'cc/graph/graph.grf'
+      set_const :DEPLOY_NAME, 'main.rb'
     end
 
     module ProjectHelper
