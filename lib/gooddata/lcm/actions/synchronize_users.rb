@@ -48,6 +48,78 @@ module GoodData
 
         description 'Additional Hidden Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'Whitelists'
+        param :whitelists, array_of(instance_of(Type::StringType)), required: false
+
+        description 'Regular expresion whitelists'
+        param :regexp_whitelists, array_of(instance_of(Type::StringType)), required: false
+
+        description 'Ignore Failures Flag'
+        param :ignore_failures, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Remove users from project flag'
+        param :remove_users_from_project, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Do not touch users that are not mentioned flag'
+        param :do_not_touch_users_that_are_not_mentioned, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Create non existing user groups flag'
+        param :create_non_existing_user_groups, instance_of(Type::BooleanType), required: false, default: true
+
+        description 'Single sign on provider'
+        param :sso_provider, instance_of(Type::StringType), required: false
+
+        description 'ADS client'
+        param :ads_client, instance_of(Type::StringType), required: false
+
+        description 'Authentication modes'
+        param :authentication_modes, instance_of(Type::StringType), required: false
+
+        description 'First name column'
+        param :first_name_column, instance_of(Type::StringType), required: false
+
+        description 'Last name column'
+        param :last_name_column, instance_of(Type::StringType), required: false
+
+        description 'Login column'
+        param :login_column, instance_of(Type::StringType), required: false
+
+        description 'Password column'
+        param :password_column, instance_of(Type::StringType), required: false
+
+        description 'Email column'
+        param :email_column, instance_of(Type::StringType), required: false
+
+        description 'Role column'
+        param :role_column, instance_of(Type::StringType), required: false
+
+        description 'Sso provider column'
+        param :sso_provider_column, instance_of(Type::StringType), required: false
+
+        description 'Authentication modes column'
+        param :authentication_modes_column, instance_of(Type::StringType), required: false
+
+        description 'User groups column'
+        param :user_groups_column, instance_of(Type::StringType), required: false
+
+        description 'Language column'
+        param :language_column, instance_of(Type::StringType), required: false
+
+        description 'Company column'
+        param :company_column, instance_of(Type::StringType), required: false
+
+        description 'Position column'
+        param :position_column, instance_of(Type::StringType), required: false
+
+        description 'Country column'
+        param :country_column, instance_of(Type::StringType), required: false
+
+        description 'Phone column'
+        param :phone_column, instance_of(Type::StringType), required: false
+
+        description 'Ip whitelist column'
+        param :ip_whitelist_column, instance_of(Type::StringType), required: false
       end
 
       class << self
