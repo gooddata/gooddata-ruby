@@ -7,19 +7,30 @@
 require 'gooddata/mixins/md_id_to_uri'
 
 describe GoodData::Mixin::MdIdToUri do
-  before :each do
+  before :all do
     @client = ConnectionHelper.create_default_connection
-    project = ProjectHelper.get_default_project(client: @client)
+    @suffix = AppstoreProjectHelper.suffix
+    @opts = {
+      client: @client,
+      title: "Project for id to uri spec #{@suffix}",
+      auth_token: ConnectionHelper::GD_PROJECT_TOKEN,
+      environment: 'TESTING',
+      prod_organization: 'staging-lcm-prod'
+    }
+    project_helper = AppstoreProjectHelper.create(@opts)
+    project_helper.create_ldm
+    project_helper.load_data
+    @project = project_helper.project
 
     class SomeTestClass
       extend GoodData::Mixin::MdIdToUri
     end
 
-    @opts = { client: @client, project: project }
+    @opts[:project] = @project
   end
 
-  after(:each) do
-    @client.disconnect
+  after(:all) do
+    @project.delete
   end
 
   it 'should throw BadRequest for -1' do

@@ -197,7 +197,7 @@ describe "User filters implementation", :constraint => 'slow' do
     new_filters = [
       [another_user.login, @label.uri, "tomas@gooddata.com"]
     ]
-    @project.add_data_permissions(new_filters)
+    @project.add_data_permissions(new_filters, users_brick_input: [{ 'login' => ConnectionHelper::DEFAULT_USERNAME }])
     expect(@project.data_permissions.map { |f| [f.related.login, f.pretty_expression] })
       .to eq [[another_user.login, "[Dev] IN ([tomas@gooddata.com])"]]
   end
@@ -278,7 +278,7 @@ describe "User filters implementation", :constraint => 'slow' do
     # lets restrict tomas to goodot only
     filters = [[u.login, @label.uri, 'tomas@gooddata.com'],
                [u.login, repo_label.uri, 'goodot']]
-    @project.add_data_permissions(filters)
+    @project.add_data_permissions(filters, users_brick_input: [{ 'login' => u.login }])
     expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [
       [u.login, "[Dev] IN ([tomas@gooddata.com])"],
       [u.login, "[Repository Name] IN ([goodot])"]
@@ -290,7 +290,7 @@ describe "User filters implementation", :constraint => 'slow' do
     # Now lets change repo to bam
     filters = [[u.login, @label.uri, 'tomas@gooddata.com'],
                [u.login, repo_label.uri, 'bam']]
-    @project.add_data_permissions(filters)
+    @project.add_data_permissions(filters, users_brick_input: [{ 'login' => u.login }])
 
     expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [
       [u.login, "[Dev] IN ([tomas@gooddata.com])"],
@@ -302,7 +302,7 @@ describe "User filters implementation", :constraint => 'slow' do
 
     # let's remove the repo restriction
     filters = [[u.login, @label.uri, 'tomas@gooddata.com']]
-    @project.add_data_permissions(filters)
+    @project.add_data_permissions(filters, users_brick_input: [{ 'login' => u.login }])
 
     r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
     expect(r.column(2)).to eq ["tomas@gooddata.com", 6, 1]
