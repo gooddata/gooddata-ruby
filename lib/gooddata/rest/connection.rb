@@ -624,9 +624,7 @@ ERR
           placeholders = true
 
           if placeholders
-            PH_MAP.each do |pm|
-              break if title.gsub!(pm[1], pm[0])
-            end
+            title = self.class.map_placeholders(title)
           end
 
           stat = stats[title]

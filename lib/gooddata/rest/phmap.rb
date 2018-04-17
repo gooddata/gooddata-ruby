@@ -7,6 +7,13 @@
 module GoodData
   module Rest
     class Connection
+      def self.map_placeholders(title)
+        PH_MAP.each do |pm|
+          break if title.gsub!(pm[1], pm[0])
+        end
+        title
+      end
+
       # PH_MAP for wildcarding of URLs in reports
       PH_MAP = [
         ['/gdc/projects/{id}/execute', %r{/gdc/projects/[^\/]+/execute}],
