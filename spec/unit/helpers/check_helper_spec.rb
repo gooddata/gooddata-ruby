@@ -50,6 +50,26 @@ describe 'GoodData::LCM2::Helpers::Check' do
     expect { params[:test_param_three] }.to raise_error(/not defined in the specification/)
   end
 
+  context 'when created from stringified hash' do
+    let(:params) do
+      raw_params = { 'update_preference' => { 'keep_data' => false,
+                                              'allow_cascade_drops' => true } }
+      GoodData::LCM2.convert_to_smart_hash(raw_params)
+    end
+
+    let(:spec) do
+      GoodData::LCM2::BaseAction.define_params(self) do
+        description 'Test'
+        param :update_preference, instance_of(GoodData::LCM2::Type::UpdatePreferenceType), required: false
+      end
+    end
+
+    it 'it works with default values' do
+      GoodData::LCM2::Helpers.check_params(spec, params)
+      expect(params[:update_preference][:keep_data]).to be(false)
+    end
+  end
+
   context 'when key contains upper-case letters' do
     let(:spec) do
       GoodData::LCM2::BaseAction.define_params(self) do
