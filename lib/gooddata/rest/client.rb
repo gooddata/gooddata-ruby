@@ -111,8 +111,7 @@ module GoodData
         end
 
         def connect_sso(sso)
-          client = Client.new(sso)
-          client
+          @@instance = Client.new(sso) # rubocop:disable ClassVars
         end
 
         def disconnect

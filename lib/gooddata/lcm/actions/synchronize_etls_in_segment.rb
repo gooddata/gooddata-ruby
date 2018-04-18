@@ -24,11 +24,17 @@ module GoodData
         description 'Schedule Additional Secure Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
 
+        description 'Schedule Parameters'
+        param :schedule_params, instance_of(Type::HashType), required: false, default: {}
+
         description 'DataProduct to manage'
         param :data_product, instance_of(Type::GDDataProductType), required: false
 
         description 'Logger'
         param :gdc_logger, instance_of(Type::GdLogger), required: true
+
+        description 'Delete extra process schedule flag'
+        param :delete_extra_process_schedule, instance_of(Type::BooleanType), required: false, default: true
       end
 
       # will be updated later based on the way etl synchronization
@@ -120,10 +126,6 @@ module GoodData
                 end
 
                 schedule.update_params(params.additional_params) if params.additional_params
-                schedule.update_params(
-                  CLIENT_ID: client_id, # needed for ADD and CloudConnect ETL
-                  GOODOT_CUSTOM_PROJECT_ID: client_id # TMA-210
-                )
 
                 schedule.update_params(params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
                 schedule.update_params(params_for_all_projects[schedule.name]) if params_for_all_projects[schedule.name]

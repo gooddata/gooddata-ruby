@@ -18,15 +18,15 @@ module GoodData
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, '3dddcd0d-1b56-4508-a94b-abea70c7154d'
+      set_const :PROCESS_ID, '7bc4b678-d1f6-4fb0-b1ee-513f4709bbf1'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'fbhs09oddsgezqtn3um5rp08midmbpg5'
+      set_const :PROJECT_ID, 'voyb6fcvdngwfyf722vn9cmbv7sq6mf6'
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '58ad4fbbe4b02e90f6422677'
+      set_const :SCHEDULE_ID, '5acdd513e4b01dce92b23505'
     end
   end
 end

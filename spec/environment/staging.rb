@@ -18,7 +18,7 @@ module GoodData
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, '83bcb06a-1735-49cd-99e9-58df1c856b06'
+      set_const :PROCESS_ID, '05cd64ef-db14-49f0-a755-d94d0fb1b3cd'
     end
 
     module ProjectHelper
