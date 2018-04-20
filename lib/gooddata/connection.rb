@@ -66,7 +66,7 @@ module GoodData
     # @param [Hash] opts Additional options
     # @option opts [Fixnum] :validity Validity in seconds from 'now'
     # @return [String] URL which can be used for SSO logging in
-    def sso_url(login, provider, url = GoodData::Rest::Connection::DEFAULT_URL, opts = DEFAULT_SSO_OPTIONS)
+    def sso_url(login, provider, url, opts = DEFAULT_SSO_OPTIONS)
       opts = DEFAULT_SSO_OPTIONS.merge(opts)
 
       ts = DateTime.now.strftime('%s').to_i + opts[:valid]
@@ -118,7 +118,7 @@ module GoodData
     # @param [String] login Email address used for logging into gooddata
     # @param [String] provider Name of SSO provider
     # @return [GoodData::Rest::Client] Instance of REST client
-    def connect_sso(login, provider, url, opts)
+    def connect_sso(login, provider, url = GoodData::Rest::Connection::DEFAULT_URL, opts = {})
       url, params = sso_url(login, provider, url)
 
       RestClient::Request.execute(opts.merge(method: :post, url: url, payload: params)) do |response, _request, _result|
