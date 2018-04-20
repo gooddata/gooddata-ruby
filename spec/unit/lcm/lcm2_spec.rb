@@ -82,4 +82,19 @@ describe 'GoodData::LCM2' do
       end
     end
   end
+
+  describe '#run_action' do
+    let(:params) { double('params') }
+    let(:logger) { GoodData.logger }
+    it 'runs the action' do
+      expect(params).to receive(:clear_filters).exactly(2).times
+      expect(params).to receive(:segments_filter)
+      expect(params).to receive(:data_product)
+      expect(params).to receive(:gdc_logger) { logger }
+      expect(params).to receive(:setup_filters)
+
+      expect(GoodData::LCM2::CollectSegments).to receive(:call)
+      GoodData::LCM2.run_action(GoodData::LCM2::CollectSegments, params)
+    end
+  end
 end
