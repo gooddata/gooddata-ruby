@@ -50,6 +50,43 @@ describe 'GoodData::LCM2::Helpers::Check' do
     expect { params[:test_param_three] }.to raise_error(/not defined in the specification/)
   end
 
+  context 'when created from stringified hash' do
+    let(:params) do
+      raw_params = { 'update_preference' => { 'keep_data' => false,
+                                              'allow_cascade_drops' => true } }
+      GoodData::LCM2.convert_to_smart_hash(raw_params)
+    end
+
+    let(:other_params) do
+      raw_params = { 'update_preference' => { 'keep_data' => false,
+                                              'cascade_drops' => true } }
+      GoodData::LCM2.convert_to_smart_hash(raw_params)
+    end
+
+    let(:spec) do
+      GoodData::LCM2::BaseAction.define_params(self) do
+        description 'Test'
+        param :update_preference, instance_of(GoodData::LCM2::Type::UpdatePreferenceType), required: false
+      end
+    end
+
+    it 'it works with default values' do
+      GoodData::LCM2::Helpers.check_params(spec, params)
+      expect(params[:update_preference][:keep_data]).to be(false)
+    end
+
+    it 'it works with default values on deprecated params' do
+      GoodData::LCM2::Helpers.check_params(spec, other_params)
+      expect(other_params[:update_preference][:keep_data]).to be(false)
+      expect(other_params[:update_preference][:cascade_drops]).to be(true)
+    end
+
+    it 'it propagates the values of deprecated params to the replacement' do
+      GoodData::LCM2::Helpers.check_params(spec, other_params)
+      expect(other_params[:update_preference][:allow_cascade_drops]).to be(true)
+    end
+  end
+
   context 'when key contains upper-case letters' do
     let(:spec) do
       GoodData::LCM2::BaseAction.define_params(self) do
@@ -61,10 +98,7 @@ describe 'GoodData::LCM2::Helpers::Check' do
     before { params.setup_filters(spec) }
 
     it 'fetching works with both lower case and original case' do
-      expect(params['upper_case_param']).to eq('qux')
-      expect(params[:upper_case_param]).to eq('qux')
-      expect(params['UPPER_case_param']).to eq('qux')
-      expect(params[:UPPER_case_param]).to eq('qux')
+      ['upper_case_param', :upper_case_param, 'UPPER_case_param', :UPPER_case_param].map { |e| expect(params[e]).to eq('qux') }
     end
   end
 end
