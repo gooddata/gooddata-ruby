@@ -207,3 +207,10 @@ end
 YARD::Rake::YardocTask.new
 
 task :default => [:usage]
+
+namespace :gitflow do
+  task :init do
+    file_path = File.join(File.dirname(__FILE__), 'bin/gitflow-init.sh')
+    system(file_path) || fail('Initializing git-flow failed!')
+  end
+end
