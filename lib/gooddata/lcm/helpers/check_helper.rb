@@ -27,6 +27,7 @@ module GoodData
               end
 
               if specification[param_name][:opts][:deprecated]
+                params[specification[param_name][:opts][:replacement]] = value
                 puts "WARNING: Parameter '#{param_name}' is deprecated. Please use '#{specification[param_name][:opts][:replacement]}' instead."
               end
 
