@@ -315,13 +315,7 @@ module GoodData
 
           # Invoke action
           begin
-            GoodData.logger.info("Running #{action.name} action ...")
-            params.clear_filters
-            # Check if all required parameters were passed
-            BaseAction.check_params(action.const_get('PARAMS'), params)
-            params.setup_filters(action.const_get('PARAMS'))
-            out = action.send(:call, params)
-            params.clear_filters
+            out = run_action action, params
           rescue => e
             errors << {
               action: action,
@@ -363,6 +357,17 @@ module GoodData
           results: brick_results,
           params: params
         }
+      end
+
+      def run_action(action, params)
+        GoodData.logger.info("Running #{action.name} action ...")
+        params.clear_filters
+        # Check if all required parameters were passed
+        BaseAction.check_params(action.const_get('PARAMS'), params)
+        params.setup_filters(action.const_get('PARAMS'))
+        out = action.send(:call, params)
+        params.clear_filters
+        return out
       end
 
       def check_unused_params(actions, params)
