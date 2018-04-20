@@ -233,6 +233,26 @@ describe GoodData::Model::FromWire do
         }
       ])
     end
+
+    it 'supports hll' do
+      model = @model_view['projectModelView']['model']['projectModel']['datasets'].first
+      hll_fact = { "fact" => {
+        "identifier" => "hll_test",
+        "title" => "Test HLL Fact",
+        "dataType" => "HLL",
+        'type' => 'hll'
+      } }
+      model['dataset']['facts'] << hll_fact
+      expected = {
+        type: :hll,
+        id: "hll_test",
+        title: "Test HLL Fact",
+        gd_data_type: "HLL",
+        folder: nil
+      }
+      facts = GoodData::Model::FromWire.parse_facts(model)
+      expect(facts).to include(expected)
+    end
   end
 
   describe '#parse_dataset' do

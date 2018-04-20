@@ -98,7 +98,7 @@ module GoodData
       # @param dataset [Hash] Dataset blueprint
       # @return [Array<Hash>] returns the attribute or an empty array
       def self.facts(dataset)
-        find_columns_by_type(dataset, :fact, :date_fact)
+        find_columns_by_type(dataset, :fact, :date_fact, :hll)
       end
 
       # Finds a specific column given a name
