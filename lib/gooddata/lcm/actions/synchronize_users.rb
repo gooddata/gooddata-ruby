@@ -71,7 +71,7 @@ module GoodData
         param :sso_provider, instance_of(Type::StringType), required: false
 
         description 'ADS client'
-        param :ads_client, instance_of(Type::StringType), required: false
+        param :ads_client, instance_of(Type::AdsClientType), required: false
 
         description 'Authentication modes'
         param :authentication_modes, instance_of(Type::StringType), required: false

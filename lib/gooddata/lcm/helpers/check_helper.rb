@@ -27,6 +27,11 @@ module GoodData
               end
 
               if specification[param_name][:opts][:deprecated]
+                if specification[specification[param_name][:opts][:replacement]][:type].class == type.class
+                  params[specification[param_name][:opts][:replacement]] = value
+                elsif type.migrate?(specification[specification[param_name][:opts][:replacement]][:type])
+                  params[specification[param_name][:opts][:replacement]] = type.migrate(value, specification[specification[param_name][:opts][:replacement]][:type])
+                end
                 puts "WARNING: Parameter '#{param_name}' is deprecated. Please use '#{specification[param_name][:opts][:replacement]}' instead."
               end
 

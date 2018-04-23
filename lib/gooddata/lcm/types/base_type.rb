@@ -20,6 +20,14 @@ module GoodData
           end
         end
 
+        def migrate?(to_type)
+          migrate(nil, to_type)
+        end
+
+        def migrate(value, to_type)
+          value.nil? ? (false) : (fail "Can not migrate #{self.class} to #{to_type}")
+        end
+
         def to_s
           self.class.short_name
         end

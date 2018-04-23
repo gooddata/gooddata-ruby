@@ -966,7 +966,13 @@ module GoodData
     alias_method :member, :get_user
 
     def find_by_tag(tags)
-      tags = tags.split(',').map(&:strip) unless tags.is_a?(Array)
+      if tags.is_a?(Array)
+        if tags.length == 1 && tags.first =~ /,/
+          tags = tags.first.split(',').map(&:strip)
+        end
+      else
+        tags = tags.split(',').map(&:strip)
+      end
 
       objects = tags.map do |tag|
         url = "/gdc/md/#{pid}/tags/#{tag}"
