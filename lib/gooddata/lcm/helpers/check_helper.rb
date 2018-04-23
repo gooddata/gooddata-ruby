@@ -16,18 +16,21 @@ module GoodData
             type = specification[param_name][:type]
             if value.nil? || (value.is_a?(String) && value.empty?)
               if specification[param_name][:opts][:default]
-                params[param_name] = specification[param_name][:opts][:default]
+                if specification.select { |x| specification[x][:opts][:replacement] == param_name }.first.nil?
+                  params[param_name] = specification[param_name][:opts][:default]
+                else
+                  GoodData.logger.warn "WARNING: Default value for parameter '#{param_name}' was not filled because deprecated parameter is used instead."
+                end
               elsif specification[param_name][:opts][:required]
                 fail("Mandatory parameter '#{param_name}' of type '#{type}' is not specified")
               end
             else
               if type.class.const_get(:CATEGORY) == :complex && !value.is_a?(Hash)
-                puts JSON.pretty_generate(params)
                 fail "Expected parameter '#{param_name}' to be kind of '#{type}', got '#{value.class.name}'"
               end
 
               if specification[param_name][:opts][:deprecated]
-                puts "WARNING: Parameter '#{param_name}' is deprecated. Please use '#{specification[param_name][:opts][:replacement]}' instead."
+                GoodData.logger.warn "WARNING: Parameter '#{param_name}' is deprecated. Please use '#{specification[param_name][:opts][:replacement]}' instead."
               end
 
               unless type.check(value)
