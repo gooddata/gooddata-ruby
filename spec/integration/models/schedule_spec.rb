@@ -64,14 +64,6 @@ describe GoodData::Schedule do
         GoodData::Schedule.create(ProcessHelper::PROCESS_ID, @test_cron, nil, @test_data)
       end.to raise_error 'Executable has to be provided'
     end
-
-    it 'Throws exception when no cron is specified' do
-      data = GoodData::Helpers.deep_dup(@test_data)
-      data[:cron] = nil
-      expect do
-        GoodData::Schedule.create(ProcessHelper::PROCESS_ID, nil, @project_executable, data)
-      end.to raise_error 'Trigger schedule has to be provided'
-    end
   end
 
   describe '#cron' do
