@@ -77,7 +77,6 @@ module GoodData
         else
           fail 'Executable has to be provided' if executable.blank?
         end
-        fail 'Trigger schedule has to be provided' if trigger.blank?
 
         schedule = c.create(GoodData::Schedule, GoodData::Helpers.stringify_keys(GoodData::Helpers.deep_dup(SCHEDULE_TEMPLATE)), client: c, project: project)
 
@@ -403,7 +402,6 @@ module GoodData
     #
     # @return [Boolean] True if saved
     def save
-      fail 'trigger schedule has to be provided' if cron.blank? && trigger_id.blank?
       fail 'A timezone has to be provided' if timezone.blank?
       fail 'Schedule type has to be provided' if schedule_type.blank?
       rewrite_deprecated_params
