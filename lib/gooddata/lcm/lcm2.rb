@@ -87,7 +87,6 @@ module GoodData
 
       release: [
         EnsureReleaseTable,
-        EnsureDataProduct,
         CollectDataProduct,
         SegmentsFilter,
         CreateSegmentMasters,
