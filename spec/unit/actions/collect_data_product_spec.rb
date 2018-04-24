@@ -5,14 +5,19 @@
 # LICENSE file in the root directory of this source tree.
 
 describe GoodData::LCM2::CollectDataProduct do
-  it 'Has GoodData::Bricks::DefaultDataProductMiddleware class' do
-    GoodData::LCM2::CollectDataProduct.should_not be(nil)
-  end
-
   let(:client) { double(:client) }
   let(:domain) { double(:domain) }
   let(:gdc_logger) { double(:gdc_logger) }
   let(:data_product) { GoodData::DataProduct.new({}) }
+  let(:params) do
+    params = {
+      domain: domain,
+      gdc_gd_client: client,
+      gdc_logger: gdc_logger,
+      data_product: data_product_id
+    }
+    GoodData::LCM2.convert_to_smart_hash(params)
+  end
 
   before do
     allow(client).to receive(:domain) { domain }
@@ -22,15 +27,6 @@ describe GoodData::LCM2::CollectDataProduct do
 
   context 'when data_product parameter is passed' do
     let(:data_product_id) { 'data-product' }
-    let(:params) do
-      params = {
-        domain: domain,
-        gdc_gd_client: client,
-        gdc_logger: gdc_logger,
-        data_product: data_product_id
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
-    end
 
     it 'collects the specified data_product object' do
       expect(domain).to receive(:data_products).with(data_product_id)
@@ -53,6 +49,19 @@ describe GoodData::LCM2::CollectDataProduct do
       expect(domain).to receive(:data_products).with('default')
       result = subject.class.call(params)
       expect(result[:params][:data_product]).to be_a GoodData::DataProduct
+    end
+  end
+
+  context 'when the passed data_product does not exist' do
+    let(:data_product_id) { 'non-existing-data-product' }
+
+    before do
+      allow(domain).to receive(:data_products) { fail RestClient::BadRequest }
+    end
+
+    it 'creates the data product' do
+      expect(domain).to receive(:create_data_product).with(id: data_product_id)
+      subject.class.call(params)
     end
   end
 end
