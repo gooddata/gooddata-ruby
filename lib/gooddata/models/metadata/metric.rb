@@ -13,6 +13,11 @@ module GoodData
   # Metric representation
   class Metric < MdObject
     include Mixin::Lockable
+    extend GoodData::Mixin::ContentPropertyReader
+    extend GoodData::Mixin::ContentPropertyWriter
+
+    content_property_reader :folders, :expression
+    content_property_writer :folders, :expression
 
     class << self
       # Method intended to get all objects of that type in a specified project
@@ -123,14 +128,6 @@ module GoodData
       }
       res = GoodData::ReportDefinition.execute(opts.merge(:left => self))
       res.data[0][0] if res && !res.empty?
-    end
-
-    def expression
-      content['expression']
-    end
-
-    def expression=(value)
-      content['expression'] = value
     end
 
     def validate
