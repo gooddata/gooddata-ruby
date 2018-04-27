@@ -27,6 +27,7 @@ module GoodData
       DEFAULT_CONNECTION_IMPLEMENTATION = GoodData::Rest::Connection
       DEFAULT_SLEEP_INTERVAL = 10
       DEFAULT_POLL_TIME_LIMIT = 5 * 60 * 60 # 5 hours
+      STATS_LOG_TIMEOUT = 5
 
       #################################
       # Class variables
@@ -156,6 +157,7 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
+
       def create_project(options = { title: 'Project' })
         GoodData::Project.create({ client: self }.merge(options))
       end
@@ -191,8 +193,16 @@ module GoodData
 
       def disconnect
         if stats_on?
-          puts "API call statistics to server #{@connection.server}"
-          puts @connection.stats_table
+          GoodData.logger.warn "Statistics collecting is turned ON. We are collecting some data about execution performance - all sensitive information are being anonymized."
+          begin
+            Timeout::timeout(STATS_LOG_TIMEOUT) do
+              @connection.stats_log.each do |log|
+                GoodData.logger.info(log)
+              end
+            end
+          rescue Timeout::Error
+            GoodData.logger.warn "Statistics logging took to long. Some statistics weren't recorded."
+          end
         end
         @connection.disconnect
       end
@@ -240,6 +250,14 @@ module GoodData
 
       def stats_on?
         @stats
+      end
+
+      def active_action(action)
+        @connection.active_action = action
+      end
+
+      def active_brick(brick)
+        @connection.active_brick = brick
       end
 
       def generate_request_id

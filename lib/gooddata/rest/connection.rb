@@ -128,9 +128,16 @@ module GoodData
       attr_reader :user
       attr_reader :verify_ssl
 
+      attr_reader :active_action
+      attr_reader :active_brick
+      attr_writer :active_action
+      attr_writer :active_brick
+
       def initialize(opts)
         super()
         @stats = ThreadSafe::Hash.new
+        @stats[:aggregated] = ThreadSafe::Hash.new
+        @stats[:calls] = ThreadSafe::Array.new
 
         headers = opts[:headers] || {}
         @webdav_headers = DEFAULT_WEBDAV_HEADERS.merge(headers)
@@ -382,53 +389,36 @@ module GoodData
         request_params[:x_gdc_authsst]
       end
 
-      def stats_table(values = stats)
-        sorted = values.sort_by { |_k, v| v[:avg] }
-        Terminal::Table.new :headings => %w(title avg min max total calls) do |t|
-          overall = {
-            :avg => 0,
-            :calls => 0,
-            :total => 0
-          }
-
-          sorted.each do |l|
-            avg = l[1][:avg]
-            min = l[1][:min]
-            max = l[1][:max]
-            total = l[1][:total]
-            calls = l[1][:calls]
-
-            row = [
-              l[0],
-              sprintf('%.3f', avg),
-              sprintf('%.3f', min),
-              sprintf('%.3f', max),
-              sprintf('%.3f', total),
-              calls
-            ]
-
-            overall[:min] = min if overall[:min].nil? || min < overall[:min]
-            overall[:max] = max if overall[:max].nil? || max > overall[:max]
-            overall[:total] += total
-            overall[:calls] += calls
-            overall[:avg] += avg
-
-            t.add_row row
+      # Method returning CSV containing all collected data
+      def stats_csv(values = stats)
+        row_id = 0
+        csv_string = CSV.generate do |csv|
+          values[:calls].each do |row|
+            row_id += 1
+            if row_id == 1
+              csv << row.keys
+            else
+              csv << row.values
+            end
           end
-
-          overall[:avg] = overall[:avg] / sorted.length
-          row = [
-            'TOTAL',
-            sprintf('%.3f', overall[:avg]),
-            sprintf('%.3f', overall[:min]),
-            sprintf('%.3f', overall[:max]),
-            sprintf('%.3f', overall[:total]),
-            overall[:calls]
-          ]
-
-          t.add_row :separator
-          t.add_row row
         end
+        return csv_string
+      end
+
+      def stats_log(values = stats)
+        log_array = []
+        values[:calls].each do |row|
+          log_string = "STATS_LOG "
+          row.each do |pair|
+            log_string << pair[0].to_s << "="
+            log_string << "\"" if pair[0] == :title || pair[0] == :time_stamp
+            log_string << pair[1].to_s
+            log_string << "\"" if pair[0] == :title || pair[0] == :time_stamp
+            log_string << " "
+          end
+          log_array << log_string
+        end
+        return log_array
       end
 
       # Reader method for TT token
@@ -597,7 +587,7 @@ ERR
         t2 = Time.now
         delta = t2 - t1
 
-        update_stats title, delta
+        update_stats title, delta, t1
         res
       end
 
@@ -617,25 +607,38 @@ ERR
         new_params
       end
 
-      def update_stats(title, delta)
+      def anonymize_path(path)
+        # if /gdc/projects/{id}
+        PH_MAP.each do |pm|
+          break if path.gsub!(pm[1], pm[0])
+        end
+        return path
+      end
+
+      def update_stats(title, delta, time_stamp)
         synchronize do
-          orig_title = title
+          title = anonymize_path(title)
 
-          placeholders = true
+          action = active_action.nil? ? "undefined_action" : active_action
+          brick = active_brick.nil? ? "undefined_brick" : active_brick
 
-          if placeholders
-            title = self.class.map_placeholders(title)
-          end
-
-          stat = stats[title]
+          # Update aggregated
+          stats[:aggregated][title] = {} if stats[:aggregated][title].nil?
+          stat = stats[:aggregated][title][action]
           if stat.nil?
             stat = {
+              :title => title,
+              :action => action,
+              :brick => brick,
               :min => delta,
               :max => delta,
               :total => 0,
               :avg => 0,
               :calls => 0,
-              :entries => []
+              :time_stamp => time_stamp.strftime("%FT%T.%6N"),
+              :type => "aggregated_calls",
+              :api_version => GoodData.version,
+              :domain => server_url.gsub(%r{http://|https://}, "")
             }
           end
 
@@ -645,9 +648,20 @@ ERR
           stat[:calls] += 1
           stat[:avg] = stat[:total] / stat[:calls]
 
-          stat[:entries] << orig_title if placeholders
+          stats[:aggregated][title][action] = stat
 
-          stats[title] = stat
+          # Add single api call
+          stat = {
+            :request => title,
+            :action => action,
+            :brick => brick,
+            :length => delta,
+            :time_stamp => Time.now,
+            :type => "api_call",
+            :api_version => GoodData.version,
+            :domain => server_url.gsub(%r{http://|https://}, "")
+          }
+          stats[:calls] << stat
         end
       end
 
