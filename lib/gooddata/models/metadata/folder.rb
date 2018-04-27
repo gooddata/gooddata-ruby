@@ -26,6 +26,28 @@ module GoodData
       def all(options = { :client => GoodData.connection, :project => GoodData.project })
         query('folder', Folder, options)
       end
+
+      def create(opts)
+        title = opts[:title]
+        summary = opts[:summary] || ''
+        type = opts[:type] || 'fact'
+
+        folder = {
+          'folder' => {
+            'content' => {
+              'type' => Array(type)
+            },
+            'meta' => {
+              'tags' => '',
+              'summary' => summary,
+              'title' => title
+            }
+          }
+        }
+
+        client, project = GoodData.get_client_and_project(opts)
+        client.create(Folder, folder, project: project)
+      end
     end
 
     def entries
