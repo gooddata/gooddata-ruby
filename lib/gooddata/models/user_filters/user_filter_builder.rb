@@ -389,7 +389,9 @@ module GoodData
       if dry_run
         create_results = to_create.map { |x| { status: 'dry_run', user: x.first, type: 'create' } }
         delete_results = to_delete.map { |x| { status: 'dry_run', user: x.first, type: 'delete' } }
-        return { results: create_results + delete_results }
+        return { created: {},
+                 deleted: {},
+                 results: create_results + delete_results }
       end
 
       create_results = to_create.each_slice(100).flat_map do |batch|
