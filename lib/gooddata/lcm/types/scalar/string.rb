@@ -16,6 +16,15 @@ module GoodData
         def check(value)
           value.is_a?(String)
         end
+
+        def migrate(value, to_type)
+          case to_type
+          when GoodData::LCM2::Type::ArrayType
+            value.nil? ? (true) : ([value])
+          else
+            value.nil? ? (false) : (fail "Can not migrate String to #{to_type}")
+          end
+        end
       end
     end
   end
