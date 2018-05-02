@@ -1172,22 +1172,15 @@ module GoodData
     # @return [String] Returns token that you can use as input for object_import
     def objects_export(objs, options = {})
       fail 'Nothing to migrate. You have to pass list of objects, ids or uris that you would like to migrate' if objs.nil?
-      objs = Array(objs)
+      objs = Array(objs).map { |o| o.respond_to?(:uri) ? o.uri : o }
       if objs.empty?
         GoodData.logger.warn 'Nothing to migrate.'
         return
       end
 
-      objs = objs.pmap { |obj| [obj, objects(obj)] }
-      if objs.any? { |_, obj| obj.nil? }
-        object = objs.select { |_, obj| obj.nil? }.map { |o, _| o }.join(', ')
-        error_message = "Exporting objects failed with messages. " \
-                        "Object #{object} could not be found."
-        fail ObjectsExportError, error_message
-      end
       export_payload = {
         :partialMDExport => {
-          :uris => objs.map { |_, obj| obj.uri },
+          :uris => objs,
           :exportAttributeProperties => '1',
           :crossDataCenterExport => '1'
         }
@@ -1259,32 +1252,21 @@ module GoodData
       if projects.is_a?(Array)
         projects.each_slice(batch_size).flat_map do |batch|
           batch.pmap do |proj|
-            begin
-              target_project = client.projects(proj)
-              target_project.objects_import(token, options)
-              {
-                project: target_project,
-                result: true
-              }
-            rescue RestClient::Exception => e
-              {
-                project: proj,
-                exception: e,
-                result: false,
-                reason: GoodData::Helpers.interpolate_error_message(MultiJson.load(e.response))
-              }
-            rescue GoodData::ObjectsImportError => e
-              {
-                project: target_project,
-                result: false,
-                reason: e.message
-              }
-            end
+            target_project = client.projects(proj)
+            target_project.objects_import(token, options)
+            {
+              project: target_project,
+              result: true
+            }
           end
         end
       else
         target_project = client.projects(projects)
         target_project.objects_import(token, options)
+        [{
+          project: target_project,
+          result: true
+        }]
       end
     end
 
