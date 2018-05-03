@@ -197,14 +197,17 @@ module GoodData
               fail 'The filter set can not be empty when using sync_multiple_projects_* mode as the filters contain \
                     the project ids in which the permissions should be changed'
             end
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
+            all_clients = domain.clients(:all, data_product).to_a
+            filters.group_by { |u| u[multiple_projects_column] }.map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
-              project = domain.clients(client_id, data_product).project
+              c = all_clients.detect { |specific_client| specific_client.id == client_id }
+              fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\"" if c.nil?
+              project = c.project
               fail "Client #{client_id} does not have project." unless project
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
               project.add_data_permissions(filters_to_load, run_params)
-            end
+            end.flatten
           when 'sync_domain_client_workspaces'
             without_check(PARAMS, params) do
               CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
@@ -213,6 +216,7 @@ module GoodData
             end
 
             domain_clients = domain.clients(:all, data_product)
+            all_clients = domain_clients.to_a
             if params.segments
               segment_uris = params.segments.map(&:uri)
               domain_clients = domain_clients.select { |c| segment_uris.include?(c.segment_uri) }
@@ -220,9 +224,9 @@ module GoodData
 
             working_client_ids = []
 
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
+            filters.group_by { |u| u[multiple_projects_column] }.map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
-              c = domain.clients(client_id, data_product)
+              c = all_clients.detect { |specific_client| specific_client.id == client_id }
               if params.segments && !segment_uris.include?(c.segment_uri)
                 puts "Client #{client_id} is outside segments_filter #{params.segments}"
                 next
@@ -233,7 +237,7 @@ module GoodData
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
               project.add_data_permissions(filters_to_load, run_params)
-            end
+            end.flatten
 
             results = []
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
