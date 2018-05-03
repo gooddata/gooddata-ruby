@@ -25,12 +25,11 @@ require 'rspec'
 require 'pathname'
 require 'webmock/rspec'
 require 'gooddata'
+require 'vcr_configurer'
 
 logger = Logger.new(STDOUT)
 logger.level = Logger::WARN
 GoodData.logger = logger
-
-WebMock.disable!
 
 # Automagically include all helpers/*_helper.rb
 
@@ -63,4 +62,30 @@ RSpec.configure do |config|
   config.filter_run_excluding :broken => true
 
   config.fail_fast = false
+
+  config.before(:all) do
+    # in case the test uses VCR
+    if self.class.metadata[:vcr]
+      # replace parallel iterations with the serial one, since VCR can't handle parallel request matching correctly
+      module Enumerable
+        def peach_with_index(*)
+          each_with_index
+        end
+      end
+
+      # insert the cassete recording everything what happens outside the tests cases
+      VCR.insert_cassette("#{self.class.metadata[:description]}/all")
+    end
+  end
+
+  config.after(:all) do
+    # in case the test uses VCR
+    if self.class.metadata[:vcr]
+      # eject the cassete recording everything what happens outside the tests cases
+      VCR.eject_cassette
+
+      # reload the original parallel iterations
+      load('pmap.rb') if self.class.metadata[:vcr]
+    end
+  end
 end
