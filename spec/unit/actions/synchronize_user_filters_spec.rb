@@ -30,6 +30,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
     allow(client).to receive(:projects).and_return(project)
     allow(client).to receive(:domain).and_return(domain)
     allow(organization).to receive(:project_uri)
+    allow(organization).to receive(:id).and_return('123456789')
     allow(project).to receive(:add_data_permissions).and_return([{}])
     allow(project).to receive(:pid).and_return('123456789')
     allow(user).to receive(:login).and_return('my_login')
@@ -42,12 +43,11 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       allow(project).to receive(:metadata).and_return({})
       allow(project).to receive(:uri)
       allow(data_source).to receive(:realize)
-      allow(organization).to receive(:id).and_return('client123')
       allow(organization).to receive(:project).and_return(project)
     end
     context 'when mode requires client_id' do
       before do
-        allow(domain).to receive(:clients).and_return(organization)
+        allow(domain).to receive(:clients).and_return([organization])
       end
       let(:mode) { 'sync_multiple_projects_based_on_custom_id' }
       let(:params) do
@@ -176,7 +176,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         input_source: 'foo',
         domain: 'bar',
         multiple_projects_column: 'id_column',
-        sync_mode: 'unsuported_sync_mode', # sync_one_project_based_on_custom_id
+        sync_mode: 'unsuported_sync_mode',
         gdc_logger: logger
       }
       GoodData::LCM2.convert_to_smart_hash(params)
