@@ -6,7 +6,7 @@
 
 require 'gooddata/mixins/md_id_to_uri'
 
-describe GoodData::Mixin::MdIdToUri do
+describe GoodData::Mixin::MdIdToUri, :vcr do
   before :all do
     @client = ConnectionHelper.create_default_connection
     @suffix = AppstoreProjectHelper.suffix
@@ -31,6 +31,7 @@ describe GoodData::Mixin::MdIdToUri do
 
   after(:all) do
     @project.delete
+    @client.disconnect
   end
 
   it 'should throw BadRequest for -1' do

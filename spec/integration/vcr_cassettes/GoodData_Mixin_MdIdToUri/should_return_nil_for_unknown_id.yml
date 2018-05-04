@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/fmsa7k9ty8tvwg6h9v4o0nvg071kjd34/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["0"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - oTcKo3v63KR_5D8pM_6UwQ:6TklRXHL9ZLDYVrMfG1G2w
+      Content-Length:
+      - '25'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Vary:
+      - Origin
+      Date:
+      - Fri, 04 May 2018 09:39:38 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - oTcKo3v63KR_5D8pM_6UwQ:6TklRXHL9ZLDYVrMfG1G2w:vdVLFH4Hqsi1ZoAA
+      X-Gdc-Request-Time:
+      - '43'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"identifiers":[]}'
+    http_version: 
+  recorded_at: Fri, 04 May 2018 09:39:38 GMT
+recorded_with: VCR 4.0.0
