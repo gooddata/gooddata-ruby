@@ -25,14 +25,27 @@ module GoodData
         end
       end
 
+      # custom path matcher, sanitizing the randomness of uploads dirs
+      gdc_path_matcher = lambda do |client_request, recorded_request|
+        client_path = client_request.parsed_uri.path
+        recorded_path = recorded_request.parsed_uri.path
+        uploads_regex = %r{(\/gdc\/uploads\/)[^\/]+(\/.*)}
+        if client_path.match(uploads_regex) && recorded_path.match(uploads_regex)
+          client_path.gsub(uploads_regex, '\1UPLOADS_TMP\2') == recorded_path.gsub(uploads_regex, '\1UPLOADS_TMP\2')
+        else
+          client_path == recorded_path
+        end
+      end
+
       VCR.configure do |vcr_config|
         vcr_config.cassette_library_dir = 'spec/integration/vcr_cassettes'
         vcr_config.hook_into :webmock
         vcr_config.allow_http_connections_when_no_cassette = true
         vcr_config.configure_rspec_metadata!
+
         vcr_config.default_cassette_options = {
           :decode_compressed_response => true,
-          :match_requests_on => [:path, :method, :query],
+          :match_requests_on => [gdc_path_matcher, :method, :query],
           # allow to set record mode from environment, see https://relishapp.com/vcr/vcr/v/3-0-3/docs/record-modes
           :record => (ENV['VCR_RECORD_MODE'] && ENV['VCR_RECORD_MODE'].to_sym) || :once
         }
