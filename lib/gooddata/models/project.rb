@@ -264,6 +264,9 @@ module GoodData
           to_process = if process.path
                          to_process.delete if to_process
                          GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
+                       elsif process.component
+                         to_process.delete if to_process
+                         GoodData::Process.deploy_component(GoodData::Helpers.symbolize_keys(process.to_hash), project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
                            dir = Pathname(dir)
