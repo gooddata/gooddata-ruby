@@ -264,6 +264,9 @@ module GoodData
           to_process = if process.path
                          to_process.delete if to_process
                          GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
+                       elsif process.component
+                         to_process.delete if to_process
+                         GoodData::Process.deploy_component(GoodData::Helpers.symbolize_keys(process.to_hash), project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
                            dir = Pathname(dir)
@@ -403,6 +406,9 @@ module GoodData
             remote_process, process_spec = cache.find do |_remote, local, schedule|
               (schedule_spec[:process_id] == local.process_id) && (schedule.name == schedule_spec[:name])
             end
+
+            # processes without schedules
+            # next unless remote_process && process_spec
 
             GoodData.logger.info("Creating schedule #{schedule_spec[:name]} for process #{remote_process.name}")
 

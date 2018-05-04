@@ -29,4 +29,19 @@ describe GoodData::Command::Project, :constraint => 'slow' do
     expect(@project.blueprint.datasets.count).to eq(4)
     expect(@project.blueprint.datasets(:all, :include_date_dimensions => true).count).to eq(5)
   end
+
+  describe '#get_spec_and_project_id' do
+    before do
+      File.write '.gooddata', { model: 'model.rb', project_id:  @project.pid}.to_json
+      File.write 'model.rb', 'puts "lolek"'
+    end
+
+    after do
+      `rm .gooddata model.rb`
+    end
+
+    it 'works' do
+      expect(GoodData::Command::Project.get_spec_and_project_id('.')).to be_truthy
+    end
+  end
 end
