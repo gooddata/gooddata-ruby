@@ -6,7 +6,7 @@
 
 require 'gooddata/connection'
 
-describe GoodData::Rest::Connection do
+describe GoodData::Rest::Connection, :vcr do
   before(:all) do
     USERNAME = ConnectionHelper::DEFAULT_USERNAME
     PASSWORD = ConnectionHelper::DEFAULT_PASSWORD
