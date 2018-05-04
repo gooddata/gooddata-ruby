@@ -306,8 +306,7 @@ module GoodData
         check_unused_params(actions, params)
         print_action_names(mode, actions)
 
-        params.gdc_gd_client.active_brick(mode) if params.gdc_gd_client != nil
-        params.development_client.active_brick(mode) if params.development_client != nil
+        GoodData::Rest::Client.connection.active_brick(mode) if GoodData::Rest::Client.connection != nil
 
         # Run actions
         errors = []
@@ -325,8 +324,7 @@ module GoodData
             BaseAction.check_params(action.const_get('PARAMS'), params)
             params.setup_filters(action.const_get('PARAMS'))
 
-            params.gdc_gd_client.active_action(action.to_s) if params.gdc_gd_client != nil
-            params.development_client.active_action(action.to_s) if params.development_client != nil
+            GoodData::Rest::Client.connection.active_action(action.to_s) if GoodData::Rest::Client.connection != nil
 
             out = action.send(:call, params)
             params.clear_filters
