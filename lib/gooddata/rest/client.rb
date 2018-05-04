@@ -197,7 +197,7 @@ module GoodData
           begin
             Timeout::timeout(STATS_LOG_TIMEOUT) do
               @connection.stats_log.each do |log|
-                GoodData.logger.info(log)
+                GoodData.logger.warn(log)
               end
             end
           rescue Timeout::Error
