@@ -32,7 +32,9 @@ module GoodData
         vcr_config.configure_rspec_metadata!
         vcr_config.default_cassette_options = {
           :decode_compressed_response => true,
-          :match_requests_on => [:path, :method, :query]
+          :match_requests_on => [:path, :method, :query],
+          # allow to set record mode from environment, see https://relishapp.com/vcr/vcr/v/3-0-3/docs/record-modes
+          :record => (ENV['VCR_RECORD_MODE'] && ENV['VCR_RECORD_MODE'].to_sym) || :once
         }
 
         %w(request response).each do |part|
