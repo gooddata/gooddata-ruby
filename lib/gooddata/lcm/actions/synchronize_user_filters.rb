@@ -65,6 +65,9 @@ module GoodData
 
         description 'User brick users'
         param :users_brick_users, instance_of(Type::ObjectType), required: false
+
+        description 'Makes the brick run without altering user filters'
+        param :dry_run, instance_of(Type::StringType), required: false, default: false
       end
 
       class << self
@@ -124,7 +127,7 @@ module GoodData
             ignore_missing_values: params.ignore_missing_values == 'true',
             do_not_touch_filters_that_are_not_mentioned: params.do_not_touch_filters_that_are_not_mentioned == 'true',
             domain: domain,
-            dry_run: false,
+            dry_run: params[:dry_run],
             users_brick_input: params.users_brick_users
           }
 

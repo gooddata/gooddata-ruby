@@ -38,7 +38,7 @@ describe GoodData::LCM2::ProvisionClients do
       GoodData::LCM2.convert_to_smart_hash(params)
     end
 
-    it 'clean all zombie clients ' do
+    it 'clean all zombie clients' do
       expect(GoodData::LCM2::PurgeClients).to receive(:call).and_return(results: [], params: { client_projects: [] })
       expect { subject.class.call(params) }.to raise_error('limit reached')
     end
