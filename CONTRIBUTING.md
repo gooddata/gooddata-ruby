@@ -35,4 +35,16 @@ We use [Pronto](https://github.com/prontolabs/pronto) to detect code smells usin
    [license](/LICENSE).
 1. Use `GoodData.logger` for logging instead of `puts`.
 
+## Integration tests
+[Integration tests](spec/integration) can be run against different GoodData [environments](spec/environment) or with 
+[VCR](https://relishapp.com/vcr/vcr/docs). 
+
+### VCR test setup
+When adding new integration test, always set `:vcr` metadata. 
+```ruby
+describe 'New integration test', :vcr
+``` 
+The VCR `record` mode can be set via `VCR_RECORD_MODE` environment variable. Set it to `all` to make a new recording.
+Please check the recorded payloads for possible sensitive data before submitting to github.
+
 _Based on [GitLab's contribution guide](https://github.com/gitlabhq/gitlabhq/blob/master/CONTRIBUTING.md)._

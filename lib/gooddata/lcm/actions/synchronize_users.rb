@@ -125,6 +125,7 @@ module GoodData
       class << self
         MODES = %w(
           add_to_organization
+          remove_from_organization
           sync_project
           sync_domain_and_project
           sync_multiple_projects_based_on_pid
@@ -183,6 +184,11 @@ module GoodData
           results = case mode
                     when 'add_to_organization'
                       domain.create_users(new_users.uniq { |u| u[:login] || u[:email] })
+                    when 'remove_from_organization'
+                      user_ids = new_users.uniq { |u| u[:login] || u[:email] }.map { |u| u[:login] || u[:email] }
+                      users = user_ids.map { |u| domain.users(u, client: client) }
+                      params.gdc_logger.warn "Deleting #{users.count} users from domain #{domain_name}"
+                      users.map(&:delete)
                     when 'sync_project'
                       project.import_users(new_users,
                                            domain: domain,
