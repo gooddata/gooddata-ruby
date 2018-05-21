@@ -8,7 +8,7 @@ require 'gooddata/connection'
 require 'gooddata/core/project'
 require 'gooddata/models/project'
 
-describe 'GoodData - project' do
+describe 'GoodData - project', :vcr do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end

@@ -36,7 +36,7 @@ class TestLogger < Logger
   end
 end
 
-describe 'GoodData - logging' do
+describe 'GoodData - logging', :vcr do
   TEST_MESSAGE = 'Hello World!'
 
   def test_error
@@ -52,10 +52,10 @@ describe 'GoodData - logging' do
   end
 
   def test_request_id_logging
-    c = ConnectionHelper.create_default_connection
-    id = c.generate_request_id
+    @client = ConnectionHelper.create_default_connection
+    id = @client.generate_request_id
     GoodData.logger.info "Request id: #{id} Doing something very useful"
-    c.get('/gdc/md', :request_id => id)
+    @client.get('/gdc/md', :request_id => id)
     id
   end
 
@@ -78,6 +78,8 @@ describe 'GoodData - logging' do
     else
       GoodData.logging_off
     end
+
+    @client.disconnect if @client
   end
 
   describe '#logger' do
@@ -93,9 +95,9 @@ describe 'GoodData - logging' do
     it 'client logs when given custom message' do
       GoodData.logger = TestLogger.new(STDOUT)
       GoodData.logger.level = Logger::INFO
-      c = ConnectionHelper.create_default_connection
+      @client = ConnectionHelper.create_default_connection
       message = "Getting all projects."
-      c.get('/gdc/md', :info_message => message)
+      @client.get('/gdc/md', :info_message => message)
       expect(GoodData.logger.last_message).to include(message)
     end
   end
