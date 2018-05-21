@@ -85,6 +85,27 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         it_behaves_like 'a user action filtering segments' do
           let(:message_for_project) { :add_data_permissions }
         end
+
+        context 'when dry_run param is true' do
+          let(:params) do
+            params = {
+              GDC_GD_CLIENT: client,
+              input_source: 'foo',
+              domain: 'bar',
+              filters_config: { labels: [] },
+              sync_mode: mode,
+              gdc_logger: logger,
+              dry_run: true
+            }
+            GoodData::LCM2.convert_to_smart_hash(params)
+          end
+
+          it 'sets the dry_run option' do
+            expect(project).to receive(:add_data_permissions)
+              .with(instance_of(Array), hash_including(dry_run: true))
+            subject.class.call(params)
+          end
+        end
       end
     end
   end
