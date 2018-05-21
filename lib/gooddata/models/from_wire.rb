@@ -120,7 +120,7 @@ module GoodData
         facts = stuff['dataset']['facts'] || []
         facts.map do |fact|
           {}.tap do |f|
-            f[:type] = fact['fact']['identifier'] =~ /^dt\./ ? :date_fact : :fact
+            f[:type] = resolve_fact_type(fact)
             f[:id] = fact['fact']['identifier']
             f[:title] = fact['fact']['title']
             f[:description] = fact['fact']['description'] if fact['fact']['description']
@@ -166,6 +166,18 @@ module GoodData
               :dataset => ref
             }
           end
+        end
+      end
+
+      private
+
+      def self.resolve_fact_type(fact)
+        if fact['fact']['type'].to_s.downcase == 'hll'
+          :hll
+        elsif fact['fact']['identifier'] =~ /^dt\./
+          :date_fact
+        else
+          :fact
         end
       end
     end

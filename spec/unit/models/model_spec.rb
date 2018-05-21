@@ -74,4 +74,14 @@ describe GoodData::Model do
     @base_blueprint.merge!(@additional_blueprint)
     @base_blueprint.find_dataset("dataset.repos").attributes.include?(type: "attribute", id: "some_attr_id", :title => "Repository Name")
   end
+
+  describe '.check_gd_data_type' do
+    let(:hll_types) { %w(HLL hll hLl) }
+    it 'supports HLL type' do
+      hll_types.each do |type|
+        actual = subject.check_gd_data_type(type)
+        expect(actual).to be(true)
+      end
+    end
+  end
 end

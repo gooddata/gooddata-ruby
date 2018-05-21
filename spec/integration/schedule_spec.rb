@@ -115,14 +115,12 @@ describe GoodData::Schedule do
       end
     end
 
-    it 'Throws exception when no cron is specified' do
+    it 'Works when no cron or schedule is specified' do
       data = GoodData::Helpers.deep_dup(@test_data)
       data[:cron] = nil
       schedule = nil
       begin
-        expect do
-          schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, nil, ProcessHelper::DEPLOY_NAME, data)
-        end.to raise_error 'Trigger schedule has to be provided'
+        schedule = @project.create_schedule(ProcessHelper::PROCESS_ID, nil, ProcessHelper::DEPLOY_NAME, data)
       ensure
         schedule && schedule.delete
       end

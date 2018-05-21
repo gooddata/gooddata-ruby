@@ -146,6 +146,7 @@ describe GoodData::Model::ProjectBlueprint do
       result = ToWire.fact_to_wire(nil, fact_def)
       expect(result).to eq(
         fact: {
+          type: "fact",
           identifier: "fact.stage_history.stage_velocity",
           title: "Stage Velocity",
           dataType: "DECIMAL(12,2)",
