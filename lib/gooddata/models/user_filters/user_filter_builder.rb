@@ -387,6 +387,7 @@ module GoodData
       end
 
       if dry_run
+        GoodData.logger.warn('Option "dry_run" specified. No user filters will be altered!')
         create_results = to_create.map { |x| { status: 'dry_run', user: x.first, type: 'create' } }
         delete_results = to_delete.map { |x| { status: 'dry_run', user: x.first, type: 'delete' } }
         return { created: {},
