@@ -1,0 +1,1257 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:jzl803R6Eal0oJWViXXCFA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:10 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:jzl803R6Eal0oJWViXXCFA:9Knhi93ygjFdWzyK
+      X-Gdc-Request-Time:
+      - '22'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:11 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-104z2g6/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:11 GMT
+      Server:
+      - Apache
+      Content-Length:
+      - '234'
+      Content-Type:
+      - text/html; charset=iso-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>404 Not Found</title>
+        </head><body>
+        <h1>Not Found</h1>
+        <p>The requested URL /gdc/uploads/d20180521-24354-104z2g6/ was not found on this server.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:11 GMT
+- request:
+    method: mkcol
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-104z2g6/
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:12 GMT
+      Server:
+      - Apache
+      Location:
+      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-104z2g6/
+      Content-Security-Policy:
+      - frame-ancestors 'none'
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '211'
+      Content-Type:
+      - text/html; charset=ISO-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>201 Created</title>
+        </head><body>
+        <h1>Created</h1>
+        <p>Collection /gdc/uploads/d20180521-24354-104z2g6/ has been created.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:12 GMT
+- request:
+    method: put
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-104z2g6/upload.zip
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        UEsDBBQAAAAIAMVwtUxt/di19QAAAN0CAAAQAAAAdXBsb2FkX2luZm8uanNv
+        brWSTWvDMAyG7/kVxudQ2HXXwWDM2wqlp7YELVGYwV+zlcEI/e+zXdI5ZjvW
+        B1viefVawp4bxvgABDuknXh6ASNHDCRkIH7PDpEyNuf9T13ULDRyB57Cteyy
+        5iKOEo8jejQ9PuN3VN61a+ysmxQQ1i4ZBquxU/COqpMDX9FT5aPtgNGCP+6F
+        4BXrrZq0eQWdFR6drezO7Q37ByJ/myFMSsoxrnFhvLxhqkphQNqk6lBcwEep
+        sBB0WbDpw1cpiukWPOiw+gMRfE6W8OEDfLI48lXnHEMP7l8aMH4hIOsXQVtV
+        m+FtFNLk7o7md9pl1suZ9lNzbn4AUEsDBBQAAAAIAMVwtUwTDBJaKAAAACkA
+        AAARAAAAZGF0YXNldF9yZXBvcy5jc3YrSi3Ij89M0SkC0XmJualchjrp+fkp
+        +SVcRjpJiblcxjqZeWlFiVwAUEsBAjQDFAAAAAgAxXC1TG392LX1AAAA3QIA
+        ABAAAAAAAAAAAQAAAKSBAAAAAHVwbG9hZF9pbmZvLmpzb25QSwECNAMUAAAA
+        CADFcLVMEwwSWigAAAApAAAAEQAAAAAAAAABAAAApIEjAQAAZGF0YXNldF9y
+        ZXBvcy5jc3ZQSwUGAAAAAAIAAgB9AAAAegEAAAAA
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Content-Length:
+      - '525'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:12 GMT
+      Server:
+      - Apache
+      Location:
+      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-104z2g6/upload.zip
+      Content-Security-Policy:
+      - frame-ancestors 'none'
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '219'
+      Content-Type:
+      - text/html; charset=ISO-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>201 Created</title>
+        </head><body>
+        <h1>Created</h1>
+        <p>Resource /gdc/uploads/d20180521-24354-104z2g6/upload.zip has been created.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:12 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:5WMoCA2XmGpra1K269_YhQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:13 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:5WMoCA2XmGpra1K269_YhQ:IqodVYgwiKQrWxa4
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '14'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Extract, transform and load services for project
+        ''sdixw5jc8mwtffse2og3edop2jtrrpki''","category":"etl","instance":"sdixw5jc8mwtffse2og3edop2jtrrpki","links":[{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/pull2","summary":"Provides
+        service of pull2.","category":"pull2","title":"pull2"},{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/task","summary":"Provides
+        service of task.","category":"task","title":"task"},{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/mode","summary":"Provides
+        service of mode.","category":"mode","title":"mode"}]}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:13 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/pull2
+    body:
+      encoding: UTF-8
+      string: '{"pullIntegration":"d20180521-24354-104z2g6"}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:nAithOUwGaFc-BDBD-4iPA
+      Info-Message:
+      - Starting the data load from user storage to dataset.
+      Content-Length:
+      - '45'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:14 GMT
+      Server:
+      - GoodData WebApp
+      Location:
+      - "/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status"
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:nAithOUwGaFc-BDBD-4iPA:HDdhcsgPhkSwrLep
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '41'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"pull2Task":{"links":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status"}}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:14 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:LupOOYYfj7vVIkSnGeNkMQ
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:14 GMT
+      Server:
+      - GoodData WebApp
+      Refresh:
+      - '2'
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:LupOOYYfj7vVIkSnGeNkMQ:939rtcBgRkkJyHq6
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '27'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status","status":"RUNNING","links":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status"}}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:14 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:U-HFUZTYv6TdjSwF7z7eIw
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:25 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:U-HFUZTYv6TdjSwF7z7eIw:MShMdhYbKxy68ZvO
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '49'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status","status":"OK","links":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/b1f09b3d02033059feb3702ef1dfbffd0000004e/status"}}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:25 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:xai3jqQzVPfeG4_bA6xbgA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:26 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:xai3jqQzVPfeG4_bA6xbgA:GCZzS8w9Xi73oUz8
+      X-Gdc-Request-Time:
+      - '23'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:26 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-1gpnymi/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:26 GMT
+      Server:
+      - Apache
+      Content-Length:
+      - '234'
+      Content-Type:
+      - text/html; charset=iso-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>404 Not Found</title>
+        </head><body>
+        <h1>Not Found</h1>
+        <p>The requested URL /gdc/uploads/d20180521-24354-1gpnymi/ was not found on this server.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:26 GMT
+- request:
+    method: mkcol
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-1gpnymi/
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:27 GMT
+      Server:
+      - Apache
+      Location:
+      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-1gpnymi/
+      Content-Security-Policy:
+      - frame-ancestors 'none'
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '211'
+      Content-Type:
+      - text/html; charset=ISO-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>201 Created</title>
+        </head><body>
+        <h1>Created</h1>
+        <p>Collection /gdc/uploads/d20180521-24354-1gpnymi/ has been created.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:27 GMT
+- request:
+    method: put
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-1gpnymi/upload.zip
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        UEsDBBQAAAAIAMxwtUzVdVk/+AAAAMMCAAAQAAAAdXBsb2FkX2luZm8uanNv
+        bq2Sy2rDMBBF9/4KobUJdNttIVCiPiB0lYQwscZUoIcryYFi/O8ZyziR3WZR
+        qBajEffqcAepKxjjEiJsMW7F8wtYVWOIQoXIH9mOVMa6VH/1kWdSSW/Ax3C9
+        Nq4u68nisUaPtsINfpPzoZzLjWtaDRGXlCRqOKFeSTyHoRyVXCnJZ6bDAmec
+        RCLx9YcQfKFVTrfGvoJJjhGY0/ry/hR/jIkGlP6vpD9g/bXPoNNbpdmoDRhT
+        pIzNa6Ux048pchXOuYeO7+DBhNlLk/DVuohPn+AHwp7PMnMMFTR31YD0USA6
+        PxnKxW0r32qhbAq3t7dZp0nHfaiHoi8uUEsDBBQAAAAIAMxwtUxQPUsLLwAA
+        AEIAAAAQAAAAZGF0YXNldF9kZXZzLmNzdktJLYvPTNFJzU3MzOEy1CnJz00s
+        dkgH8fSS83O5jHQKUkuKkASMdbIyi7ITkUQAUEsBAjQDFAAAAAgAzHC1TNV1
+        WT/4AAAAwwIAABAAAAAAAAAAAQAAAKSBAAAAAHVwbG9hZF9pbmZvLmpzb25Q
+        SwECNAMUAAAACADMcLVMUD1LCy8AAABCAAAAEAAAAAAAAAABAAAApIEmAQAA
+        ZGF0YXNldF9kZXZzLmNzdlBLBQYAAAAAAgACAHwAAACDAQAAAAA=
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Content-Length:
+      - '533'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:27 GMT
+      Server:
+      - Apache
+      Location:
+      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-1gpnymi/upload.zip
+      Content-Security-Policy:
+      - frame-ancestors 'none'
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '219'
+      Content-Type:
+      - text/html; charset=ISO-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>201 Created</title>
+        </head><body>
+        <h1>Created</h1>
+        <p>Resource /gdc/uploads/d20180521-24354-1gpnymi/upload.zip has been created.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:28 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:WkPnq0oYnBvO42wvefAC-A
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:28 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:WkPnq0oYnBvO42wvefAC-A:seymdEdRsHn9JT43
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '13'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Extract, transform and load services for project
+        ''sdixw5jc8mwtffse2og3edop2jtrrpki''","category":"etl","instance":"sdixw5jc8mwtffse2og3edop2jtrrpki","links":[{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/pull2","summary":"Provides
+        service of pull2.","category":"pull2","title":"pull2"},{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/task","summary":"Provides
+        service of task.","category":"task","title":"task"},{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/mode","summary":"Provides
+        service of mode.","category":"mode","title":"mode"}]}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:28 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/pull2
+    body:
+      encoding: UTF-8
+      string: '{"pullIntegration":"d20180521-24354-1gpnymi"}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:f4ieRG4iTDb9xNf7sQVt-w
+      Info-Message:
+      - Starting the data load from user storage to dataset.
+      Content-Length:
+      - '45'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:30 GMT
+      Server:
+      - GoodData WebApp
+      Location:
+      - "/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/6730a8e9be2b2b83489806cf30e3531a0000004e/status"
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:f4ieRG4iTDb9xNf7sQVt-w:uQgz3yR9x6gVH1wC
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '44'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"pull2Task":{"links":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/6730a8e9be2b2b83489806cf30e3531a0000004e/status"}}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:30 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/6730a8e9be2b2b83489806cf30e3531a0000004e/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:FE3DiXANQNa4hWlzUngApQ
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:30 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:FE3DiXANQNa4hWlzUngApQ:p8jHZtKI3IysCdXF
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/6730a8e9be2b2b83489806cf30e3531a0000004e/status","status":"OK","links":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/6730a8e9be2b2b83489806cf30e3531a0000004e/status"}}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:30 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:reLt0bBCC09KmyXnzkr9YA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:reLt0bBCC09KmyXnzkr9YA:ZHpAubG5zGfgZEtm
+      X-Gdc-Request-Time:
+      - '22'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:31 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-n2is7o/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:32 GMT
+      Server:
+      - Apache
+      Content-Length:
+      - '233'
+      Content-Type:
+      - text/html; charset=iso-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>404 Not Found</title>
+        </head><body>
+        <h1>Not Found</h1>
+        <p>The requested URL /gdc/uploads/d20180521-24354-n2is7o/ was not found on this server.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:32 GMT
+- request:
+    method: mkcol
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-n2is7o/
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:32 GMT
+      Server:
+      - Apache
+      Location:
+      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-n2is7o/
+      Content-Security-Policy:
+      - frame-ancestors 'none'
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '210'
+      Content-Type:
+      - text/html; charset=ISO-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>201 Created</title>
+        </head><body>
+        <h1>Created</h1>
+        <p>Collection /gdc/uploads/d20180521-24354-n2is7o/ has been created.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:33 GMT
+- request:
+    method: put
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-n2is7o/upload.zip
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        UEsDBBQAAAAIAM9wtUyuxYOVPwEAALEEAAAQAAAAdXBsb2FkX2luZm8uanNv
+        br1UwWqEMBC9+xWSs7j02muhUKptYempXWSajN2ASWwSF0T898aIVkO30FbW
+        Qxx5b968GR27KI4JAwt7tPvsLgfJSzQ248aS6/jFoXHc+fNbnuNMqMNr0NbM
+        aePVLeKBouqmAoshzYMlUJtSJQS3Jq24RFPQI8h3ZGRFPSRrUaEYOj1y+5xl
+        JMCoqhohH0B4xlnRPvmj59GuRVYomboBYSpY2/7HrzRWA5d+kl1YbqgwpOb5
+        jrFd24al+h/bX5oNC2ssUaOkeI+t415tMZwK3rBKGZ7McBScpXyzVzkKXqIL
+        owQWvpViO/saa/VL/3O8qDrtpJ+ICw3OG7SQJiWvcEEppiWj5rSkuccn0CDC
+        T498NMrizRH0IPJKVq4JGgr1WdSg+y2AVXoiJEG2ZI9l5vbSJ8uv+U79jvfh
+        PER99AlQSwMEFAAAAAgAz3C1TF1mRFhFAAAAXQAAABMAAABkYXRhc2V0X2Nv
+        bW1pdHMuY3N2TYhRCoAwDMX+e5YHrt2BhqxFB24VHZ7ffo4EArnasLfUcx+H
+        Kar33uY0LT6g9pWmeOz2KDESb6EkZgQk6xAI5XVkZPoBUEsBAjQDFAAAAAgA
+        z3C1TK7Fg5U/AQAAsQQAABAAAAAAAAAAAQAAAKSBAAAAAHVwbG9hZF9pbmZv
+        Lmpzb25QSwECNAMUAAAACADPcLVMXWZEWEUAAABdAAAAEwAAAAAAAAABAAAA
+        pIFtAQAAZGF0YXNldF9jb21taXRzLmNzdlBLBQYAAAAAAgACAH8AAADjAQAA
+        AAA=
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Content-Length:
+      - '632'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:33 GMT
+      Server:
+      - Apache
+      Location:
+      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/d20180521-24354-n2is7o/upload.zip
+      Content-Security-Policy:
+      - frame-ancestors 'none'
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '218'
+      Content-Type:
+      - text/html; charset=ISO-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>201 Created</title>
+        </head><body>
+        <h1>Created</h1>
+        <p>Resource /gdc/uploads/d20180521-24354-n2is7o/upload.zip has been created.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:33 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:OmYZ7CzAb63S4eEJmuTmBg
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:34 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:OmYZ7CzAb63S4eEJmuTmBg:WjcMSMD9GtqDO1Fa
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '79'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Extract, transform and load services for project
+        ''sdixw5jc8mwtffse2og3edop2jtrrpki''","category":"etl","instance":"sdixw5jc8mwtffse2og3edop2jtrrpki","links":[{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/pull2","summary":"Provides
+        service of pull2.","category":"pull2","title":"pull2"},{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/task","summary":"Provides
+        service of task.","category":"task","title":"task"},{"link":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/mode","summary":"Provides
+        service of mode.","category":"mode","title":"mode"}]}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:34 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/etl/pull2
+    body:
+      encoding: UTF-8
+      string: '{"pullIntegration":"d20180521-24354-n2is7o"}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:8FRkwavrZCBEDYUsnD-wlA
+      Info-Message:
+      - Starting the data load from user storage to dataset.
+      Content-Length:
+      - '44'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:34 GMT
+      Server:
+      - GoodData WebApp
+      Location:
+      - "/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/2757fa04f70a58073eb1f0be374052a50000004e/status"
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:8FRkwavrZCBEDYUsnD-wlA:uIBgWRlMTnNMlxvJ
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '36'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"pull2Task":{"links":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/2757fa04f70a58073eb1f0be374052a50000004e/status"}}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:35 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/2757fa04f70a58073eb1f0be374052a50000004e/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:tmzCbSWzeRaTHWRe0a2X9A
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 21 May 2018 12:06:35 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Uh8UrgpkqvBAnpOSpfCivQ:tmzCbSWzeRaTHWRe0a2X9A:IYfgqUsxnjBqypYk
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '27'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/2757fa04f70a58073eb1f0be374052a50000004e/status","status":"OK","links":{"poll":"/gdc/md/sdixw5jc8mwtffse2og3edop2jtrrpki/tasks/2757fa04f70a58073eb1f0be374052a50000004e/status"}}}'
+    http_version: 
+  recorded_at: Mon, 21 May 2018 12:06:35 GMT
+recorded_with: VCR 4.0.0
