@@ -19,7 +19,7 @@ shared_examples 'a user action filtering segments' do
   end
 
   it 'does operation on project only from clients in segments in segments filter' do
-    expect(project).to receive(message_for_project)
+    expect(project).to receive(message_for_project).twice.and_return(results: [])
     expect(project_not_in_segment).not_to receive(message_for_project)
     subject.class.call(params)
   end
