@@ -80,6 +80,14 @@ RSpec.configure do |config|
 
         # insert the cassete recording everything what happens outside the tests cases
         VCR.insert_cassette("#{self.class.metadata[:description]}/all")
+
+        # avoid polling idle time by overriding sleep
+        module Kernel
+          alias :old_sleep :sleep
+          def sleep(n)
+            n
+          end
+        end
       end
     end
 
@@ -91,6 +99,11 @@ RSpec.configure do |config|
 
         # reload the original parallel iterations
         load('pmap.rb') if self.class.metadata[:vcr]
+
+        # reload sleep method
+        module Kernel
+          alias :sleep :old_sleep
+        end
       end
     end
   end
