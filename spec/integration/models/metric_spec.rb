@@ -1,6 +1,6 @@
 require 'gooddata'
 
-describe GoodData::Metric do
+describe GoodData::Metric, :vcr do
   before(:all) do
     @rest_client = ConnectionHelper.create_default_connection
     @project, * = ProjectHelper.load_full_project_implementation(@rest_client)
