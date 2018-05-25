@@ -29,7 +29,7 @@ module GoodData
       gdc_path_matcher = lambda do |client_request, recorded_request|
         client_path = client_request.parsed_uri.path
         recorded_path = recorded_request.parsed_uri.path
-        uploads_regex = %r{(\/gdc\/uploads\/)[^\/]+(\/.*)}
+        uploads_regex = %r{(\/gdc\/uploads\/)[^\/]+(.*)}
         if client_path.match(uploads_regex) && recorded_path.match(uploads_regex)
           client_path.gsub(uploads_regex, '\1UPLOADS_TMP\2') == recorded_path.gsub(uploads_regex, '\1UPLOADS_TMP\2')
         else
