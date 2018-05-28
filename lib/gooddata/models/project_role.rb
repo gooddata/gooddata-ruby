@@ -33,6 +33,7 @@ module GoodData
         d[:updated] = data[:updated] || d[:created] || Time.now
         d[:title] = data[:title]
         d[:summary] = data[:summary]
+        d[:uri] = data[:uri]
       end
       new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
         d['projectRole']['links']['self'] = data[:uri] if data[:uri]
