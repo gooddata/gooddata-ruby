@@ -28,7 +28,7 @@ module GoodData
           result = c.get("/gdc/md/#{project.pid}/userfilters?count=#{count}&offset=#{offset}")
           result['userFilters']['items'].each do |item|
             item['userFilters'].each do |f|
-              user_lookup[f] = item['user']
+              user_lookup[f] = user_lookup[f] ? Array(user_lookup[f]).concat([item['user']]) : item['user']
             end
           end
           break if result['userFilters']['length'] < offset
@@ -71,6 +71,14 @@ module GoodData
       }
       res = client.post(project.md['obj'], data)
       @json[:uri] = res['uri']
+    end
+
+    def related
+      if related_uri.is_a? Array
+        related_uri.map { |u| super u }
+      else
+        super
+      end
     end
   end
 end
