@@ -1446,12 +1446,10 @@ module GoodData
     #
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
-      url = "/gdc/projects/#{pid}/roles"
-
-      tmp = client.get(url)
-      tmp['projectRoles']['roles'].pmap do |role_url|
-        json = client.get role_url
-        client.create(GoodData::ProjectRole, json, project: self)
+      url = "/gdc/internal/projects/#{pid}/roles"
+      res = client.get url
+      res['internalProjectRoles']['roles'].map do |r|
+        client.create(GoodData::ProjectRole, r, project: self)
       end
     end
 
