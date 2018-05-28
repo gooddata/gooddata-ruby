@@ -1,4 +1,24 @@
 # GoodData Ruby SDK Changelog
+## 1.1.0
+ - fix project role spec for new role implementation (#1188)
+ - TMA-860: use new roles API (#1169)
+ - Avoid polling idle time in VCR tests
+ - Enable vcr for metric specs
+ - TMA-832: support for pluggable component process type
+ - TMA-900: setup vcr for logging_spec
+ - TMA-900: setup vcr for id_to_uri_spec
+ - TMA-900: allow vcr to match uploads requests
+ - TMA-900: setup vcr for project_spec
+ - TMA-900: add VCR to connection_spec
+ - TRIVIAL: add idea moudle to gitignore
+ - TMA-904: allow to enable/disable VCR completely by ENV
+ - TMA-895: MUFs work when shared between users
+ - TMA-868: deprecated flag now propagates the value to the replacement param if the type is compatible
+ - TMA-892: User filters brick dry run (#1156)
+ - * TMA-892: User filters brick dry run
+ - fix recovery from provision clients error
+ - make sso backwards compatible
+
 ## 1.0.2
  - TMA-775: smart attribute polling
  - TMA-809: Fix new visualization object in bricks
