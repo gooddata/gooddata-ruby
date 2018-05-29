@@ -1,9 +1,23 @@
 language: ruby
 cache: bundler
-
-rvm:
- - 2.2
- - jruby-9.1.7
-
-script:
-  - bundle exec rake test:unit
+stages:
+  - unit
+  - name: integration
+    if: type = api
+jobs:
+  include:
+    - stage: unit
+      script: bundle exec rake test:unit
+      rvm:
+        - 2.2
+        - jruby-9.1.7
+    - stage: integration
+      script: |
+              bundle exec rake -f lcm.rake docker:build
+              bundle exec rake -f lcm.rake docker:bundle
+              bundle exec rake -f lcm.rake test:integration:docker
+      rvm:
+        - jruby-9.1.7
+    - stage: integration
+      script: travis_wait 50 bundle exec rake test:integration
+      rvm: jruby-9.1.7
