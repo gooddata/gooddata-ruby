@@ -7,7 +7,7 @@ RUN apk add --no-cache curl make gcc git g++ python linux-headers binutils-gold 
 RUN ln -s /usr/bin/make /usr/bin/gmake
 
 # Switch to directory with sources
-WORKDIR /var/lib/jenkins-slave
+WORKDIR /src
 
 RUN gem update --system \
     && gem install bundler

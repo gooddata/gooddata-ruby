@@ -1,0 +1,54 @@
+{
+  "organization": "<%= config[:prod_organization] %>",
+  "CLIENT_GDC_PROTOCOL": "https",
+  "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
+  "gd_encoded_params": {
+    "GDC_USERNAME": "${username}",
+    "GDC_PASSWORD": "${password}",
+    "input_source": {
+      "type": "ads",
+      "query": "SELECT distinct LOWER(login) as login, LOWER(login) as email, first_name, last_name, sso_provider, authentication_modes FROM lcm_user;"
+    },
+    "SEGMENTS": <%= segments %>,
+    "DATA_PRODUCT": "<%= data_product %>",
+    "TOKENS": {
+      "pg": "<%= config[:prod_token] %>",
+      "vertica": "<%= config[:vertica_prod_token] %>"
+    },
+    "ads_client": {
+      "username": "${username}",
+      "password": "${password}",
+      "jdbc_url": "<%= jdbc_url %>"
+    },
+    "additional_params": {
+      "msg_from_release_brick": "Hi, I was set by release brick",
+      "print_reverted": "hidden_msg_from_release_brick,SECURE_PARAM_2"
+    },
+    "query": {
+      "select": "SELECT segment_id, master_project_id, version from \"<%= release_table_name %>\" WHERE segment_id='#{segment_id}';",
+      "insert": "INSERT INTO \"<%= release_table_name %>\" (segment_id, master_project_id, version) VALUES ('#{segment_id}', '#{master_project_id}', #{version});",
+      "update": "UPDATE \"<%= release_table_name %>\" SET master_project_id='#{master_project_id}', version=#{version} WHERE segment_id='#{segment_id}';"
+    },
+    "technical_user": [
+      "${username}"
+    ],
+    "development_client": {
+      "protocol": "https",
+      "hostname": "<%= config[:dev_server] %>",
+      "username": "${username}",
+      "password": "${password}"
+    }
+  },
+  "gd_encoded_hidden_params": {
+    "additional_hidden_params": {
+      "hidden_msg_from_release_brick": "Hi, I was set by release brick but keep it secret",
+      "SECURE_PARAM_2": "I AM SET TOO"
+    }
+  },
+  "production_tag": "dashboard, metric",
+  "release_table_name": "<%= release_table_name %>",
+  "fail_early": "true",
+  "strict": "true",
+  "username": "<%= config[:username] %>",
+  "password": "<%= config[:password] %>"
+}
