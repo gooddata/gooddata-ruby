@@ -11,7 +11,7 @@ services:
       - GD_ENV
     volumes:
       - /etc/passwd:/etc/passwd:ro
-      - .:/var/lib/jenkins-slave
+      - .:/src
     volumes_from:
       - bundle
   gooddata-jruby:
@@ -25,7 +25,7 @@ services:
       - GD_ENV
     volumes:
       - /etc/passwd:/etc/passwd:ro
-      - .:/var/lib/jenkins-slave
+      - .:/src
     volumes_from:
       - bundle
   bundle:

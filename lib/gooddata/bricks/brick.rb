@@ -6,7 +6,6 @@
 
 require_relative 'utils'
 require_relative 'middleware/middleware'
-require_relative 'pipeline'
 
 module GoodData
   module Bricks
