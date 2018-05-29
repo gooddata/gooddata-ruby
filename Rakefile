@@ -148,14 +148,14 @@ namespace :changelog do
     require_relative 'lib/gooddata/version'
     new_version = GoodData::VERSION
     changelog = File.read('CHANGELOG.md')
+    changelog_header = '# GoodData Ruby SDK Changelog'
+    changelog.slice! changelog_header
     fail 'the version is already mentioned in the changelog' if changelog =~ /## #{new_version}/
     puts "Creating changelog for version #{new_version}"
     current_commit = `git rev-parse HEAD`.chomp
-    last_release = %x(git describe --tags `git rev-list --tags --max-count=1`)
+    last_release = changelog.split("\n").reject(&:empty?).first.delete('## ').chomp
     last_release_commit = `git rev-parse #{last_release}`.chomp
     changes = `git log --format=%B --no-merges #{last_release_commit}..#{current_commit}`.split("\n").reject(&:empty?)
-    changelog_header = '# GoodData Ruby SDK Changelog'
-    changelog.slice! changelog_header
     File.open('CHANGELOG.md', 'w+') do |file|
       file.puts changelog_header + "\n"
       file.puts "## #{new_version}"
