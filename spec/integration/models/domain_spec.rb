@@ -7,7 +7,17 @@
 require 'gooddata/models/domain'
 require 'gooddata/helpers/csv_helper'
 
-describe GoodData::Domain do
+require_relative '../shared_contexts_for_deterministic_random_data'
+
+describe GoodData::Domain, :vcr do
+  before(:all) do
+    @users_to_delete = []
+  end
+
+  after(:all) do
+    @users_to_delete.map(&:login).map { |u| @domain.find_user_by_login u }.map(&:delete)
+  end
+
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
@@ -34,6 +44,7 @@ describe GoodData::Domain do
       }
 
       @user = GoodData::Domain.add_user(args)
+      @users_to_delete << @user
       expect(@user).to be_an_instance_of(GoodData::Profile)
     end
 
@@ -44,6 +55,7 @@ describe GoodData::Domain do
       password = CryptoHelper.generate_password
 
       @user = domain.add_user(:login => login, :password => password, :first_name => 'X', :last_name => 'X')
+      @users_to_delete << @user
       expect(@user).to be_an_instance_of(GoodData::Profile)
     end
   end
@@ -69,9 +81,15 @@ describe GoodData::Domain do
   end
 
   describe '#create_users' do
+    include_context 'deterministic random string in $example_name'
+
     it 'Creates new users from list' do
-      list = (0..1).to_a.map { ProjectHelper.create_random_user(@client) }
+      list = ProjectHelper.ensure_users(client: @client, amount: 2, caller: $example_name)
+      # as the test checks if the user was actually added to domain we delete it first
+      list.map(&:login).map { |u| @domain.find_user_by_login u }.map { |u| u.delete if u }
+
       res = @domain.create_users(list)
+      @users_to_delete += list
 
       # no errors
       expect(res.select { |x| x[:type] == :successful && x[:action] == :user_added_to_domain }.count).to eq res.count
@@ -85,14 +103,13 @@ describe GoodData::Domain do
     end
 
     it 'Update a user' do
-      user = @domain.users.reject { |u| u.login == @client.user.login }.sample
+      user = @domain.users.reject { |u| u.login == @client.user.login }.first
       login = user.login
       name = user.first_name
       modes = user.authentication_modes
-      possible_modes = [:sso, :password]
 
       user.first_name = name.reverse
-      choice = SpecHelper.random_choice(possible_modes, user.authentication_modes)
+      choice = :password
       user.authentication_modes = choice
       @domain.create_users([user])
       changed_user = @domain.get_user(login)
@@ -108,7 +125,7 @@ describe GoodData::Domain do
     end
 
     it 'Fails with an exception if you try to create a user that is in a different domain', broken: true do
-      user = ProjectHelper.create_random_user(@client)
+      user = ProjectHelper.ensure_users(client: @client, caller: $example_name)
       user.login = 'svarovsky@gooddata.com'
       expect do
         @domain.create_user(user)
@@ -117,7 +134,7 @@ describe GoodData::Domain do
 
     it 'updates properties of a profile' do
       user = @domain.users
-        .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.take(20).sample
+        .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.first
 
       old_email = user.email
       old_sso_provider = user.sso_provider || ''

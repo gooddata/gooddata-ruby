@@ -73,8 +73,8 @@ RSpec.configure do |config|
       if self.class.metadata[:vcr]
         # replace parallel iterations with the serial one, since VCR can't handle parallel request matching correctly
         module Enumerable
-          def peach_with_index(*)
-            each_with_index
+          def peach_with_index(*, &y)
+            each_with_index(&y)
           end
         end
 
