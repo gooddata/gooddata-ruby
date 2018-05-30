@@ -19,5 +19,8 @@ jobs:
       rvm:
         - jruby-9.1.7
     - stage: integration
-      script: travis_wait 50 bundle exec rake test:integration
+      script: bundle exec rake test:integration
+      rvm: jruby-9.1.7
+    - stage: integration
+      script: bundle exec rake test:project
       rvm: jruby-9.1.7
