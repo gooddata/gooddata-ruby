@@ -1,0 +1,31 @@
+{
+  "organization": "<%= config[:prod_organization] %>",
+  "CLIENT_GDC_PROTOCOL": "https",
+  "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
+  "associate": "true",
+  "provision": "true",
+  "gd_encoded_params": {
+    "GDC_USERNAME": "${username}",
+    "GDC_PASSWORD": "${password}",
+    "input_source": {
+      "type": "ads",
+      "query": "SELECT DISTINCT client_id, segment_id, project_title FROM \"<%= workspace_table_name %>\";"
+    },
+    "SEGMENTS_FILTER": [
+      "<%= premium_segment %>"
+    ],
+    "technical_user": [
+      "${username}"
+    ],
+    "ads_client": {
+      "username": "${username}",
+      "password": "${password}",
+      "jdbc_url": "<%= jdbc_url %>"
+    }
+  },
+  "release_table_name": "<%= release_table_name %>",
+  "fail_early": "true",
+  "strict": "true",
+  "username": "<%= config[:username] %>",
+  "password": "<%= config[:password] %>"
+}

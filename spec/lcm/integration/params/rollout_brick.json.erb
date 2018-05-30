@@ -1,0 +1,45 @@
+{
+  "organization": "<%= config[:prod_organization] %>",
+  "CLIENT_GDC_PROTOCOL": "https",
+  "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
+  "gd_encoded_params": {
+    "GDC_USERNAME": "${username}",
+    "GDC_PASSWORD": "${password}",
+    "SEGMENTS_FILTER": <%= segments_filter %>,
+    "DATA_PRODUCT": "<%= data_product %>",
+    "input_source": {
+      "type": "ads",
+      "query": "SELECT DISTINCT client_id, segment_id, project_title FROM \"<%= workspace_table_name %>\";"
+    },
+    "additional_params": {
+      "msg_from_rollout_brick": "Hi, I was set by rollout brick",
+      "print_reverted": "hidden_msg_from_rollout_brick,SECURE_PARAM_2"
+    },
+    "query": {
+      "release": "SELECT segment_id, master_project_id, version from \"<%= release_table_name %>\";"
+    },
+    "apply_maql_ddl": "true",
+    "technical_user": [
+      "${username}"
+    ],
+    "ads_client": {
+      "username": "${username}",
+      "password": "${password}",
+      "jdbc_url": "<%= jdbc_url %>"
+    }
+  },
+  "gd_encoded_hidden_params": {
+    "additional_hidden_params": {
+      "hidden_msg_from_rollout_brick": "Hi, I was set by rollout brick but keep it secret",
+      "SECURE_PARAM_2": "I AM SET TOO"
+    }
+  },
+  "update_preference": {
+    "allow_cascade_drops": true
+  },
+  "release_table_name": "<%= release_table_name %>",
+  "fail_early": "true",
+  "strict": "true",
+  "username": "<%= config[:username] %>",
+  "password": "<%= config[:password] %>"
+}
