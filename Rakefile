@@ -183,9 +183,9 @@ namespace :test do
     t.pattern = 'spec/lcm/integration/**/*.rb'
   end
 
-  desc 'Run legacy tests'
-  RSpec::Core::RakeTask.new(:legacy) do |t|
-    t.pattern = 'test/**/test_*.rb'
+  desc 'Run project tests'
+  RSpec::Core::RakeTask.new(:project) do |t|
+    t.pattern = 'spec/project/**/*.rb'
   end
 
   desc 'Run coding style tests'
@@ -193,8 +193,8 @@ namespace :test do
     Rake::Task['cop'].invoke
   end
 
-  task :all => [:unit, :integration, :cop, :lcm]
-  task :ci => [:unit, :integration, :lcm]
+  task :all => [:unit, :integration, :cop, :lcm, :project]
+  task :ci => [:unit, :integration, :lcm, :project]
 end
 
 desc 'Run all tests'
