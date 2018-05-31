@@ -219,7 +219,7 @@ module GoodData
       end
 
       def decrypt(database64, key)
-        fail 'Key must be specified.' if key.nil? || key.empty?
+        return '' if key.nil? || key.empty?
 
         data = Base64.decode64(database64)
 
