@@ -64,7 +64,7 @@ RSpec.configure do |config|
 
   config.fail_fast = false
 
-  if !ENV['VCR_ON'] || ENV['VCR_ON'] == 'true' # VCR is enabled by default - set VCR_ON=false to disable
+  if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
     require 'vcr_configurer'
     skip_sleep = ENV['VCR_RECORD_MODE'].nil? || ENV['VCR_RECORD_MODE'].downcase == 'none'
 
