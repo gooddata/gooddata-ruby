@@ -28,9 +28,6 @@ require 'pathname'
 require 'webmock/rspec'
 require 'gooddata'
 
-vcr_enabled = !ENV['VCR_ON'] || ENV['VCR_ON'] == 'true' # VCR is enabled by default - set VCR_ON=false to disable
-require 'vcr_configurer' if vcr_enabled
-
 logger = Logger.new(STDOUT)
 logger.level = Logger::WARN
 GoodData.logger = logger
@@ -67,8 +64,10 @@ RSpec.configure do |config|
 
   config.fail_fast = false
 
-  if vcr_enabled
+  if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
+    require 'vcr_configurer'
     skip_sleep = ENV['VCR_RECORD_MODE'].nil? || ENV['VCR_RECORD_MODE'].downcase == 'none'
+
     config.before(:all) do
       # in case the test uses VCR
       if self.class.metadata[:vcr]
