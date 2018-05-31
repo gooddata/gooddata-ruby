@@ -172,7 +172,8 @@ shared_context 'lcm bricks' do
     s3 = Aws::S3::Resource.new(access_key_id: 'foo',
                                secret_access_key: 'foo',
                                endpoint: s3_endpoint,
-                               region: 'us-west-2')
+                               region: 'us-west-2',
+                               force_path_style: true)
 
     bucket_name = 'testbucket'
     bucket = s3.bucket(bucket_name)

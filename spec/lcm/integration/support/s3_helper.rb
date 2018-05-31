@@ -8,7 +8,8 @@ module Support
         s3 = Aws::S3::Resource.new(access_key_id: 'foo',
                                    secret_access_key: 'foo',
                                    endpoint: S3_ENDPOINT,
-                                   region: 'us-west-2')
+                                   region: 'us-west-2',
+                                   force_path_style: true)
 
         bucket = s3.bucket(BUCKET_NAME)
         bucket = s3.create_bucket(bucket: BUCKET_NAME) unless bucket.exists?
