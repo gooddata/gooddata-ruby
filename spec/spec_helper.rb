@@ -68,6 +68,7 @@ RSpec.configure do |config|
   config.fail_fast = false
 
   if vcr_enabled
+    skip_sleep = ENV['VCR_RECORD_MODE'].nil? || ENV['VCR_RECORD_MODE'].downcase == 'none'
     config.before(:all) do
       # in case the test uses VCR
       if self.class.metadata[:vcr]
@@ -82,10 +83,12 @@ RSpec.configure do |config|
         VCR.insert_cassette("#{self.class.metadata[:description]}/all")
 
         # avoid polling idle time by overriding sleep
-        module Kernel
-          alias :old_sleep :sleep
-          def sleep(n)
-            n
+        if skip_sleep
+          module Kernel
+            alias :old_sleep :sleep
+            def sleep(n)
+              n
+            end
           end
         end
       end
@@ -101,8 +104,10 @@ RSpec.configure do |config|
         load('pmap.rb') if self.class.metadata[:vcr]
 
         # reload sleep method
-        module Kernel
-          alias :sleep :old_sleep
+        if skip_sleep
+          module Kernel
+            alias :sleep :old_sleep
+          end
         end
       end
     end
