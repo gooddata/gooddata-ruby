@@ -65,6 +65,9 @@ module GoodData
 
         description 'User brick users'
         param :users_brick_users, instance_of(Type::ObjectType), required: false
+
+        description 'Makes the brick run without altering user filters'
+        param :dry_run, instance_of(Type::StringType), required: false, default: false
       end
 
       class << self
@@ -124,7 +127,7 @@ module GoodData
             ignore_missing_values: params.ignore_missing_values == 'true',
             do_not_touch_filters_that_are_not_mentioned: params.do_not_touch_filters_that_are_not_mentioned == 'true',
             domain: domain,
-            dry_run: false,
+            dry_run: params[:dry_run].to_b,
             users_brick_input: params.users_brick_users
           }
 
@@ -217,6 +220,7 @@ module GoodData
 
             working_client_ids = []
 
+            results = []
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               fail "Client id cannot be empty" if client_id.blank?
               c = domain.clients(client_id, data_product)
@@ -229,10 +233,10 @@ module GoodData
               working_client_ids << client_id
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
               puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
-              project.add_data_permissions(filters_to_load, run_params)
+              partial_results = project.add_data_permissions(filters_to_load, run_params)
+              results.concat(partial_results[:results])
             end
 
-            results = []
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
               domain_clients.each do |c|
                 next if working_client_ids.include?(c.client_id)
@@ -252,7 +256,8 @@ module GoodData
                 end
 
                 puts "Delete all filters in project #{project.pid} of client #{c.client_id}"
-                results << project.add_data_permissions([], run_params)
+                delete_results = project.add_data_permissions([], run_params)
+                results.concat(delete_results[:results])
               end
             end
 

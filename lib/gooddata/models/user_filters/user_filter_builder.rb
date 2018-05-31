@@ -385,7 +385,15 @@ module GoodData
       else
         GoodData.logger.warn("Data permissions computed: #{to_create.count} to create and #{to_delete.count} to delete")
       end
-      return { created: to_create, deleted: to_delete } if dry_run
+
+      if dry_run
+        GoodData.logger.warn('Option "dry_run" specified. No user filters will be altered!')
+        create_results = to_create.map { |x| { status: 'dry_run', user: x.first, type: 'create' } }
+        delete_results = to_delete.map { |x| { status: 'dry_run', user: x.first, type: 'delete' } }
+        return { created: {},
+                 deleted: {},
+                 results: create_results + delete_results }
+      end
 
       create_results = to_create.each_slice(100).flat_map do |batch|
         batch.pmapcat do |related_uri, group|

@@ -77,6 +77,41 @@ describe GoodData::UserFilterBuilder do
       expect(result[:deleted].length).to be(0)
     end
 
+    context 'when dry_run option set to true' do
+      let(:options) do
+        { client: client,
+          project: project,
+          dry_run: true }
+      end
+
+      it 'does not alter filters' do
+        expect(client).not_to receive(:post)
+        subject.execute_mufs(filter_definitions, options)
+      end
+
+      it 'returns results' do
+        result = subject.execute_mufs(filter_definitions, options)
+        expected = [{ status: 'dry_run', user: nil, type: 'create' }]
+        expect(result[:results]).to eq(expected)
+      end
+    end
+
+    context 'when dry_run option set to false' do
+      let(:options) do
+        { client: client,
+          project: project,
+          dry_run: false }
+      end
+
+      it 'does alter filters' do
+        expect(client).to receive(:post).with(
+          "/gdc/md/#{project.pid}/userfilters",
+          any_args
+        )
+        subject.execute_mufs(filter_definitions, options)
+      end
+    end
+
     context 'when users_brick_input option specified' do
       let(:user) { double('user') }
       let(:users_brick_input) { [{ 'login' => login }] }
