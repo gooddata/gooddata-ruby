@@ -15,7 +15,7 @@ module GoodData
             value = params.send(param_name)
             type = specification[param_name][:type]
             if value.nil? || (value.is_a?(String) && value.empty?)
-              if specification[param_name][:opts][:default]
+              if !specification[param_name][:opts][:default].nil?
                 if specification.select { |x| specification[x][:opts][:replacement] == param_name }.first.nil?
                   params[param_name] = specification[param_name][:opts][:default]
                 else
