@@ -22,10 +22,13 @@ module GoodData
         param :domain, instance_of(Type::StringType), required: false
 
         description 'Delete Extra Clients'
-        param :delete_extra, instance_of(Type::BooleanType), required: false, default: false
+        param :delete_extra, instance_of(Type::BooleanType), required: false, default: false, deprecated: true, replacement: :delete_mode
 
         description 'Physically Delete Client Projects'
-        param :delete_projects, instance_of(Type::BooleanType), required: false, default: false
+        param :delete_projects, instance_of(Type::BooleanType), required: false, default: false, deprecated: true, replacement: :delete_mode
+
+        description 'Physically Delete Client Projects'
+        param :delete_mode, instance_of(Type::StringType), required: false, default: 'none'
 
         description 'Clients'
         param :clients, array_of(instance_of(Type::HashType)), required: true, generated: true
@@ -46,7 +49,21 @@ module GoodData
       ]
 
       class << self
+        DELETE_MODES = %w(
+          none
+          delete_projects
+          delete_extra
+        )
         def call(params)
+          if params.delete_projects && !params.delete_extra
+            GoodData.logger.warn("Parameter `delete_projects` is set to true and parameter `delete_extra` is set to false (which is default) this action will do nothing!")
+            return
+          end
+
+          unless DELETE_MODES.include?(params.delete_mode) || params.delete_mode.nil?
+            fail "The parameter \"delete_mode\" has to have one of the values #{DELETE_MODES.map(&:to_s).join(', ')} or has to be empty."
+          end
+
           client = params.gdc_gd_client
 
           domain_name = params.organization || params.domain
@@ -70,22 +87,31 @@ module GoodData
           end
 
           domain.update_clients_settings(params.clients)
-
-          delete_projects = GoodData::Helpers.to_boolean(params.delete_projects)
-          delete_extra = GoodData::Helpers.to_boolean(params.delete_extra)
+          case params.delete_mode
+          when 'delete_projects'
+            delete_projects = true
+            delete_extra = true
+          when 'delete_extra'
+            delete_projects = false
+            delete_extra = true
+          else
+            # Usage of the depracated params
+            delete_projects = GoodData::Helpers.to_boolean(params.delete_projects)
+            delete_extra = GoodData::Helpers.to_boolean(params.delete_extra)
+          end
           options = { delete_projects: delete_projects }
-          options.merge!(delete_extra_option(params)) if delete_extra
+          options.merge!(delete_extra_option(params, delete_extra)) if delete_extra
 
           domain.update_clients(params.clients, options)
         end
 
         private
 
-        def delete_extra_option(params)
+        def delete_extra_option(params, delete_extra)
           if params.segments_filter && params.segments_filter.any?
             { delete_extra_in_segments: params.segments_filter }
           else
-            { delete_extra: GoodData::Helpers.to_boolean(params.delete_extra) }
+            { delete_extra: GoodData::Helpers.to_boolean(delete_extra) }
           end
         end
       end
