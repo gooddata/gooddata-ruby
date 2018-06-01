@@ -45,7 +45,14 @@ module GoodData
             params.gdc_logger.info "Using data product 'default' since none was specified in brick parameters"
             data_product_id = 'default'
           end
-          data_product = domain.data_products(data_product_id)
+
+          begin
+            data_product = domain.data_products(data_product_id)
+          rescue RestClient::BadRequest
+            params.gdc_logger.info "Can not find DataProduct #{params.data_product}, creating it instead"
+            data_product = domain.create_data_product(id: params.data_product)
+          end
+
           results = [
             {
               data_product: data_product_id
