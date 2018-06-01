@@ -66,7 +66,7 @@ RSpec.configure do |config|
 
   if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
     require 'vcr_configurer'
-    skip_sleep = ENV['VCR_RECORD_MODE'].nil? || ENV['VCR_RECORD_MODE'].downcase == 'none'
+    skip_sleep = ENV['VCR_RECORD_MODE'] && ENV['VCR_RECORD_MODE'].downcase == 'none'
 
     config.before(:all) do
       # in case the test uses VCR
