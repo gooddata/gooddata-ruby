@@ -7,7 +7,7 @@
 require 'gooddata/models/project'
 require 'gooddata/models/project_role'
 
-describe GoodData::ProjectRole do
+describe GoodData::ProjectRole, :vcr do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @project, * = ProjectHelper.load_full_project_implementation(@client)
