@@ -5,6 +5,10 @@ module GoodData
   module Helpers
     # Configures VCR for integration tests
     class VcrConfigurer
+      def self.vcr_record_mode
+        (ENV['VCR_RECORD_MODE'] && ENV['VCR_RECORD_MODE'].to_sym) || :none
+      end
+
       def self.name_to_placeholder(name)
         "<#{name.underscore.upcase}>"
       end
@@ -47,7 +51,7 @@ module GoodData
           :decode_compressed_response => true,
           :match_requests_on => [gdc_path_matcher, :method, :query],
           # allow to set record mode from environment, see https://relishapp.com/vcr/vcr/v/3-0-3/docs/record-modes
-          :record => (ENV['VCR_RECORD_MODE'] && ENV['VCR_RECORD_MODE'].to_sym) || :once
+          :record => vcr_record_mode
         }
 
         %w(request response).each do |part|
