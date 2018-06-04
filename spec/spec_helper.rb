@@ -78,8 +78,8 @@ RSpec.configure do |config|
           end
         end
 
-        # insert the cassete recording everything what happens outside the tests cases
-        VCR.insert_cassette("#{self.class.metadata[:description]}/all")
+        # insert the cassette recording everything what happens outside the tests cases
+        VCR.insert_cassette("#{self.class.metadata[:description]}/#{self.class.metadata[:vcr_all_cassette] || 'all'}")
 
         # avoid polling idle time by overriding sleep
         if skip_sleep
