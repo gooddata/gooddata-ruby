@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dataload/processes/7bc4b678-d1f6-4fb0-b1ee-513f4709bbf1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - YnUGz5e-b3l9T1WSmODIHA:qtUl3Ueyl-EdTvZwgwppUA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Mon, 04 Jun 2018 12:55:50 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - YnUGz5e-b3l9T1WSmODIHA:qtUl3Ueyl-EdTvZwgwppUA:55iflkFWbuGqnJCB
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '40'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"RUBY","name":"Test process","path":"${PRODUCTION_APPSTORE}:tag/2.1.5:/apps/hello_world_brick","graphs":["main.rb"],"executables":["main.rb"],"lastDeployed":"2018-04-11T09:23:47.314Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dataload/processes/7bc4b678-d1f6-4fb0-b1ee-513f4709bbf1","executions":"/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dataload/processes/7bc4b678-d1f6-4fb0-b1ee-513f4709bbf1/executions","source":"/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dataload/processes/7bc4b678-d1f6-4fb0-b1ee-513f4709bbf1/source"}}}'
+    http_version: 
+  recorded_at: Mon, 04 Jun 2018 12:55:50 GMT
+recorded_with: VCR 4.0.0
