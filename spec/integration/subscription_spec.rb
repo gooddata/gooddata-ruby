@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::Subscription, :constraint => 'slow' do
+describe GoodData::Subscription, :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @channel = GoodData::ChannelConfiguration.create(client: @client)
