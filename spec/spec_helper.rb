@@ -100,7 +100,7 @@ RSpec.configure do |config|
         VCR.eject_cassette
 
         # reload the original parallel iterations
-        load('pmap.rb') if self.class.metadata[:vcr]
+        load('pmap.rb')
 
         # reload sleep method
         if skip_sleep
