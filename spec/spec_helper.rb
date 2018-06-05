@@ -27,7 +27,6 @@ require 'rspec'
 require 'pathname'
 require 'webmock/rspec'
 require 'gooddata'
-require 'vcr_configurer'
 
 logger = Logger.new(STDOUT)
 logger.level = Logger::WARN
@@ -65,29 +64,51 @@ RSpec.configure do |config|
 
   config.fail_fast = false
 
-  config.before(:all) do
-    # in case the test uses VCR
-    if self.class.metadata[:vcr]
-      # replace parallel iterations with the serial one, since VCR can't handle parallel request matching correctly
-      module Enumerable
-        def peach_with_index(*)
-          each_with_index
+  if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
+    require 'vcr_configurer'
+    skip_sleep = VcrConfigurer.vcr_record_mode == :none
+
+    config.before(:all) do
+      # in case the test uses VCR
+      if self.class.metadata[:vcr]
+        # replace parallel iterations with the serial one, since VCR can't handle parallel request matching correctly
+        module Enumerable
+          def peach_with_index(*, &y)
+            each_with_index(&y)
+          end
+        end
+
+        # insert the cassete recording everything what happens outside the tests cases
+        VCR.insert_cassette("#{self.class.metadata[:description]}/all")
+
+        # avoid polling idle time by overriding sleep
+        if skip_sleep
+          module Kernel
+            alias :old_sleep :sleep
+            def sleep(n)
+              n
+            end
+          end
         end
       end
-
-      # insert the cassete recording everything what happens outside the tests cases
-      VCR.insert_cassette("#{self.class.metadata[:description]}/all")
     end
-  end
 
-  config.after(:all) do
-    # in case the test uses VCR
-    if self.class.metadata[:vcr]
-      # eject the cassete recording everything what happens outside the tests cases
-      VCR.eject_cassette
+    config.after(:all) do
+      # in case the test uses VCR
+      if self.class.metadata[:vcr]
+        # eject the cassete recording everything what happens outside the tests cases
+        VCR.eject_cassette
 
-      # reload the original parallel iterations
-      load('pmap.rb') if self.class.metadata[:vcr]
+        # reload the original parallel iterations
+        load('pmap.rb') if self.class.metadata[:vcr]
+
+        # reload sleep method
+        if skip_sleep
+          module Kernel
+            alias :sleep :old_sleep
+          end
+        end
+      end
     end
   end
 end

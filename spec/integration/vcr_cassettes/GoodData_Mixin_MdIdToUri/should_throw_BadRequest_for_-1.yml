@@ -1,0 +1,63 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/fmsa7k9ty8tvwg6h9v4o0nvg071kjd34/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["-1"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-linux/2.3.4
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - oTcKo3v63KR_5D8pM_6UwQ:1VdVUM7AnY2IQ3zooU9wDg
+      Content-Length:
+      - '26'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Vary:
+      - Origin
+      Date:
+      - Fri, 04 May 2018 09:39:37 GMT
+      Server:
+      - GoodData WebApp
+      Expires:
+      - Mon, 26 Jul 1997 05:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - oTcKo3v63KR_5D8pM_6UwQ:1VdVUM7AnY2IQ3zooU9wDg:gst7erITqf5aGuJu
+      X-Gdc-Request-Time:
+      - '24'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"parameters":["identifierToUri","STRUCTURE INVALID - name
+        of structure:''IdentifierToUri''(tag:identifierToUri),  /identifierToUri/<list:1>/Identifier:
+        STRING|(?^:^[a-zA-Z0-9_\\.]{1,255}$)| does not match with value ''-1''"],"requestId":"oTcKo3v63KR_5D8pM_6UwQ:1VdVUM7AnY2IQ3zooU9wDg:gst7erITqf5aGuJu:elHSgs9ll5ThgK4n:3quju50eyy8d98hv","component":"Apache::REST","errorClass":"GDC::Exception::User","message":"Checking
+        ''%s'', result %s"}}'
+    http_version: 
+  recorded_at: Fri, 04 May 2018 09:39:37 GMT
+recorded_with: VCR 4.0.0

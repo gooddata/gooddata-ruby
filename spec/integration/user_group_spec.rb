@@ -15,12 +15,8 @@ describe GoodData::UserGroup, :vcr do
     @project = @client.create_project(title: 'UserGroup Testing Project', token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
-    users = (1..5).to_a.map do
-      {
-        user: ProjectHelper.create_random_user(@client),
-        role: 'Admin'
-      }
-    end
+    @users_to_delete = ProjectHelper.ensure_users(client: @client, amount: 5, caller: 'user group spec')
+    users = @users_to_delete.map { |u| { user: u, role: 'Admin' } }
 
     @project.add_users(users)
     @users = @project.users.to_a

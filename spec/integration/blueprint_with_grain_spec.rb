@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe 'Create project using GoodData client', :constraint => 'slow' do
+describe 'Create project using GoodData client with grain', :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.build("My project from blueprint") do |p|

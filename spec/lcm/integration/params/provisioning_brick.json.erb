@@ -1,0 +1,50 @@
+{
+  "organization": "<%= config[:prod_organization] %>",
+  "CLIENT_GDC_PROTOCOL": "https",
+  "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
+  "associate": "true",
+  "provision": "true",
+  "gd_encoded_params": {
+    "GDC_USERNAME": "${username}",
+    "GDC_PASSWORD": "${password}",
+    "input_source": {
+      "type": "<%= input_source_type %>",
+      "bucket": "<%= s3_bucket %>",
+      "key": "<%= workspace_table_name %>",
+      "query": "SELECT DISTINCT <%= custom_client_id_column %>, segment_id, project_title FROM \"<%= workspace_table_name %>\";"
+    },
+    "SEGMENTS_FILTER": <%= segments_filter %>,
+    "DATA_PRODUCT": "<%= data_product %>",
+    "technical_user": [
+      "${username}"
+    ],
+    "additional_params": {
+      "msg_from_provisioning_brick": "Hi, I was set by provisioning brick",
+      "print_reverted": "hidden_msg_from_provisioning_brick,SECURE_PARAM_2"
+    },
+    "aws_client": {
+      "access_key_id": "foo",
+      "secret_access_key": "foo",
+      "endpoint": "<%= s3_endpoint %>"
+    },
+    "ads_client": {
+      "username": "${username}",
+      "password": "${password}",
+      "jdbc_url": "<%= jdbc_url %>"
+    }
+  },
+  "gd_encoded_hidden_params": {
+    "additional_hidden_params": {
+      "hidden_msg_from_provisioning_brick": "Hi, I was set by provisioning brick but keep it secret",
+      "SECURE_PARAM_2": "I AM SET TOO"
+    }
+  },
+  "release_table_name": "<%= release_table_name %>",
+  "delete_projects": "true",
+  "delete_extra": "true",
+  "fail_early": "true",
+  "strict": "true",
+  "username": "<%= config[:username] %>",
+  "password": "<%= config[:password] %>",
+  "client_id_column": "<%= custom_client_id_column %>"
+}

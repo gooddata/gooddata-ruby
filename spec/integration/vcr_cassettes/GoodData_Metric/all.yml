@@ -1,0 +1,2065 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login
+    body:
+      encoding: UTF-8
+      string: '{"postUserLogin":{"login":"rubydev+admin@gooddata.com","password":"<PASSWORD>","remember":1,"verify_level":2}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - ''
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:49eIZgmbULZCCSsc9z9_-A
+      Dont-Reauth:
+      - 'true'
+      Content-Length:
+      - '113'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Fri, 25 May 2018 11:50:40 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:49eIZgmbULZCCSsc9z9_-A:iTI89T8uygOPRVFu
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '48'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userLogin":{"profile":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","state":"/gdc/account/login/5ad80b895edcc438e5a4418e222733fa","token":"<TOKEN>"}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:41 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:DJV1ncWIaq6ZO2UBnWCepA
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      Dont-Reauth:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 25 May 2018 11:50:40 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:DJV1ncWIaq6ZO2UBnWCepA:PkWxe6scw4vliHWg
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '19'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userToken":{"token":"<TOKEN>"}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:41 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:FSaT_Yw92vijtUSHjOrAnQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:50:42 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:FSaT_Yw92vijtUSHjOrAnQ:CjVBZZfHCSopHddd
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '66'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"accountSetting":{"position":null,"effectiveIpWhitelist":null,"email":"rubydev+admin@gooddata.com","updated":"2018-05-25
+        01:15:47","lastName":"1","phoneNumber":"","links":{"auditEvents":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/auditEvents","domain":"/gdc/domains/staging2-lcm-prod","self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects"},"firstName":"the","country":null,"ssoProvider":"test-ruby","timezone":null,"language":"en-US","ipWhitelist":null,"companyName":"","authenticationModes":["PASSWORD","SSO"],"login":"rubydev+admin@gooddata.com","created":"2017-02-10
+        12:18:01"}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:42 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:PqWtb2V59xPomhqPIvWBqg
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:50:42 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:PqWtb2V59xPomhqPIvWBqg:qSREOGuwV5yUoeOZ
+      X-Gdc-Request-Time:
+      - '54'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:42 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
+    body:
+      encoding: UTF-8
+      string: '{"project":{"meta":{"summary":"No summary","title":"RubyGem Dev Week
+        test"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"TESTING","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:Z5boPormlNDTYbkFsdBqPw
+      Content-Length:
+      - '184'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:50:43 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:Z5boPormlNDTYbkFsdBqPw:fXI4wyPl4A6zmnAU
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '620'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa"}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:43 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:0oVXhxc24sTgpPmSxDXAqg
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:50:44 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:0oVXhxc24sTgpPmSxDXAqg:9Ne188s7siNN2Fup
+      X-Gdc-Request-Time:
+      - '49'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"PREPARING"},"links":{"ldm_thumbnail":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm?thumbnail=1","self":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa","clearCaches":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/clearCaches","invitations":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/invitations","users":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/users?link=1&offset=0&limit=100","uploads":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/uploads/","ldm":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm","metadata":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa","publicartifacts":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/publicartifacts","roles":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/roles","userRoles":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/dataload","connectors":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/connectors","execute":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/execute","config":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/config","projectFeatureFlags":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/projectFeatureFlags","schedules":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/schedules","templates":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/templates","eventstores":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/dataload/eventstore/stores"},"meta":{"created":"2018-05-25
+        13:50:43","summary":"No summary","updated":"2018-05-25 13:50:43","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"RubyGem
+        Dev Week test","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:44 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:0-9wh3-IFjLfuExdkDYjkQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:50:47 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:0-9wh3-IFjLfuExdkDYjkQ:qt9yaAKLstcxD9T6
+      X-Gdc-Request-Time:
+      - '98'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","authorizationToken":"<AUTHORIZATION_TOKEN>","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"ENABLED"},"links":{"ldm_thumbnail":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm?thumbnail=1","self":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa","clearCaches":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/clearCaches","invitations":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/invitations","users":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/users?link=1&offset=0&limit=100","uploads":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/uploads/","ldm":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm","metadata":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa","publicartifacts":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/publicartifacts","roles":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/roles","userRoles":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/dataload","connectors":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/connectors","execute":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/execute","config":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/config","projectFeatureFlags":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/projectFeatureFlags","schedules":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/schedules","templates":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/templates","eventstores":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/dataload/eventstore/stores"},"meta":{"created":"2018-05-25
+        13:50:43","summary":"No summary","updated":"2018-05-25 13:50:45","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"RubyGem
+        Dev Week test","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:47 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff?includeGrain=true
+    body:
+      encoding: UTF-8
+      string: '{"diffRequest":{"targetModel":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.repos","title":"Repositories","anchor":{"attribute":{"identifier":"attr.repos.repo_id","title":"Repository
+        Id","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_label_id","title":"Repository
+        Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"description":"This is
+        anchor description","defaultLabel":"some_label_id"}},"attributes":[{"attribute":{"identifier":"some_attr_id","title":"Repository
+        Name","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_attr_label_id","title":"Repository
+        Name","type":"GDC.text","dataType":"VARCHAR(10000)"}}],"defaultLabel":"some_attr_label_id"}}],"facts":[],"references":[]}},{"dataset":{"identifier":"dataset.devs","title":"Developers","anchor":{"attribute":{"identifier":"attr.devs.dev_id","title":"Dev","folder":"Anchor
+        folder","labels":[{"label":{"identifier":"label.devs.dev_id.id","title":"Id","type":"GDC.text","dataType":"VARCHAR(128)"}},{"label":{"identifier":"label.devs.dev_id.email","title":"Email","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.devs.dev_id.email"}},"attributes":[],"facts":[],"references":[]}},{"dataset":{"identifier":"dataset.commits","title":"Commits","anchor":{"attribute":{"identifier":"attr.commits.factsof","title":"Attr.Commits.Factsof","folder":"Commits"}},"attributes":[],"facts":[{"fact":{"identifier":"fact.commits.lines_changed","title":"Lines
+        Changed","folder":"Commits","dataType":"DECIMAL(12,2)","type":"fact","description":"Fact
+        description"}}],"references":["committed_on","dataset.devs","dataset.repos"]}}],"dateDimensions":[{"dateDimension":{"name":"committed_on","title":"Committed
+        On"}}]}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:UdrEF2HRMVFyn_m9MpJ_PQ
+      Content-Length:
+      - '1755'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff/f6193f129baa67c7f92b4bfbec9d378e01cd737461313b380000006e"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Fri, 25 May 2018 11:50:51 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:UdrEF2HRMVFyn_m9MpJ_PQ:IIo9Q2qdjuh3tuFJ
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '131'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff/f6193f129baa67c7f92b4bfbec9d378e01cd737461313b380000006e"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:51 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff/f6193f129baa67c7f92b4bfbec9d378e01cd737461313b380000006e
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:YILvTyjv9nKbcKrTnxEbvg
+      Process:
+      - 'false'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff/f6193f129baa67c7f92b4bfbec9d378e01cd737461313b380000006e"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Fri, 25 May 2018 11:50:51 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:YILvTyjv9nKbcKrTnxEbvg:SCcTp7SYLG5h01fW
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff/f6193f129baa67c7f92b4bfbec9d378e01cd737461313b380000006e"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:50:51 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff/f6193f129baa67c7f92b4bfbec9d378e01cd737461313b380000006e
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:B3rFwEkeuLUKlg5bpKo5SQ
+      Process:
+      - 'false'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Fri, 25 May 2018 11:51:02 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '13013'
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:B3rFwEkeuLUKlg5bpKo5SQ:i5qQpvysGDUqoiK1
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '22'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[{"updateOperation":{"type":"dataset.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Developers"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Commits"]}},{"updateOperation":{"type":"date-dimension.create","destructive":false,"description":"Create
+        date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Repository Id"]}},{"updateOperation":{"type":"attribute.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        attribute ''%s''","parameters":["Repository Name"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Attr.Commits.Factsof"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Dev"]}},{"updateOperation":{"type":"fact.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        fact ''%s''","parameters":["Lines Changed"]}},{"updateOperation":{"type":"dataset.references.add.dd","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"dataset.references.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.references.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to dataset ''%s''","parameters":["Developers"]}}],"updateScripts":[{"updateScript":{"maqlDdl":"CREATE
+        FOLDER {dim.folderedrepos} VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {dim.commits} VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER
+        {dim.anchorfolder} VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE ATTRIBUTE {attr.repos.repo_id} VISUAL(TITLE
+        \"Repository Id\", DESCRIPTION \"This is anchor description\", FOLDER {dim.folderedrepos})
+        AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD LABELS {some_label_id} VISUAL(TITLE \"Repository
+        Id\") AS {f_repos.nm_some_label_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE {some_attr_id} VISUAL(TITLE
+        \"Repository Name\", FOLDER {dim.folderedrepos}) AS KEYS {d_repos_some_attr_id.id}
+        FULLSET, {f_repos.some_attr_id_id};\nALTER DATASET {dataset.repos} ADD {some_attr_id};\nALTER
+        ATTRIBUTE {some_attr_id} ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository
+        Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id}
+        VARCHAR(10000);\nALTER ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE
+        ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER
+        {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.devs},
+        {dataset.repos}, {dataset.commits};","maqlDdlChunks":["CREATE FOLDER {dim.folderedrepos}
+        VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.commits}
+        VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.anchorfolder}
+        VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE FOLDER {ffld.commits}
+        VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET {dataset.repos} VISUAL(TITLE
+        \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE \"Developers\");\nCREATE
+        DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\"
+        MODIFY (IDENTIFIER \"committed_on\", TITLE \"Committed On\");\nCREATE ATTRIBUTE
+        {attr.repos.repo_id} VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is
+        anchor description\", FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER
+        DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        ADD LABELS {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE ATTRIBUTE
+        {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER {dim.commits})
+        AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits} ADD {attr.commits.factsof};\nCREATE
+        ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE \"Dev\", FOLDER {dim.anchorfolder})
+        AS KEYS {f_devs.id} FULLSET;\nALTER DATASET {dataset.devs} ADD {attr.devs.dev_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE
+        \"Id\") AS {f_devs.nm_id};\nALTER ATTRIBUTE {attr.devs.dev_id} ADD LABELS
+        {label.devs.dev_id.email} VISUAL(TITLE \"Email\") AS {f_devs.nm_email};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} DEFAULT LABEL {label.devs.dev_id.email};\nCREATE
+        FACT {fact.commits.lines_changed} VISUAL(TITLE \"Lines Changed\", DESCRIPTION
+        \"Fact description\", FOLDER {ffld.commits}) AS {f_commits.f_lines_changed};\nALTER
+        DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER ATTRIBUTE
+        {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER ATTRIBUTE
+        {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.devs}, {dataset.repos},
+        {dataset.commits};"],"preserveData":true,"cascadeDrops":false}},{"updateScript":{"maqlDdl":"CREATE
+        FOLDER {dim.folderedrepos} VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {dim.commits} VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER
+        {dim.anchorfolder} VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE ATTRIBUTE {attr.repos.repo_id} VISUAL(TITLE
+        \"Repository Id\", DESCRIPTION \"This is anchor description\", FOLDER {dim.folderedrepos})
+        AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD LABELS {some_label_id} VISUAL(TITLE \"Repository
+        Id\") AS {f_repos.nm_some_label_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE {some_attr_id} VISUAL(TITLE
+        \"Repository Name\", FOLDER {dim.folderedrepos}) AS KEYS {d_repos_some_attr_id.id}
+        FULLSET, {f_repos.some_attr_id_id};\nALTER DATASET {dataset.repos} ADD {some_attr_id};\nALTER
+        ATTRIBUTE {some_attr_id} ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository
+        Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id}
+        VARCHAR(10000);\nALTER ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE
+        ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER
+        {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.repos},
+        {dataset.devs}, {dataset.commits};","maqlDdlChunks":["CREATE FOLDER {dim.folderedrepos}
+        VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.commits}
+        VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.anchorfolder}
+        VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE FOLDER {ffld.commits}
+        VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET {dataset.repos} VISUAL(TITLE
+        \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE \"Developers\");\nCREATE
+        DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\"
+        MODIFY (IDENTIFIER \"committed_on\", TITLE \"Committed On\");\nCREATE ATTRIBUTE
+        {attr.repos.repo_id} VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is
+        anchor description\", FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER
+        DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        ADD LABELS {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE ATTRIBUTE
+        {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER {dim.commits})
+        AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits} ADD {attr.commits.factsof};\nCREATE
+        ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE \"Dev\", FOLDER {dim.anchorfolder})
+        AS KEYS {f_devs.id} FULLSET;\nALTER DATASET {dataset.devs} ADD {attr.devs.dev_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE
+        \"Id\") AS {f_devs.nm_id};\nALTER ATTRIBUTE {attr.devs.dev_id} ADD LABELS
+        {label.devs.dev_id.email} VISUAL(TITLE \"Email\") AS {f_devs.nm_email};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} DEFAULT LABEL {label.devs.dev_id.email};\nCREATE
+        FACT {fact.commits.lines_changed} VISUAL(TITLE \"Lines Changed\", DESCRIPTION
+        \"Fact description\", FOLDER {ffld.commits}) AS {f_commits.f_lines_changed};\nALTER
+        DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER ATTRIBUTE
+        {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER ATTRIBUTE
+        {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.repos}, {dataset.devs},
+        {dataset.commits};"],"preserveData":false,"cascadeDrops":false}}]}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:02 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/model/diff/f6193f129baa67c7f92b4bfbec9d378e01cd737461313b380000006e
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:wocm8MVEUi0h0RwRmkPong
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Fri, 25 May 2018 11:51:02 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '13013'
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:wocm8MVEUi0h0RwRmkPong:7V2UR5LANemEGJr4
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[{"updateOperation":{"type":"dataset.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Developers"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Commits"]}},{"updateOperation":{"type":"date-dimension.create","destructive":false,"description":"Create
+        date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Repository Id"]}},{"updateOperation":{"type":"attribute.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        attribute ''%s''","parameters":["Repository Name"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Attr.Commits.Factsof"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Dev"]}},{"updateOperation":{"type":"fact.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        fact ''%s''","parameters":["Lines Changed"]}},{"updateOperation":{"type":"dataset.references.add.dd","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"dataset.references.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.references.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to dataset ''%s''","parameters":["Developers"]}}],"updateScripts":[{"updateScript":{"maqlDdl":"CREATE
+        FOLDER {dim.folderedrepos} VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {dim.commits} VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER
+        {dim.anchorfolder} VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE ATTRIBUTE {attr.repos.repo_id} VISUAL(TITLE
+        \"Repository Id\", DESCRIPTION \"This is anchor description\", FOLDER {dim.folderedrepos})
+        AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD LABELS {some_label_id} VISUAL(TITLE \"Repository
+        Id\") AS {f_repos.nm_some_label_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE {some_attr_id} VISUAL(TITLE
+        \"Repository Name\", FOLDER {dim.folderedrepos}) AS KEYS {d_repos_some_attr_id.id}
+        FULLSET, {f_repos.some_attr_id_id};\nALTER DATASET {dataset.repos} ADD {some_attr_id};\nALTER
+        ATTRIBUTE {some_attr_id} ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository
+        Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id}
+        VARCHAR(10000);\nALTER ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE
+        ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER
+        {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.devs},
+        {dataset.repos}, {dataset.commits};","maqlDdlChunks":["CREATE FOLDER {dim.folderedrepos}
+        VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.commits}
+        VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.anchorfolder}
+        VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE FOLDER {ffld.commits}
+        VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET {dataset.repos} VISUAL(TITLE
+        \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE \"Developers\");\nCREATE
+        DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\"
+        MODIFY (IDENTIFIER \"committed_on\", TITLE \"Committed On\");\nCREATE ATTRIBUTE
+        {attr.repos.repo_id} VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is
+        anchor description\", FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER
+        DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        ADD LABELS {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE ATTRIBUTE
+        {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER {dim.commits})
+        AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits} ADD {attr.commits.factsof};\nCREATE
+        ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE \"Dev\", FOLDER {dim.anchorfolder})
+        AS KEYS {f_devs.id} FULLSET;\nALTER DATASET {dataset.devs} ADD {attr.devs.dev_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE
+        \"Id\") AS {f_devs.nm_id};\nALTER ATTRIBUTE {attr.devs.dev_id} ADD LABELS
+        {label.devs.dev_id.email} VISUAL(TITLE \"Email\") AS {f_devs.nm_email};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} DEFAULT LABEL {label.devs.dev_id.email};\nCREATE
+        FACT {fact.commits.lines_changed} VISUAL(TITLE \"Lines Changed\", DESCRIPTION
+        \"Fact description\", FOLDER {ffld.commits}) AS {f_commits.f_lines_changed};\nALTER
+        DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER ATTRIBUTE
+        {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER ATTRIBUTE
+        {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.devs}, {dataset.repos},
+        {dataset.commits};"],"preserveData":true,"cascadeDrops":false}},{"updateScript":{"maqlDdl":"CREATE
+        FOLDER {dim.folderedrepos} VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {dim.commits} VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER
+        {dim.anchorfolder} VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE
+        FOLDER {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE ATTRIBUTE {attr.repos.repo_id} VISUAL(TITLE
+        \"Repository Id\", DESCRIPTION \"This is anchor description\", FOLDER {dim.folderedrepos})
+        AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD LABELS {some_label_id} VISUAL(TITLE \"Repository
+        Id\") AS {f_repos.nm_some_label_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE {some_attr_id} VISUAL(TITLE
+        \"Repository Name\", FOLDER {dim.folderedrepos}) AS KEYS {d_repos_some_attr_id.id}
+        FULLSET, {f_repos.some_attr_id_id};\nALTER DATASET {dataset.repos} ADD {some_attr_id};\nALTER
+        ATTRIBUTE {some_attr_id} ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository
+        Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id}
+        VARCHAR(10000);\nALTER ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE
+        ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER
+        {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.repos},
+        {dataset.devs}, {dataset.commits};","maqlDdlChunks":["CREATE FOLDER {dim.folderedrepos}
+        VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.commits}
+        VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.anchorfolder}
+        VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE FOLDER {ffld.commits}
+        VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE DATASET {dataset.repos} VISUAL(TITLE
+        \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE \"Developers\");\nCREATE
+        DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\"
+        MODIFY (IDENTIFIER \"committed_on\", TITLE \"Committed On\");\nCREATE ATTRIBUTE
+        {attr.repos.repo_id} VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is
+        anchor description\", FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER
+        DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        ADD LABELS {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE ATTRIBUTE
+        {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER {dim.commits})
+        AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits} ADD {attr.commits.factsof};\nCREATE
+        ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE \"Dev\", FOLDER {dim.anchorfolder})
+        AS KEYS {f_devs.id} FULLSET;\nALTER DATASET {dataset.devs} ADD {attr.devs.dev_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE
+        \"Id\") AS {f_devs.nm_id};\nALTER ATTRIBUTE {attr.devs.dev_id} ADD LABELS
+        {label.devs.dev_id.email} VISUAL(TITLE \"Email\") AS {f_devs.nm_email};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} DEFAULT LABEL {label.devs.dev_id.email};\nCREATE
+        FACT {fact.commits.lines_changed} VISUAL(TITLE \"Lines Changed\", DESCRIPTION
+        \"Fact description\", FOLDER {ffld.commits}) AS {f_commits.f_lines_changed};\nALTER
+        DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER ATTRIBUTE
+        {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER ATTRIBUTE
+        {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.repos}, {dataset.devs},
+        {dataset.commits};"],"preserveData":false,"cascadeDrops":false}}]}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:02 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:oU5bQC23jR2W_VKRvkDs8Q
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:03 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:oU5bQC23jR2W_VKRvkDs8Q:jTxtVoXo01IAHdFU
+      X-Gdc-Request-Time:
+      - '47'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Metadata service for project ''m1yte8zc2tcgqbfiov5a1sdv8lre44sa''","category":"project","instance":"m1yte8zc2tcgqbfiov5a1sdv8lre44sa","links":[{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/data","summary":"Resources
+        for data set manipulation.","category":"data","title":"data"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/dml","summary":"Navigation
+        resource for physical data manipulation.","category":"dml","title":"dml"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/drillcrosspaths","summary":"Returns
+        a list of attributes available for drilling across.","category":"drillcrosspaths","title":"drillcrosspaths"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/etl","summary":"Resources
+        for data ETL.","category":"etl","title":"etl"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/datedimension","summary":"Resources
+        for Date Dimension manipulation","category":"datedimension","title":"datedimension"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/favorites","summary":"Returns
+        list of objects marked as favorites by the user.","category":"favorites","title":"favorites"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/favorite","summary":"Resource
+        for determining if an object is in a user''s favorites.","category":"favorite","title":"favorite"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/identifiers","summary":"Resource
+        for retrieving metadata object identifiers.","category":"instance-identifiers","title":"identifiers"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/labels","summary":"Resource
+        for retrieving uris for element labels.","category":"labels","title":"labels"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm","summary":"Resources
+        for logical data model (LDM) manipulation.","category":"ldm","title":"ldm"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/log","summary":"Returns
+        a list of metadata events.","category":"logs","title":"logs"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/maintenance","summary":"Resource
+        for project maintenace.","category":"maintenance","title":"maintenance"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/maqlvalidator","summary":"Resource
+        for MAQL construct validation and tree representation.","category":"maqlvalidator","title":"MaqlValidator"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj","summary":"Resource
+        for creating new metadata objects.","category":"obj","title":"obj"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/objects","summary":"Resource
+        for batch operations MD objects.","category":"objects","title":"objects"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/query","summary":"Resources
+        for querying collections of metadata objects.","category":"query","title":"query"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/reportstatistics","summary":"Returns
+        report statistics for a specified report.","category":"report-statistic","title":"report
+        statistics"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/search","summary":"Resource
+        for full text search.","category":"search","title":"search"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/service","summary":"Services
+        for metadata configuration.","category":"service","title":"service"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tags","summary":"Returns
+        a list of tags.","category":"tags","title":"tags"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks","summary":"Task
+        resource.","category":"tasks","title":"tasks"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/templates","summary":"Returns
+        list of uris of templates from which the project was created.","category":"templates","title":"templates"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/translations","summary":"Resource
+        for project localization.","category":"translations","title":"translations"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/usedby2","summary":"Returns
+        list of objects connected to a certain object via a ''used'' edge.","category":"usedby2","title":"usedby"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/using2","summary":"Returns
+        list of objects connected to a certain object via a ''using'' edge.","category":"using2","title":"using"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/userfilters","summary":"Relation
+        userFilter - user management.","category":"userfilters","title":"userfilters"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/validate","summary":"Resources
+        for LDM, PDM, IO validation.","category":"validate-project","title":"validateproject"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/variables","summary":"Resources
+        for variable manipulation.","category":"vars","title":"variables"}]}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:03 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:t6Epe769ujWpOdBffTxDmQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:03 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:t6Epe769ujWpOdBffTxDmQ:SKOYG54I3kboG2vk
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '60'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Resources for logical data model (LDM) manipulation
+        within project ''m1yte8zc2tcgqbfiov5a1sdv8lre44sa''","category":"ldm","instance":"m1yte8zc2tcgqbfiov5a1sdv8lre44sa","links":[{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm/manage2","summary":"Resources
+        for model manipulation with categorized result.","category":"ldm-manage2","title":"manage2"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm/singleloadinterface","summary":"Single
+        interface for data loading.","category":"singleloadinterface","title":"singleloadinterface"},{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm/attributeupperbound","summary":"Attribute
+        upper bounds for LDM.","category":"attributeupperbound","title":"attributeupperbound"}]}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:03 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/ldm/manage2
+    body:
+      encoding: UTF-8
+      string: '{"manage":{"maql":"CREATE FOLDER {dim.folderedrepos} VISUAL(TITLE \"Foldered
+        Repos\") TYPE ATTRIBUTE;\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE \"Anchor folder\")
+        TYPE ATTRIBUTE;\nCREATE FOLDER {ffld.commits} VISUAL(TITLE \"Commits\") TYPE
+        FACT;\nCREATE DATASET {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE
+        DATASET {dataset.devs} VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits}
+        VISUAL(TITLE \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY
+        (IDENTIFIER \"committed_on\", TITLE \"Committed On\");\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE ATTRIBUTE
+        {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER {dim.commits})
+        AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits} ADD {attr.commits.factsof};\nCREATE
+        ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE \"Dev\", FOLDER {dim.anchorfolder})
+        AS KEYS {f_devs.id} FULLSET;\nALTER DATASET {dataset.devs} ADD {attr.devs.dev_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE
+        \"Id\") AS {f_devs.nm_id};\nALTER ATTRIBUTE {attr.devs.dev_id} ADD LABELS
+        {label.devs.dev_id.email} VISUAL(TITLE \"Email\") AS {f_devs.nm_email};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} DEFAULT LABEL {label.devs.dev_id.email};\nCREATE
+        FACT {fact.commits.lines_changed} VISUAL(TITLE \"Lines Changed\", DESCRIPTION
+        \"Fact description\", FOLDER {ffld.commits}) AS {f_commits.f_lines_changed};\nALTER
+        DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER ATTRIBUTE
+        {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER ATTRIBUTE
+        {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD KEYS {f_commits.devs_id};\nSYNCHRONIZE {dataset.devs}, {dataset.repos},
+        {dataset.commits};"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:kVx79F8X02ChhBljiBOP9A
+      Content-Length:
+      - '2725'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:04 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:kVx79F8X02ChhBljiBOP9A:QpdHtJ8BTomhhew3
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '50'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entries":[{"link":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/8707729903adb0b49c6bcdc0018ef9020000002d/status","category":"tasks-status"}]}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:04 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/8707729903adb0b49c6bcdc0018ef9020000002d/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:ryOBfiKl0KVojMtbF3M2ww
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:04 GMT
+      Server:
+      - GoodData WebApp
+      Refresh:
+      - '2'
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:ryOBfiKl0KVojMtbF3M2ww:X8ivusIDRetu02CL
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '29'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/8707729903adb0b49c6bcdc0018ef9020000002d/status","status":"RUNNING","links":{"poll":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/8707729903adb0b49c6bcdc0018ef9020000002d/status"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:04 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/8707729903adb0b49c6bcdc0018ef9020000002d/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:vQtGyd5aAGQin0iZDxpS9w
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 303
+      message: See Other
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:15 GMT
+      Server:
+      - GoodData WebApp
+      Location:
+      - "/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/bc06f5718622dc1baf7668a34d32eb820000002d/status"
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:vQtGyd5aAGQin0iZDxpS9w:WdnZCKHhFqm4DrVZ
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '57'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/bc06f5718622dc1baf7668a34d32eb820000002d/status","status":"OK","links":{"poll":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/bc06f5718622dc1baf7668a34d32eb820000002d/status"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:15 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/bc06f5718622dc1baf7668a34d32eb820000002d/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:vQtGyd5aAGQin0iZDxpS9w
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:15 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:vQtGyd5aAGQin0iZDxpS9w:r6wNBfCh3NKvmHYU
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/bc06f5718622dc1baf7668a34d32eb820000002d/status","status":"OK","links":{"poll":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/tasks/bc06f5718622dc1baf7668a34d32eb820000002d/status"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:15 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj
+    body:
+      encoding: UTF-8
+      string: '{"folder":{"content":{"type":["metric"]},"meta":{"tags":"","summary":"","title":"aaa"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:B5F3Yd33I2PtWHnIZc_D2w
+      Content-Length:
+      - '88'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:16 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:B5F3Yd33I2PtWHnIZc_D2w:ltuzlmi4pIG1MhqN
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '78'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/244"}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:16 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/244
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:TOCf_uff5kwyQx02BzDzVw
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:16 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:TOCf_uff5kwyQx02BzDzVw:YkxYEspfrdQrsPMW
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '61'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"folder":{"content":{"entries":[],"type":["metric"]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/244","tags":"","created":"2018-05-25
+        13:51:16","identifier":"aabdVD6reu2X","deprecated":"0","summary":"","isProduction":1,"title":"aaa","category":"folder","updated":"2018-05-25
+        13:51:16","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:17 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/244
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:4rxda9TWwT0z-Dpe5ZgZGw
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:17 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:4rxda9TWwT0z-Dpe5ZgZGw:vlN5c0TKPwD0TNWg
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '60'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"folder":{"content":{"entries":[],"type":["metric"]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/244","tags":"","created":"2018-05-25
+        13:51:16","identifier":"aabdVD6reu2X","deprecated":"0","summary":"","isProduction":1,"title":"aaa","category":"folder","updated":"2018-05-25
+        13:51:16","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:17 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/objects/query?category=attribute&limit=50&offset=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:jqru1jttuQAmcbHW0SIZRQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:17 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:jqru1jttuQAmcbHW0SIZRQ:nWXNkGCPTaHYez6D
+      X-Gdc-Request-Time:
+      - '450'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"objects":{"paging":{"count":22,"offset":0},"items":[{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/64"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/148","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/65]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/166/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/166","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aag81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Year.","isProduction":1,"title":"Year (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/198","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/112"},{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/120"},{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/135"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/148","tags":"date
+        year","created":"2010-08-02 08:13:42","identifier":"committed_on.year","deprecated":"0","summary":"Year","isProduction":1,"title":"Year
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/66"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/149","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/67]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/167/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/167","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aam81lMifn6q","deprecated":"0","summary":"DisplayForm
+        default.","isProduction":1,"title":"default (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/198","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.quarter_in_year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/113"},{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/119"},{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/134"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/149","tags":"date
+        quarter year","created":"2010-08-02 08:13:42","identifier":"committed_on.quarter.in.year","deprecated":"0","summary":"Generic
+        Quarter (Q1-Q4)","isProduction":1,"title":"Quarter (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/68"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/150","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/73]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/172/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/172","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aaA81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Week #/Year (W1/2010).","isProduction":1,"title":"Week #/Year (W1/2010) (Committed
+        On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/150","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/71]","default":2},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/170/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/170","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aaw81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Week Starting.","isProduction":1,"title":"Week Starting (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/150","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/70]","default":3},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/169/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/169","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aau81lMifn6q","deprecated":"0","summary":"DisplayForm
+        From - To.","isProduction":1,"title":"From - To (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/150","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/72]","default":5},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/171/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/171","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aay81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Week #/Year (Cont.).","isProduction":1,"title":"Week #/Year (Cont.) (Committed
+        On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/150","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/74]","default":6},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/173/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/173","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aaC81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Wk/Qtr/Year (Cont.).","isProduction":1,"title":"Wk/Qtr/Year (Cont.) (Committed
+        On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/150","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/69]","default":7},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/168/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/168","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aas81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Wk/Qtr/Year.","isProduction":1,"title":"Wk/Qtr/Year (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.week_us","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/136"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/150","tags":"date
+        week","created":"2010-08-02 08:13:42","identifier":"committed_on.week","deprecated":"0","summary":"Week/Year
+        based on US Weeks (Sun-Sat). By default, if a week spans multiple years or
+        quarters (ie, end of the year/quarter), it is marked as first or last week
+        of the period according to particular standards (ie, US or EU). Labels marked
+        as \"Continuous\" show both weeks (W53/2009 - W1/2010).","isProduction":1,"title":"Week
+        (Sun-Sat)/Year (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/75"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/151","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/76]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/174/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/174","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aaI81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number US.","isProduction":1,"title":"Number US (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.week_in_year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/138"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/151","tags":"date
+        week year","created":"2010-08-02 08:13:42","identifier":"committed_on.week.in.year","deprecated":"0","summary":"Generic
+        Week based on US Weeks (Sun-Sat)","isProduction":1,"title":"Week (Sun-Sat)
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/77"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/152","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/78]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/175/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/175","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aaO81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number US.","isProduction":1,"title":"Number US (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.week_in_quarter","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/137"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/152","tags":"date
+        quarter week","created":"2010-08-02 08:13:42","identifier":"committed_on.week.in.quarter","deprecated":"0","summary":"Generic
+        Week of Quarter based on US Weeks (W1, ..., W14)","isProduction":1,"title":"Week
+        (Sun-Sat) of Qtr (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/79"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/153","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/84]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/180/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/180","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aa281lMifn6q","deprecated":"0","summary":"DisplayForm
+        Week #/Year (W1/2010).","isProduction":1,"title":"Week #/Year (W1/2010) (Committed
+        On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/153","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/82]","default":2},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/178/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/178","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aaY81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Week Starting.","isProduction":1,"title":"Week Starting (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/153","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/81]","default":3},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/177/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/177","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aaW81lMifn6q","deprecated":"0","summary":"DisplayForm
+        From - To.","isProduction":1,"title":"From - To (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.week","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/139"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/153","tags":"date
+        eu week","created":"2010-08-02 08:13:42","identifier":"committed_on.euweek","deprecated":"0","summary":"Week/Year
+        based on EU Weeks (Mon-Sun). By default, if a week spans multiple years or
+        quarters (ie, end of the year/quarter), it is marked as first or last week
+        of the period according to particular standards (ie, US or EU). Labels marked
+        as \"Continuous\" show both weeks (W53/2009 - W1/2010).","isProduction":1,"title":"Week
+        (Mon-Sun)/Year (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/86"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/154","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/87]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/182/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/182","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aba81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number EU.","isProduction":1,"title":"Number EU (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.euweek_in_year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/141"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/154","tags":"date
+        eu week year","created":"2010-08-02 08:13:42","identifier":"committed_on.euweek.in.year","deprecated":"0","summary":"Generic
+        Week based on EU Weeks (Mon-Sun)","isProduction":1,"title":"Week (Mon-Sun)
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/88"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/155","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/89]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/183/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/183","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abg81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number EU.","isProduction":1,"title":"Number EU (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.euweek_in_quarter","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/140"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/155","tags":"date
+        eu quarter week","created":"2010-08-02 08:13:42","identifier":"committed_on.euweek.in.quarter","deprecated":"0","summary":"Generic
+        Week of Quarter based on EU Weeks (W1, ..., W14)","isProduction":1,"title":"Week
+        (Mon-Sun) of Qtr (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/90"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/156","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/91]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/184/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/184","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abm81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Short (Jan).","isProduction":1,"title":"Short (Jan) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/156","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/94]","default":2},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/187/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/187","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abs81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Long (January).","isProduction":1,"title":"Long (January) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/156","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/93]","default":3},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/186/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/186","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abq81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number (M1).","isProduction":1,"title":"Number (M1) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/156","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/92]","default":4},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/185/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/185","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abo81lMifn6q","deprecated":"0","summary":"DisplayForm
+        M/Q (M1/Q1).","isProduction":1,"title":"M/Q (M1/Q1) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/199","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.month_in_year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/116"},{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/131"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/156","tags":"date
+        month year","created":"2010-08-02 08:13:42","identifier":"committed_on.month.in.year","deprecated":"0","summary":"Generic
+        Month","isProduction":1,"title":"Month (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/95"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/157","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/96]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/188/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/188","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aby81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number.","isProduction":1,"title":"Number (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/199","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.month_in_quarter","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/117"},{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/132"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/157","tags":"date
+        month quarter","created":"2010-08-02 08:13:42","identifier":"committed_on.month.in.quarter","deprecated":"0","summary":"Generic
+        month of quarter (M1, M2, M3)","isProduction":1,"title":"Month of Quarter
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/97"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/158","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/98]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/189/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/189","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abE81lMifn6q","deprecated":"0","summary":"DisplayForm
+        default.","isProduction":1,"title":"default (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.day_in_year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/129"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/158","tags":"date
+        day year","created":"2010-08-02 08:13:42","identifier":"committed_on.day.in.year","deprecated":"0","summary":"Generic
+        Day of the Year (D1, D2, ... , D365)","isProduction":1,"title":"Day of Year
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/99"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/159","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/100]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/190/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/190","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abK81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Short (Sun).","isProduction":1,"title":"Short (Sun) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/159","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/102]","default":2},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/192/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/192","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abO81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Long (Sunday).","isProduction":1,"title":"Long (Sunday) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/159","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/101]","default":3},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/191/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/191","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abM81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number (1=Sunday).","isProduction":1,"title":"Number (1=Sunday) (Committed
+        On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.day_in_week","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/127"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/159","tags":"date
+        day week","created":"2010-08-02 08:13:42","identifier":"committed_on.day.in.week","deprecated":"0","summary":"Generic
+        Day of the Week based on US Week (Sun-Sat)","isProduction":1,"title":"Day
+        of Week (Sun-Sat) (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/103"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/160","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/104]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/193/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/193","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abU81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Short (Mon).","isProduction":1,"title":"Short (Mon) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/160","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/106]","default":2},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/195/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/195","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abY81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Long (Monday).","isProduction":1,"title":"Long (Monday) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/160","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/105]","default":3},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/194/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/194","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.abW81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number (1=Monday).","isProduction":1,"title":"Number (1=Monday) (Committed
+        On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.day_in_euweek","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/128"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/160","tags":"date
+        day eu week","created":"2010-08-02 08:13:42","identifier":"committed_on.day.in.euweek","deprecated":"0","summary":"Generic
+        Day based on EU Week (Mon-Sun)","isProduction":1,"title":"Day of Week (Mon-Sun)
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/107"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/161","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/108]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/196/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/196","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.ab481lMifn6q","deprecated":"0","summary":"DisplayForm
+        default.","isProduction":1,"title":"default (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.day_in_quarter","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/126"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/161","tags":"date
+        day quarter","created":"2010-08-02 08:13:42","identifier":"committed_on.day.in.quarter","deprecated":"0","summary":"Generic
+        day of quarter (D1, D2, ... , D92)","isProduction":1,"title":"Day of Quarter
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/109"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/162","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/110]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/197/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/197","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aca81lMifn6q","deprecated":"0","summary":"DisplayForm
+        default.","isProduction":1,"title":"default (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.day_in_month","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/125"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/162","tags":"date
+        day month","created":"2010-08-02 08:13:42","identifier":"committed_on.day.in.month","deprecated":"0","summary":"Generic
+        day of month (D1, D2, ... , D31)","isProduction":1,"title":"Day of Month (Committed
+        On)","category":"attribute","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/111"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/163","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/114]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/198/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/198","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.aci81lMifn6q","deprecated":"0","summary":"DisplayForm
+        US Short.","isProduction":1,"title":"US Short (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/199","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.quarter","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/118"},{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/133"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/163","tags":"date
+        quarter","created":"2010-08-02 08:13:42","identifier":"committed_on.quarter","deprecated":"0","summary":"Quarter
+        and Year (Q1/2010)","isProduction":1,"title":"Quarter/Year (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/115"}],"displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/164","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/121]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/199/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/199","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.act81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Short (Jan 2010).","isProduction":1,"title":"Short (Jan 2010) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/164","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/123]","default":2},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/201/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/201","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.acx81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Long (January 2010).","isProduction":1,"title":"Long (January 2010) (Committed
+        On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/164","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/122]","default":3},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/200/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/200","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.acv81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Number (1/2010).","isProduction":1,"title":"Number (1/2010) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","sort":"pk","dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.month","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/130"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/164","tags":"date
+        month","created":"2010-08-02 08:13:42","identifier":"committed_on.month","deprecated":"0","summary":"Month
+        and Year","isProduction":1,"title":"Month/Year (Committed On)","category":"attribute","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"direction":"asc","sort":"pk","pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/124"}],"dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/45","type":"GDC.time.date","displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/165","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/144]","default":1,"type":"GDC.time.day_us"},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/204","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.date.mmddyyyy","deprecated":"0","summary":"DisplayForm
+        mm/dd/yyyy.","isProduction":1,"title":"mm/dd/yyyy (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/165","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/143]","default":2,"type":"GDC.time.day"},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/203/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/203","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.date.yyyymmdd","deprecated":"0","summary":"DisplayForm
+        yyyy-mm-dd.","isProduction":1,"title":"yyyy-mm-dd (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/165","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/147]","default":3,"type":"GDC.time.day_us_noleading"},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/207/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/207","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.date.mdyy","deprecated":"0","summary":"DisplayForm
+        m/d/yy (no leading zeroes).","isProduction":1,"title":"m/d/yy (no leading
+        zeroes) (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/165","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/146]","default":4,"type":"GDC.time.day_us_long"},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/206/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/206","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.date.long","deprecated":"0","summary":"DisplayForm
+        Long (Mon, Jan 1, 2010).","isProduction":1,"title":"Long (Mon, Jan 1, 2010)
+        (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/165","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/142]","default":5,"type":"GDC.time.day_eu"},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/202/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/202","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.date.ddmmyyyy","deprecated":"0","summary":"DisplayForm
+        dd/mm/yyyy.","isProduction":1,"title":"dd/mm/yyyy (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/165","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/145]","default":6,"type":"GDC.time.day_iso"},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/205/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/205","tags":"","created":"2010-08-02
+        08:13:42","identifier":"committed_on.date.eddmmyyyy","deprecated":"0","summary":"DisplayForm
+        dd-mm-yyyy.","isProduction":1,"title":"dd-mm-yyyy (Committed On)","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/25"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/165","tags":"date","created":"2010-08-02
+        08:13:42","identifier":"committed_on.date","deprecated":"0","summary":"Date","isProduction":1,"title":"Date
+        (Committed On)","category":"attribute","updated":"2018-05-25 13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/16"}],"dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/38","displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/210","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/18]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/211/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/211","tags":"","created":"2018-05-25
+        13:51:06","identifier":"some_label_id","deprecated":"0","summary":"","isProduction":1,"title":"Repository
+        Id","category":"attributeDisplayForm","updated":"2018-05-25 13:51:06","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/31"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/210","tags":"","created":"2018-05-25
+        13:51:06","identifier":"attr.repos.repo_id","deprecated":"0","summary":"This
+        is anchor description","isProduction":1,"title":"Repository Id","category":"attribute","updated":"2018-05-25
+        13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/34"}],"dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/38","displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/212","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/36]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/213/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/213","tags":"","created":"2018-05-25
+        13:51:06","identifier":"some_attr_label_id","deprecated":"0","summary":"","isProduction":1,"title":"Repository
+        Name","category":"attributeDisplayForm","updated":"2018-05-25 13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/20"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/212","tags":"","created":"2018-05-25
+        13:51:06","identifier":"some_attr_id","deprecated":"0","summary":"","isProduction":1,"title":"Repository
+        Name","category":"attribute","updated":"2018-05-25 13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/29"}],"dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/39","displayForms":[]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/214","tags":"","created":"2018-05-25
+        13:51:07","identifier":"attr.commits.factsof","deprecated":"0","summary":"","isProduction":1,"title":"Attr.Commits.Factsof","category":"attribute","updated":"2018-05-25
+        13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/9"}],"dimension":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/40","displayForms":[{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/215","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/11]","default":1},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/217/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/217","tags":"","created":"2018-05-25
+        13:51:07","identifier":"label.devs.dev_id.email","deprecated":"0","summary":"","isProduction":1,"title":"Email","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/215","expression":"[/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/13]"},"links":{"elements":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/216/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/216","tags":"","created":"2018-05-25
+        13:51:07","identifier":"label.devs.dev_id.id","deprecated":"0","summary":"","isProduction":1,"title":"Id","category":"attributeDisplayForm","updated":"2018-05-25
+        13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"fk":[{"multivalue":false,"type":"col","data":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/23"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/215","tags":"","created":"2018-05-25
+        13:51:07","identifier":"attr.devs.dev_id","deprecated":"0","summary":"","isProduction":1,"title":"Dev","category":"attribute","updated":"2018-05-25
+        13:51:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:18 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj
+    body:
+      encoding: UTF-8
+      string: '{"metric":{"content":{"format":"#,##0","expression":"SELECT COUNT([/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/148])"},"meta":{"tags":"","summary":null,"title":"count
+        of Year (Committed On)"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:_v2adLwO38-GJ1pnmIVe-w
+      Content-Length:
+      - '194'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:18 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:_v2adLwO38-GJ1pnmIVe-w:8qJhYc3KxSzuG0Zs
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '79'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245"}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:19 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:z-aaOwFQZL3p32c7RjaE-g
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:19 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:z-aaOwFQZL3p32c7RjaE-g:5EbgeRFScMBU1WxH
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '25'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"COUNT","content":[{"value":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/148","position":{"column":27,"line":1},"type":"attribute
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        COUNT([/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/148])"},"links":{"explain2":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245","tags":"","created":"2018-05-25
+        13:51:18","identifier":"aabdVEKUebOZ","deprecated":"0","summary":"","isProduction":1,"title":"count
+        of Year (Committed On)","category":"metric","updated":"2018-05-25 13:51:18","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:19 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:Q8zp_NVPJI8THH4g19SH3A
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:19 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=96
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:Q8zp_NVPJI8THH4g19SH3A:K9BfQNABTuP3bwJE
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '25'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"COUNT","content":[{"value":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/148","position":{"column":27,"line":1},"type":"attribute
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        COUNT([/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/148])"},"links":{"explain2":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245","tags":"","created":"2018-05-25
+        13:51:18","identifier":"aabdVEKUebOZ","deprecated":"0","summary":"","isProduction":1,"title":"count
+        of Year (Committed On)","category":"metric","updated":"2018-05-25 13:51:18","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:20 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/245
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:qZMnFNB02VJnIcjZyISQLQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:21 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '86'
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:qZMnFNB02VJnIcjZyISQLQ:f0MEElbWlcUHd7P4
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:21 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/m1yte8zc2tcgqbfiov5a1sdv8lre44sa/obj/244
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:Mk2OCUNdM4hj0oNx6fGjTg
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:22 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=96
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '48'
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:Mk2OCUNdM4hj0oNx6fGjTg:9qMfb7Tm2lnUJvmz
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:22 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/m1yte8zc2tcgqbfiov5a1sdv8lre44sa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.0.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:q_iqOuUJJ43gO7KXg47puQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Fri, 25 May 2018 11:51:22 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=95
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '52'
+      X-Gdc-Request:
+      - vlGNZ4wrKXQr2QjUN_8Ylg:q_iqOuUJJ43gO7KXg47puQ:pvEY203DtUTsEHYC
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Fri, 25 May 2018 11:51:22 GMT
+recorded_with: VCR 4.0.0

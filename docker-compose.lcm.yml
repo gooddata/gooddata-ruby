@@ -1,0 +1,29 @@
+version: '2'
+services:
+  appstore:
+    image: gooddata/appstore
+    build:
+      context: .
+      dockerfile: Dockerfile.jruby
+    links:
+     - localstack
+    environment:
+     - GD_ENV
+     - GDC_LOG_LEVEL
+     - JRUBY_OPTS=-J-Xmx1g
+     - GD_SPEC_PASSWORD
+    volumes:
+      - .:/src
+    volumes_from:
+      - bundle
+    mem_limit: 2500m
+  localstack:
+    image: docker-registry.na.intgdc.com/gdc_localstack:latest
+    expose:
+     - "4572"
+    environment:
+     - SERVICES=s3:4572
+  bundle:
+    image: busybox
+    volumes:
+      - /bundle

@@ -33,6 +33,7 @@ module GoodData
         d[:updated] = data[:updated] || d[:created] || Time.now
         d[:title] = data[:title]
         d[:summary] = data[:summary]
+        d[:uri] = data[:uri]
       end
       new_data = GoodData::Helpers.deep_dup(EMPTY_OBJECT).tap do |d|
         d['projectRole']['links']['self'] = data[:uri] if data[:uri]
@@ -54,7 +55,7 @@ module GoodData
     #
     # @return [Array<GoodData::Profile>] List of users
     def users
-      url = data['links']['roleUsers']
+      url = uri + '/users'
       tmp = client.get url
       tmp['associatedUsers']['users'].pmap do |user_url|
         url = user_url
@@ -67,9 +68,7 @@ module GoodData
     #
     # @return [string] URI of this project role
     def uri
-      return @json['projectRole']['links']['self'] if @json['projectRole']['links']['self']
-      return nil unless @json['projectRole']['links']['roleUsers']
-      @json['projectRole']['links']['roleUsers'].split('/')[0...-1].join('/')
+      @json['projectRole']['meta']['uri']
     end
 
     def ==(other)

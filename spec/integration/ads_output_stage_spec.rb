@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::AdsOutputStage, :constraint => 'slow' do
+describe GoodData::AdsOutputStage, :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @ads = GoodData::DataWarehouse.create(client: @client, title: 'Test ADS', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)

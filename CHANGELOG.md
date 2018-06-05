@@ -1,4 +1,61 @@
 # GoodData Ruby SDK Changelog
+## 1.1.0
+ - TMA-860: use new roles API (#1169)
+ - test passed locally 
+ - Avoid polling idle time in VCR tests
+ - Enable vcr for metric specs
+ - TMA-832: support for pluggable component process type
+ - TMA-900: setup vcr for logging_spec
+ - TMA-900: setup vcr for id_to_uri_spec
+ - TMA-900: allow vcr to match uploads requests
+ - TMA-900: setup vcr for project_spec
+ - TMA-900: add VCR to connection_spec
+ - TRIVIAL: add idea moudle to gitignore
+ - TMA-904: allow to enable/disable VCR completely by ENV
+ - TMA-712 if not run by test, the check_helper now only warns, not fails
+ - TMA-895: MUFs work when shared between users
+ - TMA-898: users brick deletes users from domain
+ - Document the VCR usage in contribution guide
+ - TMA-904: allow to set VCR record mode from environment
+ - TEST: TMA-376 use VCR by user_group_spec
+ - TEST: TMA-376 introduce VCR for integration testing
+ - TMA-868: deprecated flag now propagates the value to the replacement param if the type is compatible
+ - TMA-604: can put metrics in folders
+ - TMA-843: avoid abuse of obj resource in partial md import export
+ - TMA-892: User filters brick dry run (#1156)
+ - * TMA-892: User filters brick dry run
+ - TMA-761: add support for manual schedule execution
+ - fix recovery from provision clients error
+ - make sso backwards compatible
+ - TMA-799: Introduce HLL functionality to LCM bricks
+ - TMA-811 fixed wrong type in params specification in synchronize users action
+ - rotate integration test projects
+ - TMA-846 fixed bug in specification in synchronize_users action, unified access to the smart hash properties to symbol and fixed bug which caused some of the variablent to slip unchecked
+ - TMA-601: Remove CLIENT_ID setting from LCM bricks
+ - TMA-764: use POST for SSO
+ - SETI-1643: rotated password for rubydevadmin account
+ - No rake-notes quickfix
+ - Rotated project tokens and rubydev admin password
+ - TEST: introduce unit test for REST placeholders
+ - TMA-732: all sync_multiple actions fail when filter set is empty
+ - TMA-788: req of yard library ~> 0.9.11
+ - TMA-683: add missing stats placeholders
+ - * replace word and dash matching with not slash matching
+ - * for domain dataproducts
+ - * for outputStage
+ - * for userGroups
+ - TMA-819: requests to the profile/email@addr API always use downcase
+ - This reverts commit 66b4b7ac5dc943e11c0e179490d27d6699603386.
+ - Align active maintainers with reality
+ - TMA- 712 actions now fail when unspecified param is acessed
+ - TMA-785: Support excludeFactRule parameter
+ - SETI-1595: rotating passwords
+ - Make activesupport a runtime dependency
+ - TMA-836: release brick takes deprecated objects into account
+ - TMA-816: Make .execute_mufs work with symbolized hashes
+ - TMA-824: Test filters created with .get_filters
+ - TMA-818: executing mufs fails if api returns errors
+
 ## 1.0.2
  - TMA-775: smart attribute polling
  - TMA-809: Fix new visualization object in bricks

@@ -178,9 +178,14 @@ namespace :test do
     t.pattern = 'spec/integration/**/*.rb'
   end
 
-  desc 'Run legacy tests'
-  RSpec::Core::RakeTask.new(:legacy) do |t|
-    t.pattern = 'test/**/test_*.rb'
+  desc 'Run LCM tests'
+  RSpec::Core::RakeTask.new(:lcm) do |t|
+    t.pattern = 'spec/lcm/integration/**/*.rb'
+  end
+
+  desc 'Run project tests'
+  RSpec::Core::RakeTask.new(:project) do |t|
+    t.pattern = 'spec/project/**/*.rb'
   end
 
   desc 'Run coding style tests'
@@ -188,8 +193,8 @@ namespace :test do
     Rake::Task['cop'].invoke
   end
 
-  task :all => [:unit, :integration, :cop]
-  task :ci => [:unit, :integration]
+  task :all => [:unit, :integration, :cop, :lcm, :project]
+  task :ci => [:unit, :integration, :lcm, :project]
 end
 
 desc 'Run all tests'
@@ -202,3 +207,10 @@ end
 YARD::Rake::YardocTask.new
 
 task :default => [:usage]
+
+namespace :gitflow do
+  task :init do
+    file_path = File.join(File.dirname(__FILE__), 'bin/gitflow-init.sh')
+    system(file_path) || fail('Initializing git-flow failed!')
+  end
+end

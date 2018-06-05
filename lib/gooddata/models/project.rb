@@ -264,6 +264,9 @@ module GoodData
           to_process = if process.path
                          to_process.delete if to_process
                          GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
+                       elsif process.component
+                         to_process.delete if to_process
+                         GoodData::Process.deploy_component(GoodData::Helpers.symbolize_keys(process.to_hash), project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
                            dir = Pathname(dir)
@@ -1446,12 +1449,10 @@ module GoodData
     #
     # @return [Array<GoodData::ProjectRole>] List of roles
     def roles
-      url = "/gdc/projects/#{pid}/roles"
-
-      tmp = client.get(url)
-      tmp['projectRoles']['roles'].pmap do |role_url|
-        json = client.get role_url
-        client.create(GoodData::ProjectRole, json, project: self)
+      url = "/gdc/internal/projects/#{pid}/roles"
+      res = client.get url
+      res['internalProjectRoles']['roles'].map do |r|
+        client.create(GoodData::ProjectRole, r, project: self)
       end
     end
 

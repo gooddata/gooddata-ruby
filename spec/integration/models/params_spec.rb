@@ -8,7 +8,7 @@ require 'gooddata/models/profile'
 require 'gooddata/models/domain'
 require 'gooddata/models/project'
 
-describe 'GoodData::Schedule::Params' do
+describe 'GoodData::Schedule::Params', :vcr do
   before(:all) do
     @deploy_dir = File.join(File.dirname(__FILE__), '..', '..', 'data/cc')
     @graph_path = 'graph.grf'

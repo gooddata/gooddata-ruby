@@ -30,8 +30,7 @@ module GoodData
     # Returns the the object of this filter is related to. It can be either project or a user
     #
     # @return [GoodData::Project | GoodData::Profile] Related object
-    def related
-      uri = related_uri
+    def related(uri = related_uri)
       return unless uri
       level == :project ? client.projects(uri) : client.create(GoodData::Profile, client.get(uri))
     end
