@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "Blueprint now support urn in date dimension", :constraint => 'slow' do
+describe "Blueprint now support urn in date dimension", :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 
