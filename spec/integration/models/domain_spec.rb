@@ -9,7 +9,7 @@ require 'gooddata/helpers/csv_helper'
 
 require_relative '../shared_contexts_for_deterministic_random_data'
 
-describe GoodData::Domain, :vcr do
+describe GoodData::Domain do
   before(:all) do
     @users_to_delete = []
   end
