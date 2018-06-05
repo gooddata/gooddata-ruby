@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "Full process and schedule exercise", :constraint => 'slow' do
+describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
   COMPLEX_PARAMS ||= {
     type: 'Person',
     model_version: 1,
