@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "Object export between projects", :constraint => 'slow' do
+describe "Object export between projects", :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 
