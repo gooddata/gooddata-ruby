@@ -46,18 +46,18 @@ describe GoodData::Project, :vcr, :constraint => 'slow' do
   end
 
   describe '#add_users' do
-    before(:all) do |example|
-      @users = ProjectHelper.ensure_users(client: @client, amount: 5, caller: example.description).map { |u| { user: u, role: 'Admin' } }
-      @users_to_delete += @users
-    end
+    include_context 'deterministic random string in $example_name'
+
+    let(:users) { ProjectHelper.ensure_users(client: @client, amount: 5, caller: $example_name).map { |u| { user: u, role: 'Admin' } } }
 
     it 'Adding user without domain should fail if it is not in the project' do
-      res = @project.add_users(@users)
+      res = @project.add_users(users)
       expect(res.select { |r| r[:type] == :failed }.count).to eq users.length
     end
 
     it 'Adding users with domain should pass and users should be added to domain' do
       @domain.create_users(users.map { |u| u[:user] })
+      @users_to_delete += users
       res = @project.add_users(users, domain: @domain)
       links = res.select { |r| r[:type] == :successful }.map { |i| GoodData::Helpers.last_uri_part(i[:user]) }
       expect(@project.members?(links).all?).to be_truthy
