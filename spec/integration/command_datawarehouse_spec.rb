@@ -6,7 +6,7 @@
 
 require 'gooddata/commands/datawarehouse'
 
-describe GoodData::Command::DataWarehouse do
+describe GoodData::Command::DataWarehouse, :vcr do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end

@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::Report, :constraint => 'slow' do
+describe GoodData::Report, :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @project, @blueprint = ProjectHelper.load_full_project_implementation(@client)

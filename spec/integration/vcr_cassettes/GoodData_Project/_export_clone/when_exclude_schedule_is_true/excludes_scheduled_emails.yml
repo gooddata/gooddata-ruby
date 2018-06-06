@@ -1,0 +1,1889 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:5KBOHg4Sk_5vZu-q4zH29w
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:30 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=92
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:5KBOHg4Sk_5vZu-q4zH29w:tvsTs3RvXyOgKnYw
+      X-Gdc-Request-Time:
+      - '46'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Metadata service for project ''voyb6fcvdngwfyf722vn9cmbv7sq6mf6''","category":"project","instance":"voyb6fcvdngwfyf722vn9cmbv7sq6mf6","links":[{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/data","summary":"Resources
+        for data set manipulation.","category":"data","title":"data"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dml","summary":"Navigation
+        resource for physical data manipulation.","category":"dml","title":"dml"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/drillcrosspaths","summary":"Returns
+        a list of attributes available for drilling across.","category":"drillcrosspaths","title":"drillcrosspaths"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/etl","summary":"Resources
+        for data ETL.","category":"etl","title":"etl"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/datedimension","summary":"Resources
+        for Date Dimension manipulation","category":"datedimension","title":"datedimension"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/favorites","summary":"Returns
+        list of objects marked as favorites by the user.","category":"favorites","title":"favorites"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/favorite","summary":"Resource
+        for determining if an object is in a user''s favorites.","category":"favorite","title":"favorite"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/identifiers","summary":"Resource
+        for retrieving metadata object identifiers.","category":"instance-identifiers","title":"identifiers"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/labels","summary":"Resource
+        for retrieving uris for element labels.","category":"labels","title":"labels"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/ldm","summary":"Resources
+        for logical data model (LDM) manipulation.","category":"ldm","title":"ldm"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/log","summary":"Returns
+        a list of metadata events.","category":"logs","title":"logs"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/maintenance","summary":"Resource
+        for project maintenace.","category":"maintenance","title":"maintenance"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/maqlvalidator","summary":"Resource
+        for MAQL construct validation and tree representation.","category":"maqlvalidator","title":"MaqlValidator"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj","summary":"Resource
+        for creating new metadata objects.","category":"obj","title":"obj"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects","summary":"Resource
+        for batch operations MD objects.","category":"objects","title":"objects"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/query","summary":"Resources
+        for querying collections of metadata objects.","category":"query","title":"query"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/reportstatistics","summary":"Returns
+        report statistics for a specified report.","category":"report-statistic","title":"report
+        statistics"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/search","summary":"Resource
+        for full text search.","category":"search","title":"search"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/service","summary":"Services
+        for metadata configuration.","category":"service","title":"service"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/tags","summary":"Returns
+        a list of tags.","category":"tags","title":"tags"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/tasks","summary":"Task
+        resource.","category":"tasks","title":"tasks"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/templates","summary":"Returns
+        list of uris of templates from which the project was created.","category":"templates","title":"templates"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/translations","summary":"Resource
+        for project localization.","category":"translations","title":"translations"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/usedby2","summary":"Returns
+        list of objects connected to a certain object via a ''used'' edge.","category":"usedby2","title":"usedby"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/using2","summary":"Returns
+        list of objects connected to a certain object via a ''using'' edge.","category":"using2","title":"using"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/userfilters","summary":"Relation
+        userFilter - user management.","category":"userfilters","title":"userfilters"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/validate","summary":"Resources
+        for LDM, PDM, IO validation.","category":"validate-project","title":"validateproject"},{"link":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/variables","summary":"Resources
+        for variable manipulation.","category":"vars","title":"variables"}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:30 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj
+    body:
+      encoding: UTF-8
+      string: '{"scheduledMail":{"meta":{"title":"Scheduled report example","summary":"Daily
+        at 12:00pm PT","tags":"","deprecated":0},"content":{"when":{"recurrency":"0:0:0:12:0:0","startDate":"2012-06-05","timeZone":"America/Los_Angeles"},"to":[],"bcc":[],"subject":"Scheduled
+        Report","body":"Hey, I''m sending you new Reports and Dashboards!","attachments":[]}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:MEVT3UxLuOMpx48Cg99WyA
+      Content-Length:
+      - '348'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=89
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:MEVT3UxLuOMpx48Cg99WyA:WuHjBk5tLhRXhjeX
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '137'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/171"}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:31 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/171
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:YByPW_UlT0YUHRjaLx5zOQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=88
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:YByPW_UlT0YUHRjaLx5zOQ:mGbRh45154FS0v21
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '31'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/171","tags":"","created":"2018-06-05
+        07:40:31","identifier":"aabeJ5z6bvfr","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-05
+        07:40:31","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:32 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/maintenance/export
+    body:
+      encoding: UTF-8
+      string: '{"exportProject":{"exportUsers":0,"exportData":1,"excludeSchedules":1}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:HzS3rKPB3-Os4Pg0ES2w1A
+      Content-Length:
+      - '71'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:32 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:HzS3rKPB3-Os4Pg0ES2w1A:CtqazquYD0zuC2Ra
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '59'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"exportArtifact":{"status":{"uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/etltask/ab1fcbc2901f1a3b01186e9959d83f820000002b"},"token":"<TOKEN>"}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:32 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/etltask/ab1fcbc2901f1a3b01186e9959d83f820000002b
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:o9QWeKOWP_8x2bpOgPlwhw
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:33 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:o9QWeKOWP_8x2bpOgPlwhw:KgQj4FFcApQ5J5tr
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '27'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"taskState":{"msg":"","status":"RUNNING"}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:33 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/etltask/ab1fcbc2901f1a3b01186e9959d83f820000002b
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:0KipgjcC9-Hs6Pi3TYmUjQ
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:43 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:0KipgjcC9-Hs6Pi3TYmUjQ:3VQ935cT1Iqd2JpX
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '73'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"taskState":{"msg":"","status":"OK"}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:43 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
+    body:
+      encoding: UTF-8
+      string: '{"project":{"meta":{"summary":"No summary","title":"project clone"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"PRODUCTION","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:leVUSHRGLW5e6Xf23X8-Cw
+      Content-Length:
+      - '179'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:44 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:leVUSHRGLW5e6Xf23X8-Cw:1jGjrQMJ3Of8aT7F
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '486'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr"}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:44 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:6kJW20hogXyLIhAFNN_vWw
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:45 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:6kJW20hogXyLIhAFNN_vWw:ykv3zEGR2AwQHWIe
+      X-Gdc-Request-Time:
+      - '53'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"PRODUCTION","cluster":"","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"PREPARING"},"links":{"ldm_thumbnail":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/ldm?thumbnail=1","self":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr","clearCaches":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/clearCaches","invitations":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/invitations","users":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/users?link=1&offset=0&limit=100","uploads":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/uploads/","ldm":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/ldm","metadata":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr","publicartifacts":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/publicartifacts","roles":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/roles","userRoles":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/dataload","connectors":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/connectors","execute":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/execute","config":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/config","projectFeatureFlags":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/projectFeatureFlags","schedules":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/schedules","templates":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/templates","eventstores":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/dataload/eventstore/stores"},"meta":{"created":"2018-06-05
+        07:40:44","summary":"No summary","updated":"2018-06-05 07:40:44","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"project
+        clone","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:45 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:w4bE7J70tY7bpGtb0F60RQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:49 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=94
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:w4bE7J70tY7bpGtb0F60RQ:9WVmiwwvVxXtQI0D
+      X-Gdc-Request-Time:
+      - '41'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"PRODUCTION","cluster":"","authorizationToken":"<AUTHORIZATION_TOKEN>","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"ENABLED"},"links":{"ldm_thumbnail":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/ldm?thumbnail=1","self":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr","clearCaches":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/clearCaches","invitations":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/invitations","users":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/users?link=1&offset=0&limit=100","uploads":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/uploads/","ldm":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/ldm","metadata":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr","publicartifacts":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/publicartifacts","roles":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/roles","userRoles":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/dataload","connectors":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/connectors","execute":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/execute","config":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/config","projectFeatureFlags":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/projectFeatureFlags","schedules":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/schedules","templates":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/templates","eventstores":"/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr/dataload/eventstore/stores"},"meta":{"created":"2018-06-05
+        07:40:44","summary":"No summary","updated":"2018-06-05 07:40:46","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"project
+        clone","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:49 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/maintenance/import
+    body:
+      encoding: UTF-8
+      string: '{"importProject":{"token":"<TOKEN>"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:Bdx4xU1RfMI3cZg9QW2cyg
+      Content-Length:
+      - '45'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:52 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=91
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:Bdx4xU1RfMI3cZg9QW2cyg:Q2OBjFDIEtRiYY03
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '47'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/etltask/6dc21b729dca92e9d648db77fd6ab2e50000002b"}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:53 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/etltask/6dc21b729dca92e9d648db77fd6ab2e50000002b
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:vZgwXYZDqG1qN2Q1DO-Whg
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:40:53 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=76
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:vZgwXYZDqG1qN2Q1DO-Whg:oMCQs9zX2mTn3VIp
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '28'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"taskState":{"msg":"","status":"RUNNING"}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:40:53 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/etltask/6dc21b729dca92e9d648db77fd6ab2e50000002b
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:DvAepci1VIIIMc1Pwc5d0Q
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:04 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:DvAepci1VIIIMc1Pwc5d0Q:8pPslj77MS4kJn7b
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '28'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"taskState":{"msg":"","status":"OK"}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:04 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects/query?category=scheduledMail&limit=50&offset=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:bIpqtG36E768fayL0uAP9w
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:05 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=71
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:bIpqtG36E768fayL0uAP9w:3oLamFvf0eaIkKLb
+      X-Gdc-Request-Time:
+      - '640'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"objects":{"paging":{"next":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects/query?category=scheduledMail&limit=50&offset=50","count":50,"offset":0},"items":[{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/7","tags":"","created":"2018-04-11
+        11:15:12","identifier":"aab31eoDfceY","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-11
+        11:15:12","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/8","tags":"","created":"2018-04-11
+        11:54:19","identifier":"aab4a4Uba9V2","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-11
+        11:54:19","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/9","tags":"","created":"2018-04-11
+        16:20:24","identifier":"aab5f387ehKX","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-11
+        16:20:24","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/10","tags":"","created":"2018-04-12
+        11:44:09","identifier":"aac9Y0MKh7dU","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-12
+        11:44:09","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/11","tags":"","created":"2018-04-12
+        14:51:19","identifier":"aabaJ99UhMpu","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-12
+        14:51:19","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/12","tags":"","created":"2018-04-13
+        10:28:09","identifier":"aabfwq2zff39","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-13
+        10:28:09","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/13","tags":"","created":"2018-04-13
+        11:33:05","identifier":"aabfMMz0cICY","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-13
+        11:33:05","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/14","tags":"","created":"2018-04-13
+        11:35:11","identifier":"aabfNjqbcNKJ","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-13
+        11:35:11","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/16","tags":"","created":"2018-04-13
+        13:23:30","identifier":"aacgeoj3ajxZ","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-13
+        13:23:30","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/17","tags":"","created":"2018-04-13
+        14:24:44","identifier":"aadgtPjIdEF8","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-13
+        14:24:44","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/18","tags":"","created":"2018-04-13
+        15:27:23","identifier":"aabgJLNWeAC4","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-13
+        15:27:23","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/19","tags":"","created":"2018-04-13
+        21:30:28","identifier":"aabidaSLeW2C","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-13
+        21:30:28","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/20","tags":"","created":"2018-04-16
+        10:10:12","identifier":"aafwYPisdRP2","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-16
+        10:10:12","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/21","tags":"","created":"2018-04-16
+        13:52:21","identifier":"aabxTqgfhdYW","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-16
+        13:52:21","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/22","tags":"","created":"2018-04-16
+        15:08:45","identifier":"aabycEDjfkQk","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-16
+        15:08:45","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/23","tags":"","created":"2018-04-16
+        16:16:36","identifier":"aabytJDogqAg","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-16
+        16:16:36","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/24","tags":"","created":"2018-04-17
+        10:14:19","identifier":"aabCQ3n7dVEx","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-17
+        10:14:19","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/25","tags":"","created":"2018-04-17
+        14:40:48","identifier":"aabDV806gkJR","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-17
+        14:40:48","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/26","tags":"","created":"2018-04-17
+        15:14:00","identifier":"aacD4ou9fSId","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-17
+        15:14:00","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/27","tags":"","created":"2018-04-17
+        16:41:45","identifier":"aabEqAYciuC3","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-17
+        16:41:45","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/28","tags":"","created":"2018-04-19
+        16:21:33","identifier":"aacP16vsith8","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-19
+        16:21:33","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/29","tags":"","created":"2018-04-20
+        15:01:07","identifier":"aabVyPQKe9qS","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-20
+        15:01:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/30","tags":"","created":"2018-04-20
+        15:59:32","identifier":"aabVNxz4ijqD","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-20
+        15:59:32","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/31","tags":"","created":"2018-04-20
+        16:11:36","identifier":"aabVQzSMc4Ht","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-20
+        16:11:36","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/32","tags":"","created":"2018-04-20
+        17:59:40","identifier":"aaiWhbmwafp5","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-20
+        17:59:40","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/33","tags":"","created":"2018-04-20
+        18:53:49","identifier":"aabWvpVqdeJe","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-20
+        18:53:49","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/34","tags":"","created":"2018-04-23
+        14:11:24","identifier":"aancTzypcYqR","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-23
+        14:11:24","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/35","tags":"","created":"2018-04-24
+        10:37:14","identifier":"aachRZNodBAc","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-24
+        10:37:14","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/36","tags":"","created":"2018-04-24
+        10:39:44","identifier":"aabhS8eOa1K8","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-24
+        10:39:44","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/37","tags":"","created":"2018-04-24
+        10:44:00","identifier":"aabhUcOpdU6Y","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-24
+        10:44:00","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/38","tags":"","created":"2018-04-24
+        11:35:45","identifier":"aaeh601pgGax","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-24
+        11:35:45","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/39","tags":"","created":"2018-04-24
+        12:30:17","identifier":"aabikXXObqD1","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-24
+        12:30:17","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/40","tags":"","created":"2018-04-26
+        10:45:41","identifier":"aabtBGiGe0uF","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-26
+        10:45:41","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/41","tags":"","created":"2018-04-26
+        11:05:33","identifier":"aabtGGyXf7S8","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-26
+        11:05:33","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/42","tags":"","created":"2018-04-26
+        12:21:32","identifier":"aabtZOpvbIRh","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-26
+        12:21:32","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/43","tags":"","created":"2018-04-26
+        12:54:24","identifier":"aabt75zWdl17","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-26
+        12:54:24","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/44","tags":"","created":"2018-04-26
+        13:57:27","identifier":"aajunNQLgO7X","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-26
+        13:57:27","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/45","tags":"","created":"2018-04-26
+        17:34:50","identifier":"aabvgGCBbLBS","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-26
+        17:34:50","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/46","tags":"","created":"2018-04-26
+        17:57:07","identifier":"aabvmiqjcL9n","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-26
+        17:57:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/47","tags":"","created":"2018-04-27
+        06:32:27","identifier":"abVypEmwbK7j","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-27
+        06:32:27","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/48","tags":"","created":"2018-04-27
+        07:45:23","identifier":"adkyHzKffva0","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-27
+        07:45:23","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/49","tags":"","created":"2018-04-27
+        10:53:57","identifier":"aabzuh7ohgRi","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-04-27
+        10:53:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/54","tags":"","created":"2018-05-02
+        12:30:00","identifier":"aab2651gfbT6","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-02
+        12:30:00","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/55","tags":"","created":"2018-05-02
+        15:39:55","identifier":"aab3SUAWgJKd","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-02
+        15:39:55","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/56","tags":"","created":"2018-05-02
+        16:37:43","identifier":"aab37szFbFgL","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-02
+        16:37:43","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/57","tags":"","created":"2018-05-03
+        15:26:30","identifier":"aab9F3Nyh2qJ","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-03
+        15:26:30","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/58","tags":"","created":"2018-05-09
+        12:11:37","identifier":"aabHX9gthBBl","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-09
+        12:11:37","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/59","tags":"","created":"2018-05-09
+        13:29:18","identifier":"aadIhnpUdazX","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-09
+        13:29:18","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/60","tags":"","created":"2018-05-09
+        15:24:18","identifier":"aabIKEJGamnq","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-09
+        15:24:18","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/61","tags":"","created":"2018-05-09
+        17:48:49","identifier":"aabJk2tghRil","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-09
+        17:48:49","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:05 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects/query?category=scheduledMail&limit=50&offset=50
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:S_ogvIVrXvy4Nd-GhmC5oA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:06 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=95
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:S_ogvIVrXvy4Nd-GhmC5oA:eae6UmtqO0McgBKY
+      X-Gdc-Request-Time:
+      - '610'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"objects":{"paging":{"next":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects/query?category=scheduledMail&limit=50&offset=100","count":50,"offset":50},"items":[{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/62","tags":"","created":"2018-05-11
+        14:14:10","identifier":"aabT93lrgzX9","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-11
+        14:14:10","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/63","tags":"","created":"2018-05-11
+        16:45:27","identifier":"aabUL8Jbf5jF","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-11
+        16:45:27","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/64","tags":"","created":"2018-05-14
+        13:59:40","identifier":"aabbDYLEfkZD","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-14
+        13:59:40","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/65","tags":"","created":"2018-05-14
+        15:12:32","identifier":"aabbWj7ritwE","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-14
+        15:12:32","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/66","tags":"","created":"2018-05-14
+        18:52:11","identifier":"aabcPCv8dW9H","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-14
+        18:52:11","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/67","tags":"","created":"2018-05-15
+        10:53:41","identifier":"aabgJGvBd967","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-15
+        10:53:41","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/68","tags":"","created":"2018-05-17
+        17:49:54","identifier":"aabt7wdQeBeB","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-17
+        17:49:54","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/69","tags":"","created":"2018-05-18
+        09:43:18","identifier":"aabxZxxJdVxX","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-18
+        09:43:18","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/70","tags":"","created":"2018-05-18
+        15:09:23","identifier":"aabzjDc1fiXm","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-18
+        15:09:23","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/71","tags":"","created":"2018-05-18
+        15:40:30","identifier":"aabzrs5HgRAx","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-18
+        15:40:30","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/72","tags":"","created":"2018-05-18
+        16:37:52","identifier":"aadzFxrAbuCD","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-18
+        16:37:52","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/73","tags":"","created":"2018-05-21
+        11:01:48","identifier":"aadPQtYIhKgX","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-21
+        11:01:48","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/74","tags":"","created":"2018-05-21
+        12:18:31","identifier":"aabQabZjdmFV","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-21
+        12:18:31","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/75","tags":"","created":"2018-05-21
+        18:41:29","identifier":"aabRIBCIhB5e","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-21
+        18:41:29","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/76","tags":"","created":"2018-05-21
+        19:20:41","identifier":"aabRStAXcjLd","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-21
+        19:20:41","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/77","tags":"","created":"2018-05-22
+        09:08:57","identifier":"aabVeZPpdpC3","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-22
+        09:08:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/78","tags":"","created":"2018-05-22
+        17:36:50","identifier":"aabXiQ6NfGxb","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-22
+        17:36:50","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/79","tags":"","created":"2018-05-22
+        20:26:02","identifier":"acXXYys9fRtL","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-22
+        20:26:02","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/80","tags":"","created":"2018-05-22
+        20:44:22","identifier":"abRX3z6sg4bM","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-22
+        20:44:22","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/81","tags":"","created":"2018-05-23
+        06:14:30","identifier":"aab0nBodetsh","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        06:14:30","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/82","tags":"","created":"2018-05-23
+        09:50:43","identifier":"aae1fCjJg7Ul","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        09:50:43","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/83","tags":"","created":"2018-05-23
+        11:39:58","identifier":"aab1HxsIeQxO","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        11:39:58","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/84","tags":"","created":"2018-05-23
+        13:15:28","identifier":"aab15z8abuP4","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        13:15:28","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/85","tags":"","created":"2018-05-23
+        15:21:36","identifier":"aad2A5T5hXvN","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        15:21:36","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/86","tags":"","created":"2018-05-23
+        15:48:51","identifier":"aab2IccQa1Rv","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        15:48:51","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/87","tags":"","created":"2018-05-23
+        15:59:14","identifier":"aab2KOdmclmB","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        15:59:14","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/88","tags":"","created":"2018-05-23
+        17:50:59","identifier":"aaf3cUmvifJZ","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        17:50:59","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/89","tags":"","created":"2018-05-23
+        21:11:56","identifier":"aab31w4gbv5n","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-23
+        21:11:56","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/90","tags":"","created":"2018-05-24
+        01:32:40","identifier":"aae44O0vgP4D","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        01:32:40","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/91","tags":"","created":"2018-05-24
+        11:02:36","identifier":"aab7oEYfdbOQ","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        11:02:36","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/92","tags":"","created":"2018-05-24
+        11:08:47","identifier":"aab7qdpRdLeI","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        11:08:47","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/93","tags":"","created":"2018-05-24
+        11:50:10","identifier":"aab7ADjafx9Q","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        11:50:10","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/94","tags":"","created":"2018-05-24
+        11:58:10","identifier":"aac7Coedg1QR","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        11:58:10","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/95","tags":"","created":"2018-05-24
+        11:59:00","identifier":"aai7BHrkgXuC","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        11:59:00","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/96","tags":"","created":"2018-05-24
+        12:18:21","identifier":"aac7G9VqibbQ","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        12:18:21","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/97","tags":"","created":"2018-05-24
+        14:22:31","identifier":"aab8cZoLfzFk","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        14:22:31","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/98","tags":"","created":"2018-05-24
+        15:13:49","identifier":"aab8pTYqaoLb","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        15:13:49","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/99","tags":"","created":"2018-05-24
+        15:31:40","identifier":"aad8t6gdaqCu","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        15:31:40","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/100","tags":"","created":"2018-05-24
+        15:38:47","identifier":"aab8wbQlaO5C","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        15:38:47","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/101","tags":"","created":"2018-05-24
+        15:40:58","identifier":"aah8v3ddbN2w","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        15:40:58","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/102","tags":"","created":"2018-05-24
+        16:56:02","identifier":"aaf8Pdhge65J","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        16:56:02","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/103","tags":"","created":"2018-05-24
+        16:57:07","identifier":"aad8PDTaf1wd","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        16:57:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/104","tags":"","created":"2018-05-24
+        16:57:34","identifier":"aac8P1fof3cH","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        16:57:34","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/105","tags":"","created":"2018-05-24
+        17:00:16","identifier":"aai8QeMAe2b3","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        17:00:16","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/106","tags":"","created":"2018-05-24
+        17:05:48","identifier":"aac8RXKffIZL","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        17:05:48","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/107","tags":"","created":"2018-05-24
+        17:21:18","identifier":"aac8VZIvgudc","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        17:21:18","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/108","tags":"","created":"2018-05-24
+        17:36:59","identifier":"aak8YXmsh022","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        17:36:59","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/109","tags":"","created":"2018-05-24
+        18:03:30","identifier":"aad86jg7igEO","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        18:03:30","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/110","tags":"","created":"2018-05-24
+        18:07:26","identifier":"aab87BTviF7w","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        18:07:26","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/111","tags":"","created":"2018-05-24
+        18:35:30","identifier":"aab9eF00cOLC","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-24
+        18:35:30","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:07 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects/query?category=scheduledMail&limit=50&offset=100
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:_OaOpc1umXwLmunpQTTINw
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:07 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=95
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:_OaOpc1umXwLmunpQTTINw:jEX2sJuJRuFSuOh4
+      X-Gdc-Request-Time:
+      - '641'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"objects":{"paging":{"next":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects/query?category=scheduledMail&limit=50&offset=150","count":50,"offset":100},"items":[{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/112","tags":"","created":"2018-05-25
+        01:07:18","identifier":"aabaPjxdhkb0","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-25
+        01:07:18","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/113","tags":"","created":"2018-05-25
+        15:40:07","identifier":"aabem3bRcuMY","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-25
+        15:40:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/114","tags":"","created":"2018-05-25
+        16:40:21","identifier":"aaceBZIyfDb7","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-25
+        16:40:21","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/115","tags":"","created":"2018-05-25
+        17:18:52","identifier":"aabeLUtlgz8b","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-25
+        17:18:52","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/116","tags":"","created":"2018-05-25
+        18:31:07","identifier":"aabe358fcejR","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-25
+        18:31:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/117","tags":"","created":"2018-05-28
+        01:16:00","identifier":"aabso46VgeLN","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        01:16:00","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/118","tags":"","created":"2018-05-28
+        11:54:35","identifier":"aacuZIilgxhi","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        11:54:35","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/119","tags":"","created":"2018-05-28
+        13:22:58","identifier":"aaqvlmFBcJcB","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        13:22:58","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/120","tags":"","created":"2018-05-28
+        13:40:52","identifier":"aacvqzh2dole","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        13:40:52","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/121","tags":"","created":"2018-05-28
+        15:30:01","identifier":"aabvR48hbsnC","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        15:30:01","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/122","tags":"","created":"2018-05-28
+        16:39:35","identifier":"aacv9ADZfdX5","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        16:39:35","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/123","tags":"","created":"2018-05-28
+        18:54:56","identifier":"aabwHFQxc1EU","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        18:54:56","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/124","tags":"","created":"2018-05-28
+        23:23:58","identifier":"aabxNoTTczEE","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        23:23:58","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/125","tags":"","created":"2018-05-28
+        23:43:20","identifier":"aabxShicdHoe","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        23:43:20","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/126","tags":"","created":"2018-05-28
+        23:58:10","identifier":"aabxV0PHe6Oh","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-28
+        23:58:10","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/127","tags":"","created":"2018-05-29
+        00:17:44","identifier":"aacx0TMOfVeA","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        00:17:44","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/128","tags":"","created":"2018-05-29
+        00:26:19","identifier":"aabx256rgmMR","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        00:26:19","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/129","tags":"","created":"2018-05-29
+        00:46:34","identifier":"aabx8caih4hu","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        00:46:34","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/130","tags":"","created":"2018-05-29
+        01:25:37","identifier":"aabyh1Ihbuwv","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        01:25:37","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/131","tags":"","created":"2018-05-29
+        01:43:55","identifier":"aabymDzhcy7W","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        01:43:55","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/132","tags":"","created":"2018-05-29
+        02:05:14","identifier":"aabyrZ7LdMEu","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        02:05:14","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/133","tags":"","created":"2018-05-29
+        02:35:36","identifier":"aabyzEfhfDhc","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        02:35:36","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/134","tags":"","created":"2018-05-29
+        15:48:14","identifier":"aadBMXDBgnlN","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        15:48:14","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/135","tags":"","created":"2018-05-29
+        16:36:07","identifier":"aabBZfvOaQ9O","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        16:36:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/136","tags":"","created":"2018-05-29
+        22:16:45","identifier":"aabDm0r5cuS7","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-29
+        22:16:45","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/137","tags":"","created":"2018-05-30
+        12:08:45","identifier":"aacGKrucdCUT","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-30
+        12:08:45","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/138","tags":"","created":"2018-05-30
+        12:58:13","identifier":"aabGWU1AgwyO","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-30
+        12:58:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/139","tags":"","created":"2018-05-30
+        14:52:07","identifier":"aabHpAT3dKRr","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-30
+        14:52:07","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/140","tags":"","created":"2018-05-30
+        15:41:11","identifier":"aabHBWDbgLpV","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-30
+        15:41:11","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/141","tags":"","created":"2018-05-30
+        16:49:00","identifier":"aabHS1bdbzkb","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-30
+        16:49:00","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/142","tags":"","created":"2018-05-30
+        19:09:08","identifier":"aahIseWzaEyO","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-30
+        19:09:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/143","tags":"","created":"2018-05-31
+        01:35:47","identifier":"aabJ1DGZaOMe","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        01:35:47","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/144","tags":"","created":"2018-05-31
+        11:09:25","identifier":"aabMl3oPaRqd","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        11:09:25","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/145","tags":"","created":"2018-05-31
+        11:42:19","identifier":"aabMukNWcGLb","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        11:42:19","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/146","tags":"","created":"2018-05-31
+        13:16:14","identifier":"aabMRYH8h74n","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        13:16:14","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/147","tags":"","created":"2018-05-31
+        14:44:27","identifier":"aabNebTaei9R","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        14:44:27","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/148","tags":"","created":"2018-05-31
+        15:17:42","identifier":"aabNmyDzf5wj","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        15:17:42","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/149","tags":"","created":"2018-05-31
+        15:18:21","identifier":"aabNmIRicbsG","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        15:18:21","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/150","tags":"","created":"2018-05-31
+        17:17:10","identifier":"aabNQDtWiwmW","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        17:17:10","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/151","tags":"","created":"2018-05-31
+        20:59:29","identifier":"abGOKbCkdLY7","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-05-31
+        20:59:29","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/152","tags":"","created":"2018-06-01
+        01:26:47","identifier":"aabPPTH8e0np","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        01:26:47","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/153","tags":"","created":"2018-06-01
+        11:33:40","identifier":"aabSiGrBhpsr","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        11:33:40","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/154","tags":"","created":"2018-06-01
+        11:34:54","identifier":"aabSiZz9cYEs","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        11:34:54","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/155","tags":"","created":"2018-06-01
+        13:21:01","identifier":"aabSJIafiuBm","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        13:21:01","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/156","tags":"","created":"2018-06-01
+        14:04:43","identifier":"aabSUH6BclPg","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        14:04:43","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/157","tags":"","created":"2018-06-01
+        14:38:51","identifier":"aabS3i32iGFM","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        14:38:51","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/158","tags":"","created":"2018-06-01
+        16:21:08","identifier":"aabTs3mbfFUf","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        16:21:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/159","tags":"","created":"2018-06-01
+        16:21:08","identifier":"aacTs3mbfFUf","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-01
+        16:21:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/160","tags":"","created":"2018-06-04
+        05:47:11","identifier":"aab8q1XwaEUN","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        05:47:11","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/161","tags":"","created":"2018-06-04
+        10:55:42","identifier":"aab9GHwfeEAF","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        10:55:42","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:08 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/objects/query?category=scheduledMail&limit=50&offset=150
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:nyOMsJb2GIVqULI9utV4JQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:08 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=70
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:nyOMsJb2GIVqULI9utV4JQ:Pd9rdVZxV3XfXESh
+      X-Gdc-Request-Time:
+      - '121'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"objects":{"paging":{"count":8,"offset":150},"items":[{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/162","tags":"","created":"2018-06-04
+        11:09:50","identifier":"aab9Kf82aTs2","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        11:09:50","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/163","tags":"","created":"2018-06-04
+        11:38:58","identifier":"aab9RAUCcCrs","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        11:38:58","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/164","tags":"","created":"2018-06-04
+        12:12:14","identifier":"aab9ZYb2ep5H","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        12:12:14","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/165","tags":"","created":"2018-06-04
+        13:47:26","identifier":"aacanz7zaTor","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        13:47:26","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/166","tags":"","created":"2018-06-04
+        14:21:21","identifier":"aabawtqCcwyV","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        14:21:21","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/167","tags":"","created":"2018-06-04
+        14:42:14","identifier":"aabaBJrlijZm","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        14:42:14","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/168","tags":"","created":"2018-06-04
+        14:49:54","identifier":"aabaDE9MahcL","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-04
+        14:49:54","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"scheduledMail":{"content":{"when":{"recurrency":"0:0:0:12:0:0","timeZone":"America/Los_Angeles","startDate":"2012-06-05"},"body":"Hey,
+        I''m sending you new Reports and Dashboards!","attachments":[],"to":[],"subject":"Scheduled
+        Report"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/obj/171","tags":"","created":"2018-06-05
+        07:40:31","identifier":"aabeJ5z6bvfr","deprecated":"0","summary":"Daily at
+        12:00pm PT","isProduction":1,"title":"Scheduled report example","category":"scheduledMail","updated":"2018-06-05
+        07:40:31","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:08 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:36FuLFll5eidYKpEpKdLIQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:09 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=69
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:36FuLFll5eidYKpEpKdLIQ:951Dj6kZIxkcsy9g
+      X-Gdc-Request-Time:
+      - '21'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Metadata service for project ''xsyfp877vkgvhuj5vyqezjmma5omvgyr''","category":"project","instance":"xsyfp877vkgvhuj5vyqezjmma5omvgyr","links":[{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/data","summary":"Resources
+        for data set manipulation.","category":"data","title":"data"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/dml","summary":"Navigation
+        resource for physical data manipulation.","category":"dml","title":"dml"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/drillcrosspaths","summary":"Returns
+        a list of attributes available for drilling across.","category":"drillcrosspaths","title":"drillcrosspaths"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/etl","summary":"Resources
+        for data ETL.","category":"etl","title":"etl"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/datedimension","summary":"Resources
+        for Date Dimension manipulation","category":"datedimension","title":"datedimension"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/favorites","summary":"Returns
+        list of objects marked as favorites by the user.","category":"favorites","title":"favorites"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/favorite","summary":"Resource
+        for determining if an object is in a user''s favorites.","category":"favorite","title":"favorite"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/identifiers","summary":"Resource
+        for retrieving metadata object identifiers.","category":"instance-identifiers","title":"identifiers"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/labels","summary":"Resource
+        for retrieving uris for element labels.","category":"labels","title":"labels"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/ldm","summary":"Resources
+        for logical data model (LDM) manipulation.","category":"ldm","title":"ldm"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/log","summary":"Returns
+        a list of metadata events.","category":"logs","title":"logs"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/maintenance","summary":"Resource
+        for project maintenace.","category":"maintenance","title":"maintenance"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/maqlvalidator","summary":"Resource
+        for MAQL construct validation and tree representation.","category":"maqlvalidator","title":"MaqlValidator"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/obj","summary":"Resource
+        for creating new metadata objects.","category":"obj","title":"obj"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/objects","summary":"Resource
+        for batch operations MD objects.","category":"objects","title":"objects"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/query","summary":"Resources
+        for querying collections of metadata objects.","category":"query","title":"query"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/reportstatistics","summary":"Returns
+        report statistics for a specified report.","category":"report-statistic","title":"report
+        statistics"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/search","summary":"Resource
+        for full text search.","category":"search","title":"search"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/service","summary":"Services
+        for metadata configuration.","category":"service","title":"service"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/tags","summary":"Returns
+        a list of tags.","category":"tags","title":"tags"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/tasks","summary":"Task
+        resource.","category":"tasks","title":"tasks"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/templates","summary":"Returns
+        list of uris of templates from which the project was created.","category":"templates","title":"templates"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/translations","summary":"Resource
+        for project localization.","category":"translations","title":"translations"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/usedby2","summary":"Returns
+        list of objects connected to a certain object via a ''used'' edge.","category":"usedby2","title":"usedby"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/using2","summary":"Returns
+        list of objects connected to a certain object via a ''using'' edge.","category":"using2","title":"using"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/userfilters","summary":"Relation
+        userFilter - user management.","category":"userfilters","title":"userfilters"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/validate","summary":"Resources
+        for LDM, PDM, IO validation.","category":"validate-project","title":"validateproject"},{"link":"/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/variables","summary":"Resources
+        for variable manipulation.","category":"vars","title":"variables"}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:09 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/xsyfp877vkgvhuj5vyqezjmma5omvgyr/objects/query?category=scheduledMail&limit=50&offset=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:jmZz4391RrKwkin39K0iwA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:10 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=94
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:jmZz4391RrKwkin39K0iwA:Cf10oS8TFbfNqLSt
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '26'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"objects":{"paging":{"count":0,"offset":0},"items":[]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:10 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/xsyfp877vkgvhuj5vyqezjmma5omvgyr
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:W9CrsaqfTI7mTl8ZTtKwlA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Tue, 05 Jun 2018 05:41:10 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=94
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '66'
+      X-Gdc-Request:
+      - _rF9YKlQktWVJimM6XHJYw:W9CrsaqfTI7mTl8ZTtKwlA:1C1v7DNBktqCIudg
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 05:41:10 GMT
+recorded_with: VCR 4.0.0

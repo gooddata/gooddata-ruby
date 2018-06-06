@@ -7,7 +7,7 @@
 require 'gooddata'
 require 'gooddata/commands/project'
 
-describe GoodData::Command::Project, :constraint => 'slow' do
+describe GoodData::Command::Project, :vcr, :vcr_all_cassette => 'model_updates', :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 
