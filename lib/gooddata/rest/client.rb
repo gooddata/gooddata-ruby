@@ -8,6 +8,7 @@ require 'rest-client'
 
 require_relative '../helpers/auth_helpers'
 require_relative '../helpers/global_helpers'
+require_relative '../helpers/splunk_helper'
 
 require_relative 'connection'
 require_relative 'object_factory'
@@ -192,17 +193,16 @@ module GoodData
       end
 
       def disconnect
+
         if stats_on?
           GoodData.logger.warn "Statistics collecting is turned ON. We are collecting some data about execution performance - all sensitive information are being anonymized."
           begin
-            Timeout::timeout(STATS_LOG_TIMEOUT) do
-              @connection.stats_log.each do |log|
-                GoodData.logger.warn(log)
-                GoodData.logger.error(log)
-                GoodData.logger.unknown(log)
-                GoodData.logger.fatal(log)
-              end
-            end
+            GoodData::Helpers::SplunkHelper::send_logs_as_csv(@connection.stats_log)
+            # Timeout::timeout(STATS_LOG_TIMEOUT) do
+            #   @connection.stats_log.each do |log|
+            #     GoodData.logger.info(log)
+            #   end
+            # end
           rescue Timeout::Error
             GoodData.logger.warn "Statistics logging took to long. Some statistics weren't recorded."
           end

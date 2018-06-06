@@ -406,19 +406,19 @@ module GoodData
       end
 
       def stats_log(values = stats)
-        log_array = []
+        log_res = ""
         values[:calls].each do |row|
-          log_string = "STATS_LOG "
+          log_string = "[" + row[:time_stamp] + "] "
           row.each do |pair|
-            log_string << pair[0].to_s << "="
-            log_string << "\"" if pair[0] == :title || pair[0] == :time_stamp
-            log_string << pair[1].to_s
-            log_string << "\"" if pair[0] == :title || pair[0] == :time_stamp
-            log_string << " "
+            log_string += pair[0].to_s + "="
+            log_string += "\"" if pair[0] == :endpoint || pair[0] == :time_stamp
+            log_string += pair[1].to_s
+            log_string += "\"" if pair[0] == :endpoint || pair[0] == :time_stamp
+            log_string += " "
           end
-          log_array << log_string
+          log_res << log_string << "\n"
         end
-        return log_array
+        return log_res
       end
 
       # Reader method for TT token
@@ -623,40 +623,40 @@ ERR
           brick = active_brick.nil? ? "undefined_brick" : active_brick
 
           # Update aggregated
-          stats[:aggregated][title] = {} if stats[:aggregated][title].nil?
-          stat = stats[:aggregated][title][action]
-          if stat.nil?
-            stat = {
-              :title => title,
-              :action => action,
-              :brick => brick,
-              :min => delta,
-              :max => delta,
-              :total => 0,
-              :avg => 0,
-              :calls => 0,
-              :time_stamp => time_stamp.strftime("%FT%T.%6N"),
-              :type => "aggregated_calls",
-              :api_version => GoodData.version,
-              :domain => server_url.gsub(%r{http://|https://}, "")
-            }
-          end
-
-          stat[:min] = delta if delta < stat[:min]
-          stat[:max] = delta if delta > stat[:max]
-          stat[:total] += delta
-          stat[:calls] += 1
-          stat[:avg] = stat[:total] / stat[:calls]
-
-          stats[:aggregated][title][action] = stat
+          # stats[:aggregated][title] = {} if stats[:aggregated][title].nil?
+          # stat = stats[:aggregated][title][action]
+          # if stat.nil?
+          #   stat = {
+          #     :title => title,
+          #     :action => action,
+          #     :brick => brick,
+          #     :min => delta,
+          #     :max => delta,
+          #     :total => 0,
+          #     :avg => 0,
+          #     :calls => 0,
+          #     :time_stamp => time_stamp.strftime("%FT%T.%6N"),
+          #     :type => "aggregated_calls",
+          #     :api_version => GoodData.version,
+          #     :domain => server_url.gsub(%r{http://|https://}, "")
+          #   }
+          # end
+          #
+          # stat[:min] = delta if delta < stat[:min]
+          # stat[:max] = delta if delta > stat[:max]
+          # stat[:total] += delta
+          # stat[:calls] += 1
+          # stat[:avg] = stat[:total] / stat[:calls]
+          #
+          # stats[:aggregated][title][action] = stat
 
           # Add single api call
           stat = {
-            :request => title,
+            :endpoint => title,
             :action => action,
             :brick => brick,
             :length => delta,
-            :time_stamp => Time.now,
+            :time_stamp => Time.now.utc.strftime("%Y-%m-%d %H:%M:%S.%L"),
             :type => "api_call",
             :api_version => GoodData.version,
             :domain => server_url.gsub(%r{http://|https://}, "")

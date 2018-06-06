@@ -317,17 +317,6 @@ module GoodData
           # Invoke action
           begin
             out = run_action action, params
-
-            GoodData.logger.info("Running #{action.name} action ...")
-            params.clear_filters
-            # Check if all required parameters were passed
-            BaseAction.check_params(action.const_get('PARAMS'), params)
-            params.setup_filters(action.const_get('PARAMS'))
-
-            GoodData::Rest::Client.connection.active_action(action.to_s) if GoodData::Rest::Client.connection != nil
-
-            out = action.send(:call, params)
-            params.clear_filters
           rescue => e
             errors << {
               action: action,
