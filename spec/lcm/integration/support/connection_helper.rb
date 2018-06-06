@@ -22,6 +22,7 @@ class LcmConnectionHelper
     end
 
     def environment
+
       env = GoodData::Environment::ConnectionHelper::LCM_ENVIRONMENT
       ret = env.dup
       encrypted = [:dev_token, :prod_token, :vertica_dev_token, :vertica_prod_token, :password]

@@ -81,6 +81,7 @@ module GoodData
          %r{/gdc/internal/lcm/domains/[^\/]+/dataproducts/[^\/]+/segments/[^\/]+/syncProcesses}],
 
         ['/gdc/internal/projects/{id}/objects/setPermissions', %r{/gdc/internal/projects/[^\/]+/objects/setPermissions}],
+        ['/gdc/internal/projects/{id}/roles', %r{/gdc/internal/projects/[^\/]+/roles}],
 
         ['/gdc/md/{id}/variables/item/{id}', %r{/gdc/md/[^\/]+/variables/item/[\d]+}],
         ['/gdc/md/{id}/validate/task/{id}', %r{/gdc/md/[^\/]+/validate/task/[^\/]+}],

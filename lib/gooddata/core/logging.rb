@@ -7,6 +7,7 @@
 require 'rest-client'
 
 require_relative 'nil_logger'
+require_relative 'splunk_logger'
 
 module GoodData
   DEFAULT_LOG_LEVEL = Logger::INFO
@@ -17,8 +18,12 @@ module GoodData
   DEFAULT_RESTLOG_OUTPUT = STDOUT
   DEFAULT_RESTLOGGER_CLASS = Logger
 
+  DEFAULT_SPLUNKLOG_LEVEL = Logger::WARN
+  DEFAULT_SPLUNKLOG_OUTPUT = STDERR
+  DEFAULT_SPLUNKLOGGER_CLASS = SplunkLogger
+
   class << self
-    attr_accessor :logger, :rest_logger
+    attr_accessor :logger, :rest_logger, :splunk_logger
     attr_writer :stats
 
     # Turn logging on
@@ -60,7 +65,7 @@ module GoodData
     #
     #     GoodData.logging_http_on
     #
-    def logging_http_on(level = DEFAULT_RESTLOG_LEVEL, output = DEFAULT_RESTLOG_OUTPUT, klass = DEFAULT_RESTLOGGER_CLASS)
+    def logging_http_on(level = DEFAULT_RESTLOG_LEVEL, output = DEFAULT_SPLUNKLOG_OUTPUT, klass = DEFAULT_SPLUNKLOGGER_CLASS)
       @rest_logger = klass.new(output)
       @rest_logger.level = level
       @rest_logger
@@ -78,6 +83,20 @@ module GoodData
 
     def logging_http_on?
       !@rest_logger.instance_of?(NilLogger)
+    end
+
+    def logging_splunk_on(level = DEFAULT_SPLUNKLOG_LEVEL, output = DEFAULT_SPLUNKLOG_OUTPUT, klass = DEFAULT_SPLUNKLOGGER_CLASS)
+      @splunk_logger = klass.new(output)
+      @splunk_logger.level = level
+      @splunk_logger
+    end
+
+    def logging_splunk_off
+      @splunk_logger = NilLogger.new
+    end
+
+    def logging_splunk_on?
+      !@splunk_logger.instance_of?(NilLogger)
     end
 
     def stats_on
@@ -101,5 +120,8 @@ module GoodData
       DEFAULT_RESTLOG_OUTPUT,
       NilLogger
     )
+
+    # Initial setup of splunk logger
+    GoodData.splunk_logger = GoodData.logging_splunk_on
   end
 end

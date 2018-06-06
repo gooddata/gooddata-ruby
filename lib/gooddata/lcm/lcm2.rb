@@ -306,11 +306,14 @@ module GoodData
         check_unused_params(actions, params)
         print_action_names(mode, actions)
 
+        GoodData::Rest::Client.connection.active_brick(mode) if GoodData::Rest::Client.connection != nil
+
         # Run actions
         errors = []
         results = []
         actions.each do |action|
           puts
+          GoodData::Rest::Client.connection.active_action(action) if GoodData::Rest::Client.connection != nil
 
           # Invoke action
           begin
