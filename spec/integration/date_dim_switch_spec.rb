@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "Swapping a date dimension and exchanging all attributes/elements", :constraint => 'slow' do
+describe "Swapping a date dimension and exchanging all attributes/elements", :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.build("My project from blueprint") do |p|

@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::LCM, :constraint => 'slow' do
+describe GoodData::LCM, :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 

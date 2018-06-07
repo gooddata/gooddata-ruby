@@ -6,7 +6,7 @@
 
 require 'gooddata/models/schedule'
 
-describe GoodData::Schedule do
+describe GoodData::Schedule, :vcr do
   SCHEDULE_ID = ScheduleHelper::SCHEDULE_ID
   SCHEDULE_URL = "/gdc/projects/#{ProjectHelper::PROJECT_ID}/schedules/#{SCHEDULE_ID}"
 
@@ -40,6 +40,10 @@ describe GoodData::Schedule do
       :client => @client,
       :project => @project
     }
+  end
+
+  after(:all) do
+    @client.disconnect
   end
 
   describe '#create' do
