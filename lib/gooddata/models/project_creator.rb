@@ -14,7 +14,7 @@ module GoodData
     class ProjectCreator
       class << self
         def migrate(opts = {})
-          opts = { client: GoodData.connection, execute_ca_scripts: true }.merge(opts)
+          opts = { client: GoodData.connection, execute_ca_scripts: true, only_model: false }.merge(opts)
           client = opts[:client]
           fail ArgumentError, 'No :client specified' if client.nil?
 
@@ -27,9 +27,9 @@ module GoodData
 
           maqls = migrate_datasets(spec, opts.merge(project: project, client: client))
           load(p, spec)
-          migrate_metrics(p, spec[:metrics] || [])
-          migrate_reports(p, spec[:reports] || [])
-          migrate_dashboards(p, spec[:dashboards] || [])
+          migrate_metrics(p, spec[:metrics] || []) unless opts[:only_model]
+          migrate_reports(p, spec[:reports] || []) unless opts[:only_model]
+          migrate_dashboards(p, spec[:dashboards] || []) unless opts[:only_model]
           execute_tests(p, spec[:assert_tests] || [])
           opts[:execute_ca_scripts] ? project : maqls.find { |maql| maql.key?('maqlDdlChunks') }
         end

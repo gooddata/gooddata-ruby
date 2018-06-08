@@ -20,6 +20,13 @@ module GoodData
   class Dashboard < GoodData::MdObject
     include Mixin::Lockable
 
+    extend GoodData::Mixin::ContentPropertyReader
+    extend GoodData::Mixin::ContentPropertyWriter
+
+    content_property_reader :filters
+    content_property_writer :filters
+
+
     EMPTY_OBJECT = {
       'projectDashboard' => {
         'content' => {
