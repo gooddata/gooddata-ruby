@@ -35,6 +35,13 @@ module GoodData
         []
       end
 
+      # Returns list of all bridges defined on the schema.
+      #
+      # @return [Array<GoodData::Model::BridgeBlueprintField>] refs on schema
+      def bridges
+        []
+      end
+
       # Returns list of all facts defined on the schema.
       #
       # @return [Array<GoodData::Model::FactBlueprintField>] facts on schema

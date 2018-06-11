@@ -25,7 +25,9 @@ describe GoodData::Model::ProjectBlueprint do
 
     it 'it should turn into wire another project' do
       spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
-      ToWire.to_wire(spec)
+      wire_spec = JSON.parse(File.read("./spec/data/wire_models/test_project_model_spec.json"), :symbolize_names => true)
+      res = ToWire.to_wire(spec)
+      expect(res).to eq wire_spec
     end
 
     it 'should create manifest' do

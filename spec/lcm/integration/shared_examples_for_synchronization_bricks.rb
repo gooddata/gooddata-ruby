@@ -63,8 +63,8 @@ shared_examples 'a synchronization brick' do
   it 'migrates label types' do
     original_attributes = original_project.attributes.to_a
     new_attributes = projects && projects[0].attributes.to_a
-    expect(original_attributes.length).to be 32
-    expect(new_attributes.length).to be 32
+    expect(original_attributes.length).to be 34
+    expect(new_attributes.length).to be 34
     original_attributes.each do |attribute|
       next unless attribute.content['displayForms'] &&
       attribute.content['displayForms'].any?

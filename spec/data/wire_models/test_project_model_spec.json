@@ -1,0 +1,139 @@
+{
+  "diffRequest": {
+    "targetModel": {
+      "projectModel": {
+        "modelMetadata": {
+          "containCA": null
+        },
+        "datasets": [
+          {
+            "dataset": {
+              "identifier": "dataset.repos",
+              "title": "Repositories",
+              "anchor": {
+                "attribute": {
+                  "identifier": "attr.repos.repo_id",
+                  "title": "Repository Id",
+                  "folder": "Foldered Repos",
+                  "labels": [
+                    {
+                      "label": {
+                        "identifier": "some_label_id",
+                        "title": "Repository Id",
+                        "type": "GDC.text",
+                        "dataType": "VARCHAR(128)"
+                      }
+                    }
+                  ],
+                  "description": "This is anchor description",
+                  "defaultLabel": "some_label_id"
+                }
+              },
+              "attributes": [
+                {
+                  "attribute": {
+                    "identifier": "some_attr_id",
+                    "title": "Repository Name",
+                    "folder": "Foldered Repos",
+                    "labels": [
+                      {
+                        "label": {
+                          "identifier": "some_attr_label_id",
+                          "title": "Repository Name",
+                          "type": "GDC.text",
+                          "dataType": "VARCHAR(10000)"
+                        }
+                      }
+                    ],
+                    "defaultLabel": "some_attr_label_id"
+                  }
+                }
+              ],
+              "facts": [],
+              "references": [],
+              "bridges": []
+            }
+          },
+          {
+            "dataset": {
+              "identifier": "dataset.devs",
+              "title": "Developers",
+              "anchor": {
+                "attribute": {
+                  "identifier": "attr.devs.dev_id",
+                  "title": "Dev",
+                  "folder": "Anchor folder",
+                  "labels": [
+                    {
+                      "label": {
+                        "identifier": "label.devs.dev_id.id",
+                        "title": "Id",
+                        "type": "GDC.text",
+                        "dataType": "VARCHAR(128)"
+                      }
+                    },
+                    {
+                      "label": {
+                        "identifier": "label.devs.dev_id.email",
+                        "title": "Email",
+                        "type": "GDC.text",
+                        "dataType": "VARCHAR(128)"
+                      }
+                    }
+                  ],
+                  "defaultLabel": "label.devs.dev_id.email"
+                }
+              },
+              "attributes": [],
+              "facts": [],
+              "references": [],
+              "bridges": [
+                "dataset.commits"
+              ]
+            }
+          },
+          {
+            "dataset": {
+              "identifier": "dataset.commits",
+              "title": "Commits",
+              "anchor": {
+                "attribute": {
+                  "identifier": "attr.commits.factsof",
+                  "title": "Attr.Commits.Factsof",
+                  "folder": "Commits"
+                }
+              },
+              "attributes": [],
+              "facts": [
+                {
+                  "fact": {
+                    "identifier": "fact.commits.lines_changed",
+                    "title": "Lines Changed",
+                    "folder": "Commits",
+                    "dataType": "DECIMAL(12,2)",
+                    "type": "fact",
+                    "description": "Fact description"
+                  }
+                }
+              ],
+              "references": [
+                "committed_on",
+                "dataset.devs",
+                "dataset.repos"
+              ],
+              "bridges": []
+            }
+          }
+        ],
+        "dateDimensions": [
+          {
+            "dateDimension": {
+              "name": "committed_on",
+              "title": "Committed On"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
