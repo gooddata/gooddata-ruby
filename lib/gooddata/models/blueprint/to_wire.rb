@@ -109,12 +109,13 @@ module GoodData
       # @param project [Hash] Project blueprint hash represenation
       # @param dataset [Hash] Dataset blueprint hash represenation
       # @return [Hash] Manifest for a particular reference
-      def self.date_dimension_to_wire(_project, dataset)
+      def self.date_dimension_to_wire(project, dataset)
         payload = {}.tap do |dd|
           dd[:name] = dataset[:id]
           dd[:urn] = dataset[:urn] if dataset[:urn]
           dd[:title] = GoodData::Model.title(dataset)
           dd[:identifierPrefix] = dataset[:identifier_prefix] if dataset[:identifier_prefix]
+          dd[:bridges] = bridges_to_wire(project, dataset)
         end
         { dateDimension: payload }
       end
