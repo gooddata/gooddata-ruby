@@ -174,7 +174,7 @@ namespace :test do
   end
 
   desc 'Run integration tests'
-  RSpec::Core::RakeTask.new(:integration) do |t|
+  RSpec::Core::RakeTask.new(:sdk) do |t|
     t.pattern = 'spec/integration/**/*.rb'
   end
 
@@ -183,7 +183,8 @@ namespace :test do
     t.pattern = 'spec/lcm/integration/**/*.rb'
   end
 
-  desc 'Run project tests'
+  desc 'Run project-related tests. Separated from test:sdk so that ' \
+       'it is possible to save time by running the tasks in parallel.'
   RSpec::Core::RakeTask.new(:project) do |t|
     t.pattern = 'spec/project/**/*.rb'
   end
@@ -195,6 +196,7 @@ namespace :test do
 
   task :all => [:unit, :integration, :cop, :lcm, :project]
   task :ci => [:unit, :integration, :lcm, :project]
+  task :integration => [:sdk, :project]
 end
 
 desc 'Run all tests'
