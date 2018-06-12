@@ -33,14 +33,14 @@ end
 namespace :test do
   namespace :unit do
     task :docker do
-      system('docker-compose run -u 1002:1002 -e HOME=/var/lib/jenkins-slave gooddata-ruby bundle exec rake test:unit') ||
+      system('docker-compose run -u $(id -u):$(id -g) -e GNUPGHOME=/tmp gooddata-ruby bundle exec rake test:unit') ||
         fail('Test execution failed!')
     end
   end
 
   namespace :integration do
     task :docker do
-      system('docker-compose run -u 1002:1002 -e HOME=/var/lib/jenkins-slave gooddata-jruby bundle exec rake test:integration') ||
+      system('docker-compose run -u $(id -u):$(id -g) -e GNUPGHOME=/tmp gooddata-jruby bundle exec rake test:integration') ||
         fail('Test execution failed!')
     end
   end
