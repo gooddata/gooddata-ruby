@@ -203,7 +203,7 @@ module GoodData
 
       def save(data, options = { client: GoodData.client, project: GoodData.project })
         client, project = GoodData.get_client_and_project(options)
-        process_id = data[:process_id]
+        process_id = options[:process_id]
         res =
           if process_id.nil?
             client.post("/gdc/projects/#{project.pid}/dataload/processes", data)
