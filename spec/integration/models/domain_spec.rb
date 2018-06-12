@@ -9,7 +9,7 @@ require 'gooddata/helpers/csv_helper'
 
 require_relative '../shared_contexts_for_deterministic_random_data'
 
-describe GoodData::Domain do
+describe GoodData::Domain, :vcr do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
