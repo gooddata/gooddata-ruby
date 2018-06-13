@@ -8,11 +8,13 @@ require 'gooddata/models/profile'
 require 'gooddata/models/domain'
 require 'gooddata/models/project'
 
-describe GoodData::Profile do
-  before(:each) do
+describe GoodData::Profile, :vcr do
+  before(:all) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+  end
 
+  before(:each) do
     @user1 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
     @user2 = @domain.get_user(ConnectionHelper::DEFAULT_USERNAME)
 
