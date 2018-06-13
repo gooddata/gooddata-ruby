@@ -69,6 +69,7 @@ describe 'GoodData - logging', :vcr do
   before(:each) do
     # remember the state of logging before
     @logging_on_at_start = GoodData.logging_on?
+    @original_logger = GoodData.logger
   end
 
   after(:each) do
@@ -79,6 +80,7 @@ describe 'GoodData - logging', :vcr do
       GoodData.logging_off
     end
 
+    GoodData.logger = @original_logger
     @client.disconnect if @client
   end
 
