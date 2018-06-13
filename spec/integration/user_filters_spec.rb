@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "User filters implementation", :constraint => 'slow' do
+describe "User filters implementation", :vcr, :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_names => true)
     @client = ConnectionHelper.create_default_connection
@@ -44,6 +44,7 @@ describe "User filters implementation", :constraint => 'slow' do
 
   after(:all) do
     @project.delete if @project
+    @client && @client.disconnect
   end
 
   after(:each) do

@@ -1,4 +1,4 @@
-describe GoodData::MandatoryUserFilter do
+describe GoodData::MandatoryUserFilter, :vcr do
   before :all do
     @client = ConnectionHelper.create_default_connection
     @project, * = ProjectHelper.load_full_project_implementation @client
@@ -7,6 +7,7 @@ describe GoodData::MandatoryUserFilter do
 
   after :all do
     @project.delete if @project
+    @client.disconnect
   end
 
   describe 'when several users are sharing a MUF' do
