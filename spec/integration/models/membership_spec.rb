@@ -8,7 +8,7 @@ require 'gooddata/models/domain'
 require 'gooddata/models/membership'
 require 'gooddata/models/project_role'
 
-describe GoodData::Membership do
+describe GoodData::Membership, :vcr do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
 

@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::Label do
+describe GoodData::Label, :vcr do
   before(:all) do
     @rest_client = ConnectionHelper.create_default_connection
     @suffix = AppstoreProjectHelper.suffix
@@ -25,6 +25,7 @@ describe GoodData::Label do
   end
   after(:all) do
     @project.delete unless @project.deleted?
+    @rest_client.disconnect
   end
   # this is a substring of another value in the set, AA10041
   let(:expected_id) { 'AA1004' }

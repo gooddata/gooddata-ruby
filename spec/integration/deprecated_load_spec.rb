@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "Full project implementation", :constraint => 'slow' do
+describe "Full project implementation", :vcr, :vcr_all_cassette => 'deprecated', :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.build("my_bp") do |p|

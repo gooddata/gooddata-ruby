@@ -6,7 +6,7 @@
 
 require 'gooddata/commands/project'
 
-describe GoodData::Command::Project, :vcr do
+describe GoodData::Command::Project, :vcr, :vcr_all_cassette => 'create' do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
   end

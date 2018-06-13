@@ -30,8 +30,9 @@ describe GoodData::LCM2::SynchronizeUserFilters do
     allow(client).to receive(:projects).and_return(project)
     allow(client).to receive(:domain).and_return(domain)
     allow(organization).to receive(:project_uri)
+
     allow(organization).to receive(:id).and_return('123456789')
-    allow(project).to receive(:add_data_permissions).and_return([{}])
+    allow(project).to receive(:add_data_permissions).and_return(results: [])
     allow(project).to receive(:pid).and_return('123456789')
     allow(user).to receive(:login).and_return('my_login')
     allow(GoodData::Helpers::DataSource).to receive(:new).and_return(data_source)
@@ -77,9 +78,10 @@ describe GoodData::LCM2::SynchronizeUserFilters do
           allow(File).to receive(:open).and_return("client_id\n123456789")
           allow(project).to receive(:deleted?).and_return false
         end
+
         it 'returns results' do
           result = subject.class.call(params)
-          expect(result).to eq(results: [[{}]])
+          expect(result).to eq(results: [])
         end
 
         it_behaves_like 'a user action filtering segments' do
@@ -101,8 +103,9 @@ describe GoodData::LCM2::SynchronizeUserFilters do
           end
 
           it 'sets the dry_run option' do
-            expect(project).to receive(:add_data_permissions)
+            expect(project).to receive(:add_data_permissions).twice
               .with(instance_of(Array), hash_including(dry_run: true))
+              .and_return(results: [])
             subject.class.call(params)
           end
         end

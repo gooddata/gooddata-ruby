@@ -92,7 +92,7 @@ namespace :test do
   namespace :integration do
     desc 'Run integration tests in Docker'
     task :docker do
-      system('docker-compose -f docker-compose.lcm.yml up --force-recreate --abort-on-container-exit appstore')
+      system("docker-compose -f docker-compose.lcm.yml up --no-recreate --remove-orphans --abort-on-container-exit appstore localstack")
 
       # TODO: use exit-code-from after update to docker-compose >= 1.12
       # system('docker-compose up --exit-code-from appstore') ||
@@ -103,7 +103,7 @@ namespace :test do
   namespace :load do
     desc 'Run load tests in Docker'
     task :docker do
-      system('docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake test:load')
+      system("docker-compose -f docker-compose.lcm.yml run --rm --remove-orphans --abort-on-container-exit appstore bundle exec rake test:load")
 
       system(check_exit_code) || fail('Test execution failed!')
     end

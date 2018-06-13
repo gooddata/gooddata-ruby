@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/domains/staging2-lcm-prod/dataproducts/default/clients/tenant_a722561d-a7dd-4978-83a9-2388d4485b57
+    body:
+      encoding: UTF-8
+      string: '{"client":{"id":"different_id","segment":"/gdc/domains/staging2-lcm-prod/segments/segment-cb3812e7-52f9-43cf-8ce9-89d9e9ef2338","project":"/gdc/projects/qpg0yonx5n881bk3uin6c8c1z69k89lo","links":{"self":"/gdc/domains/staging2-lcm-prod/dataproducts/default/clients/tenant_a722561d-a7dd-4978-83a9-2388d4485b57"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - bVa1BG3XX4VDm5OykrGkEQ:-kndsPlq0eDDaTs-KsI_uA
+      Content-Length:
+      - '311'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 04 Jun 2018 13:05:03 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - bVa1BG3XX4VDm5OykrGkEQ:-kndsPlq0eDDaTs-KsI_uA:VOgAHZErHuTkWqd7
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '12'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"errorClass":"com.gooddata.webapp.rest.resource.lifecycle.ClientException","trace":"","message":"Changing
+        client ''%s'' to ''%s'' is not allowed","component":"Webapp","errorId":"1fbda1a3-a192-4cd8-9994-c9fe89e586d2","errorCode":"gdc.c4.bad_request.dataproduct.client_id.mismatch","parameters":["tenant_a722561d-a7dd-4978-83a9-2388d4485b57","different_id"]}}'
+    http_version: 
+  recorded_at: Mon, 04 Jun 2018 13:05:03 GMT
+recorded_with: VCR 4.0.0

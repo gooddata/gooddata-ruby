@@ -40,20 +40,30 @@ module GoodData
           end
         end
 
-        def create_random_user(client, opts = {})
+        def ensure_users(opts = {})
+          caller = opts[:caller] ? CGI.escape(opts[:caller]) : rand(1e7)
+          amount = opts[:amount] || 1
+          usrs = amount.times.map do |i|
+            opts[:login] = "gemtest-#{caller}-#{i}@gooddata.com"
+            create_user(opts)
+          end
+          usrs.size == 1 ? usrs.first : usrs
+        end
+
+        def create_user(opts = {})
           num = rand(1e7)
           login = opts[:login] || "gemtest#{num}@gooddata.com"
 
-          opts = {
+          data = {
             email: login,
             login: login,
             first_name: 'the',
-            last_name: num.to_s,
+            last_name: login.split('@').first,
             role: 'editor',
-            password: CryptoHelper.generate_password,
+            password: login.reverse,
             domain: ConnectionHelper::DEFAULT_DOMAIN
           }
-          GoodData::Membership.create(opts, client: client)
+          GoodData::Membership.create(data, client: opts[:client])
         end
 
         def load_full_project_implementation(client)

@@ -66,20 +66,20 @@ RSpec.configure do |config|
 
   if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
     require 'vcr_configurer'
-    skip_sleep = ENV['VCR_RECORD_MODE'].nil? || ENV['VCR_RECORD_MODE'].downcase == 'none'
+    skip_sleep = VcrConfigurer.vcr_record_mode == :none
 
     config.before(:all) do
       # in case the test uses VCR
       if self.class.metadata[:vcr]
         # replace parallel iterations with the serial one, since VCR can't handle parallel request matching correctly
         module Enumerable
-          def peach_with_index(*)
-            each_with_index
+          def peach_with_index(*, &y)
+            each_with_index(&y)
           end
         end
 
-        # insert the cassete recording everything what happens outside the tests cases
-        VCR.insert_cassette("#{self.class.metadata[:description]}/all")
+        # insert the cassette recording everything what happens outside the tests cases
+        VCR.insert_cassette("#{self.class.metadata[:description]}/#{self.class.metadata[:vcr_all_cassette] || 'all'}")
 
         # avoid polling idle time by overriding sleep
         if skip_sleep
@@ -100,7 +100,7 @@ RSpec.configure do |config|
         VCR.eject_cassette
 
         # reload the original parallel iterations
-        load('pmap.rb') if self.class.metadata[:vcr]
+        load('pmap.rb')
 
         # reload sleep method
         if skip_sleep

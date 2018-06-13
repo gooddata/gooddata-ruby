@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::Project do
+describe GoodData::Project, :vcr, :vcr_all_cassette => 'roles' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @p = GoodData::Project.create_object(title: 'a', client: @client)
@@ -35,6 +35,10 @@ describe GoodData::Project do
       GoodData::Membership.create(login: 'john.doe@goodadta.com', uri: '/uri/john'),
       GoodData::Membership.create(login: 'jane.doe@goodadta.com', uri: '/uri/jane')
     ]
+  end
+
+  after(:all) do
+    @client.disconnect
   end
 
   describe 'resolve_roles' do
