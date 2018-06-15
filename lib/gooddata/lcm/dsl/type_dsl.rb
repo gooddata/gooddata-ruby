@@ -28,10 +28,6 @@ module GoodData
           type.new
         end
 
-        def one_of(_type)
-          Type::EnumType.new
-        end
-
         def new_param
           @param = Type::Param.new
         end
