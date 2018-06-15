@@ -25,7 +25,6 @@ end
 require 'pmap'
 require 'rspec'
 require 'pathname'
-require 'webmock/rspec'
 require 'gooddata'
 
 logger = Logger.new(STDOUT)
@@ -65,6 +64,7 @@ RSpec.configure do |config|
   config.fail_fast = false
 
   if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
+    require 'webmock/rspec'
     require 'vcr_configurer'
     skip_sleep = VcrConfigurer.vcr_record_mode == :none
 
