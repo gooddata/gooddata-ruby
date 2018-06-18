@@ -6,11 +6,15 @@
 
 require 'gooddata'
 
-describe GoodData::Process do
+describe GoodData::Process, :vcr do
   before(:all) do
     @rest_client = ConnectionHelper.create_default_connection
     @suffix = AppstoreProjectHelper.suffix
     @project = ProjectHelper.get_default_project client: @rest_client
+  end
+
+  after(:all) do
+    @rest_client.disconnect
   end
 
   describe '.deploy_component' do

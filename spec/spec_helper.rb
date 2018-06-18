@@ -25,7 +25,6 @@ end
 require 'pmap'
 require 'rspec'
 require 'pathname'
-require 'webmock/rspec'
 require 'gooddata'
 
 logger = Logger.new(STDOUT)
@@ -65,6 +64,7 @@ RSpec.configure do |config|
   config.fail_fast = false
 
   if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
+    require 'webmock/rspec'
     require 'vcr_configurer'
     skip_sleep = VcrConfigurer.vcr_record_mode == :none
 
@@ -78,8 +78,8 @@ RSpec.configure do |config|
           end
         end
 
-        # insert the cassete recording everything what happens outside the tests cases
-        VCR.insert_cassette("#{self.class.metadata[:description]}/all")
+        # insert the cassette recording everything what happens outside the tests cases
+        VCR.insert_cassette("#{self.class.metadata[:description]}/#{self.class.metadata[:vcr_all_cassette] || 'all'}")
 
         # avoid polling idle time by overriding sleep
         if skip_sleep
@@ -100,7 +100,7 @@ RSpec.configure do |config|
         VCR.eject_cassette
 
         # reload the original parallel iterations
-        load('pmap.rb') if self.class.metadata[:vcr]
+        load('pmap.rb')
 
         # reload sleep method
         if skip_sleep

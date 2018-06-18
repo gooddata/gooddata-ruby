@@ -7,7 +7,7 @@
 require 'gooddata'
 require 'tempfile'
 
-describe "Full project implementation", :constraint => 'slow' do
+describe "Full project implementation", :vcr, :constraint => 'slow' do
   before(:all) do
     @invalid_spec = JSON.parse(File.read("./spec/data/blueprints/invalid_blueprint.json"), :symbolize_names => true)
     @invalid_blueprint = GoodData::Model::ProjectBlueprint.new(@invalid_spec)
@@ -66,7 +66,7 @@ describe "Full project implementation", :constraint => 'slow' do
 
   it "should be able to rename a project" do
     former_title = @project.title
-    a_title = (0...8).map { (65 + rand(26)).chr }.join
+    a_title = 'renamed project'
     @project.title = a_title
     @project.save
     expect(@project.title).to eq a_title

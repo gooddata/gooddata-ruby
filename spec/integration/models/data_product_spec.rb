@@ -7,7 +7,7 @@
 require 'gooddata/models/segment'
 require 'securerandom'
 
-describe GoodData::DataProduct do
+describe GoodData::DataProduct, :vcr do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
@@ -15,8 +15,7 @@ describe GoodData::DataProduct do
 
   before(:each) do
     @uuid = SecureRandom.uuid
-    @data_product_id = "data-product-#{@uuid}"
-    @data_product = @domain.create_data_product(id: @data_product_id)
+    @data_product = @domain.create_data_product(id: "data-product-#{@uuid}")
   end
 
   after(:each) do
@@ -34,7 +33,7 @@ describe GoodData::DataProduct do
     end
 
     it 'Returns specific data product when data product ID passed' do
-      data_product = @domain.data_products(@data_product_id)
+      data_product = @domain.data_products(@data_product.data_product_id)
       expect(data_product.uri).to eq @data_product.uri
       expect(data_product).to be_an_instance_of(GoodData::DataProduct)
     end
@@ -65,7 +64,7 @@ describe GoodData::DataProduct do
     it 'creates a segment' do
       segment = @data_product.create_segment(segment_id: "test-segment-#{@uuid}", master_project: @master_project)
       expect(segment).to be_instance_of GoodData::Segment
-      expect(segment.data_product.data_product_id).to eq(@data_product_id)
+      expect(segment.data_product.data_product_id).to eq(@data_product.data_product_id)
     end
   end
 end

@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe 'Spin a project from template', :constraint => 'slow' do
+describe 'Spin a project from template', :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
   end

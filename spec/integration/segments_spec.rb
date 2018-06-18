@@ -7,7 +7,7 @@
 require 'gooddata/models/segment'
 require 'securerandom'
 
-describe GoodData::Segment do
+describe GoodData::Segment, :vcr do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
@@ -16,8 +16,7 @@ describe GoodData::Segment do
   before(:each) do
     @uuid = SecureRandom.uuid
     @master_project = @client.create_project(title: "Test MASTER project for #{@uuid}", auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
-    @segment_name = "segment-#{@uuid}"
-    @segment = @domain.create_segment(segment_id: @segment_name, master_project: @master_project)
+    @segment = @domain.create_segment(segment_id: "segment-#{@uuid}", master_project: @master_project)
   end
 
   after(:each) do
@@ -36,7 +35,7 @@ describe GoodData::Segment do
     end
 
     it 'Returns specific segment when segment ID passed' do
-      s = @domain.segments(@segment_name)
+      s = @domain.segments(@segment.segment_id)
       expect(@segment.uri).to eq s.uri
       expect(s).to be_an_instance_of(GoodData::Segment)
       expect(@segment).to be_an_instance_of(GoodData::Segment)
@@ -46,7 +45,7 @@ describe GoodData::Segment do
   describe '#delete' do
     it 'Deletes particular segment' do
       old_count = @domain.segments.count
-      s = @domain.segments(@segment_name)
+      s = @domain.segments(@segment.segment_id)
       s.delete
       expect(@domain.segments.length).to eq(old_count - 1)
       # prevent delete attempt in the after hook
@@ -64,7 +63,7 @@ describe GoodData::Segment do
       @different_master = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
       @segment.master_project = @different_master
       @segment.save
-      @segment = @domain.segments(@segment_name)
+      @segment = @domain.segments(@segment.segment_id)
       expect(@segment.master_project_uri).not_to eq @master_project.uri
       expect(@segment.master_project_uri).to eq @different_master.uri
     end

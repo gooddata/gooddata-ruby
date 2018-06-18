@@ -1,0 +1,588 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:LH3A1g_83HDCfIen3VXU_g
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:22 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:LH3A1g_83HDCfIen3VXU_g:2AgTjcNfhpnpYnUS
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '69'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"RUBY","name":"Test ETL Process (Ruby)","graphs":["process.rb"],"executables":["process.rb"],"lastDeployed":"2018-06-05T08:09:51.773Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733/executions","source":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733/source"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:22 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules
+    body:
+      encoding: UTF-8
+      string: '{"schedule":{"name":null,"type":"MSETL","state":"ENABLED","timezone":"UTC","cron":"0
+        15 27 7 *","triggerScheduleId":null,"params":{"PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733","EXECUTABLE":"process.rb"},"hiddenParams":{}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:FrmKzQA5lSbt3gQEAxDXyw
+      Content-Length:
+      - '229'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:22 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:FrmKzQA5lSbt3gQEAxDXyw:2yUYU3cHX6zJHDwI
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '27'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"cron":"0
+        15 27 7 *","timezone":"UTC","nextExecutionTime":"2018-07-27T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4/executions"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:23 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:9nJlsN0ftUgcw1Tv_All0A
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:23 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:9nJlsN0ftUgcw1Tv_All0A:mHtsWTsEV2aH6Fz1
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '21'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"cron":"0
+        15 27 7 *","timezone":"UTC","nextExecutionTime":"2018-07-27T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4/executions"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:23 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:_7zRDfCysiEj_N5V48hpKQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:23 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:_7zRDfCysiEj_N5V48hpKQ:pT9gYOCpno3rVH79
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '69'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"RUBY","name":"Test ETL Process (Ruby)","graphs":["process.rb"],"executables":["process.rb"],"lastDeployed":"2018-06-05T08:09:51.773Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733/executions","source":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/dataload/processes/b4d771ca-0909-45b6-ae19-baeba079a733/source"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:24 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules
+    body:
+      encoding: UTF-8
+      string: '{"schedule":{"name":null,"type":"MSETL","state":"ENABLED","timezone":"UTC","cron":null,"triggerScheduleId":"5b16456fe4b0e67bea7017d4","params":{"PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733","EXECUTABLE":"process.rb"},"hiddenParams":{}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:NMEbx91VeBN91Rgn5nvhsQ
+      Content-Length:
+      - '242'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:25 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:NMEbx91VeBN91Rgn5nvhsQ:T4NHBqzoOZ9231VP
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '28'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5/executions"},"triggerScheduleId":"5b16456fe4b0e67bea7017d4"}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:25 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:OrcFgLgDUz4IpVGFBf6RNw
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:25 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:OrcFgLgDUz4IpVGFBf6RNw:Ov1SveFFE6j51gmO
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '21'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5/executions"},"triggerScheduleId":"5b16456fe4b0e67bea7017d4"}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:25 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:FUVTHcSvsXP4QgYRZzUDZA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:26 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '1169'
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:FUVTHcSvsXP4QgYRZzUDZA:ceFD6IbNmHxkPo86
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '22'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedules":{"paging":{"offset":0,"count":2},"schedulesLink":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules","items":[{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5/executions"},"triggerScheduleId":"5b16456fe4b0e67bea7017d4"}},{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"cron":"0
+        15 27 7 *","timezone":"UTC","nextExecutionTime":"2018-07-27T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4/executions"}}}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:26 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:lRPKyXTVZD9w1FYNNUEs3Q
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:26 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:lRPKyXTVZD9w1FYNNUEs3Q:kpGRur3LEGUeJsGX
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '21'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"cron":"0
+        15 27 7 *","timezone":"UTC","nextExecutionTime":"2018-07-27T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4/executions"}}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:26 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:VV2gE9A6LbDtMbtI7Y2MZA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:27 GMT
+      Server:
+      - GoodData WebApp
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '1169'
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:VV2gE9A6LbDtMbtI7Y2MZA:hGa3NdiOXyHr0QUm
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '23'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedules":{"paging":{"offset":0,"count":2},"schedulesLink":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules","items":[{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5/executions"},"triggerScheduleId":"5b16456fe4b0e67bea7017d4"}},{"schedule":{"name":"process.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"process.rb","PROCESS_ID":"b4d771ca-0909-45b6-ae19-baeba079a733"},"cron":"0
+        15 27 7 *","timezone":"UTC","nextExecutionTime":"2018-07-27T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4","executions":"/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4/executions"}}}]}}'
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:27 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b164571e4b0e67bea7017d5
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:bH2BgqkEUAXtASmBEP2eBQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Location:
+      - "/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:27 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '23'
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:bH2BgqkEUAXtASmBEP2eBQ:lPSTqEFP5vLXiEzS
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:27 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules/5b16456fe4b0e67bea7017d4
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/x86_64-linux/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:gk3A9NsSGwUmGJbctV583A
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Location:
+      - "/gdc/projects/iuykw7i9avrd0zf2n9ts5i7c48oeclti/schedules"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Tue, 05 Jun 2018 08:10:28 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '25'
+      X-Gdc-Request:
+      - RuaP0Eu51dppxrAckD6Erg:gk3A9NsSGwUmGJbctV583A:7K2LAzqBrGSL1kVN
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Tue, 05 Jun 2018 08:10:28 GMT
+recorded_with: VCR 4.0.0

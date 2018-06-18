@@ -6,7 +6,7 @@
 
 require_relative '../helpers/connection_helper'
 
-describe GoodData do
+describe GoodData, :vcr, :vcr_all_cassette => 'sso' do
   let(:login) { 'rubydev+admin@gooddata.com' }
   KEYS = ['dev-gooddata-sso.pub', 'rubydev_public.gpg', 'rubydev_secret_keys.gpg']
 

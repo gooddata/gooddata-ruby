@@ -35,49 +35,67 @@ module GoodData
 
         description 'Allows to have facts with higher precision decimals'
         param :exclude_fact_rule, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Specifies how to synchronize LDM and resolve possible conflicts'
+        param :synchronize_ldm, instance_of(Type::SynchronizeLDM), required: false, default: 'diff_against_master_with_fallback'
       end
 
       class << self
         def call(params)
           include_ca = params.include_computed_attributes.to_b
           exclude_fact_rule = params.exclude_fact_rule.to_b
-
-          results = []
-
           client = params.gdc_gd_client
-          development_client = params.development_client
+          synchronize = []
+          results = []
+          synchronize = params.synchronize.map do |segment_info|
+            from_pid = segment_info[:from]
+            from = params.development_client.projects(from_pid) || fail("Invalid 'from' project specified - '#{from_pid}'")
 
-          synchronize = params.synchronize.map do |info|
-            from_project = info.from
-            to_projects = info.to
-
-            from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
-            params.gdc_logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from.pid}"
-
+            GoodData.logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from_pid}"
             blueprint = from.blueprint(include_ca: include_ca)
-            info[:to] = to_projects.pmap do |entry|
+
+            maql_diff = nil
+            diff_against = segment_info[:diff_ldm_against]
+            if diff_against && params[:synchronize_ldm].start_with?('diff_against_master')
+              maql_diff_params = [:includeGrain]
+              maql_diff_params << :excludeFactRule if exclude_fact_rule
+              maql_diff = diff_against.maql_diff(blueprint: blueprint, params: maql_diff_params)
+            end
+
+            segment_info[:to] = segment_info[:to].pmap do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
-              params.gdc_logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
-              ca_scripts = to_project.update_from_blueprint(
-                blueprint,
-                update_preference: params.update_preference,
-                execute_ca_scripts: false,
-                exclude_fact_rule: exclude_fact_rule
-              )
-
-              entry[:ca_scripts] = ca_scripts
+              GoodData.logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
+              begin
+                entry[:ca_scripts] = to_project.update_from_blueprint(
+                  blueprint,
+                  update_preference: params[:update_preference],
+                  exclude_fact_rule: exclude_fact_rule,
+                  execute_ca_scripts: false,
+                  maql_diff: maql_diff
+                )
+              rescue MaqlExecutionError => e
+                GoodData.logger.info("Applying MAQL to project #{to_project.title} - #{pid} failed. Reason: #{e}")
+                fail e unless diff_against && params[:synchronize_ldm] == 'diff_against_master_with_fallback'
+                GoodData.logger.info("Restoring the client project #{to_project.title} from master.")
+                entry[:ca_scripts] = to_project.update_from_blueprint(
+                  blueprint,
+                  update_preference: params[:update_preference],
+                  exclude_fact_rule: exclude_fact_rule,
+                  execute_ca_scripts: false
+                )
+              end
 
               results << {
-                from: from_project,
+                from: from_pid,
                 to: pid,
                 status: 'ok'
               }
               entry
             end
 
-            info
+            segment_info
           end
 
           {

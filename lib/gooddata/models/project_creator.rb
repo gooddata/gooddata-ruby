@@ -8,6 +8,7 @@ require_relative 'project'
 require_relative 'blueprint/project_blueprint'
 
 require 'open-uri'
+require 'benchmark'
 
 module GoodData
   module Model
@@ -25,7 +26,8 @@ module GoodData
 
           project = opts[:project] || client.create_project(opts.merge(:title => opts[:title] || spec[:title], :client => client, :environment => opts[:environment]))
 
-          maqls = migrate_datasets(spec, opts.merge(project: project, client: client))
+          maqls, ca_maqls = migrate_datasets(spec, opts.merge(project: project, client: client))
+          maqls += ca_maqls ? [ca_maqls] : []
           load(p, spec)
           migrate_metrics(p, spec[:metrics] || [])
           migrate_reports(p, spec[:reports] || [])
@@ -42,50 +44,57 @@ module GoodData
           _, project = GoodData.get_client_and_project(opts)
 
           bp = ProjectBlueprint.new(spec)
-          maql_diff_params = [:includeGrain]
-          maql_diff_params << :excludeFactRule if opts[:exclude_fact_rule]
-          response = project.maql_diff(blueprint: bp, params: maql_diff_params)
+          response = opts[:maql_diff]
+          unless response
+            maql_diff_params = [:includeGrain]
+            maql_diff_params << :excludeFactRule if opts[:exclude_fact_rule]
+            maql_diff_time = Benchmark.realtime do
+              response = project.maql_diff(blueprint: bp, params: maql_diff_params)
+            end
+            GoodData.logger.debug("MAQL diff took #{maql_diff_time.round} seconds")
+          end
 
           GoodData.logger.debug("projectModelDiff") { response.pretty_inspect }
           chunks = response['projectModelDiff']['updateScripts']
-          return [] if chunks.empty?
+          return [], nil if chunks.empty?
 
           ca_maql = response['projectModelDiff']['computedAttributesScript'] if response['projectModelDiff']['computedAttributesScript']
           ca_chunks = ca_maql && ca_maql['maqlDdlChunks']
 
           maqls = pick_correct_chunks(chunks, opts)
           replaced_maqls = apply_replacements_on_maql(maqls, replacements)
+          apply_maqls(ca_chunks, project, replaced_maqls, opts) unless dry_run
+          [replaced_maqls, ca_maql]
+        end
 
-          unless dry_run
-            errors = []
-            replaced_maqls.each do |replaced_maql_chunks|
-              begin
-                replaced_maql_chunks['updateScript']['maqlDdlChunks'].each do |chunk|
-                  GoodData.logger.debug(chunk)
-                  project.execute_maql(chunk)
-                end
-              rescue => e
-                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
-                errors << e
-                next
+        def apply_maqls(ca_chunks, project, replaced_maqls, opts)
+          errors = []
+          replaced_maqls.each do |replaced_maql_chunks|
+            begin
+              replaced_maql_chunks['updateScript']['maqlDdlChunks'].each do |chunk|
+                GoodData.logger.debug(chunk)
+                project.execute_maql(chunk)
               end
-            end
-
-            if ca_chunks && opts[:execute_ca_scripts]
-              begin
-                ca_chunks.each { |chunk| project.execute_maql(chunk) }
-              rescue => e
-                puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
-                errors << e
-              end
-            end
-
-            if (!errors.empty?) && (errors.length == replaced_maqls.length)
-              messages = errors.map { |err| GoodData::Helpers.interpolate_error_messages(err.data['wTaskStatus']['messages']) }
-              fail "Unable to migrate LDM, reason(s): \n #{messages.join("\n")}"
+            rescue => e
+              puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
+              errors << e
+              next
             end
           end
-          replaced_maqls + (ca_maql ? [ca_maql] : [])
+
+          if ca_chunks && opts[:execute_ca_scripts]
+            begin
+              ca_chunks.each { |chunk| project.execute_maql(chunk) }
+            rescue => e
+              puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
+              errors << e
+            end
+          end
+
+          if (!errors.empty?) && (errors.length == replaced_maqls.length)
+            messages = errors.map { |err| GoodData::Helpers.interpolate_error_messages(err.data['wTaskStatus']['messages']) }
+            fail MaqlExecutionError.new("Unable to migrate LDM, reason(s): \n #{messages.join("\n")}", errors)
+          end
         end
 
         def migrate_reports(project, spec)

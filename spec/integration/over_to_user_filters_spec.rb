@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe "Over-To data permissions implementation", :constraint => 'slow' do
+describe "Over-To data permissions implementation", :vcr, :constraint => 'slow' do
   before(:all) do
     @spec = JSON.parse(File.read("./spec/data/blueprints/m_n_model.json"), :symbolize_names => true)
     @client = ConnectionHelper.create_default_connection
@@ -63,6 +63,7 @@ describe "Over-To data permissions implementation", :constraint => 'slow' do
 
   after(:all) do
     @project.delete if @project
+    @client.disconnect
   end
 
   after(:each) do

@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe 'Create project using GoodData client', :vcr, :constraint => 'slow' do
+describe 'Create project using GoodData client - blueprint', :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @blueprint = GoodData::Model::ProjectBlueprint.from_json('./spec/data/blueprints/test_project_model_spec.json')

@@ -72,9 +72,11 @@ module GoodData
             query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
 
             res = params.ads_client.execute_select(query)
+            sorted = res.sort_by { |row| row[:version] }
+            current_master = sorted.last[:master_project_id]
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
-            master = client.projects(res.first[:master_project_id])
+            master = client.projects(current_master)
 
             segment.master_project = master
             segment.save

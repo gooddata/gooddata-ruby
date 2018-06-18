@@ -11,31 +11,17 @@ require_relative '../shared_contexts_for_deterministic_random_data'
 
 describe GoodData::Domain, :vcr do
   before(:all) do
+    @client = ConnectionHelper.create_default_connection
+    @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
     @users_to_delete = []
   end
 
   after(:all) do
-    @users_to_delete.map(&:login).map { |u| @domain.find_user_by_login u }.map(&:delete)
-  end
-
-  before(:each) do
-    @client = ConnectionHelper.create_default_connection
-    @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
-  end
-
-  after(:each) do
+    @users_to_delete.map(&:login).map { |login| @domain.find_user_by_login login }.each { |user| user.delete if user }
     @client.disconnect
   end
 
   describe '#add_user' do
-    before(:each) do
-      @user = nil
-    end
-
-    after(:each) do
-      @user.delete if @user
-    end
-
     it 'Should add user using class method' do
       args = {
         :domain => ConnectionHelper::DEFAULT_DOMAIN,
@@ -43,20 +29,20 @@ describe GoodData::Domain, :vcr do
         :password => CryptoHelper.generate_password
       }
 
-      @user = GoodData::Domain.add_user(args)
-      @users_to_delete << @user
-      expect(@user).to be_an_instance_of(GoodData::Profile)
+      user = GoodData::Domain.add_user(args)
+      @users_to_delete << user
+      expect(user).to be_an_instance_of(GoodData::Profile)
     end
 
     it 'Should add user using instance method' do
       domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
-      login = "gemtest#{rand(1e6)}@gooddata.com"
+      login = "gemtest_#{rand(1e6)}@gooddata.com"
       password = CryptoHelper.generate_password
 
-      @user = domain.add_user(:login => login, :password => password, :first_name => 'X', :last_name => 'X')
-      @users_to_delete << @user
-      expect(@user).to be_an_instance_of(GoodData::Profile)
+      user = domain.add_user(:login => login, :password => password, :first_name => 'X', :last_name => 'X')
+      @users_to_delete << user
+      expect(user).to be_an_instance_of(GoodData::Profile)
     end
   end
 
@@ -64,7 +50,7 @@ describe GoodData::Domain, :vcr do
     it 'Should find user by login' do
       domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
       user = domain.find_user_by_login(ConnectionHelper::DEFAULT_USERNAME)
-      # user = @domain.add_user(args, client: @client)
+
       expect(user).to be_an_instance_of(GoodData::Profile)
       expect(user.login).to eq ConnectionHelper::DEFAULT_USERNAME
     end
@@ -98,7 +84,6 @@ describe GoodData::Domain, :vcr do
 
       res.select { |x| x[:type] == :successful }.map { |r| r[:user] }.each do |r|
         expect(r).to be_an_instance_of(GoodData::Profile)
-        r.delete
       end
     end
 
