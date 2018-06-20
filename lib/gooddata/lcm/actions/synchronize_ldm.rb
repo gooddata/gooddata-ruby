@@ -64,7 +64,8 @@ module GoodData
                 blueprint,
                 update_preference: params.update_preference,
                 execute_ca_scripts: false,
-                exclude_fact_rule: exclude_fact_rule
+                exclude_fact_rule: exclude_fact_rule,
+                only_model: true
               )
 
               entry[:ca_scripts] = ca_scripts
