@@ -103,7 +103,7 @@ namespace :test do
   namespace :load do
     desc 'Run load tests in Docker'
     task :docker do
-      system("docker-compose -f docker-compose.lcm.yml run --rm --remove-orphans --abort-on-container-exit appstore bundle exec rake test:load")
+      system("docker-compose -f docker-compose.lcm.yml run --rm --remove-orphans --abort-on-container-exit appstore bundle exec rake -f lcm.rake test:load")
 
       system(check_exit_code) || fail('Test execution failed!')
     end
