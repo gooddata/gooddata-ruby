@@ -21,7 +21,7 @@ module GoodData
 
     def log(log, time, buffered=true)
       if buffered == true
-        logs << @formatter.call("WARN", time, nil, log).to_s << "\n"
+        @logs << @formatter.call("WARN", time, nil, log).to_s << "\n"
       else
         warn(log)
       end
@@ -29,7 +29,7 @@ module GoodData
 
     def flush
       # GoodData::Helpers::SplunkHelper::send_logs GoodData.logger.splunk_logs
-      STDERR.puts logs if logs.length > 0
+      STDERR.puts @logs if @logs.length > 0
       clear_logs
     end
 

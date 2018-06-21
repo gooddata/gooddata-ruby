@@ -68,6 +68,7 @@ describe 'Behavior during api calls' do
   end
 
   it 'should log buffered to STDERR' do
+    @client.get('/gdc/pool_test')
     GoodData.splunk_logger.log("Hello world", Time.now)
     GoodData.splunk_logger.flush
   end

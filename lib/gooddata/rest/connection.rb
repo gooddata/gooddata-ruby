@@ -339,6 +339,7 @@ module GoodData
 
         GoodData.rest_logger.info "#{method.to_s.upcase}: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile method.to_s.upcase, uri do
+          puts "profile"
           b = proc do
             params = fresh_request_params(request_id).merge(options)
             begin
@@ -640,7 +641,7 @@ ERR
             :endpoint => anonymize_path(path.dup),
             :action => active_action,
             :brick => active_brick,
-            :length => delta,
+            :duration => delta,
             :method => method,
             # :time_stamp => time_stamp.utc.strftime("%Y-%m-%d %H:%M:%S.%L"),
             :type => "api_call",
