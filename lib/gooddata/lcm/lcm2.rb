@@ -312,7 +312,7 @@ module GoodData
         errors = []
         results = []
         actions.each do |action|
-          puts
+          GoodData::Rest::Client.connection.active_action(action) if GoodData::Rest::Client.connection != nil
 
           # Invoke action
           begin

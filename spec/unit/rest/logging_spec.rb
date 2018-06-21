@@ -6,6 +6,8 @@
 
 require 'gooddata/rest/rest'
 
+require_relative '../../../lib/gooddata/bricks/middleware/logger_middleware'
+
 describe 'Behavior during api calls' do
   before :each do
     WebMock.enable!
@@ -52,7 +54,6 @@ describe 'Behavior during api calls' do
       .to_return(:body => {}.to_json, :status => 500, :headers => { 'Content-Type' => "application/json" })
 
     @client = GoodData.connect('aaa', 'bbbb')
-    @client.stats_on
   end
 
   after :each do
@@ -66,8 +67,8 @@ describe 'Behavior during api calls' do
     GoodData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, @poll)
   end
 
-  it 'should log all api calls' do
-    @client.get('/gdc')
-    @client.disconnect
+  it 'should log buffered to STDERR' do
+    GoodData.splunk_logger.log("Hello world", Time.now)
+    GoodData.splunk_logger.flush
   end
 end

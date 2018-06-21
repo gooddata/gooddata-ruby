@@ -24,6 +24,10 @@ module GoodData
         # Set logger
         logger = params['GDC_LOGGER']
         GoodData.logger = logger
+        splunk_logger = params['GDC_SPLUNK_LOGGER']
+        GoodData.splunk_logger = splunk_logger
+        GoodData.splunk_logger.log("Hello", Time.now)
+
 
         # Set parallelism
         max_concurrency = params['max_concurrency'] || params['MAX_CONCURRENCY']

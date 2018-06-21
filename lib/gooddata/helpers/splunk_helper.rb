@@ -27,20 +27,21 @@ module GoodData
         end
 
 
-        def send_logs_as_csv(csv)
+        def send_logs(logs)
           login_payload = {
-            'username'=>'admin',
-            'password'=>'+ěšč'
+            'username'=>'deleter',
+            'password'=>'1234'
           }
+
+          puts "SENDING TO SPLUNK:"
+          puts logs
 
           response = post(:login, login_payload)
 
           xml = Nokogiri::XML(response.body)
           sessionKey = xml.at_xpath("//sessionKey").content
 
-          puts csv
-
-          post(:insert, csv, sessionKey, "source=api-call&sourcetype=ruby-statslog")
+          post(:insert, logs, sessionKey, "source=api-call&sourcetype=ruby-statslog")
 
         end
       end

@@ -338,7 +338,7 @@ module GoodData
         payload = data.is_a?(Hash) ? data.to_json : data
 
         GoodData.rest_logger.info "#{method.to_s.upcase}: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
-        profile "#{method.to_s.upcase} #{uri}" do
+        profile method.to_s.upcase, uri do
           b = proc do
             params = fresh_request_params(request_id).merge(options)
             begin
@@ -405,11 +405,22 @@ module GoodData
         return csv_string
       end
 
-      def stats_log(values = stats)
+      def map_to_string(map)
+        log_string = ""
+        map.each do |pair|
+          log_string += " "
+          log_string += pair[0].to_s + "="
+          log_string += pair[1].to_s
+        end
+        log_string
+      end
+
+      def stats_log(brick_id)
         log_res = ""
-        values[:calls].each do |row|
+        stats[:calls].each do |row|
           log_string = "[" + row[:time_stamp] + "] "
           row.each do |pair|
+            next if pair[0] == :time_stamp
             log_string += pair[0].to_s + "="
             log_string += "\"" if pair[0] == :endpoint || pair[0] == :time_stamp
             log_string += pair[1].to_s
@@ -581,13 +592,13 @@ ERR
         raise $ERROR_INFO
       end
 
-      def profile(title, &block)
+      def profile(method, path, &block)
         t1 = Time.now
         res = block.call
         t2 = Time.now
         delta = t2 - t1
 
-        update_stats title, delta, t1
+        update_stats method, path, delta, t1
         res
       end
 
@@ -612,56 +623,33 @@ ERR
         PH_MAP.each do |pm|
           break if path.gsub!(pm[1], pm[0])
         end
-        return path
+
+        path
       end
 
-      def update_stats(title, delta, time_stamp)
+      def update_stats(method, path, delta, time_stamp)
         synchronize do
-          title = anonymize_path(title)
+          return if active_action.nil? || active_brick.nil?
 
-          action = active_action.nil? ? "undefined_action" : active_action
-          brick = active_brick.nil? ? "undefined_brick" : active_brick
-
-          # Update aggregated
-          # stats[:aggregated][title] = {} if stats[:aggregated][title].nil?
-          # stat = stats[:aggregated][title][action]
-          # if stat.nil?
-          #   stat = {
-          #     :title => title,
-          #     :action => action,
-          #     :brick => brick,
-          #     :min => delta,
-          #     :max => delta,
-          #     :total => 0,
-          #     :avg => 0,
-          #     :calls => 0,
-          #     :time_stamp => time_stamp.strftime("%FT%T.%6N"),
-          #     :type => "aggregated_calls",
-          #     :api_version => GoodData.version,
-          #     :domain => server_url.gsub(%r{http://|https://}, "")
-          #   }
-          # end
-          #
-          # stat[:min] = delta if delta < stat[:min]
-          # stat[:max] = delta if delta > stat[:max]
-          # stat[:total] += delta
-          # stat[:calls] += 1
-          # stat[:avg] = stat[:total] / stat[:calls]
-          #
-          # stats[:aggregated][title][action] = stat
+          # action = active_action.nil? ? "undefined_action" : active_action
+          # brick = active_brick.nil? ? "undefined_brick" : active_brick
 
           # Add single api call
           stat = {
-            :endpoint => title,
-            :action => action,
-            :brick => brick,
+            :component => "execmgr.ruby-brick",
+            :endpoint => anonymize_path(path.dup),
+            :action => active_action,
+            :brick => active_brick,
             :length => delta,
-            :time_stamp => Time.now.utc.strftime("%Y-%m-%d %H:%M:%S.%L"),
+            :method => method,
+            # :time_stamp => time_stamp.utc.strftime("%Y-%m-%d %H:%M:%S.%L"),
             :type => "api_call",
             :api_version => GoodData.version,
             :domain => server_url.gsub(%r{http://|https://}, "")
           }
-          stats[:calls] << stat
+
+          GoodData.splunk_logger.log(map_to_string(stat), time_stamp) if defined? GoodData.splunk_logger
+          # stats[:calls] << stat
         end
       end
 

@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'rest-client'
+require 'securerandom'
 
 require_relative '../helpers/auth_helpers'
 require_relative '../helpers/global_helpers'
@@ -158,7 +159,6 @@ module GoodData
         @factory = ObjectFactory.new(self)
       end
 
-
       def create_project(options = { title: 'Project' })
         GoodData::Project.create({ client: self }.merge(options))
       end
@@ -193,18 +193,14 @@ module GoodData
       end
 
       def disconnect
-
         if stats_on?
           GoodData.logger.warn "Statistics collecting is turned ON. We are collecting some data about execution performance - all sensitive information are being anonymized."
           begin
-            GoodData::Helpers::SplunkHelper::send_logs_as_csv(@connection.stats_log)
-            # Timeout::timeout(STATS_LOG_TIMEOUT) do
-            #   @connection.stats_log.each do |log|
-            #     GoodData.logger.info(log)
-            #   end
-            # end
+            Timeout::timeout(STATS_LOG_TIMEOUT) do
+              GoodData.splunk_logger.flush
+            end
           rescue Timeout::Error
-            GoodData.logger.warn "Statistics logging took to long. Some statistics weren't recorded."
+            GoodData.logger.warn "Statistics logging took too long. Some statistics weren't recorded."
           end
         end
         @connection.disconnect
