@@ -4,20 +4,18 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-# puts "Using DEFAULT_SERVER: #{GoodData::Environment::ConnectionHelper::DEFAULT_SERVER}"
-# puts "Using PROJECT_ID: #{GoodData::Environment::ProjectHelper::PROJECT_ID}"
-# puts "Using PROCESS_ID: #{GoodData::Environment::ProcessHelper::PROCESS_ID}"
-
-
 describe GoodData::Process do
     before(:all) do
         # user = GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME
         # password = GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD}"
         # project_id = GoodData::Environment::ProjectHelper::PROJECT_ID
-        project_id = 'guec1btw971y0q3c7vxqacvno06lkstq'
-        client = GoodData.connect()
-        project = GoodData::Project[project_id, client: client]
-        @archive_location = '/Users/vladimir.pachnik/Downloads/VPC - Playground'
+        # project_id = 'guec1btw971y0q3c7vxqacvno06lkstq'
+        # client = GoodData.connect()
+        client = ConnectionHelper.create_default_connection
+        #project = GoodData::Project[project_id, client: client]
+        project = ProjectHelper.get_default_project
+        # @archive_location = '/Users/vladimir.pachnik/Downloads/VPC - Playground'
+        @archive_locatoin = '.spec/data/cc'
         @options = {project: project, client: client}
         GoodData.project=(project)
     end
