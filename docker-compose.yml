@@ -9,6 +9,7 @@ services:
       - PRONTO_GITHUB_ACCESS_TOKEN
       - PRONTO_PULL_REQUEST_ID
       - GD_ENV
+      - VCR_ON
     volumes:
       - /etc/passwd:/etc/passwd:ro
       - .:/src
@@ -23,6 +24,7 @@ services:
       - GD_PROJECT_TOKEN
       - GD_SPEC_PASSWORD
       - GD_ENV
+      - VCR_ON
     volumes:
       - /etc/passwd:/etc/passwd:ro
       - .:/src
