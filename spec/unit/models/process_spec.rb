@@ -56,4 +56,12 @@ describe GoodData::Process do
             end    
         end
     end
+
+    describe '#[] method' do
+        context 'with :all an without :project' do
+            it 'should return list all processes within projects accessible to user' do
+                expect(GoodData::Process[:all]).to be_an_instance_of(Array)
+            end
+        end
+    end
 end
