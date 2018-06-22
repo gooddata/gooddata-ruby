@@ -35,6 +35,7 @@ module GoodData
             c.create(Process, process_data, project: project)
           end
         elsif id == :all
+          c ||= GoodData.client # c may not defined if project is not defined
           uri = "/gdc/account/profile/#{c.user.obj_id}/dataload/processes"
           data = c.get(uri)
           pids = data['processes']['items'].map { |process_data| process_data['process']['links']['self'].match(%r{/gdc/projects/(\w*)/})[1] }.uniq
