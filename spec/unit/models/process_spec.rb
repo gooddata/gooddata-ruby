@@ -18,7 +18,7 @@ describe GoodData::Process do
         #project = GoodData::Project[project_id, client: client]
         project = ProjectHelper.get_default_project
         # @archive_location = '/Users/vladimir.pachnik/Downloads/VPC - Playground'
-        @archive_locatoin = '.spec/data/cc'
+        @archive_location = './spec/data/cc'
         @options = {project: project, client: client}
         GoodData.project=(project)
     end
