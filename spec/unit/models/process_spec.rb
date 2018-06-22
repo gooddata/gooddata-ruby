@@ -11,6 +11,9 @@ describe GoodData::Process do
         # project_id = GoodData::Environment::ProjectHelper::PROJECT_ID
         # project_id = 'guec1btw971y0q3c7vxqacvno06lkstq'
         # client = GoodData.connect()
+        logger = Logger.new(STDOUT)
+        logger.level = Logger::DEBUG
+        GoodData.logger = logger
         client = ConnectionHelper.create_default_connection
         #project = GoodData::Project[project_id, client: client]
         project = ProjectHelper.get_default_project
