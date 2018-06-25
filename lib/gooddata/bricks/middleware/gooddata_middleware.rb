@@ -24,10 +24,6 @@ module GoodData
         # Set logger
         logger = params['GDC_LOGGER']
         GoodData.logger = logger
-        splunk_logger = params['GDC_SPLUNK_LOGGER']
-        GoodData.splunk_logger = splunk_logger
-        GoodData.splunk_logger.log("Hello", Time.now)
-
 
         # Set parallelism
         max_concurrency = params['max_concurrency'] || params['MAX_CONCURRENCY']
@@ -44,8 +40,7 @@ module GoodData
           params['GDC_VERIFY_SSL'].to_b,
           params['GDC_USERNAME'],
           params['GDC_PASSWORD'],
-          params['GDC_SST'],
-          params['COLLECT_STATS']
+          params['GDC_SST']
         )
 
         opts = params['development_client']
@@ -63,8 +58,7 @@ module GoodData
             opts['verify_ssl'].to_b,
             opts['username'] || opts['login'] || opts['email'],
             opts['password'],
-            opts['sst'],
-            opts['collect_stats']
+            opts['sst']
           )
         else
           development_client = client
@@ -99,7 +93,7 @@ module GoodData
       end
 
       class << self
-        def connect(server, verify_ssl, username, password, sst_token, collect_stats) # rubocop:disable Metrics/ParameterLists
+        def connect(server, verify_ssl, username, password, sst_token) # rubocop:disable Metrics/ParameterLists
           if username.nil? || password.nil?
             puts "Connecting with SST to server #{server}"
             raise 'SST (SuperSecureToken) not present in params' if sst_token.nil?
@@ -108,8 +102,6 @@ module GoodData
             puts "Connecting as #{username} to server #{server}"
             conn = GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
           end
-
-          conn.stats_on if collect_stats
 
           conn
         end

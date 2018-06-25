@@ -193,15 +193,12 @@ module GoodData
       end
 
       def disconnect
-        if stats_on?
-          GoodData.logger.warn "Statistics collecting is turned ON. We are collecting some data about execution performance - all sensitive information are being anonymized."
-          begin
-            Timeout::timeout(STATS_LOG_TIMEOUT) do
-              GoodData.splunk_logger.flush
-            end
-          rescue Timeout::Error
-            GoodData.logger.warn "Statistics logging took too long. Some statistics weren't recorded."
+        begin
+          Timeout.timeout(STATS_LOG_TIMEOUT) do
+            GoodData.splunk_logger.flush
           end
+        rescue Timeout::Error
+          GoodData.logger.warn "Statistics logging took too long. Some statistics weren't recorded."
         end
         @connection.disconnect
       end

@@ -267,6 +267,8 @@ module GoodData
 
       def perform(mode, params = {})
         params = convert_params(params)
+        GoodData.splunk_logger.set_context GoodData::SplunkLogger::BRICK_CONTEXT, mode
+        GoodData.splunk_logger.set_context GoodData::SplunkLogger::ACTION_CONTEXT, "BRICK_INIT"
 
         # Get actions for mode specified
         actions = get_mode_actions(mode)
@@ -306,14 +308,12 @@ module GoodData
         check_unused_params(actions, params)
         print_action_names(mode, actions)
 
-        GoodData::Rest::Client.connection.active_brick(mode) if GoodData::Rest::Client.connection != nil
-
         # Run actions
         errors = []
         results = []
         actions.each do |action|
           puts
-          GoodData::Rest::Client.connection.active_action(action) if GoodData::Rest::Client.connection != nil
+          GoodData.splunk_logger.set_context GoodData::SplunkLogger::ACTION_CONTEXT, action
 
           # Invoke action
           begin

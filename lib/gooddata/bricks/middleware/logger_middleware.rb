@@ -30,7 +30,12 @@ module GoodData
         end
         params['GDC_LOGGER'] = logger
 
-        GoodData.logging_splunk_on
+        if params['COLLECT_STATS'] && params['COLLECT_STATS'].to_b
+          GoodData.logger.warn "Statistics collecting is turned ON.
+We are collecting some data for execution performance analysis - all sensitive information are being anonymized."
+          GoodData.logging_splunk_on Logger::INFO, STDERR, GoodData::SplunkLogger, GoodData::SplunkLogger::FILE_MODE | GoodData::SplunkLogger::API_MODE
+        end
+
         GoodData.logging_http_on if params['HTTP_LOGGING'] && params['HTTP_LOGGING'].to_b
 
         returning(@app.call(params)) do |_result|

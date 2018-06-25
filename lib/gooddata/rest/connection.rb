@@ -9,6 +9,7 @@ require 'securerandom'
 require 'monitor'
 require 'thread_safe'
 require 'rest-client'
+require 'json'
 
 require_relative '../version'
 require_relative '../exceptions/exceptions'
@@ -339,7 +340,6 @@ module GoodData
 
         GoodData.rest_logger.info "#{method.to_s.upcase}: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
         profile method.to_s.upcase, uri do
-          puts "profile"
           b = proc do
             params = fresh_request_params(request_id).merge(options)
             begin
@@ -388,49 +388,6 @@ module GoodData
       # @return uri [String] SST token
       def sst_token
         request_params[:x_gdc_authsst]
-      end
-
-      # Method returning CSV containing all collected data
-      def stats_csv(values = stats)
-        row_id = 0
-        csv_string = CSV.generate do |csv|
-          values[:calls].each do |row|
-            row_id += 1
-            if row_id == 1
-              csv << row.keys
-            else
-              csv << row.values
-            end
-          end
-        end
-        return csv_string
-      end
-
-      def map_to_string(map)
-        log_string = ""
-        map.each do |pair|
-          log_string += " "
-          log_string += pair[0].to_s + "="
-          log_string += pair[1].to_s
-        end
-        log_string
-      end
-
-      def stats_log(brick_id)
-        log_res = ""
-        stats[:calls].each do |row|
-          log_string = "[" + row[:time_stamp] + "] "
-          row.each do |pair|
-            next if pair[0] == :time_stamp
-            log_string += pair[0].to_s + "="
-            log_string += "\"" if pair[0] == :endpoint || pair[0] == :time_stamp
-            log_string += pair[1].to_s
-            log_string += "\"" if pair[0] == :endpoint || pair[0] == :time_stamp
-            log_string += " "
-          end
-          log_res << log_string << "\n"
-        end
-        return log_res
       end
 
       # Reader method for TT token
@@ -599,7 +556,7 @@ ERR
         t2 = Time.now
         delta = t2 - t1
 
-        update_stats method, path, delta, t1
+        add_stat method, path, delta, t1
         res
       end
 
@@ -620,7 +577,6 @@ ERR
       end
 
       def anonymize_path(path)
-        # if /gdc/projects/{id}
         PH_MAP.each do |pm|
           break if path.gsub!(pm[1], pm[0])
         end
@@ -628,29 +584,17 @@ ERR
         path
       end
 
-      def update_stats(method, path, delta, time_stamp)
+      def add_stat(method, path, delta, time_stamp)
         synchronize do
-          return if active_action.nil? || active_brick.nil?
-
-          # action = active_action.nil? ? "undefined_action" : active_action
-          # brick = active_brick.nil? ? "undefined_brick" : active_brick
-
-          # Add single api call
           stat = {
-            :component => "execmgr.ruby-brick",
             :endpoint => anonymize_path(path.dup),
-            :action => active_action,
-            :brick => active_brick,
             :duration => delta,
             :method => method,
-            # :time_stamp => time_stamp.utc.strftime("%Y-%m-%d %H:%M:%S.%L"),
-            :type => "api_call",
-            :api_version => GoodData.version,
+            :time_stamp => time_stamp.utc.strftime("%Y-%m-%dT%H:%M:%S.%L"),
             :domain => server_url.gsub(%r{http://|https://}, "")
           }
 
-          GoodData.splunk_logger.log(map_to_string(stat), time_stamp) if defined? GoodData.splunk_logger
-          # stats[:calls] << stat
+          GoodData.splunk_logger.add(Logger::INFO, stat, "api_call")
         end
       end
 
