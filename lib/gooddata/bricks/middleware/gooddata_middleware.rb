@@ -102,7 +102,6 @@ module GoodData
             puts "Connecting as #{username} to server #{server}"
             conn = GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
           end
-          conn.stats_on
 
           conn
         end

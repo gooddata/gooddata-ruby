@@ -5,9 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'rest-client'
+require 'securerandom'
 
 require_relative '../helpers/auth_helpers'
 require_relative '../helpers/global_helpers'
+require_relative '../helpers/splunk_helper'
 
 require_relative 'connection'
 require_relative 'object_factory'
@@ -27,6 +29,7 @@ module GoodData
       DEFAULT_CONNECTION_IMPLEMENTATION = GoodData::Rest::Connection
       DEFAULT_SLEEP_INTERVAL = 10
       DEFAULT_POLL_TIME_LIMIT = 5 * 60 * 60 # 5 hours
+      STATS_LOG_TIMEOUT = 5
 
       #################################
       # Class variables
@@ -190,9 +193,12 @@ module GoodData
       end
 
       def disconnect
-        if stats_on?
-          puts "API call statistics to server #{@connection.server}"
-          puts @connection.stats_table
+        begin
+          Timeout.timeout(STATS_LOG_TIMEOUT) do
+            GoodData.splunk_logger.flush
+          end
+        rescue Timeout::Error
+          GoodData.logger.warn "Statistics logging took too long. Some statistics weren't recorded."
         end
         @connection.disconnect
       end
@@ -240,6 +246,14 @@ module GoodData
 
       def stats_on?
         @stats
+      end
+
+      def active_action(action)
+        @connection.active_action = action
+      end
+
+      def active_brick(brick)
+        @connection.active_brick = brick
       end
 
       def generate_request_id

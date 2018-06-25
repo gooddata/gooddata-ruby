@@ -13,6 +13,12 @@ module GoodData
       @level = nil
     end
 
+    def flush(*_args)
+    end
+
+    alias_method :set_context, :flush
+    alias_method :add, :flush
+
     def debug(*_args)
     end
 
