@@ -110,7 +110,7 @@ shared_examples 'a synchronization brick' do
   end
 
   it 'migrates reports used in dashboards' do
-    used_reports = original_project.dashboards.map{|d|d.tabs.map{|t|t.items.map{|i|i}}}.flatten.map{|r|r.obj}.uniq{|r|r.identifier}
+    used_reports = Support::ComparisonHelper.used_reports(original_project)
     projects.each do |target_project|
       target_reports = target_project.reports.to_a
       expect(target_reports.length).to be used_reports.length
@@ -126,10 +126,13 @@ shared_examples 'a synchronization brick' do
   end
 
   it 'migrates metrics' do
-    used_reports = original_project.dashboards.map{|d|d.tabs.map{|t|t.items.map{|i|i}}}.flatten.map{|r|r.obj}.uniq{|r|r.identifier}
-    used_metrics = used_reports.map(&:definition).map(&:metrics).flatten.uniq{|m|m.identifier}
-    tagged_production = original_project.metrics.select { |m| m.tags.include?("metric") }
-    expected_metrics = used_metrics.concat(tagged_production).uniq{|m|m.identifier}.map(&:identifier)
+    used_metrics = Support::ComparisonHelper.used_metrics(original_project)
+    tagged_production = original_project.metrics
+      .select { |m| m.tags.include?("metric") }
+    expected_metrics = used_metrics
+      .concat(tagged_production)
+      .uniq(&:identifier)
+      .map(&:identifier)
     projects.each do |target_project|
       expect(target_project.metrics.map(&:identifier)).to match_array(expected_metrics)
     end
@@ -146,7 +149,7 @@ shared_examples 'a synchronization brick' do
 
   it 'does not migrate variables' do
     projects.each do |project|
-       expect(project.variables.to_a).to be_empty
+      expect(project.variables.to_a).to be_empty
     end
   end
 end

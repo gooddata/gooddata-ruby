@@ -35,6 +35,20 @@ module Support
         response['projectModelDiff']
       end
 
+      def used_reports(project)
+        project.dashboards.map { |d| d.tabs.map(&:items) }
+                          .flatten
+                          .map(&:obj)
+                          .uniq(&:identifier)
+      end
+
+      def used_metrics(project)
+        used_reports(project).map(&:definition)
+                             .map(&:metrics)
+                             .flatten
+                             .uniq(&:identifier)
+      end
+
       private
 
       def sanitize_dashboard_for_comparison(dashboard)
