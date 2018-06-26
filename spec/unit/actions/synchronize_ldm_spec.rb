@@ -54,17 +54,17 @@ describe GoodData::LCM2::SynchronizeLdm do
   it 'calls updates ldm of the client' do
     expect(target_project).to receive(:update_from_blueprint)
       .once
-      .with(any_args, { :update_preference=>nil,
-                        :exclude_fact_rule=>false,
-                        :execute_ca_scripts=>false,
-                        :maql_diff=>nil })
+      .with(any_args, :update_preference => nil,
+                      :exclude_fact_rule => false,
+                      :execute_ca_scripts => false,
+                      :maql_diff => nil)
     subject.class.call(converted_params)
   end
 
   it 'sets synchronize param' do
     result = subject.class.call(converted_params)
     expect(result[:params][:synchronize]).to eq(
-      [{ from: 'from_pid', to: [{ pid: 'to_pid', ca_scripts: nil}] }]
+      [{ from: 'from_pid', to: [{ pid: 'to_pid', ca_scripts: nil }] }]
     )
   end
 

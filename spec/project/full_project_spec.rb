@@ -29,7 +29,7 @@ describe "Full project implementation", :vcr, :constraint => 'slow' do
 
   it "should do nothing if the project is updated with the same blueprint" do
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
-    expect(results).to eq []
+    expect(results).to eq [[], nil]
   end
 
   it 'should try to rename a dataset back' do
@@ -39,18 +39,18 @@ describe "Full project implementation", :vcr, :constraint => 'slow' do
 
     # Now the update of project using the original blueprint should offer update of the title. Nothing else.
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
-    expect(results.first['updateScript']['maqlDdlChunks']).to eq ["ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repositories\", DESCRIPTION \"\");\n"]
+    expect(results.first.first['updateScript']['maqlDdlChunks']).to eq ["ALTER DATASET {dataset.repos} VISUAL(TITLE \"Repositories\", DESCRIPTION \"\");\n"]
 
     # Update using a freshly gained blueprint should offer no changes.
     new_blueprint = @project.blueprint
     results = GoodData::Model::ProjectCreator.migrate_datasets(new_blueprint, project: @project, client: @client, dry_run: true)
-    expect(results).to eq []
+    expect(results).to eq [[], nil]
 
     # When we change the model using the original blueprint. Basically change the title back.
     @project.update_from_blueprint(@spec)
     # It should offer no changes using the original blueprint
     results = GoodData::Model::ProjectCreator.migrate_datasets(@spec, project: @project, client: @client, dry_run: true)
-    expect(results).to eq []
+    expect(results).to eq [[], nil]
   end
 
   it "should contain datasets" do

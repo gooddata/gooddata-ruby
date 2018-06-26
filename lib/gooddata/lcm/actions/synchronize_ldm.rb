@@ -42,60 +42,11 @@ module GoodData
 
       class << self
         def call(params)
-          include_ca = params.include_computed_attributes.to_b
           exclude_fact_rule = params.exclude_fact_rule.to_b
           client = params.gdc_gd_client
-          synchronize = []
           results = []
           synchronize = params.synchronize.map do |segment_info|
-            from_pid = segment_info[:from]
-            from = params.development_client.projects(from_pid) || fail("Invalid 'from' project specified - '#{from_pid}'")
-
-            GoodData.logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from_pid}"
-            blueprint = from.blueprint(include_ca: include_ca)
-
-            maql_diff = nil
-            diff_against = segment_info[:diff_ldm_against]
-            if diff_against && params[:synchronize_ldm].start_with?('diff_against_master')
-              maql_diff_params = [:includeGrain]
-              maql_diff_params << :excludeFactRule if exclude_fact_rule
-              maql_diff = diff_against.maql_diff(blueprint: blueprint, params: maql_diff_params)
-            end
-
-            segment_info[:to] = segment_info[:to].pmap do |entry|
-              pid = entry[:pid]
-              to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
-
-              GoodData.logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
-              begin
-                entry[:ca_scripts] = to_project.update_from_blueprint(
-                  blueprint,
-                  update_preference: params[:update_preference],
-                  exclude_fact_rule: exclude_fact_rule,
-                  execute_ca_scripts: false,
-                  maql_diff: maql_diff
-                )
-              rescue MaqlExecutionError => e
-                GoodData.logger.info("Applying MAQL to project #{to_project.title} - #{pid} failed. Reason: #{e}")
-                fail e unless diff_against && params[:synchronize_ldm] == 'diff_against_master_with_fallback'
-                GoodData.logger.info("Restoring the client project #{to_project.title} from master.")
-                entry[:ca_scripts] = to_project.update_from_blueprint(
-                  blueprint,
-                  update_preference: params[:update_preference],
-                  exclude_fact_rule: exclude_fact_rule,
-                  execute_ca_scripts: false
-                )
-              end
-
-              results << {
-                from: from_pid,
-                to: pid,
-                status: 'ok'
-              }
-              entry
-            end
-
-            segment_info
+            sync_segment(client, exclude_fact_rule, params, results, segment_info)
           end
 
           {
@@ -104,6 +55,59 @@ module GoodData
               synchronize: synchronize
             }
           }
+        end
+
+        private
+
+        def sync_segment(client, exclude_fact_rule, params, results, segment_info)
+          from_pid = segment_info[:from]
+          from = params.development_client.projects(from_pid) || fail("Invalid 'from' project specified - '#{from_pid}'")
+
+          GoodData.logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from_pid}"
+          blueprint = from.blueprint(include_ca: params.include_computed_attributes.to_b)
+
+          maql_diff = nil
+          diff_against = segment_info[:diff_ldm_against]
+          if diff_against && params[:synchronize_ldm].start_with?('diff_against_master')
+            maql_diff_params = [:includeGrain]
+            maql_diff_params << :excludeFactRule if exclude_fact_rule
+            maql_diff = diff_against.maql_diff(blueprint: blueprint, params: maql_diff_params)
+          end
+
+          segment_info[:to] = segment_info[:to].pmap do |entry|
+            pid = entry[:pid]
+            to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+
+            GoodData.logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
+            begin
+              entry[:ca_scripts] = to_project.update_from_blueprint(
+                blueprint,
+                update_preference: params[:update_preference],
+                exclude_fact_rule: exclude_fact_rule,
+                execute_ca_scripts: false,
+                maql_diff: maql_diff
+              )
+            rescue MaqlExecutionError => e
+              GoodData.logger.info("Applying MAQL to project #{to_project.title} - #{pid} failed. Reason: #{e}")
+              fail e unless diff_against && params[:synchronize_ldm] == 'diff_against_master_with_fallback'
+              GoodData.logger.info("Restoring the client project #{to_project.title} from master.")
+              entry[:ca_scripts] = to_project.update_from_blueprint(
+                blueprint,
+                update_preference: params[:update_preference],
+                exclude_fact_rule: exclude_fact_rule,
+                execute_ca_scripts: false
+              )
+            end
+
+            results << {
+              from: from_pid,
+              to: pid,
+              status: 'ok'
+            }
+            entry
+          end
+
+          segment_info
         end
       end
     end

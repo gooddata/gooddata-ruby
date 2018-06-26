@@ -138,7 +138,7 @@ describe 'GoodData::LCM2::Helpers::Check' do
     let(:spec) do
       GoodData::LCM2::BaseAction.define_params(self) do
         param :enum_type_param,
-        instance_of(GoodData::LCM2::Type::SynchronizeLDM)
+              instance_of(GoodData::LCM2::Type::SynchronizeLDM)
       end
     end
 
