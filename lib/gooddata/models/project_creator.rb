@@ -26,14 +26,13 @@ module GoodData
 
           project = opts[:project] || client.create_project(opts.merge(:title => opts[:title] || spec[:title], :client => client, :environment => opts[:environment]))
 
-          maqls, ca_maqls = migrate_datasets(spec, opts.merge(project: project, client: client))
-          maqls += ca_maqls ? [ca_maqls] : []
+          _maqls, ca_maqls = migrate_datasets(spec, opts.merge(project: project, client: client))
           load(p, spec)
           migrate_metrics(p, spec[:metrics] || [])
           migrate_reports(p, spec[:reports] || [])
           migrate_dashboards(p, spec[:dashboards] || [])
           execute_tests(p, spec[:assert_tests] || [])
-          opts[:execute_ca_scripts] ? project : maqls.find { |maql| maql.key?('maqlDdlChunks') }
+          opts[:execute_ca_scripts] ? project : ca_maqls
         end
 
         def migrate_datasets(spec, opts = {})
