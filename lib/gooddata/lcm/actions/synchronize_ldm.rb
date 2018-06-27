@@ -42,11 +42,9 @@ module GoodData
 
       class << self
         def call(params)
-          exclude_fact_rule = params.exclude_fact_rule.to_b
-          client = params.gdc_gd_client
           results = []
           synchronize = params.synchronize.map do |segment_info|
-            sync_segment(client, exclude_fact_rule, params, results, segment_info)
+            sync_segment(params, results, segment_info)
           end
 
           {
@@ -59,7 +57,9 @@ module GoodData
 
         private
 
-        def sync_segment(client, exclude_fact_rule, params, results, segment_info)
+        def sync_segment(params, results, segment_info)
+          client = params.gdc_gd_client
+          exclude_fact_rule = params.exclude_fact_rule.to_b
           from_pid = segment_info[:from]
           from = params.development_client.projects(from_pid) || fail("Invalid 'from' project specified - '#{from_pid}'")
 
