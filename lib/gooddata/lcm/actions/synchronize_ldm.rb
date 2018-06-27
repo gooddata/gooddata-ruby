@@ -43,8 +43,11 @@ module GoodData
       class << self
         def call(params)
           results = []
-          synchronize = params.synchronize.map do |segment_info|
-            sync_segment(params, results, segment_info)
+          synchronize = []
+          params.synchronize.map do |segment_info|
+            new_segment_info, segment_results = sync_segment_ldm(params, segment_info)
+            results.concat(segment_results)
+            synchronize << new_segment_info
           end
 
           {
@@ -57,7 +60,8 @@ module GoodData
 
         private
 
-        def sync_segment(params, results, segment_info)
+        def sync_segment_ldm(params, segment_info)
+          results = []
           client = params.gdc_gd_client
           exclude_fact_rule = params.exclude_fact_rule.to_b
           from_pid = segment_info[:from]
@@ -107,7 +111,7 @@ module GoodData
             entry
           end
 
-          segment_info
+          [segment_info, results]
         end
       end
     end
