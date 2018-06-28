@@ -7,7 +7,10 @@
 shared_examples 'a computed attributes synchronizer' do
   it 'diffs LDM with computed attributes' do
     expect(project).to receive(:blueprint).with(include_ca: true)
-    subject.class.call(converted_params)
+    GoodData::LCM2.run_action(
+      GoodData::LCM2::SynchronizeLdm,
+      converted_params
+    )
   end
 end
 
@@ -29,9 +32,8 @@ describe GoodData::LCM2::SynchronizeLdm do
       synchronize_ldm: synchronize_ldm
     }
   end
-  let(:converted_params) do
-    GoodData::LCM2.convert_to_smart_hash(params)
-  end
+  let(:params) { basic_params }
+  let(:converted_params) { GoodData::LCM2.convert_to_smart_hash(params) }
 
   before do
     allow(gdc_gd_client).to receive(:projects)
@@ -50,26 +52,35 @@ describe GoodData::LCM2::SynchronizeLdm do
     allow(target_project).to receive(:update_from_blueprint)
   end
 
-  let(:params) { basic_params }
-  it 'calls updates ldm of the client' do
+  it 'updates ldm of the client' do
     expect(target_project).to receive(:update_from_blueprint)
       .once
       .with(any_args, :update_preference => nil,
                       :exclude_fact_rule => false,
                       :execute_ca_scripts => false,
                       :maql_diff => nil)
-    subject.class.call(converted_params)
+    GoodData::LCM2.run_action(
+      GoodData::LCM2::SynchronizeLdm,
+      converted_params
+    )
   end
 
   it 'sets synchronize param' do
-    result = subject.class.call(converted_params)
+    result = GoodData::LCM2.run_action(
+      GoodData::LCM2::SynchronizeLdm,
+      converted_params
+    )
     expect(result[:params][:synchronize]).to eq(
       [{ from: 'from_pid', to: [{ pid: 'to_pid', ca_scripts: nil }] }]
     )
   end
 
   it 'sets result' do
-    result = subject.class.call(converted_params)
+    result = GoodData::LCM2.run_action(
+      GoodData::LCM2::SynchronizeLdm,
+      converted_params
+    )
+
     expect(result[:results]).to eq(
       [{ from: 'from_pid', to: 'to_pid', status: 'ok' }]
     )
@@ -84,7 +95,10 @@ describe GoodData::LCM2::SynchronizeLdm do
     let(:params) { basic_params.merge(include_computed_attributes: 'false') }
     it 'diffs LDM without computed attributes' do
       expect(project).to receive(:blueprint).with(include_ca: false)
-      subject.class.call(converted_params)
+      GoodData::LCM2.run_action(
+        GoodData::LCM2::SynchronizeLdm,
+        converted_params
+      )
     end
   end
 
@@ -93,14 +107,15 @@ describe GoodData::LCM2::SynchronizeLdm do
     it 'calls update_from_blueprint with exclude_fact_rule option' do
       expect(target_project).to receive(:update_from_blueprint)
         .with(any_args, hash_including(exclude_fact_rule: true))
-      subject.class.call(converted_params)
+      GoodData::LCM2.run_action(
+        GoodData::LCM2::SynchronizeLdm,
+        converted_params
+      )
     end
   end
 
   context 'when diff_ldm_against specified' do
-    let(:params) do
-      GoodData::LCM2.convert_to_smart_hash(basic_params)
-    end
+    let(:synchronize_ldm) { 'diff_against_master_with_fallback' }
     let(:diff_against) { double(GoodData::Project) }
     let(:maql_diff) { 'awesome diff' }
     let(:synchronize) do
@@ -117,7 +132,7 @@ describe GoodData::LCM2::SynchronizeLdm do
         .with(any_args, hash_including(maql_diff: maql_diff))
       GoodData::LCM2.run_action(
         GoodData::LCM2::SynchronizeLdm,
-        params
+        converted_params
       )
     end
 
@@ -129,7 +144,7 @@ describe GoodData::LCM2::SynchronizeLdm do
           .with(any_args, hash_including(maql_diff: nil))
         GoodData::LCM2.run_action(
           GoodData::LCM2::SynchronizeLdm,
-          params
+          converted_params
         )
       end
     end
@@ -146,7 +161,7 @@ describe GoodData::LCM2::SynchronizeLdm do
           .with(any_args, hash_excluding(:maql_diff))
         GoodData::LCM2.run_action(
           GoodData::LCM2::SynchronizeLdm,
-          params
+          converted_params
         )
       end
 
@@ -160,7 +175,7 @@ describe GoodData::LCM2::SynchronizeLdm do
           expect do
             GoodData::LCM2.run_action(
               GoodData::LCM2::SynchronizeLdm,
-              params
+              converted_params
             )
           end.to raise_error
         end
