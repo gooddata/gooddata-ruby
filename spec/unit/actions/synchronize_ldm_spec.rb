@@ -115,7 +115,7 @@ describe GoodData::LCM2::SynchronizeLdm do
     it 'applies MAQL diff of that project to clients' do
       expect(target_project).to receive(:update_from_blueprint)
         .with(any_args, hash_including(maql_diff: maql_diff))
-        subject
+      subject
     end
 
     context 'when synchronize_ldm set to diff_against_clients' do
