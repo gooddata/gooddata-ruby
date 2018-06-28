@@ -54,7 +54,6 @@ shared_context 'provisioning brick' do
     @brick_result = GoodData::Bricks::Pipeline.provisioning_brick_pipeline.call(params)
     client_pids = @brick_result[:params][:synchronize].first[:to].map(&:pid)
     $client_projects = client_pids.map { |id| @prod_rest_client.projects(id) }
-    $conflicting_ldm_project ||= $client_projects.find { |p| p.title.include?('Client With Conflicting LDM Changes') }
     pp @brick_result
   end
 end
@@ -165,9 +164,9 @@ shared_context 'lcm bricks' do
       }
     end
 
-    $conflicting_client_id = "CLIENT_WITH_CONFLICTING_LDM_CHANGES_#{@suffix}"
+    conflicting_client_id = "CLIENT_WITH_CONFLICTING_LDM_CHANGES_#{@suffix}"
     @workspaces << {
-      client_id: $conflicting_client_id,
+      client_id: conflicting_client_id,
       segment_id: segments.first[:segment_id],
       title: "Client With Conflicting LDM Changes #{@suffix}"
     }
@@ -206,7 +205,8 @@ shared_context 'lcm bricks' do
         s3_bucket: bucket_name,
         s3_endpoint: s3_endpoint,
         custom_client_id_column: Support::CUSTOM_CLIENT_ID_COLUMN,
-        transfer_all: true
+        transfer_all: true,
+        conflicting_client_id: conflicting_client_id
     }
   end
 

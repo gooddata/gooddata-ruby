@@ -123,6 +123,11 @@ describe 'the whole life-cycle' do
       mf = @project.facts(Support::FACT_IDENTIFIER)
       mf.identifier = Support::FACT_IDENTIFIER_RENAMED
       mf.save
+
+      # remove fact in client project to create LDM conflict
+      conflicting_ldm_project = $client_projects
+        .find { |p| p.title.include?('Client With Conflicting LDM') }
+      conflicting_ldm_project.facts(Support::FACT_IDENTIFIER).delete
     end
   end
 
@@ -186,8 +191,6 @@ describe 'the whole life-cycle' do
 
   describe '7 - Subsequent Rollout' do
     before(:all) do
-      cf = $conflicting_ldm_project.facts(Support::FACT_IDENTIFIER)
-      cf.delete
       @config_template_path = File.expand_path(
         '../params/rollout_brick.json.erb',
         __FILE__
