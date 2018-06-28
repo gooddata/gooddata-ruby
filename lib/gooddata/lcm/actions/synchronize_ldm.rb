@@ -69,10 +69,11 @@ module GoodData
 
           GoodData.logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from_pid}"
           blueprint = from.blueprint(include_ca: params.include_computed_attributes.to_b)
-
           maql_diff = nil
           diff_against = segment_info[:diff_ldm_against]
-          if diff_against && params[:synchronize_ldm].start_with?('diff_against_master')
+          diff_against_master = %w(diff_against_master_with_fallback diff_against_master)
+            .include?(params[:synchronize_ldm].downcase)
+          if diff_against && diff_against_master
             maql_diff_params = [:includeGrain]
             maql_diff_params << :excludeFactRule if exclude_fact_rule
             maql_diff = diff_against.maql_diff(blueprint: blueprint, params: maql_diff_params)
