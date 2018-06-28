@@ -7,14 +7,17 @@
 shared_examples 'a computed attributes synchronizer' do
   it 'diffs LDM with computed attributes' do
     expect(project).to receive(:blueprint).with(include_ca: true)
+    subject
+  end
+end
+
+describe GoodData::LCM2::SynchronizeLdm do
+  subject do
     GoodData::LCM2.run_action(
       GoodData::LCM2::SynchronizeLdm,
       converted_params
     )
   end
-end
-
-describe GoodData::LCM2::SynchronizeLdm do
   let(:gdc_gd_client) { double(GoodData::Rest::Client) }
   let(:logger) { double(Logger) }
   let(:project) { double(GoodData::Project) }
@@ -59,29 +62,17 @@ describe GoodData::LCM2::SynchronizeLdm do
                       :exclude_fact_rule => false,
                       :execute_ca_scripts => false,
                       :maql_diff => nil)
-    GoodData::LCM2.run_action(
-      GoodData::LCM2::SynchronizeLdm,
-      converted_params
-    )
+    subject
   end
 
   it 'sets synchronize param' do
-    result = GoodData::LCM2.run_action(
-      GoodData::LCM2::SynchronizeLdm,
-      converted_params
-    )
-    expect(result[:params][:synchronize]).to eq(
+    expect(subject[:params][:synchronize]).to eq(
       [{ from: 'from_pid', to: [{ pid: 'to_pid', ca_scripts: nil }] }]
     )
   end
 
   it 'sets result' do
-    result = GoodData::LCM2.run_action(
-      GoodData::LCM2::SynchronizeLdm,
-      converted_params
-    )
-
-    expect(result[:results]).to eq(
+    expect(subject[:results]).to eq(
       [{ from: 'from_pid', to: 'to_pid', status: 'ok' }]
     )
   end
@@ -95,10 +86,7 @@ describe GoodData::LCM2::SynchronizeLdm do
     let(:params) { basic_params.merge(include_computed_attributes: 'false') }
     it 'diffs LDM without computed attributes' do
       expect(project).to receive(:blueprint).with(include_ca: false)
-      GoodData::LCM2.run_action(
-        GoodData::LCM2::SynchronizeLdm,
-        converted_params
-      )
+      subject
     end
   end
 
@@ -107,10 +95,7 @@ describe GoodData::LCM2::SynchronizeLdm do
     it 'calls update_from_blueprint with exclude_fact_rule option' do
       expect(target_project).to receive(:update_from_blueprint)
         .with(any_args, hash_including(exclude_fact_rule: true))
-      GoodData::LCM2.run_action(
-        GoodData::LCM2::SynchronizeLdm,
-        converted_params
-      )
+      subject
     end
   end
 
@@ -130,10 +115,7 @@ describe GoodData::LCM2::SynchronizeLdm do
     it 'applies MAQL diff of that project to clients' do
       expect(target_project).to receive(:update_from_blueprint)
         .with(any_args, hash_including(maql_diff: maql_diff))
-      GoodData::LCM2.run_action(
-        GoodData::LCM2::SynchronizeLdm,
-        converted_params
-      )
+        subject
     end
 
     context 'when synchronize_ldm set to diff_against_clients' do
@@ -142,10 +124,7 @@ describe GoodData::LCM2::SynchronizeLdm do
         expect(target_project).to receive(:update_from_blueprint)
           .once
           .with(any_args, hash_including(maql_diff: nil))
-        GoodData::LCM2.run_action(
-          GoodData::LCM2::SynchronizeLdm,
-          converted_params
-        )
+        subject
       end
     end
 
@@ -159,10 +138,7 @@ describe GoodData::LCM2::SynchronizeLdm do
       it 'falls back to diffing against clients' do
         expect(target_project).to receive(:update_from_blueprint)
           .with(any_args, hash_excluding(:maql_diff))
-        GoodData::LCM2.run_action(
-          GoodData::LCM2::SynchronizeLdm,
-          converted_params
-        )
+        subject
       end
 
       context 'when synchronize_ldm is diff_against_master' do
@@ -172,12 +148,7 @@ describe GoodData::LCM2::SynchronizeLdm do
             .once
             .with(any_args, hash_including(maql_diff: maql_diff))
 
-          expect do
-            GoodData::LCM2.run_action(
-              GoodData::LCM2::SynchronizeLdm,
-              converted_params
-            )
-          end.to raise_error
+          expect { subject }.to raise_error
         end
       end
     end
