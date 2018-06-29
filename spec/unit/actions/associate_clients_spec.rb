@@ -15,6 +15,16 @@ describe GoodData::LCM2::AssociateClients do
   let(:domain) { double(:domain) }
   let(:client) { double(:client) }
   let(:data_product) { double(:data_product) }
+  let(:params) do
+    params = {
+      gdc_gd_client: gdc_gd_client,
+      clients: [
+        { segment: segment }
+      ],
+      domain: domain
+    }
+    GoodData::LCM2.convert_to_smart_hash(params)
+  end
 
   before do
     allow(gdc_gd_client).to receive(:domain) { domain }
@@ -33,17 +43,6 @@ describe GoodData::LCM2::AssociateClients do
   end
 
   context 'when clients parameter is passed' do
-    let(:params) do
-      params = {
-        gdc_gd_client: gdc_gd_client,
-        clients: [
-          { segment: segment }
-        ],
-        domain: domain
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
-    end
-
     it 'enriches the clients with data_product_id' do
       GoodData::LCM2.run_action(GoodData::LCM2::AssociateClients, params)
       expect(params.clients.first.data_product_id).to eq(DATA_PRODUCT_ID)
@@ -52,44 +51,41 @@ describe GoodData::LCM2::AssociateClients do
 
   context 'when delete_extra and delete_projects parameters are passed' do
     let(:mocked_logger) { double(Logger) }
-    let(:params) do
-      params = {
-        gdc_gd_client: gdc_gd_client,
-        clients: [
-          { segment: segment }
-        ],
-        domain: domain,
-        delete_projects: true
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
-    end
 
-    it 'logs warning and does nothing' do
+    it 'logs warning and runs' do
+      local_params = params.dup
+      local_params[:delete_projects] = true
       allow(GoodData).to receive(:logger).and_return(mocked_logger)
       allow(mocked_logger).to receive(:info)
       allow(mocked_logger).to receive(:warn)
 
-      expect(mocked_logger).to receive(:warn).with(/action will do nothing/)
-      expect(domain).to_not receive('update_clients')
-      GoodData::LCM2.run_action(GoodData::LCM2::AssociateClients, params)
+      expect(mocked_logger).to receive(:warn).with(/action will not delete anything/)
+      expect(domain).to receive('update_clients')
+      GoodData::LCM2.run_action(GoodData::LCM2::AssociateClients, local_params)
     end
   end
 
   context 'when delete_mode is not in list of possible modes' do
-    let(:params) do
-      params = {
-        gdc_gd_client: gdc_gd_client,
-        clients: [
-          { segment: segment }
-        ],
-        domain: domain,
-        delete_mode: 'some_non-existing_delete_mode'
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
-    end
-
     it 'fails' do
-      expect { GoodData::LCM2.run_action(GoodData::LCM2::AssociateClients, params) }.to raise_error(/The parameter/)
+      local_params = params.dup
+      local_params[:delete_mode] = 'some_non-existing_delete_mode'
+      expect { GoodData::LCM2.run_action(GoodData::LCM2::AssociateClients, local_params) }.to raise_error(/The parameter/)
+    end
+  end
+
+  context 'in any delete mode' do
+    it 'runs update clients' do
+      local_params = params.dup
+      DELETE_MODES = %w(
+        none
+        delete_projects
+        delete_extra
+      )
+      DELETE_MODES.map do |mode|
+        params[:delete_mode] = mode
+        expect(domain).to receive('update_clients')
+        GoodData::LCM2.run_action(GoodData::LCM2::AssociateClients, local_params)
+      end
     end
   end
 end

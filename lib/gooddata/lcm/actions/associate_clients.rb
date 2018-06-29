@@ -73,8 +73,7 @@ module GoodData
           end
 
           if delete_projects && !delete_extra
-            GoodData.logger.warn("Parameter `delete_projects` is set to true and parameter `delete_extra` is set to false (which is default) this action will do nothing!")
-            return
+            GoodData.logger.warn("Parameter `delete_projects` is set to true and parameter `delete_extra` is set to false (which is default) this action will not delete anything!")
           end
 
           client = params.gdc_gd_client
