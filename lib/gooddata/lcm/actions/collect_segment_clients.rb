@@ -15,12 +15,6 @@ module GoodData
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
 
-        description 'Organization Name'
-        param :organization, instance_of(Type::StringType), required: false
-
-        description 'Domain'
-        param :domain, instance_of(Type::StringType), required: false
-
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: true
 
@@ -47,20 +41,9 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
 
-          domain_name = params.organization || params.domain
-          fail "Either organisation or domain has to be specified in params" unless domain_name
-          domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-          data_product = params.data_product
-          domain_segments = domain.segments(:all, data_product)
-
-          segments = params.segments.map do |seg|
-            domain_segments.find do |s|
-              s.segment_id == seg.segment_id
-            end
-          end
-
           results = []
-          synchronize_clients = segments.map do |segment|
+          synchronize_clients = params[:segments].map do |segment_hash|
+            segment = segment_hash[:segment]
             segment_clients = segment.clients
             missing_project_clients = segment_clients.reject(&:project?).map(&:client_id)
 
@@ -75,21 +58,21 @@ module GoodData
             query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
 
             res = params.ads_client.execute_select(query)
-
-            sorted = res.sort_by { |row| row[:version] }
-              .map { |row| row[:master_project_id] }
-            current_master = client.projects(sorted[-1])
-            previous_master = nil
-            previous_master = client.projects(sorted[-2]) if sorted.length > 1
+            latest_master_id = res.max_by { |row| row[:version] }[:master_project_id]
+            latest_master = client.projects(latest_master_id)
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
-            master_pid = current_master.pid
-            master_name = current_master.title
+            master_pid = latest_master.pid
+            master_name = latest_master.title
+
+            previous_master = segment_hash[:segment_master] if
+              segment_hash[:segment_master] &&
+              segment_hash[:segment_master].pid != latest_master.pid
 
             sync_info = {
               segment_id: segment.segment_id,
               from: master_pid,
-              diff_ldm_against: previous_master,
+              previous_master: previous_master,
               to: segment_clients.map do |segment_client|
                 client_project = segment_client.project
                 to_pid = client_project.pid
@@ -98,7 +81,7 @@ module GoodData
                   from_pid: master_pid,
                   to_name: client_project.title,
                   to_pid: to_pid,
-                  diff_ldm_against: previous_master && previous_master.pid
+                  previous_master: previous_master
                 }
 
                 {

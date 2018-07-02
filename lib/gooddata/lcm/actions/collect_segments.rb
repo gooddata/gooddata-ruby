@@ -50,9 +50,11 @@ module GoodData
 
             {
               segment_id: segment.segment_id,
+              segment: segment,
               development_pid: project.pid,
               driver: project.driver.downcase,
               master_name: project.title,
+              segment_master: project,
               uri: segment.uri
             }
           end
