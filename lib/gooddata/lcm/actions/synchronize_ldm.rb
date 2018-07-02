@@ -94,7 +94,7 @@ module GoodData
               )
             rescue MaqlExecutionError => e
               GoodData.logger.info("Applying MAQL to project #{to_project.title} - #{pid} failed. Reason: #{e}")
-              fail e unless diff_against && params[:synchronize_ldm] == 'diff_against_master_with_fallback'
+              fail e unless previous_master && params[:synchronize_ldm] == 'diff_against_master_with_fallback'
               GoodData.logger.info("Restoring the client project #{to_project.title} from master.")
               entry[:ca_scripts] = to_project.update_from_blueprint(
                 blueprint,
