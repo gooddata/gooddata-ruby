@@ -99,16 +99,18 @@ describe GoodData::LCM2::SynchronizeLdm do
     end
   end
 
-  context 'when diff_ldm_against specified' do
+  context 'when previous_master specified' do
     let(:synchronize_ldm) { 'diff_against_master_with_fallback' }
-    let(:diff_against) { double(GoodData::Project) }
+    let(:previous_master) { double(GoodData::Project) }
     let(:maql_diff) { 'awesome diff' }
     let(:synchronize) do
-      [{ from: 'from_pid', to: [{ pid: 'to_pid' }], diff_ldm_against: diff_against }]
+      [{ from: 'from_pid',
+         to: [{ pid: 'to_pid' }],
+         previous_master: previous_master }]
     end
 
     before do
-      allow(diff_against).to receive(:maql_diff)
+      allow(previous_master).to receive(:maql_diff)
         .and_return(maql_diff)
     end
 
