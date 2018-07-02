@@ -10,30 +10,39 @@ require 'gooddata/lcm/lcm2'
 describe GoodData::LCM2::CollectSegmentClients do
   let(:gdc_gd_client) { double('gdc_gd_client') }
   let(:domain) { double('domain') }
-  let(:segment) { double('segment') }
+  let(:segment_mock) { double('segment') }
   let(:segments) { [segment] }
   let(:client) { double('client') }
   let(:clients) { [client] }
   let(:project) { double(GoodData::Project) }
   let(:master_project_id) { 'master_project_id' }
 
+  let(:converted_params) { GoodData::LCM2.convert_to_smart_hash(params) }
+
+  subject do
+    GoodData::LCM2.run_action(
+      GoodData::LCM2::CollectSegmentClients,
+      converted_params
+    )
+  end
+
   before do
     allow(gdc_gd_client).to receive(:domain).and_return(domain)
     allow(domain).to receive(:segments).and_return(segments)
-    allow(segment).to receive(:clients).and_return(clients)
+    allow(segment_mock).to receive(:clients).and_return(clients)
     allow(project).to receive(:pid)
     allow(project).to receive(:title)
     allow(gdc_gd_client).to receive(:projects).with(master_project_id).and_return(project)
+    allow(gdc_gd_client).to receive(:class) { GoodData::Rest::Client }
   end
 
   context 'when client has no project in segments' do
     let(:params) do
-      params = {
+      {
         gdc_gd_client: gdc_gd_client,
         synchronize: [{}],
         segments: [{}]
       }
-      GoodData::LCM2.convert_to_smart_hash(params)
     end
 
     before do
@@ -42,13 +51,18 @@ describe GoodData::LCM2::CollectSegmentClients do
     end
 
     it 'raise error' do
-      expect { subject.class.call(params) }.to raise_error
+      expect { subject }.to raise_error
     end
   end
 
   context 'when client has project in segments' do
     let(:client_project) { double(GoodData::Project) }
-    let(:segment) { double('segment') }
+    let(:segment) do
+      { segment_id: 'premium_segment',
+        development_pid: 'dev_project',
+        master_name: 'master_1',
+        segment: segment_mock }
+    end
     let(:ads_client) { double('ads_client') }
     let(:ads_response) do
       [
@@ -58,29 +72,29 @@ describe GoodData::LCM2::CollectSegmentClients do
       ]
     end
     let(:params) do
-      params = {
+      {
         gdc_gd_client: gdc_gd_client,
         synchronize: [{}],
         segments: [segment],
         domain: domain,
         ads_client: ads_client
       }
-      GoodData::LCM2.convert_to_smart_hash(params)
     end
 
     before do
       allow(client).to receive(:project).and_return(client_project)
       allow(client).to receive(:project?).and_return(true)
       allow(client).to receive(:client_id).and_return('client_id')
-      allow(segment).to receive(:segment_id).and_return('segment-id')
+      allow(segment_mock).to receive(:segment_id).and_return('segment-id')
       allow(ads_client).to receive(:execute_select).and_return(ads_response)
       allow(client_project).to receive(:pid)
       allow(client_project).to receive(:title)
+      allow(ads_client).to receive(:class) { GoodData::Datawarehouse }
     end
 
     it 'uses the project from client in segments' do
       expect(client).to receive(:project)
-      subject.class.call(params)
+      subject
     end
 
     context 'when there are multiple master project versions' do
@@ -106,10 +120,10 @@ describe GoodData::LCM2::CollectSegmentClients do
         allow(previous_master_project).to receive(:pid)
       end
 
-      it 'sets diff_ldm_against parameter' do
-        result = subject.class.call(params)
+      it 'sets previous_master parameter' do
+        result = subject
         result[:params][:synchronize].each do |segment|
-          expect(segment[:diff_ldm_against]).to eq(previous_master_project)
+          expect(segment[:previous_master]).to eq(previous_master_project)
         end
       end
     end
