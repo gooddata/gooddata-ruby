@@ -91,6 +91,11 @@ describe GoodData::LCM2::CollectSegmentClients do
       allow(ads_client).to receive(:execute_select).and_return(ads_response)
       allow(client_project).to receive(:pid)
       allow(client_project).to receive(:title)
+      module GoodData
+        class Datawarehouse
+          # to make the test work for Rubies other than JRuby
+        end
+      end
       allow(ads_client).to receive(:class) { GoodData::Datawarehouse }
       allow(segment_master_project).to receive(:pid)
     end
