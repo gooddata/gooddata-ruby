@@ -1,5 +1,5 @@
 require 'gooddata_datawarehouse'
-require 'aws-sdk'
+require 'aws-sdk-s3'
 require 'tempfile'
 require 'csv'
 
