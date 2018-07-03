@@ -49,7 +49,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'vcr'
 
   s.add_dependency 'activesupport', '~> 4.2.9'
-  s.add_dependency 'aws-sdk', '~> 2.9', '>= 2.9.42'
+  s.add_dependency 'aws-sdk-s3', '~> 1'
   s.add_dependency 'docile', '~> 1.1'
   s.add_dependency 'erubis', '~> 2.7'
   s.add_dependency 'gli', '~> 2.15'
