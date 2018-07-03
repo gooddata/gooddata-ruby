@@ -11,7 +11,7 @@ describe GoodData::LCM2::CollectSegmentClients do
   let(:gdc_gd_client) { double('gdc_gd_client') }
   let(:domain) { double('domain') }
   let(:segment_mock) { double('segment') }
-  let(:segments) { [segment] }
+  let(:segments) { [segment_mock] }
   let(:client) { double('client') }
   let(:clients) { [client] }
   let(:project) { double(GoodData::Project) }
@@ -57,11 +57,13 @@ describe GoodData::LCM2::CollectSegmentClients do
 
   context 'when client has project in segments' do
     let(:client_project) { double(GoodData::Project) }
+    let(:segment_master_project) { double(GoodData::Project) }
     let(:segment) do
       { segment_id: 'premium_segment',
         development_pid: 'dev_project',
         master_name: 'master_1',
-        segment: segment_mock }
+        segment: segment_mock,
+        segment_master: segment_master_project }
     end
     let(:ads_client) { double('ads_client') }
     let(:ads_response) do
@@ -90,6 +92,7 @@ describe GoodData::LCM2::CollectSegmentClients do
       allow(client_project).to receive(:pid)
       allow(client_project).to receive(:title)
       allow(ads_client).to receive(:class) { GoodData::Datawarehouse }
+      allow(segment_master_project).to receive(:pid)
     end
 
     it 'uses the project from client in segments' do
@@ -98,16 +101,16 @@ describe GoodData::LCM2::CollectSegmentClients do
     end
 
     context 'when there are multiple master project versions' do
-      let(:previous_master_project) { double(GoodData::Project) }
-      let(:previous_master_id) { 'old_master_project_id' }
+      let(:latest_master_project) { double(GoodData::Project) }
+      let(:latest_master_id) { 'latest_master_project_id' }
       let(:ads_response) do
         [
           {
-            master_project_id: previous_master_id,
+            master_project_id: 'foo',
             version: 1
           },
           {
-            master_project_id: master_project_id,
+            master_project_id: latest_master_id,
             version: 2
           }
         ]
@@ -115,15 +118,38 @@ describe GoodData::LCM2::CollectSegmentClients do
 
       before do
         allow(gdc_gd_client).to receive(:projects)
-          .with(previous_master_id)
-          .and_return(previous_master_project)
-        allow(previous_master_project).to receive(:pid)
+          .with(latest_master_id)
+          .and_return(latest_master_project)
+        allow(latest_master_project).to receive(:pid)
+        allow(latest_master_project).to receive(:title)
       end
 
-      it 'sets previous_master parameter' do
-        result = subject
-        result[:params][:synchronize].each do |segment|
-          expect(segment[:previous_master]).to eq(previous_master_project)
+      context 'when segment master is the same as latest master' do
+        let(:project_pid) { 'the same' }
+        before do
+          allow(latest_master_project).to receive(:pid)
+            .and_return(project_pid)
+          allow(segment_master_project).to receive(:pid)
+            .and_return(project_pid)
+        end
+        it 'sets previous_master parameter to nil' do
+          subject[:params][:synchronize].each do |segment|
+            expect(segment[:previous_master]).to eq(nil)
+          end
+        end
+      end
+
+      context 'when segment master is different from latest master' do
+        before do
+          allow(latest_master_project).to receive(:pid)
+            .and_return('something')
+          allow(segment_master_project).to receive(:pid)
+            .and_return('something else')
+        end
+        it 'sets previous_master parameter to current segment master' do
+          subject[:params][:synchronize].each do |segment|
+            expect(segment[:previous_master]).to eq(segment_master_project)
+          end
         end
       end
     end
