@@ -137,7 +137,7 @@ describe GoodData::LCM2::CollectSegmentClients do
           allow(segment_master_project).to receive(:pid)
             .and_return(project_pid)
         end
-        it 'sets previous_master parameter to nil' do
+        it 'does not set the previous_master parameter' do
           subject[:params][:synchronize].each do |segment|
             expect(segment[:previous_master]).to eq(nil)
           end
