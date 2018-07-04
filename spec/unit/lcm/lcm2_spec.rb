@@ -19,10 +19,15 @@ shared_examples 'a smart hash' do
 end
 
 describe 'GoodData::LCM2' do
+  let(:logger) { double(Logger) }
+
+  before do
+    allow(logger).to receive(:class) { Logger }
+  end
+
   describe '#skip_actions' do
     let(:client) { double(:client) }
     let(:domain) { 'domain' }
-    let(:logger) { GoodData.logger }
     let(:params) do
       params = {
         skip_actions: %w(CollectSegments SynchronizeUsers),
@@ -85,7 +90,6 @@ describe 'GoodData::LCM2' do
 
   describe '#run_action' do
     let(:params) { double('params') }
-    let(:logger) { GoodData.logger }
     it 'runs the action' do
       expect(params).to receive(:clear_filters).exactly(2).times
       expect(params).to receive(:segments_filter)

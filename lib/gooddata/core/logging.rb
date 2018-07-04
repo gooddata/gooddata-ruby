@@ -93,7 +93,7 @@ module GoodData
     end
 
     # Initial setup of logger
-    GoodData.logger = GoodData.logging_on
+    GoodData.logger = GoodData.logging_on(ENV['GD_LOG_LEVEL'] || DEFAULT_LOG_LEVEL)
 
     # Initial setup of rest logger
     GoodData.rest_logger = GoodData.logging_http_on(

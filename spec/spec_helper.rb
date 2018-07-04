@@ -27,9 +27,7 @@ require 'rspec'
 require 'pathname'
 require 'gooddata'
 
-logger = Logger.new(STDOUT)
-logger.level = Logger::WARN
-GoodData.logger = logger
+GoodData.logging_off unless ENV['GD_SPEC_LOG'] == 'true'
 
 # Automagically include all helpers/*_helper.rb
 
