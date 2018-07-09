@@ -18,7 +18,7 @@ module GoodData
           logger = NilLogger.new
         else
           logger = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
-          logger.level = params['GDC_LOG_LEVEL'] if params['GDC_LOG_LEVEL']
+          logger.level = params['GDC_LOG_LEVEL'] || 'info'
           logger.info('Pipeline starts')
         end
         params['GDC_LOGGER'] = logger
