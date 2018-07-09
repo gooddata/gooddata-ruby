@@ -10,9 +10,14 @@ require 'gooddata/bricks/middleware/logger_middleware'
 
 describe GoodData::Bricks::LoggerMiddleware do
   let(:app) { double(:app) }
+  let(:logger) { double(Logger) }
+
   before do
     subject.app = app
     allow(app).to receive(:call)
+    allow(Logger).to receive(:new) { logger }
+    allow(logger).to receive(:info)
+    allow(logger).to receive(:level=)
   end
 
   it "Has GoodData::Bricks::LoggerMiddleware class" do
@@ -29,12 +34,7 @@ describe GoodData::Bricks::LoggerMiddleware do
   end
 
   context 'GDC_LOG_LEVEL' do
-    let(:logger) { double(Logger) }
     let(:params) { { 'GDC_LOG_LEVEL' => log_level } }
-    before do
-      allow(Logger).to receive(:new) { logger }
-      allow(logger).to receive(:info)
-    end
 
     context 'when set' do
       let(:log_level) { 'warn' }
