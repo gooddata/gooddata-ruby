@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'pathname'
-require 'aws-sdk'
+require 'aws-sdk-s3'
 
 module GoodData
   module Bricks
