@@ -1,4 +1,91 @@
 # GoodData Ruby SDK Changelog
+## 1.2.0
+ - * TMA-484: Perform MAQL diff only once in rollout
+ - Use the latest aws sdk gem (#1237)
+ - fixed lcm.rake file
+ - Limit logging (#1238)
+ - TMA-969 brick does not ends when run with nonsensical delete params (or mode)
+ - Add a readme for LCM specs (#1224)
+ - Added VCR_ON to the docker compose env variables
+ - fixed rake task for load tests
+ - Load webmock only when VCR is on
+ - Deduplicate environments
+ - fix: clean up logger in logging_spec
+ - TMA-950: VCRize user_filters_spec
+ - TMA-950: VCR for over_to_user_filters_spec
+ - TMA-950: VCR for mandatory_user_filter_spec
+ - modified docker-compose commpands in rake file to solve the localstack problem
+ - TMA-939: VCRize domain_spec
+ - TMA-939: VCRize profile_spec
+ - changed localstack image in docker compose
+ - Run project specs in test:integration task
+ - TMA-900: VCR for full_project_spec
+ - TMA-900: VCR for full_process_schedule_spec
+ - TMA-900: VCR for variables_spec
+ - TMA-900: VCR for urn_date_dim_spec
+ - TMA-900: VCR for subscription_spec
+ - TMA-900: VCR for segment_spec
+ - TMA-900: VCR for partial_md_export_import_spec
+ - TMA-900: VCR for lcm_spec
+ - TMA-900: VCR for deprecated_load_spec
+ - TMA-900: VCR for date_dim_switch_spec
+ - TMA-900: VCR for create_project_spec
+ - TMA-900: VCR for create_from_template_spec
+ - TMA-900: VCR for connection_spec
+ - TMA-900: VCR for schedule_spec
+ - fixed cyclic decrypting of encrypted password
+ - TRIVIAL: remove redundant if
+ - TMA-900: VCR for command_projects_spec
+ - TMA-900: VCR for command_datawarehouse_spec
+ - TMA-900: VCR for clients_spec
+ - TMA-900: VCR for channel_configuration_spec
+ - TMA-900: VCR for unit_project_spec
+ - TMA-900: VCR for models project_spec
+ - TMA-900: VCR for project_role_spec
+ - TMA-900: VCR for report_spec
+ - TMA-900: VCR for process_spec
+ - TMA-900: VCR for membership_spec
+ - TMA-900: VCR for label_spec
+ - delete empty invitation_spec
+ - TMA-900: VCR for data_product_spec
+ - fix: delete domain users at one place
+ - fix: temporarily remove domain_spec from VCR
+ - fix: temporarily remove vcr for user groups
+ - fix rspec before example
+ - fixup! Skip sleep only when vcr_record_mode=none
+ - TMA-928: delete temporary user profiles
+ - Skip sleep only when vcr_record_mode=none
+ - TMA-705 deprecated delete_projects and delete_extra param and added new delete_mode (#1196)
+ - Enable VCR under ruby >= 2.4
+ - Add task for configuring git-flow extension
+ - Revert "Fail when decrypting using an empty key" (#1197)
+ - SETI-1082 localstack container now uses unique name and s3 the force_path_style param
+ - fix VCR_ON evaluation
+ - Refactor decrypting passwords (#1194)
+ - TRIVIAL: move to vcr_enabled logic to single if
+ - TMA-900: setup VCR for blueprint_with_grain_spec
+ - TMA-900: setup VCR for blueprint_with_ca_spec
+ - TMA-900: setup VCR for blueprint_updates_spec
+ - TMA-900: setup VCR for ads_output_stage_spec
+ - TMA-900: setup VCR for commands_projects_spec
+ - TMA-831: create default dataproduct if it does not exist yet
+ - Don't skip sleep when recording cassettes
+ - Enable vcr for params spec
+ - Split integration tests in two stages
+ - Fail when decrypting using an empty key
+ - Use travis to run integration tests
+ - TMA-560: Merge appstore repo to gooddata-ruby
+ - changelog:update doesn't rely on last tagged object
+ - fix project role spec for new role implementation (#1188)
+ - PI is viable environment for running tests
+ - TMA-892: Fix passing results of sync_domain_client_workspaces
+ - TMA-892: Fix user filters dry run when false
+ - TMA-868: deprecated flag now propagates the value to the replacement param if the type is compatible
+ - TMA-892: User filters brick dry run (#1156)
+ - fix recovery from provision clients error
+ - make sso backwards compatible
+ - TMA-920: self contained goodfile spec
+
 ## 1.1.0
  - TMA-860: use new roles API (#1169)
  - test passed locally 
