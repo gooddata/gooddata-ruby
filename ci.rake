@@ -25,7 +25,7 @@ end
 namespace :pronto do
   desc 'Performs automated code review on the PR'
   task :ci do
-    system('docker-compose run gooddata-ruby bundle exec pronto run -f github_pr -c origin/develop --exit-code') ||
+    system('docker-compose run gooddata-ruby bundle exec pronto run -f github_pr -c origin/master --exit-code') ||
       fail('Pronto execution failed!')
   end
 end
