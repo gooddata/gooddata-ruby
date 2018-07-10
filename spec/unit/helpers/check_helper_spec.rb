@@ -131,4 +131,41 @@ describe 'GoodData::LCM2::Helpers::Check' do
       ['upper_case_param', :upper_case_param, 'UPPER_case_param', :UPPER_case_param].map { |e| expect(params[e]).to eq('qux') }
     end
   end
+
+  context 'when params contain enum' do
+    before { params.setup_filters(spec) }
+
+    let(:spec) do
+      GoodData::LCM2::BaseAction.define_params(self) do
+        param :enum_type_param,
+              instance_of(GoodData::LCM2::Type::SynchronizeLDM)
+      end
+    end
+
+    context 'when invalid value specified' do
+      let(:params) do
+        raw_params = { 'enum_type_param' => 'wrong_value' }
+        GoodData::LCM2.convert_to_smart_hash(raw_params)
+      end
+
+      it 'fails' do
+        expect do
+          GoodData::LCM2::Helpers.check_params(spec, params)
+        end.to raise_error(/Invalid parameter value 'wrong_value'/)
+      end
+    end
+
+    context 'when valid value specified' do
+      let(:params) do
+        raw_params = { 'enum_type_param' => 'diff_against_clients' }
+        GoodData::LCM2.convert_to_smart_hash(raw_params)
+      end
+
+      it 'passes' do
+        expect do
+          GoodData::LCM2::Helpers.check_params(spec, params)
+        end.not_to raise_error
+      end
+    end
+  end
 end

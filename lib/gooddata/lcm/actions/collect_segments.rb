@@ -23,6 +23,14 @@ module GoodData
         param :gdc_logger, instance_of(Type::GdLogger), required: true
       end
 
+      RESULT_HEADER = [
+        :segment_id,
+        :development_pid,
+        :driver,
+        :master_name,
+        :uri
+      ]
+
       class << self
         def call(params)
           data_product = params.data_product
@@ -50,9 +58,11 @@ module GoodData
 
             {
               segment_id: segment.segment_id,
+              segment: segment,
               development_pid: project.pid,
               driver: project.driver.downcase,
               master_name: project.title,
+              segment_master: project,
               uri: segment.uri
             }
           end

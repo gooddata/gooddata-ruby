@@ -10,7 +10,6 @@ shared_examples 'a synchronization brick' do
     projects.each do |project|
       process = project.processes.find { |p| p.name == title }
       schedule = process.schedules.first
-      a = schedule.hidden_params
       expect(schedule.hidden_params.keys.map(&:to_sym)).to include(*@brick_result[:params][:additional_hidden_params].keys.map(&:to_sym))
     end
   end
@@ -43,8 +42,8 @@ shared_examples 'a synchronization brick' do
     projects.each do |target_project|
       blueprint = GoodData::Model::ProjectBlueprint.new(original_project.blueprint)
       diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
-      expect(diff['updateOperations']).to eq(update_operations)
-      expect(diff['updateScripts']).to eq(update_scripts)
+      expect(diff['updateOperations']).to eq([])
+      expect(diff['updateScripts']).to eq([])
     end
   end
 
@@ -57,7 +56,7 @@ shared_examples 'a synchronization brick' do
   it 'transfer tags for facts and datasets' do
     projects.each do |p|
       expect(p.datasets(Support::DATASET_IDENTIFIER).tags.split).to include('dataset')
-      expect(p.facts(Support::FACT_IDENTIFIER).tags.split).to include('fact')
+      expect(p.facts(fact_id).tags.split).to include('fact')
     end
   end
 
@@ -111,19 +110,14 @@ shared_examples 'a synchronization brick' do
   end
 
   it 'migrates reports used in dashboards' do
-    original_reports = original_project.reports.to_a
-    used_reports_titles = ['Customers Count By State', 'Customers Count By Gender', 'Report contains CA']
-    expected_reports = original_reports.find_all do |r|
-      used_reports_titles.include?(r.title)
-    end
-    expect(expected_reports.length).to be 3
+    used_reports = Support::ComparisonHelper.used_reports(original_project)
     projects.each do |target_project|
       target_reports = target_project.reports.to_a
-      expect(target_reports.length).to be expected_reports.length
-      expected_reports.each do |expected|
-        actual = target_reports.find { |r| r.title == expected.title }
+      expect(target_reports.length).to be used_reports.length
+      used_reports.each do |report|
+        actual = target_reports.find { |r| r.identifier == report.identifier }
         expect(actual).not_to be_nil
-        diff = Support::ComparisonHelper.compare_reports(expected, actual)
+        diff = Support::ComparisonHelper.compare_reports(report, actual)
         expected_diff = []
         expected_diff << ['~', 'meta.tags', '', '_lcm_managed_object'] if lcm_managed_tag
         expect(diff).to eq(expected_diff)
@@ -132,9 +126,13 @@ shared_examples 'a synchronization brick' do
   end
 
   it 'migrates metrics' do
-    used_in_dashboard = 'metric.customers.count'
-    tagged_production = Support::PRODUCTION_TAGGED_METRIC
-    expected_metrics = [used_in_dashboard, tagged_production]
+    used_metrics = Support::ComparisonHelper.used_metrics(original_project)
+    tagged_production = original_project.metrics
+      .select { |m| m.tags.include?("metric") }
+    expected_metrics = used_metrics
+      .concat(tagged_production)
+      .uniq(&:identifier)
+      .map(&:identifier)
     projects.each do |target_project|
       expect(target_project.metrics.map(&:identifier)).to match_array(expected_metrics)
     end
@@ -151,7 +149,7 @@ shared_examples 'a synchronization brick' do
 
   it 'does not migrate variables' do
     projects.each do |project|
-       expect(project.variables.to_a).to be_empty
+      expect(project.variables.to_a).to be_empty
     end
   end
 end

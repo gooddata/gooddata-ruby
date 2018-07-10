@@ -131,7 +131,6 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         SynchronizeLdm,
-        ApplyCustomMaql,
         SynchronizeClients,
         SynchronizeComputedAttributes,
         CollectDymanicScheduleParams,

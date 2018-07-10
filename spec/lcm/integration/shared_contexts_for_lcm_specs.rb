@@ -164,6 +164,13 @@ shared_context 'lcm bricks' do
       }
     end
 
+    conflicting_client_id = "CLIENT_WITH_CONFLICTING_LDM_CHANGES_#{@suffix}"
+    @workspaces << {
+      client_id: conflicting_client_id,
+      segment_id: segments.first[:segment_id],
+      title: "Client With Conflicting LDM Changes #{@suffix}"
+    }
+
     s3_endpoint = 'http://localstack:4572'
     workspace_csv = LcmHelper.create_workspace_csv(
         @workspaces,
@@ -198,7 +205,8 @@ shared_context 'lcm bricks' do
         s3_bucket: bucket_name,
         s3_endpoint: s3_endpoint,
         custom_client_id_column: Support::CUSTOM_CLIENT_ID_COLUMN,
-        transfer_all: true
+        transfer_all: true,
+        conflicting_client_id: conflicting_client_id
     }
   end
 
@@ -208,9 +216,9 @@ shared_context 'lcm bricks' do
 
   after(:all) do
     projects_to_delete =
-        $master_projects +
-        $client_projects +
-        [@prod_output_stage_project]
+      $master_projects +
+      $client_projects +
+      [@prod_output_stage_project]
 
     projects_to_delete += [@project] unless ENV['REUSE_PROJECT']
 
