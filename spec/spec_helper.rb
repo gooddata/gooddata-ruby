@@ -8,18 +8,20 @@ ENV['RSPEC_ENV'] = 'test'
 
 require 'simplecov'
 # for simplecov to work correctly, it has to be started before any other code
-SimpleCov.start do
-  add_filter 'spec/'
+unless RUBY_PLATFORM =~ /java/
+  SimpleCov.start do
+    add_filter 'spec/'
 
-  add_group 'Middleware', 'lib/gooddata/bricks/middleware'
-  add_group 'CLI', 'lib/gooddata/cli'
-  add_group 'Commands', 'lib/gooddata/commands'
-  add_group 'Core', 'lib/gooddata/core'
-  add_group 'Exceptions', 'lib/gooddata/exceptions'
-  add_group 'Extensions', 'lib/gooddata/extensions'
-  add_group 'Goodzilla', 'lib/gooddata/goodzilla'
-  add_group 'Models', 'lib/gooddata/models'
-  add_group 'LCM', 'lib/gooddata/lcm'
+    add_group 'Middleware', 'lib/gooddata/bricks/middleware'
+    add_group 'CLI', 'lib/gooddata/cli'
+    add_group 'Commands', 'lib/gooddata/commands'
+    add_group 'Core', 'lib/gooddata/core'
+    add_group 'Exceptions', 'lib/gooddata/exceptions'
+    add_group 'Extensions', 'lib/gooddata/extensions'
+    add_group 'Goodzilla', 'lib/gooddata/goodzilla'
+    add_group 'Models', 'lib/gooddata/models'
+    add_group 'LCM', 'lib/gooddata/lcm'
+  end
 end
 
 require 'pmap'
