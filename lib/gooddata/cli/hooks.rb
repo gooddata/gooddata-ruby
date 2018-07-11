@@ -11,8 +11,7 @@ require_relative '../helpers/auth_helpers'
 
 GoodData::CLI.module_eval do
   pre do |global, _command, _options, _args|
-    require 'logger'
-    GoodData.logger = Logger.new(STDOUT) if global[:l]
+    GoodData.logger = GoodData::GDLogger.new(STDOUT) if global[:l]
     username = global[:username]
     password = global[:password]
     token = global[:token]

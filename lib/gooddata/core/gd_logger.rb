@@ -4,20 +4,13 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require_relative '../base_type'
-
-require_relative 'class'
-
 module GoodData
-  module LCM2
-    module Type
-      class GdLogger < ClassType
-        CATEGORY = :class
+  class GDLogger < Logger
+    attr_accessor :log_to_splunk
 
-        def check(value)
-          value.class == GoodData::GDLogger
-        end
-      end
+    def add(severity, message, progname)
+      super(severity, message, progname)
+      GoodData.splunk_logger.add(severity, message, progname) if log_to_splunk.to_b
     end
   end
 end

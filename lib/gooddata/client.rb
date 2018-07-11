@@ -33,7 +33,7 @@ require_relative 'helpers/helpers'
 #
 # ## Logging
 #
-#     GoodData.logger = Logger.new(STDOUT)
+#     GoodData.logger = GDLogger.new(STDOUT)
 #
 # For details about the logger options and methods, see the
 # (Logger module documentation)[http://www.ruby-doc.org/stdlib/libdoc/logger/rdoc].
