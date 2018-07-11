@@ -28,9 +28,8 @@ describe GoodData::Bricks::LoggerMiddleware do
     end
   end
 
-  context 'when COLLECT_STATS parameter set on true' do
+  context 'when COLLECT_STATS parameter set to true' do
     let(:params) { { 'COLLECT_STATS' => 'true' } }
-
     let(:app) { double(:app) }
 
     before do
@@ -39,15 +38,25 @@ describe GoodData::Bricks::LoggerMiddleware do
     end
 
     it 'turns splunk logging on' do
-      GoodData.splunk_logger.should_not be(nil)
-      GoodData.splunk_logger.should_not be_an_instance_of(GoodData::NilLogger)
+      expect(GoodData).to receive(:logging_splunk_on)
+      expect(GoodData.splunk_logger).not_to be_an_instance_of(GoodData::SplunkLogger)
       subject.call(params)
     end
+  end
 
-    it 'creates buffered log' do
-      expect(GoodData.splunk_logger.logs.length).to satisfy { |len| len == 0 }
-      GoodData.splunk_logger.log("I'm nice log", Time.now)
-      expect(GoodData.splunk_logger.logs.length).to satisfy { |len| len > 0 }
+  context 'when COLLECT_STATS parameter set to false' do
+    let(:params) { { 'COLLECT_STATS' => 'false' } }
+    let(:app) { double(:app) }
+
+    before do
+      subject.app = app
+      allow(app).to receive(:call)
+    end
+
+    it 'turns splunk logging off' do
+      expect(GoodData).not_to receive(:logging_splunk_on)
+      expect(GoodData.splunk_logger).to be_an_instance_of(GoodData::NilLogger)
+      subject.call(params)
     end
   end
 end
