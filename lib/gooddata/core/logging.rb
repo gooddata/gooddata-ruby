@@ -8,20 +8,21 @@ require 'rest-client'
 
 require_relative 'nil_logger'
 require_relative 'splunk_logger'
+require_relative 'gd_logger'
 
 module GoodData
   DEFAULT_LOG_LEVEL = Logger::INFO
   DEFAULT_LOG_OUTPUT = STDOUT
-  DEFAULT_LOGGER_CLASS = Logger
+  DEFAULT_LOGGER_CLASS = GDLogger
 
   DEFAULT_RESTLOG_LEVEL = Logger::DEBUG
   DEFAULT_RESTLOG_OUTPUT = STDOUT
-  DEFAULT_RESTLOGGER_CLASS = Logger
+  DEFAULT_RESTLOGGER_CLASS = GDLogger
 
   DEFAULT_SPLUNKLOG_LEVEL = Logger::INFO
   DEFAULT_SPLUNKLOG_OUTPUT = STDERR
   DEFAULT_SPLUNKLOGGER_CLASS = SplunkLogger
-  DEFAULT_SPLUNKLOG_MODE = SplunkLogger::FILE_MODE | SplunkLogger::BUFFERED
+  DEFAULT_SPLUNKLOG_MODE = {:file_output => true, :buffering => true}
 
   class << self
     attr_accessor :logger, :rest_logger, :splunk_logger
