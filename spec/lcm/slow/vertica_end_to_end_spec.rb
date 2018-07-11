@@ -1,4 +1,4 @@
-require_relative '../integration/shared_contexts_for_lcm_specs'
+require_relative '../integration/shared_contexts_for_lcm'
 require_relative '../integration/support/s3_helper'
 require_relative '../integration/support/lcm_helper'
 
