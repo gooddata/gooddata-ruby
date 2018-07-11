@@ -4,8 +4,8 @@ shared_examples 'a user action reading client_id' do
   end
 
   it 'uses client_id column' do
-    expect(domain).to receive(:clients).with(client_id, nil)
-    subject.class.call(params)
+    expect(domain).to receive(:clients).with(client_id, data_product)
+    GoodData::LCM2.run_action(subject.class, params)
   end
 end
 
@@ -19,9 +19,9 @@ shared_examples 'a user action filtering segments' do
   end
 
   it 'does operation on project only from clients in segments in segments filter' do
-    expect(project).to receive(message_for_project)
+    expect(project).to receive(message_for_project).and_return(type: :success, results: ['yes'])
     expect(project_not_in_segment).not_to receive(message_for_project)
-    subject.class.call(params)
+    GoodData::LCM2.run_action(subject.class, params)
   end
 end
 

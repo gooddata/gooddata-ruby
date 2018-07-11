@@ -6,7 +6,7 @@ require 'csv'
 require_relative '../integration/support/constants'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/shared_examples_for_synchronization_bricks'
-require_relative '../integration/shared_contexts_for_lcm_specs'
+require_relative '../integration/shared_contexts_for_lcm'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []

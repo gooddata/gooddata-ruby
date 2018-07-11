@@ -28,8 +28,8 @@ describe GoodData::LCM2::CollectUsersBrickUsers do
 
   it 'enriches parameters with logins' do
     result = subject.class.call(params)
-    expect(result[:results].length).to eq(11)
-    result[:results].each do |user|
+    expect(result[:params][:users_brick_users].length).to eq(11)
+    result[:params][:users_brick_users].each do |user|
       expect(user[:login]).not_to be_nil
     end
   end

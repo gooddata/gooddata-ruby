@@ -7,7 +7,7 @@ require_relative 'support/constants'
 require_relative 'support/configuration_helper'
 require_relative 'support/lcm_helper'
 require_relative 'shared_examples_for_synchronization_bricks'
-require_relative 'shared_contexts_for_lcm_specs'
+require_relative 'shared_contexts_for_lcm'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []

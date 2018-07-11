@@ -36,11 +36,14 @@ module GoodData
                       headers: true,
                       return_headers: false,
                       encoding: 'utf-8') do |row|
-            users_brick_users << { login: row[login_column] }
+            users_brick_users << {
+              login: row[login_column]
+            }.merge(row)
           end
 
           {
-            results: users_brick_users,
+            # todo: return the real results when print is fixed for large sets
+            results: [{state:'success!'}],
             params: {
               users_brick_users: users_brick_users
             }

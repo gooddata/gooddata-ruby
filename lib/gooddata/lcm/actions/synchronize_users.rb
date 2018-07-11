@@ -198,11 +198,10 @@ module GoodData
                                            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_pid'
-                      new_users.group_by { |u| u[:pid] }.flat_map do |project_id, users|
+                      new_users.group_by { |u| u[:pid] }.flat_map.pmap do |project_id, users|
                         begin
-                          project = client.projects(project_id)
-                          fail "You (user executing the script - #{client.user.login}) is not admin in project \"#{project_id}\"." unless project.am_i_admin?
-                          project.import_users(users,
+                          current_project = client.projects(project_id)
+                          current_project.import_users(users,
                                                domain: domain,
                                                whitelists: whitelists,
                                                ignore_failures: ignore_failures,
@@ -253,17 +252,17 @@ module GoodData
                                            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_custom_id'
-                      new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
+                      new_users.group_by { |u| u[:pid] }.flat_map.pmap do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
                         begin
-                          project = domain.clients(client_id, data_product).project
+                          current_project = domain.clients(client_id, data_product).project
                         rescue RestClient::BadRequest => e
                           raise e unless /does not exist in data product/ =~ e.response
                           fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\""
                         end
-                        fail "Client #{client_id} does not have project." unless project
-                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
-                        project.import_users(users,
+                        fail "Client #{client_id} does not have project." unless current_project
+                        puts "Project #{current_project.pid} of client #{client_id} will receive #{users.count} users"
+                        current_project.import_users(users,
                                              domain: domain,
                                              whitelists: whitelists,
                                              ignore_failures: ignore_failures,
@@ -286,11 +285,11 @@ module GoodData
                           puts "Client #{client_id} is outside segments_filter #{params.segments}"
                           next
                         end
-                        project = c.project
-                        fail "Client #{client_id} does not have project." unless project
+                        current_project = c.project
+                        fail "Client #{client_id} does not have project." unless current_project
                         working_client_ids << client_id.to_s
-                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
-                        project.import_users(users,
+                        puts "Project #{current_project.pid} of client #{client_id} will receive #{users.count} users"
+                        current_project.import_users(users,
                                              domain: domain,
                                              whitelists: whitelists,
                                              ignore_failures: ignore_failures,
@@ -305,21 +304,21 @@ module GoodData
                         domain_clients.each do |c|
                           next if working_client_ids.include?(c.client_id.to_s)
                           begin
-                            project = c.project
+                            current_project = c.project
                           rescue => e
                             puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
                             next
                           end
-                          unless project
+                          unless current_project
                             puts "Client #{c.client_id} has no project."
                             next
                           end
-                          if project.deleted?
-                            puts "Project #{project.pid} of client #{c.client_id} is deleted."
+                          if current_project.deleted?
+                            puts "Project #{current_project.pid} of client #{c.client_id} is deleted."
                             next
                           end
-                          puts "Synchronizing all users in project #{project.pid} of client #{c.client_id}"
-                          res += project.import_users([],
+                          puts "Synchronizing all users in project #{current_project.pid} of client #{c.client_id}"
+                          res += current_project.import_users([],
                                                       domain: domain,
                                                       whitelists: whitelists,
                                                       ignore_failures: ignore_failures,

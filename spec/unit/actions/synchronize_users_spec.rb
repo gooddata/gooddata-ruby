@@ -18,8 +18,13 @@ describe GoodData::LCM2::SynchronizeUsers do
   let(:organization) { double('organization') }
   let(:logger) { double('logger') }
   let(:project_uri) { '/gdc/projects/123abc' }
+  let(:data_product) { double('data product') }
 
   before do
+    allow(client).to receive(:class).and_return(GoodData::Rest::Client)
+    allow(data_product).to receive(:class).and_return GoodData::DataProduct
+    allow(logger).to receive(:class).and_return Logger
+
     allow(client).to receive(:projects).and_return(project)
     allow(client).to receive(:user).and_return(user)
     allow(client).to receive(:domain).and_return(domain)
@@ -48,7 +53,7 @@ describe GoodData::LCM2::SynchronizeUsers do
         params = {
           sync_mode: 'sync_one_project_based_on_custom_id',
           GDC_GD_CLIENT: client,
-          input_source: 'foo',
+          input_source: {},
           domain: 'bar',
           gdc_logger: logger,
         }
@@ -77,7 +82,7 @@ describe GoodData::LCM2::SynchronizeUsers do
         params = {
           sync_mode: 'sync_one_project_based_on_pid',
           GDC_GD_CLIENT: client,
-          input_source: 'foo',
+          input_source: {},
           domain: 'bar',
           gdc_logger: logger
         }
@@ -100,13 +105,76 @@ describe GoodData::LCM2::SynchronizeUsers do
       end
     end
 
-    context 'when using mode sync_domain_client_workspaces' do
+    context 'when using multiple_projects modes' do
+      let(:segment) { double('segment') }
+      let(:segment_uri) { 'segment_uri' }
+      let(:message_for_project) { :import_users }
+      let(:params_stub) do
+        {
+          GDC_GD_CLIENT: client,
+          input_source: {},
+          domain: 'bar',
+          gdc_logger: logger,
+          segments: [segment]
+        }
+      end
+
+      before do
+        allow(segment).to receive(:uri).and_return(segment_uri)
+        allow(segment).to receive(:segment_id).and_return('123')
+        allow(segment).to receive(:development_pid).and_return('456')
+        allow(segment).to receive(:driver).and_return('vertica')
+        allow(segment).to receive(:production_tags).and_return([])
+        allow(segment).to receive(:master_name).and_return('charles')
+        allow(organization).to receive(:segment_uri).and_return(segment_uri)
+        allow(organization).to receive(:project).and_return(project)
+        allow(organization).to receive(:client_id).and_return('123456789')
+        allow(project).to receive(:deleted?).and_return(false)
+      end
+
+      context 'sync_multiple_projects_based_on_custom_id mode' do
+        let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_custom_id')) }
+        before do
+          allow(File).to receive(:open).and_return("client_id\n123456789")
+          allow(domain).to receive(:clients).with(:all, nil).and_return([organization, organization_not_in_segment])
+          allow(domain).to receive(:clients).with('123456789', nil).and_return(organization)
+        end
+
+        it_behaves_like 'a user action filtering segments'
+      end
+
+      context 'sync_multiple_projects_based_on_pid mode' do
+        let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_pid')) }
+        before do
+          allow(File).to receive(:open).and_return("project_id\n123456789")
+          allow(domain).to receive(:projects).with(:all, nil).and_return([organization, organization_not_in_segment])
+          allow(domain).to receive(:projects).with('123456789', nil).and_return(organization)
+        end
+
+        it_behaves_like 'a user action filtering segments'
+      end
+
+      context 'sync_domain_client_workspaces mode' do
+        let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_domain_client_workspaces')) }
+        before do
+          allow(File).to receive(:open).and_return("client_id\n123456789")
+          allow(domain).to receive(:clients).with(:all, nil).and_return([organization, organization_not_in_segment])
+          allow(domain).to receive(:clients).with('123456789', nil).and_return(organization)
+        end
+
+        it_behaves_like 'a user action filtering segments'
+      end
+
+
+    end
+
+    context 'when using mode' do
       let(:segment) { double('segment') }
       let(:segment_uri) { 'segment_uri' }
       let(:params) do
         params = {
           GDC_GD_CLIENT: client,
-          input_source: 'foo',
+          input_source: {},
           domain: 'bar',
           gdc_logger: logger,
           sync_mode: 'sync_domain_client_workspaces',
@@ -119,7 +187,14 @@ describe GoodData::LCM2::SynchronizeUsers do
         allow(File).to receive(:open).and_return("client_id\n123456789")
         allow(domain).to receive(:clients).with(:all, nil).and_return([organization, organization_not_in_segment])
         allow(domain).to receive(:clients).with('123456789', nil).and_return(organization)
+
         allow(segment).to receive(:uri).and_return(segment_uri)
+        allow(segment).to receive(:segment_id).and_return('123')
+        allow(segment).to receive(:development_pid).and_return('456')
+        allow(segment).to receive(:driver).and_return('vertica')
+        allow(segment).to receive(:production_tags).and_return([])
+        allow(segment).to receive(:master_name).and_return('charles')
+
         allow(organization).to receive(:segment_uri).and_return(segment_uri)
         allow(organization).to receive(:project).and_return(project)
         allow(organization).to receive(:client_id).and_return('123456789')
@@ -134,7 +209,7 @@ describe GoodData::LCM2::SynchronizeUsers do
       let(:params) do
         params = {
           GDC_GD_CLIENT: client,
-          input_source: 'foo',
+          input_source: {},
           domain: 'bar',
           gdc_logger: logger,
           sync_mode: 'unsuported_sync_mode'
@@ -151,7 +226,7 @@ describe GoodData::LCM2::SynchronizeUsers do
       let(:params) do
         params = {
           GDC_GD_CLIENT: client,
-          input_source: 'foo',
+          input_source: {},
           domain: 'bar',
           gdc_logger: logger
         }

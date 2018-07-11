@@ -2,7 +2,7 @@ require_relative '../integration/support/project_helper'
 require_relative '../integration/support/connection_helper'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/s3_helper'
-require_relative '../integration/shared_examples_for_user_bricks'
+require_relative '../integration/shared_contexts_for_user_bricks'
 
 def user_in_domain(user_name)
   domain = @rest_client.domain(LcmConnectionHelper.environment[:prod_organization])
@@ -115,7 +115,7 @@ describe 'UsersBrick' do
 
     it 'adds users to project' do
       $SCRIPT_PARAMS = JSON.parse(File.read(@config_path))
-      load 'users_brick/main.rb'
+      GoodData::Bricks::Pipeline.users_brick_pipeline.call($SCRIPT_PARAMS)
       user_array.each do |u|
         this_project = project_array.detect {|project| project.title.include? u[:client_id] }
         expect(this_project.member?(u)).to be_truthy unless this_project.nil?

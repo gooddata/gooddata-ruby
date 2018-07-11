@@ -64,7 +64,7 @@ module GoodData
         param :gdc_project_id, instance_of(Type::StringType), required: false
 
         description 'User brick users'
-        param :users_brick_users, instance_of(Type::ObjectType), required: false
+        param :users_brick_users, instance_of(Type::ObjectType), required: false, default: []
 
         description 'Makes the brick run without altering user filters'
         param :dry_run, instance_of(Type::StringType), required: false, default: false
@@ -161,12 +161,16 @@ module GoodData
               fail 'The filter set can not be empty when using sync_multiple_projects_* mode as the filters contain \
                     the project ids in which the permissions should be changed'
             end
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |project_id, new_filters|
+            users_by_project = run_params[:users_brick_input].group_by { |u| u[multiple_projects_column] }
+
+            filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |project_id, new_filters|
+              users = users_by_project[project_id]
+
               fail "Project id cannot be empty" if project_id.blank?
-              project = client.projects(project_id)
+              current_project = client.projects(project_id)
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid}"
-              project.add_data_permissions(filters_to_load, run_params)
+              puts "Synchronizing #{filters_to_load.count} filters in project #{current_project.pid}"
+              current_project.add_data_permissions(filters_to_load, run_params.merge(users_brick_input: users))
             end
           when 'sync_one_project_based_on_custom_id'
             filter_value = UserBricksHelper.resolve_client_id(domain, project, data_product)
@@ -197,13 +201,16 @@ module GoodData
               fail 'The filter set can not be empty when using sync_multiple_projects_* mode as the filters contain \
                     the project ids in which the permissions should be changed'
             end
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
+            users_by_project = run_params[:users_brick_input].group_by { |u| u[multiple_projects_column] }
+
+            filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |client_id, new_filters|
+              users = users_by_project[client_id]
               fail "Client id cannot be empty" if client_id.blank?
-              project = domain.clients(client_id, data_product).project
-              fail "Client #{client_id} does not have project." unless project
+              current_project = domain.clients(client_id, data_product).project
+              fail "Client #{client_id} does not have project." unless current_project
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
-              project.add_data_permissions(filters_to_load, run_params)
+              puts "Synchronizing #{filters_to_load.count} filters in project #{current_project.pid} of client #{client_id}"
+              current_project.add_data_permissions(filters_to_load, run_params.merge(users_brick_input: users))
             end
           when 'sync_domain_client_workspaces'
             without_check(PARAMS, params) do
@@ -220,20 +227,22 @@ module GoodData
 
             working_client_ids = []
 
+            users_by_project = run_params[:users_brick_input].group_by { |u| u[multiple_projects_column] }
             results = []
-            filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
+            filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |client_id, new_filters|
+              users = users_by_project[client_id]
               fail "Client id cannot be empty" if client_id.blank?
               c = domain.clients(client_id, data_product)
               if params.segments && !segment_uris.include?(c.segment_uri)
                 puts "Client #{client_id} is outside segments_filter #{params.segments}"
                 next
               end
-              project = c.project
-              fail "Client #{client_id} does not have project." unless project
+              current_project = c.project
+              fail "Client #{client_id} does not have project." unless current_project
               working_client_ids << client_id
               filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{project.pid} of client #{client_id}"
-              partial_results = project.add_data_permissions(filters_to_load, run_params)
+              puts "Synchronizing #{filters_to_load.count} filters in project #{current_project.pid} of client #{client_id}"
+              partial_results = current_project.add_data_permissions(filters_to_load, run_params.merge(users_brick_input: users))
               results.concat(partial_results[:results])
             end
 
@@ -241,22 +250,22 @@ module GoodData
               domain_clients.each do |c|
                 next if working_client_ids.include?(c.client_id)
                 begin
-                  project = c.project
+                  current_project = c.project
                 rescue => e
                   puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
                   next
                 end
-                unless project
+                unless current_project
                   puts "Client #{c.client_id} has no project."
                   next
                 end
-                if project.deleted?
-                  puts "Project #{project.pid} of client #{c.client_id} is deleted."
+                if current_project.deleted?
+                  puts "Project #{current_project.pid} of client #{c.client_id} is deleted."
                   next
                 end
 
-                puts "Delete all filters in project #{project.pid} of client #{c.client_id}"
-                delete_results = project.add_data_permissions([], run_params)
+                puts "Delete all filters in project #{current_project.pid} of client #{c.client_id}"
+                delete_results = current_project.add_data_permissions([], run_params)
                 results.concat(delete_results[:results])
               end
             end
