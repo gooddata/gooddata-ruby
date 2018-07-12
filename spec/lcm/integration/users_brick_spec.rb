@@ -104,11 +104,6 @@ describe 'UsersBrick' do
       @data_product.delete(force: true) if @data_product
     end
 
-    after(:all) do
-      user = user_in_domain(@user_name)
-      user.delete
-    end
-
     context 'when data product with correct client is passed' do
       before do
         data_product_id = "testing-data-product-#{@suffix}"
