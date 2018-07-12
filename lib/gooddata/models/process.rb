@@ -24,32 +24,33 @@ module GoodData
     alias_method :to_hash, :data
 
     class << self
-      def [](id, options = {})
+      def [](id, options = { :client => GoodData.connection })
         project = options[:project]
-        c = options[:client] || (project && project.client)
+        client = options[:client] || (project && project.client)
+        fail 'Client has to be specified in options' unless client
 
         if id == :all && project
           uri = "/gdc/projects/#{project.pid}/dataload/processes"
-          data = c.get(uri)
+          data = client.get(uri)
           data['processes']['items'].map do |process_data|
-            c.create(Process, process_data, project: project)
+            client.create(Process, process_data, project: project)
           end
         elsif id == :all
-          uri = "/gdc/account/profile/#{c.user.obj_id}/dataload/processes"
-          data = c.get(uri)
+          uri = "/gdc/account/profile/#{client.user.obj_id}/dataload/processes"
+          data = client.get(uri)
           pids = data['processes']['items'].map { |process_data| process_data['process']['links']['self'].match(%r{/gdc/projects/(\w*)/})[1] }.uniq
-          projects_lookup = pids.pmap { |pid| c.projects(pid) }.reduce({}) do |a, e|
+          projects_lookup = pids.pmap { |pid| client.projects(pid) }.reduce({}) do |a, e|
             a[e.pid] = e
             a
           end
 
           data['processes']['items'].map do |process_data|
             pid = process_data['process']['links']['self'].match(%r{/gdc/projects/(\w*)/})[1]
-            c.create(Process, process_data, project: projects_lookup[pid])
+            client.create(Process, process_data, project: projects_lookup[pid])
           end
         else
           uri = "/gdc/projects/#{project.pid}/dataload/processes/#{id}"
-          c.create(Process, c.get(uri), project: project)
+          client.create(Process, client.get(uri), project: project)
         end
       end
 
@@ -203,7 +204,7 @@ module GoodData
 
       def save(data, options = { client: GoodData.client, project: GoodData.project })
         client, project = GoodData.get_client_and_project(options)
-        process_id = data[:process_id]
+        process_id = options[:process_id]
         res =
           if process_id.nil?
             client.post("/gdc/projects/#{project.pid}/dataload/processes", data)

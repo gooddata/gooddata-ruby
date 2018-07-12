@@ -1,0 +1,54 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/dataload/processes
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.1.0/java/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - u7vkp-tdaZdrVHQdK5kcTg:JiIhAFjVRah1XzntvindMA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 12 Jul 2018 13:57:07 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - u7vkp-tdaZdrVHQdK5kcTg:JiIhAFjVRah1XzntvindMA:nmpACxhgJY8WjxnM
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '48063'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"processes":{"items":[],"links":{"self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/dataload/processes"}}}'
+    http_version:
+  recorded_at: Thu, 12 Jul 2018 13:57:07 GMT
+recorded_with: VCR 4.0.0
