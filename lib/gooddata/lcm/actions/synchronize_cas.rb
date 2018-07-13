@@ -29,6 +29,9 @@ module GoodData
       end
 
       class << self
+        using TrueExtensions
+        using FalseExtensions
+
         def call(params)
           # set default value for include_computed_attributes
           # (we won't have to do this after TMA-690)

@@ -71,6 +71,9 @@ module GoodData
       end
 
       class << self
+        using TrueExtensions
+        using FalseExtensions
+
         MODES = %w(
           add_to_organization
           sync_project
