@@ -12,6 +12,11 @@ require 'openssl'
 require_relative '../extensions/object'
 require_relative 'global_helpers_params'
 
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+require 'gooddata/extensions/nil'
+
 module GoodData
   module Helpers
     extend Hashie::Extensions::StringifyKeys::ClassMethods
@@ -24,6 +29,11 @@ module GoodData
     set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 3
 
     class << self
+      using TrueExtensions
+      using FalseExtensions
+      using IntegerExtensions
+      using NilExtensions
+
       def error(msg)
         STDERR.puts(msg)
         exit 1
