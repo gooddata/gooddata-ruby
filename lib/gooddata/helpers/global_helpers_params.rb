@@ -100,7 +100,7 @@ module GoodData
 
         params.delete(key)
         params.delete(hidden_key)
-        params = params.deep_merge(parsed_data_params).deep_merge(parsed_hidden_data_params)
+        params = params.custom_deep_merge(parsed_data_params).custom_deep_merge(parsed_hidden_data_params)
 
         if options[:convert_pipe_delimited_params]
           convert_pipe_delimited_params = lambda do |args|
@@ -119,7 +119,7 @@ module GoodData
             end
 
             lines.reduce({}) do |a, e|
-              a.deep_merge(e)
+              a.custom_deep_merge(e)
             end
           end
 
@@ -127,7 +127,7 @@ module GoodData
           params.delete_if do |k, _|
             k.include?('|')
           end
-          params = params.deep_merge(pipe_delimited_params)
+          params = params.custom_deep_merge(pipe_delimited_params)
         end
 
         params
