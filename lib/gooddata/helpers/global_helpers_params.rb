@@ -1,13 +1,13 @@
-# encoding: UTF-8
-#
 # Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
+require 'gooddata/extensions/enumerable'
 
 module GoodData
   module Helpers
     ENCODED_PARAMS_KEY = 'gd_encoded_params'
     ENCODED_HIDDEN_PARAMS_KEY = 'gd_encoded_hidden_params'
+    using EnumerableExtensions
 
     class << self
       # Encodes parameters for passing them to GD execution platform.

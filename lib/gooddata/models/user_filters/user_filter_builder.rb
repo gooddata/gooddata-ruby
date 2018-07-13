@@ -6,9 +6,11 @@
 
 require_relative '../project_log_formatter'
 require 'active_support/core_ext/hash/indifferent_access'
+require 'gooddata/extensions/enumerable'
 
 module GoodData
   module UserFilterBuilder
+    using EnumerableExtensions
     # Main Entry function. Gets values and processes them to get filters
     # that are suitable for other function to process.
     # Values can be read from file or provided inline as an array.

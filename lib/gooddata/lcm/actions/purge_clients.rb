@@ -5,10 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require 'gooddata/extensions/enumerable'
 
 module GoodData
   module LCM2
     class PurgeClients < BaseAction
+      using EnumerableExtensions
+
       DESCRIPTION = 'Purge LCM Clients'
 
       PARAMS = define_params(self) do
