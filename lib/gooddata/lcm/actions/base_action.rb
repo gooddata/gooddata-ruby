@@ -9,17 +9,17 @@ require_relative '../types/types'
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
+require 'gooddata/extensions/nil'
 
 module GoodData
   module LCM2
-    using TrueExtensions
-    using FalseExtensions
-    using IntegerExtensions
-
     class BaseAction
       class << self
         using TrueExtensions
         using FalseExtensions
+        using IntegerExtensions
+        using NilExtensions
+
         include Dsl::Dsl
 
         def check_params(specification, params)

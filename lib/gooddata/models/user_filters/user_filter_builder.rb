@@ -17,6 +17,7 @@ module GoodData
     using FalseExtensions
     using TrueExtensions
     using IntegerExtensions
+    using NilExtensions
 
     # Main Entry function. Gets values and processes them to get filters
     # that are suitable for other function to process.

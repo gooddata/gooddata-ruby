@@ -74,6 +74,7 @@ module GoodData
         using TrueExtensions
         using FalseExtensions
         using IntegerExtensions
+        using NilExtensions
 
         MODES = %w(
           add_to_organization
