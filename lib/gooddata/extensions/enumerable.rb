@@ -2,7 +2,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 module EnumerableExtensions
-  refine Enumerable do
+  refine Array do
     def mapcat(initial = [], &block)
       reduce(initial) do |a, e|
         block.call(e).each do |x|

@@ -367,7 +367,7 @@ module GoodData
         end
 
         {
-          actions: actions.map(&:short_name),
+          actions: actions.map { |action| action.short_name },
           results: brick_results,
           params: params
         }
