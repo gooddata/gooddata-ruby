@@ -43,6 +43,7 @@ module GoodData
       class << self
         using TrueExtensions
         using FalseExtensions
+        using StringExtensions
 
         def call(params)
           results = []

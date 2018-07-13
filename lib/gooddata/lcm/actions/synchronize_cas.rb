@@ -33,6 +33,7 @@ module GoodData
         using FalseExtensions
         using IntegerExtensions
         using NilExtensions
+        using StringExtensions
 
         def call(params)
           # set default value for include_computed_attributes
