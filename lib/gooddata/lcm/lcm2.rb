@@ -9,11 +9,16 @@ require 'terminal-table'
 require_relative 'actions/actions'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
+
 require 'gooddata/extensions/class'
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
 
 module GoodData
   module LCM2
     using ::ClassExtensions
+    using ::TrueExtensions
+    using ::FalseExtensions
 
     class SmartHash < Hash
       @specification = nil

@@ -41,6 +41,9 @@ module GoodData
       end
 
       class << self
+        using TrueExtensions
+        using FalseExtensions
+
         def call(params)
           results = []
           synchronize = []
