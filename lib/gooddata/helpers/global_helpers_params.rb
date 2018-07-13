@@ -2,14 +2,16 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 require 'gooddata/extensions/enumerable'
+require 'gooddata/extensions/hash'
 
 module GoodData
   module Helpers
     ENCODED_PARAMS_KEY = 'gd_encoded_params'
     ENCODED_HIDDEN_PARAMS_KEY = 'gd_encoded_hidden_params'
-    using EnumerableExtensions
-
     class << self
+      using EnumerableExtensions
+      using HashExtensions
+
       # Encodes parameters for passing them to GD execution platform.
       # Core types are kept and complex types (arrays, structures, etc) are
       # JSON encoded into key hash "gd_encoded_params" or
