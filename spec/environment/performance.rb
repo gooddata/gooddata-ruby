@@ -8,8 +8,8 @@ module GoodData
   module Environment
     module ConnectionHelper
       set_const :LCM_ENVIRONMENT,
-                dev_server: 'perf-lcm-dev.intgdc.com',
-                prod_server: 'perf-lcm-prod.intgdc.com',
+                dev_server: 'perf-lcm-dev.prod.com',
+                prod_server: 'perf-lcm-prod.prod.com',
                 dev_token: "KP3+C5et9WMmYI9zsYUgj9XqvorBEEMmflrAP2jauh/s92O8oaDKnJ7RIaQy\npU1W\n",
                 prod_token: "BSH8a/JFKkwwwRpGLZTb2ViOxdeZ+VW0KUny9Mq4AuEalBdeoCbxsfcjCM3W\n6JrK\n",
                 vertica_dev_token: "pdFK5RReapLYI0bzM2kz0gtORGJyKiy3tn05uawulcJIP3wDsHQaFjpNJbVF\niVJf\n",
