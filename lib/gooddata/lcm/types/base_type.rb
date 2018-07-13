@@ -7,10 +7,13 @@
 
 require_relative '../dsl/dsl'
 require_relative '../helpers/helpers'
+require 'gooddata/extensions/class'
 
 module GoodData
   module LCM2
     module Type
+      using ClassExtensions
+
       class BaseType
         class << self
           include Dsl::Dsl
