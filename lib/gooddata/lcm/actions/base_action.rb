@@ -1,25 +1,22 @@
 # Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
+require 'gooddata/extensions/class'
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+require 'gooddata/extensions/string'
+require 'gooddata/extensions/nil'
+require 'gooddata/extensions/object'
 
 require_relative '../dsl/dsl'
 require_relative '../helpers/helpers'
 require_relative '../types/types'
 
-require 'gooddata/extensions/true'
-require 'gooddata/extensions/false'
-require 'gooddata/extensions/integer'
-require 'gooddata/extensions/nil'
-
 module GoodData
   module LCM2
     class BaseAction
       class << self
-        using TrueExtensions
-        using FalseExtensions
-        using IntegerExtensions
-        using NilExtensions
-
         include Dsl::Dsl
 
         def check_params(specification, params)

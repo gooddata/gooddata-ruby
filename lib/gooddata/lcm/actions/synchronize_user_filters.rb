@@ -71,10 +71,13 @@ module GoodData
       end
 
       class << self
+        using ClassExtensions
         using TrueExtensions
         using FalseExtensions
         using IntegerExtensions
+        using StringExtensions
         using NilExtensions
+        using ObjectExtensions
 
         MODES = %w(
           add_to_organization

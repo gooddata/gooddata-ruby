@@ -43,6 +43,14 @@ module GoodData
       ]
 
       class << self
+        using ClassExtensions
+        using TrueExtensions
+        using FalseExtensions
+        using IntegerExtensions
+        using StringExtensions
+        using NilExtensions
+        using ObjectExtensions
+
         def call(params)
           return [] unless params.apply_maql_ddl.to_b
 

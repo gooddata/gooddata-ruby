@@ -41,9 +41,13 @@ module GoodData
       end
 
       class << self
+        using ClassExtensions
         using TrueExtensions
         using FalseExtensions
+        using IntegerExtensions
         using StringExtensions
+        using NilExtensions
+        using ObjectExtensions
 
         def call(params)
           results = []

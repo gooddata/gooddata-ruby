@@ -6,19 +6,27 @@
 
 require 'terminal-table'
 
-require_relative 'actions/actions'
-require_relative 'dsl/dsl'
-require_relative 'helpers/helpers'
-
 require 'gooddata/extensions/class'
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+require 'gooddata/extensions/string'
+require 'gooddata/extensions/nil'
+require 'gooddata/extensions/object'
+
+require_relative 'actions/actions'
+require_relative 'dsl/dsl'
+require_relative 'helpers/helpers'
 
 module GoodData
   module LCM2
     using ::ClassExtensions
     using ::TrueExtensions
     using ::FalseExtensions
+    using ::IntegerExtensions
+    using ::StringExtensions
+    using ::NilExtensions
+    using ::ObjectExtensions
 
     class SmartHash < Hash
       @specification = nil

@@ -29,11 +29,13 @@ module GoodData
       end
 
       class << self
+        using ClassExtensions
         using TrueExtensions
         using FalseExtensions
         using IntegerExtensions
-        using NilExtensions
         using StringExtensions
+        using NilExtensions
+        using ObjectExtensions
 
         def call(params)
           # set default value for include_computed_attributes
