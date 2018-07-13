@@ -4,9 +4,13 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require 'gooddata/extensions/object'
+
 module GoodData
   module Environment
     class << self
+      using ObjectExtensions
+
       BRANCH_TO_ENVIRONMENT = {
         develop: 'testing',
         hotfix: 'production'

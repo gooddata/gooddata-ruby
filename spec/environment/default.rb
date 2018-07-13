@@ -11,6 +11,8 @@ require 'gooddata/helpers/global_helpers'
 module GoodData
   module Environment
     module ConnectionHelper
+      using ObjectExtensions
+
       set_const :GD_PROJECT_TOKEN, ''
       set_const :GD_MAX_RETRY, Helpers::GD_MAX_RETRY
 
@@ -26,17 +28,23 @@ module GoodData
     end
 
     module ProcessHelper
+      using ObjectExtensions
+
       set_const :PROCESS_ID, ''
       set_const :DEPLOY_NAME, 'main.rb'
     end
 
     module ProjectHelper
+      using ObjectExtensions
+
       set_const :PROJECT_ID, ''
       set_const :PROJECT_TITLE, 'GoodTravis'
       set_const :PROJECT_SUMMARY, 'No summary'
     end
 
     module ScheduleHelper
+      using ObjectExtensions
+
       set_const :SCHEDULE_ID, ''
     end
   end

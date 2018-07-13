@@ -18,9 +18,12 @@ require 'gooddata/extensions/integer'
 require 'gooddata/extensions/nil'
 require 'gooddata/extensions/numeric'
 require 'gooddata/extensions/big_decimal'
+require 'gooddata/extensions/object'
 
 module GoodData
   module Helpers
+    using ObjectExtensions
+
     extend Hashie::Extensions::StringifyKeys::ClassMethods
     extend Hashie::Extensions::SymbolizeKeys::ClassMethods
 
@@ -37,6 +40,7 @@ module GoodData
       using NilExtensions
       using NumericExtensions
       using BigDecimalExtensions
+      using ObjectExtensions
 
       def error(msg)
         STDERR.puts(msg)
