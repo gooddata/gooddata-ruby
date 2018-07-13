@@ -31,6 +31,7 @@ module GoodData
       class << self
         using TrueExtensions
         using FalseExtensions
+        using IntegerExtensions
 
         def call(params)
           # set default value for include_computed_attributes

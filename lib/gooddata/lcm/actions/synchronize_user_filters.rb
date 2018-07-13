@@ -73,6 +73,7 @@ module GoodData
       class << self
         using TrueExtensions
         using FalseExtensions
+        using IntegerExtensions
 
         MODES = %w(
           add_to_organization

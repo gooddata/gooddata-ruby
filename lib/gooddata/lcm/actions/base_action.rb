@@ -8,11 +8,13 @@ require_relative '../types/types'
 
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
 
 module GoodData
   module LCM2
     using TrueExtensions
     using FalseExtensions
+    using IntegerExtensions
 
     class BaseAction
       class << self

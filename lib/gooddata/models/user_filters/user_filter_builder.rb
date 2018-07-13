@@ -9,12 +9,14 @@ require 'active_support/core_ext/hash/indifferent_access'
 require 'gooddata/extensions/enumerable'
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
 
 module GoodData
   module UserFilterBuilder
     using EnumerableExtensions
     using FalseExtensions
     using TrueExtensions
+    using IntegerExtensions
 
     # Main Entry function. Gets values and processes them to get filters
     # that are suitable for other function to process.
