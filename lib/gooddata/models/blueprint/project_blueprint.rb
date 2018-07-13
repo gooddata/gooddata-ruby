@@ -126,7 +126,7 @@ module GoodData
       def self.dataset?(project, name, options = {})
         find_dataset(project, name, options)
         true
-      rescue
+      rescue StandardError
         false
       end
 
@@ -164,7 +164,7 @@ module GoodData
       def self.date_dimension?(project, name)
         find_date_dimension(project, name)
         true
-      rescue
+      rescue StandardError
         false
       end
 
@@ -767,7 +767,7 @@ module GoodData
         errors.concat datasets.reduce([]) { |acc, elem| acc.concat(elem.validate) }
         errors.concat datasets.reduce([]) { |acc, elem| acc.concat(elem.validate_gd_data_type_errors) }
         errors
-      rescue
+      rescue StandardError
         raise GoodData::ValidationError
       end
 
