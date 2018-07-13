@@ -16,6 +16,7 @@ require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
 require 'gooddata/extensions/nil'
+require 'gooddata/extensions/numeric'
 require 'gooddata/extensions/big_decimal'
 
 module GoodData
@@ -34,6 +35,7 @@ module GoodData
       using FalseExtensions
       using IntegerExtensions
       using NilExtensions
+      using NumericExtensions
       using BigDecimalExtensions
 
       def error(msg)
