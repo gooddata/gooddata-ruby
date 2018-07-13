@@ -263,6 +263,7 @@ describe 'UsersFiltersBrick' do
         users_csv = ConfigurationHelper.csv_from_hashes([{ custom_login: @test_user.login, client_id: 'testingclient' }])
         Support::S3Helper.upload_file(users_csv, @test_context[:users_brick_input][:s3_key])
 
+        @project.add_data_permissions([])
 
         config_path = ConfigurationHelper.create_interpolated_tempfile(
           ads_template_path,

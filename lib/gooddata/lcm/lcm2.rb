@@ -155,12 +155,14 @@ module GoodData
 
       users: [
         CollectDataProduct,
+        CollectMultipleProjectsColumn,
         CollectSegments,
         SynchronizeUsers
       ],
 
       user_filters: [
         CollectDataProduct,
+        CollectMultipleProjectsColumn,
         CollectUsersBrickUsers,
         CollectSegments,
         SynchronizeUserFilters

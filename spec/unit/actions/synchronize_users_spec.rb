@@ -52,10 +52,11 @@ describe GoodData::LCM2::SynchronizeUsers do
       let(:params) do
         params = {
           sync_mode: 'sync_one_project_based_on_custom_id',
+          multiple_projects_column: 'client_id',
           GDC_GD_CLIENT: client,
           input_source: {},
           domain: 'bar',
-          gdc_logger: logger,
+          gdc_logger: logger
         }
         GoodData::LCM2.convert_to_smart_hash(params)
       end
@@ -81,6 +82,7 @@ describe GoodData::LCM2::SynchronizeUsers do
       let(:params) do
         params = {
           sync_mode: 'sync_one_project_based_on_pid',
+          multiple_projects_column: 'project_id',
           GDC_GD_CLIENT: client,
           input_source: {},
           domain: 'bar',
@@ -133,7 +135,10 @@ describe GoodData::LCM2::SynchronizeUsers do
       end
 
       context 'sync_multiple_projects_based_on_custom_id mode' do
-        let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_custom_id')) }
+        let(:params) do
+          GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_custom_id',
+                                                                              multiple_projects_column: 'client_id'))
+        end
         before do
           allow(File).to receive(:open).and_return("client_id\n123456789")
           allow(domain).to receive(:clients).with(:all, nil).and_return([organization, organization_not_in_segment])
@@ -144,7 +149,10 @@ describe GoodData::LCM2::SynchronizeUsers do
       end
 
       context 'sync_multiple_projects_based_on_pid mode' do
-        let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_pid')) }
+        let(:params) do
+          GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_pid',
+                                                                              multiple_projects_column: 'project_id'))
+        end
         before do
           allow(File).to receive(:open).and_return("project_id\n123456789")
           allow(domain).to receive(:projects).with(:all, nil).and_return([organization, organization_not_in_segment])
@@ -155,7 +163,10 @@ describe GoodData::LCM2::SynchronizeUsers do
       end
 
       context 'sync_domain_client_workspaces mode' do
-        let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_domain_client_workspaces')) }
+        let(:params) do
+          GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_domain_client_workspaces',
+                                                                              multiple_projects_column: 'client_id'))
+        end
         before do
           allow(File).to receive(:open).and_return("client_id\n123456789")
           allow(domain).to receive(:clients).with(:all, nil).and_return([organization, organization_not_in_segment])
@@ -164,8 +175,6 @@ describe GoodData::LCM2::SynchronizeUsers do
 
         it_behaves_like 'a user action filtering segments'
       end
-
-
     end
 
     context 'when using mode' do
@@ -178,6 +187,7 @@ describe GoodData::LCM2::SynchronizeUsers do
           domain: 'bar',
           gdc_logger: logger,
           sync_mode: 'sync_domain_client_workspaces',
+          multiple_projects_column: 'client_id',
           segments: [segment]
         }
         GoodData::LCM2.convert_to_smart_hash(params)

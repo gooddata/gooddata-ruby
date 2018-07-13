@@ -13,14 +13,13 @@ shared_context 'using mode with custom_id' do
     allow(project).to receive(:uri).and_return('project-uri')
     allow(project).to receive(:add_data_permissions)
     allow(domain).to receive(:clients).and_return([])
-    allow(data_source).to receive(:realize).and_return('filepath')
   end
 end
 
 describe GoodData::LCM2::SynchronizeUserFilters do
   let(:client) { double('client') }
   let(:user) { double('user') }
-  let(:data_source) { double('user') }
+  let(:data_source) { double('data source') }
   let(:domain) { double('domain') }
   let(:project) { double('project') }
   let(:organization) { double('organization') }
@@ -31,6 +30,8 @@ describe GoodData::LCM2::SynchronizeUserFilters do
     allow(client).to receive(:class).and_return(GoodData::Rest::Client)
     allow(data_product).to receive(:class).and_return GoodData::DataProduct
     allow(logger).to receive(:class).and_return Logger
+
+    allow(data_source).to receive(:realize).and_return('filepath')
 
     allow(client).to receive(:projects).and_return(project)
     allow(client).to receive(:domain).and_return(domain)
@@ -47,12 +48,13 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       allow(project).to receive(:metadata).and_return({})
       allow(project).to receive(:uri)
       allow(data_source).to receive(:realize)
-      allow(organization).to receive(:id).and_return('client123')
+      allow(organization).to receive(:id).and_return('123456789')
       allow(organization).to receive(:project).and_return(project)
     end
     context 'when mode requires client_id' do
       before do
-        allow(domain).to receive(:clients).and_return(organization)
+        allow(domain).to receive(:clients).with(:all, data_product).and_return([organization])
+        allow(domain).to receive(:clients).with('123456789', data_product).and_return(organization)
       end
       let(:params_stub) do
         {
@@ -61,7 +63,8 @@ describe GoodData::LCM2::SynchronizeUserFilters do
           domain: 'bar',
           filters_config: { labels: [] },
           gdc_logger: logger,
-          data_product: data_product
+          data_product: data_product,
+          multiple_projects_column: 'client_id'
         }
       end
 
@@ -82,7 +85,10 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         end
 
         context 'sync_multiple_projects_based_on_custom_id mode' do
-          let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_custom_id')) }
+          let(:params) do
+            GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_custom_id',
+                                                                   multiple_projects_column: 'client_id'))
+          end
           before do
             allow(File).to receive(:open).and_return("client_id\n123456789")
             allow(domain).to receive(:clients).with(:all, nil).and_return([organization, organization_not_in_segment])
@@ -93,16 +99,19 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         end
 
         context 'sync_multiple_projects_based_on_pid mode' do
-          let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_pid')) }
           before do
             allow(File).to receive(:open).and_return("project_id\n123456789")
             allow(domain).to receive(:projects).with(:all, nil).and_return([organization, organization_not_in_segment])
             allow(domain).to receive(:projects).with('123456789', nil).and_return(organization)
           end
 
-          it_behaves_like 'a user action filtering segments'
+          it_behaves_like 'a user action filtering segments' do
+            let(:params) do
+              GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_multiple_projects_based_on_custom_id',
+                                                                     multiple_projects_column: 'project_id'))
+            end
+          end
         end
-
 
         context 'sync_domain_client_workspaces mode' do
           let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_domain_client_workspaces')) }
@@ -150,6 +159,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
         allow(project).to receive(:metadata).and_return({})
         allow(project).to receive(:uri).and_return('project-uri')
         allow(domain).to receive(:clients).and_return([])
+        allow(File).to receive(:open).and_return("client_id\n123456789")
       end
 
       it 'fails when unable to get filter value for selecting filters' do
@@ -179,11 +189,10 @@ describe GoodData::LCM2::SynchronizeUserFilters do
     end
 
     context 'when the input set does not contain data for the current project' do
-      it 'does not fail and logs a warning' do
+      it 'does not fail' do
         expect(File).to receive(:open)
         expect(CSV).to receive(:foreach).and_yield({})
         expect(project).to receive(:add_data_permissions)
-        expect(logger).to receive(:warn)
         expect { GoodData::LCM2.run_action(subject.class, params) }.to_not raise_error
       end
     end
@@ -210,6 +219,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
       expect { GoodData::LCM2.run_action(subject.class, params) }.to raise_error(/The filter set can not be empty/)
     end
   end
+
   context 'when using unsuported sync_mode' do
     let(:params) do
       params = {

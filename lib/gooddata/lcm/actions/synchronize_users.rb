@@ -198,10 +198,10 @@ module GoodData
                                            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_pid'
-                      new_users.group_by { |u| u[:pid] }.flat_map.pmap do |project_id, users|
+                      new_users.group_by { |u| u[:pid] }.flat_map do |project_id, users|
                         begin
-                          current_project = client.projects(project_id)
-                          current_project.import_users(users,
+                          project = client.projects(project_id)
+                          project.import_users(users,
                                                domain: domain,
                                                whitelists: whitelists,
                                                ignore_failures: ignore_failures,
@@ -252,17 +252,17 @@ module GoodData
                                            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     when 'sync_multiple_projects_based_on_custom_id'
-                      new_users.group_by { |u| u[:pid] }.flat_map.pmap do |client_id, users|
+                      new_users.group_by { |u| u[:pid] }.flat_map do |client_id, users|
                         fail "Client id cannot be empty" if client_id.blank?
                         begin
-                          current_project = domain.clients(client_id, data_product).project
+                          project = domain.clients(client_id, data_product).project
                         rescue RestClient::BadRequest => e
                           raise e unless /does not exist in data product/ =~ e.response
                           fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\""
                         end
-                        fail "Client #{client_id} does not have project." unless current_project
-                        puts "Project #{current_project.pid} of client #{client_id} will receive #{users.count} users"
-                        current_project.import_users(users,
+                        fail "Client #{client_id} does not have project." unless project
+                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
+                        project.import_users(users,
                                              domain: domain,
                                              whitelists: whitelists,
                                              ignore_failures: ignore_failures,
@@ -285,11 +285,11 @@ module GoodData
                           puts "Client #{client_id} is outside segments_filter #{params.segments}"
                           next
                         end
-                        current_project = c.project
-                        fail "Client #{client_id} does not have project." unless current_project
+                        project = c.project
+                        fail "Client #{client_id} does not have project." unless project
                         working_client_ids << client_id.to_s
-                        puts "Project #{current_project.pid} of client #{client_id} will receive #{users.count} users"
-                        current_project.import_users(users,
+                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
+                        project.import_users(users,
                                              domain: domain,
                                              whitelists: whitelists,
                                              ignore_failures: ignore_failures,
@@ -304,21 +304,21 @@ module GoodData
                         domain_clients.each do |c|
                           next if working_client_ids.include?(c.client_id.to_s)
                           begin
-                            current_project = c.project
+                            project = c.project
                           rescue => e
                             puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
                             next
                           end
-                          unless current_project
+                          unless project
                             puts "Client #{c.client_id} has no project."
                             next
                           end
-                          if current_project.deleted?
-                            puts "Project #{current_project.pid} of client #{c.client_id} is deleted."
+                          if project.deleted?
+                            puts "Project #{project.pid} of client #{c.client_id} is deleted."
                             next
                           end
-                          puts "Synchronizing all users in project #{current_project.pid} of client #{c.client_id}"
-                          res += current_project.import_users([],
+                          puts "Synchronizing all users in project #{project.pid} of client #{c.client_id}"
+                          res += project.import_users([],
                                                       domain: domain,
                                                       whitelists: whitelists,
                                                       ignore_failures: ignore_failures,
@@ -370,20 +370,9 @@ module GoodData
           country_column              = params.country_column || 'country'
           phone_column                = params.phone_column || 'phone'
           ip_whitelist_column         = params.ip_whitelist_column || 'ip_whitelist'
-          mode                        = params.sync_mode
 
           sso_provider = params.sso_provider
           authentication_modes = params.authentication_modes || []
-
-          multiple_projects_column = params.multiple_projects_column
-          unless multiple_projects_column
-            client_modes = %w(sync_domain_client_workspaces sync_one_project_based_on_custom_id sync_multiple_projects_based_on_custom_id)
-            multiple_projects_column = if client_modes.include?(mode)
-                                         'client_id'
-                                       else
-                                         'project_id'
-                                       end
-          end
 
           dwh = params.ads_client
           if dwh
@@ -422,7 +411,7 @@ module GoodData
               :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
               :authentication_modes => modes,
               :user_group => user_group,
-              :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
+              :pid => params.multiple_projects_column.nil? ? nil : (row[params.multiple_projects_column] || row[params.multiple_projects_column.to_sym]),
               :language => row[language_column] || row[language_column.to_sym],
               :company => row[company_column] || row[company_column.to_sym],
               :position => row[position_column] || row[position_column.to_sym],
