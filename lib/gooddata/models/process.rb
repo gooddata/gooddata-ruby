@@ -35,6 +35,7 @@ module GoodData
             c.create(Process, process_data, project: project)
           end
         elsif id == :all
+          c ||= GoodData.client # c may not defined if project is not defined
           uri = "/gdc/account/profile/#{c.user.obj_id}/dataload/processes"
           data = c.get(uri)
           pids = data['processes']['items'].map { |process_data| process_data['process']['links']['self'].match(%r{/gdc/projects/(\w*)/})[1] }.uniq
@@ -203,7 +204,7 @@ module GoodData
 
       def save(data, options = { client: GoodData.client, project: GoodData.project })
         client, project = GoodData.get_client_and_project(options)
-        process_id = data[:process_id]
+        process_id = options[:process_id]
         res =
           if process_id.nil?
             client.post("/gdc/projects/#{project.pid}/dataload/processes", data)
