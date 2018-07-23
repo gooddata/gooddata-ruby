@@ -134,7 +134,7 @@ shared_context 'lcm bricks' do
     @prod_rest_client = GoodData.connect(prod_connection_parameters)
     @prod_ads = ConfigurationHelper.create_development_datawarehouse(client: @prod_rest_client,
                                                                      title: 'Production ADS',
-                                                                     auth_token: @config[:prod_token])
+                                                                     auth_token: @config[:vertica_prod_token])
 
     @prod_output_stage_project = ConfigurationHelper.create_output_stage_project(
         @prod_rest_client,
