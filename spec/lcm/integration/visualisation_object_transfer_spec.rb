@@ -114,4 +114,10 @@ describe 'release brick' do
     expect(prodVisualizationObject.first.meta['title']).to eq('Foo')
     expect(prodVisualizationObject.first.content['buckets'].first['items'].first['measure']['title']).to eq('Count of Account')
   end
+
+  after(:all) do
+    @project.delete
+    ConfigurationHelper.delete_datawarehouse(@ads)
+    ConfigurationHelper.delete_datawarehouse(@prod_ads)
+  end
 end

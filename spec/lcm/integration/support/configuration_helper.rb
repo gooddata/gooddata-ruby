@@ -47,6 +47,16 @@ class ConfigurationHelper
       datawarehouse
     end
 
+    def delete_datawarehouse(ads)
+      begin # rubocop:disable RedundantBegin
+        GoodData.logger.info("Deleting ADS #{ads.obj_id}")
+        ads.delete
+      rescue StandardError => e
+        GoodData.logger.warn("Failed to delete development ADS. #{e}")
+        GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
+      end
+    end
+
     def ensure_development_project(opts = {})
       if $reuse_project
         begin
