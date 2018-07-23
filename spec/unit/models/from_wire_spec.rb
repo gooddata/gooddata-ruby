@@ -256,8 +256,11 @@ describe GoodData::Model::FromWire do
   end
 
   describe '#parse_dataset' do
+    let(:model_view) do
+      MultiJson.load(File.read('./spec/data/wire_models/nu_model.json'))
+    end
+
     it 'should be able to parse dataset' do
-      model_view = MultiJson.load(File.read('./spec/data/wire_models/nu_model.json'))
       dataset = GoodData::Model::FromWire.dataset_from_wire(model_view['projectModelView']['model']['projectModel']['datasets'].first)
       expect(dataset).to have_key(:type)
       expect(dataset[:type]).to eq :dataset
@@ -266,6 +269,13 @@ describe GoodData::Model::FromWire do
       expect(dataset[:columns].select { |c| c[:type] == :fact }.count).to eq 3
       expect(dataset[:columns].select { |c| c[:type] == :reference }.count).to eq 6
       expect(dataset[:columns].select { |c| c[:type] == :date }.count).to eq 5
+    end
+
+    it 'should parse bridges too' do
+      dataset = GoodData::Model::FromWire.dataset_from_wire(
+        model_view['projectModelView']['model']['projectModel']['datasets'].detect { |d| d['dataset']['identifier'].eql? "dataset.parentplanbookings" }
+      )
+      expect(dataset[:columns].select { |c| c[:type] == :bridge }.first[:dataset]).to eq 'dataset.oracleebsreports'
     end
   end
 

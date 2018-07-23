@@ -166,6 +166,14 @@ module GoodData
         find_columns_by_type(dataset, :reference, :date)
       end
 
+      # Returns bridges of a dataset
+      #
+      # @param dataset [Hash] Dataset blueprint
+      # @return [Array<Hash>] returns the bridges or an empty array
+      def self.bridges(dataset)
+        find_columns_by_type(dataset, :bridge)
+      end
+
       # Returns anchor of a dataset
       #
       # @return [Hash] returns the anchor or nil
@@ -222,6 +230,8 @@ module GoodData
             GoodData::Model::FactBlueprintField.new(c, self)
           when :label
             GoodData::Model::LabelBlueprintField.new(c, self)
+          when :bridge
+            GoodData::Model::BridgeBlueprintField.new(c, self)
           when :reference
             GoodData::Model::ReferenceBlueprintField.new(c, self)
           when :date
@@ -350,6 +360,13 @@ module GoodData
       # @return [Array<Hash>] returns the references or an empty array
       def references
         find_columns_by_type(:reference, :date)
+      end
+
+      # Returns bridges of a dataset
+      #
+      # @return [Array<Hash>] returns the bridges or an empty array
+      def bridges
+        find_columns_by_type(:bridge)
       end
 
       # Removes column from from the blueprint
