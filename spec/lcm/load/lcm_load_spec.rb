@@ -12,6 +12,7 @@ require_relative '../integration/shared_contexts_for_lcm_specs'
 $master_projects = []
 $client_projects = []
 $master = false
+$start_time
 
 $segments_multiplier = ENV['GD_LCM_SEGMENTS_MULTIPLIER'] || 2
 $workspaces_multiplier = ENV['GD_LCM_WORKSPACES_MULTIPLIER'] || 100
@@ -20,37 +21,55 @@ describe 'LCM load test' do
   include_context 'lcm bricks'
 
   before(:all) do
-    @start_time = Time.now
+    $start_time = Time.now
   end
 
   after(:all) do
-    duration = Time.now - @start_time
+    duration = Time.now - $start_time
     puts '=' * 10
     puts "The run took #{duration} seconds"
-    puts "Out of that, release took #{@release_time} s, provisioning took #{@provisioning_time} s, rollout took #{@rollout_time} s"
+    puts "Out of that, release took #{$release_time} s, provisioning took #{$provisioning_time} s, rollout took #{$rollout_time} s"
   end
 
   describe 'release' do
+    before(:all) do
+      @config_template_path = File.expand_path(
+        '../../integration/params/release_brick.json.erb',
+        __FILE__
+      )
+    end
     include_context 'release brick'
     after(:all) do
-      @release_time = Time.now - @start_time
+      $release_time = Time.now - $start_time
     end
     # these need to be in every describe to ensure the before and after hooks (which contain the brick run) happen
     it('does not fail') {}
   end
 
   describe 'provisioning' do
+    before(:all) do
+      @config_template_path = File.expand_path(
+        '../../integration/params/provisioning_brick.json.erb',
+        __FILE__
+      )
+    end
     include_context 'provisioning brick'
     after(:all) do
-      @provisioning_time = Time.now - @start_time
+      $provisioning_time = Time.now - $start_time
     end
     it('does not fail') {}
   end
 
   describe 'rollout' do
+    before(:all) do
+      @config_template_path = File.expand_path(
+        '../../integration/params/rollout_brick.json.erb',
+        __FILE__
+      )
+    end
     include_context 'rollout brick'
     after(:all) do
-      @rollout_time = Time.now - @start_time
+      $rollout_time = Time.now - $start_time
     end
     it('does not fail') {}
   end
