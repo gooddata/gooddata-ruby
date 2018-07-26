@@ -18,6 +18,17 @@ module GoodData
 
       set_const :DEFAULT_USERNAME, 'bear@gooddata.com'
       set_const :DEFAULT_PASSWORD, GoodData::Helpers.decrypt("xl/HBp7FLeMAlhXfm4Y5sKnpdf51QNNZ2KaXLb98E4c=", ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY'])
+      set_const :LCM_ENVIRONMENT,
+                dev_server: "#{pi_env}.na.intgdc.com",
+                prod_server: "#{pi_env}.na.intgdc.com",
+                dev_token: "LHJX476wS3lDofhiekbSXWoPR+LWuWFp17jLeLY3ZFM=\n",
+                prod_token: "LHJX476wS3lDofhiekbSXWoPR+LWuWFp17jLeLY3ZFM=\n",
+                vertica_dev_token: "ZPKbHox2/7vBTv5CvMX02mQ5MG0RqPaWt13Ywtd8b0k=\n",
+                vertica_prod_token: "ZPKbHox2/7vBTv5CvMX02mQ5MG0RqPaWt13Ywtd8b0k=\n",
+                dev_organization: 'default',
+                prod_organization: 'default',
+                username: DEFAULT_USERNAME,
+                password: "xl/HBp7FLeMAlhXfm4Y5sKnpdf51QNNZ2KaXLb98E4c="
     end
   end
 end
