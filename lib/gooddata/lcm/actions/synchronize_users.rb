@@ -201,7 +201,6 @@ module GoodData
                       new_users.group_by { |u| u[:pid] }.flat_map do |project_id, users|
                         begin
                           project = client.projects(project_id)
-                          fail "You (user executing the script - #{client.user.login}) is not admin in project \"#{project_id}\"." unless project.am_i_admin?
                           project.import_users(users,
                                                domain: domain,
                                                whitelists: whitelists,
