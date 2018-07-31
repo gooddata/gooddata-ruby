@@ -188,7 +188,7 @@ module GoodData
                   end
                 end
               else
-                csv_header = File.open(path, &:gets).split(',')
+                csv_header = File.open(path, &:gets).chomp.split(',')
                 zip.add(filename, path)
               end
 

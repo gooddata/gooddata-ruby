@@ -488,7 +488,7 @@ module GoodData
         begin
           request.execute
         rescue => e
-          GoodData.logger.error("Error when uploading file #{filename}", e)
+          GoodData.logger.error("Error when uploading file #{filename}")
           raise e
         end
       end
