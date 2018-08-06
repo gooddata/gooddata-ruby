@@ -7,11 +7,11 @@
 require_relative 'base_action'
 require 'gooddata/extensions/enumerable'
 
+using EnumerableExtensions
+
 module GoodData
   module LCM2
     class PurgeClients < BaseAction
-      using EnumerableExtensions
-
       DESCRIPTION = 'Purge LCM Clients'
 
       PARAMS = define_params(self) do

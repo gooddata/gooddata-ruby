@@ -8,9 +8,9 @@ require_relative '../mixins/rest_resource'
 
 require 'gooddata/extensions/object'
 
-module GoodData
-  using ObjectExtensions
+using ObjectExtensions
 
+module GoodData
   class Subscription < Rest::Resource
     SUBSCRIPTION_PATH = '/gdc/projects/%s/users/%s/subscriptions'
 

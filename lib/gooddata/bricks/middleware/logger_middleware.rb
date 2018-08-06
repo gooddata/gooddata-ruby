@@ -13,18 +13,18 @@ require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
 require 'gooddata/extensions/object'
 
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+using ObjectExtensions
+
 require_relative 'base_middleware'
 
 module GoodData
   module Bricks
     class LoggerMiddleware < Bricks::Middleware
-      using TrueExtensions
-      using FalseExtensions
-      using IntegerExtensions
-      using StringExtensions
-      using NilExtensions
-      using ObjectExtensions
-
       def call(params)
         params = params.to_hash
         logger = nil

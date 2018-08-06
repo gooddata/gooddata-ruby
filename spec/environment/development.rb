@@ -5,11 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 require 'gooddata/extensions/object'
 
+using ObjectExtensions
+
 module GoodData
   module Environment
     module ConnectionHelper
-      using ObjectExtensions
-
       encrypted_token = "ciKR76io4KgIUksL6BOF5GW9frsXHAa7JUFqRmc5Wsw=\n"
       key = ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
       token = GoodData::Helpers.decrypt(encrypted_token, key)
@@ -32,20 +32,14 @@ module GoodData
     end
 
     module ProcessHelper
-      using ObjectExtensions
-
       set_const :PROCESS_ID, 'b671fcfe-f6fd-4379-92c1-3db9eceb1c54'
     end
 
     module ProjectHelper
-      using ObjectExtensions
-
       set_const :PROJECT_ID, 'rd87oh5rnbf1qhh9vjq5lkgq5v6okei5'
     end
 
     module ScheduleHelper
-      using ObjectExtensions
-
       set_const :SCHEDULE_ID, '58ad6260e4b0ee87af79b0b8'
     end
   end

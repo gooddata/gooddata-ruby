@@ -6,6 +6,14 @@
 
 require_relative 'base_action'
 
+using ClassExtensions
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+using ObjectExtensions
+
 module GoodData
   module LCM2
     # Applies custom MAQL DDL to all client projects so customized
@@ -43,14 +51,6 @@ module GoodData
       ]
 
       class << self
-        using ClassExtensions
-        using TrueExtensions
-        using FalseExtensions
-        using IntegerExtensions
-        using StringExtensions
-        using NilExtensions
-        using ObjectExtensions
-
         def call(params)
           return [] unless params.apply_maql_ddl.to_b
 

@@ -11,14 +11,14 @@ require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
 
+using EnumerableExtensions
+using FalseExtensions
+using TrueExtensions
+using IntegerExtensions
+using NilExtensions
+
 module GoodData
   module UserFilterBuilder
-    using EnumerableExtensions
-    using FalseExtensions
-    using TrueExtensions
-    using IntegerExtensions
-    using NilExtensions
-
     # Main Entry function. Gets values and processes them to get filters
     # that are suitable for other function to process.
     # Values can be read from file or provided inline as an array.

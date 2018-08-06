@@ -6,6 +6,14 @@
 
 require_relative 'base_action'
 
+using ClassExtensions
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+using ObjectExtensions
+
 module GoodData
   module LCM2
     class SynchronizeLdm < BaseAction
@@ -41,14 +49,6 @@ module GoodData
       end
 
       class << self
-        using ClassExtensions
-        using TrueExtensions
-        using FalseExtensions
-        using IntegerExtensions
-        using StringExtensions
-        using NilExtensions
-        using ObjectExtensions
-
         def call(params)
           results = []
           synchronize = []

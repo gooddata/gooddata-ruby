@@ -6,6 +6,10 @@
 
 require 'gooddata'
 
+require 'gooddata/extensions/enumerable'
+
+using EnumerableExtensions
+
 describe "Swapping a date dimension and exchanging all attributes/elements", :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection

@@ -3,11 +3,11 @@
 # LICENSE file in the root directory of this source tree.
 require 'gooddata/extensions/enumerable'
 
+using EnumerableExtensions
+
 module GoodData
   module Model
     module FromWire
-      using EnumerableExtensions
-
       # Converts dataset from wire format into an internal blueprint representation
       #
       # @param dataset [Hash] Whatever comes from wire

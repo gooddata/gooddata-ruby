@@ -4,11 +4,11 @@
 
 require 'gooddata/extensions/enumerable'
 
+using EnumerableExtensions
+
 module GoodData
   module Model
     module ToManifest
-      using EnumerableExtensions
-
       # Converts attribute or anchor to manifest
       #
       # @param project [GoodData::Model::ProjectBlueprint] Project blueprint

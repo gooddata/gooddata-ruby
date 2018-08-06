@@ -3,11 +3,11 @@
 # LICENSE file in the root directory of this source tree.
 require 'gooddata/extensions/enumerable'
 
+using EnumerableExtensions
+
 module GoodData
   module Model
     class ProjectBlueprint
-      using EnumerableExtensions
-
       attr_accessor :data
 
       # Instantiates a project blueprint either from a file or from a string containing

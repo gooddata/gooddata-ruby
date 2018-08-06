@@ -32,6 +32,10 @@ require_relative 'metadata/scheduled_mail'
 require_relative 'metadata/scheduled_mail/dashboard_attachment'
 require_relative 'metadata/scheduled_mail/report_attachment'
 
+require 'gooddata/extensions/enumerable'
+
+using EnumerableExtensions
+
 module GoodData
   class Project < Rest::Resource
     USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'

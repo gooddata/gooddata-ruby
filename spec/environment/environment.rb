@@ -6,11 +6,11 @@
 
 require 'gooddata/extensions/object'
 
+using ObjectExtensions
+
 module GoodData
   module Environment
     class << self
-      using ObjectExtensions
-
       BRANCH_TO_ENVIRONMENT = {
         develop: 'testing',
         hotfix: 'production'

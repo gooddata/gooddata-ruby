@@ -6,6 +6,14 @@
 
 require_relative 'base_action'
 
+using ClassExtensions
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+using ObjectExtensions
+
 module GoodData
   module LCM2
     class SynchronizeUserFilters < BaseAction
@@ -71,14 +79,6 @@ module GoodData
       end
 
       class << self
-        using ClassExtensions
-        using TrueExtensions
-        using FalseExtensions
-        using IntegerExtensions
-        using StringExtensions
-        using NilExtensions
-        using ObjectExtensions
-
         MODES = %w(
           add_to_organization
           sync_project

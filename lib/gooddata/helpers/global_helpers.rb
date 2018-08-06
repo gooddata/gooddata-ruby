@@ -21,10 +21,17 @@ require 'gooddata/extensions/big_decimal'
 require 'gooddata/extensions/object'
 require 'gooddata/extensions/symbol'
 
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using NilExtensions
+using NumericExtensions
+using BigDecimalExtensions
+using ObjectExtensions
+using SymbolExtensions
+
 module GoodData
   module Helpers
-    using ObjectExtensions
-
     extend Hashie::Extensions::StringifyKeys::ClassMethods
     extend Hashie::Extensions::SymbolizeKeys::ClassMethods
 
@@ -35,15 +42,6 @@ module GoodData
     set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 3
 
     class << self
-      using TrueExtensions
-      using FalseExtensions
-      using IntegerExtensions
-      using NilExtensions
-      using NumericExtensions
-      using BigDecimalExtensions
-      using ObjectExtensions
-      using SymbolExtensions
-
       def error(msg)
         STDERR.puts(msg)
         exit 1

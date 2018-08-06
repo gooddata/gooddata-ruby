@@ -5,10 +5,11 @@
 require_relative 'base_action'
 require 'gooddata/extensions/enumerable'
 
+using EnumerableExtensions
+
 module GoodData
   module LCM2
     class ExecuteSchedules < BaseAction
-      using EnumerableExtensions
 
       DESCRIPTION = 'Execute schedules'
 

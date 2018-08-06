@@ -4,14 +4,14 @@
 require 'gooddata/extensions/enumerable'
 require 'gooddata/extensions/hash'
 
+using EnumerableExtensions
+using HashExtensions
+
 module GoodData
   module Helpers
     ENCODED_PARAMS_KEY = 'gd_encoded_params'
     ENCODED_HIDDEN_PARAMS_KEY = 'gd_encoded_hidden_params'
     class << self
-      using EnumerableExtensions
-      using HashExtensions
-
       # Encodes parameters for passing them to GD execution platform.
       # Core types are kept and complex types (arrays, structures, etc) are
       # JSON encoded into key hash "gd_encoded_params" or

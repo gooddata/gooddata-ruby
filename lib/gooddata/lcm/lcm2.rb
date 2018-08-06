@@ -18,16 +18,16 @@ require_relative 'actions/actions'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
 
+using ClassExtensions
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+using ObjectExtensions
+
 module GoodData
   module LCM2
-    using ::ClassExtensions
-    using ::TrueExtensions
-    using ::FalseExtensions
-    using ::IntegerExtensions
-    using ::StringExtensions
-    using ::NilExtensions
-    using ::ObjectExtensions
-
     class SmartHash < Hash
       @specification = nil
       def method_missing(name, *_args)
