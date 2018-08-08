@@ -18,7 +18,6 @@ require 'gooddata/extensions/integer'
 require 'gooddata/extensions/nil'
 require 'gooddata/extensions/numeric'
 require 'gooddata/extensions/big_decimal'
-require 'gooddata/extensions/object'
 require 'gooddata/extensions/symbol'
 
 using TrueExtensions
@@ -27,7 +26,6 @@ using IntegerExtensions
 using NilExtensions
 using NumericExtensions
 using BigDecimalExtensions
-using ObjectExtensions
 using SymbolExtensions
 
 module GoodData

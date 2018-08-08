@@ -11,14 +11,12 @@ require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
 require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
-require 'gooddata/extensions/object'
 
 using TrueExtensions
 using FalseExtensions
 using IntegerExtensions
 using StringExtensions
 using NilExtensions
-using ObjectExtensions
 
 module GoodData
   module Bricks

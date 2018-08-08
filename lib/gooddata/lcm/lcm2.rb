@@ -12,7 +12,6 @@ require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
 require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
-require 'gooddata/extensions/object'
 
 require_relative 'actions/actions'
 require_relative 'dsl/dsl'
@@ -24,7 +23,6 @@ using FalseExtensions
 using IntegerExtensions
 using StringExtensions
 using NilExtensions
-using ObjectExtensions
 
 module GoodData
   module LCM2
