@@ -9,10 +9,6 @@ class Object
     end
   end
 
-  def blank?
-    respond_to?(:empty?) ? empty? : !self
-  end
-
   def duplicable?
     true
   end
