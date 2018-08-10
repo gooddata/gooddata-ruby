@@ -146,7 +146,7 @@ describe GoodData::LCM2::SynchronizeLdm do
       context 'when synchronize_ldm is diff_against_master' do
         let(:synchronize_ldm) { 'diff_against_master' }
         it 'does not fall back to diff against client' do
-          expect(target_project).not_to receive(:update_from_blueprint)
+          expect(target_project).to receive(:update_from_blueprint)
             .once
             .with(any_args, hash_including(maql_diff: maql_diff))
 
