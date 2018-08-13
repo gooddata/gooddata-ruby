@@ -35,8 +35,6 @@ module GoodData
         :to_pid
       ]
 
-      DEFAULT_TABLE_NAME = 'LCM_RELEASE'
-
       class << self
         def call(params)
           client = params.gdc_gd_client
@@ -49,16 +47,11 @@ module GoodData
 
             raise "Client(s) missing workspace: #{missing_project_clients.join(', ')}. Please make sure all clients have workspace." unless missing_project_clients.empty?
 
-            replacements = {
-              table_name: params.release_table_name || DEFAULT_TABLE_NAME,
-              segment_id: segment.segment_id
-            }
-
-            path = File.expand_path('../../data/select_from_lcm_release.sql.erb', __FILE__)
-            query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
-
-            res = params.ads_client.execute_select(query)
-            latest_master_id = res.max_by { |row| row[:version] }[:master_project_id]
+            latest_master_id = GoodData::LCM2::Helpers.latest_master_project(
+              params.release_table_name,
+              params.ads_client,
+              segment.segment_id
+            )[:master_project_id]
             latest_master = client.projects(latest_master_id)
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?

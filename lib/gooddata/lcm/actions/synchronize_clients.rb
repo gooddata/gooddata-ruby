@@ -44,8 +44,6 @@ module GoodData
         :master_pid
       ]
 
-      DEFAULT_TABLE_NAME = 'LCM_RELEASE'
-
       class << self
         def call(params)
           client = params.gdc_gd_client
@@ -63,17 +61,11 @@ module GoodData
           end
 
           results = segments.map do |segment|
-            replacements = {
-              table_name: params.release_table_name || DEFAULT_TABLE_NAME,
-              segment_id: segment.segment_id
-            }
-
-            path = File.expand_path('../../data/select_from_lcm_release.sql.erb', __FILE__)
-            query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
-
-            res = params.ads_client.execute_select(query)
-            sorted = res.sort_by { |row| row[:version] }
-            current_master = sorted.last[:master_project_id]
+            current_master = GoodData::LCM2::Helpers.latest_master_project(
+              params.release_table_name,
+              params.ads_client,
+              segment.segment_id
+            )[:master_project_id]
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
             master = client.projects(current_master)
