@@ -9,6 +9,7 @@ require_relative 'user_filters_brick'
 require_relative 'release_brick'
 require_relative 'provisioning_brick'
 require_relative 'rollout_brick'
+require_relative 'hello_world_brick'
 
 module GoodData
   module Bricks
@@ -86,6 +87,17 @@ module GoodData
         WarehouseMiddleware,
         RolloutBrick
         ])
+      end
+
+      def self.hello_world_brick_pipeline
+        prepare(
+          [
+            DecodeParamsMiddleware,
+            LoggerMiddleware,
+            BenchMiddleware,
+            HelloWorldBrick
+          ]
+        )
       end
     end
   end

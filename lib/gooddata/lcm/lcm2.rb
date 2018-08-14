@@ -152,6 +152,10 @@ module GoodData
 
       schedules_execution: [
         ExecuteSchedules
+      ],
+
+      hello_world: [
+        HelloWorld
       ]
     }
 
