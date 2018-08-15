@@ -283,8 +283,6 @@ module GoodData
 
         # TODO: Check all action params first
 
-        new_params = params
-
         fail_early = if params.key?(:fail_early)
                        params.fail_early.to_b
                      else

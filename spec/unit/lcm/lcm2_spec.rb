@@ -182,7 +182,7 @@ describe 'GoodData::LCM2' do
     end
   end
 
-  describe '#run_action' do
+  describe '.run_action' do
     let(:params) { double('params') }
     it 'runs the action' do
       expect(params).to receive(:clear_filters).exactly(2).times
