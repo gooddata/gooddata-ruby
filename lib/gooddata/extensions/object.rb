@@ -9,10 +9,6 @@ class Object
     end
   end
 
-  def duplicable?
-    true
-  end
-
   def set_const(name, val)
     send(:remove_const, name) if const_defined?(name)
     send(:const_set, name, val)

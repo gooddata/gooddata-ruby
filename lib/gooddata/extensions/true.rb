@@ -3,14 +3,6 @@
 # LICENSE file in the root directory of this source tree.
 module TrueExtensions
   refine TrueClass do
-    # +true+ is not duplicable:
-    #
-    #   true.duplicable? # => false
-    #   true.dup         # => TypeError: can't dup TrueClass
-    def duplicable?
-      false
-    end
-
     def to_b
       true
     end

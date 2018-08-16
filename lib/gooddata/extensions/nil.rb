@@ -3,14 +3,6 @@
 # LICENSE file in the root directory of this source tree.
 module NilExtensions
   refine NilClass do
-    # +nil+ is not duplicable:
-    #
-    #   nil.duplicable? # => false
-    #   nil.dup         # => TypeError: can't dup NilClass
-    def duplicable?
-      false
-    end
-
     def to_b
       false
     end

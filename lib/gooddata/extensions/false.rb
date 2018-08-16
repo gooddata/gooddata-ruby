@@ -3,14 +3,6 @@
 # LICENSE file in the root directory of this source tree.
 module FalseExtensions
   refine FalseClass do
-    # +false+ is not duplicable:
-    #
-    #   false.duplicable? # => false
-    #   false.dup         # => TypeError: can't dup FalseClass
-    def duplicable?
-      false
-    end
-
     def to_b
       false
     end
