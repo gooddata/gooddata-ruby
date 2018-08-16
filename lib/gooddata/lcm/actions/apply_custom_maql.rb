@@ -6,7 +6,6 @@
 
 require_relative 'base_action'
 
-using ClassExtensions
 using TrueExtensions
 using FalseExtensions
 using IntegerExtensions

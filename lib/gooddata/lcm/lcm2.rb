@@ -17,7 +17,6 @@ require_relative 'actions/actions'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
 
-using ClassExtensions
 using TrueExtensions
 using FalseExtensions
 using IntegerExtensions

@@ -6,8 +6,6 @@
 
 require_relative 'base_action'
 
-using ClassExtensions
-
 module GoodData
   module LCM2
     class PrintActions < BaseAction

@@ -8,8 +8,6 @@ require_relative '../base_type'
 
 require 'gooddata/extensions/class'
 
-using ClassExtensions
-
 module GoodData
   module LCM2
     module Type
