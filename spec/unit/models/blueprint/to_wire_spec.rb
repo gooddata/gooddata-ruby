@@ -192,7 +192,7 @@ describe GoodData::Model::ProjectBlueprint do
   describe '#date_dimension_to_wire' do
     it 'should be able to generate date dimension' do
       res = ToWire.date_dimension_to_wire(@spec, type: "date_dimension", id: "timeline", title: "Timeline")
-      expect(res).to eq(:dateDimension => { :name => "timeline", :title => "Timeline" })
+      expect(res).to eq(:dateDimension => { :name => "timeline", :title => "Timeline", :bridges => [] })
     end
   end
 end
