@@ -1,4 +1,16 @@
 # GoodData Ruby SDK Changelog
+## 1.3.0
+ - Add changelog for 1.2.1
+ - Automate bumping version (#1243)
+ - TMA-787 added support M:N in LCM
+ - Fix spec for synchronize_ldm=diff_against_master
+ - TRIVIAL: remove the newline character from the CSV header string
+ - TMA-484: Fix getting latest master version (#1258)
+ - minor fixes to the load tests
+ - Enable lcm tests on personal instance
+ - TMA-787 added support M:N in LCM
+ - Fix logging error
+
 
 ## 1.2.1
  - Document gem release process (#1254)
