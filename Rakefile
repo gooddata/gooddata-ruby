@@ -142,26 +142,34 @@ namespace :license do
   end
 end
 
-namespace :changelog do
-  desc 'Updates the changelog with commit messages'
-  task :update do
+# Updates the changelog with commit messages
+def update_changelog(new_version)
+  changelog = File.read('CHANGELOG.md')
+  changelog_header = '# GoodData Ruby SDK Changelog'
+  changelog.slice! changelog_header
+  fail 'the version is already mentioned in the changelog' if changelog =~ /## #{new_version}/
+  puts "Creating changelog for version #{new_version}"
+  current_commit = `git rev-parse HEAD`.chomp
+  last_release = changelog.split("\n").reject(&:empty?).first.delete('## ').chomp
+  last_release_commit = `git rev-parse #{last_release}`.chomp
+  changes = `git log --format=%s --no-merges #{last_release_commit}..#{current_commit}`.split("\n").reject(&:empty?)
+  File.open('CHANGELOG.md', 'w+') do |file|
+    file.puts changelog_header + "\n"
+    file.puts "## #{new_version}"
+    changes.each { |change| file.puts ' - ' + change }
+    file.puts changelog
+  end
+end
+
+namespace :version do
+  desc 'Updates the changelog, commits and tags the bump'
+  task :bump do
     require_relative 'lib/gooddata/version'
     new_version = GoodData::VERSION
-    changelog = File.read('CHANGELOG.md')
-    changelog_header = '# GoodData Ruby SDK Changelog'
-    changelog.slice! changelog_header
-    fail 'the version is already mentioned in the changelog' if changelog =~ /## #{new_version}/
-    puts "Creating changelog for version #{new_version}"
-    current_commit = `git rev-parse HEAD`.chomp
-    last_release = changelog.split("\n").reject(&:empty?).first.delete('## ').chomp
-    last_release_commit = `git rev-parse #{last_release}`.chomp
-    changes = `git log --format=%B --no-merges #{last_release_commit}..#{current_commit}`.split("\n").reject(&:empty?)
-    File.open('CHANGELOG.md', 'w+') do |file|
-      file.puts changelog_header + "\n"
-      file.puts "## #{new_version}"
-      changes.each { |change| file.puts ' - ' + change }
-      file.puts changelog
-    end
+    update_changelog(new_version)
+    `git add CHANGELOG.md lib/gooddata/version.rb`
+    `git commit -m "Bump version to #{new_version}"`
+    `git tag #{new_version}`
   end
 end
 
