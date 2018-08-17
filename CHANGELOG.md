@@ -1,4 +1,18 @@
 # GoodData Ruby SDK Changelog
+
+## 1.2.1
+ - Document gem release process (#1254)
+ - TMA-956 - Update process.rb to fix regression from TMA-832 (#1248)
+ - Add certificate for prodgdc
+ - fixed up the pefr cluster urls
+ - fixed url to perfcluster
+ - TMA-983: Fix error in after hook
+ - Exclude specs from gem release
+ - Exclude specs from gem release
+ - Bump version to 1.2.0 (#1242)
+ - Run pronto against correct branch (#1244)
+ - SRT-796: Ensure safe version of rubyzip
+
 ## 1.2.0
  - * TMA-484: Perform MAQL diff only once in rollout
  - Use the latest aws sdk gem (#1237)
