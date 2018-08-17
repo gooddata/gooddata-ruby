@@ -64,4 +64,4 @@ module GoodData
 end
 
 # Init requires
-GoodData.init_module
+GoodData.init_module       
