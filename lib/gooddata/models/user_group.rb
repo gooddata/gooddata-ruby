@@ -12,6 +12,9 @@ require_relative '../mixins/links'
 require_relative '../mixins/rest_resource'
 require_relative '../mixins/uri_getter'
 
+require 'active_support/core_ext/hash/except'
+require 'active_support/core_ext/hash/compact'
+
 module GoodData
   # Representation of User Group
   #

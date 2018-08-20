@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'cgi'
+require 'active_support/core_ext/hash/compact'
 
 require_relative 'profile'
 require_relative '../extensions/enumerable'
