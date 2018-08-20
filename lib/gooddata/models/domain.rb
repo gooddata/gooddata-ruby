@@ -10,8 +10,6 @@ require_relative 'profile'
 require_relative '../extensions/enumerable'
 require_relative '../rest/object'
 
-using EnumerableExtensions
-
 module GoodData
   class Domain < Rest::Resource
     attr_reader :name

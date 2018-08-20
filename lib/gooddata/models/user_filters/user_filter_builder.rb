@@ -6,12 +6,10 @@
 
 require_relative '../project_log_formatter'
 require 'active_support/core_ext/hash/indifferent_access'
-require 'gooddata/extensions/enumerable'
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
 
-using EnumerableExtensions
 using FalseExtensions
 using TrueExtensions
 using IntegerExtensions

@@ -7,7 +7,6 @@ require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
 require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
-require 'gooddata/extensions/object'
 
 require_relative '../dsl/dsl'
 require_relative '../helpers/helpers'

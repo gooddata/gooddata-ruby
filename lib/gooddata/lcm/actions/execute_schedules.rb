@@ -3,9 +3,6 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
-require 'gooddata/extensions/enumerable'
-
-using EnumerableExtensions
 
 module GoodData
   module LCM2
