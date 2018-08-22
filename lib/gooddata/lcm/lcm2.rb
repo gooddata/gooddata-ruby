@@ -321,6 +321,7 @@ module GoodData
               backtrace: e.backtrace
             }
             break if fail_early
+            results << nil
           end
 
           # in case fail_early = false, we need to execute another action

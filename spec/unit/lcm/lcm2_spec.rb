@@ -18,6 +18,14 @@ shared_examples 'a smart hash' do
   end
 end
 
+shared_examples 'perform raise exception' do |mode, error_message|
+  it 'throw exception' do
+    expect do
+      GoodData::LCM2.perform(mode, params)
+    end.to raise_error { |e| expect(e.message).to include(error_message) }
+  end
+end
+
 describe 'GoodData::LCM2' do
   let(:logger) { double(Logger) }
 
@@ -25,18 +33,9 @@ describe 'GoodData::LCM2' do
     allow(logger).to receive(:class) { Logger }
   end
 
-  describe '#skip_actions' do
+  describe '#perform' do
     let(:client) { double(:client) }
     let(:domain) { 'domain' }
-    let(:params) do
-      params = {
-        skip_actions: %w(CollectSegments SynchronizeUsers),
-        GDC_GD_CLIENT: client,
-        GDC_LOGGER: logger,
-        domain: domain
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
-    end
 
     before do
       allow(client).to receive(:class) { GoodData::Rest::Client }
@@ -45,10 +44,105 @@ describe 'GoodData::LCM2' do
       allow(domain).to receive(:data_products)
     end
 
-    it 'skips actions in skip_actions' do
-      expect(GoodData::LCM2::CollectSegments).not_to receive(:call)
-      expect(GoodData::LCM2::SynchronizeUsers).not_to receive(:call)
-      GoodData::LCM2.perform('users', params)
+    context 'when skip_actions specified' do
+      let(:params) do
+        params = {
+          skip_actions: %w(CollectSegments SynchronizeUsers),
+          GDC_GD_CLIENT: client,
+          GDC_LOGGER: logger,
+          domain: domain
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      it 'skips actions in skip_actions' do
+        expect(GoodData::LCM2::CollectSegments).not_to receive(:call)
+        expect(GoodData::LCM2::SynchronizeUsers).not_to receive(:call)
+        GoodData::LCM2.perform('users', params)
+      end
+    end
+
+    context 'when mandatory params are given and hello action is performed' do
+      let(:params) do
+        params = {
+          GDC_LOGGER: logger,
+          message: 'Ahoj'
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      it 'finish successfully' do
+        result = GoodData::LCM2.perform('hello', params)
+        pp result
+        expect(result[:actions]).to eq(['HelloWorld'])
+        expect(result[:results]["HelloWorld"][0][:message]).to eq('Ahoj')
+        expect(result[:params][:message]).to eq('Ahoj')
+        expect(result[:params][:gdc_logger]).to eq(logger)
+        expect(result[:params][:iterations]).to eq(1)
+      end
+    end
+
+    context 'when invalid mode is specified' do
+      let(:params) do
+        params = {
+          GDC_LOGGER: logger
+        }
+        GoodData::LCM2.convert_to_smart_hash(params)
+      end
+
+      it_should_behave_like 'perform raise exception', 'invalid', 'Invalid mode specified \'invalid\''
+    end
+
+    [true, false].each do |fail_early|
+      [true, false].each do |strict_mode|
+        context "when fail_early is #{fail_early}, strict_mode is #{strict_mode} and error occurs" do
+          let(:params) do
+            params = {
+              GDC_LOGGER: logger,
+              fail_early: fail_early,
+              strict: strict_mode
+            }
+            GoodData::LCM2.convert_to_smart_hash(params)
+          end
+
+          # Test class 1
+          class Action1 < GoodData::LCM2::BaseAction
+            PARAMS = {}
+            DESCRIPTION = "Test action"
+          end
+
+          # Test class 2
+          class Action2 < Action1
+          end
+
+          # Test class 3
+          class Action3 < Action1
+          end
+
+          before do
+            allow(GoodData::LCM2).to receive(:get_mode_actions) { [Action1, Action2, Action3] }
+            expect(Action1).to receive(:call).and_return([{ :a1 => 'a1' }])
+            expect(Action2).to receive(:call).and_raise("boom")
+            if fail_early
+              expect(Action3).not_to receive(:call)
+            else
+              expect(Action3).to receive(:call).and_return([{ :a3 => 'a3' }])
+            end
+          end
+
+          if strict_mode
+            it_should_behave_like 'perform raise exception', 'some_mode', 'boom'
+          else
+            it "fail and #{fail_early ? 'stop' : 'continue'} performing next actions" do
+              result = GoodData::LCM2.perform('some_mode', params)
+              expect(result[:actions]).to eq(%w(Action1 Action2 Action3))
+              expect(result[:results]["Action1"]).to eq([{ :a1 => 'a1' }])
+              expect(result[:results]["Action2"]).to eq(nil)
+              expect(result[:results]["Action3"]).to eq(fail_early ? nil : [{ :a3 => 'a3' }])
+            end
+          end
+        end
+      end
     end
   end
 
