@@ -27,14 +27,14 @@ describe 'Contains M to N relation' do
 
     domain = @rest_client.domain(@config[:dev_organization])
     domain.data_products(:all).each { |d| d.delete(force: true) }
-
-    project_helper = Support::ProjectHelper.create(
+    @project_params = {
       client: @rest_client,
       title: "Development Project for m to n #{@suffix}",
       auth_token: @config[:dev_token],
       environment: @config[:environment],
       ads: @ads
-    )
+    }
+    project_helper = Support::ProjectHelper.create(@project_params)
 
     @project = project_helper.project
     maql = '
@@ -64,6 +64,34 @@ describe 'Contains M to N relation' do
     expect(m_to_ns(@project)).to include(['dataset.y', 'dataset.x'])
   end
 
+  it 'on datedimension too' do
+    date_dimension_project_helper = Support::ProjectHelper.create(@project_params)
+
+    @date_dim_project = date_dimension_project_helper.project
+    maql = '
+      CREATE DATASET {dataset.x};
+      CREATE DATASET {dataset.y};
+      INCLUDE TEMPLATE "URN:GOODDATA:DATE";
+      ALTER ATTRIBUTE {date} ADD KEYS {f_v.dt_id} MULTIVALUE;
+
+      CREATE ATTRIBUTE {attr.volume} AS KEYS {f_v.id} FULLSET;
+      CREATE ATTRIBUTE {attr.y} AS KEYS {f_y.id} FULLSET, {f_v.y_id} MULTIVALUE;
+
+      CREATE FACT {fact.volume} AS {f_v.f};
+      CREATE FACT {fact.y} AS {f_y.f};
+
+      ALTER DATASET {dataset.y} ADD {attr.y}, {fact.y};
+      ALTER DATASET {dataset.x} ADD {attr.volume}, {fact.volume};
+
+      ALTER ATTRIBUTE {attr.y} ADD LABELS {label.y} VISUAL(TITLE "Test Labelis") AS {f_y.label_y};
+    '
+    @date_dim_project.execute_maql maql
+    expect(m_to_ns(@date_dim_project)).to include(['dataset.dt', 'dataset.x'])
+    @date_dim_project.update_from_blueprint(@date_dim_project.blueprint)
+    expect(m_to_ns(@date_dim_project)).to include(['dataset.dt', 'dataset.x'])
+    @date_dim_project.delete
+  end
+
   after(:all) do
     @project.delete
   end
@@ -73,13 +101,14 @@ def m_to_ns(project)
   options = { include_ca: true }
   result = project.client.get("/gdc/projects/#{project.pid}/model/view", params: { includeDeprecated: true, includeGrain: true, includeCA: options[:include_ca] })
   polling_url = result['asyncTask']['link']['poll']
-  model = project.client.poll_on_code(polling_url, options)
-  result = model['projectModelView']['model']['projectModel']['datasets'].map do |d|
-    if !d['dataset']['bridges'].nil?
-      [d['dataset']['identifier'], d['dataset']['bridges'].join]
-    else
-      []
-    end
+  model = project.client.poll_on_code(polling_url, options)['projectModelView']['model']['projectModel']
+  %w(
+    datasets
+    dateDimensions
+  ).map do |a|
+    next [] if model[a].nil?
+    model[a].map do |d|
+      d[a.chomp('s')]['bridges'].nil? ? [] : [d[a.chomp('s')]['identifier'], d[a.chomp('s')]['bridges'].join]
+    end.flatten
   end
-  result
 end

@@ -16,6 +16,7 @@ require 'gooddata/extensions/nil'
 require 'active_support/core_ext/hash/compact'
 
 require_relative 'actions/actions'
+require_relative 'brick_logger'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
 
@@ -167,6 +168,10 @@ module GoodData
 
       schedules_execution: [
         ExecuteSchedules
+      ],
+
+      hello_world: [
+        HelloWorld
       ]
     }
 
@@ -284,6 +289,16 @@ module GoodData
 
         # Get actions for mode specified
         actions = get_mode_actions(mode)
+
+        if params.key?('log_directory')
+          brick_logger = BrickFileLogger.new(params['log_directory'], mode)
+          logging_enabled = true
+        else
+          logging_enabled = false
+        end
+        if logging_enabled
+          brick_logger.log_action('start', JSON.pretty_generate(params))
+        end
         if params.actions
           actions = params.actions.map do |action|
             "GoodData::LCM2::#{action}".split('::').inject(Object) do |o, c|
@@ -297,8 +312,6 @@ module GoodData
         end
 
         # TODO: Check all action params first
-
-        new_params = params
 
         fail_early = if params.key?(:fail_early)
                        params.fail_early.to_b
@@ -336,6 +349,7 @@ module GoodData
               backtrace: e.backtrace
             }
             break if fail_early
+            results << nil
           end
 
           # in case fail_early = false, we need to execute another action
@@ -357,19 +371,27 @@ module GoodData
           results << res
         end
 
-        # Fail whole execution if there is any failed action
-        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
-
         brick_results = {}
         actions.each_with_index do |action, index|
           brick_results[action.short_name] = results[index]
         end
 
-        {
-          actions: actions.map { |action| action.short_name },
+        result = {
+          actions: actions.map(&:short_name),
           results: brick_results,
-          params: params
+          params: params,
+          success: errors.empty?
         }
+
+        # Fail whole execution if there is any failed action
+        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
+
+        result
+
+      ensure
+        if logging_enabled
+          brick_logger.log_action('finished', JSON.pretty_generate(result))
+        end
       end
 
       def run_action(action, params)

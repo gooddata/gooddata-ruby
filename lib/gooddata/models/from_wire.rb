@@ -105,6 +105,7 @@ module GoodData
           d[:title] = date_dim['dateDimension']['title']
           d[:urn] = date_dim['dateDimension']['urn']
           d[:identifier_prefix] = date_dim['dateDimension']['identifierPrefix']
+          d[:columns] = parse_bridges(date_dim)
         end
       end
 
@@ -163,7 +164,8 @@ module GoodData
       # @param dataset [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular bridge
       def self.parse_bridges(dataset)
-        references = dataset['dataset']['bridges'] || []
+        references = !dataset['dataset'].nil? && !dataset['dataset']['bridges'].nil? ? dataset['dataset']['bridges'] : []
+        references = !dataset['dateDimension'].nil? && !dataset['dateDimension']['bridges'].nil? ? dataset['dateDimension']['bridges'] : references
         references.map do |ref|
           if ref =~ /^dataset\./
             {
