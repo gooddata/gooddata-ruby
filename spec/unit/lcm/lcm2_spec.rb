@@ -73,7 +73,6 @@ describe 'GoodData::LCM2' do
 
       it 'finish successfully' do
         result = GoodData::LCM2.perform('hello', params)
-        pp result
         expect(result[:actions]).to eq(['HelloWorld'])
         expect(result[:results]["HelloWorld"][0][:message]).to eq('Ahoj')
         expect(result[:params][:message]).to eq('Ahoj')
@@ -182,7 +181,7 @@ describe 'GoodData::LCM2' do
     end
   end
 
-  describe '#run_action' do
+  describe '.run_action' do
     let(:params) { double('params') }
     it 'runs the action' do
       expect(params).to receive(:clear_filters).exactly(2).times
@@ -193,6 +192,27 @@ describe 'GoodData::LCM2' do
 
       expect(GoodData::LCM2::CollectSegments).to receive(:call)
       GoodData::LCM2.run_action(GoodData::LCM2::CollectSegments, params)
+    end
+  end
+
+  describe '.perform' do
+    it 'performs brick' do
+      log_dir = Dir.mktmpdir
+      message = 'Zdar'
+
+      GoodData::LCM2.perform('hello', 'log_directory' => log_dir, 'message' => message)
+
+      log_start_file = "#{log_dir}/hello_start.json"
+      log_start_json = JSON.parse(File.read(log_start_file))
+      log_start_json['log_directory'].should eq(log_dir)
+
+      log_finished_file = "#{log_dir}/hello_finished.json"
+      log_finished_json = JSON.parse(File.open(log_finished_file).read)
+      log_finished_json['actions'][0].should eq('HelloWorld')
+
+      log_finished_json['results']['HelloWorld'][0]['message'].should eq(message)
+      log_finished_json['params']['log_directory'].should eq(log_dir)
+      log_finished_json['success'].should be_truthy
     end
   end
 end
