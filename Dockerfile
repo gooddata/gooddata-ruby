@@ -1,11 +1,11 @@
-FROM harbor.intgdc.com/staging/gdc-java-8-jre:1.8.0.171-8.b10
+FROM harbor.intgdc.com/tools/gdc-java-8-jre:b057b53
 
 MAINTAINER tma <tma@gooddata.com>
 
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repostiory_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="harbor.intgdc.com/staging/gdc-java-8-jre:1.8.0.171-8.b10"
+LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:b057b53"
 
 # which is required by RVM
 RUN yum install -y curl which \
