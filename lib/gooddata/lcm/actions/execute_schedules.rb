@@ -7,7 +7,6 @@ require_relative 'base_action'
 module GoodData
   module LCM2
     class ExecuteSchedules < BaseAction
-
       DESCRIPTION = 'Execute schedules'
 
       PARAMS = define_params(self) do
