@@ -9,8 +9,20 @@ require 'pathname'
 require 'hashie'
 require 'openssl'
 
+require 'active_support/core_ext/object/duplicable'
+
 require_relative '../extensions/object'
 require_relative 'global_helpers_params'
+
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+require 'gooddata/extensions/nil'
+
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using NilExtensions
 
 module GoodData
   module Helpers

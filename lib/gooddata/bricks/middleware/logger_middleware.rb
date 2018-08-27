@@ -6,6 +6,18 @@
 
 require 'logger'
 
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+require 'gooddata/extensions/string'
+require 'gooddata/extensions/nil'
+
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+
 require_relative 'base_middleware'
 
 module GoodData

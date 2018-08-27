@@ -6,6 +6,12 @@
 
 require_relative 'base_action'
 
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+
 module GoodData
   module LCM2
     # Applies custom MAQL DDL to all client projects so customized

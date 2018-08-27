@@ -1,8 +1,14 @@
-# encoding: UTF-8
-#
 # Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
+require 'gooddata/extensions/class'
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+require 'gooddata/extensions/string'
+require 'gooddata/extensions/nil'
+
+require 'active_support/core_ext/hash/compact'
 
 require_relative '../dsl/dsl'
 require_relative '../helpers/helpers'

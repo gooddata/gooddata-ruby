@@ -6,6 +6,12 @@
 
 require_relative 'base_action'
 
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
+
 module GoodData
   module LCM2
     class SynchronizeUserFilters < BaseAction

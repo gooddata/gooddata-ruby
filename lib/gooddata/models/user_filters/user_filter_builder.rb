@@ -5,7 +5,18 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../project_log_formatter'
+
 require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/hash/compact'
+
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+
+using FalseExtensions
+using TrueExtensions
+using IntegerExtensions
+using NilExtensions
 
 module GoodData
   module UserFilterBuilder

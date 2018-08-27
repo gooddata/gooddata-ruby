@@ -6,10 +6,25 @@
 
 require 'terminal-table'
 
+require 'gooddata/extensions/class'
+require 'gooddata/extensions/true'
+require 'gooddata/extensions/false'
+require 'gooddata/extensions/integer'
+require 'gooddata/extensions/string'
+require 'gooddata/extensions/nil'
+
+require 'active_support/core_ext/hash/compact'
+
 require_relative 'actions/actions'
 require_relative 'brick_logger'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
+
+using TrueExtensions
+using FalseExtensions
+using IntegerExtensions
+using StringExtensions
+using NilExtensions
 
 module GoodData
   module LCM2
