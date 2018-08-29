@@ -65,6 +65,27 @@ describe 'Behavior during polling and retries' do
     GoodData::Rest::Client.const_set(:DEFAULT_SLEEP_INTERVAL, @poll)
   end
 
+  describe '#poll_on_response' do
+    context 'when block yields a truthy value' do
+      before do
+        GoodData::Rest::Connection::RETRY_TIME_INITIAL_VALUE = 1
+        GoodData::Rest::Connection::RETRY_TIME_COEFFICIENT = 1.5
+      end
+
+      it 'retries after an increasing interval' do
+        expect_any_instance_of(Object).to receive(:sleep).with(1).once
+        expect_any_instance_of(Object).to receive(:sleep).with(1.5).once
+        expect_any_instance_of(Object).to receive(:sleep).with(2.25).once
+        tries = 4
+        i = 0
+        @client.poll_on_response('/poll_test', time_limit: 300) do |_|
+          i += 1
+          i < tries
+        end
+      end
+    end
+  end
+
   it 'should fail a poller after timelimit passes' do
     expect do
       @client.poll_on_response('/poll_test', time_limit: 0.1) { |_| true }
