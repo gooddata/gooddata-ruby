@@ -203,14 +203,15 @@ module GoodData
             end
             users_by_project = run_params[:users_brick_input].group_by { |u| u[multiple_projects_column] }
 
+            filters_to_load = {}
             filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |client_id, new_filters|
               users = users_by_project[client_id]
               fail "Client id cannot be empty" if client_id.blank?
               current_project = domain.clients(client_id, data_product).project
               fail "Client #{client_id} does not have project." unless current_project
-              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{current_project.pid} of client #{client_id}"
-              current_project.add_data_permissions(filters_to_load, run_params.merge(users_brick_input: users))
+              filters_to_load[current_project.pid] = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
+              puts "Synchronizing #{filters_to_load[current_project.pid].count} filters in project #{current_project.pid} of client #{client_id}"
+              current_project.add_data_permissions(filters_to_load[current_project.pid], run_params.merge(users_brick_input: users))
             end
           when 'sync_domain_client_workspaces'
             without_check(PARAMS, params) do
