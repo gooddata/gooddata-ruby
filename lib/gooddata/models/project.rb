@@ -1817,6 +1817,7 @@ module GoodData
     alias_method :create_users, :set_users_roles
 
     def add_data_permissions(filters, options = {})
+      GoodData.logger.info("Synchronizing #{filters.count} filters in project #{self.pid}")
       GoodData::UserFilterBuilder.execute_mufs(filters, { client: client, project: self }.merge(options))
     end
 

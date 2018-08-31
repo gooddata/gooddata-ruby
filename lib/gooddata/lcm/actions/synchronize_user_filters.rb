@@ -214,9 +214,7 @@ module GoodData
               fail "Client id cannot be empty" if client_id.blank?
               current_project = domain.clients(client_id, data_product).project
               fail "Client #{client_id} does not have project." unless current_project
-              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{current_project.pid} of client #{client_id}"
-              current_project.add_data_permissions(filters_to_load, run_params.merge(users_brick_input: users))
+              current_project.add_data_permissions(GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config), run_params.merge(users_brick_input: users))
             end
           when 'sync_domain_client_workspaces'
             without_check(PARAMS, params) do
@@ -246,9 +244,7 @@ module GoodData
               current_project = c.project
               fail "Client #{client_id} does not have project." unless current_project
               working_client_ids << client_id
-              filters_to_load = GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config)
-              puts "Synchronizing #{filters_to_load.count} filters in project #{current_project.pid} of client #{client_id}"
-              partial_results = current_project.add_data_permissions(filters_to_load, run_params.merge(users_brick_input: users))
+              partial_results = current_project.add_data_permissions(GoodData::UserFilterBuilder.get_filters(new_filters, symbolized_config), run_params.merge(users_brick_input: users))
               results.concat(partial_results[:results])
             end
 

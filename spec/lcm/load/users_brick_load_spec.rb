@@ -14,6 +14,7 @@ user_count = 6
 project_array = []
 project_count = 6
 
+
 describe 'UsersBrick' do
   before(:each) do
     @suffix = ConfigurationHelper.suffix
@@ -112,10 +113,15 @@ describe 'UsersBrick' do
         GoodData.logger.info("Deleting project \"#{@project.title}\" with ID #{@project.pid}")
         @project.delete unless @project.deleted? || !@project
       rescue StandardError => e
-        GoodData.logger.warn("Failed to delete project #{@project.title}. #{e}")
+        GoodData.logger.warn("Failed to delete project #{@project.title}. #{e}") unless @project.nil?
         GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
       end
       user_in_domain(@user_name).delete if @user_name
+      project_array.map do |proj|
+        proj.user_filters.map do |muf|
+          muf.client.delete(muf.json[:uri])
+        end
+      end
     end
 
     it 'adds users to project' do
@@ -174,11 +180,10 @@ describe 'UsersBrick' do
       $SCRIPT_PARAMS = JSON.parse(File.read(@config_path))
 
       GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
-      require 'pry'
-      binding.pry
+      GoodData.connection.connect
       project_array.map do |proj|
         proj.user_filters.map do |muf|
-          [GoodData::Profile[muf.json[:related]].json["accountSetting"]["email"].scan(/[^\d]*\d*[_]\d*_(\d*)@bar\.baz/).first.last, proj.title.scan(/testing_client_(\d*)/).first.last]
+          expect(GoodData::Profile[muf.json[:related]].json["accountSetting"]["email"].scan(/[^\d]*\d*[_]\d*_(\d*)@bar\.baz/).first.last).to eq proj.title.scan(/testing_client_(\d*)/).first.last
         end
       end
     end
