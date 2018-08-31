@@ -10,9 +10,9 @@ def user_in_domain(user_name)
 end
 
 user_array = []
-user_count = 18
+user_count = 6
 project_array = []
-project_count = 60
+project_count = 6
 
 describe 'UsersBrick' do
   before(:each) do
@@ -25,14 +25,15 @@ describe 'UsersBrick' do
       auth_token: LcmConnectionHelper.environment[:prod_token],
       environment: 'TESTING'
     }
-    project_helper = Support::ProjectHelper.create(@opts)
+    # project_helper = Support::ProjectHelper.create(@opts)
+    project_helper = ConfigurationHelper.create_development_project(@opts)
     @project = project_helper.project
     @test_context = {
       project_id: @project.pid,
       config: LcmConnectionHelper.environment,
       s3_bucket: Support::S3Helper::BUCKET_NAME,
       s3_endpoint: Support::S3Helper::S3_ENDPOINT,
-      s3_key: 'user_data'
+      s3_key: 'user_data',
     }
     @template_path = File.expand_path('../../integration/params/users_brick.json.erb', __FILE__)
     @user_name = "#{@suffix}@bar.baz"
@@ -54,14 +55,7 @@ describe 'UsersBrick' do
   end
 
   after(:each) do
-    begin
-      GoodData.logger.info("Deleting project \"#{@project.title}\" with ID #{@project.pid}")
-      @project.delete unless @project.deleted? || !@project
-    rescue StandardError => e
-      GoodData.logger.warn("Failed to delete project #{@project.title}. #{e}")
-      GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
-    end
-    user_in_domain(@user_name).delete if @user_name
+
     $SCRIPT_PARAMS = nil
   end
 
@@ -85,18 +79,20 @@ describe 'UsersBrick' do
       @domain.create_users(user_array)
       users_csv = ConfigurationHelper.csv_from_hashes(user_array)
       Support::S3Helper.upload_file(users_csv, @test_context[:s3_key])
-      data_product_id = "testing-data-product-#{@suffix}"
-      @data_product = @domain.create_data_product(id: data_product_id)
+      @data_product_id = "testing-data-product-#{@suffix}"
+      @data_product = @domain.create_data_product(id: @data_product_id)
       @master_project = @rest_client.create_project(title: "Test MASTER project for #{@suffix}", auth_token: LcmConnectionHelper.environment[:prod_token])
       @segment = @data_product.create_segment(segment_id: "testing-segment-#{@suffix}", master_project: @master_project)
       @segment.create_client(id: 'testingclient', project: @project.uri)
       (1..project_count).each do |i|
-        proj = @rest_client.create_project(title: "Test MINOR project with testing_client_#{i} for #{@suffix}", auth_token: LcmConnectionHelper.environment[:prod_token])
+        project_helper = ConfigurationHelper.create_development_project(client: @rest_client, title: "Test MINOR project with testing_client_#{i} for #{@suffix}", auth_token: LcmConnectionHelper.environment[:prod_token])
+        proj = project_helper.project
+        # proj = @rest_client.create_project(title: "Test MINOR project with testing_client_#{i} for #{@suffix}", auth_token: LcmConnectionHelper.environment[:prod_token])
         @segment.create_client(id: "testing_client_#{i}", project: proj.uri)
         project_array << proj
       end
 
-      @test_context[:data_product] = data_product_id
+      @test_context[:data_product] = @data_product_id
       @config_path = ConfigurationHelper.create_interpolated_tempfile(
         @template_path,
         @test_context
@@ -111,14 +107,79 @@ describe 'UsersBrick' do
         user = user_in_domain(u[:login])
         user.delete
       end
+      @ads.delete if @ads
+      begin
+        GoodData.logger.info("Deleting project \"#{@project.title}\" with ID #{@project.pid}")
+        @project.delete unless @project.deleted? || !@project
+      rescue StandardError => e
+        GoodData.logger.warn("Failed to delete project #{@project.title}. #{e}")
+        GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
+      end
+      user_in_domain(@user_name).delete if @user_name
     end
 
     it 'adds users to project' do
       $SCRIPT_PARAMS = JSON.parse(File.read(@config_path))
       GoodData::Bricks::Pipeline.users_brick_pipeline.call($SCRIPT_PARAMS)
       user_array.each do |u|
-        this_project = project_array.detect {|project| project.title.include? u[:client_id] }
+        this_project = project_array.detect { |project| project.title.include? u[:client_id] }
         expect(this_project.member?(u)).to be_truthy unless this_project.nil?
+      end
+      # here starts the second it
+      @test_context = {
+        project_id: @project.pid,
+        config: LcmConnectionHelper.environment,
+        s3_bucket: Support::S3Helper::BUCKET_NAME,
+        s3_endpoint: Support::S3Helper::S3_ENDPOINT,
+        s3_key: 'user_data',
+        users_brick_input: {
+          s3_bucket: Support::S3Helper::BUCKET_NAME,
+          s3_endpoint: Support::S3Helper::S3_ENDPOINT,
+          s3_key: 'users_brick_input'
+        }
+      }
+      @ads = GoodData::DataWarehouse.create(
+        client: @rest_client,
+        title: 'TEST ADS',
+        auth_token: LcmConnectionHelper.environment[:prod_token]
+      )
+
+      @test_context[:jdbc_url] = @ads.data['connectionUrl']
+
+      @ads_client = GoodData::Datawarehouse.new(
+        @test_context[:config][:username],
+        @test_context[:config][:password],
+        nil,
+        jdbc_url: @ads.data['connectionUrl']
+      )
+
+      ads_template_path = File.expand_path(
+        '../params/user_filters_brick_ads.json.erb',
+        __FILE__
+      )
+
+      query = 'CREATE TABLE IF NOT EXISTS "user_filters" (login VARCHAR(255) NOT NULL, state VARCHAR(255) NOT NULL, client_id VARCHAR(255));'
+      @ads_client.execute(query)
+      user_array.map do |u|
+        insert = "INSERT INTO \"user_filters\" VALUES('#{u[:login]}', 'Oregon','#{u[:client_id]}');"
+        @ads_client.execute(insert)
+      end
+      @test_context[:sync_mode] = 'sync_multiple_projects_based_on_custom_id'
+      @test_context[:data_product] = @data_product_id
+      @template_path = File.expand_path('../../integration/params/user_filters_brick_ads.json.erb', __FILE__)
+      @config_path = ConfigurationHelper.create_interpolated_tempfile(
+        @template_path,
+        @test_context
+      )
+      $SCRIPT_PARAMS = JSON.parse(File.read(@config_path))
+
+      GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
+      require 'pry'
+      binding.pry
+      project_array.map do |proj|
+        proj.user_filters.map do |muf|
+          [GoodData::Profile[muf.json[:related]].json["accountSetting"]["email"].scan(/[^\d]*\d*[_]\d*_(\d*)@bar\.baz/).first.last, proj.title.scan(/testing_client_(\d*)/).first.last]
+        end
       end
     end
   end

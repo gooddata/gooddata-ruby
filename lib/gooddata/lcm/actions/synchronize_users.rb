@@ -340,12 +340,11 @@ module GoodData
                                            create_non_existing_user_groups: create_non_existing_user_groups)
                     end
 
-          results.compact!
-          counts = results.group_by { |r| r[:type] }.map { |g, r| [g, r.count] }
+          counts = results.compact.flatten.group_by { |r| r[:type] }.map { |g, r| [g, r.count] }
           counts.each do |category, count|
             puts "There were #{count} events of type #{category}"
           end
-          errors = results.select { |r| r[:type] == :error || r[:type] == :failed }
+          errors = results.compact.flatten.select { |r| r[:type] == :error || r[:type] == :failed }
           return if errors.empty?
 
           puts 'Printing 10 first errors'
