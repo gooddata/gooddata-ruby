@@ -314,27 +314,27 @@ module GoodData
       # Generalizaton of poller. Since we have quite a variation of how async proceses are handled
       # this is a helper that should help you with resources where the information about "Are we done"
       # is inside the response. It expects the URI as an input where it can poll and a block that should
-      # return either true -> 'meaning we are done' or false -> meaning sleep and repeat. It returns the
+      # return either true (meaning sleep and repeat) or false (meaning we are done). It returns the
       # value of last poll. In majority of cases these are the data that you need
       #
       # @param link [String] Link for polling
       # @param options [Hash] Options
       # @return [Hash] Result of polling
       def poll_on_response(link, options = {}, &bl)
-        sleep_interval = options[:sleep_interval] || DEFAULT_SLEEP_INTERVAL
         time_limit = options[:time_limit] || DEFAULT_POLL_TIME_LIMIT
         process = options[:process] == false ? false : true
 
         # get the first status and start the timer
         response = get(link, process: process)
         poll_start = Time.now
-
+        retry_time = GoodData::Rest::Connection::RETRY_TIME_INITIAL_VALUE
         while bl.call(response)
           limit_breached = time_limit && (Time.now - poll_start > time_limit)
           if limit_breached
             fail ExecutionLimitExceeded, "The time limit #{time_limit} secs for polling on #{link} is over"
           end
-          sleep sleep_interval
+          sleep retry_time
+          retry_time *= GoodData::Rest::Connection::RETRY_TIME_COEFFICIENT
           GoodData::Rest::Client.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { connection.refresh_token }) do
             response = get(link, process: process)
           end
