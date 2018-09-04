@@ -132,7 +132,7 @@ module GoodData
             sync_user_filters(project, user_filters, run_params, symbolized_config)
           when 'sync_multiple_projects_based_on_pid', 'sync_multiple_projects_based_on_custom_id'
             users_by_project = run_params[:users_brick_input].group_by { |u| u[:pid] }
-            user_filters.group_by { |u| u[:pid] }.flat_map.pmap do |id, new_filters|
+            user_filters.group_by { |u| u[:pid] }.flat_map do |id, new_filters|
               users = users_by_project[id]
               fail "The #{multiple_projects_column} cannot be empty" if id.blank?
               if mode == 'sync_multiple_projects_based_on_custom_id'
@@ -153,7 +153,7 @@ module GoodData
 
             users_by_project = run_params[:users_brick_input].group_by { |u| u[:pid] }
             results = []
-            user_filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |client_id, new_filters|
+            user_filters.group_by { |u| u[multiple_projects_column] }.flat_map do |client_id, new_filters|
               users = users_by_project[client_id]
               fail "Client id cannot be empty" if client_id.blank?
               c = domain.clients(client_id, data_product)
