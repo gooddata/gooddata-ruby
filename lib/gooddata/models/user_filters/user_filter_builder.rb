@@ -284,7 +284,7 @@ module GoodData
         expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
         safe_login = login.downcase
         profiles_uri = if options[:type] == :muf
-                         project_user = project_users.find { |u| u.login == login }
+                         project_user = project_users.find { |u| u.login == safe_login }
                          project_user.nil? ? ('/gdc/account/profile/' + safe_login) : project_user.profile_url
                        elsif options[:type] == :variable
                          (users_cache[login] && users_cache[login].uri)

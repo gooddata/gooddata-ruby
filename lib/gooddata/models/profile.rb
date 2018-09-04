@@ -214,7 +214,7 @@ module GoodData
     #
     # @return [String] Email address
     def email
-      @json['accountSetting']['email'] || ''
+      @json['accountSetting']['email'].is_a?(String) ? @json['accountSetting']['email'].downcase : ''
     end
 
     # Set the email

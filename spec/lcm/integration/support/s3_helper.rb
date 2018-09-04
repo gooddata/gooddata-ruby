@@ -2,6 +2,8 @@ module Support
   class S3Helper
     S3_ENDPOINT = 'http://localstack:4572'.freeze
     BUCKET_NAME = 'testbucket'.freeze
+    USER_FILTERS_KEY = 'user_filters'
+    USERS_KEY = 'users_brick_input'
 
     class << self
       def upload_file(file, object_name)

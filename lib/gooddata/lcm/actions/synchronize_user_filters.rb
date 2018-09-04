@@ -164,7 +164,7 @@ module GoodData
               end
             end
             if filters.empty?
-              fail 'The filter set can not be empty when using sync_multiple_projects_* mode as the filters contain \
+              fail 'The filter set can not be empty when using sync_multiple_projects_* mode as the filters contain
                     the project ids in which the permissions should be changed'
             end
             filters.group_by { |u| u[multiple_projects_column] }.flat_map do |project_id, new_filters|
