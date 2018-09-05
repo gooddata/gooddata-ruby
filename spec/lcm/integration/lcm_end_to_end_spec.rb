@@ -6,6 +6,7 @@ require 'csv'
 require_relative 'support/constants'
 require_relative 'support/configuration_helper'
 require_relative 'support/lcm_helper'
+require_relative 'brick_runner'
 require_relative 'shared_examples_for_synchronization_bricks'
 require_relative 'shared_contexts_for_lcm'
 
@@ -19,13 +20,9 @@ describe 'the whole life-cycle' do
 
   describe '1 - Initial Release' do
     before(:all) do
-      @config_template_path = File.expand_path(
-        '../params/release_brick.json.erb',
-        __FILE__
-      )
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master = $master_projects.first
     end
-
-    include_context 'release brick'
 
     it_behaves_like 'a synchronization brick' do
       let(:original_project) { @project }
@@ -44,13 +41,8 @@ describe 'the whole life-cycle' do
 
   describe '2 - Initial Provisioning' do
     before(:all) do
-      @config_template_path = File.expand_path(
-        '../params/provisioning_brick.json.erb',
-        __FILE__
-      )
+      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../params/provisioning_brick.json.erb', client: @prod_rest_client
     end
-
-    include_context 'provisioning brick'
 
     it 'creates client projects only for filtered segments' do
       expect($client_projects.length).to be 3
@@ -73,13 +65,8 @@ describe 'the whole life-cycle' do
 
   describe '3 - Initial Rollout' do
     before(:all) do
-      @config_template_path = File.expand_path(
-        '../params/rollout_brick.json.erb',
-        __FILE__
-      )
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
     end
-
-    include_context 'rollout brick'
 
     it_behaves_like 'a synchronization brick' do
       let(:original_project) { $master }
@@ -133,13 +120,9 @@ describe 'the whole life-cycle' do
 
   describe '5 - Subsequent Release' do
     before(:all) do
-      @config_template_path = File.expand_path(
-        '../params/release_brick.json.erb',
-        __FILE__
-      )
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master = $master_projects.first
     end
-
-    include_context 'release brick'
 
     it_behaves_like 'a synchronization brick' do
       let(:original_project) { @project }
@@ -158,15 +141,6 @@ describe 'the whole life-cycle' do
 
   describe '6 - Subsequent Provisioning' do
     before(:all) do
-      @config_template_path = File.expand_path(
-        '../params/provisioning_brick.json.erb',
-        __FILE__
-      )
-      LcmHelper.create_workspace_table(
-        @workspace_table_name,
-        @ads_client,
-        Support::CUSTOM_CLIENT_ID_COLUMN
-      )
       deleted_workspace = @workspaces.delete(@workspaces.first)
       @deleted_workspace = @prod_rest_client.projects(:all).find { |p| p.title == deleted_workspace[:title] }
       @test_context[:input_source_type] = 'ads'
@@ -181,8 +155,9 @@ describe 'the whole life-cycle' do
         query = "INSERT INTO \"#{@workspace_table_name}\" VALUES('#{ws[:client_id]}', '#{ws[:segment_id]}', NULL, '#{ws[:title]}');"
         @ads_client.execute(query)
       end
+
+      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../params/provisioning_brick.json.erb', client: @prod_rest_client
     end
-    include_context 'provisioning brick'
 
     it 'deletes extra client projects' do
       expect(@brick_result[:params][:clients].map(&:obj_id)).to_not include @deleted_workspace.obj_id
@@ -191,13 +166,8 @@ describe 'the whole life-cycle' do
 
   describe '7 - Subsequent Rollout' do
     before(:all) do
-      @config_template_path = File.expand_path(
-        '../params/rollout_brick.json.erb',
-        __FILE__
-      )
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
     end
-
-    include_context 'rollout brick'
 
     it_behaves_like 'a synchronization brick' do
       let(:original_project) { $master }

@@ -7,6 +7,7 @@ require_relative '../integration/support/constants'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/shared_examples_for_synchronization_bricks'
 require_relative '../integration/shared_contexts_for_lcm'
+require_relative '../integration/brick_runner'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []
@@ -32,45 +33,23 @@ describe 'LCM load test' do
   end
 
   describe 'release' do
-    before(:all) do
-      @config_template_path = File.expand_path(
-        '../../integration/params/release_brick.json.erb',
-        __FILE__
-      )
-    end
-    include_context 'release brick'
-    after(:all) do
+    it 'runs' do
+      BrickRunner.release_brick context: @test_context, template_path: '../../integration/params/release_brick.json.erb'
       $release_time = Time.now - $start_time
     end
-    # these need to be in every describe to ensure the before and after hooks (which contain the brick run) happen
-    it('does not fail') {}
   end
 
   describe 'provisioning' do
-    before(:all) do
-      @config_template_path = File.expand_path(
-        '../../integration/params/provisioning_brick.json.erb',
-        __FILE__
-      )
-    end
-    include_context 'provisioning brick'
-    after(:all) do
+    it 'runs' do
+      BrickRunner.provisioning_brick context: @test_context, template_path: '../../integration/params/provisioning_brick.json.erb'
       $provisioning_time = Time.now - $start_time
     end
-    it('does not fail') {}
   end
 
   describe 'rollout' do
-    before(:all) do
-      @config_template_path = File.expand_path(
-        '../../integration/params/rollout_brick.json.erb',
-        __FILE__
-      )
-    end
-    include_context 'rollout brick'
-    after(:all) do
+    it 'runs' do
+      BrickRunner.rollout_brick context: @test_context, template_path: '../../integration/params/rollout_brick.json.erb'
       $rollout_time = Time.now - $start_time
     end
-    it('does not fail') {}
   end
 end

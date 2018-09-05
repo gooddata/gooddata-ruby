@@ -29,51 +29,6 @@ def create_workspace_csv(workspaces, client_id_column)
   temp_file
 end
 
-shared_context 'brick' do
-  before(:all) do
-    config_path = ConfigurationHelper.create_interpolated_tempfile(
-      @config_template_path,
-      @test_context
-    )
-    $params = JSON.parse(File.read(config_path))
-  end
-
-  after(:all) do
-    $params = nil
-  end
-end
-
-shared_context 'release brick' do
-  include_context 'brick'
-  before(:all) do
-    @brick_result = GoodData::Bricks::Pipeline.release_brick_pipeline.call($params)
-    master_ids = @brick_result[:results]['CreateSegmentMasters'].map { |r| r[:master_pid] }
-    $master_projects = master_ids.map { |id| @prod_rest_client.projects(id) }
-    $master = $master_projects.first
-    pp @brick_result
-  end
-end
-
-shared_context 'provisioning brick' do
-  include_context 'brick'
-  before(:all) do
-    @brick_result = GoodData::Bricks::Pipeline.provisioning_brick_pipeline.call($params)
-    client_pids = @brick_result[:params][:synchronize].first[:to].map(&:pid)
-    $client_projects = client_pids.map { |id| @prod_rest_client.projects(id) }
-    pp @brick_result
-  end
-end
-
-shared_context 'rollout brick' do
-  include_context 'brick'
-  before(:all) do
-    @brick_result = GoodData::Bricks::Pipeline.rollout_brick_pipeline.call($params)
-    client_pids = @brick_result[:params][:synchronize].first[:to].map(&:pid)
-    $client_projects = client_pids.map { |id| @prod_rest_client.projects(id) }
-    pp @brick_result
-  end
-end
-
 shared_context 'lcm bricks' do
   before(:all) do
     @config = {
@@ -110,10 +65,15 @@ shared_context 'lcm bricks' do
     @release_table_name = "LCM_RELEASE_#{@suffix}"
     LcmHelper.create_release_table(@release_table_name, @ads_client)
     @workspace_table_name = "LCM_WORKSPACE_#{@suffix}"
+    LcmHelper.create_workspace_table(
+      @workspace_table_name,
+      @ads_client,
+      Support::CUSTOM_CLIENT_ID_COLUMN
+    )
 
     $reuse_project = ENV['REUSE_PROJECT']
 
-    project_helper = ConfigurationHelper.create_development_project(
+    project_helper = ConfigurationHelper.ensure_development_project(
       client: @rest_client,
       title: "Development Project #{@suffix}",
       auth_token: @config[:dev_token],

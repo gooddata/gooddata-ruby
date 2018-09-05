@@ -27,23 +27,6 @@ module Support
       json = File.read(blueprint_path)
       blueprint = GoodData::Model::ProjectBlueprint.from_json(json)
       project.update_from_blueprint(blueprint)
-
-      maql = '
-        CREATE DATASET {dataset.a};
-        CREATE DATASET {dataset.b};
-        CREATE ATTRIBUTE {attr.a} AS KEYS {f_a.id} FULLSET;
-        CREATE ATTRIBUTE {attr.b} AS KEYS {f_b.id} FULLSET, {f_a.b_id} MULTIVALUE;
-
-        CREATE FACT {fact.a} AS {f_a.f};
-        CREATE FACT {fact.b} AS {f_b.f};
-
-        ALTER DATASET {dataset.a} ADD {attr.a}, {fact.a};
-        ALTER DATASET {dataset.b} ADD {attr.b}, {fact.b};
-
-        ALTER ATTRIBUTE {attr.a} ADD LABELS {label.a} VISUAL(TITLE "Test Label") AS {f_a.label_a};
-        ALTER ATTRIBUTE {attr.b} ADD LABELS {label.b} VISUAL(TITLE "Test Labelis") AS {f_a.label_b};
-      '
-      @project.execute_maql maql
     end
 
     def load_data(data_path = DATA_FILE, dataset_identifier = DATASET_IDENTIFIER)
