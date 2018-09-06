@@ -16,6 +16,8 @@ require_relative '../mixins/meta_property_writer'
 
 require_relative '../mixins/root_key_getter'
 
+require 'active_support/core_ext/object/blank'
+
 module GoodData
   module Rest
     # Base class dealing with REST endpoints

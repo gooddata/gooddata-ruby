@@ -21,7 +21,7 @@ describe "Blueprint now support urn in date dimension", :vcr, :constraint => 'sl
 
   context 'project creates from blueprint contains urn in date dimension' do
     before(:all) do
-      @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+      @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
     end
 
     after(:all) do

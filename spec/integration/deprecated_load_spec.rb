@@ -19,7 +19,7 @@ describe "Full project implementation", :vcr, :vcr_all_cassette => 'deprecated',
       end
     end
 
-    @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
   end
 
   after(:all) do

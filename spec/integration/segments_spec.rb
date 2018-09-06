@@ -15,7 +15,7 @@ describe GoodData::Segment, :vcr do
 
   before(:each) do
     @uuid = SecureRandom.uuid
-    @master_project = @client.create_project(title: "Test MASTER project for #{@uuid}", auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @master_project = @client.create_project(title: "Test MASTER project for #{@uuid}", auth_token: ConnectionHelper::SECRETS[:gd_project_token])
     @segment = @domain.create_segment(segment_id: "segment-#{@uuid}", master_project: @master_project)
   end
 
@@ -60,7 +60,7 @@ describe GoodData::Segment, :vcr do
     end
 
     it 'can update a segment master project' do
-      @different_master = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @different_master = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       @segment.master_project = @different_master
       @segment.save
       @segment = @domain.segments(@segment.segment_id)
@@ -83,7 +83,7 @@ describe GoodData::Segment, :vcr do
     end
 
     it 'can create a new client in a segment' do
-      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       @segment_client = @segment.create_client(id: 'tenant_1', project: @client_project)
       expect(@segment_client).to be_an_instance_of(GoodData::Client)
       expect(@segment.clients.count).to eq 1

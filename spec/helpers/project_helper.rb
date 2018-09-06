@@ -72,7 +72,7 @@ module GoodData
 
           project = client.create_project_from_blueprint(
             blueprint,
-            token: ConnectionHelper::GD_PROJECT_TOKEN,
+            token: ConnectionHelper::SECRETS[:gd_project_token],
             environment: ProjectHelper::ENVIRONMENT
           )
 

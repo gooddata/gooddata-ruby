@@ -28,7 +28,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
 
   before(:all) do
     @client = ConnectionHelper.create_default_connection
-    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
     @process = @project.deploy_process('./spec/data/ruby_process',
                                        type: 'RUBY',
                                        name: 'Test ETL Process (Ruby)')
@@ -285,7 +285,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
       process = @project.processes.first
       schedule_first = process.create_schedule('0 15 27 7 *', process.executables.first)
       schedule_second = process.create_schedule('0 15 27 8 *', process.executables.first)
-      cloned_project = GoodData::Project.clone_with_etl(@project, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      cloned_project = GoodData::Project.clone_with_etl(@project, auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       a = @project.processes.flat_map { |p| p.schedules.map { |s| [p.name, s.name] } }
       b = cloned_project.processes.flat_map { |p| p.schedules.map { |s| [p.name, s.name] } }
       expect(a).to eq b

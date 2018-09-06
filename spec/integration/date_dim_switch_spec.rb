@@ -22,7 +22,7 @@ describe "Swapping a date dimension and exchanging all attributes/elements", :vc
     end
 
     # Create a project
-    @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @project = @client.create_project_from_blueprint(@blueprint, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
 
     # Load data
     users_data = [

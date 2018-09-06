@@ -12,7 +12,7 @@ describe GoodData::UserGroup do
     @user_group_description = 'My Test Description'
 
     @client = ConnectionHelper.create_default_connection
-    @project = @client.create_project(title: 'UserGroup Testing Project', token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @project = @client.create_project(title: 'UserGroup Testing Project', token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
 
     @users_to_delete = ProjectHelper.ensure_users(client: @client, amount: 5, caller: 'user group spec')

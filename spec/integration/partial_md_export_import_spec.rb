@@ -12,8 +12,8 @@ describe "Object export between projects", :vcr, :constraint => 'slow' do
 
     spec = MultiJson.load(File.read("./spec/data/blueprints/test_project_model_spec.json"), :symbolize_keys => true)
 
-    @source_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-    @target_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @source_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
+    @target_project = @client.create_project_from_blueprint(spec, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
   end
 
   after(:all) do

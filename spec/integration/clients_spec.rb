@@ -11,7 +11,7 @@ describe GoodData::Client, :vcr do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
-    @master_project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @master_project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
     @segment_name = "segment-#{SecureRandom.uuid}"
     @segment = @domain.create_segment(segment_id: @segment_name, master_project: @master_project)
   end
@@ -25,7 +25,7 @@ describe GoodData::Client, :vcr do
   describe '#[]' do
     before(:all) do
       client_id = SecureRandom.uuid
-      @client_project = @client.create_project(title: "client_#{client_id} project", auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @client_project = @client.create_project(title: "client_#{client_id} project", auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       @segment_client = @segment.create_client(id: "tenant_#{client_id}", project: @client_project)
     end
 
@@ -65,7 +65,7 @@ describe GoodData::Client, :vcr do
   describe '#dissociate' do
     before(:all) do
       client_id = SecureRandom.uuid
-      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       @segment_client = @segment.create_client(id: "tenant_#{client_id}", project: @client_project)
     end
 
@@ -86,7 +86,7 @@ describe GoodData::Client, :vcr do
   describe '#delete' do
     before(:all) do
       client_id = SecureRandom.uuid
-      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       @segment_client = @segment.create_client(id: "tenant_#{client_id}", project: @client_project)
     end
 
@@ -123,13 +123,13 @@ describe GoodData::Client, :vcr do
   describe '#save' do
     before(:all) do
       @client_id = SecureRandom.uuid
-      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @client_project = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       @segment_client = @segment.create_client(id: "tenant_#{@client_id}", project: @client_project)
     end
 
     it 'can update project id' do
       begin
-        other_client_project = @client.create_project(title: "client_#{@client_id} other project", auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+        other_client_project = @client.create_project(title: "client_#{@client_id} other project", auth_token: ConnectionHelper::SECRETS[:gd_project_token])
         @segment_client.project = other_client_project
         @segment_client.save
         expect(@segment.clients(@segment_client).project_uri).to eq other_client_project.uri
@@ -140,7 +140,7 @@ describe GoodData::Client, :vcr do
 
     it 'throws error when trying to update tenants segment id' do
       second_segment_name = "segment-#{SecureRandom.uuid}"
-      second_master_project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      second_master_project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
       second_segment = @domain.create_segment(segment_id: second_segment_name, master_project: second_master_project)
       @segment_client.segment = second_segment
 

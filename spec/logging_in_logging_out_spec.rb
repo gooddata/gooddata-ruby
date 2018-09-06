@@ -17,7 +17,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   end
 
   it 'should be able to log in with user name and password as params' do
-    client = GoodData.connect(GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+    client = GoodData.connect(GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, GoodData::Environment::ConnectionHelper::SECRETS[:default_password],
                               server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               verify_ssl: false)
     client.disconnect
@@ -25,7 +25,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
 
   it 'should be able to log in with user name and password as hash' do
     client = GoodData.connect(username: GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME,
-                              password: GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              password: GoodData::Environment::ConnectionHelper::SECRETS[:default_password],
                               server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               verify_ssl: false)
     client.disconnect
@@ -33,7 +33,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
 
   it 'should be able to log in with login and password as hash' do
     client = GoodData.connect(login: GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME,
-                              password: GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              password: GoodData::Environment::ConnectionHelper::SECRETS[:default_password],
                               server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               verify_ssl: false)
     client.disconnect
@@ -41,7 +41,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
 
   it 'should be able to pass additional params in hash' do
     client = GoodData.connect(login: GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME,
-                              password: GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+                              password: GoodData::Environment::ConnectionHelper::SECRETS[:default_password],
                               server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               webdav_server: 'https://some_random_server/',
                               verify_ssl: false)
@@ -50,7 +50,7 @@ describe GoodData::Rest::Connection, :constraint => 'slow' do
   end
 
   it 'should be able to pass additional params in hash when used login/pass' do
-    client = GoodData.connect(GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD,
+    client = GoodData.connect(GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, GoodData::Environment::ConnectionHelper::SECRETS[:default_password],
                               server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
                               webdav_server: 'https://some_random_server/',
                               verify_ssl: false)
