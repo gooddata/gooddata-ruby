@@ -89,13 +89,16 @@ shared_context 'user filters brick test context' do
         country: 'CZech',
         phone: '123',
         language: 'fr-FR',
-        user_groups: 'test_group'
+        user_groups: 'test_group',
+        client_id: 'testingclient'
       },
       {
-        custom_login: promoted_login
+        custom_login: promoted_login,
+        client_id: 'testingclient'
       },
       {
-        custom_login: test_login
+        custom_login: test_login,
+        client_id: 'testingclient'
       }
     ]
     users_csv = ConfigurationHelper.csv_from_hashes(user_data)
@@ -205,23 +208,22 @@ describe 'UsersFiltersBrick' do
     include_context 'user filters brick test context'
     include_context 'a user action in sync_domain_client_workspaces mode'
     let(:user_filters) do
-      [{
-           login: 'rubydev+admin@gooddata.com',
-           state: 'Washington',
-           client_id: 'testingclient'
-       },
-       {
-           login: 'rubydev+admin@gooddata.com',
-           state: 'Oregon',
-           client_id: 'testingclient-not-in-filter'
-       }]
+      [
+        {
+          login: 'rubydev+admin@gooddata.com',
+          state: 'Washington',
+          client_id: 'testingclient'
+        },
+        {
+          login: 'iam@promoted.com',
+          state: 'Oregon',
+          client_id: 'testingclient-not-in-filter'
+        }
+      ]
     end
 
     it 'adds user filters only on projects from clients in segments in segments filter' do
       upload_user_filters_csv(user_filters)
-      users_csv = ConfigurationHelper.csv_from_hashes(user_filters.push(login: 'iam@promoted.com', client_id: 'testingclient'))
-      Support::S3Helper.upload_file(users_csv, @test_context[:users_brick_input][:s3_key])
-
       GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
       expect(@project.user_filters.to_a.length).to be(2)
       expect(@project_not_in_filter.user_filters.to_a.length).to be(0)

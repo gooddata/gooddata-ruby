@@ -140,7 +140,7 @@ module GoodData
               elsif mode == 'sync_multiple_projects_based_on_pid'
                 current_project = client.projects(id)
               end
-              sync_user_filters(current_project, new_filters, run_params.merge(users_brick_users: users), symbolized_config)
+              sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
             end
           when 'sync_domain_client_workspaces'
             domain_clients = domain.clients(:all, data_product)
@@ -164,7 +164,7 @@ module GoodData
               current_project = c.project
               fail "Client #{client_id} does not have project." unless current_project
               working_client_ids << client_id
-              partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_users: users), symbolized_config)
+              partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
               results.concat(partial_results[:results])
             end
 
@@ -188,7 +188,7 @@ module GoodData
 
                 puts "Delete all filters in project #{current_project.pid} of client #{c.client_id}"
                 users = users_by_project[c.client_id]
-                delete_results = current_project.add_data_permissions([], run_params.merge(users_brick_users: users))
+                delete_results = current_project.add_data_permissions([], run_params.merge(users_brick_input: users))
                 results.concat(delete_results[:results])
               end
             end

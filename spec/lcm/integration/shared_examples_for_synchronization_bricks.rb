@@ -10,7 +10,7 @@ shared_examples 'a synchronization brick' do
     projects.each do |project|
       process = project.processes.find { |p| p.name == title }
       schedule = process.schedules.first
-      expect(schedule.hidden_params.keys.map(&:to_sym)).to include(*@brick_result[:params][:additional_hidden_params].keys.map(&:to_sym))
+      expect(schedule.hidden_params.keys.map(&:to_sym)).to include(*additional_hidden_params.keys.map(&:to_sym))
     end
   end
 
@@ -63,14 +63,10 @@ shared_examples 'a synchronization brick' do
   it 'migrates label types' do
     original_attributes = original_project.attributes.to_a
     new_attributes = projects && projects[0].attributes.to_a
-    expect(original_attributes.length).to be 34
-    expect(new_attributes.length).to be 34
+    expect(new_attributes.length).to be original_attributes.length
     original_attributes.each do |attribute|
-      next unless attribute.content['displayForms'] &&
-      attribute.content['displayForms'].any?
-      new_attribute = new_attributes.find do |a|
-        a.identifier == attribute.identifier
-      end
+      next unless attribute.content['displayForms'] && attribute.content['displayForms'].any?
+      new_attribute = new_attributes.find { |a| a.identifier == attribute.identifier }
       label_type = attribute.content['displayForms'].first['content']['type']
       new_label_type = new_attribute.content['displayForms'].first['content']['type']
       expect(new_label_type).to eq label_type

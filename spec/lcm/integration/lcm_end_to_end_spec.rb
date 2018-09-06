@@ -15,8 +15,26 @@ $master_projects = []
 $client_projects = []
 $master = false
 
+release_additional_hidden_params = {
+  hidden_msg_from_release_brick: 'Hi, I was set by release brick but keep it secret',
+  SECURE_PARAM_2: 'I AM SET TOO'
+}
+
+rollout_additional_hidden_params = {
+  hidden_msg_from_rollout_brick: 'Hi, I was set by rollout brick but keep it secret',
+  SECURE_PARAM_2: 'I AM SET TOO'
+}
+
+provisioning_additional_hidden_params = {
+  hidden_msg_from_provisioning_brick: 'Hi, I was set by provisioning brick but keep it secret',
+  SECURE_PARAM_2: 'I AM SET TOO'
+}
+
 describe 'the whole life-cycle' do
-  include_context 'lcm bricks'
+  include_context 'lcm bricks',
+                  release_additional_hidden_params: release_additional_hidden_params,
+                  provisioning_additional_hidden_params: provisioning_additional_hidden_params,
+                  rollout_additional_hidden_params: rollout_additional_hidden_params
 
   describe '1 - Initial Release' do
     before(:all) do
@@ -36,6 +54,7 @@ describe 'the whole life-cycle' do
          ['+', 'params.msg_from_release_brick', 'Hi, I was set by release brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
+      let(:additional_hidden_params) { release_additional_hidden_params }
     end
   end
 
@@ -60,6 +79,7 @@ describe 'the whole life-cycle' do
          ['+', 'params.msg_from_provisioning_brick', 'Hi, I was set by provisioning brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
+      let(:additional_hidden_params) { provisioning_additional_hidden_params }
     end
   end
 
@@ -80,6 +100,7 @@ describe 'the whole life-cycle' do
          ['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
+      let(:additional_hidden_params) { rollout_additional_hidden_params }
     end
   end
 
@@ -136,6 +157,7 @@ describe 'the whole life-cycle' do
          ['+', 'params.msg_from_release_brick', 'Hi, I was set by release brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
+      let(:additional_hidden_params) { release_additional_hidden_params }
     end
   end
 
@@ -160,7 +182,7 @@ describe 'the whole life-cycle' do
     end
 
     it 'deletes extra client projects' do
-      expect(@brick_result[:params][:clients].map(&:obj_id)).to_not include @deleted_workspace.obj_id
+      expect($client_projects.map(&:pid)).to_not include @deleted_workspace.pid
     end
   end
 
@@ -181,6 +203,7 @@ describe 'the whole life-cycle' do
          ['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
+      let(:additional_hidden_params) { rollout_additional_hidden_params }
     end
   end
 end

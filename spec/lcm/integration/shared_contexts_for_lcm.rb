@@ -29,7 +29,7 @@ def create_workspace_csv(workspaces, client_id_column)
   temp_file
 end
 
-shared_context 'lcm bricks' do
+shared_context 'lcm bricks' do |opts = {}|
   before(:all) do
     @config = {
       verify_ssl: false,
@@ -168,7 +168,11 @@ shared_context 'lcm bricks' do
       s3_endpoint: s3_endpoint,
       custom_client_id_column: Support::CUSTOM_CLIENT_ID_COLUMN,
       transfer_all: true,
-      conflicting_client_id: conflicting_client_id
+      conflicting_client_id: conflicting_client_id,
+      # this is very painful, please remove it as soon as possible
+      release_additional_hidden_params: (opts[:release_additional_hidden_params] || {}).to_json,
+      provisioning_additional_hidden_params: (opts[:provisioning_additional_hidden_params] || {}).to_json,
+      rollout_additional_hidden_params: (opts[:rollout_additional_hidden_params] || {}).to_json
     }
   end
 

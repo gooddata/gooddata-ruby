@@ -16,6 +16,9 @@ module GoodData
                     'deletion of filters for a user that is to be removed.'
         param :users_brick_config, instance_of(Type::UsersBrickConfig), required: true
 
+        description 'Column That Contains Target Project IDs'
+        param :multiple_projects_column, instance_of(Type::StringType), required: true
+
         description 'Input Source'
         param :input_source, instance_of(Type::HashType), required: false
       end
@@ -37,8 +40,9 @@ module GoodData
                       return_headers: false,
                       encoding: 'utf-8') do |row|
             users_brick_users << {
-              login: row[login_column]
-            }.merge(row)
+              login: row[login_column],
+              pid: row[params.multiple_projects_column]
+            }
           end
 
           {
