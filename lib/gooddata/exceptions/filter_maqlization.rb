@@ -6,11 +6,5 @@
 
 module GoodData
   class FilterMaqlizationError < RuntimeError
-    attr_accessor :errors
-
-    def initialize(errs = [])
-      super('Filter MAQLization failed')
-      @errors = errs
-    end
   end
 end
