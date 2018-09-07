@@ -160,65 +160,66 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
     end
   end
 
-  describe '#export_clone' do
-    context 'when exclude_schedule is true' do
-      let(:options) { { exclude_schedules: true } }
-      let(:clone) { GoodData::Project.create(title: 'project clone', client: @client, auth_token: ConnectionHelper::GD_PROJECT_TOKEN) }
+  describe 'cloning' do
+    let(:clone) { GoodData::Project.create(title: 'project clone', client: @client, auth_token: ConnectionHelper::SECRETS[:gd_project_token]) }
+    describe '#export_clone' do
+      context 'when exclude_schedule is true' do
+        let(:options) { { exclude_schedules: true } }
 
-      after do
-        clone.delete if clone
+        after do
+          clone.delete if clone
+        end
+
+        it 'excludes scheduled emails' do
+          @project.schedule_mail.save
+          export_token = @project.export_clone(options)
+          clone.import_clone(export_token)
+          expect(@project.scheduled_mails.to_a).not_to be_empty
+          expect(clone.scheduled_mails.to_a).to be_empty
+        end
       end
 
-      it 'excludes scheduled emails' do
-        @project.schedule_mail.save
-        export_token = @project.export_clone(options)
-        clone.import_clone(export_token)
-        expect(@project.scheduled_mails.to_a).not_to be_empty
-        expect(clone.scheduled_mails.to_a).to be_empty
+      context 'when cross_data_center_export is true' do
+        it 'is ok' do
+          # there are no staging environments on other datacenters
+          # so just checking if the parameter gets accepted
+          @project.export_clone(cross_data_center_export: true)
+        end
+      end
+
+      context 'when export task fails' do
+        let(:fail_response) do
+          response = { taskState: { status: 'ERROR' } }
+          GoodData::Helpers.stringify_keys(response)
+        end
+
+        before do
+          allow(@client)
+            .to receive(:poll_on_response).and_return(fail_response)
+        end
+
+        it 'raises ExportCloneError' do
+          expect { @project.export_clone }.to raise_error(GoodData::ExportCloneError)
+        end
       end
     end
 
-    context 'when cross_data_center_export is true' do
-      it 'is ok' do
-        # there are no staging environments on other datacenters
-        # so just checking if the parameter gets accepted
-        @project.export_clone(cross_data_center_export: true)
-      end
-    end
-
-    context 'when export task fails' do
+    describe '#import_clone' do
       let(:fail_response) do
         response = { taskState: { status: 'ERROR' } }
         GoodData::Helpers.stringify_keys(response)
       end
 
-      before do
-        allow(@client)
-          .to receive(:poll_on_response).and_return(fail_response)
+      after do
+        clone.delete if clone
       end
 
-      it 'raises ExportCloneError' do
-        expect { @project.export_clone }.to raise_error(GoodData::ExportCloneError)
-      end
-    end
-  end
-
-  describe '#import_clone' do
-    let(:clone) { GoodData::Project.create(title: 'import clone test', client: @client, auth_token: ConnectionHelper::GD_PROJECT_TOKEN) }
-    let(:fail_response) do
-      response = { taskState: { status: 'ERROR' } }
-      GoodData::Helpers.stringify_keys(response)
-    end
-
-    after do
-      clone.delete if clone
-    end
-
-    context 'when import task fails' do
-      it 'raises ImportCloneError' do
-        export_token = @project.export_clone
-        allow(@client).to receive(:poll_on_response).and_return(fail_response)
-        expect { clone.import_clone(export_token) }.to raise_error(GoodData::ImportCloneError)
+      context 'when import task fails' do
+        it 'raises ImportCloneError' do
+          export_token = @project.export_clone
+          allow(@client).to receive(:poll_on_response).and_return(fail_response)
+          expect { clone.import_clone(export_token) }.to raise_error(GoodData::ImportCloneError)
+        end
       end
     end
   end

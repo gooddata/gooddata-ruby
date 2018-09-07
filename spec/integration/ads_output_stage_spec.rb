@@ -9,8 +9,8 @@ require 'gooddata'
 describe GoodData::AdsOutputStage, :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
-    @ads = GoodData::DataWarehouse.create(client: @client, title: 'Test ADS', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-    @project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @ads = GoodData::DataWarehouse.create(client: @client, title: 'Test ADS', auth_token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
+    @project = @client.create_project(title: 'Test project', auth_token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
   end
 
   after(:all) do

@@ -13,7 +13,7 @@ describe GoodData::Label, :vcr do
     @opts = {
       client: @rest_client,
       title: "Project for label spec #{@suffix}",
-      auth_token: ConnectionHelper::GD_PROJECT_TOKEN,
+      auth_token: ConnectionHelper::SECRETS[:gd_project_token],
       environment: 'TESTING',
       prod_organization: 'staging-lcm-prod'
     }

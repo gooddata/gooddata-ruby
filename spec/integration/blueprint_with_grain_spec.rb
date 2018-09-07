@@ -22,7 +22,7 @@ describe 'Create project using GoodData client with grain', :vcr, :constraint =>
     end
     @blueprint.valid? # => true
 
-    @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::SECRETS[:gd_project_token])
   end
 
   after(:all) do

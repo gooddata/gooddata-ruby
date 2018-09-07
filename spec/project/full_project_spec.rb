@@ -23,7 +23,7 @@ describe "Full project implementation", :vcr, :constraint => 'slow' do
 
   it "should not build an invalid model" do
     expect do
-      @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+      @client.create_project_from_blueprint(@invalid_spec, auth_token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
     end.to raise_error(GoodData::ValidationError)
   end
 
@@ -517,7 +517,7 @@ describe "Full project implementation", :vcr, :constraint => 'slow' do
   it "should be able to clone a project and transfer the data" do
     title = 'My new clone project'
     begin
-      cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+      cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
       expect(cloned_project.title).to eq title
       expect(cloned_project.facts.first.create_metric.execute).to eq 9
       m = @project.facts.first.create_metric
@@ -546,7 +546,7 @@ describe "Full project implementation", :vcr, :constraint => 'slow' do
 
   it "should be able to clone a project without data" do
     title = 'My new clone project'
-    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, data: false)
+    cloned_project = @project.clone(title: title, auth_token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT, data: false)
     expect(cloned_project.title).to eq title
     expect(cloned_project.facts.first.create_metric.execute).to eq nil
     cloned_project.delete
@@ -582,7 +582,7 @@ describe "Full project implementation", :vcr, :constraint => 'slow' do
       attr_sort_order_spec = JSON.parse(File.read("./spec/data/blueprints/attribute_sort_order_blueprint.json"), :symbolize_names => true)
       attr_sort_order_blueprint = GoodData::Model::ProjectBlueprint.new(attr_sort_order_spec)
 
-      project = @client.create_project_from_blueprint(attr_sort_order_blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+      project = @client.create_project_from_blueprint(attr_sort_order_blueprint, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
       attribute = project.blueprint.datasets('dataset.id').attributes('attr.id.name')
       expect(attribute.order_by).to eq 'label.id.name.name_label_2 - DESC'
     ensure

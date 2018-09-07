@@ -20,7 +20,10 @@ module GoodData
         #
         # @param [String] username Optional username
         # @param [String] password Optional password
-        def create_default_connection(username = GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME, password = GoodData::Environment::ConnectionHelper::DEFAULT_PASSWORD)
+        def create_default_connection(
+            username = GoodData::Environment::ConnectionHelper::DEFAULT_USERNAME,
+            password = GoodData::Environment::ConnectionHelper::SECRETS[:default_password]
+        )
           GoodData.connect(username, password, :server => GoodData::Environment::ConnectionHelper::DEFAULT_SERVER, :verify_ssl => OpenSSL::SSL::VERIFY_NONE)
         end
 

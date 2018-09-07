@@ -5,10 +5,11 @@ require 'rubygems'
 require 'bundler/setup'
 require 'bundler/cli'
 require 'bundler/gem_tasks'
-
+require 'gooddata'
 require 'rake/testtask'
 require 'rspec/core/rake_task'
 
+require 'yaml'
 require 'yard'
 
 require 'rubocop/rake_task'
@@ -222,5 +223,20 @@ namespace :gitflow do
   task :init do
     file_path = File.join(File.dirname(__FILE__), 'bin/gitflow-init.sh')
     system(file_path) || fail('Initializing git-flow failed!')
+  end
+end
+
+namespace :password do
+  task :rotate, [:value, :encryption_key] do |_, args|
+    key = 'password'
+    value = args[:value]
+    encryption_key = args[:encryption_key]
+    encrypted_value = GoodData::Helpers.encrypt(value, encryption_key).strip
+    secrets_path = File.join(File.dirname(__FILE__), 'spec/environment/secrets.yaml')
+    secrets = YAML.load_file(secrets_path)
+    secrets.each_value do |env|
+      env[key].replace(encrypted_value) if env.key?(key)
+    end
+    File.write(secrets_path, secrets.to_yaml)
   end
 end

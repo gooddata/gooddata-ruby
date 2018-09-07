@@ -20,7 +20,7 @@ describe 'Spin a project from template', :vcr, :constraint => 'slow' do
       GoodData::Project.create(
         title: 'Test project',
         template: '/some/nonexisting/template/uri',
-        auth_token: ConnectionHelper::GD_PROJECT_TOKEN,
+        auth_token: ConnectionHelper::SECRETS[:gd_project_token],
         environment: ProjectHelper::ENVIRONMENT,
         client: @client
       )

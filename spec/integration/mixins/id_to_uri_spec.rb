@@ -13,7 +13,7 @@ describe GoodData::Mixin::MdIdToUri, :vcr do
     @opts = {
       client: @client,
       title: "Project for id to uri spec #{@suffix}",
-      auth_token: ConnectionHelper::GD_PROJECT_TOKEN,
+      auth_token: ConnectionHelper::SECRETS[:gd_project_token],
       environment: 'TESTING',
       prod_organization: 'staging-lcm-prod'
     }

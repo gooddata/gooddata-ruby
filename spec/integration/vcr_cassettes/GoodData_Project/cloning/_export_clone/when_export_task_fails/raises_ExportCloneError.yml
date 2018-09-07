@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/maintenance/export
+    body:
+      encoding: UTF-8
+      string: '{"exportProject":{"exportUsers":0,"exportData":1}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.0/java/2.4.1
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - 4_nOXTbOQuIAKhXmc8B--g:tXb1FtOxL7CKTDVP6VYuBQ
+      Content-Length:
+      - '50'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 07 Sep 2018 08:32:55 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - 4_nOXTbOQuIAKhXmc8B--g:tXb1FtOxL7CKTDVP6VYuBQ:BsGtalQ6MRdbBIES
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '37'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"exportArtifact":{"status":{"uri":"/gdc/md/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/etltask/a0e2b0e62038475cdf3eab8dfa67949700000040"},"token":"<TOKEN>"}}'
+    http_version:
+  recorded_at: Fri, 07 Sep 2018 08:32:55 GMT
+recorded_with: VCR 4.0.0

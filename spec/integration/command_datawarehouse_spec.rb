@@ -29,7 +29,7 @@ describe GoodData::Command::DataWarehouse, :vcr do
       dwh = GoodData::Command::DataWarehouse.create(
         title: title,
         summary: summary,
-        token: ConnectionHelper::GD_PROJECT_TOKEN,
+        token: ConnectionHelper::SECRETS[:gd_project_token],
         environment: ProjectHelper::ENVIRONMENT,
         client: @client
       )

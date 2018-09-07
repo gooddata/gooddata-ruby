@@ -23,12 +23,7 @@ class LcmConnectionHelper
 
     def environment
       env = GoodData::Environment::ConnectionHelper::LCM_ENVIRONMENT
-      ret = env.dup
-      encrypted = [:dev_token, :prod_token, :vertica_dev_token, :vertica_prod_token, :password]
-      encrypted.each do |key|
-        ret[key] = GoodData::Helpers.decrypt(env[key], ENV['GD_SPEC_PASSWORD'])
-      end
-      ret
+      env.merge(GoodData::Environment::ConnectionHelper::SECRETS)
     end
 
     def env_name

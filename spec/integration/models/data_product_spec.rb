@@ -58,7 +58,7 @@ describe GoodData::DataProduct, :vcr do
 
   describe '#create_segment' do
     before do
-      @master_project = @client.create_project(title: "Test MASTER project for #{@uuid}", auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+      @master_project = @client.create_project(title: "Test MASTER project for #{@uuid}", auth_token: ConnectionHelper::SECRETS[:gd_project_token])
     end
 
     it 'creates a segment' do

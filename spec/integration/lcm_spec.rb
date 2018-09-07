@@ -13,8 +13,8 @@ describe GoodData::LCM, :vcr, :constraint => 'slow' do
     spec = JSON.parse(File.read("./spec/data/blueprints/attribute_sort_order_blueprint.json"), :symbolize_names => true)
     blueprint = GoodData::Model::ProjectBlueprint.new(spec)
 
-    @source_project = @client.create_project_from_blueprint(blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
-    @target_project = @client.create_project_from_blueprint(@source_project.blueprint, token: ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT)
+    @source_project = @client.create_project_from_blueprint(blueprint, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
+    @target_project = @client.create_project_from_blueprint(@source_project.blueprint, token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
   end
 
   after(:all) do

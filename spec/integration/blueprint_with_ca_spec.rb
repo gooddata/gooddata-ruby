@@ -20,7 +20,7 @@ describe 'Create project using GoodData client with computed attribute', :vcr, :
     end
     fail "blueprint is invalid" unless @blueprint.valid?
 
-    @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::GD_PROJECT_TOKEN)
+    @project = @client.create_project_from_blueprint(@blueprint, auth_token: ConnectionHelper::SECRETS[:gd_project_token])
   end
 
   after(:all) do

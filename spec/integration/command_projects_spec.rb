@@ -13,7 +13,12 @@ describe GoodData::Command::Project, :vcr, :vcr_all_cassette => 'model_updates',
 
     @blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/test_project_model_spec.json")
     @module_blueprint = GoodData::Model::ProjectBlueprint.from_json("./spec/data/blueprints/additional_dataset_module.json")
-    @project = GoodData::Command::Project.build(:spec => @blueprint, :token => ConnectionHelper::GD_PROJECT_TOKEN, environment: ProjectHelper::ENVIRONMENT, :client => @client)
+    @project = GoodData::Command::Project.build(
+      spec: @blueprint,
+      token: ConnectionHelper::SECRETS[:gd_project_token],
+      environment: ProjectHelper::ENVIRONMENT,
+      client: @client
+    )
   end
 
   after(:all) do
