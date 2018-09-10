@@ -19,10 +19,8 @@ describe GoodData::Project, :vcr, :constraint => 'slow' do
   end
 
   after(:all) do
-    @users_to_delete.map(&:login).map { |u| @domain.find_user_by_login u }.map(&:delete)
-
     @project && @project.delete
-    @client.disconnect
+    @users_to_delete.map(&:login).map { |u| @domain.find_user_by_login u }.map(&:delete)
   end
 
   include_context 'deterministic random string in $example_name'
@@ -87,6 +85,9 @@ describe GoodData::Project, :vcr, :constraint => 'slow' do
       bill = users[0]
       bill.first_name = 'buffalo'
       bill.last_name = 'bill'
+      users.map do |u|
+        u.json['user']['content'].delete('password')
+      end
       # import
       @domain.create_users(users, domain: @domain, whitelists: [/admin@gooddata.com/])
       @project.import_users(users, domain: @domain, whitelists: [/admin@gooddata.com/])

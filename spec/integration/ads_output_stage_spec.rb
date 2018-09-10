@@ -31,7 +31,7 @@ describe GoodData::AdsOutputStage, :vcr, :constraint => 'slow' do
   end
 
   it 'shoule be able to show the sql diff' do
-    expect(@project.add.output_stage.sql_diff).to eq '-- Output Stage and LDM column mapping matches.'
+    expect(@project.add.output_stage.sql_diff.to_s.chomp).to eq '-- No LDM set in target workspace, cannot perform SQL diff task.'
   end
 
   describe '#delete' do
