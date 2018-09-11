@@ -17,8 +17,8 @@ shared_context 'a user action in sync_domain_client_workspaces mode' do
     @test_context[:data_product] = data_product_id
     @test_context[:segments_filter] = [segment_id]
     config_path = ConfigurationHelper.create_interpolated_tempfile(
-        @template_path,
-        @test_context
+      @template_path,
+      @test_context
     )
 
     $SCRIPT_PARAMS = JSON.parse(File.read(config_path))

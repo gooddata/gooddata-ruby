@@ -29,65 +29,22 @@ def create_workspace_csv(workspaces, client_id_column)
   temp_file
 end
 
-shared_context 'release brick' do
-  before(:all) do
-    config_path = ConfigurationHelper.create_interpolated_tempfile(
-      @config_template_path,
-      @test_context
-    )
-    params = JSON.parse(File.read(config_path))
-    @brick_result = GoodData::Bricks::Pipeline.release_brick_pipeline.call(params)
-    master_ids = @brick_result[:results]['CreateSegmentMasters'].map { |r| r[:master_pid] }
-    $master_projects = master_ids.map { |id| @prod_rest_client.projects(id) }
-    $master = $master_projects.first
-    pp @brick_result
-  end
-end
-
-shared_context 'provisioning brick' do
-  before(:all) do
-    config_path = ConfigurationHelper.create_interpolated_tempfile(
-      @config_template_path,
-      @test_context
-    )
-    params = JSON.parse(File.read(config_path))
-    @brick_result = GoodData::Bricks::Pipeline.provisioning_brick_pipeline.call(params)
-    client_pids = @brick_result[:params][:synchronize].first[:to].map(&:pid)
-    $client_projects = client_pids.map { |id| @prod_rest_client.projects(id) }
-    pp @brick_result
-  end
-end
-
-shared_context 'rollout brick' do
-  before(:all) do
-    config_path = ConfigurationHelper.create_interpolated_tempfile(
-      @config_template_path,
-      @test_context
-    )
-    params = JSON.parse(File.read(config_path))
-    @brick_result = GoodData::Bricks::Pipeline.rollout_brick_pipeline.call(params)
-    client_pids = @brick_result[:params][:synchronize].first[:to].map(&:pid)
-    $client_projects = client_pids.map { |id| @prod_rest_client.projects(id) }
-    pp @brick_result
-  end
-end
-
-shared_context 'lcm bricks' do
+shared_context 'lcm bricks' do |opts = {}|
   before(:all) do
     @config = {
-        verify_ssl: false,
-        environment: 'TESTING',
-        master_prefix: 'Insurance Demo Master'
+      verify_ssl: false,
+      environment: 'TESTING',
+      master_prefix: 'Insurance Demo Master'
     }
     @config.merge!(LcmConnectionHelper.environment)
     @config[:ads_client] = {
-        username: @config[:username],
-        password: @config[:password]
+      username: @config[:username],
+      password: @config[:password]
     }
     connection_parameters = {
-        username: @config[:username],
-        password: @config[:password],
-        server: "https://#{@config[:dev_server]}"
+      username: @config[:username],
+      password: @config[:password],
+      server: "https://#{@config[:dev_server]}"
     }
     @rest_client = GoodData.connect(connection_parameters)
 
@@ -98,26 +55,31 @@ shared_context 'lcm bricks' do
     @config[:ads_client][:jdbc_url] = @ads.data['connectionUrl']
 
     @ads_client = GoodData::Datawarehouse.new(
-        @config[:ads_client][:username],
-        @config[:ads_client][:password],
-        @config[:ads_client][:ads_id],
-        jdbc_url: @ads.data['connectionUrl']
+      @config[:ads_client][:username],
+      @config[:ads_client][:password],
+      @config[:ads_client][:ads_id],
+      jdbc_url: @ads.data['connectionUrl']
     )
 
     @suffix = LcmHelper.create_suffix
     @release_table_name = "LCM_RELEASE_#{@suffix}"
     LcmHelper.create_release_table(@release_table_name, @ads_client)
     @workspace_table_name = "LCM_WORKSPACE_#{@suffix}"
+    LcmHelper.create_workspace_table(
+      @workspace_table_name,
+      @ads_client,
+      Support::CUSTOM_CLIENT_ID_COLUMN
+    )
 
     $reuse_project = ENV['REUSE_PROJECT']
 
-    project_helper = ConfigurationHelper.create_development_project({
+    project_helper = ConfigurationHelper.ensure_development_project(
       client: @rest_client,
       title: "Development Project #{@suffix}",
       auth_token: @config[:dev_token],
       environment: @config[:environment],
       ads: @ads
-    })
+    )
     project_helper.deploy_processes(@ads) unless $reuse_project
     @project = project_helper.project
 
@@ -127,9 +89,9 @@ shared_context 'lcm bricks' do
     label.save
 
     prod_connection_parameters = {
-        username: @config[:username],
-        password: @config[:password],
-        server: "https://#{@config[:prod_server]}"
+      username: @config[:username],
+      password: @config[:password],
+      server: "https://#{@config[:prod_server]}"
     }
     @prod_rest_client = GoodData.connect(prod_connection_parameters)
     @prod_ads = ConfigurationHelper.create_development_datawarehouse(client: @prod_rest_client,
@@ -137,30 +99,30 @@ shared_context 'lcm bricks' do
                                                                      auth_token: @config[:vertica_prod_token])
 
     @prod_output_stage_project = ConfigurationHelper.create_output_stage_project(
-        @prod_rest_client,
-        @suffix,
-        @prod_ads,
-        @config[:prod_token],
-        @config[:environment]
+      @prod_rest_client,
+      @suffix,
+      @prod_ads,
+      @config[:prod_token],
+      @config[:environment]
     )
     production_output_stage_uri = @prod_output_stage_project.add.output_stage.data['schema']
 
-    segments = (['BASIC', 'PREMIUM'] * ($segments_multiplier || 1)).map.with_index do |segment, i|
+    segments = (%w(BASIC PREMIUM) * ($segments_multiplier || 1)).map.with_index do |segment, i|
       {
-          segment_id: "INSURANCE_DEMO_#{segment}_#{i}_#{@suffix}",
-          development_pid: @project.obj_id,
-          driver: segment == 'PREMIUM' ? 'vertica' : 'pg',
-          master_name: "Insurance Demo Master (#{segment} #{i}) " + '##{version}',
-          ads_output_stage_uri: production_output_stage_uri
+        segment_id: "INSURANCE_DEMO_#{segment}_#{i}_#{@suffix}",
+        development_pid: @project.obj_id,
+        driver: segment == 'PREMIUM' ? 'vertica' : 'pg',
+        master_name: "Insurance Demo Master (#{segment} #{i}) " + '##{version}',
+        ads_output_stage_uri: production_output_stage_uri
       }
     end
     segments_filter = segments.map { |s| s[:segment_id] }
 
     @workspaces = (segments * ($workspaces_multiplier || 2)).map.with_index do |segment, i|
       {
-          client_id: "INSURANCE_DEMO_#{i}_#{@suffix}",
-          segment_id: segment[:segment_id],
-          title: "Insurance Demo Workspace #{i} #{@suffix}"
+        client_id: "INSURANCE_DEMO_#{i}_#{@suffix}",
+        segment_id: segment[:segment_id],
+        title: "Insurance Demo Workspace #{i} #{@suffix}"
       }
     end
 
@@ -173,8 +135,8 @@ shared_context 'lcm bricks' do
 
     s3_endpoint = 'http://localstack:4572'
     workspace_csv = LcmHelper.create_workspace_csv(
-        @workspaces,
-        Support::CUSTOM_CLIENT_ID_COLUMN
+      @workspaces,
+      Support::CUSTOM_CLIENT_ID_COLUMN
     )
     s3 = Aws::S3::Resource.new(access_key_id: 'foo',
                                secret_access_key: 'foo',
@@ -191,22 +153,26 @@ shared_context 'lcm bricks' do
     @data_product_id = "DATA_PRODUCT_#{@suffix}"
 
     @test_context = {
-        release_table_name: @release_table_name,
-        workspace_table_name: @workspace_table_name,
-        config: @config,
-        ads_client: @ads_client,
-        jdbc_url: @ads.data['connectionUrl'],
-        development_pid: @project.obj_id,
-        segments: segments.to_json,
-        segments_filter: segments_filter.to_json,
-        ads_output_stage_uri: production_output_stage_uri,
-        data_product: @data_product_id,
-        input_source_type: 's3',
-        s3_bucket: bucket_name,
-        s3_endpoint: s3_endpoint,
-        custom_client_id_column: Support::CUSTOM_CLIENT_ID_COLUMN,
-        transfer_all: true,
-        conflicting_client_id: conflicting_client_id
+      release_table_name: @release_table_name,
+      workspace_table_name: @workspace_table_name,
+      config: @config,
+      ads_client: @ads_client,
+      jdbc_url: @ads.data['connectionUrl'],
+      development_pid: @project.obj_id,
+      segments: segments.to_json,
+      segments_filter: segments_filter.to_json,
+      ads_output_stage_uri: production_output_stage_uri,
+      data_product: @data_product_id,
+      input_source_type: 's3',
+      s3_bucket: bucket_name,
+      s3_endpoint: s3_endpoint,
+      custom_client_id_column: Support::CUSTOM_CLIENT_ID_COLUMN,
+      transfer_all: true,
+      conflicting_client_id: conflicting_client_id,
+      # this is very painful, please remove it as soon as possible
+      release_additional_hidden_params: (opts[:release_additional_hidden_params] || {}).to_json,
+      provisioning_additional_hidden_params: (opts[:provisioning_additional_hidden_params] || {}).to_json,
+      rollout_additional_hidden_params: (opts[:rollout_additional_hidden_params] || {}).to_json
     }
   end
 

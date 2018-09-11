@@ -370,20 +370,9 @@ module GoodData
           country_column              = params.country_column || 'country'
           phone_column                = params.phone_column || 'phone'
           ip_whitelist_column         = params.ip_whitelist_column || 'ip_whitelist'
-          mode                        = params.sync_mode
 
           sso_provider = params.sso_provider
           authentication_modes = params.authentication_modes || []
-
-          multiple_projects_column = params.multiple_projects_column
-          unless multiple_projects_column
-            client_modes = %w(sync_domain_client_workspaces sync_one_project_based_on_custom_id sync_multiple_projects_based_on_custom_id)
-            multiple_projects_column = if client_modes.include?(mode)
-                                         'client_id'
-                                       else
-                                         'project_id'
-                                       end
-          end
 
           dwh = params.ads_client
           if dwh
@@ -422,7 +411,7 @@ module GoodData
               :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
               :authentication_modes => modes,
               :user_group => user_group,
-              :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
+              :pid => params.multiple_projects_column.nil? ? nil : (row[params.multiple_projects_column] || row[params.multiple_projects_column.to_sym]),
               :language => row[language_column] || row[language_column.to_sym],
               :company => row[company_column] || row[company_column.to_sym],
               :position => row[position_column] || row[position_column.to_sym],

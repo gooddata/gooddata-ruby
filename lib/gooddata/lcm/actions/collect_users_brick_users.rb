@@ -16,6 +16,9 @@ module GoodData
                     'deletion of filters for a user that is to be removed.'
         param :users_brick_config, instance_of(Type::UsersBrickConfig), required: true
 
+        description 'Column That Contains Target Project IDs'
+        param :multiple_projects_column, instance_of(Type::StringType), required: true
+
         description 'Input Source'
         param :input_source, instance_of(Type::HashType), required: false
       end
@@ -36,11 +39,15 @@ module GoodData
                       headers: true,
                       return_headers: false,
                       encoding: 'utf-8') do |row|
-            users_brick_users << { login: row[login_column] }
+            users_brick_users << {
+              login: row[login_column],
+              pid: row[params.multiple_projects_column]
+            }
           end
 
           {
-            results: users_brick_users,
+            # TODO; TMA-989 return the real results when print of results is fixed for large sets
+            results: [{ status: 'ok' }],
             params: {
               users_brick_users: users_brick_users
             }

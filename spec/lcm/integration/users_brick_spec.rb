@@ -2,7 +2,7 @@ require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
 require_relative 'support/configuration_helper'
 require_relative 'support/s3_helper'
-require_relative 'shared_examples_for_user_bricks'
+require_relative 'shared_contexts_for_user_bricks'
 
 def user_in_domain(user_name)
   domain = @rest_client.domain(LcmConnectionHelper.environment[:prod_organization])
