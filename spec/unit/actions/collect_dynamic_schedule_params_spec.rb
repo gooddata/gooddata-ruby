@@ -10,23 +10,22 @@ require 'gooddata/lcm/lcm2'
 describe GoodData::LCM2::CollectDymanicScheduleParams do
   let(:data_source) { double(:data_source) }
 
-  before do
-    allow(GoodData::Helpers::DataSource).to receive(:new).and_return(data_source)
-    allow(data_source).to receive(:realize).and_return('spec/data/dynamic_schedule_params_table.csv')
-  end
-
   context 'when dynamic schedule params are passed' do
     let(:params) do
-      params = {
+      GoodData::LCM2.convert_to_smart_hash(
         dynamic_params: {
           input_source: {}
         }
-      }
-      GoodData::LCM2.convert_to_smart_hash(params)
+      )
+    end
+
+    before do
+      allow(GoodData::Helpers::DataSource).to receive(:new).and_return(data_source)
+      allow(data_source).to receive(:realize).and_return('spec/data/dynamic_schedule_params_table.csv')
     end
 
     it 'collects them' do
-      result = subject.class.call(params)
+      result = GoodData::LCM2.run_action(subject.class, params)
       expected = {
         'client_1' => {
           'rollout' => {
@@ -51,6 +50,17 @@ describe GoodData::LCM2::CollectDymanicScheduleParams do
         }
       }
       expect(result[:params][:schedule_params]).to eq(expected)
+    end
+
+    it 'does not print the one with param_secure' do
+      result = GoodData::LCM2.run_action(subject.class, params)
+      secret_param_value = 'mode_a'
+      public_param_value = 'mode_c'
+
+      result[:results].each do |r|
+        expect(r['param_value']).not_to eq(secret_param_value)
+      end
+      expect(result[:results].map { |r| r['param_value'] }).to include(public_param_value)
     end
   end
 end
