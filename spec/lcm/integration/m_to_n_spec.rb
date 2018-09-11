@@ -94,6 +94,7 @@ describe 'Contains M to N relation' do
 
   after(:all) do
     @project.delete
+    ConfigurationHelper.delete_datawarehouse(@ads)
   end
 end
 

@@ -241,21 +241,8 @@ shared_context 'lcm bricks' do
       end
     end
 
-    begin
-      GoodData.logger.info("Deleting production ADS #{@ads.obj_id}")
-      @prod_ads.delete
-    rescue StandardError => e
-      GoodData.logger.warn("Failed to delete production ADS. #{e}")
-      GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
-    end
-
-    begin
-      GoodData.logger.info("Deleting development ADS #{@ads.obj_id}")
-      @ads.delete
-    rescue StandardError => e
-      GoodData.logger.warn("Failed to delete development ADS. #{e}")
-      GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
-    end
+    ConfigurationHelper.delete_datawarehouse(@prod_ads)
+    ConfigurationHelper.delete_datawarehouse(@ads)
 
     begin
       GoodData.logger.info("Deleting segments")

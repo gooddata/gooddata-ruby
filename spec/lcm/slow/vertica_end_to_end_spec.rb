@@ -84,13 +84,7 @@ describe 'the whole life-cycle' do
       end
     end
 
-    begin
-      GoodData.logger.info("Deleting ADS #{@ads.obj_id}")
-      @ads.delete
-    rescue StandardError => e
-      GoodData.logger.warn("Failed to delete development ADS. #{e}")
-      GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
-    end
+    ConfigurationHelper.delete_datawarehouse(@ads)
   end
 
   describe '1 - Initial Release' do

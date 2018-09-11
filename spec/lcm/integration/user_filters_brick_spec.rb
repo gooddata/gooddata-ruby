@@ -270,7 +270,7 @@ describe 'UsersFiltersBrick' do
       end
 
       after(:all) do
-        @ads.delete if @ads
+        ConfigurationHelper.delete_datawarehouse(@ads) if @ads
       end
 
       it 'updates changed user filter' do
