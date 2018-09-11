@@ -226,6 +226,7 @@ namespace :gitflow do
   end
 end
 
+desc 'Rotates the password of the test domain admin'
 namespace :password do
   task :rotate, [:value, :encryption_key] do |_, args|
     key = 'password'
