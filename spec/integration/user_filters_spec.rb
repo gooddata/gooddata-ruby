@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'gooddata'
+require 'gooddata/exceptions/filter_maqlization'
 
 describe "User filters implementation", :vcr, :constraint => 'slow' do
   before(:all) do
@@ -101,26 +102,24 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
   end
 
   it "should fail when asked to set a value not in the project" do
+    value = '%^&*( nonexistent value'
     filters = [
-      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value', 'tomas@gooddata.com']
+      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, value, 'tomas@gooddata.com']
     ]
     expect do
       @project.add_data_permissions(filters)
-    end.to raise_error
-    begin
-      @project.add_data_permissions(filters)
-    rescue GoodData::FilterMaqlizationError => e
-      expect(e.errors.count).to eq 1
-    end
+    end.to raise_error Regexp.new Regexp.escape value
     expect(@project.data_permissions.count).to eq 0
   end
 
   it 'should fail but return all values if specified' do
     domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
     u = domain.users.find { |user| user.login != ConnectionHelper::DEFAULT_USERNAME }
+    first_value = '%^&*( nonexistent value'
+    second_value = '%^&*( other nonexistent value'
     filters = [
-      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, '%^&*( nonexistent value', 'tomas@gooddata.com'],
-      [u.login, @label.uri, '%^&*( other nonexistent value', 'jirka@gooddata.com']
+      [ConnectionHelper::DEFAULT_USERNAME, @label.uri, first_value, 'tomas@gooddata.com'],
+      [u.login, @label.uri, second_value, 'jirka@gooddata.com']
     ]
     expect do
       @project.add_data_permissions(filters, fail_early: false)
@@ -128,7 +127,9 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
     begin
       @project.add_data_permissions(filters, fail_early: false)
     rescue GoodData::FilterMaqlizationError => e
-      expect(e.errors.count).to eq 2
+      [first_value, second_value].each do |v|
+        expect(e.message).to match Regexp.new Regexp.escape v
+      end
     end
     expect(@project.data_permissions.count).to eq 0
   end
@@ -307,5 +308,15 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
 
     r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
     expect(r.column(2)).to eq ["tomas@gooddata.com", 6, 1]
+  end
+
+  it 'can reach the error reported in filtermaqlization' do
+    error = GoodData::FilterMaqlizationError
+    msg = 'its broken'
+    begin
+      fail error, data: { another_layer: { text: msg } }
+    rescue error => e
+      expect(e.message).to include msg
+    end
   end
 end

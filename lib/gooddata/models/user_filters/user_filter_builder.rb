@@ -210,47 +210,53 @@ module GoodData
     # Creates a MAQL expression(s) based on the filter defintion.
     # Takes the filter definition looks up any necessary values and provides API executable MAQL
     def self.create_expression(filter, labels_cache, lookups_cache, attr_cache, options = {})
-      errors = []
       values = filter[:values]
       label = labels_cache[filter[:label]]
-      element_uris = values.map do |v|
-        begin
-          if lookups_cache.key?(label.uri)
-            if lookups_cache[label.uri].key?(v)
-              lookups_cache[label.uri][v]
-            else
-              fail
-            end
-          else
-            label.find_value_uri(v)
-          end
-        rescue
-          errors << {
-            type: :error,
-            label: label.title,
-            value: v
-          }
-          nil
+      errors = []
+
+      element_uris_by_values = Hash[values.map do |v|
+        if lookups_cache.key?(label.uri)
+          [v, lookups_cache[label.uri][v]]
+        else
+          [v, label.find_value_uri(v)]
         end
+      end]
+
+      missing_value_errors = element_uris_by_values.select { |_, v| v.nil? }.map do |k, _|
+        {
+          type: :error,
+          label: label.title,
+          value: k,
+          reason: 'Can not find the value of the attribute referenced in the MUF'
+        }
       end
-      expression = if element_uris.compact.empty? && options[:restrict_if_missing_all_values] && options[:type] == :muf
-                     '1 <> 1'
-                   elsif element_uris.compact.empty? && options[:restrict_if_missing_all_values] && options[:type] == :variable
-                     nil
-                   elsif element_uris.compact.empty?
+      errors += missing_value_errors unless options[:ignore_missing_values]
+
+      element_uris = element_uris_by_values.values.compact
+      # happens when data is not yet loaded in the project
+      no_values = element_uris.empty?
+
+      expression = if no_values && options[:restrict_if_missing_all_values] && options[:type] == :muf
+                     # create a filter that is always false to ensure the user can not see any data
+                     # as the proper MUF can not be constructed yet
+                     case options[:type]
+                     when :muf
+                       '1 <> 1'
+                     when :variable
+                       nil
+                     end
+                   elsif no_values
+                     # create a filter that is always true to ensure the user can see all data
                      'TRUE'
                    elsif filter[:over] && filter[:to]
                      over = attr_cache[filter[:over]]
                      to = attr_cache[filter[:to]]
-                     "([#{label.attribute_uri}] IN (#{element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ')})) OVER [#{over && over.uri}] TO [#{to && to.uri}]"
+                     "([#{label.attribute_uri}] IN (#{element_uris.sort.map { |e| '[' + e + ']' }.join(', ')})) OVER [#{over && over.uri}] TO [#{to && to.uri}]"
                    else
-                     "[#{label.attribute_uri}] IN (#{element_uris.compact.sort.map { |e| '[' + e + ']' }.join(', ')})"
+                     "[#{label.attribute_uri}] IN (#{element_uris.sort.map { |e| '[' + e + ']' }.join(', ')})"
                    end
-      if options[:ignore_missing_values]
-        [expression, []]
-      else
-        [expression, errors]
-      end
+
+      [expression, errors]
     end
 
     # Encapuslates the creation of filter
