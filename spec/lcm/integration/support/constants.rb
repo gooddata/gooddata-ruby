@@ -28,4 +28,6 @@ module Support
   COMPUTED_ATTRIBUTE_ID = 'attr.comp.my_computed_attr'
 
   USER_GROUP_NAME = 'My Test Group'
+
+  OUTPUT_STAGE_PREFIX = 'my_prefix'
 end

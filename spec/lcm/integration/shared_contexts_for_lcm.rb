@@ -113,7 +113,8 @@ shared_context 'lcm bricks' do |opts = {}|
         development_pid: @project.obj_id,
         driver: segment == 'PREMIUM' ? 'vertica' : 'pg',
         master_name: "Insurance Demo Master (#{segment} #{i}) " + '##{version}',
-        ads_output_stage_uri: production_output_stage_uri
+        ads_output_stage_uri: production_output_stage_uri,
+        ads_output_stage_prefix: Support::OUTPUT_STAGE_PREFIX
       }
     end
     segments_filter = segments.map { |s| s[:segment_id] }

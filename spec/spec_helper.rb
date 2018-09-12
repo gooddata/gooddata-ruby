@@ -28,6 +28,7 @@ require 'pmap'
 require 'rspec'
 require 'pathname'
 require 'gooddata'
+require_relative 'double_with_class'
 
 GoodData.logging_off unless ENV['GD_SPEC_LOG'] == 'true'
 

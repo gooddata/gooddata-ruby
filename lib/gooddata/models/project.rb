@@ -195,13 +195,15 @@ module GoodData
       end
 
       def transfer_output_stage(from_project, to_project, options)
+        from_prj_output_stage = from_project.add.output_stage
+        output_stage_prefix = options[:ads_output_stage_prefix] || from_prj_output_stage.output_stage_prefix
+        output_stage_uri = options[:ads_output_stage_uri] || from_prj_output_stage.schema
         if from_project.processes.any? { |p| p.type == :dataload }
           if to_project.processes.any? { |p| p.type == :dataload }
-            to_project.add.output_stage.schema = from_project.add.output_stage.schema
-            to_project.add.output_stage.output_stage_prefix = from_project.add.output_stage.output_stage_prefix
+            to_project.add.output_stage.schema = output_stage_uri
+            to_project.add.output_stage.output_stage_prefix = output_stage_prefix
             to_project.add.output_stage.save
           else
-            from_prj_output_stage = from_project.add.output_stage
             from_server = from_project.client.connection.server.url
             to_server = to_project.client.connection.server.url
             if from_server != to_server && options[:ads_output_stage_uri].nil?
@@ -214,9 +216,9 @@ module GoodData
 
             to_project.add.output_stage = GoodData::AdsOutputStage.create(
               client: to_project.client,
-              ads: options[:ads_output_stage_uri] || from_prj_output_stage.schema,
+              ads: output_stage_uri,
               client_id: from_prj_output_stage.client_id,
-              output_stage_prefix: from_prj_output_stage.output_stage_prefix,
+              output_stage_prefix: output_stage_prefix,
               project: to_project
             )
           end

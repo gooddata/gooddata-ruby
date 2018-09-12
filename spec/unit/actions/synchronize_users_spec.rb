@@ -128,6 +128,8 @@ describe GoodData::LCM2::SynchronizeUsers do
         allow(segment).to receive(:driver).and_return('vertica')
         allow(segment).to receive(:production_tags).and_return([])
         allow(segment).to receive(:master_name).and_return('charles')
+        allow(segment).to receive(:ads_output_stage_uri)
+        allow(segment).to receive(:ads_output_stage_prefix)
         allow(organization).to receive(:segment_uri).and_return(segment_uri)
         allow(organization).to receive(:project).and_return(project)
         allow(organization).to receive(:client_id).and_return('123456789')
@@ -209,6 +211,8 @@ describe GoodData::LCM2::SynchronizeUsers do
         allow(organization).to receive(:project).and_return(project)
         allow(organization).to receive(:client_id).and_return('123456789')
         allow(project).to receive(:deleted?).and_return(false)
+        allow(segment).to receive(:ads_output_stage_prefix)
+        allow(segment).to receive(:ads_output_stage_uri)
       end
 
       it_behaves_like 'a user action filtering segments' do

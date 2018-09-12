@@ -55,7 +55,12 @@ module GoodData
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Transferring processes, from project: '#{from.title}', PID: '#{from.pid}', to project: '#{to_project.title}', PID: '#{to_project.pid}'"
-              res = GoodData::Project.transfer_processes(from, to_project, ads_output_stage_uri: info.ads_output_stage_uri)
+              res = GoodData::Project.transfer_processes(
+                from,
+                to_project,
+                ads_output_stage_uri: info.ads_output_stage_uri,
+                ads_output_stage_prefix: info.ads_output_stage_prefix
+              )
 
               to_project.add.output_stage.client_id = client_id if client_id && to_project.add.output_stage
 
