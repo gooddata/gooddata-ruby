@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'gooddata'
+require 'gooddata/exceptions/filter_maqlization'
 
 describe "User filters implementation", :vcr, :constraint => 'slow' do
   before(:all) do
@@ -307,5 +308,15 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
 
     r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
     expect(r.column(2)).to eq ["tomas@gooddata.com", 6, 1]
+  end
+
+  it 'can reach the error reported in filtermaqlization' do
+    error = GoodData::FilterMaqlizationError
+    msg = 'its broken'
+    begin
+      fail error, data: { another_layer: { text: msg } }
+    rescue error => e
+      expect(e.message).to include msg
+    end
   end
 end
