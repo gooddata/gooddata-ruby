@@ -1,4 +1,52 @@
 # GoodData Ruby SDK Changelog
+## 1.3.1
+ - FEATURE: TMA-1030 Raise jruby version used in K8s docker image (#1284)
+ - Update README.md
+ - TRIVIAL: Correct dockerfile maintainer
+ - TMA-1033: show reason of filter composition failure (#1282)
+ - TMA-483 && TMA-963 Paralel ufb bug final fix
+ - TMA-963 && TMA-483: UFB and UB performance (#1234)
+ - TMA-1002 fixed broken tests
+ - no vcr (#1277)
+ - TMA-1005: Automate rotating credentials
+ - TMA-925: Optimize polling intervals
+ - Add info about running tests to CONTRIBUTING.md (#1262)
+ - Fix rubocop issue
+ - Add empty lines between licenses and modules
+ - SETI-2180 Updated base image namespace
+ - FEATURE: TMA-1030 Dockerize LCM bricks
+ - FEATURE: TMA-1030 Write brick outputs to files
+ - FEATURE: TMA-1030 Add Hello World brick
+ - REFACTOR: TMA-1030 Non functional changes
+ - BUGFIX: TMA-1040 Add nil result if action fails
+ - TEST: TMA-1040 Add tests for "perform" method in LCM2 module
+ - Require ActiveSupport where it's needed
+ - Revert Array refinement to Enumerable opening
+ - Revert class to reopening
+ - Use duplicable? from ActiveSupport
+ - Remove object.blank? as ActiveSupport already do it
+ - Revert Object to reopening
+ - Increase the scope of monkey patchs
+ - Fixes tests in CI
+ - Patch all places that use '.to_b' with all extensions that implements it
+ - Isolate Symbol monkeypatch in SymbolExtensions module
+ - Code :lipstick: Insert license header in files where it was missing
+ - Isolate String monkeypatch in StringExtensions module
+ - Add TrueExtensions and FalseExtensions in missing places
+ - Isolate Object monkeypatch in ObjectExtensions module
+ - Isolate Numeric monkeypatch in NumericExtensions module
+ - Isolate BigDecimal monkeypatch in BigDecimalExtensions module
+ - Adds Extensions to Globalhelper, it's the only one calls `duplicable?`
+ - Isolate Nil monkeypatch in NilExtensions module
+ - Isolate Integer monkeypatch in IntegerExtensions module
+ - Isolate Hash monkeypatch in HashExtensions module
+ - Isolate True/False monkey patchs in respectives modules
+ - Is a good practice to explicit the error in rescue block
+ - Isolate Enumerable monkey patch in EnumerableExtensions module
+ - Isolate Class monkeypatch in ClassExtensions module
+ - TMA-927: handle uppercase email inputs
+ - TMA-648 tests not deleting ads instances fixed
+
 ## 1.3.0
  - Add changelog for 1.2.1
  - Automate bumping version (#1243)
