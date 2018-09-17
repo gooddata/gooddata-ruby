@@ -1,6 +1,6 @@
 FROM harbor.intgdc.com/tools/gdc-java-8-jre:b057b53
 
-MAINTAINER tma <tma@gooddata.com>
+MAINTAINER lcm <lcm@gooddata.com>
 
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
