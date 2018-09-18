@@ -264,7 +264,9 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
     metric = @project.create_metric("SELECT SUM(#\"Lines Changed\")")
 
     # we want to compute stuff on different user than we are setting it on
-    u = @domain.users.find { |user| user.login != ConnectionHelper::DEFAULT_USERNAME }
+    nu = ProjectHelper.ensure_users(client: @client)
+    @domain.add_user(nu)
+    u = @domain.users.find { |user| user.login == nu.json['user']['content']['login'] }
     password = CryptoHelper.generate_password
     u.json['accountSetting']['password'] = password
     @domain.update_user(u)
