@@ -21,7 +21,16 @@ module GoodData
 
         description 'Input Source'
         param :input_source, instance_of(Type::HashType), required: false
+
+        description 'Synchronization Mode (e.g. sync_one_project_based_on_pid)'
+        param :sync_mode, instance_of(Type::StringType), required: false, default: 'sync_project'
       end
+
+      MULTIPLE_COLUMN_MODES = %w(
+        sync_domain_client_workspaces
+        sync_multiple_projects_based_on_custom_id
+        sync_multiple_projects_based_on_pid
+      )
 
       class << self
         def call(params)
@@ -39,12 +48,14 @@ module GoodData
                       headers: true,
                       return_headers: false,
                       encoding: 'utf-8') do |row|
+            pid = row[params.multiple_projects_column]
+            fail "The set multiple_projects_column '#{params.multiple_projects_column}' of the users input is empty" if !pid && MULTIPLE_COLUMN_MODES.include?(params.sync_mode)
+
             users_brick_users << {
-              login: row[login_column],
-              pid: row[params.multiple_projects_column]
+              login: row[login_column].downcase,
+              pid: pid
             }
           end
-
           {
             # TODO; TMA-989 return the real results when print of results is fixed for large sets
             results: [{ status: 'ok' }],

@@ -395,7 +395,7 @@ module GoodData
       filters = user_filters.map { |data| client.create(MandatoryUserFilter, data, project: project) }
       to_create, to_delete = resolve_user_filters(filters, project.data_permissions)
 
-      to_delete = sanitize_filters_to_delete(to_delete, options[:users_brick_input], project_users)
+      to_delete = sanitize_filters_to_delete(to_delete, options[:users_brick_input], project_users) unless options[:no_sanitize]
 
       if options[:do_not_touch_filters_that_are_not_mentioned]
         GoodData.logger.warn("Data permissions computed: #{to_create.count} to create")

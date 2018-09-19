@@ -14,16 +14,16 @@ describe GoodData::LCM2::CollectUsersBrickUsers do
       users_brick_config: {
         input_source: {},
         login_column: 'Email'
-      }
+      },
+      sync_mode: 'sync_domain_client_workspaces',
+      multiple_projects_column: 'client_id'
     }
     GoodData::LCM2.convert_to_smart_hash(params)
   end
 
   before do
-    allow(GoodData::Helpers::DataSource).to receive(:new)
-      .and_return(data_source)
-    allow(data_source).to receive(:realize)
-      .and_return('spec/data/users.csv')
+    allow(GoodData::Helpers::DataSource).to receive(:new).and_return(data_source)
+    allow(data_source).to receive(:realize).and_return('spec/data/users.csv')
   end
 
   it 'enriches parameters with logins' do
@@ -31,6 +31,16 @@ describe GoodData::LCM2::CollectUsersBrickUsers do
     expect(result[:params][:users_brick_users].length).to eq(11)
     result[:params][:users_brick_users].each do |user|
       expect(user[:login]).not_to be_nil
+    end
+  end
+
+  context 'when multiple_projects_column is not set' do
+    before do
+      allow(data_source).to receive(:realize).and_return('spec/data/users_without_multiple_projects_column.csv')
+    end
+
+    it 'fails' do
+      expect { subject.class.call(params) }.to raise_error(/of the users input is empty/)
     end
   end
 end
