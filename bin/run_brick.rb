@@ -4,22 +4,22 @@ require 'remote_syslog_logger'
 require_relative '../lib/gooddata'
 
 DEFAULT_BRICK = 'hello_world_brick'
+BRICK_PARAM_PREFIX = 'BRICK_PARAM_'
 
-brick_type = ENV['BRICK_TYPE'] || DEFAULT_BRICK
+brick_type = ARGV.length > 0 ? ARGV[0] : DEFAULT_BRICK
 
 syslog_node = ENV['NODE_NAME']
 log = RemoteSyslogLogger.new(syslog_node, 514, :program => brick_type)
 
-log.info "action=#{brick_type}_execution status=start"
+log.info "action=#{brick_type}_execution status=init"
 
 begin
   brick_pipeline = GoodData::Bricks::Pipeline.send("#{brick_type}_pipeline")
-  params_json = ENV['BRICK_PARAMS_JSON']
-  params = params_json.nil? ? {} : JSON.parse(params_json)
-
-  params['gooddata_ruby_commit'] = ENV['GOODDATA_RUBY_COMMIT'] || '<unknown>'
+  params = ENV.select { |k,| k.to_s.match(/^#{BRICK_PARAM_PREFIX}.*/) }.map { |k, v| [k.slice(BRICK_PARAM_PREFIX.length..-1), v] }.to_h
+  commit_hash = ENV['GOODDATA_RUBY_COMMIT'] || ''
+  params['gooddata_ruby_commit'] = commit_hash
   params['log_directory'] = ENV['LOG_DIRECTORY'] || '/tmp/'
-
+  log.info "action=#{brick_type}_execution status=start commit_hash=#{commit_hash}"
   @brick_result = brick_pipeline.call(params)
   log.info "action=#{brick_type}_execution status=finished"
 rescue NoMethodError => e
