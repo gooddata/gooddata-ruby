@@ -6,7 +6,7 @@ require_relative '../lib/gooddata'
 DEFAULT_BRICK = 'hello_world_brick'
 BRICK_PARAM_PREFIX = 'BRICK_PARAM_'
 
-brick_type = ARGV.length > 0 ? ARGV[0] : DEFAULT_BRICK
+brick_type = !ARGV.empty? ? ARGV[0] : DEFAULT_BRICK
 
 syslog_node = ENV['NODE_NAME']
 log = RemoteSyslogLogger.new(syslog_node, 514, :program => brick_type)
