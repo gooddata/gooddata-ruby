@@ -11,6 +11,13 @@ jobs:
       rvm:
         - 2.2
         - jruby-9.1.7
+    - stage: unit
+      script: |
+              git remote add upstream https://github.com/gooddata/gooddata-ruby.git
+              git fetch upstream master
+              bundle exec pronto run -c upstream/master --exit-code
+      rvm:
+        - 2.2
     - stage: integration
       script: |
               bundle exec rake -f lcm.rake docker:build
