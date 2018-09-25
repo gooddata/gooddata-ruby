@@ -103,7 +103,7 @@ module GoodData
         # TODO: It will be nice if the API will return us user just newly created
         begin
           url = "/gdc/account/domains/#{domain_name}/users"
-          response = c.post(url, :accountSetting => data)
+          response = c.post(url, :accountSetting => data) 
         rescue RestClient::BadRequest => e
           error = MultiJson.load(e.response)
           error_type = GoodData::Helpers.get_path(error, %w(error errorClass))
