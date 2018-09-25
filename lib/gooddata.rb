@@ -12,7 +12,7 @@ module GoodData
 end
 
 # Modules
-require_relative 'gooddata/bricks/bricks'
+ require_relative 'gooddata/bricks/bricks'
 require_relative 'gooddata/commands/commands'
 require_relative 'gooddata/core/core'
 require_relative 'gooddata/data/data'
@@ -21,7 +21,7 @@ require_relative 'gooddata/helpers/helpers'
 require_relative 'gooddata/lcm/lcm'
 require_relative 'gooddata/lcm/lcm2'
 require_relative 'gooddata/models/models'
-require_relative 'gooddata/bricks/pipeline' 
+require_relative 'gooddata/bricks/pipeline'
 
 # Files
 require_relative 'gooddata/app/app'
