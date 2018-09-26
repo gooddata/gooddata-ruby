@@ -31,6 +31,7 @@ describe GoodData::LCM2::CollectSegments do
     allow(gdc_gd_client).to receive(:class) { GoodData::Rest::Client }
     allow(logger).to receive(:class) { Logger }
     allow(logger).to receive(:info)
+    allow(logger).to receive(:debug)
     allow(data_product).to receive(:class) { GoodData::DataProduct }
     allow(data_product).to receive(:segments) { [segment] }
     allow(segment).to receive(:master_project) { segment_master }
