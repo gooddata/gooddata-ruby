@@ -78,9 +78,7 @@ module GoodData
 
       class << self
         MODES = %w(
-          add_to_organization
           sync_project
-          sync_domain_and_project
           sync_multiple_projects_based_on_pid
           sync_one_project_based_on_pid
           sync_one_project_based_on_custom_id
