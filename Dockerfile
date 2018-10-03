@@ -1,11 +1,11 @@
 FROM harbor.intgdc.com/tools/gdc-java-8-jre:b057b53
 
-MAINTAINER LCM <lcm@gooddata.com>
-
+ARG GIT_COMMIT=unspecified
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
-LABEL git_repostiory_url="https://github.com/gooddata/gooddata-ruby/"
+LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:b057b53"
+LABEL git_commit=$GIT_COMMIT
 
 # which is required by RVM
 RUN yum install -y curl which \
@@ -23,8 +23,7 @@ ENV HOME=/src
 RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && gem update --system \
     && gem install bundler rake"
 
-ARG SOURCE_COMMIT
-ENV GOODDATA_RUBY_COMMIT=$SOURCE_COMMIT
+ENV GOODDATA_RUBY_COMMIT=$GIT_COMMIT
 
 ADD ./bin ./bin
 ADD ./lib ./lib
