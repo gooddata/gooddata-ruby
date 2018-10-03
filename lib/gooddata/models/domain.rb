@@ -45,7 +45,7 @@ module GoodData
       # @param password [String] Default preset password
       # @return [Object] Raw response
       def add_user(user_data, name = nil, opts = { :client => GoodData.connection })
-        generated_pass = rand(10E10).to_s
+        generated_pass = GoodData::Helpers::CryptoHelper.generate_password
         domain_name = name || user_data[:domain]
         user_data = user_data.to_hash
         data = {
@@ -135,7 +135,6 @@ module GoodData
         user_data = user_data.to_hash if user_data.is_a?(GoodData::Profile)
         client = client(options)
         user_data = user_data.to_hash
-        # generated_pass = rand(10E10).to_s
         data = {
           :firstName => user_data[:first_name] || 'FirstName',
           :lastName => user_data[:last_name] || 'LastName',
