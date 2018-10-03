@@ -7,8 +7,6 @@
 require 'gooddata/models/domain'
 require 'gooddata/helpers/csv_helper'
 
-require_relative '../shared_contexts_for_deterministic_random_data'
-
 describe GoodData::Domain, :vcr do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
@@ -67,10 +65,12 @@ describe GoodData::Domain, :vcr do
   end
 
   describe '#create_users' do
-    include_context 'deterministic random string in $example_name'
-
-    it 'Creates new users from list' do
-      list = ProjectHelper.ensure_users(client: @client, amount: 2, caller: $example_name)
+    it 'Creates new users from list' do |example|
+      list = ProjectHelper.ensure_users(
+        client: @client,
+        amount: 2,
+        caller: example.description
+      )
       # as the test checks if the user was actually added to domain we delete it first
       list.map(&:login).map { |u| @domain.find_user_by_login u }.map { |u| u.delete if u }
 
@@ -109,8 +109,8 @@ describe GoodData::Domain, :vcr do
       expect(reverted_user.authentication_modes).to eq modes
     end
 
-    it 'Fails with an exception if you try to create a user that is in a different domain', broken: true do
-      user = ProjectHelper.ensure_users(client: @client, caller: $example_name)
+    it 'Fails with an exception if you try to create a user that is in a different domain', broken: true do |example|
+      user = ProjectHelper.ensure_users(client: @client, caller: example.description)
       user.login = 'svarovsky@gooddata.com'
       expect do
         @domain.create_user(user)
