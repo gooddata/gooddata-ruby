@@ -6,6 +6,7 @@ RUN apk add --no-cache curl make gcc git g++ python linux-headers binutils-gold 
 
 # Switch to directory with sources
 WORKDIR /src
+ENV HOME=/src
 
 RUN gem update --system \
     && gem install bundler

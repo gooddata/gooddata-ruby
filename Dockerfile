@@ -17,6 +17,7 @@ RUN curl -sSL https://get.rvm.io | bash -s stable --ruby=jruby-9.1.14.0
 
 # Switch to directory with sources
 WORKDIR /src
+ENV HOME=/src
 
 # login shell is required by rvm
 RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && gem update --system \

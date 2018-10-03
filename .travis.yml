@@ -1,33 +1,34 @@
 language: ruby
 cache: bundler
 stages:
-  - unit
-  - name: integration
-    if: type = api
+- unit
+- name: integration
+  if: type IN (api, cron)
 jobs:
   include:
-    - stage: unit
-      script: bundle exec rake test:unit
-      rvm:
-        - 2.2
-        - jruby-9.1.7
-    - stage: unit
-      script: |
-              git remote add upstream https://github.com/gooddata/gooddata-ruby.git
-              git fetch upstream master
-              bundle exec pronto run -c upstream/master --exit-code
-      rvm:
-        - 2.2
-    - stage: integration
-      script: |
-              bundle exec rake -f lcm.rake docker:build
-              bundle exec rake -f lcm.rake docker:bundle
-              bundle exec rake -f lcm.rake test:integration:docker
-      rvm:
-        - jruby-9.1.7
-    - stage: integration
-      script: bundle exec rake test:sdk
-      rvm: jruby-9.1.7
-    - stage: integration
-      script: bundle exec rake test:project
-      rvm: jruby-9.1.7
+  - stage: unit
+    script: bundle exec rake test:unit
+    rvm:
+    - 2.2
+    - jruby-9.1.7
+  - stage: unit
+    script: |
+      git remote add upstream https://github.com/gooddata/gooddata-ruby.git
+      git fetch upstream master
+      bundle exec pronto run -c upstream/master --exit-code
+  - stage: integration
+    script: |
+      bundle exec rake -f lcm.rake docker:build
+      bundle exec rake -f lcm.rake docker:bundle
+      bundle exec rake -f lcm.rake test:integration:docker
+    rvm:
+    - jruby-9.1.7
+  - stage: integration
+    script: bundle exec rake test:sdk
+    rvm: jruby-9.1.7
+  - stage: integration
+    script: bundle exec rake test:project
+    rvm: jruby-9.1.7
+env:
+  global:
+    secure: JuTmJkZEUra41StZV3wUf6YZZYTC3HYFsQYHPZToNqf1DUq6OFrV75j8FQR9q7Xecax/ZQo/MFvQeoUmLTurdN/v4v26d20gyygqLZOouSwvuvxb8TpV7FQLdosqN8Qu/g6efPaNJfv8eAGR3Y3qid8bhVT2bf7m3dd5U9zKxaE=

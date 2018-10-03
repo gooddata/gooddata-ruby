@@ -35,7 +35,8 @@ module GoodData
         def call(params)
           data_product = params.data_product
           data_product_segments = data_product.segments
-          params.gdc_logger.info("Domain segments: #{data_product_segments}")
+          segment_names = data_product_segments.map(&:segment_id)
+          params.gdc_logger.debug("Domain segments: #{segment_names}")
 
           if params.segments_filter
             params.gdc_logger.info("Segments filter: #{params.segments_filter}")
