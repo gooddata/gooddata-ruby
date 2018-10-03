@@ -33,6 +33,4 @@ ADD ./gooddata.gemspec .
 
 RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && bundle install"
 
-ENTRYPOINT ["/bin/bash", "-l", "-c"]
-
-CMD [ ". /usr/local/rvm/scripts/rvm && bundle exec ./bin/run_brick.rb" ]
+CMD [ "./bin/hello_world.sh" ]
