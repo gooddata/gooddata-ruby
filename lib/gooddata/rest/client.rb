@@ -169,9 +169,12 @@ module GoodData
       end
 
       def project_is_accessible?(id)
-        projects(id) && true
-      rescue
-        true
+        GoodData.logger.warn 'Beware! project_is_accessible is deprecated and should not be used.'
+        begin # rubocop:disable RedundantBegin TODO: remove this after droping JRuby which does not support rescue without begin
+          projects(id)
+        rescue RestClient::NotFound
+          false
+        end
       end
 
       def projects(id = :all)

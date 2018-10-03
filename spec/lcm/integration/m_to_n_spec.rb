@@ -18,12 +18,11 @@ describe 'Contains M to N relation' do
     @suffix = ConfigurationHelper.suffix
     @release_table_name = "LCM_RELEASE_#{@suffix}"
     @config.merge!(LcmConnectionHelper.environment)
-
     @rest_client = LcmConnectionHelper.development_server_connection
 
     @ads = ConfigurationHelper.create_development_datawarehouse(client: @rest_client,
                                             title: 'Development ADS',
-                                            auth_token: @config[:dev_token])
+                                            auth_token: @config[:vertica_dev_token])
 
     domain = @rest_client.domain(@config[:dev_organization])
     domain.data_products(:all).each { |d| d.delete(force: true) }
@@ -93,7 +92,7 @@ describe 'Contains M to N relation' do
   end
 
   after(:all) do
-    @project.delete
+    @project.delete if @project
     ConfigurationHelper.delete_datawarehouse(@ads)
   end
 end
