@@ -7,16 +7,19 @@ stages:
 jobs:
   include:
   - stage: unit
+    name: unit tests
     script: bundle exec rake test:unit
     rvm:
     - 2.2
     - jruby-9.1.7
   - stage: unit
+    name: pronto code review
     script: |
       git remote add upstream https://github.com/gooddata/gooddata-ruby.git
       git fetch upstream master
       bundle exec pronto run -c upstream/master --exit-code
   - stage: integration
+    name: lcm integration tests
     script: |
       bundle exec rake -f lcm.rake docker:build
       bundle exec rake -f lcm.rake docker:bundle
@@ -24,9 +27,11 @@ jobs:
     rvm:
     - jruby-9.1.7
   - stage: integration
+    name: sdk integration tests
     script: bundle exec rake test:sdk
     rvm: jruby-9.1.7
   - stage: integration
+    name: sdk integration tests (project)
     script: bundle exec rake test:project
     rvm: jruby-9.1.7
 env:
