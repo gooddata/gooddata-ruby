@@ -241,14 +241,8 @@ module GoodData
         random_iv = data[0..15] # extract iv from first 16 bytes
         data = data[16..data.size - 1]
         cipher.iv = Digest::SHA256.digest(random_iv + cipher_key)[0..15]
-        begin
-          decrypted = cipher.update(data)
-          decrypted << cipher.final
-        rescue
-          puts 'Error'
-          return nil
-        end
-
+        decrypted = cipher.update(data)
+        decrypted << cipher.final
         decrypted
       end
     end
