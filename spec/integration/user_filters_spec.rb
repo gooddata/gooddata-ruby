@@ -129,6 +129,7 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
     rescue GoodData::FilterMaqlizationError => e
       [first_value, second_value].each do |v|
         expect(e.message).to match Regexp.new Regexp.escape v
+        expect(e.message).to match Regexp.new Regexp.escape @project.pid
       end
     end
     expect(@project.data_permissions.count).to eq 0
