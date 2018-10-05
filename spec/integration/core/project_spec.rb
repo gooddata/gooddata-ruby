@@ -23,7 +23,7 @@ describe 'GoodData - project', :vcr do
     end
 
     it 'Assigns project using project ID' do
-      GoodData.use(ProjectHelper::PROJECT_ID, client: @client)
+      GoodData.use(ProjectHelper.project_id(@client), client: @client)
     end
 
     it 'Assigns project using project URL' do
@@ -31,7 +31,7 @@ describe 'GoodData - project', :vcr do
     end
 
     it 'Assigns project directly' do
-      GoodData.project = GoodData::Project[ProjectHelper::PROJECT_ID, client: @client]
+      GoodData.project = GoodData::Project[ProjectHelper.project_id(@client), client: @client]
     end
   end
 
@@ -40,14 +40,14 @@ describe 'GoodData - project', :vcr do
       GoodData.project = nil
       expect(GoodData.project).to be_nil
 
-      GoodData.use ProjectHelper::PROJECT_ID, client: @client
+      GoodData.use ProjectHelper.project_id(@client), client: @client
       expect(GoodData.project).not_to be_nil
     end
   end
 
   describe '#with_project' do
     it 'Uses project specified' do
-      GoodData.with_project GoodData::Project[ProjectHelper::PROJECT_ID, :client => @client] do
+      GoodData.with_project GoodData::Project[ProjectHelper.project_id(@client), :client => @client] do
       end
     end
   end
