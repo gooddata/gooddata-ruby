@@ -145,21 +145,32 @@ end
 
 # Updates the changelog with commit messages
 def update_changelog(new_version)
-  changelog = File.read('CHANGELOG.md')
-  changelog_header = '# GoodData Ruby SDK Changelog'
-  changelog.slice! changelog_header
+  changelog = headless_changelog
   fail 'the version is already mentioned in the changelog' if changelog =~ /## #{new_version}/
   puts "Creating changelog for version #{new_version}"
-  current_commit = `git rev-parse HEAD`.chomp
-  last_release = changelog.split("\n").reject(&:empty?).first.delete('## ').chomp
-  last_release_commit = `git rev-parse #{last_release}`.chomp
-  changes = `git log --format=%s --no-merges #{last_release_commit}..#{current_commit}`.split("\n").reject(&:empty?)
   File.open('CHANGELOG.md', 'w+') do |file|
     file.puts changelog_header + "\n"
     file.puts "## #{new_version}"
-    changes.each { |change| file.puts ' - ' + change }
+    changes(changelog).each { |change| file.puts ' - ' + change }
     file.puts changelog
   end
+end
+
+def changes(changelog)
+  current_commit = `git rev-parse HEAD`.chomp
+  last_release = changelog.split("\n").reject(&:empty?).first.delete('## ').chomp
+  last_release_commit = `git rev-parse #{last_release}`.chomp
+  `git log --format=%s --no-merges #{last_release_commit}..#{current_commit}`.split("\n").reject(&:empty?)
+end
+
+def headless_changelog
+  changelog = File.read('CHANGELOG.md')
+  changelog.slice! changelog_header
+  changelog
+end
+
+def changelog_header
+  '# GoodData Ruby SDK Changelog'
 end
 
 namespace :version do
@@ -171,6 +182,11 @@ namespace :version do
     `git add CHANGELOG.md lib/gooddata/version.rb`
     `git commit -m "Bump version to #{new_version}"`
     `git tag #{new_version}`
+  end
+
+  desc 'Shows changes since last release'
+  task :changelog do
+    puts changes(headless_changelog)
   end
 end
 
