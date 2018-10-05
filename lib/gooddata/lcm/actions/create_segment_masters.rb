@@ -68,6 +68,7 @@ module GoodData
             driver = segment_in.driver.downcase
             token = params.tokens[driver.to_sym] || fail("Token for driver '#{driver}' was not specified")
             ads_output_stage_uri = segment_in.ads_output_stage_uri
+            ads_output_stage_prefix = segment_in.ads_output_stage_prefix
 
             # Create master project Postgres
             version = get_project_version(params, segment_id) + 1
@@ -126,6 +127,7 @@ module GoodData
               development_pid: development_pid,
               master_pid: project.pid,
               ads_output_stage_uri: ads_output_stage_uri,
+              ads_output_stage_prefix: ads_output_stage_prefix,
               driver: driver,
               status: status
             }
@@ -134,7 +136,8 @@ module GoodData
               segment: segment_id,
               from: development_pid,
               to: [{ pid: project.pid }],
-              ads_output_stage_uri: ads_output_stage_uri
+              ads_output_stage_uri: ads_output_stage_uri,
+              ads_output_stage_prefix: ads_output_stage_prefix
             }
           end
 

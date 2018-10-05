@@ -24,6 +24,9 @@ module GoodData
 
           description 'Uri of the source output stage. It must be in the same domain as the target project.'
           param :ads_output_stage_uri, instance_of(Type::StringType), required: false
+
+          description 'Custom prefix for the target output stage.'
+          param :ads_output_stage_prefix, instance_of(Type::StringType), required: false
         end
 
         def check(value)

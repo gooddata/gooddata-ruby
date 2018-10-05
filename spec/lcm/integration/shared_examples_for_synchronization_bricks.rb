@@ -29,6 +29,13 @@ shared_examples 'a synchronization brick' do
     end
   end
 
+  it 'sets specified output stage prefix' do
+    projects.each do |target_project|
+      prefix = target_project.add.output_stage.output_stage_prefix
+      expect(prefix).to eq(Support::OUTPUT_STAGE_PREFIX)
+    end
+  end
+
   it 'migrates user groups' do
     if user_group
       projects.each do |target_project|

@@ -16,11 +16,11 @@ end
 
 describe GoodData::Project do
   subject { GoodData::Project }
-  let(:from_project) { double('from_project') }
-  let(:to_project) { double('to_project') }
-  let(:process) { double('process') }
-  let(:add) { double('add') }
-  let(:output_stage) { double('output_stage') }
+  let(:from_project) { double(GoodData::Project) }
+  let(:to_project) { double(GoodData::Project) }
+  let(:process) { double(GoodData::Process) }
+  let(:add) { double(GoodData::AutomatedDataDistribution) }
+  let(:output_stage) { double(GoodData::AdsOutputStage) }
   let(:client) { double('client') }
   let(:connection) { double('connection') }
   let(:server) { double('server') }
@@ -39,6 +39,18 @@ describe GoodData::Project do
   end
 
   describe '.transfer_output_stage' do
+    let(:original_prefix) { 'im_the_original_prefix' }
+    let(:prefix) { 'its_a_prefix' }
+    let(:stage_uri) { 'foo.bar/baz' }
+
+    before do
+      allow(server).to receive(:url).and_return('foo', 'foo')
+      allow(output_stage).to receive(:schema)
+      allow(output_stage).to receive(:client_id) { 'mahnert biscuits ltd' }
+      allow(add).to receive(:output_stage=)
+      allow(output_stage).to receive(:output_stage_prefix).and_return(original_prefix)
+    end
+
     context 'when source and target domains are different' do
       before do
         allow(server).to receive(:url).and_return('foo', 'bar')
@@ -47,6 +59,59 @@ describe GoodData::Project do
       it 'raises an error' do
         expect { subject.transfer_output_stage(from_project, to_project, {}) }
           .to raise_error(/Cannot transfer output stage from foo to bar/)
+      end
+    end
+
+    it 'creates output stage with the same prefix as in the original project' do
+      expect(GoodData::AdsOutputStage).to receive(:create)
+        .with(hash_including(output_stage_prefix: original_prefix))
+      subject.transfer_output_stage(from_project, to_project, {})
+    end
+
+    context 'when output stage parameters are specified' do
+      let(:options) do
+        { ads_output_stage_prefix: prefix,
+          ads_output_stage_uri: stage_uri }
+      end
+
+      it 'creates output stage with the specified parameters' do
+        expect(GoodData::AdsOutputStage).to receive(:create)
+          .with(hash_including(output_stage_prefix: prefix, ads: stage_uri))
+        subject.transfer_output_stage(from_project, to_project, options)
+      end
+    end
+
+    context 'when add process already exists' do
+      let(:to_add) { double(GoodData::AutomatedDataDistribution) }
+      let(:to_output_stage) { double(GoodData::AdsOutputStage) }
+
+      before do
+        allow(to_project).to receive(:processes).and_return([process])
+        allow(to_project).to receive(:add).and_return(to_add)
+        allow(to_output_stage).to receive(:schema)
+        allow(to_add).to receive(:output_stage).and_return(to_output_stage)
+        allow(to_output_stage).to receive(:schema=)
+        allow(to_output_stage).to receive(:output_stage_prefix=)
+      end
+
+      it 'sets output stage prefix to the same value as in the original project' do
+        expect(to_output_stage).to receive(:output_stage_prefix=).with(original_prefix)
+        expect(to_output_stage).to receive(:save)
+        subject.transfer_output_stage(from_project, to_project, {})
+      end
+
+      context 'when output stage parameters are specified' do
+        let(:options) do
+          { ads_output_stage_prefix: prefix,
+            ads_output_stage_uri: stage_uri }
+        end
+
+        it 'sets output stage attributes to the specified values' do
+          expect(to_output_stage).to receive(:schema=).with(stage_uri)
+          expect(to_output_stage).to receive(:output_stage_prefix=).with(prefix)
+          expect(to_output_stage).to receive(:save)
+          subject.transfer_output_stage(from_project, to_project, options)
+        end
       end
     end
   end
