@@ -1,4 +1,32 @@
 # GoodData Ruby SDK Changelog
+## 1.3.2
+ - Add rake task for changelog preview
+ - added possibility to run tests on PI
+ - TMA-1025: Parametrize output stage prefix
+ - TMA-1002 fix test run and added abbility to recover from mandatory projects delete
+ - Remove secret from .travis.yml
+ - Dont swallow error in .decrypt
+ - Properly escape secret in .travis.yml
+ - Update ruby in .travis.yml to 2.3
+ - Fix travis secret
+ - FEATURE: TMA-1034 Create image build pipeline
+ - TMA-1033: report pid in case of UFB failure
+ - Name travis build stages
+ - TMA-801: Update rubocop
+ - FEATURE: TMA-1052 Create execution script for each brick
+ - TMA-1081: fail UFB when multiple_project mode column is missing from UB input
+ - Enable running tests using cron in travis
+ - Reduce log size
+ - Set $HOME to writable directory
+ - Run pronto in travis
+ - TRIVIAL: Correct Ruby version used in brick Dockerfile
+ - FEATURE: TMA-1052 Change parameters passing
+ - TMA-1078: Generate stronger passwords
+ - Set correct default password
+ - TMA-986 fix random user selection in user filters test
+ - TMA-1005: Rotate test user password
+ - TMA-1005: Add description for rake password:rotate
+
 ## 1.3.1
  - FEATURE: TMA-1030 Raise jruby version used in K8s docker image (#1284)
  - Update README.md
