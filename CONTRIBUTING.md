@@ -19,6 +19,9 @@ describe 'New integration test', :vcr
 The VCR `record` mode can be set via `VCR_RECORD_MODE` environment variable. Set it to `all` to make a new recording.
 Please check the recorded payloads for possible sensitive data before submitting to github.
 
+#### PI test setup 
+If you are so lucky and have acces to PI, you can run the test agains it ... there is guide in [confluence](https://confluence.intgdc.com/display/SCRUM/Running+Tests+on+PI)
+
 ## Static analysis
 We use [Pronto](https://github.com/prontolabs/pronto) to detect code smells using static analysis. Comments are automatically created on pull requests when code smells are found.
 
