@@ -390,8 +390,13 @@ module GoodData
       project_users = project.users
       filters = normalize_filters(user_filters)
       user_filters, errors = maqlify_filters(filters, project_users, options.merge(users_must_exist: users_must_exist, type: :muf))
+      if !ignore_missing_values && !errors.empty?
+        errors = errors.map do |e|
+          e.merge(pid: project.pid)
+        end
+        fail GoodData::FilterMaqlizationError, errors
+      end
 
-      fail GoodData::FilterMaqlizationError, errors if !ignore_missing_values && !errors.empty?
       filters = user_filters.map { |data| client.create(MandatoryUserFilter, data, project: project) }
       to_create, to_delete = resolve_user_filters(filters, project.data_permissions)
 
