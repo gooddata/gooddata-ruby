@@ -7,7 +7,7 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      pi_env = ENV['GD_PI_ENV'] || 'js-devel'
+      pi_env = ENV['GD_PI_ENV'] || 'pgd-klemtest-002'
       set_const :DEFAULT_DOMAIN, 'default'
       set_const :DEFAULT_SERVER, "https://#{pi_env}.na.intgdc.com"
 
