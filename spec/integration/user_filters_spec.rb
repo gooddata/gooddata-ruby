@@ -260,12 +260,12 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
     expect(@project.data_permissions.count).to eq 1
   end
 
-  it "should create a mandatory user filter with double filters" do
+  it "should create a mandatory user filter with double filters" do |example|
     repo_label = @project.labels('some_attr_label_id')
     metric = @project.create_metric("SELECT SUM(#\"Lines Changed\")")
 
     # we want to compute stuff on different user than we are setting it on
-    nu = ProjectHelper.ensure_users(client: @client)
+    nu = ProjectHelper.ensure_users(caller: example.description, client: @client)
     @domain.add_user(nu)
     u = @domain.users.find { |user| user.login == nu.json['user']['content']['login'] }
     password = CryptoHelper.generate_password
