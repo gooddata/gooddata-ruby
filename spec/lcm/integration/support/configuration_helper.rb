@@ -72,7 +72,7 @@ class ConfigurationHelper
           helper
         end
       else
-        return create_development_project(opts)
+        create_development_project(opts)
       end
     end
 

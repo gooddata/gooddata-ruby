@@ -47,7 +47,6 @@ shared_context 'lcm bricks' do |opts = {}|
       server: "https://#{@config[:dev_server]}"
     }
     @rest_client = GoodData.connect(connection_parameters)
-
     @ads = ConfigurationHelper.create_development_datawarehouse(client: @rest_client,
                                                                 title: 'Development ADS',
                                                                 auth_token: @config[:vertica_dev_token])

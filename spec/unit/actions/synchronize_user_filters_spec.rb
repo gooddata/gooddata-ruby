@@ -41,6 +41,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
     allow(user).to receive(:login).and_return('my_login')
     allow(GoodData::Helpers::DataSource).to receive(:new).and_return(data_source)
     allow(logger).to receive(:warn)
+    allow(logger).to receive(:info)
   end
 
   context 'when multiple_projects_column not specified' do

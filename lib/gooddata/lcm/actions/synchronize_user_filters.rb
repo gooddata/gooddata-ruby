@@ -90,13 +90,16 @@ module GoodData
           client = params.gdc_gd_client
           domain_name = params.organization || params.domain
           fail "Either organisation or domain has to be specified in params" unless domain_name
+
           domain = client.domain(domain_name) if domain_name
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
           fail "Either project or project_id has to be specified in params" unless project
+
           data_product = params.data_product
 
           config = params.filters_config
           fail 'User filters brick requires configuration how the filter should be setup. For this use the param "filters_config"' if config.blank?
+
           symbolized_config = GoodData::Helpers.deep_dup(config)
           symbolized_config = GoodData::Helpers.symbolize_keys(symbolized_config)
           symbolized_config[:labels] = symbolized_config[:labels].map { |l| GoodData::Helpers.symbolize_keys(l) }
@@ -133,6 +136,7 @@ module GoodData
             user_filters.group_by { |u| u[:pid] }.flat_map.pmap do |id, new_filters|
               users = users_by_project[id]
               fail "The #{multiple_projects_column} cannot be empty" if id.blank?
+
               if mode == 'sync_multiple_projects_based_on_custom_id'
                 current_project = domain.clients(id, data_product).project
               elsif mode == 'sync_multiple_projects_based_on_pid'
@@ -154,40 +158,34 @@ module GoodData
             user_filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |client_id, new_filters|
               users = users_by_project[client_id]
               fail "Client id cannot be empty" if client_id.blank?
+
               c = domain.clients(client_id, data_product)
               if params.segments && !segment_uris.include?(c.segment_uri)
-                puts "Client #{client_id} is outside segments_filter #{params.segments}"
+                params.gdc_logger.warn "Client #{client_id} is outside segments_filter #{params.segments}"
                 next
               end
               current_project = c.project
               fail "Client #{client_id} does not have project." unless current_project
+
               working_client_ids << client_id
               partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
               results.concat(partial_results[:results])
             end
 
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
-              domain_clients.each do |c|
+              domain_clients.peach do |c|
                 next if working_client_ids.include?(c.client_id)
+
                 begin
                   current_project = c.project
-                rescue => e
-                  puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
-                  next
-                end
-                unless current_project
-                  puts "Client #{c.client_id} has no project."
-                  next
-                end
-                if current_project.deleted?
-                  puts "Project #{current_project.pid} of client #{c.client_id} is deleted."
-                  next
-                end
+                  users = users_by_project[c.client_id]
+                  params.gdc_logger.info "Delete all filters in project #{current_project.pid} of client #{c.client_id}"
+                  current_results = sync_user_filters(current_project, [], run_params.merge(users_brick_input: users), symbolized_config)
 
-                puts "Delete all filters in project #{current_project.pid} of client #{c.client_id}"
-                users = users_by_project[c.client_id]
-                delete_results = current_project.add_data_permissions([], run_params.merge(users_brick_input: users))
-                results.concat(delete_results[:results])
+                  results.concat(current_results[:results])
+                rescue StandardError => e
+                  params.gdc_logger.error "Failed to clear filters of  #{c.client_id} due to: #{e.inspect}"
+                end
               end
             end
 
