@@ -17,6 +17,9 @@ describe GoodData, :vcr, :vcr_all_cassette => 'sso' do
     end
 
     `gpg --import #{KEYS.join(' ')}`
+
+    live_api = GoodData::Environment::VCR_ON == false || VCR.current_cassette.recording?
+    allow(GoodData).to receive(:system) { true } unless live_api
   end
 
   it 'can use SSO' do

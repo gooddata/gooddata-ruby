@@ -6,9 +6,7 @@
 
 require 'tempfile'
 
-require 'gooddata/core/rest'
-
-describe GoodData do
+describe GoodData, :vcr do
   before(:each) do
     @client = ConnectionHelper.create_default_connection
     # @project = ProjectHelper.get_default_project(:client => @client)
@@ -29,7 +27,7 @@ describe GoodData do
   def test_webdav_upload(params)
     GoodData.with_project(@project, :client => @client) do
       # use current timestamp as a directory name on webdav
-      dir = params[:no_dir] ? nil : Time.now.to_i.to_s
+      dir = params[:no_dir] ? nil : 'testdir'
       dir = "#{dir}/#{dir}" if params[:nested_dir]
       dir = "#{dir}/" if params[:slash_in_dir]
 
@@ -37,9 +35,7 @@ describe GoodData do
       path = 'spec/data/test-ci-data.csv'
 
       if params[:special_chars]
-        source_file = Tempfile.new('abc-16:55:29+ha#he.csv')
-        FileUtils.cp(path, source_file)
-        path = source_file.path
+        path = 'spec/data/abc-16:55:29+ha#he.csv'
       end
 
       path = File.expand_path(path) if params[:absolute_path]

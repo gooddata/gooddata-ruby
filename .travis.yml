@@ -1,11 +1,15 @@
 language: ruby
 cache: bundler
 stages:
-- unit
+- name: unit
+  if: type IN (push, pull_request)
 - name: integration
-  if: type IN (api, cron)
+  if: type IN (api)
+- name: periodic
+  if: type IN (cron)
 jobs:
   include:
+  # unit
   - stage: unit
     name: unit tests
     script: bundle exec rake test:unit
@@ -18,6 +22,15 @@ jobs:
       git remote add upstream https://github.com/gooddata/gooddata-ruby.git
       git fetch upstream master
       bundle exec pronto run -c upstream/master --exit-code
+  - stage: unit
+    name: sdk vcr tests
+    script: VCR_RECORD_MODE=none bundle exec rake test:sdk
+    rvm: jruby-9.1.7
+  - stage: unit
+    name: sdk vcr tests (project)
+    script: VCR_RECORD_MODE=none bundle exec rake test:project
+    rvm: jruby-9.1.7
+  # integration
   - stage: integration
     name: lcm integration tests
     script: |
@@ -28,9 +41,37 @@ jobs:
     - jruby-9.1.7
   - stage: integration
     name: sdk integration tests
-    script: bundle exec rake test:sdk
+    script: VCR_ON=false bundle exec rake test:sdk
     rvm: jruby-9.1.7
   - stage: integration
     name: sdk integration tests (project)
-    script: bundle exec rake test:project
+    script: VCR_ON=false bundle exec rake test:project
     rvm: jruby-9.1.7
+  # periodic
+  - stage: periodic
+    name: lcm integration tests
+    script: |
+      bundle exec rake -f lcm.rake docker:build
+      bundle exec rake -f lcm.rake docker:bundle
+      VCR_ON=false bundle exec rake -f lcm.rake test:integration:docker
+    rvm: jruby-9.1.7
+    env:
+    - GD_ENV=development
+    - GD_ENV=testing
+    - GD_ENV=staging
+  - stage: periodic
+    name: sdk integration tests
+    script: VCR_ON=false bundle exec rake test:sdk
+    rvm: jruby-9.1.7
+    env:
+    - GD_ENV=development
+    - GD_ENV=testing
+    - GD_ENV=staging
+  - stage: periodic
+    name: sdk integration tests (project)
+    script: VCR_ON=false bundle exec rake test:project
+    rvm: jruby-9.1.7
+    env:
+    - GD_ENV=development
+    - GD_ENV=testing
+    - GD_ENV=staging

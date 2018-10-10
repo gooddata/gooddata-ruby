@@ -365,7 +365,10 @@ Available values for setting language are: #{available_languages}."
     # use fuzzy_get_user.
     #
     # @param [String] name Name to look for
-    # @param [Array<GoodData::User>]user_list Optional cached list of users used for look-ups
+    # @param [Array<GoodData::User>] user_list
+    # Optional cached list of users used for look-ups.
+    # WARNING: If not specified, in the worst case the
+    # method gets all users from the domain!
     # @return [GoodDta::Membership] User
     def get_user(name, user_list = users)
       return member(name, user_list) if name.instance_of?(GoodData::Membership)
