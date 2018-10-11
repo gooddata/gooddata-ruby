@@ -31,7 +31,8 @@ jobs:
     script: VCR_RECORD_MODE=none bundle exec rake test:project
     rvm: jruby-9.1.7
   # integration
-  - stage: integration
+  - &lcm-integration-tests
+    stage: integration
     name: lcm integration tests
     script: |
       bundle exec rake -f lcm.rake docker:build
@@ -39,39 +40,73 @@ jobs:
       bundle exec rake -f lcm.rake test:integration:docker
     rvm:
     - jruby-9.1.7
-  - stage: integration
+  - &sdk-integration-tests
+    stage: integration
     name: sdk integration tests
-    script: VCR_ON=false bundle exec rake test:sdk
+    script: bundle exec rake test:sdk
     rvm: jruby-9.1.7
-  - stage: integration
+    env: VCR_ON=false
+  - &sdk-integration-tests-project
+    stage: integration
     name: sdk integration tests (project)
-    script: VCR_ON=false bundle exec rake test:project
+    script: bundle exec rake test:project
+    env: VCR_ON=false
     rvm: jruby-9.1.7
   # periodic
-  - stage: periodic
-    name: lcm integration tests
-    script: |
-      bundle exec rake -f lcm.rake docker:build
-      bundle exec rake -f lcm.rake docker:bundle
-      VCR_ON=false bundle exec rake -f lcm.rake test:integration:docker
-    rvm: jruby-9.1.7
+  # staging 1
+  - <<: *lcm-integration-tests
+    stage: periodic
+    name: staging1 - lcm integration tests
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+  - <<: *sdk-integration-tests
+    stage: periodic
+    name: staging1 - sdk integration tests
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+  - <<: *sdk-integration-tests-project
+    stage: periodic
+    name: staging1 - sdk integration tests (project)
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+  # staging 2
+  - <<: *lcm-integration-tests
+    stage: periodic
+    name: staging2 - lcm integration tests
+    env:
+    - GD_ENV=testing
+    - VCR_ON=false
+  - <<: *sdk-integration-tests
+    stage: periodic
+    name: staging2 - sdk integration tests
+    env:
+    - GD_ENV=testing
+    - VCR_ON=false
+  - <<: *sdk-integration-tests-project
+    stage: periodic
+    name: staging2 - sdk integration tests (project)
+    env:
+    - GD_ENV=testing
+    - VCR_ON=false
+  # staging 3
+  - <<: *lcm-integration-tests
+    stage: periodic
+    name: staging3 - lcm integration tests
     env:
     - GD_ENV=development
-    - GD_ENV=testing
-    - GD_ENV=staging
-  - stage: periodic
-    name: sdk integration tests
-    script: VCR_ON=false bundle exec rake test:sdk
-    rvm: jruby-9.1.7
+    - VCR_ON=false
+  - <<: *sdk-integration-tests
+    stage: periodic
+    name: staging3 - sdk integration tests
     env:
     - GD_ENV=development
-    - GD_ENV=testing
-    - GD_ENV=staging
-  - stage: periodic
-    name: sdk integration tests (project)
-    script: VCR_ON=false bundle exec rake test:project
-    rvm: jruby-9.1.7
+    - VCR_ON=false
+  - <<: *sdk-integration-tests-project
+    stage: periodic
+    name: staging3 - sdk integration tests (project)
     env:
     - GD_ENV=development
-    - GD_ENV=testing
-    - GD_ENV=staging
+    - VCR_ON=false
