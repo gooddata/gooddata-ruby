@@ -53,7 +53,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"uri":"/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/projectFeatureFlags/enableEtlComponent"}'
-    http_version:
+    http_version: 
   recorded_at: Thu, 12 Jul 2018 13:56:07 GMT
 - request:
     method: post
@@ -108,6 +108,226 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"process":{"type":"ETL","name":"test component","graphs":[],"executables":[],"lastDeployed":"2018-07-12T13:56:08.445Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dataload/processes/f37c2933-8bcf-4760-b2cc-a0bf62c7c3a7","executions":"/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dataload/processes/f37c2933-8bcf-4760-b2cc-a0bf62c7c3a7/executions","source":"/gdc/projects/voyb6fcvdngwfyf722vn9cmbv7sq6mf6/dataload/processes/f37c2933-8bcf-4760-b2cc-a0bf62c7c3a7/source"},"component":{"name":"gdc-etl-sql-executor","version":"1"}}}'
-    http_version:
+    http_version: 
   recorded_at: Thu, 12 Jul 2018 13:56:08 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/projectFeatureFlags
+    body:
+      encoding: UTF-8
+      string: '{"featureFlag":{"key":"enableEtlComponent","value":true}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - HQitaUxln6axKLv_PFjIUg:r8KzlZvfRgQVfAbqPFOSPw
+      Content-Length:
+      - '57'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/projectFeatureFlags/enableEtlComponent"
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Fri, 05 Oct 2018 12:51:42 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - HQitaUxln6axKLv_PFjIUg:r8KzlZvfRgQVfAbqPFOSPw:UUZvTn9S3XER38Mf
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '117'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/projectFeatureFlags/enableEtlComponent"}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:51:42 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/dataload/processes
+    body:
+      encoding: UTF-8
+      string: '{"process":{"name":"test component","type":"etl","component":{"name":"gdc-etl-sql-executor","version":"1"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - HQitaUxln6axKLv_PFjIUg:lHvPi6Tit5WQtgBLqEDsbQ
+      Content-Length:
+      - '108'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/dataload/processes/b6401a73-bf75-4727-8f25-c7d9019445fd"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Fri, 05 Oct 2018 12:51:43 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - HQitaUxln6axKLv_PFjIUg:lHvPi6Tit5WQtgBLqEDsbQ:BWEH0268P4b6GAcu
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '257'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"ETL","name":"test component","graphs":[],"executables":[],"lastDeployed":"2018-10-05T12:51:43.519Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/dataload/processes/b6401a73-bf75-4727-8f25-c7d9019445fd","executions":"/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/dataload/processes/b6401a73-bf75-4727-8f25-c7d9019445fd/executions","source":"/gdc/projects/zyoflmgyrszp8cjur3x271h18fgu8ikz/dataload/processes/b6401a73-bf75-4727-8f25-c7d9019445fd/source"},"component":{"name":"gdc-etl-sql-executor","version":"1"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:51:43 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/projectFeatureFlags
+    body:
+      encoding: UTF-8
+      string: '{"featureFlag":{"key":"enableEtlComponent","value":true}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - DE-LgY6Tx6Ls_nEJee4Grw:AJKhUWj4n-y3v7KMPt7cQA
+      Content-Length:
+      - '57'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/projectFeatureFlags/enableEtlComponent"
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 10 Oct 2018 10:50:49 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - DE-LgY6Tx6Ls_nEJee4Grw:AJKhUWj4n-y3v7KMPt7cQA:Bxe93kb8IINQMrpc
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '94'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/projectFeatureFlags/enableEtlComponent"}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:50:49 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/dataload/processes
+    body:
+      encoding: UTF-8
+      string: '{"process":{"name":"test component","type":"etl","component":{"name":"gdc-etl-sql-executor","version":"1"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - DE-LgY6Tx6Ls_nEJee4Grw:GkAy9lwdVz4FZ4ygN1Jpjw
+      Content-Length:
+      - '108'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/dataload/processes/0ff4d084-d10c-489b-97de-734e34e69fa9"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Wed, 10 Oct 2018 10:50:50 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - DE-LgY6Tx6Ls_nEJee4Grw:GkAy9lwdVz4FZ4ygN1Jpjw:GbXiNedc8cGVteho
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '121'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"ETL","name":"test component","graphs":[],"executables":[],"lastDeployed":"2018-10-10T10:50:50.618Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/dataload/processes/0ff4d084-d10c-489b-97de-734e34e69fa9","executions":"/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/dataload/processes/0ff4d084-d10c-489b-97de-734e34e69fa9/executions","source":"/gdc/projects/x61hr057hl6zofam5vsgltg92ozkbtyc/dataload/processes/0ff4d084-d10c-489b-97de-734e34e69fa9/source"},"component":{"name":"gdc-etl-sql-executor","version":"1"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:50:50 GMT
 recorded_with: VCR 4.0.0

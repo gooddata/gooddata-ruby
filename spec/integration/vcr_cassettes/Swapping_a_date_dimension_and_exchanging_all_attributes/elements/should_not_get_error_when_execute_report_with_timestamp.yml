@@ -1099,4 +1099,2202 @@ http_interactions:
       string: '{"xtab_data":{"columns":{"tree":{"index":{"8065":[4],"8066":[5],"8062":[1],"8063":[2],"8068":[7],"8067":[6],"8061":[0],"8064":[3]},"first":0,"last":7,"children":[{"index":{},"first":0,"last":0,"children":[],"type":"normal","id":"8061"},{"index":{},"first":1,"last":1,"children":[],"type":"normal","id":"8062"},{"index":{},"first":2,"last":2,"children":[],"type":"normal","id":"8063"},{"index":{},"first":3,"last":3,"children":[],"type":"normal","id":"8064"},{"index":{},"first":4,"last":4,"children":[],"type":"normal","id":"8065"},{"index":{},"first":5,"last":5,"children":[],"type":"normal","id":"8066"},{"index":{},"first":6,"last":6,"children":[],"type":"normal","id":"8067"},{"index":{},"first":7,"last":7,"children":[],"type":"normal","id":"8068"}],"type":"root","id":null},"lookups":[{"8065":"Q1/2016","8066":"Q2/2016","8062":"Q2/2015","8063":"Q3/2015","8068":"Q4/2016","8067":"Q3/2016","8061":"Q1/2015","8064":"Q4/2015"}]},"data":[["90","91","92","92","91","91","92","92"]],"overall_size":{"columns":8,"rows":1},"rows":{"tree":{"index":{"0":[0]},"first":0,"last":0,"children":[{"index":{},"first":0,"last":0,"children":[],"type":"metric","id":"0"}],"type":"root","id":null},"lookups":[{"0":"test_metric"}]},"offset":{"columns":0,"rows":0},"size":{"columns":8,"rows":1}}}'
     http_version: 
   recorded_at: Tue, 05 Jun 2018 06:24:51 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["created_on.date"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:pFdqmKfDrh-yPasrIiuFrw
+      Content-Length:
+      - '39'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:26 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:pFdqmKfDrh-yPasrIiuFrw:lF6ga9niVosuft2p
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '40'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"identifiers":[{"identifier":"created_on.date","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143"}]}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:26 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:Svis7kbzqG_o5KbhJAXHpg
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:26 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:Svis7kbzqG_o5KbhJAXHpg:UdiADdmofpT30ZO0
+      X-Gdc-Request-Time:
+      - '206'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"direction":"asc","sort":"pk","pk":[{"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/102"}],"dimension":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/23","type":"GDC.time.date","displayForms":[{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/122]","default":1,"type":"GDC.time.day_us"},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/182/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/182","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.mmddyyyy","deprecated":"0","summary":"DisplayForm
+        mm/dd/yyyy.","isProduction":1,"title":"mm/dd/yyyy (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/121]","default":2,"type":"GDC.time.day"},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/181/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/181","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.yyyymmdd","deprecated":"0","summary":"DisplayForm
+        yyyy-mm-dd.","isProduction":1,"title":"yyyy-mm-dd (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/125]","default":3,"type":"GDC.time.day_us_noleading"},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/185/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/185","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.mdyy","deprecated":"0","summary":"DisplayForm
+        m/d/yy (no leading zeroes).","isProduction":1,"title":"m/d/yy (no leading
+        zeroes) (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/124]","default":4,"type":"GDC.time.day_us_long"},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/184/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/184","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.long","deprecated":"0","summary":"DisplayForm
+        Long (Mon, Jan 1, 2010).","isProduction":1,"title":"Long (Mon, Jan 1, 2010)
+        (Created On)","category":"attributeDisplayForm","updated":"2018-10-05 14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/120]","default":5,"type":"GDC.time.day_eu"},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/180/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/180","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.ddmmyyyy","deprecated":"0","summary":"DisplayForm
+        dd/mm/yyyy.","isProduction":1,"title":"dd/mm/yyyy (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/123]","default":6,"type":"GDC.time.day_iso"},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/183/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/183","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.eddmmyyyy","deprecated":"0","summary":"DisplayForm
+        dd-mm-yyyy.","isProduction":1,"title":"dd-mm-yyyy (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"fk":[{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/14"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","tags":"date","created":"2010-08-02
+        08:13:42","identifier":"created_on.date","deprecated":"0","summary":"Date","isProduction":1,"title":"Date
+        (Created On)","category":"attribute","updated":"2018-10-05 14:36:15","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:26 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj
+    body:
+      encoding: UTF-8
+      string: '{"metric":{"content":{"format":"#,##0","expression":"SELECT COUNT([/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143])"},"meta":{"tags":"","summary":null,"title":"test_metric"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:7wwtsrF18t13ZmWhTaBh-Q
+      Content-Length:
+      - '177'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:27 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:7wwtsrF18t13ZmWhTaBh-Q:2V7zJnnRc758hEEj
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '98'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/398"}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:27 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/398
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:4L8SzUoabJte2IVHYSn96A
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:28 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:4L8SzUoabJte2IVHYSn96A:gK2eGfexYadd38XC
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '59'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"COUNT","content":[{"value":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143","position":{"column":27,"line":1},"type":"attribute
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        COUNT([/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/143])"},"links":{"explain2":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/398/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/398","tags":"","created":"2018-10-05
+        14:36:27","identifier":"aabLMVp8gB9o","deprecated":"0","summary":"","isProduction":1,"title":"test_metric","category":"metric","updated":"2018-10-05
+        14:36:27","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:28 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["created_on.quarter"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:Zkdr0b35ou5yAURrumK-qA
+      Content-Length:
+      - '42'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:28 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:Zkdr0b35ou5yAURrumK-qA:5rSNSvpQomTjrKHZ
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '39'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"identifiers":[{"identifier":"created_on.quarter","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/141"}]}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:28 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/141
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:7enmnKNWbdV1jsw5WOd-fQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:29 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:7enmnKNWbdV1jsw5WOd-fQ:FuwzXhaQYOtA0ksd
+      X-Gdc-Request-Time:
+      - '146'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/89"}],"displayForms":[{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/141","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/92]","default":1},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aci81lMifn6q","deprecated":"0","summary":"DisplayForm
+        US Short.","isProduction":1,"title":"US Short (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/177","sort":"pk","dimension":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/23","type":"GDC.time.quarter","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/96"},{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/111"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/141","tags":"date
+        quarter","created":"2010-08-02 08:13:42","identifier":"created_on.quarter","deprecated":"0","summary":"Quarter
+        and Year (Q1/2010)","isProduction":1,"title":"Quarter/Year (Created On)","category":"attribute","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:29 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:ZImv9NvJ8rwWpSlt8mr-9A
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:30 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:ZImv9NvJ8rwWpSlt8mr-9A:3RHUkp2cA1PveDPf
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '27'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attributeDisplayForm":{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/141","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/92]","default":1},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aci81lMifn6q","deprecated":"0","summary":"DisplayForm
+        US Short.","isProduction":1,"title":"US Short (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:30 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["created_on.year"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:PAez8zfwlCpL7HO_S707ug
+      Content-Length:
+      - '39'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:30 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:PAez8zfwlCpL7HO_S707ug:ByQDyJKW5MyP6AaF
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '27'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"identifiers":[{"identifier":"created_on.year","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126"}]}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:30 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:ADpgDupNM5iBptsPIxX0rw
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:ADpgDupNM5iBptsPIxX0rw:x8xYnU7oP4ZtNSfu
+      X-Gdc-Request-Time:
+      - '144'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/42"}],"displayForms":[{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/43]","default":1},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aag81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Year.","isProduction":1,"title":"Year (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176","sort":"pk","dimension":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/23","type":"GDC.time.year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/90"},{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/98"},{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/113"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","tags":"date
+        year","created":"2010-08-02 08:13:42","identifier":"created_on.year","deprecated":"0","summary":"Year","isProduction":1,"title":"Year
+        (Created On)","category":"attribute","updated":"2018-10-05 14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:31 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:aUXM5vBM26RSF7kT6i4lPg
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:aUXM5vBM26RSF7kT6i4lPg:VfOWNHKcdjzctLlK
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '82'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attributeDisplayForm":{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/43]","default":1},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aag81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Year.","isProduction":1,"title":"Year (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:32 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144/validElements?filter=2015&limit=1&offset=0&order=asc
+    body:
+      encoding: UTF-8
+      string: '{"validElementsRequest":{}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:QC8QV_BffQvhp5XiD-9WbA
+      Content-Length:
+      - '27'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:32 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:QC8QV_BffQvhp5XiD-9WbA:XX8QuWCHt8cv2HDH
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '197'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"validElements":{"elementsMeta":{"attribute":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","filter":"2015","order":"asc","attributeDisplayForm":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144"},"paging":{"count":1,"total":"1","offset":"0"},"items":[{"element":{"title":"2015","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2015"}}]}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:32 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144/validElements?filter=2016&limit=1&offset=0&order=asc
+    body:
+      encoding: UTF-8
+      string: '{"validElementsRequest":{}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:j7L9js_vLnkK6nWER5G6UA
+      Content-Length:
+      - '27'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:33 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:j7L9js_vLnkK6nWER5G6UA:Vr3dHyZJOO6rFmtD
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '138'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"validElements":{"elementsMeta":{"attribute":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","filter":"2016","order":"asc","attributeDisplayForm":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144"},"paging":{"count":1,"total":"1","offset":"0"},"items":[{"element":{"title":"2016","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2016"}}]}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:33 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:LF1gFSYMBF4JAFZdCpCznQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:34 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:LF1gFSYMBF4JAFZdCpCznQ:sBHYvRPqLN0ozvKv
+      X-Gdc-Request-Time:
+      - '31'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/42"}],"displayForms":[{"content":{"formOf":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/43]","default":1},"links":{"elements":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/144","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aag81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Year.","isProduction":1,"title":"Year (Created On)","category":"attributeDisplayForm","updated":"2018-10-05
+        14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176","sort":"pk","dimension":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/23","type":"GDC.time.year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/90"},{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/98"},{"multivalue":false,"type":"col","data":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/113"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","tags":"date
+        year","created":"2010-08-02 08:13:42","identifier":"created_on.year","deprecated":"0","summary":"Year","isProduction":1,"title":"Year
+        (Created On)","category":"attribute","updated":"2018-10-05 14:36:13","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:34 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj
+    body:
+      encoding: UTF-8
+      string: '{"reportDefinition":{"content":{"grid":{"sort":{"columns":[],"rows":[]},"columnWidths":[],"columns":[{"attribute":{"alias":"","totals":[],"uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176"}}],"metrics":[{"alias":"test_metric","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/398"}],"rows":["metricGroup"]},"format":"grid","filters":[{"expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126]
+        IN ([/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2015], [/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2016])"}]},"meta":{"tags":"","summary":"","title":"Untitled
+        report definition"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:xamwNYXMVZjSt6FfbjEscA
+      Content-Length:
+      - '624'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:34 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:xamwNYXMVZjSt6FfbjEscA:m6anXPd7Ye9W1tbB
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '45'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/399"}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:34 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/399
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:Sq4v4y1h0AgXwPFtbnneSQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:35 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:Sq4v4y1h0AgXwPFtbnneSQ:yLL4NgGpd88urHyT
+      X-Gdc-Request-Time:
+      - '34'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"reportDefinition":{"content":{"grid":{"sort":{"columns":[],"rows":[]},"columnWidths":[],"columns":[{"attribute":{"alias":"","totals":[[]],"uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176"}}],"metrics":[{"alias":"test_metric","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/398"}],"rows":["metricGroup"]},"format":"grid","filters":[{"tree":{"content":[{"value":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","position":{"column":14,"line":1},"type":"attribute
+        object"},{"content":[{"value":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2015","position":{"column":69,"line":1},"type":"attributeElement
+        object"},{"value":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2016","position":{"column":138,"line":1},"type":"attributeElement
+        object"}],"position":{"column":69,"line":1},"type":"list"}],"position":{"column":65,"line":1},"type":"in"},"expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126]
+        IN ([/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2015], [/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2016])"}]},"links":{"explain2":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/399/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/399","tags":"","created":"2018-10-05
+        14:36:34","identifier":"aabLMXkAemJR","deprecated":"0","summary":"","isProduction":1,"title":"Untitled
+        report definition","category":"reportDefinition","updated":"2018-10-05 14:36:34","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:35 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj
+    body:
+      encoding: UTF-8
+      string: '{"report":{"content":{"domains":[],"definitions":["/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/399"]},"meta":{"tags":"","deprecated":"0","summary":"","title":"test_report"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:tyeGwQOhsuVDo4H230GUdg
+      Content-Length:
+      - '175'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:36 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:tyeGwQOhsuVDo4H230GUdg:6WcBWoWjv3IPkalq
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '62'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/400"}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:36 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/400
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:DOA-5oSkVzisuFmd_jcOzg
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:36 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:DOA-5oSkVzisuFmd_jcOzg:Ase8rEcnFfKb2JEf
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '50'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"report":{"content":{"domains":[],"definitions":["/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/399"]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/400","tags":"","created":"2018-10-05
+        14:36:36","identifier":"aabLMXEcemLh","deprecated":"0","summary":"","isProduction":1,"title":"test_report","category":"report","updated":"2018-10-05
+        14:36:36","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:36 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/iuhske32nkyrac6qzcbxg46d8as6t0h0/execute
+    body:
+      encoding: UTF-8
+      string: '{"report_req":{"report":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/400","timestamp":1538742996}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:1CKm4IKTsFC1GquuRNgfCA
+      Content-Length:
+      - '99'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/dataResult/7742953653614967808"
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      Date:
+      - Fri, 05 Oct 2018 12:36:38 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:1CKm4IKTsFC1GquuRNgfCA:6sTi4VCXYa2D11A6
+      X-Gdc-Request-Time:
+      - '574'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execResult":{"reportView":{"reportName":"test_report","columnWidths":[],"filters":[{"tree":{"content":[{"value":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126","position":{"column":14,"line":1},"type":"attribute
+        object"},{"content":[{"value":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2015","position":{"column":69,"line":1},"type":"attributeElement
+        object"},{"value":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2016","position":{"column":138,"line":1},"type":"attributeElement
+        object"}],"position":{"column":69,"line":1},"type":"list"}],"position":{"column":65,"line":1},"type":"in"},"expression":"[/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126]
+        IN ([/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2015], [/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/126/elements?id=2016])"}],"rows":["metricGroup"],"sort":{"columns":[],"rows":[]},"format":"grid","columns":[{"displayFormId":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/176","baseElementURI":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/141/elements?id=","attributeId":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/141","drillDownStepAttributeDF":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/177","sort":"pk","summary":"Quarter
+        and Year (Q1/2010)","attributeTitle":"Quarter/Year (Created On)","title":"Quarter/Year
+        (Created On)","totals":[[]]}],"metrics":[{"format":"#,##0","summary":"","title":"test_metric","metricId":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/398"}]},"reportDefinition":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/obj/399","dataResult":"/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/dataResult/7742953653614967808"}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:38 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/iuhske32nkyrac6qzcbxg46d8as6t0h0/dataResult/7742953653614967808
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.1/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:wJAYiy-xChBvwetHXwxRXg
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 05 Oct 2018 12:36:38 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Execution-Time:
+      - '197'
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - max-age=86400,private
+      Keep-Alive:
+      - timeout=5, max=96
+      Vary:
+      - Accept,Accept-Encoding
+      - origin
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request:
+      - Ok1X4HxZieGkDOjr08cWVw:wJAYiy-xChBvwetHXwxRXg:NVwzzqjCoPljd7s9
+      X-Gdc-Request-Time:
+      - '61'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"xtab_data":{"columns":{"tree":{"index":{"8065":[4],"8066":[5],"8062":[1],"8063":[2],"8068":[7],"8067":[6],"8061":[0],"8064":[3]},"first":0,"last":7,"children":[{"index":{},"first":0,"last":0,"children":[],"type":"normal","id":"8061"},{"index":{},"first":1,"last":1,"children":[],"type":"normal","id":"8062"},{"index":{},"first":2,"last":2,"children":[],"type":"normal","id":"8063"},{"index":{},"first":3,"last":3,"children":[],"type":"normal","id":"8064"},{"index":{},"first":4,"last":4,"children":[],"type":"normal","id":"8065"},{"index":{},"first":5,"last":5,"children":[],"type":"normal","id":"8066"},{"index":{},"first":6,"last":6,"children":[],"type":"normal","id":"8067"},{"index":{},"first":7,"last":7,"children":[],"type":"normal","id":"8068"}],"type":"root","id":null},"lookups":[{"8065":"Q1/2016","8066":"Q2/2016","8062":"Q2/2015","8063":"Q3/2015","8068":"Q4/2016","8067":"Q3/2016","8061":"Q1/2015","8064":"Q4/2015"}]},"data":[["90","91","92","92","91","91","92","92"]],"overall_size":{"columns":8,"rows":1},"rows":{"tree":{"index":{"0":[0]},"first":0,"last":0,"children":[{"index":{},"first":0,"last":0,"children":[],"type":"metric","id":"0"}],"type":"root","id":null},"lookups":[{"0":"test_metric"}]},"offset":{"columns":0,"rows":0},"size":{"columns":8,"rows":1}}}'
+    http_version: 
+  recorded_at: Fri, 05 Oct 2018 12:36:38 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["created_on.date"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:AqUnV_EbxABRwious-PI2w
+      Content-Length:
+      - '39'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:22 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:AqUnV_EbxABRwious-PI2w:y9VZxVqDzoQ2i9e2
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"identifiers":[{"identifier":"created_on.date","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143"}]}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:22 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:CDZbVG8gs4E9KM1n41EkTQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:22 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:CDZbVG8gs4E9KM1n41EkTQ:XX25it5L3AiqlExT
+      X-Gdc-Request-Time:
+      - '59'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"direction":"asc","sort":"pk","pk":[{"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/102"}],"dimension":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/23","type":"GDC.time.date","displayForms":[{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/122]","default":1,"type":"GDC.time.day_us"},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/182/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/182","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.mmddyyyy","deprecated":"0","summary":"DisplayForm
+        mm/dd/yyyy.","isProduction":1,"title":"mm/dd/yyyy (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/121]","default":2,"type":"GDC.time.day"},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/181/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/181","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.yyyymmdd","deprecated":"0","summary":"DisplayForm
+        yyyy-mm-dd.","isProduction":1,"title":"yyyy-mm-dd (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/125]","default":3,"type":"GDC.time.day_us_noleading"},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/185/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/185","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.mdyy","deprecated":"0","summary":"DisplayForm
+        m/d/yy (no leading zeroes).","isProduction":1,"title":"m/d/yy (no leading
+        zeroes) (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/124]","default":4,"type":"GDC.time.day_us_long"},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/184/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/184","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.long","deprecated":"0","summary":"DisplayForm
+        Long (Mon, Jan 1, 2010).","isProduction":1,"title":"Long (Mon, Jan 1, 2010)
+        (Created On)","category":"attributeDisplayForm","updated":"2018-10-10 12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/120]","default":5,"type":"GDC.time.day_eu"},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/180/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/180","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.ddmmyyyy","deprecated":"0","summary":"DisplayForm
+        dd/mm/yyyy.","isProduction":1,"title":"dd/mm/yyyy (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}},{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/123]","default":6,"type":"GDC.time.day_iso"},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/183/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/183","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.date.eddmmyyyy","deprecated":"0","summary":"DisplayForm
+        dd-mm-yyyy.","isProduction":1,"title":"dd-mm-yyyy (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"fk":[{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/14"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","tags":"date","created":"2010-08-02
+        08:13:42","identifier":"created_on.date","deprecated":"0","summary":"Date","isProduction":1,"title":"Date
+        (Created On)","category":"attribute","updated":"2018-10-10 12:32:10","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:23 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj
+    body:
+      encoding: UTF-8
+      string: '{"metric":{"content":{"format":"#,##0","expression":"SELECT COUNT([/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143])"},"meta":{"tags":"","summary":null,"title":"test_metric"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:kYyZoai3IL08JMatj-vnsA
+      Content-Length:
+      - '177'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:23 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:kYyZoai3IL08JMatj-vnsA:oVw6JBIg9cGrOMjR
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '45'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/398"}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:23 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/398
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:F3aneP3W2NqMgFABFMZFkQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:24 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:F3aneP3W2NqMgFABFMZFkQ:NNfWTRmq2DbLkjT7
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '58'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"COUNT","content":[{"value":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143","position":{"column":27,"line":1},"type":"attribute
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        COUNT([/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/143])"},"links":{"explain2":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/398/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/398","tags":"","created":"2018-10-10
+        12:32:23","identifier":"aacevWaicNa6","deprecated":"0","summary":"","isProduction":1,"title":"test_metric","category":"metric","updated":"2018-10-10
+        12:32:23","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:24 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["created_on.quarter"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:r56wlidZkbwzXEBlwuZljA
+      Content-Length:
+      - '42'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:24 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:r56wlidZkbwzXEBlwuZljA:k9rqcqUZGg5GCp4m
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '23'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"identifiers":[{"identifier":"created_on.quarter","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/141"}]}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:25 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/141
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:HOZWTnlsDLpadKxBJ8nK8g
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:25 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:HOZWTnlsDLpadKxBJ8nK8g:Jb5pQZB0ULB15nOp
+      X-Gdc-Request-Time:
+      - '36'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/89"}],"displayForms":[{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/141","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/92]","default":1},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aci81lMifn6q","deprecated":"0","summary":"DisplayForm
+        US Short.","isProduction":1,"title":"US Short (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/177","sort":"pk","dimension":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/23","type":"GDC.time.quarter","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/96"},{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/111"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/141","tags":"date
+        quarter","created":"2010-08-02 08:13:42","identifier":"created_on.quarter","deprecated":"0","summary":"Quarter
+        and Year (Q1/2010)","isProduction":1,"title":"Quarter/Year (Created On)","category":"attribute","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:25 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:z2HSm5G9MqOuiuDH793X1A
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:26 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:z2HSm5G9MqOuiuDH793X1A:Mrf1qq56IwoYb3OD
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '28'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attributeDisplayForm":{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/141","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/92]","default":1},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aci81lMifn6q","deprecated":"0","summary":"DisplayForm
+        US Short.","isProduction":1,"title":"US Short (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:26 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["created_on.year"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:zJAXQb_AddLZJVKJLFawEQ
+      Content-Length:
+      - '39'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:27 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:zJAXQb_AddLZJVKJLFawEQ:3XY3bhnebx9Y1J12
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '23'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"identifiers":[{"identifier":"created_on.year","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126"}]}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:27 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:VMiywr1ASJq8gQ0Kzv8kfA
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:27 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:VMiywr1ASJq8gQ0Kzv8kfA:WrFtV3U54gM1lyn1
+      X-Gdc-Request-Time:
+      - '143'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/42"}],"displayForms":[{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/43]","default":1},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aag81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Year.","isProduction":1,"title":"Year (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176","sort":"pk","dimension":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/23","type":"GDC.time.year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/90"},{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/98"},{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/113"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","tags":"date
+        year","created":"2010-08-02 08:13:42","identifier":"created_on.year","deprecated":"0","summary":"Year","isProduction":1,"title":"Year
+        (Created On)","category":"attribute","updated":"2018-10-10 12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:27 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:gqeMaYPsfdMoDsXcHnTukw
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:28 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:gqeMaYPsfdMoDsXcHnTukw:PSrzknD8Www4eVby
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '29'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attributeDisplayForm":{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/43]","default":1},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aag81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Year.","isProduction":1,"title":"Year (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:28 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144/validElements?filter=2015&limit=1&offset=0&order=asc
+    body:
+      encoding: UTF-8
+      string: '{"validElementsRequest":{}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:KTmtzooyphRjSJzY_DFGzw
+      Content-Length:
+      - '27'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:29 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:KTmtzooyphRjSJzY_DFGzw:pSLgzQ9PAgPJoW1F
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '42'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"validElements":{"elementsMeta":{"attribute":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","filter":"2015","order":"asc","attributeDisplayForm":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144"},"paging":{"count":1,"total":"1","offset":"0"},"items":[{"element":{"title":"2015","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2015"}}]}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:29 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144/validElements?filter=2016&limit=1&offset=0&order=asc
+    body:
+      encoding: UTF-8
+      string: '{"validElementsRequest":{}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:ehK1eIoIaWYAsot7uUZPZg
+      Content-Length:
+      - '27'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:29 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:ehK1eIoIaWYAsot7uUZPZg:R6jNXKmxA7ZhBB92
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '40'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"validElements":{"elementsMeta":{"attribute":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","filter":"2016","order":"asc","attributeDisplayForm":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144"},"paging":{"count":1,"total":"1","offset":"0"},"items":[{"element":{"title":"2016","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2016"}}]}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:29 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:zpGe0l8394JgZW5R7xknxQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:30 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:zpGe0l8394JgZW5R7xknxQ:rca3AGolJc7eBENt
+      X-Gdc-Request-Time:
+      - '33'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"attribute":{"content":{"pk":[{"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/42"}],"displayForms":[{"content":{"formOf":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/43]","default":1},"links":{"elements":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144/elements"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/144","tags":"","created":"2010-08-02
+        08:13:42","identifier":"created_on.aag81lMifn6q","deprecated":"0","summary":"DisplayForm
+        Year.","isProduction":1,"title":"Year (Created On)","category":"attributeDisplayForm","updated":"2018-10-10
+        12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}],"direction":"asc","drillDownStepAttributeDF":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176","sort":"pk","dimension":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/23","type":"GDC.time.year","fk":[{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/90"},{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/98"},{"multivalue":false,"type":"col","data":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/113"}]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","tags":"date
+        year","created":"2010-08-02 08:13:42","identifier":"created_on.year","deprecated":"0","summary":"Year","isProduction":1,"title":"Year
+        (Created On)","category":"attribute","updated":"2018-10-10 12:32:08","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:30 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj
+    body:
+      encoding: UTF-8
+      string: '{"reportDefinition":{"content":{"grid":{"sort":{"columns":[],"rows":[]},"columnWidths":[],"columns":[{"attribute":{"alias":"","totals":[],"uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176"}}],"metrics":[{"alias":"test_metric","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/398"}],"rows":["metricGroup"]},"format":"grid","filters":[{"expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126]
+        IN ([/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2015], [/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2016])"}]},"meta":{"tags":"","summary":"","title":"Untitled
+        report definition"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:a-i_761p6ENohAFLByjbFA
+      Content-Length:
+      - '624'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=96
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:a-i_761p6ENohAFLByjbFA:bCDqO9LBqMKKkgL8
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '42'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/399"}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:31 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/399
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:LGTgYNvU90J8cLwfIvi4_w
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:LGTgYNvU90J8cLwfIvi4_w:MapWEBQTXmtZjyg9
+      X-Gdc-Request-Time:
+      - '32'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"reportDefinition":{"content":{"grid":{"sort":{"columns":[],"rows":[]},"columnWidths":[],"columns":[{"attribute":{"alias":"","totals":[[]],"uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176"}}],"metrics":[{"alias":"test_metric","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/398"}],"rows":["metricGroup"]},"format":"grid","filters":[{"tree":{"content":[{"value":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","position":{"column":14,"line":1},"type":"attribute
+        object"},{"content":[{"value":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2015","position":{"column":69,"line":1},"type":"attributeElement
+        object"},{"value":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2016","position":{"column":138,"line":1},"type":"attributeElement
+        object"}],"position":{"column":69,"line":1},"type":"list"}],"position":{"column":65,"line":1},"type":"in"},"expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126]
+        IN ([/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2015], [/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2016])"}]},"links":{"explain2":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/399/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/399","tags":"","created":"2018-10-10
+        12:32:31","identifier":"aabewlOZc57z","deprecated":"0","summary":"","isProduction":1,"title":"Untitled
+        report definition","category":"reportDefinition","updated":"2018-10-10 12:32:31","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:31 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj
+    body:
+      encoding: UTF-8
+      string: '{"report":{"content":{"domains":[],"definitions":["/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/399"]},"meta":{"tags":"","deprecated":"0","summary":"","title":"test_report"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:ZiZmSAALAVEq4_jVEQBQkQ
+      Content-Length:
+      - '175'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:32 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:ZiZmSAALAVEq4_jVEQBQkQ:MrUgIxOdWeLTtO4z
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '41'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/400"}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:33 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/400
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:Spw8iolHHCpiynHpeloavQ
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:33 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=96
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:Spw8iolHHCpiynHpeloavQ:spVIBiAH4JdlipVZ
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '29'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"report":{"content":{"domains":[],"definitions":["/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/399"]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/400","tags":"","created":"2018-10-10
+        12:32:32","identifier":"aacevQzrcNj2","deprecated":"0","summary":"","isProduction":1,"title":"test_report","category":"report","updated":"2018-10-10
+        12:32:32","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:33 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/s10gvd9kscbk48pu908q7pz814294x7j/execute
+    body:
+      encoding: UTF-8
+      string: '{"report_req":{"report":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/400","timestamp":1539167553}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:t-T2bZDpg20CNkzEMEXt1w
+      Content-Length:
+      - '99'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/dataResult/1946004427986009856"
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      Date:
+      - Wed, 10 Oct 2018 10:32:34 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:t-T2bZDpg20CNkzEMEXt1w:c1ROBELMUpyyBinm
+      X-Gdc-Request-Time:
+      - '230'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execResult":{"reportView":{"reportName":"test_report","columnWidths":[],"filters":[{"tree":{"content":[{"value":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126","position":{"column":14,"line":1},"type":"attribute
+        object"},{"content":[{"value":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2015","position":{"column":69,"line":1},"type":"attributeElement
+        object"},{"value":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2016","position":{"column":138,"line":1},"type":"attributeElement
+        object"}],"position":{"column":69,"line":1},"type":"list"}],"position":{"column":65,"line":1},"type":"in"},"expression":"[/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126]
+        IN ([/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2015], [/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/126/elements?id=2016])"}],"rows":["metricGroup"],"sort":{"columns":[],"rows":[]},"format":"grid","columns":[{"displayFormId":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/176","baseElementURI":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/141/elements?id=","attributeId":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/141","drillDownStepAttributeDF":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/177","sort":"pk","summary":"Quarter
+        and Year (Q1/2010)","attributeTitle":"Quarter/Year (Created On)","title":"Quarter/Year
+        (Created On)","totals":[[]]}],"metrics":[{"format":"#,##0","summary":"","title":"test_metric","metricId":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/398"}]},"reportDefinition":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/obj/399","dataResult":"/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/dataResult/1946004427986009856"}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:34 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/s10gvd9kscbk48pu908q7pz814294x7j/dataResult/1946004427986009856
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:53QIeM3wnGcEaho2QeLQbg
+      Process:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Oct 2018 10:32:35 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Execution-Time:
+      - '204'
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - max-age=86400,private
+      Keep-Alive:
+      - timeout=5, max=100
+      Vary:
+      - Accept,Accept-Encoding
+      - origin
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request:
+      - q7FRSkwyZmQvyEEkqMvbtA:53QIeM3wnGcEaho2QeLQbg:WGflqyOITZcXgrJd
+      X-Gdc-Request-Time:
+      - '55'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"xtab_data":{"columns":{"tree":{"index":{"8065":[4],"8066":[5],"8062":[1],"8063":[2],"8068":[7],"8067":[6],"8061":[0],"8064":[3]},"first":0,"last":7,"children":[{"index":{},"first":0,"last":0,"children":[],"type":"normal","id":"8061"},{"index":{},"first":1,"last":1,"children":[],"type":"normal","id":"8062"},{"index":{},"first":2,"last":2,"children":[],"type":"normal","id":"8063"},{"index":{},"first":3,"last":3,"children":[],"type":"normal","id":"8064"},{"index":{},"first":4,"last":4,"children":[],"type":"normal","id":"8065"},{"index":{},"first":5,"last":5,"children":[],"type":"normal","id":"8066"},{"index":{},"first":6,"last":6,"children":[],"type":"normal","id":"8067"},{"index":{},"first":7,"last":7,"children":[],"type":"normal","id":"8068"}],"type":"root","id":null},"lookups":[{"8065":"Q1/2016","8066":"Q2/2016","8062":"Q2/2015","8063":"Q3/2015","8068":"Q4/2016","8067":"Q3/2016","8061":"Q1/2015","8064":"Q4/2015"}]},"data":[["90","91","92","92","91","91","92","92"]],"overall_size":{"columns":8,"rows":1},"rows":{"tree":{"index":{"0":[0]},"first":0,"last":0,"children":[{"index":{},"first":0,"last":0,"children":[],"type":"metric","id":"0"}],"type":"root","id":null},"lookups":[{"0":"test_metric"}]},"offset":{"columns":0,"rows":0},"size":{"columns":8,"rows":1}}}'
+    http_version: 
+  recorded_at: Wed, 10 Oct 2018 10:32:35 GMT
 recorded_with: VCR 4.0.0
