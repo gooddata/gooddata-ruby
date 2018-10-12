@@ -231,7 +231,10 @@ module GoodData
       end
 
       def decrypt(database64, key)
-        return '' if key.nil? || key.empty?
+        if key.nil? || key.empty?
+          puts 'WARNING: No encryption key provided.'
+          return 'no_key_provided'
+        end
 
         data = Base64.decode64(database64)
 

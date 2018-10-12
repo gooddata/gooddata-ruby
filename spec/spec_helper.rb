@@ -33,42 +33,26 @@ require_relative 'double_with_class'
 GoodData.logging_off unless ENV['GD_SPEC_LOG'] == 'true'
 
 # Automagically include all helpers/*_helper.rb
-
 require_relative 'environment/environment'
-
-GoodData::Environment.load
-
 base = Pathname(__FILE__).dirname.expand_path
 Dir.glob(base + 'helpers/*_helper.rb').each do |file|
   require file
 end
 
-include GoodData::Helpers
+GoodData::Environment.load
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
 RSpec.configure do |config|
   config.deprecation_stream = File.open('deprecations.txt', 'w')
 
-  config.include BlueprintHelper
-  config.include CliHelper
-  config.include ConnectionHelper
-  config.include CryptoHelper
-  config.include CsvHelper
-  config.include ProcessHelper
-  config.include ProjectHelper
-  config.include ScheduleHelper
-  # config.include SchemaHelper
-
   config.filter_run_excluding :broken => true
 
   config.fail_fast = false
 
-  # if ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true' # VCR is enabled by default - set VCR_ON=false to disable
-  # TODO; TMA-1071: remove this when VCR is fixed
-  if false
+  if GoodData::Environment::VCR_ON
     require 'vcr_configurer'
-    skip_sleep = VcrConfigurer.vcr_record_mode == :none
+    skip_sleep = GoodData::Helpers::VcrConfigurer.vcr_record_mode == :none
 
     config.before(:all) do
       # in case the test uses VCR
@@ -83,8 +67,8 @@ RSpec.configure do |config|
         # insert the cassette recording everything what happens outside the tests cases
         VCR.insert_cassette("#{self.class.metadata[:description]}/#{self.class.metadata[:vcr_all_cassette] || 'all'}")
 
-        # avoid polling idle time by overriding sleep
         if skip_sleep
+          # avoid polling idle time by overriding sleep
           module Kernel
             alias :old_sleep :sleep
             def sleep(n)
@@ -104,8 +88,8 @@ RSpec.configure do |config|
         # reload the original parallel iterations
         load('pmap.rb')
 
-        # reload sleep method
         if skip_sleep
+          # reload sleep method
           module Kernel
             alias :sleep :old_sleep
           end
@@ -113,4 +97,15 @@ RSpec.configure do |config|
       end
     end
   end
+
+  include GoodData::Helpers
+
+  config.include BlueprintHelper
+  config.include CliHelper
+  config.include ConnectionHelper
+  config.include CryptoHelper
+  config.include CsvHelper
+  config.include ProcessHelper
+  config.include ProjectHelper
+  config.include ScheduleHelper
 end
