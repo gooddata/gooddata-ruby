@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::Process, :vcr do
+describe GoodData::Process do
   before(:all) do
     @rest_client = ConnectionHelper.create_default_connection
     @suffix = AppstoreProjectHelper.suffix
@@ -30,13 +30,35 @@ describe GoodData::Process, :vcr do
   describe '.deploy_component' do
     let(:name) { 'test component' }
 
-    it 'deploys etl pluggable component' do
+    it 'deploys sql executor etl pluggable component' do
       component_data = {
         name: name,
         type: :etl,
         component: {
           name: 'gdc-etl-sql-executor',
           version: '1'
+        }
+      }
+      component = GoodData::Process.deploy_component component_data, client: @rest_client, project: @project
+      expect(component.name).to eq name
+      expect(component.type).to eq :etl
+    end
+
+    it 'deploys csv downloader etl pluggable component' do
+      component_data = {
+        name: name,
+        type: :etl,
+        component: {
+          name: 'gdc-etl-csv-downloader',
+          version: '1',
+          configLocation: {
+            s3: {
+              path: 's3://s3_bucket/s3_folder/',
+              accessKey: 's3_access_key',
+              secretKey: 's3_secret_key',
+              serverSideEncryption: true
+            }
+          }
         }
       }
       component = GoodData::Process.deploy_component component_data, client: @rest_client, project: @project
