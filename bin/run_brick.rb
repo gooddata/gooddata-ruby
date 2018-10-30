@@ -9,7 +9,7 @@ BRICK_PARAM_PREFIX = 'BRICK_PARAM_'
 brick_type = !ARGV.empty? ? ARGV[0] : DEFAULT_BRICK
 
 syslog_node = ENV['NODE_NAME']
-log = RemoteSyslogLogger.new(syslog_node, 514, :program => brick_type)
+log = RemoteSyslogLogger.new(syslog_node, 514, :program => "ruby_#{brick_type}", :facility => 'local2')
 
 log.info "action=#{brick_type}_execution status=init"
 
