@@ -169,10 +169,8 @@ shared_context 'lcm bricks' do |opts = {}|
       custom_client_id_column: Support::CUSTOM_CLIENT_ID_COLUMN,
       transfer_all: true,
       conflicting_client_id: conflicting_client_id,
-      # this is very painful, please remove it as soon as possible
-      release_additional_hidden_params: (opts[:release_additional_hidden_params] || {}).to_json,
-      provisioning_additional_hidden_params: (opts[:provisioning_additional_hidden_params] || {}).to_json,
-      rollout_additional_hidden_params: (opts[:rollout_additional_hidden_params] || {}).to_json
+      schedule_additional_hidden_params: (opts[:schedule_additional_hidden_params] || {}).to_json,
+      process_additional_hidden_params: (opts[:process_additional_hidden_params] || {}).to_json
     }
   end
 

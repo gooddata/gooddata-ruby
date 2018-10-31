@@ -24,8 +24,8 @@ module GoodData
         description 'Logger'
         param :gdc_logger, instance_of(Type::GdLogger), required: true
 
-        description 'Additional Hidden Parameters'
-        param :additional_hidden_params, instance_of(Type::HashType), required: false
+        description 'Additional Hidden Parameters of Processes'
+        param :process_additional_hidden_params, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = [
@@ -59,7 +59,8 @@ module GoodData
                 from,
                 to_project,
                 ads_output_stage_uri: info.ads_output_stage_uri,
-                ads_output_stage_prefix: info.ads_output_stage_prefix
+                ads_output_stage_prefix: info.ads_output_stage_prefix,
+                additional_hidden_params: params.process_additional_hidden_params
               )
 
               to_project.add.output_stage.client_id = client_id if client_id && to_project.add.output_stage

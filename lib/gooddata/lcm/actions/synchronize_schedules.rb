@@ -22,10 +22,16 @@ module GoodData
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
 
         description 'Schedule Additional Parameters'
-        param :additional_params, instance_of(Type::HashType), required: false
+        param :additional_params, instance_of(Type::HashType), required: false, deprecated: true, replacement: :schedule_additional_params
 
         description 'Schedule Additional Secure Parameters'
-        param :additional_hidden_params, instance_of(Type::HashType), required: false
+        param :additional_hidden_params, instance_of(Type::HashType), required: false, deprecated: true, replacement: :schedule_additional_hidden_params
+
+        description 'Schedule Additional Parameters'
+        param :schedule_additional_params, instance_of(Type::HashType), required: false
+
+        description 'Schedule Additional Secure Parameters'
+        param :schedule_additional_hidden_params, instance_of(Type::HashType), required: false
 
         description 'Logger'
         param :gdc_logger, instance_of(Type::GdLogger), required: true
@@ -46,6 +52,9 @@ module GoodData
 
           client = params.gdc_gd_client
           development_client = params.development_client
+
+          schedule_additional_params = params.schedule_additional_params || params.additional_params
+          schedule_additional_hidden_params = params.schedule_additional_hidden_params || params.additional_hidden_params
 
           params.synchronize.peach do |info|
             from_project = info.from
@@ -68,8 +77,8 @@ module GoodData
                 # s.update_params('GOODOT_CUSTOM_PROJECT_ID' => c.id)
                 # s.update_params('CLIENT_ID' => c.id)
                 # s.update_params('SEGMENT_ID' => segment.id)
-                schedule.update_params(params.additional_params || {})
-                schedule.update_hidden_params(params.additional_hidden_params || {})
+                schedule.update_params(schedule_additional_params || {})
+                schedule.update_hidden_params(schedule_additional_hidden_params || {})
                 schedule.disable
                 schedule.save
 

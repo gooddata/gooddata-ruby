@@ -10,13 +10,12 @@ shared_examples 'a synchronization brick' do
     projects.each do |project|
       process = project.processes.find { |p| p.name == title }
       schedule = process.schedules.first
-      expect(schedule.hidden_params.keys.map(&:to_sym)).to include(*additional_hidden_params.keys.map(&:to_sym))
+      expect(schedule.hidden_params.keys.map(&:to_sym)).to include(*schedule_additional_hidden_params.keys.map(&:to_sym))
     end
   end
 
   it 'migrates processes' do
     original_processes = original_project.processes.to_a
-    expect(original_processes.length).to be 3
     projects.each do |target_project|
       target_processes = target_project.processes.to_a
       expect(target_processes.length).to be original_processes.length

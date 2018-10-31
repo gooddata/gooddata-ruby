@@ -262,6 +262,7 @@ module GoodData
       def transfer_processes(from_project, to_project, options = {})
         options = GoodData::Helpers.symbolize_keys(options)
         to_project_processes = to_project.processes
+        additional_hidden_params = options[:additional_hidden_params] || {}
         result = from_project.processes.uniq(&:name).map do |process|
           fail "The process name #{process.name} must be unique in transfered project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
           next if process.type == :dataload
@@ -272,7 +273,8 @@ module GoodData
                          GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
                        elsif process.component
                          to_process.delete if to_process
-                         GoodData::Process.deploy_component(GoodData::Helpers.symbolize_keys(process.to_hash), project: to_project, client: to_project.client)
+                         process_hash = GoodData::Helpers.symbolize_keys(process.to_hash).deep_merge(additional_hidden_params)
+                         GoodData::Process.deploy_component(process_hash, project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
                            dir = Pathname(dir)

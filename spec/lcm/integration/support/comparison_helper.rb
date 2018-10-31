@@ -107,6 +107,7 @@ module Support
         data_dup = process.data.dup
         data_dup['process'].delete('links')
         data_dup['process'].delete('lastDeployed')
+        data_dup['process']['component'].delete('configLocation') if data_dup['process']['component']
         data_dup
       end
     end
