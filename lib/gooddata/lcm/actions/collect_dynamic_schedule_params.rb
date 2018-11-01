@@ -26,6 +26,9 @@ module GoodData
 
         description 'Value Column'
         param :param_value_column, instance_of(Type::StringType), required: false
+
+        description 'Should the param be hidden?'
+        param :param_secure_column, instance_of(Type::StringType), required: false
       end
 
       class << self
@@ -36,6 +39,7 @@ module GoodData
           client_id_column = params.client_id_column || 'client_id'
           param_name_column = params.param_name_column || 'param_name'
           param_value_column = params.param_value_column || 'param_value'
+          param_secure_column = params.param_secure_column || 'param_secure'
           results = []
 
           input_source = params.dynamic_params.input_source
@@ -43,16 +47,18 @@ module GoodData
           input_data = without_check(PARAMS, params) do
             File.open(data_source.realize(params), 'r:UTF-8')
           end
-          GoodData.logger.debug("Input data: #{input_data.read}")
 
           schedule_params = {}
 
           CSV.foreach(input_data, :headers => true, :return_headers => false, encoding: 'utf-8') do |row|
-            GoodData.logger.debug("Processing row: #{row}")
-            results << row.to_hash
+            is_param_secure = row[param_secure_column] == 'true'
+            safe_to_print_row = row.to_hash
+            safe_to_print_row[param_value_column] = '******' if is_param_secure
+            GoodData.logger.debug("Processing row: #{safe_to_print_row}")
+            results << safe_to_print_row
 
-            client_id = row[client_id_column] ? row[client_id_column] : :all_clients
-            schedule_name = row[schedule_title_column] ? row[schedule_title_column] : :all_schedules
+            client_id = row[client_id_column] || :all_clients
+            schedule_name = row[schedule_title_column] || :all_schedules
 
             schedule_params[client_id] ||= {}
             schedule_params[client_id][schedule_name] ||= {}
