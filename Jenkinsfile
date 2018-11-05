@@ -9,7 +9,10 @@ def config = [
         'microservices': [
                 'lcm-bricks': [
                         'docker': [
-                                'dockerfile': './Dockerfile'
+                                'dockerfile': './Dockerfile',
+                                'arguments': [
+                                        'BRICKS_VERSION': { readFile('./VERSION').trim() }
+                                ]
                         ]
                 ]
         ]

@@ -1,11 +1,14 @@
 FROM harbor.intgdc.com/tools/gdc-java-8-jre:b057b53
 
 ARG GIT_COMMIT=unspecified
+ARG BRICKS_VERSION=unspecified
+
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:b057b53"
 LABEL git_commit=$GIT_COMMIT
+LABEL bricks_version=$BRICKS_VERSION
 
 # which is required by RVM
 RUN yum install -y curl which \
