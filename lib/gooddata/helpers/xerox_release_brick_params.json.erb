@@ -1,0 +1,21 @@
+{
+  "CLIENT_GDC_HOSTNAME": "<%= target_hostname %>",
+  "GDC_LOG_LEVEL": "error",
+  "simple_mode": "true",
+  "db_driver": "<%= db_driver %>",
+  "project_token": "<%= project_token %>",
+  "gd_encoded_params": {
+    "GDC_USERNAME": "<%= target_username %>",
+    "GDC_PASSWORD": "<%= target_password %>",
+    "SRC_PID": "<%= source_pid %>",
+    "development_client": {
+      "protocol": "https",
+      "hostname": "<%= source_hostname %>",
+      "username": "<%= source_username %>",
+      "password": "<%= source_password %>"
+    }
+  },
+  "transfer_all": "true",
+  "skip_actions": [ "EnsureReleaseTable", "CollectDataProduct", "SegmentsFilter", "UpdateReleaseTable", "EnsureTechnicalUsersDomain", "EnsureTechnicalUsersProject", "SynchronizeNewSegments" ],
+  "strict": "true"
+}

@@ -47,7 +47,7 @@ shared_examples 'a synchronization brick' do
   it 'migrates LDM' do
     projects.each do |target_project|
       blueprint = GoodData::Model::ProjectBlueprint.new(original_project.blueprint)
-      diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
+      diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, prod_rest_client)
       expect(diff['updateOperations']).to eq([])
       expect(diff['updateScripts']).to eq([])
     end

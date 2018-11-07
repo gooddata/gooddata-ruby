@@ -70,9 +70,10 @@ class ConfigurationHelper
         begin
           project_id = File.read(CACHE_DIR + LcmConnectionHelper.env_name).chomp
           project = opts[:client].projects(project_id)
-          GoodData.logger.info("Reusing development project ID: #{project_id}")
+          puts "Reusing development project ID: #{project_id}"
           Support::ProjectHelper.new(project, opts)
-        rescue Errno::ENOENT, RestClient::NotFound, RestClient::Gone
+        rescue StandardError => e
+          puts "Was trying to reuse development project, but error occurred: #{e}"
           $reuse_project = false
           helper = create_development_project(opts)
           FileUtils.mkpath CACHE_DIR
@@ -94,6 +95,7 @@ class ConfigurationHelper
       project_helper.create_dashboards
       project_helper.create_tag_for_fact_n_dataset
       project_helper.add_user_group
+      project_helper.deploy_processes if opts[:deploy_processes]
       project_helper
     end
 

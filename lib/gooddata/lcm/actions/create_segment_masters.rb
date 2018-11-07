@@ -44,14 +44,41 @@ module GoodData
 
         description 'Logger'
         param :gdc_logger, instance_of(Type::GdLogger), required: true
-      end
 
+        description 'Simple mode? (no ADS, master projects, segment creation..)'
+        param :simple_mode, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'source project pid'
+        param :src_pid, instance_of(Type::StringType), required: false
+
+        description 'project token'
+        param :project_token, instance_of(Type::StringType), required: false
+
+        description 'project token'
+        param :db_driver, instance_of(Type::StringType), required: false
+      end
       class << self
         def call(params)
           results = []
 
           client = params.gdc_gd_client
           development_client = params.development_client
+
+          if params.simple_mode
+            source = development_client.projects(params.src_pid)
+            target = client.create_project(title: source.title, auth_token: params.project_token, driver: params.db_driver)
+            synchronize_projects = [{
+              from: params.src_pid,
+              to: [{ pid: target.pid }]
+            }]
+
+            return {
+              results: [{ master_pid: target.pid }],
+              params: {
+                synchronize: synchronize_projects
+              }
+            }
+          end
 
           domain_name = params.organization || params.domain
           fail "Either organisation or domain has to be specified in params" unless domain_name
