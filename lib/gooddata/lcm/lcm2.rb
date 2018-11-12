@@ -75,31 +75,10 @@ module GoodData
     end
 
     MODES = {
-      # Low Level Commands
-
-      actions: [
-        PrintActions
-      ],
 
       hello: [
         HelloWorld
       ],
-
-      modes: [
-        PrintModes
-      ],
-
-      info: [
-        PrintTypes,
-        PrintActions,
-        PrintModes
-      ],
-
-      types: [
-        PrintTypes
-      ],
-
-      ## Bricks
 
       release: [
         EnsureReleaseTable,
@@ -170,11 +149,8 @@ module GoodData
 
       schedules_execution: [
         ExecuteSchedules
-      ],
-
-      hello_world: [
-        HelloWorld
       ]
+
     }
 
     MODE_NAMES = MODES.keys
