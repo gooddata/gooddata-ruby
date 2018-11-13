@@ -14,7 +14,7 @@ module GoodData
       # @option [String] 'message' text to be returned in result, if nill - nothing is returned
       # :reek:UtilityFunction
       def call(params)
-        GoodData::LCM2.perform('hello_world', params)
+        GoodData::LCM2.perform('hello', params)
       end
     end
   end
