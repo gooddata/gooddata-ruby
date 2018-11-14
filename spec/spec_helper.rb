@@ -64,7 +64,9 @@ RSpec.configure do |config|
           end
         end
 
-        # insert the cassette recording everything what happens outside the tests cases
+        # Insert cassette for before(:all) and after(:all) blocks.
+        # vcr_all_cassette specifies the cassette name. Unique name is needed
+        # for multiple all blocks so that they don't overwrite each other).
         VCR.insert_cassette("#{self.class.metadata[:description]}/#{self.class.metadata[:vcr_all_cassette] || 'all'}")
 
         if skip_sleep

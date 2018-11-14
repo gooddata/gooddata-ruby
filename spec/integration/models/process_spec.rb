@@ -6,10 +6,9 @@
 
 require 'gooddata'
 
-describe GoodData::Process do
+describe GoodData::Process, :vcr do
   before(:all) do
     @rest_client = ConnectionHelper.create_default_connection
-    @suffix = AppstoreProjectHelper.suffix
     @project = ProjectHelper.get_default_project client: @rest_client
     @archive_location = './spec/data/cc'
     @options = { project: @project, client: @rest_client }
