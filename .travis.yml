@@ -29,11 +29,11 @@ jobs:
   - stage: unit
     name: sdk vcr tests
     script: VCR_RECORD_MODE=none bundle exec rake test:sdk
-    rvm: jruby-9.1.7
+    rvm: jruby-9.1.14
   - stage: unit
     name: sdk vcr tests (project)
     script: VCR_RECORD_MODE=none bundle exec rake test:project
-    rvm: jruby-9.1.7
+    rvm: jruby-9.1.14
   # integration
   - &lcm-integration-tests
     stage: integration
@@ -50,7 +50,7 @@ jobs:
     name: sdk integration tests
     before_script: *gd-certificates
     script: bundle exec rake test:sdk
-    rvm: jruby-9.1.7
+    rvm: 2.5
     env: VCR_ON=false
   - &sdk-integration-tests-project
     stage: integration
@@ -58,7 +58,7 @@ jobs:
     before_script: *gd-certificates
     script: bundle exec rake test:project
     env: VCR_ON=false
-    rvm: jruby-9.1.7
+    rvm: 2.5
   # periodic
   # staging 1
   - <<: *lcm-integration-tests
