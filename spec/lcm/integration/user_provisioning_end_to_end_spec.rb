@@ -48,7 +48,8 @@ describe 'the user provisioning flow' do
       end.flatten
       Support::S3Helper.upload_file(ConfigurationHelper.csv_from_hashes(mufs), Support::S3Helper::USER_FILTERS_KEY)
 
-      params = @fixtures[:brick_params].merge(label: mufs.first[:label_id])
+      params = @fixtures[:brick_params]
+      params[:label_config] = [JSON.parse(params[:label_config], symbolize_names: true).first.merge(label: mufs.first[:label_id])].to_json
       Support::UserProvisioningHelper.test_user_filters_brick(projects: @fixtures[:projects],
                               test_context: params,
                               mufs: mufs)
