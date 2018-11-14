@@ -19,10 +19,16 @@ module GoodData
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
 
         description 'Schedule Additional Parameters'
-        param :additional_params, instance_of(Type::HashType), required: false
+        param :additional_params, instance_of(Type::HashType), required: false, deprecated: true, replacement: :schedule_additional_params
 
         description 'Schedule Additional Secure Parameters'
-        param :additional_hidden_params, instance_of(Type::HashType), required: false
+        param :additional_hidden_params, instance_of(Type::HashType), required: false, deprecated: true, replacement: :schedule_additional_hidden_params
+
+        description 'Schedule Additional Parameters'
+        param :schedule_additional_params, instance_of(Type::HashType), required: false
+
+        description 'Schedule Additional Secure Parameters'
+        param :schedule_additional_hidden_params, instance_of(Type::HashType), required: false
 
         description 'Schedule Parameters'
         param :schedule_params, instance_of(Type::HashType), required: false, default: {}
@@ -50,6 +56,10 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
           data_product = params.data_product
+
+          schedule_additional_params = params.schedule_additional_params || params.additional_params
+          schedule_additional_hidden_params = params.schedule_additional_hidden_params || params.additional_hidden_params
+
           synchronize_segments = params.synchronize.group_by do |info|
             info[:segment_id]
           end
@@ -125,14 +135,14 @@ module GoodData
                   end
                 end
 
-                schedule.update_params(params.additional_params) if params.additional_params
+                schedule.update_params(schedule_additional_params) if schedule_additional_params
 
                 schedule.update_params(params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
                 schedule.update_params(params_for_all_projects[schedule.name]) if params_for_all_projects[schedule.name]
                 schedule.update_params(params_for_all_schedules_in_this_client) if params_for_all_schedules_in_this_client
                 schedule.update_params(params_for_this_client[schedule.name]) if params_for_this_client[schedule.name]
 
-                schedule.update_hidden_params(params.additional_hidden_params) if params.additional_hidden_params
+                schedule.update_hidden_params(schedule_additional_hidden_params) if schedule_additional_hidden_params
                 schedule.enable
                 schedule.save
               end

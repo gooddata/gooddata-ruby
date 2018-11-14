@@ -87,6 +87,34 @@ module Support
           de_synchronize_all: true,
           state: 'DISABLED'
         )
+
+        component_data = {
+          name: 'lcm-end-to-end-sql-exec',
+          type: :etl,
+          component: {
+            name: 'gdc-etl-sql-executor',
+            version: '1'
+          }
+        }
+        project.deploy_process component_data
+
+        component_data = {
+          name: 'lcm-end-to-end-csv-download',
+          type: :etl,
+          component: {
+            name: 'gdc-etl-csv-downloader',
+            version: '1',
+            configLocation: {
+              s3: {
+                path: 's3://s3_bucket/s3_folder/',
+                accessKey: 's3_access_key',
+                secretKey: 's3_secret_key',
+                serverSideEncryption: true
+              }
+            }
+          }
+        }
+        project.deploy_process component_data
       end
     end
 
@@ -188,9 +216,7 @@ module Support
 
     def ensure_user(login, domain)
       user = domain.users(login)
-      unless user
-        user = domain.add_user(login: login)
-      end
+      user ||= domain.add_user(login: login)
       @project.add_user(user, 'Viewer', domain: domain)
       user
     end

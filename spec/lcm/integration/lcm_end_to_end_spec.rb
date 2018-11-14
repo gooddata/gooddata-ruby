@@ -15,26 +15,30 @@ $master_projects = []
 $client_projects = []
 $master = false
 
-release_additional_hidden_params = {
-  hidden_msg_from_release_brick: 'Hi, I was set by release brick but keep it secret',
+schedule_additional_hidden_params = {
+  hidden_msg_from_release_brick: 'Hi, I was set by a brick but keep it secret',
   SECURE_PARAM_2: 'I AM SET TOO'
 }
 
-rollout_additional_hidden_params = {
-  hidden_msg_from_rollout_brick: 'Hi, I was set by rollout brick but keep it secret',
-  SECURE_PARAM_2: 'I AM SET TOO'
-}
-
-provisioning_additional_hidden_params = {
-  hidden_msg_from_provisioning_brick: 'Hi, I was set by provisioning brick but keep it secret',
-  SECURE_PARAM_2: 'I AM SET TOO'
+process_additional_hidden_params = {
+  process: {
+    component: {
+      configLocation: {
+        s3: {
+          path: 's3://s3_bucket/s3_folder/',
+          accessKey: 's3_access_key',
+          secretKey: 's3_secret_key',
+          serverSideEncryption: true
+        }
+      }
+    }
+  }
 }
 
 describe 'the whole life-cycle' do
   include_context 'lcm bricks',
-                  release_additional_hidden_params: release_additional_hidden_params,
-                  provisioning_additional_hidden_params: provisioning_additional_hidden_params,
-                  rollout_additional_hidden_params: rollout_additional_hidden_params
+                  schedule_additional_hidden_params: schedule_additional_hidden_params,
+                  process_additional_hidden_params: process_additional_hidden_params
 
   describe '1 - Initial Release' do
     before(:all) do
@@ -54,7 +58,7 @@ describe 'the whole life-cycle' do
          ['+', 'params.msg_from_release_brick', 'Hi, I was set by release brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
-      let(:additional_hidden_params) { release_additional_hidden_params }
+      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
     end
   end
 
@@ -75,11 +79,10 @@ describe 'the whole life-cycle' do
       let(:client_id_schedule_parameter) { true }
       let(:user_group) { false }
       let(:schedule_diff) do
-        [['+', 'hiddenParams.hidden_msg_from_provisioning_brick', nil],
-         ['+', 'params.msg_from_provisioning_brick', 'Hi, I was set by provisioning brick']]
+        [['+', 'params.msg_from_provisioning_brick', 'Hi, I was set by provisioning brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
-      let(:additional_hidden_params) { provisioning_additional_hidden_params }
+      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
     end
   end
 
@@ -96,11 +99,10 @@ describe 'the whole life-cycle' do
       let(:client_id_schedule_parameter) { true }
       let(:user_group) { false }
       let(:schedule_diff) do
-        [['+', 'hiddenParams.hidden_msg_from_rollout_brick', nil],
-         ['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
+        [['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
-      let(:additional_hidden_params) { rollout_additional_hidden_params }
+      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
     end
   end
 
@@ -157,7 +159,7 @@ describe 'the whole life-cycle' do
          ['+', 'params.msg_from_release_brick', 'Hi, I was set by release brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
-      let(:additional_hidden_params) { release_additional_hidden_params }
+      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
     end
   end
 
@@ -199,11 +201,10 @@ describe 'the whole life-cycle' do
       let(:client_id_schedule_parameter) { true }
       let(:user_group) { false }
       let(:schedule_diff) do
-        [['+', 'hiddenParams.hidden_msg_from_rollout_brick', nil],
-         ['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
+        [['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
-      let(:additional_hidden_params) { rollout_additional_hidden_params }
+      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
     end
   end
 end
