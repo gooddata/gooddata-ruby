@@ -38,21 +38,24 @@ jobs:
   - &lcm-integration-tests
     stage: integration
     name: lcm integration tests
-    script: |
-      bundle exec rake -f lcm.rake docker:build
-      bundle exec rake -f lcm.rake docker:bundle
-      bundle exec rake -f lcm.rake test:integration:docker
+    before_script: &gd-certificates |
+      sudo cp data/*.crt /usr/local/share/ca-certificates/
+      sudo update-ca-certificates
+    script: bundle exec rake -f lcm.rake test:integration
     rvm:
-    - jruby-9.1.7
+    - jruby-9.1.5
+    - jruby-9.1.14
   - &sdk-integration-tests
     stage: integration
     name: sdk integration tests
+    before_script: *gd-certificates
     script: bundle exec rake test:sdk
     rvm: jruby-9.1.7
     env: VCR_ON=false
   - &sdk-integration-tests-project
     stage: integration
     name: sdk integration tests (project)
+    before_script: *gd-certificates
     script: bundle exec rake test:project
     env: VCR_ON=false
     rvm: jruby-9.1.7
