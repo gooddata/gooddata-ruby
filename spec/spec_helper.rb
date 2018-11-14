@@ -109,8 +109,3 @@ RSpec.configure do |config|
   config.include ProjectHelper
   config.include ScheduleHelper
 end
-
-# so you can call expect outside of scope of it block
-def spec_env
-  RSpec.describe { it do yield end }
-end

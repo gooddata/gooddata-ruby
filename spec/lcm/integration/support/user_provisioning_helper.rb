@@ -5,6 +5,8 @@ module Support
     FILTER_DATA_COLUMN = 'value'
 
     class << self
+      include ::RSpec::Matchers
+
       def uniq_label_with_value(project, value_count)
         blacklists = $generated_uniq_labels_with_value || {}
         blacklist = blacklists[project.pid] || []
@@ -55,13 +57,13 @@ module Support
           label = p.attributes(mufs.first[:label_id])
           expected_filters_by_email = mufs.select { |m| m[:project_id] == p.pid }.group_by { |f| f[:login] }
 
-          spec_env { expect(filters.length).to eq(expected_filters_by_email.length) }
+          expect(filters.length).to eq(expected_filters_by_email.length)
           expected_filters_by_email.each do |email, expected_filters|
             # all emails are downcased during brick provisioning
             matching = filters.find { |f| f.related.email == email.downcase }
             expected_filters.each do |f|
               value = label.find_value_uri f[:value]
-              spec_env { expect(matching.expression).to include value }
+              expect(matching.expression).to include value
             end
           end
         end
@@ -76,7 +78,7 @@ module Support
 
         projects.each do |p|
           users = p.users.to_a
-          spec_env { expect(users.length).to eq((user_data.count / projects.count) + 1) } # the user who created the project is also a member
+          expect(users.length).to eq((user_data.count / projects.count) + 1) # the user who created the project is also a member
           # TODO: check the data is the same
         end
       end
