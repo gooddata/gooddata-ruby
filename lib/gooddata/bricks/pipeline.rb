@@ -99,6 +99,17 @@ module GoodData
           ]
         )
       end
+
+      def self.help_brick_pipeline
+        prepare(
+          [
+            DecodeParamsMiddleware,
+            LoggerMiddleware,
+            BenchMiddleware,
+            HelpBrick
+          ]
+        )
+      end
     end
   end
 end

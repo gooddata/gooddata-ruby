@@ -35,4 +35,4 @@ ADD ./gooddata.gemspec .
 
 RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && bundle install"
 
-CMD [ "./bin/hello_world.sh" ]
+CMD [ "./bin/help.sh" ]
