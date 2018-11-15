@@ -80,6 +80,10 @@ module GoodData
         HelloWorld
       ],
 
+      help: [
+        Help
+      ],
+
       release: [
         EnsureReleaseTable,
         CollectDataProduct,
