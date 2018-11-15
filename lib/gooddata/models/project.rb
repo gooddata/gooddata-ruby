@@ -273,7 +273,7 @@ module GoodData
                          GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
                        elsif process.component
                          to_process.delete if to_process
-                         process_hash = GoodData::Helpers.symbolize_keys(process.to_hash).deep_merge(additional_hidden_params)
+                         process_hash = GoodData::Helpers::DeepMergeableHash[GoodData::Helpers.symbolize_keys(process.to_hash)].deep_merge(additional_hidden_params)
                          GoodData::Process.deploy_component(process_hash, project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
