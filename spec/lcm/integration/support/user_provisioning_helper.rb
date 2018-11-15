@@ -84,7 +84,7 @@ module Support
       end
 
       def label_config(mufs)
-        [{ value: FILTER_DATA_COLUMN, label: mufs.first[:label_id] }]
+        [{ column: FILTER_DATA_COLUMN, label: mufs.first[:label_id] }]
       end
     end
   end
