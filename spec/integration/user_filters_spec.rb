@@ -311,6 +311,9 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
 
     r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
     expect(r.column(2)).to eq ["tomas@gooddata.com", 6, 1]
+
+    computation_client.disconnect
+    u.delete
   end
 
   it 'can reach the error reported in filtermaqlization' do
