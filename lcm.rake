@@ -92,12 +92,8 @@ namespace :test do
   namespace :integration do
     desc 'Run integration tests in Docker'
     task :docker do
-      system('docker-compose -f docker-compose.lcm.yml up --force-recreate --abort-on-container-exit appstore')
-
-      # TODO: use exit-code-from after update to docker-compose >= 1.12
-      # system('docker-compose up --exit-code-from appstore') ||
-      #   fail('Test execution failed')
-      system(check_exit_code) || fail('Test execution failed!')
+      system('docker-compose -f docker-compose.lcm.yml up --force-recreate --abort-on-container-exit --exit-code-from appstore appstore') ||
+        fail('Test execution failed!')
     end
   end
   namespace :load do
