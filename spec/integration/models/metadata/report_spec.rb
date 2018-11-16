@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'gooddata'
+require_relative '../../../lcm/integration/support/configuration_helper'
 
 describe GoodData::Report, :vcr, :constraint => 'slow' do
   before(:all) do
@@ -12,7 +13,7 @@ describe GoodData::Report, :vcr, :constraint => 'slow' do
     @project, @blueprint = ProjectHelper.load_full_project_implementation(@client)
 
     m = @project.facts.first.create_metric
-    metric_name = Dir::Tmpname.make_tmpname ['metric.some_metric'], nil
+    metric_name = 'metric.some_metric' + ConfigurationHelper.suffix
     metric_name.delete!('-')
     m.identifier = metric_name
     m.save
@@ -38,7 +39,7 @@ describe GoodData::Report, :vcr, :constraint => 'slow' do
 
   describe 'raw export' do
     before :each do
-      @filename = Dir::Tmpname.make_tmpname([File.join(Dir::Tmpname.tmpdir, 'test_raw_export'), '.csv'], nil)
+      @filename = File.join(Dir::Tmpname.tmpdir, 'test_raw_export') + ConfigurationHelper.suffix + '.csv'
     end
 
     after :each do
