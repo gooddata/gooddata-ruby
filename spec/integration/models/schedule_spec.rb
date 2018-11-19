@@ -6,7 +6,7 @@
 
 require 'gooddata/models/schedule'
 
-describe GoodData::Schedule, :vcr do
+describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_model_all' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     SCHEDULE_ID = ProjectHelper.schedule_id(@client)
@@ -384,14 +384,6 @@ describe GoodData::Schedule, :vcr do
       schedule.trigger_id = 'some_other_id'
       expect(schedule.dirty).to be_truthy
       expect(schedule.trigger_id).to eq 'some_other_id'
-    end
-  end
-
-  describe '#name=' do
-    it 'should be able to set name of the schedule.' do
-      schedule = GoodData::Schedule.create(PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
-      schedule.name = 'MY NAME'
-      expect(schedule.name).to eq 'MY NAME'
     end
   end
 

@@ -7,11 +7,10 @@
 require 'gooddata/models/schedule'
 require 'gooddata/helpers/global_helpers'
 
-describe GoodData::Schedule, :vcr do
+describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_all' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     SCHEDULE_ID = ProjectHelper.schedule_id(@client)
-    SCHEDULE_URL = "/gdc/projects/#{ProjectHelper.project_id(@client)}/schedules/#{ProjectHelper.schedule_id(@client)}"
     @project = ProjectHelper.get_default_project(:client => @client)
     PROCESS_ID = ProjectHelper.process_id(@client)
   end
@@ -263,19 +262,6 @@ describe GoodData::Schedule, :vcr do
     end
   end
 
-  describe '#type' do
-    it 'Should return execution type as string' do
-      begin
-        schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
-        res = schedule.type
-        res.should_not be_nil
-        res.should be_a_kind_of(String)
-      ensure
-        schedule && schedule.delete
-      end
-    end
-  end
-
   describe '#hidden_params' do
     it 'Should return execution hidden_params as hash' do
       begin
@@ -429,20 +415,6 @@ describe GoodData::Schedule, :vcr do
     end
   end
 
-  describe '#type' do
-    it 'Should return execution type as string' do
-      begin
-        schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
-        res = schedule.type
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(String)
-      ensure
-        schedule && schedule.delete
-      end
-    end
-  end
-
   describe '#type=' do
     it 'Assigns the type the object dirty' do
       test_type = 'TEST'
@@ -541,34 +513,6 @@ describe GoodData::Schedule, :vcr do
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param.merge(name: 'My schedule name'))
         expect(schedule.name).to eq 'My schedule name'
-      ensure
-        schedule && schedule.delete
-      end
-    end
-  end
-
-  describe '#trigger_id=' do
-    it 'should be able to set trigger_id of the schedule.' do
-      begin
-        process = @project.processes(PROCESS_ID)
-        schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
-        expect(schedule.dirty).to be_falsey
-        schedule.trigger_id = 'some_other_id'
-        expect(schedule.dirty).to be_truthy
-      ensure
-        schedule && schedule.delete
-      end
-    end
-  end
-
-  describe '#trigger_id=' do
-    it 'should be able to set trigger_id of the schedule.' do
-      begin
-        process = @project.processes(PROCESS_ID)
-        schedule = process.create_schedule(@test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
-        expect(schedule.dirty).to be_falsey
-        schedule.trigger_id = 'some_other_id'
-        expect(schedule.dirty).to be_truthy
       ensure
         schedule && schedule.delete
       end

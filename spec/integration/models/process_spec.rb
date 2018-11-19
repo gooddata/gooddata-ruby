@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::Process do
+describe GoodData::Process, :vcr do
   before(:all) do
     @rest_client = ConnectionHelper.create_default_connection
     @project = ProjectHelper.get_default_project client: @rest_client
