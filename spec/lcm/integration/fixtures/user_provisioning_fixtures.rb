@@ -40,7 +40,7 @@ module Fixtures
       mufs = project_fixtures[:clients].map do |client, project|
         Support::UserProvisioningHelper.muf_data client: client, project: project, users: users
       end.flatten
-      Support::S3Helper.upload_file(ConfigurationHelper.csv_from_hashes(mufs), Support::S3Helper::USER_FILTERS_KEY)
+      Support::UserProvisioningHelper.upload_mufs(mufs)
 
       brick_params = {
         project_id: project_fixtures[:projects].first.pid, # this doesn't really matter for the runtime

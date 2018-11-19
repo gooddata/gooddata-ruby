@@ -86,6 +86,10 @@ module Support
       def label_config(mufs)
         [{ column: FILTER_DATA_COLUMN, label: mufs.first[:label_id] }]
       end
+
+      def upload_mufs(mufs)
+        Support::S3Helper.upload_file(ConfigurationHelper.csv_from_hashes(mufs), Support::S3Helper::USER_FILTERS_KEY)
+      end
     end
   end
 end
