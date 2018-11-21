@@ -7,6 +7,8 @@ stages:
   if: type IN (api)
 - name: periodic
   if: type IN (cron)
+- name: cleanup
+  if: type IN (cron)
 jobs:
   include:
   # unit
@@ -114,8 +116,18 @@ jobs:
     env:
     - GD_ENV=development
     - VCR_ON=false
+  - &cleanup
+    stage: cleanup
+    name: staging1 - test environment clean-up
+    script: bundle exec ruby bin/test_projects_cleanup.rb -f
+    env: GD_ENV=staging
+  - <<: *cleanup
+    name: staging2 - test environment clean-up
+    env: GD_ENV=testing
+  - <<: *cleanup
+    name: staging3 - test environment clean-up
+    env: GD_ENV=development
 notifications:
   slack:
     secure: TyYks8rEBJMouWRjRtHZJJm+BIajxgwsoSIpxidZmD5zRk5ssEkGVbuYIvjUN+if1NyM1bmWspTSVX+8g5IDmt9PgcujXVqCbPRvfK90r3obs8A5pHbDnKEue6inqYUjNoqa1D6PkWTS1dTb6xvy8WiAwMGqoFGHnlNs4WFF9N4=
     on_pull_requests: false
-
