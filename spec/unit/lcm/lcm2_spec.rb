@@ -199,20 +199,13 @@ describe 'GoodData::LCM2' do
     it 'performs brick' do
       log_dir = Dir.mktmpdir
       message = 'Zdar'
+      execution_id = 'execid'
 
-      GoodData::LCM2.perform('hello', 'log_directory' => log_dir, 'message' => message)
+      GoodData::LCM2.perform('hello', 'log_directory' => log_dir, 'message' => message, 'execution_id' => execution_id)
 
-      log_start_file = "#{log_dir}/hello_start.json"
-      log_start_json = JSON.parse(File.read(log_start_file))
-      log_start_json['log_directory'].should eq(log_dir)
+      log_file = "#{log_dir}/#{execution_id}.log"
 
-      log_finished_file = "#{log_dir}/hello_finished.json"
-      log_finished_json = JSON.parse(File.open(log_finished_file).read)
-      log_finished_json['actions'][0].should eq('HelloWorld')
-
-      log_finished_json['results']['HelloWorld'][0]['message'].should eq(message)
-      log_finished_json['params']['log_directory'].should eq(log_dir)
-      log_finished_json['success'].should be_truthy
+      File.open(log_file).read.should eq("start\nfinished\n")
     end
   end
 end
