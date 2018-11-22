@@ -7,7 +7,7 @@
 1. `bundle install`
 1. bump version in [lib/gooddata/version.rb](lib/gooddata/version.rb)
 1. `bundle exec rake version:bump`
-1. push to master
+1. create PR to upstream and have it merged
 1. `git push origin tags/{version}`
 1. `rake gem:release`
 1. `rvm use jruby && rm Gemfile.lock && bundle install`
