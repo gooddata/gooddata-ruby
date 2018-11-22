@@ -13,12 +13,15 @@ Gem::Specification.new do |s|
     'Pavel Kolesnikov',
     'Thomas Watson Steen',
     'Tomas Svarovsky',
-    'Tomas Korcak'
+    'Tomas Korcak',
+    'Jan Zdrahal',
+    'Petr Gadorek',
+    'Jakub Mahnert'
   ]
 
   s.summary = 'A convenient Ruby wrapper around the GoodData RESTful API'
   s.description = 'Use the GoodData::Client class to integrate GoodData into your own application or use the CLI to work with GoodData directly from the command line.'
-  s.email = 'pavel@gooddata.com'
+  s.email = 'lcm@gooddata.com'
   s.extra_rdoc_files = %w(LICENSE README.md)
 
   s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
@@ -56,7 +59,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'erubis', '~> 2.7'
   s.add_dependency 'gli', '~> 2.15'
   s.add_dependency 'gooddata_datawarehouse', '~> 0.0.9' if RUBY_PLATFORM == 'java'
-  s.add_dependency 'gooddata-dss-jdbc', '~> 0.2.4' if RUBY_PLATFORM == 'java'
   s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
   s.add_dependency 'json_pure', '~> 1.8'
   s.add_dependency 'multi_json', '~> 1.12'
