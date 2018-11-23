@@ -28,6 +28,7 @@ require 'pmap'
 require 'rspec'
 require 'pathname'
 require 'gooddata'
+require 'vcr_configurer'
 require_relative 'double_with_class'
 
 GoodData.logging_off unless ENV['GD_SPEC_LOG'] == 'true'
@@ -51,7 +52,7 @@ RSpec.configure do |config|
   config.fail_fast = false
 
   if GoodData::Environment::VCR_ON
-    require 'vcr_configurer'
+    GoodData::Helpers::VcrConfigurer.setup
     skip_sleep = GoodData::Helpers::VcrConfigurer.vcr_record_mode == :none
 
     config.before(:all) do
