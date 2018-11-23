@@ -117,7 +117,7 @@ jobs:
     - GD_ENV=development
     - VCR_ON=false
   - &cleanup
-    stage: cleanup
+    stage: periodic
     name: staging1 - test environment clean-up
     script: bundle exec ruby bin/test_projects_cleanup.rb -f
     env: GD_ENV=staging
