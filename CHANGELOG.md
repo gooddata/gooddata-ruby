@@ -1,4 +1,45 @@
 # GoodData Ruby SDK Changelog
+## 1.3.3
+ - Fix git-ignoring project cache
+ - Fix style in vcr configurer
+ - TMA-1205: Fix vcr configurer setup
+ - Describe releasing process more accurately
+ - Fix editorconfig
+ - TMA-1190: Add cleanup stage to travis.yml
+ - gemspec cleanup: transitive deps, email, authors
+ - TMA-1190: Add test env clean-up script
+ - TMA-1185: Record vcr cassettes
+ - TMA-1185: Fix vcr for project cache
+ - TMA-1182: UFB extended spec passing
+ - TRIVIAL: remove redundant suffix
+ - BUGFIX: TMA-1183 don't use make_tmpname
+ - TMA-1181: use correct exit code from lcm integ. docker-compose
+ - TMA-782: do not rely on spec extensions
+ - Revert "TMA-1181: do not use docker for lcm-integration-tests"
+ - TMA-1152: logout and delete users after spec
+ - FEATURE: TMA-1165 Create Help brick and make it default entry point in Docker image
+ - TMA-1181: passing userprov spec
+ - TRIVIAL: use the correct ruby version's for tests in travis
+ - TMA-1181: do not use docker for lcm-integration-tests
+ - Add pry-byebug to dev dependencies
+ - Fix standalone calls to rspec expect
+ - TMA-782: transfer component type process thru lcm
+ - FEATURE: TMA-1165 Remove unused info bricks
+ - Enable travis notifications in slack
+ - Update gooddata.gemspec
+ - TMA-1048 update ads driver dependency
+ - Run unit tests in supported rubies
+ - Run cron job on staging env 1/2/3
+ - FEATURE: TMA-1034 Add Docker label containing LCM bricks version
+ - SETI-2444 fix docker run on jenkins slaves
+ - TMA-1014: parallel do_not_touch logic in UFB
+ - TMA-905: do not print dynamic schedule param value if the param is set as secure
+ - BUGFIX: TMA-1153 Adjust LCM brick syslog to be able to log to Splunk
+ - TMA-1100 fix productized connector deployment
+ - TMA-1071: Record VCR cassettes
+ - TMA-1071: Reenable VCR
+ - Add pry-byebug to dev dependencies
+
 ## 1.3.2
  - Add rake task for changelog preview
  - added possibility to run tests on PI
