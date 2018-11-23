@@ -42,7 +42,7 @@ module GoodData
             :record => vcr_record_mode
           }
 
-          %w(request response).each do |part|
+          %w[request response].each do |part|
             filter_body_field(vcr_config, part, 'password')
             filter_body_field(vcr_config, part, 'token')
             filter_body_field(vcr_config, part, 'authorizationToken')
