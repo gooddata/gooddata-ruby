@@ -36,7 +36,6 @@ module GoodData
       end
 
       def self.included(source)
-        # $stdout.puts "Overriding inspect on #{source}"
         inspected << source
         source.class_eval do
           def self.inspector(*fields)

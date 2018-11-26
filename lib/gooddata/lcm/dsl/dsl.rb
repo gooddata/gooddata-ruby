@@ -27,13 +27,6 @@ module GoodData
           dsl = type.new
           dsl.instance_eval(&block)
 
-          # puts "#{caption}: #{klass.name}"
-          # puts JSON.pretty_generate(dsl.params)
-          # puts
-
-          # yield if block_given?
-
-          # Return params
           dsl.params
         end
 
