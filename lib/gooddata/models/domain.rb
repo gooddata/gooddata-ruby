@@ -426,7 +426,7 @@ Available values for setting language are: #{available_languages}."
 
     # Calls Segment#synchronize_clients on all segments and concatenates the results
     #
-    # @return [Array] Returns array of results
+    # @return [Array] Returns array of result
     def synchronize_clients
       segments.flat_map(&:synchronize_clients)
     end

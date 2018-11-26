@@ -45,7 +45,7 @@ GoodData::Environment.load
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
 RSpec.configure do |config|
-  config.deprecation_stream = File.open('deprecations.txt', 'w')
+  config.deprecation_stream = File.open('deprecations.txt', 'w') if File.world_writable?('deprecations.txt')
 
   config.filter_run_excluding :broken => true
 
