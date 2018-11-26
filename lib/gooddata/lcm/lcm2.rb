@@ -273,14 +273,12 @@ module GoodData
         actions = get_mode_actions(mode)
 
         if params.key?('log_directory')
-          brick_logger = BrickFileLogger.new(params['log_directory'], mode)
+          brick_logger = BrickFileLogger.new(params['log_directory'], "#{params['execution_id']}.log")
           logging_enabled = true
         else
           logging_enabled = false
         end
-        if logging_enabled
-          brick_logger.log_action('start', JSON.pretty_generate(params))
-        end
+        brick_logger.log_action("start") if logging_enabled
         if params.actions
           actions = params.actions.map do |action|
             "GoodData::LCM2::#{action}".split('::').inject(Object) do |o, c|
@@ -365,14 +363,16 @@ module GoodData
           success: errors.empty?
         }
 
+        has_errors = errors.any?
         # Fail whole execution if there is any failed action
-        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
+        fail(JSON.pretty_generate(errors)) if strict_mode && has_errors
 
         result
 
       ensure
         if logging_enabled
-          brick_logger.log_action('finished', JSON.pretty_generate(result))
+          brick_logger.log_action(errors.to_s) if has_errors
+          brick_logger.log_action(has_errors ? 'error' : 'finished')
         end
       end
 

@@ -9,18 +9,18 @@ module GoodData
   class BrickFileLogger
     # entry-point
     # @param [String] log_directory directory to create log files
-    # @param [String] mode - brick mode (short name if brick)
-    def initialize(log_directory, mode)
+    # @param [String] log_file - file to log
+    def initialize(log_directory, log_file)
       @log_directory = log_directory
-      @mode = mode
+      @log_file = log_file
     end
 
     # Creates file in log directory with given content. Logging is disabled when log_directory is nil.
     #
-    # @param [String] status brick phase/status (start, finished, error,...)
     # @param [String] content log file content
-    def log_action(status, content)
-      File.write("#{@log_directory}/#{@mode}_#{status}.json", content)
+    def log_action(content)
+      FileUtils.mkpath @log_directory
+      File.open("#{@log_directory}/#{@log_file}", 'a') { |file| file.write(content + "\n") }
     end
   end
 end

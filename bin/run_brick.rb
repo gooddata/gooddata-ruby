@@ -17,9 +17,13 @@ begin
   brick_pipeline = GoodData::Bricks::Pipeline.send("#{brick_type}_pipeline")
   params = ENV.select { |k,| k.to_s.match(/^#{BRICK_PARAM_PREFIX}.*/) }.map { |k, v| [k.slice(BRICK_PARAM_PREFIX.length..-1), v] }.to_h
   commit_hash = ENV['GOODDATA_RUBY_COMMIT'] || ''
+  execution_id = ENV['EXECUTION_ID']
   params['gooddata_ruby_commit'] = commit_hash
   params['log_directory'] = ENV['LOG_DIRECTORY'] || '/tmp/'
-  log.info "action=#{brick_type}_execution status=start commit_hash=#{commit_hash}"
+  params['project_id'] = ENV['PROJECT_ID']
+  params['process_id'] = ENV['PROCESS_ID']
+  params['execution_id'] = execution_id
+  log.info "action=#{brick_type}_execution status=start commit_hash=#{commit_hash} execution_id=#{execution_id}"
   @brick_result = brick_pipeline.call(params)
   log.info "action=#{brick_type}_execution status=finished"
 rescue NoMethodError => e
