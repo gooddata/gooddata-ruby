@@ -1,9 +1,9 @@
-require_relative 'support/connection_helper'
-require_relative 'support/configuration_helper'
-require_relative 'support/s3_helper'
+require_relative '../integration/support/connection_helper'
+require_relative '../integration/support/configuration_helper'
+require_relative '../integration/support/s3_helper'
 
-require_relative 'support/project_helper'
-require_relative 'shared_examples_for_synchronization_bricks'
+require_relative '../integration/support/project_helper'
+require_relative '../integration/shared_examples_for_synchronization_bricks'
 
 require 'active_support'
 require 'active_support/core_ext'

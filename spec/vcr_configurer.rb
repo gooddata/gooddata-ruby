@@ -5,9 +5,10 @@ module GoodData
   module Helpers
     # Configures VCR for integration tests
     class VcrConfigurer
-      VCR_PROJECT_ID = 'VCRFakeId'
+      VCR_PROJECT_ID = 'VCRFakeProjectId'
       VCR_SCHEDULE_ID = 'VCRFakeScheduleId'
       VCR_PROCESS_ID = 'VCRFakeProcessId'
+      VCR_DATAPRODUCT_ID = 'VCRFakeDataProductId'
       @ignore_vcr_requests = false
 
       def self.setup
@@ -64,6 +65,10 @@ module GoodData
         (ENV['VCR_RECORD_MODE'] && ENV['VCR_RECORD_MODE'].to_sym) || :none
       end
 
+      def self.vcr_cassette_playing?
+        !VCR.current_cassette.recording?
+      end
+
       def self.name_to_placeholder(name)
         "<#{name.underscore.upcase}>"
       end
@@ -97,12 +102,14 @@ module GoodData
       # of the cached project and its objects.
       def self.matches_project_cache_fake_id?(actual_uri, recorded_uri)
         case actual_uri
-        when '/gdc/projects/VCRFakeId'
-          %r{(\/gdc\/projects\/)[^\/]+(.*)} =~ recorded_uri
-        when /VCRFakeProcessId/
-          %r{(\/gdc\/projects\/)[^\/]+/dataload/processes/[^\/]+} =~ recorded_uri
-        when /VCRFakeScheduleId/
-          %r{(\/gdc\/projects\/)[^\/]+/schedules/[^\/]+} =~ recorded_uri
+        when Regexp.new(VCR_PROJECT_ID)
+          %r{(/gdc/projects/)[^/]+(.*)} =~ recorded_uri
+        when Regexp.new(VCR_PROCESS_ID)
+          %r{(/gdc/projects/)[^/]+/dataload/processes/[^/]+} =~ recorded_uri
+        when Regexp.new(VCR_SCHEDULE_ID)
+          %r{(/gdc/projects/)[^/]+/schedules/[^/]+} =~ recorded_uri
+        when Regexp.new(VCR_DATAPRODUCT_ID)
+          %r{/gdc/domains/[^/]+/dataproducts/[^/]+} =~ recorded_uri
         end
       end
     end

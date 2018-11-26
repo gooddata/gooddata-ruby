@@ -1,4 +1,5 @@
 require 'fileutils'
+require_relative 'in_memory_ads' if GoodData::Environment::VCR_ON
 
 class ConfigurationHelper
   class << self
@@ -42,8 +43,13 @@ class ConfigurationHelper
     end
 
     def create_development_datawarehouse(opts = {})
-      datawarehouse = GoodData::DataWarehouse.create(opts)
-      GoodData.logger.info("Datawarehouse ID: #{datawarehouse.obj_id}")
+      if GoodData::Environment::VCR_ON
+        datawarehouse = Support::InMemoryAds.new()
+        puts 'Using mocked in-memory datawarehouse'
+      else
+        datawarehouse = GoodData::DataWarehouse.create(opts)
+        GoodData.logger.info("Datawarehouse ID: #{datawarehouse.obj_id}")
+      end
       datawarehouse
     end
 
@@ -58,6 +64,8 @@ class ConfigurationHelper
     end
 
     def ensure_development_project(opts = {})
+      $reuse_project = false if GoodData::Environment::VCR_ON
+
       if $reuse_project
         begin
           project_id = File.read(CACHE_DIR + LcmConnectionHelper.env_name).chomp

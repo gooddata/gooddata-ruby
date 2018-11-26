@@ -2,7 +2,7 @@ require_relative 'support/configuration_helper'
 require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
 require_relative 'support/lcm_helper'
-require 'gooddata_datawarehouse'
+require 'gooddata_datawarehouse' unless GoodData::Environment::VCR_ON
 
 def create_suffix
   hostname = Socket.gethostname
@@ -44,26 +44,30 @@ shared_context 'lcm bricks' do |opts = {}|
     connection_parameters = {
       username: @config[:username],
       password: @config[:password],
-      server: "https://#{@config[:dev_server]}"
+      server: "https://#{@config[:dev_server]}",
+      verify_ssl: false
     }
     @rest_client = GoodData.connect(connection_parameters)
     @ads = ConfigurationHelper.create_development_datawarehouse(client: @rest_client,
                                                                 title: 'Development ADS',
                                                                 auth_token: @config[:vertica_dev_token])
-
     @config[:ads_client][:jdbc_url] = @ads.data['connectionUrl']
 
-    @ads_client = GoodData::Datawarehouse.new(
-      @config[:ads_client][:username],
-      @config[:ads_client][:password],
-      @config[:ads_client][:ads_id],
-      jdbc_url: @ads.data['connectionUrl']
-    )
+    if GoodData::Environment::VCR_ON
+      $in_memory_ads_instance = @ads
+      @ads_client = @ads
+    else
+      @ads_client = GoodData::Datawarehouse.new(
+        @config[:ads_client][:username],
+        @config[:ads_client][:password],
+        @config[:ads_client][:ads_id],
+        jdbc_url: @ads.data['connectionUrl']
+      )
+    end
 
-    @suffix = LcmHelper.create_suffix
-    @release_table_name = "LCM_RELEASE_#{@suffix}"
+    @release_table_name = 'LCM_RELEASE'
     LcmHelper.create_release_table(@release_table_name, @ads_client)
-    @workspace_table_name = "LCM_WORKSPACE_#{@suffix}"
+    @workspace_table_name = 'LCM_WORKSPACE'
     LcmHelper.create_workspace_table(
       @workspace_table_name,
       @ads_client,
@@ -74,12 +78,13 @@ shared_context 'lcm bricks' do |opts = {}|
 
     project_helper = ConfigurationHelper.ensure_development_project(
       client: @rest_client,
-      title: "Development Project #{@suffix}",
+      title: 'LCM spec Development Project',
       auth_token: @config[:dev_token],
       environment: @config[:environment],
       ads: @ads
     )
     project_helper.deploy_processes(@ads) unless $reuse_project
+
     @project = project_helper.project
 
     label = @project.labels.first
@@ -90,47 +95,53 @@ shared_context 'lcm bricks' do |opts = {}|
     prod_connection_parameters = {
       username: @config[:username],
       password: @config[:password],
-      server: "https://#{@config[:prod_server]}"
+      server: "https://#{@config[:prod_server]}",
+      verify_ssl: false
     }
     @prod_rest_client = GoodData.connect(prod_connection_parameters)
     @prod_ads = ConfigurationHelper.create_development_datawarehouse(client: @prod_rest_client,
                                                                      title: 'Production ADS',
                                                                      auth_token: @config[:vertica_prod_token])
-
-    @prod_output_stage_project = ConfigurationHelper.create_output_stage_project(
-      @prod_rest_client,
-      @suffix,
-      @prod_ads,
-      @config[:prod_token],
-      @config[:environment]
-    )
-    production_output_stage_uri = @prod_output_stage_project.add.output_stage.data['schema']
+    unless GoodData::Environment::VCR_ON
+      @prod_output_stage_project = ConfigurationHelper.create_output_stage_project(
+        @prod_rest_client,
+        @suffix,
+        @prod_ads,
+        @config[:prod_token],
+        @config[:environment]
+      )
+      production_output_stage_uri = @prod_output_stage_project.add.output_stage.data['schema']
+    end
 
     segments = (%w(BASIC PREMIUM) * ($segments_multiplier || 1)).map.with_index do |segment, i|
-      {
-        segment_id: "INSURANCE_DEMO_#{segment}_#{i}_#{@suffix}",
+      data = {
+        segment_id: "LCM_SPEC_#{segment}_#{i}",
         development_pid: @project.obj_id,
         driver: segment == 'PREMIUM' ? 'vertica' : 'pg',
-        master_name: "Insurance Demo Master (#{segment} #{i}) " + '##{version}',
-        ads_output_stage_uri: production_output_stage_uri,
-        ads_output_stage_prefix: Support::OUTPUT_STAGE_PREFIX
+        master_name: "LCM spec master project (#{segment} #{i}) " + '##{version}',
       }
+
+      unless GoodData::Environment::VCR_ON
+        data[:ads_output_stage_uri] = production_output_stage_uri
+        data[:ads_output_stage_prefix] = Support::OUTPUT_STAGE_PREFIX
+      end
+      data
     end
     segments_filter = segments.map { |s| s[:segment_id] }
 
     @workspaces = (segments * ($workspaces_multiplier || 2)).map.with_index do |segment, i|
       {
-        client_id: "INSURANCE_DEMO_#{i}_#{@suffix}",
+        client_id: "LCM_SPEC_CLIENT_#{i}",
         segment_id: segment[:segment_id],
-        title: "Insurance Demo Workspace #{i} #{@suffix}"
+        title: "LCM SPEC PROJECT #{i}"
       }
     end
 
-    conflicting_client_id = "CLIENT_WITH_CONFLICTING_LDM_CHANGES_#{@suffix}"
+    conflicting_client_id = 'LCM_SPEC_CLIENT_WITH_CONFLICTING_LDM_CHANGES'
     @workspaces << {
       client_id: conflicting_client_id,
       segment_id: segments.first[:segment_id],
-      title: "Client With Conflicting LDM Changes #{@suffix}"
+      title: 'LCM spec Client With Conflicting LDM Changes'
     }
 
     s3_endpoint = 'http://localstack:4572'
@@ -150,7 +161,12 @@ shared_context 'lcm bricks' do |opts = {}|
     obj = bucket.object(@workspace_table_name)
     obj.upload_file(Pathname.new(workspace_csv))
 
-    @data_product_id = "DATA_PRODUCT_#{@suffix}"
+    if GoodData::Environment::VCR_ON && GoodData::Helpers::VcrConfigurer.vcr_cassette_playing?
+      @data_product_id = GoodData::Helpers::VcrConfigurer::VCR_DATAPRODUCT_ID
+    else
+      @data_product_id = 'LCM_DATA_PRODUCT_' + GoodData::Environment::RANDOM_STRING
+    end
+
 
     @test_context = {
       release_table_name: @release_table_name,
@@ -161,7 +177,6 @@ shared_context 'lcm bricks' do |opts = {}|
       development_pid: @project.obj_id,
       segments: segments.to_json,
       segments_filter: segments_filter.to_json,
-      ads_output_stage_uri: production_output_stage_uri,
       data_product: @data_product_id,
       input_source_type: 's3',
       s3_bucket: bucket_name,

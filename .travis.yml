@@ -1,133 +1,189 @@
 language: ruby
 cache: bundler
 stages:
-- name: unit
+- name: before-merge
   if: type IN (push, pull_request)
-- name: integration
-  if: type IN (api)
-- name: periodic
+- name: after-merge
+  if: type IN (api, cron)
+- name: platform-cleanup
   if: type IN (cron)
-- name: cleanup
-  if: type IN (cron)
+
 jobs:
   include:
-  # unit
-  - stage: unit
-    name: unit tests
+  # BEFORE MERGE
+  - name: pronto code review
+    stage: before-merge
+    script: |
+      git remote add upstream https://github.com/gooddata/gooddata-ruby.git
+      git fetch upstream master
+      bundle exec pronto run -c upstream/master --exit-code
+
+  - name: unit tests
+    stage: before-merge
     script: bundle exec rake test:unit
     rvm:
     - 2.3
     - 2.4
     - 2.5
-    - jruby-9.1.5
-    - jruby-9.1.14
     - jruby-1.7.19
-  - stage: unit
-    name: pronto code review
-    script: |
-      git remote add upstream https://github.com/gooddata/gooddata-ruby.git
-      git fetch upstream master
-      bundle exec pronto run -c upstream/master --exit-code
-  - stage: unit
-    name: sdk vcr tests
-    script: VCR_RECORD_MODE=none bundle exec rake test:sdk
+    - jruby-9.1.5
+    - jruby-9.1.7
+    - jruby-9.1.14
+
+  - name: sdk integration (vcr) tests - base
+    stage: before-merge
+    script: bundle exec rake test:sdk
+    env: VCR_RECORD_MODE=none
     rvm: jruby-9.1.14
-  - stage: unit
-    name: sdk vcr tests (project)
-    script: VCR_RECORD_MODE=none bundle exec rake test:project
+
+  - name: sdk integration (vcr) tests - project
+    stage: before-merge
+    script: bundle exec rake test:project
+    env: VCR_RECORD_MODE=none
     rvm: jruby-9.1.14
-  # integration
+
+  - name: lcm integration (vcr) tests - e2e
+    stage: before-merge
+    script: bundle exec rspec spec/lcm/integration/lcm_end_to_end_spec.rb
+    env:
+    - VCR_RECORD_MODE=none
+    - GD_ENV=development
+    rvm: 2.3
+
+  #  AFTER MERGE
+  #  staging 1
   - &lcm-integration-tests
-    stage: integration
-    name: lcm integration tests
+    name: staging1 - lcm integration tests
+    stage: after-merge
     script: |
       bundle exec rake -f lcm.rake docker:build
       bundle exec rake -f lcm.rake docker:bundle
-      bundle exec rake -f lcm.rake test:integration:docker
-    rvm:
-    - jruby-9.1.7
+      bundle exec rake -f lcm.rake test:docker:integration
+    env:
+    - VCR_ON=false
+    - GD_ENV=staging
+    rvm: jruby-9.1.7
+
+  - &lcm-slow-tests
+    name: staging1 - lcm slow tests
+    stage: after-merge
+    script: |
+      bundle exec rake -f lcm.rake docker:build
+      bundle exec rake -f lcm.rake docker:bundle
+      bundle exec rake -f lcm.rake test:docker:slow
+    env:
+    - VCR_ON=false
+    - GD_ENV=staging
+    rvm: jruby-9.1.7
+
+  - &userprov-tests
+    name: staging1 - user provisioning tests
+    stage: after-merge
+    script: |
+      bundle exec rake -f lcm.rake docker:build
+      bundle exec rake -f lcm.rake docker:bundle
+      bundle exec rake -f lcm.rake test:docker:userprov
+    env:
+    - VCR_ON=false
+    - GD_ENV=staging
+    rvm: jruby-9.1.7
+
   - &sdk-integration-tests
-    stage: integration
-    name: sdk integration tests
+    name: staging1 - sdk integration tests - base
+    stage: after-merge
     script: bundle exec rake test:sdk
+    env:
+    - VCR_ON=false
+    - GD_ENV=staging
     rvm: 2.5
-    env: VCR_ON=false
+
   - &sdk-integration-tests-project
-    stage: integration
-    name: sdk integration tests (project)
+    name: staging1 - sdk integration tests - project
+    stage: after-merge
     script: bundle exec rake test:project
-    env: VCR_ON=false
+    env:
+    - VCR_ON=false
+    - GD_ENV=staging
     rvm: 2.5
-  # periodic
-  # staging 1
-  - <<: *lcm-integration-tests
-    stage: periodic
-    name: staging1 - lcm integration tests
-    env:
-    - GD_ENV=staging
-    - VCR_ON=false
-  - <<: *sdk-integration-tests
-    stage: periodic
-    name: staging1 - sdk integration tests
-    env:
-    - GD_ENV=staging
-    - VCR_ON=false
-  - <<: *sdk-integration-tests-project
-    stage: periodic
-    name: staging1 - sdk integration tests (project)
-    env:
-    - GD_ENV=staging
-    - VCR_ON=false
+
   # staging 2
   - <<: *lcm-integration-tests
-    stage: periodic
     name: staging2 - lcm integration tests
     env:
     - GD_ENV=testing
     - VCR_ON=false
+
+  - <<: *lcm-slow-tests
+    name: staging2 - lcm slow tests
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+
+  - <<: *userprov-tests
+    name: staging2 - lcm user provisioning tests
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+
   - <<: *sdk-integration-tests
-    stage: periodic
-    name: staging2 - sdk integration tests
+    name: staging2 - sdk integration tests - base
     env:
     - GD_ENV=testing
     - VCR_ON=false
+
   - <<: *sdk-integration-tests-project
-    stage: periodic
-    name: staging2 - sdk integration tests (project)
+    name: staging2 - sdk integration tests - project
     env:
     - GD_ENV=testing
     - VCR_ON=false
+
   # staging 3
   - <<: *lcm-integration-tests
-    stage: periodic
     name: staging3 - lcm integration tests
     env:
     - GD_ENV=development
     - VCR_ON=false
+
+  - <<: *lcm-slow-tests
+    name: staging3 - lcm slow tests
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+
+  - <<: *userprov-tests
+    name: staging3 - lcm user provisioning tests
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+
   - <<: *sdk-integration-tests
-    stage: periodic
-    name: staging3 - sdk integration tests
+    name: staging3 - sdk integration tests - base
     env:
     - GD_ENV=development
     - VCR_ON=false
+
   - <<: *sdk-integration-tests-project
-    stage: periodic
-    name: staging3 - sdk integration tests (project)
+    name: staging3 - sdk integration tests - project
     env:
     - GD_ENV=development
     - VCR_ON=false
+
+  # cleanups
   - &cleanup
-    stage: periodic
+    stage: after-merge
     name: staging1 - test environment clean-up
     script: bundle exec ruby bin/test_projects_cleanup.rb -f
     env: GD_ENV=staging
+
   - <<: *cleanup
     name: staging2 - test environment clean-up
     env: GD_ENV=testing
+
   - <<: *cleanup
     name: staging3 - test environment clean-up
     env: GD_ENV=development
+
 notifications:
   slack:
-    secure: TyYks8rEBJMouWRjRtHZJJm+BIajxgwsoSIpxidZmD5zRk5ssEkGVbuYIvjUN+if1NyM1bmWspTSVX+8g5IDmt9PgcujXVqCbPRvfK90r3obs8A5pHbDnKEue6inqYUjNoqa1D6PkWTS1dTb6xvy8WiAwMGqoFGHnlNs4WFF9N4=
+    secure: "DtBi41vUmUXWbklcvD5gfQkzlYFMG9X5//QXxpc3oXRY5EFbh/YdsESzVP1o4tAR64JvbRqwbHzRgejhhbezS1Zx7BdjRF+DG+bT1qJ+0xfxzmC+wuA/TmqZrfjATpPsjVNZiFxuFVBdgcUuaZAmeZw3UhmeOyLg0ujYnsRbPuM+19AuCG1EDKUBjeSuhvMFck+TGASS9gCLvUSABP+lVr7JDsEsuKCcjTnw2/et27suZOT9gxl9SZNBQhX1zm65q87MLwy+kMXiwwebgeTzraotMNZI3x1yV7cb7SLown3VHZiS3o9bYSGMapgvlW9HGhMDpi07Q2v4DISi7Llot913BjpO1hbTByauWyxMrkMjqtpq9rF2StC8gCqLP9Sf75++7q2ibhRWZWJ44ur71juN60z2d2sTELqDUFzaXQTPvDeIFsUOMk8Sz+WmsDOo1FQi2zvTBUaxgFFMkIGTNXuG3un5iDMHsmIWDCeMvdYujUCvUhFDtW4/gphnZuWCX2p+3kiJdhRKo2pbSBXkdQ47RXKxGFPDUfW3UgVz5PoYJg8WFsInOCQgsUTuHMJhjCZ1k/ReZNjfuunq0WiFcFrIzA/WAFg6tShr83atPx/HKps9ieJAki/avwU1+3IMQeWUbDuisoQFWme350LDfKrK3Hncsrc2aXQlI8tm1ZI="
     on_pull_requests: false
