@@ -78,16 +78,6 @@ module Support
           state: 'DISABLED'
         )
 
-        associate_output_stage ads
-        add_process = project.add.process
-        add_process.create_schedule(
-          ruby_schedule,
-          '',
-          dataload_datasets: [DATASET_IDENTIFIER],
-          de_synchronize_all: true,
-          state: 'DISABLED'
-        )
-
         component_data = {
           name: 'lcm-end-to-end-sql-exec',
           type: :etl,
@@ -115,6 +105,18 @@ module Support
           }
         }
         project.deploy_process component_data
+
+        unless ads.data[:mocked?]
+          associate_output_stage ads
+          add_process = project.add.process
+          add_process.create_schedule(
+            ruby_schedule,
+            '',
+            dataload_datasets: [DATASET_IDENTIFIER],
+            de_synchronize_all: true,
+            state: 'DISABLED'
+          )
+        end
       end
     end
 

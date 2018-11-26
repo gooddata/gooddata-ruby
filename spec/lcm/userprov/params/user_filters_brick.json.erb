@@ -1,0 +1,48 @@
+{
+  "organization": "<%= config[:prod_organization] %>",
+  "GDC_PROJECT_ID": "<%= project_id %>",
+  "CLIENT_GDC_PROTOCOL": "https",
+  "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
+  "gd_encoded_params": {
+    "GDC_USERNAME": "${username}",
+    "GDC_PASSWORD": "${password}",
+    "filters_config": {
+      "user_column": "login",
+      "labels": [{"label": "label.csv_policies.state", "column": "state"}]
+    },
+    "aws_client": {
+      "access_key_id": "foo",
+      "secret_access_key": "foo",
+      "endpoint": "<%= s3_endpoint %>"
+    },
+    "input_source": {
+      "type": "s3",
+      "key": "<%= s3_key %>",
+      "bucket": "<%= s3_bucket %>"
+    },
+    "users_brick_config": {
+      "input_source": {
+        "type": "s3",
+        "key": "<%= users_brick_input[:s3_key] %>",
+        "bucket": "<%= users_brick_input[:s3_bucket] %>"
+      },
+      "login_column": "custom_login"
+    }
+    <% if defined? segments_filter %>
+    ,
+    "segments_filter": [
+      <% segments_filter.each do |filter| %>
+        "<%= filter %>" <% if segments_filter.length > 1 %>,<% end %>
+      <% end %>
+    ]
+    <% end %>
+  },
+  "fail_early": "true",
+  "strict": "true",
+  "username": "<%= config[:username] %>",
+  "password": "<%= config[:password] %>",
+  "sync_mode": "<%= sync_mode %>",
+  <% if data_product %>
+  "data_product": "<%= data_product %>"
+  <% end %>
+}

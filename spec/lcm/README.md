@@ -5,7 +5,7 @@
 1. install Docker
 1. run `bundle exec rake -f lcm.rake docker:build`
 1. run `bundle exec rake -f lcm.rake docker:bundle` (every time you update gems)
-1. run `bundle exec rake -f lcm.rake test:integration:docker`
+1. run `bundle exec rake -f lcm.rake test:docker:integration`
 
 ## Running tests locally
 1. switch to JRuby (because JRuby ADS driver is needed): `rvm use jruby`

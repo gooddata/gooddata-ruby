@@ -13,6 +13,7 @@ services:
     volumes:
       - /etc/passwd:/etc/passwd:ro
       - .:/src
+      - /tmp/junit.xml:/src/junit.xml
     volumes_from:
       - bundle
   gooddata-jruby:

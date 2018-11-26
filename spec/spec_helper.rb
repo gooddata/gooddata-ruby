@@ -6,23 +6,24 @@
 #
 ENV['RSPEC_ENV'] = 'test'
 
-require 'simplecov'
-# for simplecov to work correctly, it has to be started before any other code
-unless RUBY_PLATFORM =~ /java/
-  SimpleCov.start do
-    add_filter 'spec/'
-
-    add_group 'Middleware', 'lib/gooddata/bricks/middleware'
-    add_group 'CLI', 'lib/gooddata/cli'
-    add_group 'Commands', 'lib/gooddata/commands'
-    add_group 'Core', 'lib/gooddata/core'
-    add_group 'Exceptions', 'lib/gooddata/exceptions'
-    add_group 'Extensions', 'lib/gooddata/extensions'
-    add_group 'Goodzilla', 'lib/gooddata/goodzilla'
-    add_group 'Models', 'lib/gooddata/models'
-    add_group 'LCM', 'lib/gooddata/lcm'
-  end
-end
+# require 'simplecov'
+# # for simplecov to work correctly, it has to be started before any other code
+# unless RUBY_PLATFORM =~ /java/
+#   SimpleCov.minimum_coverage 10
+#   SimpleCov.start do
+#     add_filter 'spec/'
+#
+#     add_group 'Middleware', 'lib/gooddata/bricks/middleware'
+#     add_group 'CLI', 'lib/gooddata/cli'
+#     add_group 'Commands', 'lib/gooddata/commands'
+#     add_group 'Core', 'lib/gooddata/core'
+#     add_group 'Exceptions', 'lib/gooddata/exceptions'
+#     add_group 'Extensions', 'lib/gooddata/extensions'
+#     add_group 'Goodzilla', 'lib/gooddata/goodzilla'
+#     add_group 'Models', 'lib/gooddata/models'
+#     add_group 'LCM', 'lib/gooddata/lcm'
+#   end
+# end
 
 require 'pmap'
 require 'rspec'
@@ -45,7 +46,7 @@ GoodData::Environment.load
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
 RSpec.configure do |config|
-  config.deprecation_stream = File.open('deprecations.txt', 'w')
+  config.deprecation_stream = File.open('deprecations.txt', 'w') if File.world_writable?('deprecations.txt')
 
   config.filter_run_excluding :broken => true
 
