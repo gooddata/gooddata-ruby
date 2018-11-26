@@ -17,7 +17,7 @@ shared_examples 'a HLL fact synchronizer' do
   end
 end
 
-describe 'the whole life-cycle' do
+describe 'the whole life-cycle with vertica dwh' do
   before(:all) do
     @suffix = ConfigurationHelper.suffix
     @prod_rest_client = LcmConnectionHelper.production_server_connection

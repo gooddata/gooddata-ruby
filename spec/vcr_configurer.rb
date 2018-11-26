@@ -2,12 +2,21 @@ require 'vcr'
 require 'active_support/core_ext/string'
 
 module GoodData
+  class Datawarehouse
+    #  existence of Datawarehouse and InMemoryAds implementations is mutually exclusive
+    # this is to simplify tests, see InMemoryAds#class and vcr_configurer
+    @@dwh_instance = nil # rubocop:disable Style/ClassVars
+  end
+end
+
+module GoodData
   module Helpers
     # Configures VCR for integration tests
     class VcrConfigurer
-      VCR_PROJECT_ID = 'VCRFakeId'
+      VCR_PROJECT_ID = 'VCRFakeProjectId'
       VCR_SCHEDULE_ID = 'VCRFakeScheduleId'
       VCR_PROCESS_ID = 'VCRFakeProcessId'
+      VCR_DATAPRODUCT_ID = 'VCRFakeDataProductId'
       @ignore_vcr_requests = false
 
       def self.setup
@@ -58,10 +67,22 @@ module GoodData
           GoodData::Helpers::ProjectHelper.schedule_id = GoodData::Helpers::VcrConfigurer::VCR_SCHEDULE_ID
           GoodData::Helpers::ProjectHelper.process_id = GoodData::Helpers::VcrConfigurer::VCR_PROCESS_ID
         end
+
+        # vcr runs use InMemoryAds implementations instead of Datawarehouse
+        GoodData::Datawarehouse.define_singleton_method :new do |*_|
+          GoodData::Datawarehouse.class_variable_set(:@@dwh_instance, Support::InMemoryAds.new) unless GoodData::Datawarehouse.class_variable_get :@@dwh_instance
+          return GoodData::Datawarehouse.class_variable_get :@@dwh_instance
+        end
+
+        puts "VCR IS ON FOR THIS RUN IN MODE #{vcr_record_mode}"
       end
 
       def self.vcr_record_mode
         (ENV['VCR_RECORD_MODE'] && ENV['VCR_RECORD_MODE'].to_sym) || :none
+      end
+
+      def self.vcr_cassette_playing?
+        VCR.current_cassette && !VCR.current_cassette.recording?
       end
 
       def self.name_to_placeholder(name)
@@ -97,12 +118,14 @@ module GoodData
       # of the cached project and its objects.
       def self.matches_project_cache_fake_id?(actual_uri, recorded_uri)
         case actual_uri
-        when '/gdc/projects/VCRFakeId'
-          %r{(\/gdc\/projects\/)[^\/]+(.*)} =~ recorded_uri
-        when /VCRFakeProcessId/
-          %r{(\/gdc\/projects\/)[^\/]+/dataload/processes/[^\/]+} =~ recorded_uri
-        when /VCRFakeScheduleId/
-          %r{(\/gdc\/projects\/)[^\/]+/schedules/[^\/]+} =~ recorded_uri
+        when Regexp.new(VCR_PROJECT_ID)
+          %r{(/gdc/projects/)[^/]+(.*)} =~ recorded_uri
+        when Regexp.new(VCR_PROCESS_ID)
+          %r{(/gdc/projects/)[^/]+/dataload/processes/[^/]+} =~ recorded_uri
+        when Regexp.new(VCR_SCHEDULE_ID)
+          %r{(/gdc/projects/)[^/]+/schedules/[^/]+} =~ recorded_uri
+        when Regexp.new(VCR_DATAPRODUCT_ID)
+          %r{/gdc/domains/[^/]+/dataproducts/[^/]+} =~ recorded_uri
         end
       end
     end

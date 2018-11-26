@@ -31,7 +31,7 @@ shared_examples 'a synchronization brick' do
   it 'sets specified output stage prefix' do
     projects.each do |target_project|
       prefix = target_project.add.output_stage.output_stage_prefix
-      expect(prefix).to eq(Support::OUTPUT_STAGE_PREFIX)
+      expect(prefix).to eq(output_stage_prefix)
     end
   end
 
@@ -81,7 +81,6 @@ shared_examples 'a synchronization brick' do
 
   it 'migrates schedules' do
     original_schedules = original_project.schedules.to_a
-    expect(original_schedules.length).to be 3
     projects.each do |target_project|
       target_schedules = target_project.schedules
       expect(target_schedules.all? { |sch| sch.state == schedules_status }).to be_truthy

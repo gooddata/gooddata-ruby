@@ -31,11 +31,11 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/gooddata/gooddata-ruby'
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'bundler', "~> 1.14"
+  # s.add_development_dependency 'bundler', "~> 1.14"
   s.add_development_dependency 'license_finder', '~> 2.0'
   s.add_development_dependency 'rake', '~> 11.1'
   s.add_development_dependency 'redcarpet', '~> 3.1' if RUBY_PLATFORM != 'java'
-  s.add_development_dependency 'rspec', '~> 3.5'
+  s.add_development_dependency 'rspec', '~> 3.5.0'
   s.add_development_dependency 'rspec-expectations', '~> 3.5'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
   s.add_development_dependency 'rubocop', '~> 0.59.1'
@@ -51,6 +51,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pronto-reek', '~> 0.9.0' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'pronto-flay', '~> 0.9.0' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'vcr'
+
+  s.add_development_dependency 'sqlite3' if RUBY_PLATFORM != 'java'
 
   s.add_dependency 'activesupport', '~> 4.2.9'
   s.add_dependency 'aws-sdk-s3', '~> 1.16'
