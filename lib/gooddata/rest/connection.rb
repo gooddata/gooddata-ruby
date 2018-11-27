@@ -175,13 +175,13 @@ module GoodData
           merge_headers!(headers)
           get('/gdc/account/token', @request_params)
 
-          @user = get(get('/gdc/app/account/bootstrap')['bootstrapResource']['accountSetting']['links']['self'])
+          @user = get('/gdc/account/profile/current')
           GoodData.logger.info("Connected using SST to server #{@server.url} to profile \"#{@user['accountSetting']['login']}\"")
           @auth = {}
           refresh_token :dont_reauth => true
         elsif  options[:headers][:x_gdc_authsst]
           @request_params = options[:headers]
-          @user = get('/gdc/app/account/bootstrap')['bootstrapResource']
+          @user = get('/gdc/account/profile/current')
           GoodData.logger.info("Connected using SST to server #{@server.url} to profile \"#{@user['accountSetting']['login']}\"")
           @auth = {}
           refresh_token :dont_reauth => true
