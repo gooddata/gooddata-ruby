@@ -12,12 +12,20 @@ describe GoodData::Bricks::LoggerMiddleware do
   let(:app) { double(:app) }
   let(:logger) { double(Logger) }
 
+  before(:all) do
+    @original_logger = GoodData.logger
+  end
+
   before do
     subject.app = app
     allow(app).to receive(:call)
     allow(Logger).to receive(:new) { logger }
     allow(logger).to receive(:info)
     allow(logger).to receive(:level=)
+  end
+
+  after(:all) do
+    GoodData.logger = @original_logger
   end
 
   it "Has GoodData::Bricks::LoggerMiddleware class" do
@@ -41,6 +49,7 @@ describe GoodData::Bricks::LoggerMiddleware do
       it 'sets the specified log level' do
         expect(logger).to receive(:level=).with(log_level)
         subject.call(params)
+        expect(logger).to eq(GoodData.logger)
       end
     end
 
@@ -49,6 +58,7 @@ describe GoodData::Bricks::LoggerMiddleware do
       it 'sets info log level' do
         expect(logger).to receive(:level=).with('info')
         subject.call(params)
+        expect(logger).to eq(GoodData.logger)
       end
     end
   end
