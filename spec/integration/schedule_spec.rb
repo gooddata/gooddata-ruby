@@ -116,6 +116,31 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       end
     end
 
+    context 'when process type is LCM' do
+      let(:name) { 'my lcm component' }
+      let(:type) { :lcm }
+      let(:component_data) do
+        {
+          name: name,
+          type: type,
+          component: {
+            name: 'gdc-lcm-bricks-help-TESTING-DO_NOT_DELETE',
+            version: '6'
+          }
+        }
+      end
+
+      it 'can be scheduled' do
+        component = GoodData::Process.deploy_component(
+          component_data,
+          client: @client,
+          project: @project
+        )
+        schedule = component.create_manual_schedule
+        expect(schedule).to be
+      end
+    end
+
     it 'Works when no cron or schedule is specified' do
       data = GoodData::Helpers.deep_dup(@test_data)
       data[:cron] = nil

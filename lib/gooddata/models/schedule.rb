@@ -67,7 +67,8 @@ module GoodData
 
         fail 'Process ID has to be provided' if process_id.blank?
 
-        is_dataload_process = Process[process_id, project: project, client: c].type == :dataload
+        process = Process[process_id, project: project, client: c]
+        is_dataload_process = process.type == :dataload
 
         if is_dataload_process
           dataload_datasets = options[:dataload_datasets] || options['GDC_DATALOAD_DATASETS']
@@ -75,7 +76,9 @@ module GoodData
 
           de_synchronize_all = options[:de_synchronize_all] || options['GDC_DE_SYNCHRONIZE_ALL']
         else
-          fail 'Executable has to be provided' if executable.blank?
+          lcm_component = process.type == :lcm
+          executable_missing = !lcm_component && executable.blank?
+          fail 'Executable has to be provided' if executable_missing
         end
 
         schedule = c.create(GoodData::Schedule, GoodData::Helpers.stringify_keys(GoodData::Helpers.deep_dup(SCHEDULE_TEMPLATE)), client: c, project: project)

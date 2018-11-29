@@ -341,6 +341,10 @@ module GoodData
       project.schedules.select { |schedule| schedule.process_id == obj_id }
     end
 
+    def create_manual_schedule(options = {})
+      create_schedule(nil, nil, options)
+    end
+
     def create_schedule(cron, executable, options = {})
       project.create_schedule(process_id, cron, executable, options.merge(client: client, project: project))
     end
