@@ -27,7 +27,7 @@ describe 'GoodData - project', :vcr do
     end
 
     it 'Assigns project using project URL' do
-      GoodData.use ProjectHelper::PROJECT_URL, client: @client
+      GoodData.use "/gdc/projects/#{ProjectHelper.project_id(@client)}", client: @client
     end
 
     it 'Assigns project directly' do
