@@ -21,7 +21,6 @@ module GoodData
         require_relative env
         env_secrets = decrypt_secrets(env)
         GoodData::Environment::ConnectionHelper.set_const('SECRETS', env_secrets)
-        GoodData::Environment::ProjectHelper.set_const :PROJECT_URL, "/gdc/projects/#{GoodData::Environment::ProjectHelper::PROJECT_ID}"
         ENV['GD_SERVER'] = GoodData::Environment::ConnectionHelper::DEFAULT_SERVER
         # VCR is enabled by default - set VCR_ON=false to disable
         vcr_on = ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true'
