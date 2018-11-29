@@ -33,10 +33,6 @@ module GoodData
         params = GoodData::Helpers.stringify_keys(params)
         # params = GoodData::Helpers.symbolize_keys(params)
 
-        # Set logger
-        logger = params['GDC_LOGGER']
-        GoodData.logger = logger
-
         # Set parallelism
         max_concurrency = params['max_concurrency'] || params['MAX_CONCURRENCY']
         if max_concurrency && max_concurrency.to_i > 0
