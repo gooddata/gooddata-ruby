@@ -25,7 +25,7 @@ module GoodData
               GoodData.client.get '/gdc/account/token', dont_reauth: true
               url = GoodData.project_webdav_path
               GoodData.upload_to_project_webdav(path)
-              puts "Uploaded local file \"#{path}\" to url \"#{url + path}\""
+              GoodData.logger.info("Uploaded local file \"#{path}\" to url \"#{url + path}\"")
             end
           end
         end

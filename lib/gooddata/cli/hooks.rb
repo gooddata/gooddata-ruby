@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'gli'
-require 'pp'
 
 require_relative '../helpers/auth_helpers'
 

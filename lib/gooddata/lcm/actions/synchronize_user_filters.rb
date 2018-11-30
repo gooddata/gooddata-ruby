@@ -121,7 +121,7 @@ module GoodData
             users_brick_input: params.users_brick_users
           }
 
-          puts "Synchronizing in mode \"#{mode}\""
+          GoodData.logger.info("Synchronizing in mode \"#{mode}\"")
           case mode
           when 'sync_project', 'sync_one_project_based_on_pid', 'sync_one_project_based_on_custom_id'
             if mode == 'sync_one_project_based_on_pid'

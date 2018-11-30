@@ -293,7 +293,7 @@ module GoodData
           # Remove when TT sent in headers. Currently we need to parse from body
           merge_headers!(:x_gdc_authtt => GoodData::Helpers.get_path(response, %w(userToken token)))
         rescue Exception => e # rubocop:disable RescueException
-          puts e.message
+          GoodData.logger.error(e.message)
           raise e
         end
       end

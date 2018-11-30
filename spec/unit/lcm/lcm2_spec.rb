@@ -195,17 +195,4 @@ describe 'GoodData::LCM2' do
     end
   end
 
-  describe '.perform' do
-    it 'performs brick' do
-      log_dir = Dir.mktmpdir
-      message = 'Zdar'
-      execution_id = 'execid'
-
-      GoodData::LCM2.perform('hello', 'log_directory' => log_dir, 'message' => message, 'execution_id' => execution_id)
-
-      log_file = "#{log_dir}/#{execution_id}.log"
-
-      File.open(log_file).read.should eq("start\nfinished\n")
-    end
-  end
 end

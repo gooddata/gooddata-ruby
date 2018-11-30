@@ -19,23 +19,30 @@ using StringExtensions
 using NilExtensions
 
 require_relative 'base_middleware'
+require_relative 'mask_logger_decorator'
 
 module GoodData
   module Bricks
     class LoggerMiddleware < Bricks::Middleware
       def call(params)
         params = params.to_hash
-        logger = nil
         if params['GDC_LOGGING_OFF']
           logger = NilLogger.new
+        elsif params['log_directory'] && params['execution_id']
+          log_directory = params['log_directory']
+          execution_id = params['execution_id']
+          FileUtils.mkpath log_directory
+          logger = Logger.new("#{log_directory}/#{execution_id}.log")
+          logger.level = params['GDC_LOG_LEVEL'] || 'info'
+          values_to_mask = params['values_to_mask'] || []
+          logger = MaskLoggerDecorator.new(logger, values_to_mask) if values_to_mask.any?
         else
           logger = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
           logger.level = params['GDC_LOG_LEVEL'] || 'info'
-          logger.info('Pipeline starts')
         end
         GoodData.logger = logger
+        logger.info('Pipeline starts')
         params['GDC_LOGGER'] = logger
-
         GoodData.logging_http_on if params['HTTP_LOGGING'] && params['HTTP_LOGGING'].to_b
 
         returning(@app.call(params)) do |_result|

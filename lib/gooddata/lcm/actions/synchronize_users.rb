@@ -243,7 +243,7 @@ module GoodData
                         )
                       end
 
-                      puts "Project #{project.pid} will receive #{filtered_users.count} from #{new_users.count} users"
+                      GoodData.logger.info("Project #{project.pid} will receive #{filtered_users.count} from #{new_users.count} users")
                       project.import_users(filtered_users,
                                            domain: domain,
                                            whitelists: whitelists,
@@ -261,7 +261,7 @@ module GoodData
                           fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\""
                         end
                         fail "Client #{client_id} does not have project." unless project
-                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
+                        GoodData.logger.info("Project #{project.pid} of client #{client_id} will receive #{users.count} users")
                         project.import_users(users,
                                              domain: domain,
                                              whitelists: whitelists,
@@ -282,13 +282,13 @@ module GoodData
                         fail "Client id cannot be empty" if client_id.blank?
                         c = domain.clients(client_id, data_product)
                         if params.segments && !segment_uris.include?(c.segment_uri)
-                          puts "Client #{client_id} is outside segments_filter #{params.segments}"
+                          GoodData.logger.info("Client #{client_id} is outside segments_filter #{params.segments}")
                           next
                         end
                         project = c.project
                         fail "Client #{client_id} does not have project." unless project
                         working_client_ids << client_id.to_s
-                        puts "Project #{project.pid} of client #{client_id} will receive #{users.count} users"
+                        GoodData.logger.info("Project #{project.pid} of client #{client_id} will receive #{users.count} users")
                         project.import_users(users,
                                              domain: domain,
                                              whitelists: whitelists,
@@ -306,18 +306,18 @@ module GoodData
                           begin
                             project = c.project
                           rescue => e
-                            puts "Error when accessing project of client #{c.client_id}. Error: #{e}"
+                            GoodData.logger.error("Error when accessing project of client #{c.client_id}. Error: #{e}")
                             next
                           end
                           unless project
-                            puts "Client #{c.client_id} has no project."
+                            GoodData.logger.info("Client #{c.client_id} has no project.")
                             next
                           end
                           if project.deleted?
-                            puts "Project #{project.pid} of client #{c.client_id} is deleted."
+                            GoodData.logger.info("Project #{project.pid} of client #{c.client_id} is deleted.")
                             next
                           end
-                          puts "Synchronizing all users in project #{project.pid} of client #{c.client_id}"
+                          GoodData.logger.info("Synchronizing all users in project #{project.pid} of client #{c.client_id}")
                           res += project.import_users([],
                                                       domain: domain,
                                                       whitelists: whitelists,
@@ -343,14 +343,14 @@ module GoodData
           results.compact!
           counts = results.group_by { |r| r[:type] }.map { |g, r| [g, r.count] }
           counts.each do |category, count|
-            puts "There were #{count} events of type #{category}"
+            GoodData.logger.info("There were #{count} events of type #{category}")
           end
           errors = results.select { |r| r[:type] == :error || r[:type] == :failed }
           return if errors.empty?
 
-          puts 'Printing 10 first errors'
-          puts '========================'
-          pp errors.take(10)
+          GoodData.logger.info('Printing 10 first errors')
+          GoodData.logger.info('========================')
+          GoodData.logger.info(errors.take(10).pretty_inspect)
           fail 'There was an error syncing users'
         end
 
