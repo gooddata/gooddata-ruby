@@ -33,7 +33,7 @@ module GoodData
             dav.verify_server = false
             dav.credentials(params['GDC_USERNAME'], params['GDC_PASSWORD'])
             dav.find(path, recursive: true, suppress_errors: true) do |item|
-              puts 'Checking: ' + item.url.to_s
+              GoodData.logger.info('Checking: ' + item.url.to_s)
               name = (item.uri - webdav_uri).to_s
               File.open(name, 'w') do |f|
                 f << item.content

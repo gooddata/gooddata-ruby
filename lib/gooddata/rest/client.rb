@@ -194,8 +194,8 @@ module GoodData
 
       def disconnect
         if stats_on?
-          puts "API call statistics to server #{@connection.server}"
-          puts @connection.stats_table
+          GoodData.logger.info("API call statistics to server #{@connection.server}")
+          GoodData.logger.info(@connection.stats_table)
         end
         @connection.disconnect
       end
@@ -221,7 +221,7 @@ module GoodData
 
       # Gets resource by name
       def resource(res_name)
-        puts "Getting resource '#{res_name}'"
+        GoodData.logger.info("Getting resource '#{res_name}'")
         nil
       end
 

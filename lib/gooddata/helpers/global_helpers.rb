@@ -37,7 +37,7 @@ module GoodData
 
     class << self
       def error(msg)
-        STDERR.puts(msg)
+        GoodData.logger.error(msg)
         exit 1
       end
 
@@ -140,7 +140,7 @@ module GoodData
 
         if full_outer
           (lookup.keys - marked_lookup.keys).each do |key|
-            puts lookup[key]
+            GoodData.logger.info(lookup[key])
             results << lookup[key].first.to_hash
           end
         end
@@ -232,7 +232,7 @@ module GoodData
 
       def decrypt(database64, key)
         if key.nil? || key.empty?
-          puts 'WARNING: No encryption key provided.'
+          GoodData.logger.warn('WARNING: No encryption key provided.')
           return 'no_key_provided'
         end
 

@@ -75,7 +75,7 @@ module GoodData
                 project.execute_maql(chunk)
               end
             rescue => e
-              puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}"
+              GoodData.logger.error("Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{replaced_maql_chunks.inspect}")
               errors << e
               next
             end
@@ -85,7 +85,7 @@ module GoodData
             begin
               ca_chunks.each { |chunk| project.execute_maql(chunk) }
             rescue => e
-              puts "Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
+              GoodData.logger.error("Error occured when executing MAQL, project: \"#{project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}")
               errors << e
             end
           end

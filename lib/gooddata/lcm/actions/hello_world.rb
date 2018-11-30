@@ -21,7 +21,7 @@ module GoodData
 
       class << self
         def say(msg)
-          puts "#{name}#say - #{msg}"
+          GoodData.logger.info("#{name}#say - #{msg}")
         end
 
         def call(params)

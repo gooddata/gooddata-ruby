@@ -68,7 +68,7 @@ module GoodData
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
             rescue => e
-              puts e.inspect
+              GoodData.logger.error(e.inspect)
             ensure
               res.delete if res
             end
@@ -114,7 +114,7 @@ module GoodData
         fail ArgumentError, 'options[:name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
 
         verbose = options[:verbose] || false
-        puts HighLine.color("Deploying #{path}", HighLine::BOLD) if verbose
+        GoodData.logger.info("Deploying #{path}") if verbose
 
         deployed_path = Process.upload_package(path, files_to_exclude, client: client, project: project)
         data = {
@@ -171,7 +171,7 @@ module GoodData
         fail ArgumentError, 'options[:name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
 
         verbose = options[:verbose] || false
-        puts HighLine.color("Deploying #{path}", HighLine::BOLD) if verbose
+        GoodData.logger.info("Deploying #{path}") if verbose
 
         data = {
           process: {
@@ -233,7 +233,7 @@ module GoodData
 
       def zip_and_upload(path, files_to_exclude, opts = {})
         client = opts[:client]
-        puts 'Creating package for upload'
+        GoodData.logger.info('Creating package for upload')
         if !path.directory? && (path.extname == '.grf' || path.extname == '.rb')
           with_zip(opts) do |zipfile|
             zipfile.add(File.basename(path), path)
@@ -248,7 +248,7 @@ module GoodData
         else
           with_zip(opts) do |zipfile|
             files_to_upload = Dir[File.join(path, '**', '**')].reject { |f| files_to_exclude.include?(Pathname(path) + f) }
-            puts "Uploading #{files_to_upload.count} files."
+            GoodData.logger.info("Uploading #{files_to_upload.count} files.")
             files_to_upload.each do |file|
               file_pathname = Pathname.new(file)
               file_relative_pathname = file_pathname.relative_path_from(Pathname.new(path))

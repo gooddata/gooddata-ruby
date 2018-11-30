@@ -30,10 +30,10 @@ module GoodData
       def transfer_everything(client, domain, migration_spec, opts = {})
         filter_on_segment = migration_spec[:segments] || migration_spec['segments'] || []
 
-        puts 'Ensuring Users - warning: works across whole domain not just provided segment(s)'
+        GoodData.logger.info('Ensuring Users - warning: works across whole domain not just provided segment(s)')
         ensure_users(domain, migration_spec, filter_on_segment)
 
-        puts 'Migrating Blueprints'
+        GoodData.logger.info('Migrating Blueprints')
 
         bp_opts = {
           update_preference: opts[:update_preference] || opts['update_preference'],
@@ -89,7 +89,7 @@ module GoodData
           # GoodData::LCM.transfer_meta(segment.master_project, target_projects)
         end
 
-        puts 'Migrating Processes and Schedules'
+        GoodData.logger.info('Migrating Processes and Schedules')
 
         deployment_client = migration_spec.key?(:user_for_deployment) ? GoodData.connect(migration_spec[:user_for_deployment]) : client
         domain.clients.peach do |c|
@@ -126,7 +126,7 @@ module GoodData
           begin
             GoodData::LCM.transfer_label_types(segment_master, project)
           rescue => e
-            puts "Unable to transfer label_types, reason: #{e.message}"
+            GoodData.logger.error("Unable to transfer label_types, reason: #{e.message}")
           end
 
           # Transfer tagged objects
@@ -137,7 +137,7 @@ module GoodData
 
         do_not_synchronize_clients = migration_spec[:do_not_synchronize_clients]
         if do_not_synchronize_clients.nil? || !do_not_synchronize_clients
-          puts 'Migrating Dashboards'
+          GoodData.logger.info('Migrating Dashboards')
           if filter_on_segment.empty?
             domain.synchronize_clients
           else
@@ -148,7 +148,7 @@ module GoodData
         end
 
         # User groups must be migrated after dashboards
-        puts 'Migrating User Groups'
+        GoodData.logger.info('Migrating User Groups')
         domain.clients.peach do |c|
           segment = c.segment
           segment_master = segment.master_project

@@ -13,7 +13,7 @@ module GoodData
       def call(params)
         params = params.to_hash
         if params.key?('aws_client')
-          puts 'Setting up AWS-S3 connection'
+          GoodData.logger.info('Setting up AWS-S3 connection')
           raise 'Unable to connect to AWS. Parameter "aws_client" seems to be empty' unless params['aws_client']
           raise 'Unable to connect to AWS. Parameter "access_key_id" is missing' if params['aws_client']['access_key_id'].blank?
           raise 'Unable to connect to AWS. Parameter "secret_access_key" is missing' if params['aws_client']['secret_access_key'].blank?

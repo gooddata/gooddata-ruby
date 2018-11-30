@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'pathname'
-require 'pp'
 
 require_relative '../shared'
 require_relative '../../commands/project'

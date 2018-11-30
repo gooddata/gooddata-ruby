@@ -483,12 +483,12 @@ module GoodData
       end
 
       def transfer_tagged_stuff(from_project, to_project, tag)
-        puts "Transferring tagged stuff - #{tag}"
+        GoodData.logger.info("Transferring tagged stuff - #{tag}")
 
         objects = from_project.find_by_tag(tag)
 
         if objects.any?
-          puts JSON.pretty_generate(objects)
+          GoodData.logger.info("\n#{JSON.pretty_generate(objects)}")
           from_project.partial_md_export(objects, project: to_project)
         else
           GoodData.logger.info('No tagged objects to transfer')
@@ -1044,7 +1044,7 @@ module GoodData
     #
     # TODO: Return invite object
     def invite(email, role, msg = DEFAULT_INVITE_MESSAGE)
-      puts "Inviting #{email}, role: #{role}"
+      GoodData.logger.info("Inviting #{email}, role: #{role}")
 
       role_url = nil
       if role.index('/gdc/').nil?
@@ -1302,19 +1302,16 @@ module GoodData
       results = blueprint.datasets.pmap do |ds|
         [ds, ds.count(self)]
       end
-      puts title
-      puts GoodData::Helpers.underline(title)
-      puts
-      puts "Datasets - #{results.count}"
-      puts
+      GoodData.logger.info(title)
+      GoodData.logger.info(GoodData::Helpers.underline(title))
+      GoodData.logger.info("\nDatasets - #{results.count}\n")
       results.each do |x|
         dataset, count = x
         dataset.title.tap do |t|
-          puts t
-          puts GoodData::Helpers.underline(t)
-          puts "Size - #{count} rows"
-          puts "#{dataset.attributes_and_anchors.count} attributes, #{dataset.facts.count} facts, #{dataset.references.count} references"
-          puts
+          GoodData.logger.info(t)
+          GoodData.logger.info(GoodData::Helpers.underline(t))
+          GoodData.logger.info("Size - #{count} rows")
+          GoodData.logger.info("#{dataset.attributes_and_anchors.count} attributes, #{dataset.facts.count} facts, #{dataset.references.count} references\n")
         end
       end
       nil
@@ -1357,7 +1354,7 @@ module GoodData
         metrics: metrics,
         report_definitions: rds
       }.each do |key, collection|
-        puts "Replacing #{key}"
+        GoodData.logger.info("Replacing #{key}")
         collection.peach do |item|
           new_item = item.replace(mapping)
           if new_item.json != item.json
@@ -1375,7 +1372,7 @@ module GoodData
 
       GoodData.logger.info 'Replacing hidden metrics'
       local_metrics = mapping.map { |a, _| a }.pmapcat { |a| a.usedby('metric') }.select { |m| m['deprecated'] == '1' }.map { |m| m['link'] }.uniq
-      puts "Found #{local_metrics.count} metrics"
+      GoodData.logger.info("Found #{local_metrics.count} metrics")
       local_metrics.pmap { |m| metrics(m) }.peach do |item|
         new_item = item.replace(mapping)
         if new_item.json != item.json
@@ -1392,7 +1389,7 @@ module GoodData
 
       GoodData.logger.info 'Replacing dashboard saved views'
       contexts = mapping.map { |a, _| a }.pmapcat { |a| a.usedby('executionContext') }.map { |a| GoodData::MdObject[a['link'], client: client, project: self] }
-      puts "Found #{contexts.count} dashboard saved views"
+      GoodData.logger.info("Found #{contexts.count} dashboard saved views")
       contexts.peach do |item|
         new_item = GoodData::MdObject.replace_quoted(item, mapping)
         if new_item.json != item.json

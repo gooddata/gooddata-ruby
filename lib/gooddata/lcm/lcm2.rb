@@ -16,7 +16,6 @@ require 'gooddata/extensions/nil'
 require 'active_support/core_ext/hash/compact'
 
 require_relative 'actions/actions'
-require_relative 'brick_logger'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
 
@@ -218,7 +217,7 @@ module GoodData
             t.add_separator if index < rows.length - 1
           end
         end
-        puts "\n#{table}"
+        GoodData.logger.info("\n#{table}")
       end
 
       def print_action_result(action, messages)
@@ -255,13 +254,13 @@ module GoodData
           end
         end
 
-        puts "\n#{table}"
+        GoodData.logger.info("\n#{table}")
       end
 
       def print_actions_result(actions, results)
         actions.each_with_index do |action, index|
           print_action_result(action, results[index])
-          puts
+          GoodData.logger.info
         end
         nil
       end
@@ -272,13 +271,6 @@ module GoodData
         # Get actions for mode specified
         actions = get_mode_actions(mode)
 
-        if params.key?('log_directory')
-          brick_logger = BrickFileLogger.new(params['log_directory'], "#{params['execution_id']}.log")
-          logging_enabled = true
-        else
-          logging_enabled = false
-        end
-        brick_logger.log_action("start") if logging_enabled
         if params.actions
           actions = params.actions.map do |action|
             "GoodData::LCM2::#{action}".split('::').inject(Object) do |o, c|
@@ -317,8 +309,7 @@ module GoodData
         errors = []
         results = []
         actions.each do |action|
-          puts
-
+          GoodData.logger.info
           # Invoke action
           begin
             out = run_action action, params
@@ -344,7 +335,6 @@ module GoodData
           params.merge!(new_params)
 
           # Print action result
-          puts
           print_action_result(action, res)
 
           # Store result for final summary
@@ -368,12 +358,6 @@ module GoodData
         fail(JSON.pretty_generate(errors)) if strict_mode && has_errors
 
         result
-
-      ensure
-        if logging_enabled
-          brick_logger.log_action(errors.to_s) if has_errors
-          brick_logger.log_action(has_errors ? 'error' : 'finished')
-        end
       end
 
       def run_action(action, params)
@@ -420,7 +404,7 @@ module GoodData
           end
 
           table = Terminal::Table.new :headings => ['Action', 'Parameter', 'Description', 'Parameter Type'], :rows => rows
-          puts table.to_s
+          GoodData.logger.info("\n#{table}")
         end
       end
     end

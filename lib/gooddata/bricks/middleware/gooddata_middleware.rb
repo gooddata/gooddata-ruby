@@ -87,14 +87,14 @@ module GoodData
         begin
           client.disconnect
         rescue
-          puts 'Tried to disconnect client. Was unsuccessful. Proceeding anyway.'
+          GoodData.logger.warn('Tried to disconnect client. Was unsuccessful. Proceeding anyway.')
         end
 
         # Try to disconnect development_client
         begin
           development_client.disconnect if development_client != client
         rescue
-          puts 'Tried to disconnect development_client. Was unsuccessful. Proceeding anyway.'
+          GoodData.logger.warn('Tried to disconnect development_client. Was unsuccessful. Proceeding anyway.')
         end
 
         returning_value
@@ -103,11 +103,11 @@ module GoodData
       class << self
         def connect(server, verify_ssl, username, password, sst_token) # rubocop:disable Metrics/ParameterLists
           if username.nil? || password.nil?
-            puts "Connecting with SST to server #{server}"
+            GoodData.logger.info("Connecting with SST to server #{server}")
             raise 'SST (SuperSecureToken) not present in params' if sst_token.nil?
             conn = GoodData.connect(sst_token: sst_token, server: server, verify_ssl: verify_ssl)
           else
-            puts "Connecting as #{username} to server #{server}"
+            GoodData.logger.info("Connecting as #{username} to server #{server}")
             conn = GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
           end
           conn.stats_on

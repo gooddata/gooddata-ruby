@@ -13,11 +13,11 @@ module GoodData
     class BenchMiddleware < Bricks::Middleware
       def call(params)
         params = params.to_hash
-        puts 'Starting timer'
+        GoodData.logger.info('Starting timer')
         result = nil
         report = Benchmark.measure { result = @app.call(params) }
-        puts 'Stopping timer'
-        pp report
+        GoodData.logger.info('Stopping timer')
+        GoodData.logger.info(report.pretty_inspect)
         result
       end
     end

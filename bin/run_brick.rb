@@ -16,6 +16,7 @@ log.info "action=#{brick_type}_execution status=init"
 begin
   brick_pipeline = GoodData::Bricks::Pipeline.send("#{brick_type}_pipeline")
   params = ENV.select { |k,| k.to_s.match(/^#{BRICK_PARAM_PREFIX}.*/) }.map { |k, v| [k.slice(BRICK_PARAM_PREFIX.length..-1), v] }.to_h
+  params['values_to_mask'] = params.values
   commit_hash = ENV['GOODDATA_RUBY_COMMIT'] || ''
   execution_id = ENV['EXECUTION_ID']
   params['gooddata_ruby_commit'] = commit_hash
