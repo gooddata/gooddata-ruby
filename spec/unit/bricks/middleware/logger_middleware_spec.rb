@@ -69,7 +69,7 @@ describe GoodData::Bricks::LoggerMiddleware do
     tmp_dir = Dir.mktmpdir
     log_dir = tmp_dir + '/logs'
     execution_id = 'execid'
-    let(:params) { { 'execution_id' => execution_id, 'log_directory' => log_dir } }
+    let(:params) { { 'GDC_EXECUTION_ID' => execution_id, 'GDC_LOG_DIRECTORY' => log_dir } }
 
     it 'set MSF compatible file logger' do
       subject.call(params)

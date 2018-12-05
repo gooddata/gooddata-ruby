@@ -28,9 +28,9 @@ module GoodData
         params = params.to_hash
         if params['GDC_LOGGING_OFF']
           logger = NilLogger.new
-        elsif params['log_directory'] && params['execution_id']
-          log_directory = params['log_directory']
-          execution_id = params['execution_id']
+        elsif params['GDC_LOG_DIRECTORY'] && params['GDC_EXECUTION_ID']
+          log_directory = params['GDC_LOG_DIRECTORY']
+          execution_id = params['GDC_EXECUTION_ID']
           FileUtils.mkpath log_directory
           logger = Logger.new("#{log_directory}/#{execution_id}.log")
           logger.level = params['GDC_LOG_LEVEL'] || 'info'
