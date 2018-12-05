@@ -7,6 +7,20 @@
 require 'gooddata/lcm/lcm2'
 require 'gooddata/lcm/actions/synchronize_etls_in_segment'
 
+def process_mock(name, id)
+  mock = double(GoodData::Process)
+  allow(mock).to receive(:name) { name }
+  allow(mock).to receive(:process_id) { id }
+  mock
+end
+
+def schedule_mock(name, process_id)
+  mock = double(GoodData::Schedule)
+  allow(mock).to receive(:name) { name }
+  allow(mock).to receive(:process_id) { process_id }
+  mock
+end
+
 describe GoodData::LCM2::SynchronizeETLsInSegment do
   let(:gdc_gd_client) { double_with_class(GoodData::Rest::Client) }
   let(:logger) { double_with_class(Logger) }
@@ -17,19 +31,19 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
   let(:client_id) { 'foo_client' }
   let(:data_product) { double_with_class(GoodData::DataProduct) }
   let(:target_project_id) { 'foo' }
-  let(:process) { double(GoodData::Process) }
+  let(:process) { process_mock(process_name, process_id) }
   let(:process_id) { 'my_test_process_id' }
   let(:process_name) { 'my_test_process_name' }
   let(:target_project) { double(GoodData::Project) }
   let(:target_process) { double(GoodData::Process) }
-  let(:custom_target_process) { double(GoodData::Process) }
   let(:target_process_name) { process_name }
+  let(:schedule_name) { 'my schedule' }
+  let(:schedule) { schedule_mock(schedule_name, process_id) }
+  let(:target_schedule) { schedule_mock(schedule_name, process_id) }
+  let(:custom_target_process) { double(GoodData::Process) }
   let(:custom_target_process_name) { 'custom_client_process' }
   let(:custom_target_process_id) { 'custom_client_process_id' }
-  let(:schedule) { double(GoodData::Schedule) }
-  let(:schedule_name) { 'my schedule' }
-  let(:target_schedule) { double(GoodData::Schedule) }
-  let(:custom_target_schedule) { double(GoodData::Schedule) }
+  let(:custom_target_schedule) { schedule_mock('custom schedule', custom_target_process_id) }
   let(:params) do
     params = {
       gdc_logger: logger,
@@ -49,14 +63,11 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
     allow(gdc_gd_client).to receive(:domain) { domain }
     allow(gdc_gd_client).to receive(:projects).with('from project') { project }
     allow(gdc_gd_client).to receive(:projects).with(target_project_id) { project }
-    allow(project).to receive(:schedules) { [] }
     allow(data_product).to receive(:segments) { [segment] }
     allow(segment).to receive(:synchronize_processes) { result }
     allow(project).to receive(:set_metadata)
     allow(segment).to receive(:segment_id) { 'some_segment_ids' }
-    allow(project).to receive(:processes) { [target_process] }
-    allow(process).to receive(:process_id) { process_id }
-    allow(process).to receive(:name) { process_name }
+    allow(project).to receive(:processes) { [process] }
     allow(gdc_gd_client).to receive(:projects)
       .with(target_project_id) { target_project }
     allow(target_project).to receive(:processes) { [target_process, custom_target_process] }
@@ -67,15 +78,9 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
     allow(target_process).to receive(:process_id) { process_id }
     allow(custom_target_process).to receive(:process_id) { custom_target_process_id }
     allow(custom_target_process).to receive(:delete)
-    allow(schedule).to receive(:name) { schedule_name }
-    allow(schedule).to receive(:process_id) { process_id }
-    allow(target_schedule).to receive(:name) { schedule_name }
-    allow(target_schedule).to receive(:process_id) { process_id }
     allow(target_schedule).to receive(:enable)
     allow(target_schedule).to receive(:save)
     allow(project).to receive(:schedules) { [schedule] }
-    allow(custom_target_schedule).to receive(:name) { 'custom schedule' }
-    allow(custom_target_schedule).to receive(:process_id) { custom_target_process_id }
     allow(custom_target_schedule).to receive(:enable)
     allow(custom_target_schedule).to receive(:save)
     allow(custom_target_schedule).to receive(:delete)
