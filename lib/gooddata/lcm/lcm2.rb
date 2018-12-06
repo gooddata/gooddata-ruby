@@ -309,7 +309,7 @@ module GoodData
         errors = []
         results = []
         actions.each do |action|
-          GoodData.logger.info
+          GoodData.logger.info("\n")
           # Invoke action
           begin
             out = run_action action, params
