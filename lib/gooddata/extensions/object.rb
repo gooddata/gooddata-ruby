@@ -13,8 +13,4 @@ class Object
     send(:remove_const, name) if const_defined?(name)
     send(:const_set, name, val)
   end
-
-  def to_b
-    false
-  end
 end

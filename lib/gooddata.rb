@@ -22,6 +22,7 @@ require_relative 'gooddata/lcm/lcm'
 require_relative 'gooddata/lcm/lcm2'
 require_relative 'gooddata/models/models'
 require_relative 'gooddata/bricks/pipeline'
+require 'gooddata/extensions/object'
 
 # Files
 require_relative 'gooddata/app/app'
@@ -33,3 +34,6 @@ require_relative 'gooddata/version'
 # Extensions
 require_relative 'gooddata/extensions/extensions'
 require 'backports/2.1.0/array/to_h'
+
+# Helpers
+require 'gooddata/helpers/global_helpers'
