@@ -194,11 +194,9 @@ shared_context 'lcm bricks' do |opts = {}|
   end
 
   after(:all) do
-    projects_to_delete =
-      $master_projects +
-      $client_projects +
-      [@prod_output_stage_project]
+    projects_to_delete = $master_projects + $client_projects
 
+    projects_to_delete += [@prod_output_stage_project] unless GoodData::Environment::VCR_ON
     projects_to_delete += [@project] unless ENV['REUSE_PROJECT']
 
     projects_to_delete.each do |project|
