@@ -59,6 +59,8 @@ module GoodData
           GoodData::Helpers::ProjectHelper.schedule_id = GoodData::Helpers::VcrConfigurer::VCR_SCHEDULE_ID
           GoodData::Helpers::ProjectHelper.process_id = GoodData::Helpers::VcrConfigurer::VCR_PROCESS_ID
         end
+
+        puts "VCR IS ON FOR THIS RUN IN MODE #{vcr_record_mode}"
       end
 
       def self.vcr_record_mode
@@ -66,7 +68,7 @@ module GoodData
       end
 
       def self.vcr_cassette_playing?
-        !VCR.current_cassette.recording?
+        VCR.current_cassette && !VCR.current_cassette.recording?
       end
 
       def self.name_to_placeholder(name)

@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'license_finder', '~> 2.0'
   s.add_development_dependency 'rake', '~> 11.1'
   s.add_development_dependency 'redcarpet', '~> 3.1' if RUBY_PLATFORM != 'java'
-  s.add_development_dependency 'rspec', '~> 3.5'
+  s.add_development_dependency 'rspec', '~> 3.5.0'
   s.add_development_dependency 'rspec-expectations', '~> 3.5'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
   s.add_development_dependency 'rubocop', '~> 0.59.1'

@@ -1,4 +1,4 @@
-require 'sqlite3'
+require 'sqlite3' unless RUBY_PLATFORM == 'java'
 
 module GoodData
   class Datawarehouse
