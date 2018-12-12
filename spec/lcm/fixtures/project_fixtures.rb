@@ -1,7 +1,7 @@
 require_relative 'base_fixtures'
-require_relative '../support/configuration_helper'
-require_relative '../support/connection_helper'
-require_relative '../support/project_helper'
+require_relative '../integration/support/configuration_helper'
+require_relative '../integration/support/connection_helper'
+require_relative '../integration/support/project_helper'
 
 module Fixtures
   class ProjectFixtures < BaseFixtures

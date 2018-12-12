@@ -1,5 +1,5 @@
-require_relative '../integration/fixtures/user_provisioning_fixtures'
-require_relative '../integration/support/user_provisioning_helper'
+require_relative '../fixtures/user_provisioning_fixtures'
+require_relative 'support/user_provisioning_helper'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/s3_helper'
 require_relative '../../../lib/gooddata/models/user_filters/user_filter_builder'

@@ -19,12 +19,16 @@ module Support
       {
         'connectionUrl' => 'this_should_never_be_used',
         :mocked? => true,
-        :schema => 'this_uri_should_not_be_used'
+        :schema => schemas
       }
     end
 
     def schemas
-      'this_should_be_irrelevant'
+      'irrelevant/schema/uri'
+    end
+
+    def obj_id
+      'irrelevant_object_id'
     end
 
     def execute_select(*args, &block)
