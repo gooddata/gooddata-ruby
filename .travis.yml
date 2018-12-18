@@ -16,7 +16,7 @@ jobs:
     script: |
       git remote add upstream https://github.com/gooddata/gooddata-ruby.git
       git fetch upstream master
-      bundle exec pronto run -c upstream/master --exit-code
+      export PRONTO_PULL_REQUEST_ID=${TRAVIS_PULL_REQUEST} && bundle exec pronto run -c upstream/master --exit-code
 
   - name: unit tests
     stage: before-merge
