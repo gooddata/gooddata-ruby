@@ -268,6 +268,8 @@ module GoodData
       def perform(mode, params = {})
         params = convert_params(params)
 
+        GoodData.gd_logger.brick = mode
+
         # Get actions for mode specified
         actions = get_mode_actions(mode)
 
@@ -365,6 +367,7 @@ module GoodData
       end
 
       def run_action(action, params)
+        GoodData.gd_logger.start_action action, GoodData.gd_logger
         GoodData.logger.info("Running #{action.name} action ...")
         params.clear_filters
         # Check if all required parameters were passed
@@ -372,6 +375,7 @@ module GoodData
         params.setup_filters(action.const_get('PARAMS'))
         out = action.send(:call, params)
         params.clear_filters
+        GoodData.gd_logger.end_action GoodData.gd_logger
         out
       end
 
