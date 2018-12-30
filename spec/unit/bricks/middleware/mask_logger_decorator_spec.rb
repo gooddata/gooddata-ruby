@@ -49,4 +49,36 @@ describe GoodData::Bricks::MaskLoggerDecorator do
       end
     end
   end
+
+  describe ".extract_values" do
+    it "should extract String" do
+      values_to_extract = "secret_password"
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(["secret_password"])
+    end
+
+    it "should extract Array" do
+      values_to_extract = %w[secret_password sensitive]
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(%w[secret_password sensitive])
+    end
+
+    it "should extract Hash" do
+      values_to_extract = { key1: "secret_password", key2: "sensitive" }
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(%w[secret_password sensitive])
+    end
+
+    it "should extract structured data" do
+      values_to_extract = { key1: ["secret_password"], key2: { inner: "sensitive" } }
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(%w[secret_password sensitive])
+    end
+
+    it "shouldn't extract not String types" do
+      values_to_extract = [nil, true, 342, 4.2]
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq([])
+    end
+  end
 end
