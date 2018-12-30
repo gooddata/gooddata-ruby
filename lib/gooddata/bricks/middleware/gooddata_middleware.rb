@@ -26,6 +26,9 @@ module GoodData
       DEFAULT_HOSTNAME = 'secure.gooddata.com'
 
       def call(params)
+        # Generate brick execution id
+        execution_id = GoodData.gd_logger.execution_id
+
         # Convert possible jruby hash to plain hash
         params = params.to_hash
 
@@ -48,7 +51,8 @@ module GoodData
           params['GDC_VERIFY_SSL'].to_b,
           params['GDC_USERNAME'],
           params['GDC_PASSWORD'],
-          params['GDC_SST']
+          params['GDC_SST'],
+          execution_id
         )
 
         opts = params['development_client']
@@ -66,7 +70,8 @@ module GoodData
             opts['verify_ssl'].to_b,
             opts['username'] || opts['login'] || opts['email'],
             opts['password'],
-            opts['sst']
+            opts['sst'],
+            execution_id
           )
         else
           development_client = client
@@ -101,14 +106,14 @@ module GoodData
       end
 
       class << self
-        def connect(server, verify_ssl, username, password, sst_token) # rubocop:disable Metrics/ParameterLists
+        def connect(server, verify_ssl, username, password, sst_token, execution_id) # rubocop:disable Metrics/ParameterLists
           if username.nil? || password.nil?
             GoodData.logger.info("Connecting with SST to server #{server}")
             raise 'SST (SuperSecureToken) not present in params' if sst_token.nil?
-            conn = GoodData.connect(sst_token: sst_token, server: server, verify_ssl: verify_ssl)
+            conn = GoodData.connect(sst_token: sst_token, server: server, verify_ssl: verify_ssl, execution_id: execution_id)
           else
             GoodData.logger.info("Connecting as #{username} to server #{server}")
-            conn = GoodData.connect(username, password, server: server, verify_ssl: verify_ssl)
+            conn = GoodData.connect(username, password, server: server, verify_ssl: verify_ssl, execution_id: execution_id)
           end
           conn.stats_on
 
