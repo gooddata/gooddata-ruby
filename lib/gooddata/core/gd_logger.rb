@@ -19,7 +19,7 @@ module GoodData
       unknown: Logger::UNKNOWN
     }
 
-    attr_accessor :execution_id, :loggers
+    attr_accessor :loggers
 
     include ContextManager
     include GoodData::Rest::Aggregator
