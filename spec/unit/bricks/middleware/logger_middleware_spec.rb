@@ -11,11 +11,13 @@ require 'gooddata/core/nil_logger'
 require 'gooddata/bricks/brick'
 require 'gooddata/bricks/bricks'
 require 'gooddata/bricks/middleware/logger_middleware'
+require 'gooddata/bricks/middleware/mask_logger_decorator'
 
 describe GoodData::Bricks::LoggerMiddleware do
   let(:app) { double(:app) }
   let(:logger) { double(Logger) }
-  let(:splunk_logger) { double(GoodData::SplunkLogger) }
+  let(:temp_splunk_logger) { double(GoodData::SplunkLogger) }
+  let(:splunk_logger) { double(GoodData::Bricks::MaskLoggerDecorator) }
   let(:nil_logger) { double(GoodData::NilLogger) }
 
   before(:all) do
@@ -28,7 +30,9 @@ describe GoodData::Bricks::LoggerMiddleware do
     allow(Logger).to receive(:new) { logger }
     allow(logger).to receive(:info)
     allow(logger).to receive(:level=)
-    allow(GoodData::SplunkLogger).to receive(:new) { splunk_logger }
+    allow(GoodData::SplunkLogger).to receive(:new) { temp_splunk_logger }
+    allow(temp_splunk_logger).to receive(:level=)
+    allow(GoodData::Bricks::MaskLoggerDecorator).to receive(:new) { splunk_logger }
     allow(splunk_logger).to receive(:info)
     allow(splunk_logger).to receive(:level=)
     allow(GoodData::NilLogger).to receive(:new) { nil_logger }
@@ -63,7 +67,7 @@ describe GoodData::Bricks::LoggerMiddleware do
       let(:log_level) { 'warn' }
       let(:params) { { 'SPLUNK_LOG_LEVEL' => log_level, 'SPLUNK_LOGGING' => 'true' } }
       it 'sets the specified log level' do
-        expect(splunk_logger).to receive(:level=).with(log_level)
+        expect(temp_splunk_logger).to receive(:level=).with(log_level)
         subject.call(params)
       end
     end
