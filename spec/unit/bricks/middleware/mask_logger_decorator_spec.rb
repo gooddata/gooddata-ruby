@@ -28,6 +28,21 @@ describe GoodData::Bricks::MaskLoggerDecorator do
         subject.send(level, "This is secret_password which is sensitive information.")
       end
 
+      it "should mask Array" do
+        expect(logger).to receive(level).with(["This is ******.", "Also ******"])
+        subject.send(level, ["This is secret_password.", "Also sensitive"])
+      end
+
+      it "should mask Hash" do
+        expect(logger).to receive(level).with(key1: "This is ******.", key2: "Also ******")
+        subject.send(level, key1: "This is secret_password.", key2: "Also sensitive")
+      end
+
+      it "should mask structured data" do
+        expect(logger).to receive(level).with(key1: ["This is ******."], key2: { inner: "Also ******" })
+        subject.send(level, key1: ["This is secret_password."], key2: { inner: "Also sensitive" })
+      end
+
       it "should not mask nil" do
         expect(logger).to receive(level).with(nil)
         subject.send(level, nil)
