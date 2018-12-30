@@ -42,8 +42,8 @@ module GoodData
 
       def add(severity, message = nil, progname = nil)
         mask message
-        mask severity
-        super(severity, message, progname)
+        mask progname
+        @logger.add(severity, message, progname)
       end
 
       private
@@ -67,10 +67,12 @@ module GoodData
         unless message.nil?
           if message.is_a?(String)
             mask_string message
-          else
+          elsif message.is_a?(Hash) || message.is_a?(Array)
             (message.is_a?(Hash) ? message.values : message).each do |item|
               mask item
             end
+          else
+            message
           end
         end
       end
