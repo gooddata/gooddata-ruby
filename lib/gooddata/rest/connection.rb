@@ -131,6 +131,7 @@ module GoodData
       def initialize(opts)
         super()
         @stats = ThreadSafe::Hash.new
+        @execution_id = opts[:execution_id]
 
         headers = opts[:headers] || {}
         @webdav_headers = DEFAULT_WEBDAV_HEADERS.merge(headers)
@@ -308,8 +309,8 @@ module GoodData
       # HTTP DELETE
       #
       # @param uri [String] Target URI
-      def delete(uri, options = {})
-        request(:delete, uri, nil, options)
+      def delete(uri, options = {}, stats_on = false)
+        request(:delete, uri, nil, options, stats_on)
       end
 
       # Helper for logging error
@@ -325,13 +326,13 @@ module GoodData
         end
       end
 
-      def request(method, uri, data, options = {}, &user_block)
+      def request(method, uri, data, options = {}, stats_on = false, &user_block)
         request_id = options[:request_id] || generate_request_id
         log_info(options.merge(request_id: request_id))
         payload = data.is_a?(Hash) ? data.to_json : data
 
         GoodData.rest_logger.info "#{method.to_s.upcase}: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
-        profile "#{method.to_s.upcase} #{uri}" do
+        profile method.to_s.upcase, uri, request_id, stats_on do
           b = proc do
             params = fresh_request_params(request_id).merge(options)
             begin
@@ -357,22 +358,22 @@ module GoodData
       # HTTP GET
       #
       # @param uri [String] Target URI
-      def get(uri, options = {}, &user_block)
-        request(:get, uri, nil, options, &user_block)
+      def get(uri, options = {}, stats_on = false, &user_block)
+        request(:get, uri, nil, options, stats_on, &user_block)
       end
 
       # HTTP PUT
       #
       # @param uri [String] Target URI
-      def put(uri, data, options = {})
-        request(:put, uri, data, options)
+      def put(uri, data, options = {}, stats_on = false)
+        request(:put, uri, data, options, stats_on)
       end
 
       # HTTP POST
       #
       # @param uri [String] Target URI
-      def post(uri, data = nil, options = {})
-        request(:post, uri, data, options)
+      def post(uri, data = nil, options = {}, stats_on = false)
+        request(:post, uri, data, options, stats_on)
       end
 
       # Reader method for SST token
@@ -452,7 +453,7 @@ module GoodData
       end
 
       def generate_request_id
-        "#{session_id}:#{call_id}"
+        "#{@execution_id}:#{session_id}:#{call_id}"
       end
 
       private
@@ -591,13 +592,13 @@ ERR
         raise $ERROR_INFO
       end
 
-      def profile(title, &block)
+      def profile(method, path, request_id, stats_on, &block)
         t1 = Time.now
         res = block.call
         t2 = Time.now
         delta = t2 - t1
 
-        update_stats title, delta
+        add_stat_record method, path, delta, t1, request_id if stats_on
         res
       end
 
@@ -617,9 +618,10 @@ ERR
         new_params
       end
 
-      def update_stats(title, delta)
+      def add_stat_record(method, path, delta, time_stamp, request_id)
         synchronize do
-          orig_title = title
+          orig_title = "#{method.to_s.upcase} #{path}"
+          title = "#{method.to_s.upcase} #{path}"
 
           placeholders = true
 
@@ -648,6 +650,16 @@ ERR
           stat[:entries] << orig_title if placeholders
 
           stats[title] = stat
+
+          endpoint = self.class.map_placeholders path.clone
+          duration = delta
+          time_stamp = time_stamp.utc.strftime "%Y-%m-%dT%H:%M:%S.%L"
+          domain = server_url.gsub %r{http://|https://}, ""
+          execution_id = request_id
+
+          GoodData.gd_logger.update_store(domain, method, duration, endpoint)
+          GoodData.gd_logger.add Logger::INFO, { endpoint: endpoint, duration: duration, domain: domain,
+                                                 execution_id: execution_id, time_stamp: time_stamp }, "rest_call"
         end
       end
 
