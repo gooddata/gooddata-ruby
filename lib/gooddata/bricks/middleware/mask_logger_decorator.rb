@@ -17,19 +17,42 @@ module GoodData
       # log methods to be decorated
       %i[debug error fatal info unknown warn].each do |level|
         define_method level do |message|
-          @logger.send(level, mask(message))
+          mask message
+          @logger.send(level, message)
         end
+      end
+
+      def add(severity, message = nil, progname = nil)
+        mask message
+        mask severity
+        super(severity, message, progname)
       end
 
       private
 
-      # Masks given message.
+      # Masks given String.
       # @param message  [String] message to mask
       # @return masked_message [String] masked message
-      def mask(message)
+      def mask_string(message)
         unless message.nil?
           @values_to_mask.reduce(message) do |masked_message, value_to_mask|
-            masked_message.gsub(value_to_mask, "******")
+            masked_message.gsub!(value_to_mask, "******")
+            masked_message
+          end
+        end
+      end
+
+      # Masks given message
+      # @param message [String] or [Hash] or [Array] message to mask
+      # @return masked_message [String] or [Hash] or [Array] masked message
+      def mask(message)
+        unless message.nil?
+          if message.is_a?(String)
+            mask_string message
+          else
+            (message.is_a?(Hash) ? message.values : message).each do |item|
+              mask item
+            end
           end
         end
       end
