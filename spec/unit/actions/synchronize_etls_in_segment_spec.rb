@@ -6,20 +6,7 @@
 
 require 'gooddata/lcm/lcm2'
 require 'gooddata/lcm/actions/synchronize_etls_in_segment'
-
-def process_mock(name, id)
-  mock = double(GoodData::Process)
-  allow(mock).to receive(:name) { name }
-  allow(mock).to receive(:process_id) { id }
-  mock
-end
-
-def schedule_mock(name, process_id)
-  mock = double(GoodData::Schedule)
-  allow(mock).to receive(:name) { name }
-  allow(mock).to receive(:process_id) { process_id }
-  mock
-end
+require_relative '../support/mock_factory'
 
 describe GoodData::LCM2::SynchronizeETLsInSegment do
   let(:gdc_gd_client) { double_with_class(GoodData::Rest::Client) }
@@ -31,19 +18,19 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
   let(:client_id) { 'foo_client' }
   let(:data_product) { double_with_class(GoodData::DataProduct) }
   let(:target_project_id) { 'foo' }
-  let(:process) { process_mock(process_name, process_id) }
+  let(:process) { GoodData::MockFactory.process_mock(process_name, process_id) }
   let(:process_id) { 'my_test_process_id' }
   let(:process_name) { 'my_test_process_name' }
   let(:target_project) { double(GoodData::Project) }
   let(:target_process) { double(GoodData::Process) }
   let(:target_process_name) { process_name }
   let(:schedule_name) { 'my schedule' }
-  let(:schedule) { schedule_mock(schedule_name, process_id) }
-  let(:target_schedule) { schedule_mock(schedule_name, process_id) }
+  let(:schedule) { GoodData::MockFactory.schedule_mock(schedule_name, process_id) }
+  let(:target_schedule) { GoodData::MockFactory.schedule_mock(schedule_name, process_id) }
   let(:custom_target_process) { double(GoodData::Process) }
   let(:custom_target_process_name) { 'custom_client_process' }
   let(:custom_target_process_id) { 'custom_client_process_id' }
-  let(:custom_target_schedule) { schedule_mock('custom schedule', custom_target_process_id) }
+  let(:custom_target_schedule) { GoodData::MockFactory.schedule_mock('custom schedule', custom_target_process_id) }
   let(:params) do
     params = {
       gdc_logger: logger,
