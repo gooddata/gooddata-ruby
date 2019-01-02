@@ -209,6 +209,8 @@ module GoodData
 
     # Creates a MAQL expression(s) based on the filter defintion.
     # Takes the filter definition looks up any necessary values and provides API executable MAQL
+    # @param labels_cache e.g. { 'label_uri': label_object }
+    # @param lookups_cache e.g. { 'label_uri': { "jirka@gooddata.com": 'value_uri' }}
     def self.create_expression(filter, labels_cache, lookups_cache, attr_cache, options = {})
       values = filter[:values]
       label = labels_cache[filter[:label]]
