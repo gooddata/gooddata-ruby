@@ -1,3 +1,5 @@
+require 'active_support/core_ext/hash'
+
 class BrickRunner
   class << self
     def user_filters_brick(opts)
@@ -26,7 +28,41 @@ class BrickRunner
       fetch_projects(client_pids, opts) if opts[:client]
     end
 
+    def schedule_brick(brick_name, service_project, opts)
+      opts[:template_path] = "../../integration/params/#{brick_name}.json.erb" unless opts[:template_path]
+      decoded_params = GoodData::Helpers.decode_params(script_params(opts))
+      params, hidden_params = extract_hidden_params(decoded_params)
+      params.delete('gd_encoded_hidden_params')
+      deploy_string = "${PRODUCTION_APPSTORE}:branch/lcm2:/apps/#{brick_name}"
+
+      process = service_project.deploy_process(
+        deploy_string,
+        name: "test of #{brick_name}"
+      )
+
+      schedule = process.create_schedule(
+        opts[:run_after],
+        ProcessHelper::DEPLOY_NAME,
+        params: params,
+        hidden_params: hidden_params
+      )
+
+      puts "#{brick_name} schedule URI: #{schedule.uri}"
+      schedule
+    end
+
     private
+
+    def extract_hidden_params(params)
+      hidden_params = params.dup
+      params = hidden_params.slice!(
+        'GDC_USERNAME',
+        'GDC_PASSWORD',
+        's3_secret_access_key',
+        's3_access_key'
+      )
+      [params, hidden_params]
+    end
 
     def fetch_projects(pids, opts)
       client = opts[:client]

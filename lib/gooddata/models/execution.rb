@@ -92,7 +92,12 @@ module GoodData
     #
     # @return [GoodData::Execution] Execution result
     def wait_for_result(options = {})
+      start_time = Time.now
+      timeout = options[:timeout]
       res = client.poll_on_response(uri, options) do |body|
+        timeout_exceeded = timeout && (start_time + timeout) < Time.now
+        fail 'Waiting for schedule execution timed out.' if timeout_exceeded
+
         body['execution'] && (body['execution']['status'] == 'RUNNING' || body['execution']['status'] == 'SCHEDULED')
       end
       @json = res
