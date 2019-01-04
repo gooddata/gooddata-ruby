@@ -15,6 +15,8 @@ $master_projects = []
 $client_projects = []
 $master = false
 
+output_stage_prefix = GoodData::Environment::VCR_ON ? nil : Support::OUTPUT_STAGE_PREFIX
+
 schedule_additional_hidden_params = {
   hidden_msg_from_release_brick: 'Hi, I was set by a brick but keep it secret',
   SECURE_PARAM_2: 'I AM SET TOO'
@@ -35,7 +37,7 @@ process_additional_hidden_params = {
   }
 }
 
-describe 'the whole life-cycle' do
+describe 'the whole life-cycle', :vcr do
   include_context 'lcm bricks',
                   schedule_additional_hidden_params: schedule_additional_hidden_params,
                   process_additional_hidden_params: process_additional_hidden_params
@@ -59,6 +61,7 @@ describe 'the whole life-cycle' do
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:output_stage_prefix) { output_stage_prefix }
     end
   end
 
@@ -83,6 +86,7 @@ describe 'the whole life-cycle' do
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:output_stage_prefix) { output_stage_prefix }
     end
   end
 
@@ -103,6 +107,7 @@ describe 'the whole life-cycle' do
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:output_stage_prefix) { output_stage_prefix }
     end
   end
 
@@ -160,6 +165,7 @@ describe 'the whole life-cycle' do
       end
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:output_stage_prefix) { output_stage_prefix }
     end
   end
 
@@ -205,6 +211,7 @@ describe 'the whole life-cycle' do
       end
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:output_stage_prefix) { output_stage_prefix }
     end
   end
 end

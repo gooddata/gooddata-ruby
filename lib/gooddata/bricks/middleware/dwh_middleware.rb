@@ -13,7 +13,7 @@ module GoodData
     # Connects to the warehouse (ADS) and enriches parameters with GoodData::Datawarehouse
     class WarehouseMiddleware < Bricks::Middleware
       def call(params)
-        if params.key?('ads_client') && (RUBY_PLATFORM == 'java')
+        if params.key?('ads_client')
           GoodData.logger.info "Setting up ADS connection to #{params['ads_client']['ads_id'] || params['ads_client']['jdbc_url']}"
           unless params['ads_client']['username'] || params['GDC_USERNAME']
             raise "ADS middleware needs username either as part of " \
