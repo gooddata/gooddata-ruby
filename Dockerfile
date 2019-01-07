@@ -23,7 +23,7 @@ WORKDIR /src
 ENV HOME=/src
 
 # login shell is required by rvm
-RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && rvm install jruby-9.1.14.0 && gem update --system \
+RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && rvm install jruby-9.2.5.0 && gem update --system \
     && gem install bundler rake"
 
 ENV GOODDATA_RUBY_COMMIT=$GIT_COMMIT
