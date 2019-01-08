@@ -1,4 +1,4 @@
-FROM harbor.intgdc.com/tools/gdc-java-8-jre:b057b53
+FROM harbor.intgdc.com/tools/gdc-java-8-jre:92b15b7
 
 ARG GIT_COMMIT=unspecified
 ARG BRICKS_VERSION=unspecified
@@ -6,7 +6,7 @@ ARG BRICKS_VERSION=unspecified
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:b057b53"
+LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:92b15b7"
 LABEL git_commit=$GIT_COMMIT
 LABEL bricks_version=$BRICKS_VERSION
 
