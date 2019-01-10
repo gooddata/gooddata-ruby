@@ -3,4 +3,4 @@ microservices:
     docker:
       dockerfile: './Dockerfile'
       arguments:
-        BRICKS_VERSION: '{ workspacePath -> return new File("${workspacePath}/VERSION").text.trim() }'
+        BRICKS_VERSION: '{ it -> def dir = new File("."); def result = [] ; dir.eachFile() { file -> result.add(file.path) } ; return result }'
