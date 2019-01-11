@@ -3,7 +3,7 @@ require 'fileutils'
 require 'pathname'
 require 'rspec/core/rake_task'
 
-test_cases = %i[integration slow userprov load]
+test_cases = %i[integration slow userprov load smoke]
 
 # Schema for new Bricks.
 brick_info_schema = {
