@@ -133,6 +133,7 @@ describe GoodData::LCM2::SynchronizeUsers do
         allow(organization).to receive(:segment_uri).and_return(segment_uri)
         allow(organization).to receive(:project).and_return(project)
         allow(organization).to receive(:client_id).and_return('123456789')
+        allow(organization).to receive(:id).and_return('123456789')
         allow(project).to receive(:deleted?).and_return(false)
       end
 
@@ -210,6 +211,7 @@ describe GoodData::LCM2::SynchronizeUsers do
         allow(organization).to receive(:segment_uri).and_return(segment_uri)
         allow(organization).to receive(:project).and_return(project)
         allow(organization).to receive(:client_id).and_return('123456789')
+        allow(organization).to receive(:id).and_return('123456789')
         allow(project).to receive(:deleted?).and_return(false)
         allow(segment).to receive(:ads_output_stage_prefix)
         allow(segment).to receive(:ads_output_stage_uri)

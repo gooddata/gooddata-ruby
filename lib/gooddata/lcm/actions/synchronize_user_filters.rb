@@ -120,6 +120,7 @@ module GoodData
             dry_run: params[:dry_run].to_b,
             users_brick_input: params.users_brick_users
           }
+          all_clients = domain.clients(:all, data_product).to_a
 
           GoodData.logger.info("Synchronizing in mode \"#{mode}\"")
           case mode
@@ -138,14 +139,15 @@ module GoodData
               fail "The #{multiple_projects_column} cannot be empty" if id.blank?
 
               if mode == 'sync_multiple_projects_based_on_custom_id'
-                current_project = domain.clients(id, data_product).project
+                c = all_clients.detect { |specific_client| specific_client.id == id }
+                current_project = c.project
               elsif mode == 'sync_multiple_projects_based_on_pid'
                 current_project = client.projects(id)
               end
               sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
             end
           when 'sync_domain_client_workspaces'
-            domain_clients = domain.clients(:all, data_product)
+            domain_clients = all_clients
             if params.segments
               segment_uris = params.segments.map(&:uri)
               domain_clients = domain_clients.select { |c| segment_uris.include?(c.segment_uri) }
@@ -159,7 +161,7 @@ module GoodData
               users = users_by_project[client_id]
               fail "Client id cannot be empty" if client_id.blank?
 
-              c = domain.clients(client_id, data_product)
+              c = all_clients.detect { |specific_client| specific_client.id == client_id }
               if params.segments && !segment_uris.include?(c.segment_uri)
                 params.gdc_logger.warn "Client #{client_id} is outside segments_filter #{params.segments}"
                 next
