@@ -59,7 +59,7 @@ describe GoodData::Bricks::LoggerMiddleware do
     let(:params) { { 'SPLUNK_LOGGING' => 'true' } }
 
     it 'turns splunk logging on' do
-      expect(GoodData).to receive(:logging_splunk_on).with(nil, nil, nil, splunk_logger)
+      expect(GoodData).to receive(:splunk_logging_on).with(splunk_logger)
       subject.call(params)
     end
 
@@ -86,7 +86,7 @@ describe GoodData::Bricks::LoggerMiddleware do
     let(:params) { { 'SPLUNK_LOGGING' => 'false' } }
 
     it 'turns splunk logging off' do
-      expect(GoodData).to receive(:logging_splunk_on).with(nil, nil, nil, nil_logger)
+      expect(GoodData).to receive(:splunk_logging_on).with(nil_logger)
       subject.call(params)
     end
   end

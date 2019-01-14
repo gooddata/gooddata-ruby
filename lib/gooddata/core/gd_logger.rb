@@ -66,22 +66,9 @@ module GoodData
     # @param severity, severity of record
     # @param message, message to be logged
     # @param progname, progname to be logged
-    # @param modifiers [Hash], Hash of proc objects indexed by names of loggers.
-    # # Modifier will be applied on message passed to specified logger
-    # @param filters [Set], Set of names of loggers, that will be filtered out
-    # # The message won't be passed to loggers in set filters
-    def add(severity, message, progname, modifiers: {}, filters: Set[], &block)
-      loggers.each do |pair|
-        logger_name = pair[0]
-        logger = pair[1]
-        next if filters.include? logger_name
-
-        if modifiers.key? logger_name
-          modified_message = modifiers[logger_name].call(message)
-          logger.add(severity, modified_message, progname, &block)
-        else
-          logger.add(severity, message, progname, &block)
-        end
+    def add(severity, message, progname, &block)
+      loggers.each do |_, logger|
+        logger.add(severity, message, progname, &block)
       end
     end
 
