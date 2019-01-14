@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 require 'yaml'
 require 'active_support/core_ext/hash/keys'
+require 'securerandom'
 
 module GoodData
   module Environment
@@ -25,6 +26,8 @@ module GoodData
         # VCR is enabled by default - set VCR_ON=false to disable
         vcr_on = ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true'
         GoodData::Environment.set_const(:VCR_ON, vcr_on)
+        suffix = SecureRandom.urlsafe_base64(5)
+        GoodData::Environment.set_const(:RANDOM_STRING, suffix)
       end
 
       private

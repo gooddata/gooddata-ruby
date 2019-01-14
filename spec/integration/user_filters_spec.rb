@@ -260,60 +260,70 @@ describe "User filters implementation", :vcr, :constraint => 'slow' do
     expect(@project.data_permissions.count).to eq 1
   end
 
-  it "should create a mandatory user filter with double filters" do |example|
-    repo_label = @project.labels('some_attr_label_id')
-    metric = @project.create_metric("SELECT SUM(#\"Lines Changed\")")
+  context 'when validating MUFs via report computation' do
+    before do
+      nu = ProjectHelper.ensure_users(caller: self.class.description, client: @client)
+      user = @domain.users(nu.login)
+      user.delete if user
+      @domain.add_user(nu)
+      @computation_user = @domain.users(nu.login)
+    end
 
-    # we want to compute stuff on different user than we are setting it on
-    nu = ProjectHelper.ensure_users(caller: example.description, client: @client)
-    @domain.add_user(nu)
-    u = @domain.users.find { |user| user.login == nu.json['user']['content']['login'] }
-    password = CryptoHelper.generate_password
-    u.json['accountSetting']['password'] = password
-    @domain.update_user(u)
-    @project.add_user(u, 'admin')
+    after do
+      @computation_user.delete if @computation_user
+    end
 
-    computation_client = GoodData.connect(u.login, password, verify_ssl: false)
-    computation_project = computation_client.projects(@project.pid)
+    it 'should create a mandatory user filter with double filters' do
+      repo_label = @project.labels('some_attr_label_id')
+      metric = @project.create_metric("SELECT SUM(#\"Lines Changed\")")
 
-    # verify we are set up
-    r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
-    expect(r.column(4)).to eq ["tomas@gooddata.com", 6, 1]
+      password = CryptoHelper.generate_password
+      @computation_user.json['accountSetting']['password'] = password
+      login = @computation_user.login
+      @domain.update_user(@computation_user)
+      @project.add_user(@computation_user, 'admin')
 
-    # lets restrict tomas to goodot only
-    filters = [[u.login, @label.uri, 'tomas@gooddata.com'],
-               [u.login, repo_label.uri, 'goodot']]
-    @project.add_data_permissions(filters, users_brick_input: [{ 'login' => u.login }])
-    expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [
-      [u.login, "[Dev] IN ([tomas@gooddata.com])"],
-      [u.login, "[Repository Name] IN ([goodot])"]
-    ]
+      computation_client = GoodData.connect(login, password, verify_ssl: false)
+      computation_project = computation_client.projects(@project.pid)
 
-    r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
-    expect(r.column(2)).to eq ["tomas@gooddata.com", 1]
+      # verify we are set up
+      r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
+      expect(r.column(4)).to eq ["tomas@gooddata.com", 6, 1]
 
-    # Now lets change repo to bam
-    filters = [[u.login, @label.uri, 'tomas@gooddata.com'],
-               [u.login, repo_label.uri, 'bam']]
-    @project.add_data_permissions(filters, users_brick_input: [{ 'login' => u.login }])
+      # lets restrict tomas to goodot only
+      filters = [[login, @label.uri, 'tomas@gooddata.com'],
+                 [login, repo_label.uri, 'goodot']]
+      @project.add_data_permissions(filters, users_brick_input: [{ 'login' => login }])
+      expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [
+                                                                                                    [login, "[Dev] IN ([tomas@gooddata.com])"],
+                                                                                                    [login, "[Repository Name] IN ([goodot])"]
+                                                                                                  ]
 
-    expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [
-      [u.login, "[Dev] IN ([tomas@gooddata.com])"],
-      [u.login, "[Repository Name] IN ([bam])"]
-    ]
+      r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
+      expect(r.column(2)).to eq ["tomas@gooddata.com", 1]
 
-    r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
-    expect(r.column(2)).to eq ["tomas@gooddata.com", 6]
+      # Now lets change repo to bam
+      filters = [[login, @label.uri, 'tomas@gooddata.com'],
+                 [login, repo_label.uri, 'bam']]
+      @project.add_data_permissions(filters, users_brick_input: [{ 'login' => login }])
 
-    # let's remove the repo restriction
-    filters = [[u.login, @label.uri, 'tomas@gooddata.com']]
-    @project.add_data_permissions(filters, users_brick_input: [{ 'login' => u.login }])
+      expect(@project.data_permissions.pmap { |f| [f.related.login, f.pretty_expression] }).to eq [
+                                                                                                    [login, "[Dev] IN ([tomas@gooddata.com])"],
+                                                                                                    [login, "[Repository Name] IN ([bam])"]
+                                                                                                  ]
 
-    r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
-    expect(r.column(2)).to eq ["tomas@gooddata.com", 6, 1]
+      r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
+      expect(r.column(2)).to eq ["tomas@gooddata.com", 6]
 
-    computation_client.disconnect
-    u.delete
+      # let's remove the repo restriction
+      filters = [[login, @label.uri, 'tomas@gooddata.com']]
+      @project.add_data_permissions(filters, users_brick_input: [{ 'login' => login }])
+
+      r = computation_project.compute_report(left: [metric, 'some_attr_label_id'], top: [@label])
+      expect(r.column(2)).to eq ["tomas@gooddata.com", 6, 1]
+
+      computation_client.disconnect
+    end
   end
 
   it 'can reach the error reported in filtermaqlization' do

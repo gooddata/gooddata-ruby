@@ -3,6 +3,8 @@ require 'fileutils'
 require 'pathname'
 require 'rspec/core/rake_task'
 
+test_cases = %i[integration slow userprov load smoke]
+
 # Schema for new Bricks.
 brick_info_schema = {
   "type" => "object",
@@ -74,34 +76,20 @@ end
 
 RSpec::Core::RakeTask.new(:test)
 namespace :test do
-  desc 'Run integration tests'
-  RSpec::Core::RakeTask.new(:integration) do |t|
-    t.pattern = 'spec/lcm/integration/**/*.rb'
-  end
-
-  desc 'Run load tests'
-  RSpec::Core::RakeTask.new(:load) do |t|
-    t.pattern = 'spec/lcm/load/**/*.rb'
-  end
-
-  desc 'Run slow tests'
-  RSpec::Core::RakeTask.new(:slow) do |t|
-    t.pattern = 'spec/lcm/slow/**/*.rb'
-  end
-
-  namespace :integration do
-    desc 'Run integration tests in Docker'
-    task :docker do
-      system('docker-compose -f docker-compose.lcm.yml up --force-recreate --abort-on-container-exit --exit-code-from appstore appstore') ||
-        fail('Test execution failed!')
+  test_cases.each do |test_case|
+    desc "Run #{test_case} tests"
+    RSpec::Core::RakeTask.new(test_case) do |task|
+      task.pattern = "spec/lcm/#{test_case}/**/*.rb"
     end
   end
-  namespace :load do
-    desc 'Run load tests in Docker'
-    task :docker do
-      system('docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake -f lcm.rake test:load')
 
-      system(check_exit_code) || fail('Test execution failed!')
+  namespace :docker do
+    test_cases.each do |t|
+      desc "Run #{t} tests in Docker"
+      task t do
+        system("docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake -f lcm.rake test:#{t}") ||
+          fail('Test execution failed!')
+      end
     end
   end
 end
