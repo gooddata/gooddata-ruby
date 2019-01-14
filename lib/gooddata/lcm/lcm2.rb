@@ -363,15 +363,18 @@ module GoodData
       end
 
       def run_action(action, params)
-        GoodData.gd_logger.start_action action, GoodData.gd_logger
-        GoodData.logger.info("Running #{action.name} action ...")
-        params.clear_filters
-        # Check if all required parameters were passed
-        BaseAction.check_params(action.const_get('PARAMS'), params)
-        params.setup_filters(action.const_get('PARAMS'))
-        out = action.send(:call, params)
-        params.clear_filters
-        GoodData.gd_logger.end_action GoodData.gd_logger
+        begin
+          GoodData.gd_logger.start_action action, GoodData.gd_logger
+          GoodData.logger.info("Running #{action.name} action ...")
+          params.clear_filters
+          # Check if all required parameters were passed
+          BaseAction.check_params(action.const_get('PARAMS'), params)
+          params.setup_filters(action.const_get('PARAMS'))
+          out = action.send(:call, params)
+        ensure
+          params.clear_filters
+          GoodData.gd_logger.end_action GoodData.gd_logger
+        end
         out
       end
 

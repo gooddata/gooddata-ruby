@@ -60,7 +60,7 @@ module GoodData
         else
           splunk_logger = NilLogger.new
         end
-        GoodData.logging_splunk_on nil, nil, nil, splunk_logger
+        GoodData.splunk_logging_on splunk_logger
 
         # Initialize context: Execution ID
         GoodData.gd_logger.execution_id = params['GDC_EXECUTION_ID'] || SecureRandom.urlsafe_base64(16)

@@ -21,10 +21,7 @@ describe GoodData::ContextManager do
       api_version: GoodData.version,
       log_v: 0,
       component: 'lcm.ruby',
-      action: GoodData::ContextManager::UNDEFINED,
-      brick: GoodData::ContextManager::UNDEFINED,
-      status: GoodData::ContextManager::STATUS_OUTSIDE,
-      execution_id: GoodData::ContextManager::UNDEFINED
+      status: :not_in_action,
     )
   end
 
@@ -46,7 +43,7 @@ describe GoodData::ContextManager do
       component: 'lcm.ruby',
       brick: brick,
       action: action,
-      status: GoodData::ContextManager::STATUS_IN_PROGRESS,
+      status: :action_in_progress,
       execution_id: execution_id,
       time: 55_000
     )

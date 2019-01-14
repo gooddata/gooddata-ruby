@@ -87,20 +87,7 @@ module GoodData
     end
 
     # Turn splunk logging on
-    #
-    # ### Example
-    #
-    #     # Default logger
-    #     GoodData.logging_splunk_on
-    #
-    #     # Init with predefined logger
-    #     GoodData.logging_splunk_on nil, nil, nil, logger
-    #
-    def logging_splunk_on(level = DEFAULT_SPLUNK_LEVEL, output = DEFAULT_SPLUNK_OUTPUT, klass = DEFAULT_SPLUNKLOGGER_CLASS, logger = nil)
-      unless logger
-        logger = klass.new output
-        logger.level = level
-      end
+    def splunk_logging_on(logger)
       gd_logger.logging_on :splunk, logger
     end
 
@@ -110,11 +97,11 @@ module GoodData
     #
     #     GoodData.logging_splunk_off
     #
-    def logging_splunk_off
+    def splunk_logging_off
       gd_logger.logging_off :splunk
     end
 
-    def logging_splunk_on?
+    def splunk_logging_on?
       gd_logger.logging_on? :splunk
     end
 
@@ -130,6 +117,6 @@ module GoodData
 
     # Initial setup of splunk logger
     GoodData.gd_logger = GdLogger.new
-    GoodData.logging_splunk_off
+    GoodData.splunk_logging_off
   end
 end

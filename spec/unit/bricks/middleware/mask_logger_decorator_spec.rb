@@ -28,21 +28,11 @@ describe GoodData::Bricks::MaskLoggerDecorator do
         subject.send(level, "This is secret_password which is sensitive information.")
       end
 
-      it "should mask Array" do
-        expect(logger).to receive(level).with(["This is ******.", "Also ******"])
-        subject.send(level, ["This is secret_password.", "Also sensitive"])
-      end
-
-      it "should mask Hash" do
-        expect(logger).to receive(level).with(key1: "This is ******.", key2: "Also ******")
-        subject.send(level, key1: "This is secret_password.", key2: "Also sensitive")
-      end
-
-      it "should mask structured data" do
-        expect(logger).to receive(level).with(key1: ["This is ******."], key2: { inner: "Also ******" })
+      it "should recursively mask structured data" do
+        expect(logger).to receive(level).with("{:key1=>[\"This is ******.\"], :key2=>{:inner=>\"Also ******\"}}")
         subject.send(level, key1: ["This is secret_password."], key2: { inner: "Also sensitive" })
       end
-
+      
       it "should not mask nil" do
         expect(logger).to receive(level).with(nil)
         subject.send(level, nil)
@@ -79,6 +69,20 @@ describe GoodData::Bricks::MaskLoggerDecorator do
       values_to_extract = [nil, true, 342, 4.2]
       extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
       expect(extracted_values).to eq([])
+    end
+  end
+
+  context 'when logging complex object' do
+    subject { GoodData::Bricks::MaskLoggerDecorator.new(logger, ['secret']) }
+    let(:printed_object) { double('secret') }
+    before do
+      printed_object.instance_variable_set :@secret, 'secret'
+      string = printed_object.to_s
+      allow(printed_object).to receive(:to_s) { string + "#{@secret} secret" }
+    end
+
+    it 'should mask data in object attributes and names' do
+      expect(subject.mask(printed_object)).to_not include('secret')
     end
   end
 end

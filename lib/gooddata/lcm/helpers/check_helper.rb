@@ -22,19 +22,11 @@ module GoodData
                   GoodData.logger.warn "WARNING: Default value for parameter '#{param_name}' was not filled because deprecated parameter is used instead."
                 end
               elsif specification[param_name][:opts][:required]
-                if ENV['RSPEC_ENV'] == 'test'
-                  fail "Mandatory parameter '#{param_name}' of type '#{type}' is not specified"
-                else
-                  GoodData.logger.error("Mandatory parameter '#{param_name}' of type '#{type}' is not specified")
-                end
+                fail_if_development "Mandatory parameter '#{param_name}' of type '#{type}' is not specified"
               end
             else
               if type.class.const_get(:CATEGORY) == :complex && !value.is_a?(Hash)
-                if ENV['RSPEC_ENV'] == 'test'
-                  fail "Expected parameter '#{param_name}' to be kind of '#{type}', got '#{value.class.name}'"
-                else
-                  GoodData.logger.error("Expected parameter '#{param_name}' to be kind of '#{type}', got '#{value.class.name}'")
-                end
+                fail_if_development "Expected parameter '#{param_name}' to be kind of '#{type}', got '#{value.class.name}'"
               end
 
               if specification[param_name][:opts][:deprecated]
@@ -42,11 +34,7 @@ module GoodData
               end
 
               unless type.check(value)
-                if ENV['RSPEC_ENV'] == 'test'
-                  fail "Parameter '#{param_name}' has invalid type, expected: #{type}, got #{value.class}"
-                else
-                  GoodData.logger.error("Parameter '#{param_name}' has invalid type, expected: #{type}, got #{value.class}")
-                end
+                fail_if_development "Parameter '#{param_name}' has invalid type, expected: #{type}, got #{value.class}"
               end
             end
           end
