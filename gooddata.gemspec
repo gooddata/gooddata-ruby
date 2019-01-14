@@ -54,7 +54,8 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'sqlite3' if RUBY_PLATFORM != 'java'
 
-  s.add_dependency 'activesupport', '~> 4.2.9'
+  s.add_dependency 'activesupport', '> 4.2.9', '< 5.2'
+
   s.add_dependency 'aws-sdk-s3', '~> 1.16'
   s.add_dependency 'docile', '~> 1.1'
   s.add_dependency 'erubis', '~> 2.7'
