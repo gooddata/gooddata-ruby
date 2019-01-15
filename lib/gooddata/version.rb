@@ -6,12 +6,22 @@
 
 # GoodData Module
 module GoodData
-  VERSION = '1.3.3'
+  VERSION = File.read('SDK_VERSION')
+  BRICKS_VERSION = File.read('VERSION')
 
   class << self
-    # Version
+    # SDK version
+    # @return SDK version
     def version
       VERSION
+    end
+
+    alias_method :sdk_version, :version
+
+    # LCM bricks version
+    # @return brick version
+    def bricks_version
+      BRICKS_VERSION
     end
 
     # Identifier of gem version
