@@ -267,14 +267,14 @@ module GoodData
       #
       # @param uri [String] Target URI
       def delete(uri, opts = {})
-        @connection.delete uri, opts, stats_on?
+        @connection.delete uri, opts.merge(stats_on: stats_on?)
       end
 
       # HTTP GET
       #
       # @param uri [String] Target URI
       def get(uri, opts = {}, & block)
-        @connection.get uri, opts, stats_on?, & block
+        @connection.get uri, opts.merge(stats_on: stats_on?), & block
       end
 
       def project_webdav_path(opts = { project: GoodData.project })
@@ -360,14 +360,14 @@ module GoodData
       #
       # @param uri [String] Target URI
       def put(uri, data, opts = {})
-        @connection.put uri, data, opts, stats_on?
+        @connection.put uri, data, opts.merge(stats_on: stats_on?)
       end
 
       # HTTP POST
       #
       # @param uri [String] Target URI
       def post(uri, data, opts = {})
-        @connection.post uri, data, opts, stats_on?
+        @connection.post uri, data, opts.merge(stats_on: stats_on?)
       end
 
       # Uploads file to staging

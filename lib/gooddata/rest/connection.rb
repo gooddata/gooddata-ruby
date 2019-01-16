@@ -309,8 +309,8 @@ module GoodData
       # HTTP DELETE
       #
       # @param uri [String] Target URI
-      def delete(uri, options = {}, stats_on = false)
-        request(:delete, uri, nil, options, stats_on)
+      def delete(uri, options = {})
+        request(:delete, uri, nil, options)
       end
 
       # Helper for logging error
@@ -326,9 +326,11 @@ module GoodData
         end
       end
 
-      def request(method, uri, data, options = {}, stats_on = false, &user_block)
+      def request(method, uri, data, options = {}, &user_block)
         request_id = options[:request_id] || generate_request_id
         log_info(options.merge(request_id: request_id))
+        stats_on = options[:stats_on]
+
         payload = data.is_a?(Hash) ? data.to_json : data
 
         GoodData.rest_logger.info "#{method.to_s.upcase}: #{@server.url}#{uri}, #{scrub_params(data, KEYS_TO_SCRUB)}"
@@ -358,22 +360,22 @@ module GoodData
       # HTTP GET
       #
       # @param uri [String] Target URI
-      def get(uri, options = {}, stats_on = false, &user_block)
-        request(:get, uri, nil, options, stats_on, &user_block)
+      def get(uri, options = {}, &user_block)
+        request(:get, uri, nil, options, &user_block)
       end
 
       # HTTP PUT
       #
       # @param uri [String] Target URI
-      def put(uri, data, options = {}, stats_on = false)
-        request(:put, uri, data, options, stats_on)
+      def put(uri, data, options = {})
+        request(:put, uri, data, options)
       end
 
       # HTTP POST
       #
       # @param uri [String] Target URI
-      def post(uri, data = nil, options = {}, stats_on = false)
-        request(:post, uri, data, options, stats_on)
+      def post(uri, data = nil, options = {})
+        request(:post, uri, data, options)
       end
 
       # Reader method for SST token

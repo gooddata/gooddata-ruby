@@ -5,7 +5,7 @@
 require 'gooddata/bricks/middleware/context_manager'
 
 describe GoodData::ContextManager do
-  it "Has GoodData::ContextManager class" do
+  it 'Has GoodData::ContextManager class' do
     expect(GoodData::ContextManager).not_to be(nil)
   end
 
@@ -14,18 +14,18 @@ describe GoodData::ContextManager do
     include GoodData::ContextManager
   end
 
-  it "Should be empty" do
+  it 'Should be empty' do
     context_manager = ContextManagerWrapper.new
     context_manager.initialize_context
     expect(context_manager.context).to eq(
       api_version: GoodData.version,
       log_v: 0,
       component: 'lcm.ruby',
-      status: :not_in_action,
+      status: :not_in_action
     )
   end
 
-  it "Should contain some context" do
+  it 'Should contain some context' do
     action = "LCM::TestAction"
     brick = "LCM::TestBrick"
     execution_id = "abcd1234"
