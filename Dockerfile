@@ -30,6 +30,8 @@ ENV GOODDATA_RUBY_COMMIT=$GIT_COMMIT
 
 ADD ./bin ./bin
 ADD ./lib ./lib
+ADD ./SDK_VERSION .
+ADD ./VERSION .
 ADD ./Gemfile .
 ADD ./gooddata.gemspec .
 
