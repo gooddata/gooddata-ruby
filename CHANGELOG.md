@@ -1,4 +1,35 @@
 # GoodData Ruby SDK Changelog
+## 1.3.4
+ - FEATURE: TMA-1240 Read SDK and brick versions from files
+ - TEST: TMA-1061 Introduce end to end tests
+ - TMA-483 request number optimisation in synchronize users and user filters action
+ - TMA-1232: resilient user filters spec
+ - II-294: Update base image - CentOS 7.6
+ - FEATURE: TMA-1243 Upgrade LCM k8s image to JRuby version 9.2.5.0
+ - Encrypt notification recipient
+ - TMA-1192: dependable CI env
+ - TMA-1003: Move mocking methods into a separate class
+ - BUGFIX: TMA-1233 Install RVM according to changes in installation script
+ - Describe parameters of create_expression
+ - BUGFIX: TMA-1233 Remove ZenTest development dependency which isn't needed anymore
+ - Relax the activesupport dependency
+ - fixup! TMA-1003: Add unit test for delete_extra_process_schedule
+ - BUGFIX: TMA-1218 Anonymise hidden parameters only in LCM bricks running in K8s
+ - TMA-1003: Add unit test for delete_extra_process_schedule
+ - Update README.md
+ - Remove nonsensical object extension
+ - TMA-1189: Remove unnecessary requires from specs
+ - FEATURE: TMA-1198 Log LCM brick output to file instead of stdout when running in K8s
+ - Update README.md
+ - REFACTOR: TMA-1198 Set global logger in LoggerMiddleware instead of GoodDataMiddleware
+ - TMA-1216 removed constant PROJECT_URL
+ - TMA-1070: Record vcr cassettes
+ - TMA-1070: Add test for LCM components
+ - TRIVIAL: Remove code which was commented out
+ - TMA-1208 Log to sigle file from K8s LCM bricks
+ - TMA-1190: Merge cleanup stage into periodic
+ - BUGFIX: TMA-1121 use current user call instead of expensive bootstrap
+
 ## 1.3.3
  - Fix git-ignoring project cache
  - Fix style in vcr configurer
