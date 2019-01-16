@@ -25,23 +25,6 @@ describe GoodData::GdLogger do
     end
   end
 
-  describe "When using filter" do
-    it "should pass message to :errlog logger" do
-      expect(logger.loggers[:logger]).not_to receive(:add)
-      expect(logger.loggers[:errlog]).to receive(:add)
-      logger.add(Logger::INFO, "Plain text", nil, filters: Set[:logger])
-    end
-  end
-
-  describe "When using modifier" do
-    it "it should not modify :errlog and modify :logger" do
-      modifier = proc { |message| "Modified " + message }
-      expect(logger.loggers[:logger]).to receive(:add).with(1, "Modified Plain text", nil)
-      expect(logger.loggers[:errlog]).to receive(:add).with(1, "Plain text", nil)
-      logger.add(Logger::INFO, "Plain text", nil, modifiers: { :logger => modifier })
-    end
-  end
-
   describe "When using different levels" do
     it "should prefer individual level over global" do
       logger.level = Logger::ERROR
