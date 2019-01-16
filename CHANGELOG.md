@@ -1,4 +1,7 @@
 # GoodData Ruby SDK Changelog
+## 1.3.6
+ - Make path to version file relative
+
 ## 1.3.5
  - Fix reading version from file
  - BUGFIX: TMA-1264 Copy version files to Docker image
