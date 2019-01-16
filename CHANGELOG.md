@@ -1,4 +1,9 @@
 # GoodData Ruby SDK Changelog
+## 1.3.5
+ - Fix reading version from file
+ - BUGFIX: TMA-1264 Copy version files to Docker image
+ - Bump version to 1.3.4
+
 ## 1.3.4
  - FEATURE: TMA-1240 Read SDK and brick versions from files
  - TEST: TMA-1061 Introduce end to end tests
