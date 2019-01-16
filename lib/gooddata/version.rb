@@ -6,8 +6,8 @@
 
 # GoodData Module
 module GoodData
-  VERSION = File.read('SDK_VERSION')
-  BRICKS_VERSION = File.read('VERSION')
+  VERSION = File.open('SDK_VERSION') { |f| f.readline.strip }
+  BRICKS_VERSION = File.open('VERSION') { |f| f.readline.strip }
 
   class << self
     # SDK version
