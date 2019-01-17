@@ -33,5 +33,9 @@ describe GoodData::Bricks::MaskLoggerDecorator do
         subject.send(level, nil)
       end
     end
+
+    it "should pretend being inner logger" do
+      expect(subject.class).to eq(logger.class)
+    end
   end
 end

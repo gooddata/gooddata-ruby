@@ -21,6 +21,12 @@ module GoodData
         end
       end
 
+      # Decorator pretends being inner logger itselfs.
+      # @return inner logger class
+      def class
+        @logger.class
+      end
+
       private
 
       # Masks given message.
