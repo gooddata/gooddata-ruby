@@ -179,7 +179,7 @@ namespace :version do
     require_relative 'lib/gooddata/version'
     new_version = GoodData::VERSION
     update_changelog(new_version)
-    `git add CHANGELOG.md lib/gooddata/version.rb`
+    `git add CHANGELOG.md SDK_VERSION`
     `git commit -m "Bump version to #{new_version}"`
     `git tag #{new_version}`
   end
