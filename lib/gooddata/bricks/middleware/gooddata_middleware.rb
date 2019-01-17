@@ -86,15 +86,15 @@ module GoodData
         # Try to disconnect client
         begin
           client.disconnect
-        rescue
-          GoodData.logger.warn('Tried to disconnect client. Was unsuccessful. Proceeding anyway.')
+        rescue StandardError => e
+          GoodData.logger.warn("Tried to disconnect client. Was unsuccessful. Proceeding anyway. Error: #{e}")
         end
 
         # Try to disconnect development_client
         begin
           development_client.disconnect if development_client != client
-        rescue
-          GoodData.logger.warn('Tried to disconnect development_client. Was unsuccessful. Proceeding anyway.')
+        rescue StandardError => e
+          GoodData.logger.warn("Tried to disconnect development_client. Was unsuccessful. Proceeding anyway. Error: #{e}")
         end
 
         returning_value
