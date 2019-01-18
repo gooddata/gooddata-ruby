@@ -353,9 +353,13 @@ module GoodData
           success: errors.empty?
         }
 
-        has_errors = errors.any?
-        # Fail whole execution if there is any failed action
-        fail(JSON.pretty_generate(errors)) if strict_mode && has_errors
+        if errors.any?
+          error_message = JSON.pretty_generate(errors)
+          GoodData.logger.error(error_message)
+
+          # Fail whole execution if there is any failed action
+          fail(error_message) if strict_mode
+        end
 
         result
       end
