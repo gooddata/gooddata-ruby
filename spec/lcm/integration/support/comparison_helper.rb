@@ -27,6 +27,12 @@ module Support
         HashDiff.diff(sanitized_expected, sanitized_actual)
       end
 
+      def compare_subscriptions(expected, actual)
+        sanitized_expected = expected.data.dup
+        sanitized_actual = actual.data.dup
+        HashDiff.diff(sanitized_expected, sanitized_actual)
+      end
+
       def compare_ldm(blueprint, project_id, rest_client)
         uri = "/gdc/projects/#{project_id}/model/diff?includeGrain=true&includeCA=true"
         result = rest_client.post(uri, blueprint.to_wire)
