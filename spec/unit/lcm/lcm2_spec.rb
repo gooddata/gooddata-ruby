@@ -31,6 +31,7 @@ describe 'GoodData::LCM2' do
 
   before do
     allow(logger).to receive(:class) { Logger }
+    allow(GoodData.gd_logger).to receive(:info)
   end
 
   describe '#perform' do

@@ -22,5 +22,11 @@
   "username": "<%= config[:username] %>",
   "password": "<%= config[:password] %>",
   "sync_mode": "<%= sync_mode %>",
-  "data_product": "<%= data_product %>"
+  "data_product": "<%= data_product %>",
+  <% if splunk_logging %>
+  "SPLUNK_LOGGING": "<%= splunk_logging %>",
+  <% end %>
+  <% if splunk_log_path %>
+  "SPLUNK_LOG_PATH": "<%= splunk_log_path %>"
+  <% end %>
 }

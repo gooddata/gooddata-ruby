@@ -14,6 +14,24 @@ module GoodData
         @values_to_mask = values_to_mask
       end
 
+      class << self
+        # Extract values to mask from structured data
+        # @param values [String] or [Hash] or [Array] structured data to be extracted
+        # @return [[String]] array of all String in values
+        def extract_values(values)
+          if values.is_a?(String)
+            [values]
+          elsif values.is_a?(Hash) || values.is_a?(Array)
+            (values.is_a?(Hash) ? values.values : values).reduce([]) do |strings, item|
+              strings.concat extract_values(item)
+              strings
+            end
+          else
+            []
+          end
+        end
+      end
+
       # log methods to be decorated
       %i[debug error fatal info unknown warn].each do |level|
         define_method level do |message|
@@ -27,14 +45,20 @@ module GoodData
         @logger.class
       end
 
-      private
+      def add(severity, message = nil, progname = nil)
+        mask message
+        mask progname
+        @logger.add(severity, message, progname)
+      end
 
-      # Masks given message.
-      # @param message  [String] message to mask
-      # @return masked_message [String] masked message
+      # Masks given message
+      # @param message [String] or [Hash] or [Array] message to mask
+      # @return masked_message [String] or [Hash] or [Array] masked message
       def mask(message)
         unless message.nil?
-          @values_to_mask.reduce(message) do |masked_message, value_to_mask|
+          string = message.to_s
+
+          @values_to_mask.reduce(string) do |masked_message, value_to_mask|
             masked_message.gsub(value_to_mask, "******")
           end
         end

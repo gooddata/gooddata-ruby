@@ -67,6 +67,17 @@ module GoodData
         # @param password [String] Password to be used for authentication
         # @return [GoodData::Rest::Client] Client
         def connect(username, password = 'aaaa', opts = {})
+          execution_id = ""
+          if username.is_a?(Hash) && username.key?(:execution_id)
+            execution_id = username[:execution_id]
+            username.delete(:execution_id)
+          end
+
+          if opts.key?(:execution_id)
+            execution_id = opts[:execution_id]
+            opts.delete(:execution_id)
+          end
+
           if username.nil? && password.nil?
             username = ENV['GD_GEM_USER']
             password = ENV['GD_GEM_PASSWORD']
@@ -88,7 +99,7 @@ module GoodData
             new_opts[:password] = password
           end
 
-          new_opts = { verify_ssl: true }.merge(new_opts)
+          new_opts = { verify_ssl: true, execution_id: execution_id }.merge(new_opts)
           if username.is_a?(Hash) && username[:cookies]
             new_opts[:sst_token] = username[:cookies]['GDCAuthSST']
             new_opts[:cookies] = username[:cookies]
@@ -256,14 +267,14 @@ module GoodData
       #
       # @param uri [String] Target URI
       def delete(uri, opts = {})
-        @connection.delete uri, opts
+        @connection.delete uri, opts.merge(stats_on: stats_on?)
       end
 
       # HTTP GET
       #
       # @param uri [String] Target URI
       def get(uri, opts = {}, & block)
-        @connection.get uri, opts, & block
+        @connection.get uri, opts.merge(stats_on: stats_on?), & block
       end
 
       def project_webdav_path(opts = { project: GoodData.project })
@@ -349,14 +360,14 @@ module GoodData
       #
       # @param uri [String] Target URI
       def put(uri, data, opts = {})
-        @connection.put uri, data, opts
+        @connection.put uri, data, opts.merge(stats_on: stats_on?)
       end
 
       # HTTP POST
       #
       # @param uri [String] Target URI
       def post(uri, data, opts = {})
-        @connection.post uri, data, opts
+        @connection.post uri, data, opts.merge(stats_on: stats_on?)
       end
 
       # Uploads file to staging
