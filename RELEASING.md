@@ -6,7 +6,7 @@
 1. `rvm use ruby`
 1. `bundle install`
 1. optionally check what's changed since last release: `bundle exec rake version:changelog`
-1. bump version in [lib/gooddata/version.rb](lib/gooddata/version.rb)
+1. bump version in [SDK_VERSION](SDK_VERSION)
 1. `bundle exec rake version:bump`
 1. create PR to upstream and have it merged
 1. `git push origin tags/{version}`
