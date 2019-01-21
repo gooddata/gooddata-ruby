@@ -686,4 +686,358 @@ http_interactions:
         On","production":true,"urn":"urn:gooddata:date","identifier":"committed_on.dataset.dt","identifierPrefix":"committed_on","bridges":[]}}]}}}}'
     http_version: 
   recorded_at: Fri, 05 Oct 2018 13:55:15 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/kox3qimhjpq0mbp0g8q6qkqiv0wbapxp/model/view?includeCA=true&includeDeprecated=true&includeGrain=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":MI5onfuWjw3LK8LA44DUlw:ay9LhOBG9KN3xPHUtNCv8A"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/kox3qimhjpq0mbp0g8q6qkqiv0wbapxp/model/view/4bb48313064aa1d2b42a81abe669ec85f64d63a7c177db2d00000018"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Mon, 21 Jan 2019 18:56:47 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":MI5onfuWjw3LK8LA44DUlw:ay9LhOBG9KN3xPHUtNCv8A:4jng0s9KSAezG2rX"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '25'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/kox3qimhjpq0mbp0g8q6qkqiv0wbapxp/model/view/4bb48313064aa1d2b42a81abe669ec85f64d63a7c177db2d00000018"}}}'
+    http_version: 
+  recorded_at: Mon, 21 Jan 2019 18:56:48 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/kox3qimhjpq0mbp0g8q6qkqiv0wbapxp/model/view/4bb48313064aa1d2b42a81abe669ec85f64d63a7c177db2d00000018
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":MI5onfuWjw3LK8LA44DUlw:Ihtqr7QhJNH41yctsqj2CA"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Mon, 21 Jan 2019 18:56:49 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '1887'
+      X-Gdc-Request:
+      - ":MI5onfuWjw3LK8LA44DUlw:Ihtqr7QhJNH41yctsqj2CA:HlfIKsdli1ncTtWd"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '30'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.repos","title":"Repositories","anchor":{"attribute":{"identifier":"attr.repos.repo_id","title":"Repository
+        Id","description":"This is anchor description","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_label_id","title":"Repository
+        Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"some_label_id"}},"attributes":[{"attribute":{"identifier":"some_attr_id","title":"Repository
+        Name","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_attr_label_id","title":"Repository
+        Name","type":"GDC.text","dataType":"VARCHAR(10000)"}}],"defaultLabel":"some_attr_label_id"}}],"production":true}},{"dataset":{"identifier":"dataset.devs","title":"Developers","anchor":{"attribute":{"identifier":"attr.devs.dev_id","title":"Dev","folder":"Anchor
+        folder","labels":[{"label":{"identifier":"label.devs.dev_id.email","title":"Email","type":"GDC.text","dataType":"VARCHAR(128)"}},{"label":{"identifier":"label.devs.dev_id.id","title":"Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.devs.dev_id.email"}},"bridges":["dataset.commits"],"production":true}},{"dataset":{"identifier":"dataset.commits","title":"Commits","anchor":{"attribute":{"identifier":"attr.commits.factsof","title":"Attr.Commits.Factsof","folder":"Commits"}},"facts":[{"fact":{"identifier":"fact.commits.lines_changed","title":"Lines
+        Changed","description":"Fact description","folder":"Commits","dataType":"DECIMAL(12,2)","restricted":false}}],"references":["dataset.repos","dataset.devs","committed_on"],"production":true}}],"dateDimensions":[{"dateDimension":{"name":"committed_on","title":"Committed
+        On","production":true,"urn":"urn:gooddata:date","identifier":"committed_on.dataset.dt","identifierPrefix":"committed_on","bridges":[]}}]}}}}'
+    http_version: 
+  recorded_at: Mon, 21 Jan 2019 18:56:49 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/kox3qimhjpq0mbp0g8q6qkqiv0wbapxp/model/view/4bb48313064aa1d2b42a81abe669ec85f64d63a7c177db2d00000018
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":MI5onfuWjw3LK8LA44DUlw:RwveiAOhtl9jf6QYi3iULQ"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Mon, 21 Jan 2019 18:56:49 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '1887'
+      X-Gdc-Request:
+      - ":MI5onfuWjw3LK8LA44DUlw:RwveiAOhtl9jf6QYi3iULQ:9EcSTKy6CNfBBC1X"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '26'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.repos","title":"Repositories","anchor":{"attribute":{"identifier":"attr.repos.repo_id","title":"Repository
+        Id","description":"This is anchor description","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_label_id","title":"Repository
+        Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"some_label_id"}},"attributes":[{"attribute":{"identifier":"some_attr_id","title":"Repository
+        Name","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_attr_label_id","title":"Repository
+        Name","type":"GDC.text","dataType":"VARCHAR(10000)"}}],"defaultLabel":"some_attr_label_id"}}],"production":true}},{"dataset":{"identifier":"dataset.devs","title":"Developers","anchor":{"attribute":{"identifier":"attr.devs.dev_id","title":"Dev","folder":"Anchor
+        folder","labels":[{"label":{"identifier":"label.devs.dev_id.email","title":"Email","type":"GDC.text","dataType":"VARCHAR(128)"}},{"label":{"identifier":"label.devs.dev_id.id","title":"Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.devs.dev_id.email"}},"bridges":["dataset.commits"],"production":true}},{"dataset":{"identifier":"dataset.commits","title":"Commits","anchor":{"attribute":{"identifier":"attr.commits.factsof","title":"Attr.Commits.Factsof","folder":"Commits"}},"facts":[{"fact":{"identifier":"fact.commits.lines_changed","title":"Lines
+        Changed","description":"Fact description","folder":"Commits","dataType":"DECIMAL(12,2)","restricted":false}}],"references":["dataset.repos","dataset.devs","committed_on"],"production":true}}],"dateDimensions":[{"dateDimension":{"name":"committed_on","title":"Committed
+        On","production":true,"urn":"urn:gooddata:date","identifier":"committed_on.dataset.dt","identifierPrefix":"committed_on","bridges":[]}}]}}}}'
+    http_version: 
+  recorded_at: Mon, 21 Jan 2019 18:56:50 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/model/view?includeCA=true&includeDeprecated=true&includeGrain=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":5nkIgsVhoFUfrtJPVTipNw:oNN6LtADoklUtbfQBIRKPA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/model/view/16d19687e50be2031d1a3900abc45dc972dfee1e4d2ceac300000018"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Mon, 21 Jan 2019 19:30:22 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":5nkIgsVhoFUfrtJPVTipNw:oNN6LtADoklUtbfQBIRKPA:dr5kufya2oNTZ5BL"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '25'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/model/view/16d19687e50be2031d1a3900abc45dc972dfee1e4d2ceac300000018"}}}'
+    http_version: 
+  recorded_at: Mon, 21 Jan 2019 19:30:22 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/model/view/16d19687e50be2031d1a3900abc45dc972dfee1e4d2ceac300000018
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":5nkIgsVhoFUfrtJPVTipNw:hFcgSRyAw7R7d-PeNL1Tkg"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Mon, 21 Jan 2019 19:30:22 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '1887'
+      X-Gdc-Request:
+      - ":5nkIgsVhoFUfrtJPVTipNw:hFcgSRyAw7R7d-PeNL1Tkg:PDkhrYJyCbl26JF1"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '36'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.repos","title":"Repositories","anchor":{"attribute":{"identifier":"attr.repos.repo_id","title":"Repository
+        Id","description":"This is anchor description","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_label_id","title":"Repository
+        Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"some_label_id"}},"attributes":[{"attribute":{"identifier":"some_attr_id","title":"Repository
+        Name","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_attr_label_id","title":"Repository
+        Name","type":"GDC.text","dataType":"VARCHAR(10000)"}}],"defaultLabel":"some_attr_label_id"}}],"production":true}},{"dataset":{"identifier":"dataset.devs","title":"Developers","anchor":{"attribute":{"identifier":"attr.devs.dev_id","title":"Dev","folder":"Anchor
+        folder","labels":[{"label":{"identifier":"label.devs.dev_id.email","title":"Email","type":"GDC.text","dataType":"VARCHAR(128)"}},{"label":{"identifier":"label.devs.dev_id.id","title":"Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.devs.dev_id.email"}},"bridges":["dataset.commits"],"production":true}},{"dataset":{"identifier":"dataset.commits","title":"Commits","anchor":{"attribute":{"identifier":"attr.commits.factsof","title":"Attr.Commits.Factsof","folder":"Commits"}},"facts":[{"fact":{"identifier":"fact.commits.lines_changed","title":"Lines
+        Changed","description":"Fact description","folder":"Commits","dataType":"DECIMAL(12,2)","restricted":false}}],"references":["dataset.repos","dataset.devs","committed_on"],"production":true}}],"dateDimensions":[{"dateDimension":{"name":"committed_on","title":"Committed
+        On","production":true,"urn":"urn:gooddata:date","identifier":"committed_on.dataset.dt","identifierPrefix":"committed_on","bridges":[]}}]}}}}'
+    http_version: 
+  recorded_at: Mon, 21 Jan 2019 19:30:23 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/model/view/16d19687e50be2031d1a3900abc45dc972dfee1e4d2ceac300000018
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":5nkIgsVhoFUfrtJPVTipNw:Moa2-nbpVnkThHFugbhweA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Mon, 21 Jan 2019 19:30:23 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '1887'
+      X-Gdc-Request:
+      - ":5nkIgsVhoFUfrtJPVTipNw:Moa2-nbpVnkThHFugbhweA:bVYO2C0ntFMqwS9F"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '23'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.repos","title":"Repositories","anchor":{"attribute":{"identifier":"attr.repos.repo_id","title":"Repository
+        Id","description":"This is anchor description","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_label_id","title":"Repository
+        Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"some_label_id"}},"attributes":[{"attribute":{"identifier":"some_attr_id","title":"Repository
+        Name","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_attr_label_id","title":"Repository
+        Name","type":"GDC.text","dataType":"VARCHAR(10000)"}}],"defaultLabel":"some_attr_label_id"}}],"production":true}},{"dataset":{"identifier":"dataset.devs","title":"Developers","anchor":{"attribute":{"identifier":"attr.devs.dev_id","title":"Dev","folder":"Anchor
+        folder","labels":[{"label":{"identifier":"label.devs.dev_id.email","title":"Email","type":"GDC.text","dataType":"VARCHAR(128)"}},{"label":{"identifier":"label.devs.dev_id.id","title":"Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.devs.dev_id.email"}},"bridges":["dataset.commits"],"production":true}},{"dataset":{"identifier":"dataset.commits","title":"Commits","anchor":{"attribute":{"identifier":"attr.commits.factsof","title":"Attr.Commits.Factsof","folder":"Commits"}},"facts":[{"fact":{"identifier":"fact.commits.lines_changed","title":"Lines
+        Changed","description":"Fact description","folder":"Commits","dataType":"DECIMAL(12,2)","restricted":false}}],"references":["dataset.repos","dataset.devs","committed_on"],"production":true}}],"dateDimensions":[{"dateDimension":{"name":"committed_on","title":"Committed
+        On","production":true,"urn":"urn:gooddata:date","identifier":"committed_on.dataset.dt","identifierPrefix":"committed_on","bridges":[]}}]}}}}'
+    http_version: 
+  recorded_at: Mon, 21 Jan 2019 19:30:24 GMT
 recorded_with: VCR 4.0.0
