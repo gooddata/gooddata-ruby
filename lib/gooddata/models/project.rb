@@ -57,7 +57,6 @@ module GoodData
         }
       }
     }
-    @user_groups_cache = nil
 
     attr_accessor :connection, :json
 
@@ -1607,7 +1606,7 @@ module GoodData
       whitelisted_new_users, whitelisted_users = whitelist_users(new_users.map(&:to_hash), users_list, options[:whitelists])
 
       # First check that if groups are provided we have them set up
-      @user_groups_cache = check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq, @user_groups_cache, options)
+      options[:user_groups_cache] = check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq, options[:user_groups_cache], options)
 
       # conform the role on list of new users so we can diff them with the users coming from the project
       diffable_new_with_default_role = whitelisted_new_users.map do |u|
@@ -1707,7 +1706,7 @@ module GoodData
           user_groups(g).set_members(remote_users)
         end
         mentioned_groups = mappings.map(&:last).uniq
-        groups_to_cleanup = @user_groups_cache.reject { |g| mentioned_groups.include?(g.name) }
+        groups_to_cleanup = options[:user_groups_cache].reject { |g| mentioned_groups.include?(g.name) }
         # clean all groups not mentioned with exception of whitelisted users
         groups_to_cleanup.each do |g|
           g.set_members(whitelist_users(g.members.map(&:to_hash), [], options[:whitelists], :include).first.map { |x| x[:uri] })

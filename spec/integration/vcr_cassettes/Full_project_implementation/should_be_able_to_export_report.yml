@@ -3630,67 +3630,6 @@ http_interactions:
     http_version: 
   recorded_at: Mon, 21 Jan 2019 19:39:15 GMT
 - request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/executor
-    body:
-      encoding: UTF-8
-      string: '{"result_req":{"format":"csv","result":{"execResult":{"reportView":{"reportName":"Report
-        to export","columnWidths":[],"filters":[],"rows":[],"sort":{"columns":[],"rows":[]},"format":"grid","columns":["metricGroup"],"metrics":[{"format":"#,##0","summary":"","title":"My
-        metric","metricId":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/obj/269"}]},"reportDefinition":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/obj/295","dataResult":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/dataResult/2504515528852504064"}}}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":5nkIgsVhoFUfrtJPVTipNw:_znf-STy_7WYIKY0DjywDA"
-      Stats-On:
-      - ''
-      Content-Length:
-      - '502'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 201
-      message: Created
-    headers:
-      Date:
-      - Mon, 21 Jan 2019 19:39:16 GMT
-      Server:
-      - GoodData WebApp
-      Location:
-      - "/gdc/exporter/result/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/3df966b07479c4cf6d69f267996a0a670000002d"
-      Keep-Alive:
-      - timeout=5, max=90
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      X-Gdc-Request:
-      - ":5nkIgsVhoFUfrtJPVTipNw:_znf-STy_7WYIKY0DjywDA:5hpmDDPTEnBYGM7U"
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '66'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"uri":"/gdc/exporter/result/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/3df966b07479c4cf6d69f267996a0a670000002d"}'
-    http_version: 
-  recorded_at: Mon, 21 Jan 2019 19:39:16 GMT
-- request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/result/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/3df966b07479c4cf6d69f267996a0a670000002d
     body:
@@ -3811,78 +3750,6 @@ http_interactions:
         metric","metricId":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/obj/269"}]},"reportDefinition":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/obj/295","dataResult":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/dataResult/2504515528852504064"}}'
     http_version: 
   recorded_at: Mon, 21 Jan 2019 19:39:18 GMT
-- request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/executor
-    body:
-      encoding: UTF-8
-      string: '{"result_req":{"format":"pdf","result":{"execResult":{"reportView":{"reportName":"Report
-        to export","columnWidths":[],"filters":[],"rows":[],"sort":{"columns":[],"rows":[]},"format":"grid","columns":["metricGroup"],"metrics":[{"format":"#,##0","summary":"","title":"My
-        metric","metricId":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/obj/269"}]},"reportDefinition":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/obj/295","dataResult":"/gdc/md/l40ehvu3qvgnvwytea4yt8ml2lnlqwec/dataResult/2504515528852504064"}}}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":5nkIgsVhoFUfrtJPVTipNw:p0vXHsCTBPVSoGzFeqbJmw"
-      Stats-On:
-      - ''
-      Content-Length:
-      - '502'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 401
-      message: Unauthorized
-    headers:
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-store, no-cache, must-revalidate, max-age=0
-      Pragma:
-      - no-cache
-      P3p:
-      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
-      Www-Authenticate:
-      - GoodData realm="GoodData API" cookie=GDCAuthTT
-      Content-Type:
-      - application/json; charset=utf-8
-      X-Gdc-Request-Time:
-      - '1'
-      X-Gdc-Request:
-      - ":5nkIgsVhoFUfrtJPVTipNw:p0vXHsCTBPVSoGzFeqbJmw:ViXlfH5J2xM9qGtk"
-      Vary:
-      - origin
-      Set-Cookie:
-      - GDCAuthTT=; Max-Age=0; Expires=Mon, 21 Jan 2019 19:39:19 GMT; Path=/gdc; Domain=staging2-lcm-prod.intgdc.com;
-        Secure; HTTPOnly
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: |
-        {
-            "error": {
-                "code": 401,
-                "message": "Authorization Required",
-                "description": "This server could not verify that you are authorized to access the document requested. Either you supplied the wrong credentials (e.g., bad password), or your browser doesn't understand how to supply the credentials required",
-                "links": {
-                    "documentation": "https://help.gooddata.com/display/developer/API+Reference#/reference/authentication/log-in"
-                }
-            }
-        }
-    http_version: 
-  recorded_at: Mon, 21 Jan 2019 19:39:19 GMT
 - request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
@@ -4288,4 +4155,949 @@ http_interactions:
       string: ''
     http_version: 
   recorded_at: Mon, 21 Jan 2019 19:39:29 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/objects/query?category=metric&limit=50&offset=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:iIw4_XfRDypSYX4CN0olew"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:38 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:iIw4_XfRDypSYX4CN0olew:7rTvokKk3Zg30rkg"
+      X-Gdc-Request-Time:
+      - '53'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"objects":{"paging":{"count":4,"offset":0},"items":[{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"SUM","content":[{"value":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/223","position":{"column":25,"line":1},"type":"fact
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        SUM([/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/223])"},"links":{"explain2":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269","tags":"","created":"2019-01-24
+        14:53:17","identifier":"aabe8BVsbeQ7","deprecated":"0","summary":"","isProduction":1,"title":"My
+        metric","category":"metric","updated":"2019-01-24 14:53:35","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"COUNT","content":[{"value":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/214","position":{"column":27,"line":1},"type":"attribute
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        COUNT([/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/214])"},"links":{"explain2":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/291/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/291","tags":"","created":"2019-01-24
+        14:55:34","identifier":"aage8sYRfFHw","deprecated":"0","summary":"","isProduction":1,"title":"My
+        test metric","category":"metric","updated":"2019-01-24 14:55:37","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"COUNT","content":[{"value":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/214","position":{"column":27,"line":1},"type":"attribute
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        COUNT([/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/214])"},"links":{"explain2":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/293/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/293","tags":"","created":"2019-01-24
+        14:56:57","identifier":"aaee8JdSfHWo","deprecated":"0","summary":"","isProduction":1,"title":"Clone
+        of My test metric","category":"metric","updated":"2019-01-24 14:55:37","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"metric":{"content":{"format":"#,##0","tree":{"content":[{"content":[{"value":"SUM","content":[{"value":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/223","position":{"column":25,"line":1},"type":"fact
+        object"}],"position":{"column":21,"line":1},"type":"function"}],"position":{"column":21,"line":1},"type":"expression"}],"position":{"column":14,"line":1},"type":"metric"},"expression":"SELECT
+        SUM([/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/223])"},"links":{"explain2":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/294/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/294","tags":"","created":"2019-01-24
+        14:57:35","identifier":"metric.cloned_metric","deprecated":"0","summary":"","isProduction":1,"title":"sum
+        of Lines Changed","category":"metric","updated":"2019-01-24 14:57:37","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:38 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj
+    body:
+      encoding: UTF-8
+      string: '{"reportDefinition":{"content":{"grid":{"sort":{"columns":[],"rows":[]},"columnWidths":[],"columns":["metricGroup"],"metrics":[{"alias":"My
+        metric","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269"}],"rows":[]},"format":"grid","filters":[]},"meta":{"tags":"","summary":"","title":"Untitled
+        report definition"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:3mzSC4kIYlUh1vMxe-dsZg"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '318'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:38 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:3mzSC4kIYlUh1vMxe-dsZg:FLyr0NTnisMzm2Ut"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '57'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295"}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:39 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:rxPodmajiyjqoNzhYA7-Ig"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:39 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:rxPodmajiyjqoNzhYA7-Ig:vHWCDLPQLsOl0o3M"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '47'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"reportDefinition":{"content":{"grid":{"sort":{"columns":[],"rows":[]},"columnWidths":[],"columns":["metricGroup"],"metrics":[{"alias":"My
+        metric","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269"}],"rows":[]},"format":"grid","filters":[]},"links":{"explain2":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295","tags":"","created":"2019-01-24
+        14:58:39","identifier":"aabe9XtNirKq","deprecated":"0","summary":"","isProduction":1,"title":"Untitled
+        report definition","category":"reportDefinition","updated":"2019-01-24 14:58:39","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:39 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj
+    body:
+      encoding: UTF-8
+      string: '{"report":{"content":{"domains":[],"definitions":["/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295"]},"meta":{"tags":"","deprecated":"0","summary":"","title":"Report
+        to export"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:67qm8HDWZMHEhhNrRgXOCQ"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '180'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:40 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:67qm8HDWZMHEhhNrRgXOCQ:9PDRx2Nraphdt58Z"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '91'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296"}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:40 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:eoY09PpsTvUKhxZ0n9ghJw"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:41 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:eoY09PpsTvUKhxZ0n9ghJw:eR43Um4noGtSYQ1c"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '51'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"report":{"content":{"domains":[],"definitions":["/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295"]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296","tags":"","created":"2019-01-24
+        14:58:40","identifier":"aabe9XUBfTbl","deprecated":"0","summary":"","isProduction":1,"title":"Report
+        to export","category":"report","updated":"2019-01-24 14:58:40","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:41 GMT
+- request:
+    method: put
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296
+    body:
+      encoding: UTF-8
+      string: '{"report":{"content":{"domains":[],"definitions":["/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295"]},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296","tags":"","created":"2019-01-24
+        14:58:40","identifier":"aabe9XUBfTbl","deprecated":"0","summary":"","isProduction":1,"title":"Report
+        to export","category":"report","updated":"2019-01-24 14:58:40","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:3NkBq7wB1IcI-ChCLjXBew"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '501'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:42 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:3NkBq7wB1IcI-ChCLjXBew:4Nf0X0GuEQSOidCX"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '75'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296"}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:42 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/um2g0ncbycgqt13ikyo20d86n0htj1a9/execute
+    body:
+      encoding: UTF-8
+      string: '{"report_req":{"report":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:SSGf6Vpe9aW875c9VCJpgw"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '76'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/dataResult/5200225769064430592"
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 24 Jan 2019 13:58:42 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:SSGf6Vpe9aW875c9VCJpgw:cqMupOJxybd9uxJJ"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '539'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execResult":{"reportView":{"reportName":"Report to export","columnWidths":[],"filters":[],"rows":[],"sort":{"columns":[],"rows":[]},"format":"grid","columns":["metricGroup"],"metrics":[{"format":"#,##0","summary":"","title":"My
+        metric","metricId":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269"}]},"reportDefinition":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295","dataResult":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/dataResult/5200225769064430592"}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:43 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/executor
+    body:
+      encoding: UTF-8
+      string: '{"result_req":{"format":"csv","result":{"execResult":{"reportView":{"reportName":"Report
+        to export","columnWidths":[],"filters":[],"rows":[],"sort":{"columns":[],"rows":[]},"format":"grid","columns":["metricGroup"],"metrics":[{"format":"#,##0","summary":"","title":"My
+        metric","metricId":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269"}]},"reportDefinition":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295","dataResult":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/dataResult/5200225769064430592"}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:PpzXQDQw-_ngl_ZaHaEu6A"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '502'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:44 GMT
+      Server:
+      - GoodData WebApp
+      Location:
+      - "/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/f3f0f10dc4a39b5d1307d42982be20510000002d"
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:PpzXQDQw-_ngl_ZaHaEu6A:uLUkRt6SdX6GTzXd"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '51'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/f3f0f10dc4a39b5d1307d42982be20510000002d"}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:44 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/f3f0f10dc4a39b5d1307d42982be20510000002d
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:dqWUYktAHCJJMDH1T3t72A"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:44 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - private
+      Pragma:
+      - ''
+      Content-Disposition:
+      - attachment; filename="Report_to_export.csv"; filename*=UTF-8''Report%20to%20export.csv
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - text/csv;charset=utf8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:dqWUYktAHCJJMDH1T3t72A:HXD8P9KKf8ovrx02"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '50'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        "","My metric"
+        "My metric","9"
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:44 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/um2g0ncbycgqt13ikyo20d86n0htj1a9/execute
+    body:
+      encoding: UTF-8
+      string: '{"report_req":{"report":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:0vvBGjThai-HKNa3-veErQ"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '76'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/dataResult/5200225769064430592"
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 24 Jan 2019 13:58:46 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:0vvBGjThai-HKNa3-veErQ:SZ05oQrcJo1m4sU4"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '523'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execResult":{"reportView":{"reportName":"Report to export","columnWidths":[],"filters":[],"rows":[],"sort":{"columns":[],"rows":[]},"format":"grid","columns":["metricGroup"],"metrics":[{"format":"#,##0","summary":"","title":"My
+        metric","metricId":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269"}]},"reportDefinition":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295","dataResult":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/dataResult/5200225769064430592"}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:46 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/executor
+    body:
+      encoding: UTF-8
+      string: '{"result_req":{"format":"pdf","result":{"execResult":{"reportView":{"reportName":"Report
+        to export","columnWidths":[],"filters":[],"rows":[],"sort":{"columns":[],"rows":[]},"format":"grid","columns":["metricGroup"],"metrics":[{"format":"#,##0","summary":"","title":"My
+        metric","metricId":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269"}]},"reportDefinition":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295","dataResult":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/dataResult/5200225769064430592"}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:IWygEIkyPT6NLNFX4_xQRQ"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '502'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:46 GMT
+      Server:
+      - GoodData WebApp
+      Location:
+      - "/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/209362191cbb28ffc0202a828d7031d80000002e"
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:IWygEIkyPT6NLNFX4_xQRQ:Un0Ki8IgnPBUF4sm"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '77'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/209362191cbb28ffc0202a828d7031d80000002e"}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:46 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/209362191cbb28ffc0202a828d7031d80000002e
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:gVZlNQWFz9yrTrudRq7vvw"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:47 GMT
+      Server:
+      - GoodData WebApp
+      Refresh:
+      - '1'
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:gVZlNQWFz9yrTrudRq7vvw:AoOIpV1GRuiakWLT"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '37'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/209362191cbb28ffc0202a828d7031d80000002e"}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:47 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/exporter/result/um2g0ncbycgqt13ikyo20d86n0htj1a9/209362191cbb28ffc0202a828d7031d80000002e
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:qraPzuGd2MT9mNxHs0bGZw"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:49 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - private
+      Pragma:
+      - ''
+      Content-Disposition:
+      - attachment; filename="Report_to_export.pdf"; filename*=UTF-8''Report%20to%20export.pdf
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/pdf
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:qraPzuGd2MT9mNxHs0bGZw:PcsNhNXWBqC3eRy5"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '41'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        JVBERi0xLjQKJeLjz9MKMiAwIG9iago8PC9GaWx0ZXIvRmxhdGVEZWNvZGUvTGVuZ3RoIDEwPj5zdHJlYW0KeJwr5AIAAO4AfAplbmRzdHJlYW0KZW5kb2JqCjMgMCBvYmoKPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCAzNzA+PnN0cmVhbQp4nK1TsU7EMAzd8xWeT7rgNEmTSFUkkGBgO6kSA2KDA6Ee0t3C72NfmjQph2CgHWKn9rPfs4tSwac4AgKSZYOVHXijpIfTi3jYwIdQwO/pVViUBlww0kFw0oKyFAP7jUBpUYUe1iflKONkyElK6iUpoblwAS1oemB9LmgpqUHbfSteNdHpwKwwyB4O5Hlix14HE1AbjWPmOHbAKySD0/tkN1ATvAnul7VbyjDXXIaZa8I/I7vaMXNc+WJJgqkknT2oAXOx31iyOKk8n+wlYpU5695n9s4nlj7bDdRcuJLmINaiZYwVdl0+ydcI3KqnjC/4ZJMM7GmKS16qwFG5AG+DKvdszxkV1l9lW5ajzBpaCVtNKrWgWaiLG/LzRh+h/F43I/XNw2e24zNc3REhGPePA6poB+yiGVBHNaCJ225AG7d00cctfXN8TTXj03gvbkexWwFbxYPxlnr6B+QyM0LutD4PQbdND3gdx/eU8AW+ueUyCmVuZHN0cmVhbQplbmRvYmoKNCAwIG9iago8PC9GaWx0ZXIvRmxhdGVEZWNvZGUvTGVuZ3RoIDE1ND4+c3RyZWFtCniclY87C8JAEIQH0m2pERuLLbWJ9+DOSyuKIV3iiYK9QcFC/3/hJiAcFkIYdvZR7MdwQy9R74ZrUnyQeRtJsxJptpaDLjk+aX25Kw4cb6SKjfPB829/d7SEQ4UjWpxwRibVile4fm+r+BBIR/uYUpx2RWlGkqbIMcEM88H7bZF8/5PJGV+Eko0eAbPYoZYg2QDNE1BDH7SHOjQKZW5kc3RyZWFtCmVuZG9iago4IDAgb2JqCjw8L0xlbmd0aDEgNTQzMjQvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCAxMzYyNj4+c3RyZWFtCnic7bwJYBVF1vd9uqur+96bhSQk7IRACMgiYCL7FhFQFgEFEVAUJSKisoiBAGJYREBAQCAoIkYFxYAYETEgKggqEXAZRGXAQVxGHYODDi4Doe/7P9Xd4eaSuLwzzzPfN+9N8supqq59PdVd3aQRkZ9mkKC4kZPuSqFb67aHy2oizR41/pY7Jlw8aQyRDjttuOX2KaN8xZetJxKXE0U3HH3zjVl0+spxRFVux/U2o+EQXZR8IexrYW84+o67cv68/amDsO8lumH87eNG3qglly4kGtcO9rvuuDFnfJ1e5gSidzbCf8r4O28e39H6HsZ39hPJ0VprKqJ9+N1FBbRaewq2Ubg4AS75+maaQ9lw2a3t0+brF8LtKTpJB+FzLu0TBQZpvSkDrkSHpU6ntEG0BXG01xK19pZpkNHP2GJcZRQZXxkHqK0x0ThgjDAmahniCTlYPgXaizf0BCqmelSkHaOJtF18IzLEDqO7EUvHxAFRQF8iFQPx76PFtJamIS+J2jjK1afpV8HlLXmAVuF3HK4f0NZoB5G77dpsOkQPCUO/nNZoh1CuffQTzRaD9FzUaYY+Cvl/C3EdQPhVNNEgeUgLkK03g9sWbhO6Sf2vKy6Uh9TvScpFyoNorVlkJlqpSIVr7Cltt1ZiLqN8OiiuExPEEW2OkWqsNy6nxU4NiBG0GHGv4jDmKG0Kys6/0zh2fbIxQiugb4wR1k2I+w0uEdLcol+FEo2iHWCyGYcyddTmiPnIKV+tSwes3kZLhEcM1nSUGo0sWtMYmKbRJtpMF4o8WoyYVHnNtvInhFxtHEeZF2uL9J/ogOhOTWiU8R3qmhKJ8oheskxpCF2j5ilxhXpar6zCzCuHpOwdWv/C5mHWlDgrpZAGFMZMSSkKBgcMMWrLoYWyTqFI8xUaaanHK7t4/MLmfQYMSSk826O7G2uPEd3hNnAIjGyDM9x7dFfXONFCmYa/XiMKU0aOTrk/7v7UDvfH3dwBXV6nUXaeMUquxUiyqFZmtHGGzDOaT+bqBrXc80HJRRT3QckHJa2qxtePT6sfX3+UQaUTRe3SL+08K/aXH+40mxDGYrCbvlkeQhwXZiZSLU3X9FqCRDf9MZpp6KSJlnvat0dMp0paIZNWnDzBDG2gZWipuq/g7C8F8tA/70DlIz9zg58bi9FDoqg6pWZWNfMTKD96acLCGv46VZJFnaTaNeJKS05xvr44VRL3XSutgR4fl5CRnhAfpzdOp/g4Sm3A//UFqx99FH+PPnpG89s/nzlj/6z55QD7gL0fHEDSGdrFWka+PdG+z55rT9QWaVO0qdoiTCF0nMgYhvIEKDMzqZvIN/R8OdOifL+vnllHUD0tKu6DPoVVBg3ZBs+Z7YaW7ClFhlqWpJ/iqkIRUbQtVUQVQx/etn68bJ2WEV8/qb6t9bYf1m5+W+tdurbAmHh50eWnDxUQp4deY/RGmevQmszGNWvVFjXqxEuD4qU0usU9Hr88Jj9xqYHZg+ICuhaoUz1OmHXjSvsUJg3qU1ht0LV9ChMHXYu8iODOdkPRZjt3xie0d/MTUuXyhFZYJy6+envkLjP9amOwHGxNNabKSbXn1rQwt9Q0aqGT1bmLJpnZtSbWvqvOLLqv5qxas2rPqrOe1teOH07D01CM1m2obRet9cWNUhuYVusuWka6kZRoWiZhQttV2hcVmXHjFU/fd8PBnKkfDPlaS+xxbU37VEFBwWRtaYc7VvaanNft0v0XpX/9+nXrxte1v1VtnoXyr0V96xRDMzPrajEihoSI6UYiysqXmpjp16IDVMf0GdGxcUf7FEah3DGqyNFc5A867SlJj+cSf/FBp5L0hPZOkY1iFLuYC9s0iprS5TSUbqXJdD9Z1bRm1EhrJtpo/bT+0f1jBmujtGxtqpijxaCQfq2+yIjPSEqNT42v31qYtq7Zre1Dh4rPXi/TSj8XB0oz1tv52ojdKu8z0V/nou1qUEMakplq1aup3Uc18wPrjHyaX61eftzSagvTrDp16ldNpgYN6sTUTkP/Rdf1evBf7R+/i/sODdYqs9qemq/X2ll7Z52ddV9P3lPPKkjYkfBNghiuDW/bOhn1nFA1VkPnbn0xZaRwF6/foJGW3sZpiaTEasf7ru6z92CVDptv/9Q+o8V9pgkt3n7e/rLvaq3LvMcemwfqFTVspMVoCYOv06p8+1etmur8j9nXJusrtz/x+MsvP/7Edi5TMdpjEdrDR1WpQ2YNbUUcrfDPTIgL+DAryJoxXeOpjt9IREHSS0vQoVDzqudnRlVJqpfUNemGpOeSpDZci89wspdWn/uI0UyLT9WW2YtWrVpkt9P2ntE0O3jGflu2PPvug3Pve/Cpz4988tnZ9U76chDSr4oR8Xxma7/PEgEzXhhCxhuG6IaFMEkYSSv8iStiZkYZ0hTxfqpTLVYGatY04rsmBupEG3VV5vZw7uLb8+TTshNnMaE9/4bOQmo8bM5M1rThmd2mVtUkSU3qprCMJErSEvVqorqRRmlamt5INDYbWY18jfwpyW20NnpPrac+WmYb2XJy1XnmPOsh8yGrHvqPlqxVr5oqWmhc3vj6KdUwPMqqQiy6ZFqXA4df670g5+jb2l6NSmefnW8/uGLFg/qOakvusUdruXk3nZ0vD3348aLtev+z382dPXsOt8k09LMLsdYFKI12YJaoF1XdH0vPVDe3xcan3Fdve51tqUXxC6tHU3VRI8bvi6onfIk9GqEW9n9Qko7RwVWw54tTpehyb3KHQ7Vwnxvbqm6r5Fb1WqW0qt+qQdfGmXUzkzPrZaZk1s9sMKDugOQB9QakDKg/oMGAxuMbz6k7N3luvbkpc+vPabCkcX7jk42TvaBeIC/AiOQR9UakjKg/Pnl8vfEp4+vPSJ5Rb0bKjPo10Jc11VlRHZ21tvGprblLN2p9cZuM+qFTSjX91WMbZ457eFtRUdcd8zbuO3tG059eOWLroJtfHfaPk3rGqGk3TTy8pUnfszMLRt2464lXdibkLmjRoqBx41Kuqwmoq1zUVSLVpvGZDdGO/vt882TSM5rcFq29XGNbQlH0wjq1k3Rfko/66AlVetRRi8oeNW/ysPwiDnUUd8oZl0261h1fN7/ue3VP1pVdqavWVe+a1LW2bG619LX0Nw+Mo3HaOH1c0rja/uETUL6k+jxY27RNQtHUOM1IJ6uFxmUzcks3Rx94acxbN4187zb7lP2W1qT0M80q0tfNW7UtVr9+2KtvXXzxpqbNtXZaQKuqXWp/smfllk1rVJnswcYwlCmKLqDemak1o+v6E+6rWm1bFbGtUWpR4x3+bVVeqVW3UU3yRV9mJiSk9GgSh+5/Cm2vGh5Tzp6SOPsQl6h9q60jms5omt9UILfe7IEcV4/TMaU0VnMNWodbxllbq1VvDRVz3Yrl69YtX7GuyLZP37jxyivXXPXilvab736ntPSduze3L9I77z16dO9bR49+a39mf1M3+YXmTV957dqRN2kdMBEZWoebRhZ4bZOtylEd5ahqbkugbdFFvL4nVLlSJCT1CFvfM1O71pxG08xcK9eX688N5EZNi86NyY3NrZIblxs/LSG/5sma8SG9Cr2onBowcfnGDSuWbdy47KSWYH938nv771q8OPZVcfFXX+9965vV9l67xD6BhmiP+k7U2qk5fTvqei3yGIf5p0tm7VrbKDZxm/QVxS7UXhE76sYnRF1W3SCf3lPNMulObr9QNbwHOfaPSJ6RnJ/8abKhDU/DFJCRxF0audHR1UMrXJu4bVuH56ftp2Bw/7Tn9XZPP/jg08z6s5vMQEHWjfYO+xf87rhR+3bfV1/tA6T0BUzSojfyF0+tMhPNKIvio8Tc2CL/Ditg+sjXM4GbntsdVbjng/3cibcMqPpYVR31pDpiUlmuqlUXvev1ar76aeRk+5yqLeqILQnx+149u9kYsWnUSClVem1RKT/INZiP22XWjJW+KuIZitd2+OYGonx+LAm+uITYnlgOOu3BX7qaakpOOYty+1abn0vSeC2A6hCfWK2jlsTjHQM/I16brE2z5/SZ+Morh56YO1eusV9ffDZ/fr9Vj/1JH7FY6+KUtSPWImj6FKVdmtlTxkPRMLASWCykAU1TxOu6FhUPn4F4f0BjERWwfJY/3uezugUsQzN89JrUXZPuM6NZeQsMYgUOqlMc/4tXyoTJuhwrU2x2dKk9zuoGraJ6yKrhc5Enwu2sbTwUMIxALSMp0CjQ2bgocLVxjTUkMCowSZtqTLLuCiwyZgUeNh4zVloPBpYEntKeMZ4z1llPBvIDdQLCkNIfiKolkmSSv1ZUE9FIpvmbRqXEdMDup6282Grjbx/VKqaX6Cl7+HtHZcYMpcHaUH2ouEYONodag32D/UOjBsSMi8nRcmMe0ZZbG7S1VmHMuzHHYoIxLVm30VP9Gv4y/JqRZd+mFRy2t9vbD2sv2Hce1ppoTYwRZ4+d3aUV2ZfrvfVq9gRtMbcBmv+awCd/PnH6hiqdfqR6Pm4ZeqfrR5s9+fOHpZti7vRfDauPnBDqv3WHXZco5rOfPzx9ZcydrnvZT/WjxgG1Nyadp4YF6NWttdZiE71hbqE1sjoVWKtogtmZZuoZ9IaoR4VgLTavnXH9MPyv0T+nLMgj2FcT/M8Fx0EeWA2yAMezGKwHC8BM+D0J1nAcHkZXWoaMz5VTKE5Op2KZRxOxsymWsVRsrKJiMwN2g4r165hgHpaBYiMb7l/BTylkX+x7DzpSLoZbIs01Pg+elkdoM8dpfUPd5TTqDLdSyOu4LJxnyLdU+hQsQbkKjK9oGsJuN0bRBMgJRglN0N+nlmyWCbRdb0+79PbBI8YTjtnaR9vZ3fhS+d/O/kRv2JthH5tKbXFtk7ED9bWABkN2ZLORQUNkdY30zZrB0q1LVfeon41cR+B6cBX7Qb6uAx/5SKst3kA5v3Tqjuue3XDtENjNbtg7Xw9uMkibiPCbuP65fWBPhft8hB+B8LusXTTf5SbU/WJV7xWA8vm4LbgdQkE7dARPoC1sSBPtE/Da4Ty2aDUhR6m2CIHbwvgI8QVQX6j3irCOQI5y2iEUtMFbqP8lkH8Bp1T9u+0QjmrfL+lybotQuC1UW7NEWVXbh0uUXfWFSqTqo2hzVX7uI9xfS35bcn92w1Us0ddlQvBLaxDkYspBPX+Bch5EXQvIH2D/EfIL2AtRD3lqXKA/GkWI/070UYwR7qdqnKCvKrJdP46cx1KQa98BmYt4e5LO7ch1GS7NWXSgzNxX9cMJ4dK3mCb6WqKcGIM8Dlw5q8zO4xJjozLJY5bHTbhUfYbb7XdKHu9qzHEf23Fu3KuxFybd8Z0ijwdXqrmHx/F0zGeJIB/t4bU12thcVOZH9S2052yUPdv4G+bFVajz94O5qg3vIZ91DHPEB2qsBOTPqh22od4DnB+Mq82yFPOYW5dWP7oF8U2yVmK8VEW8bZFOIm1z57I7UTdZatwV2j849UI1vPoxP6FnEU+hWZf6yT3w/w+U9WP0aa+cgygfXGc8RqNhn6Dm50E0XNmTcB3l5f4jToKNlKgPp+KoEVQcyKJifyeU+zmM6z649jTmjYlUbMHdvBF15I4RNQe0D37q9YHf20ZqPISNN55veMyHjwenHwe/Ce9vXDaUYwj39XJ5dsP5eH3IdtYI1ZfD08G8pOaG8HEfNl5RxqeRxm7Uk4T8/Lx8LKa3yvXz8DKH9W9p0GqjOV3mjvOT8jPU6RY1r0wwPoP02i4sP5WNO096/V3sp/vNV2m7eJ/act1YpTSBkVOCZ5FGNPqzH+M+AP+bVb6QFtbPAeIQDUD/DiDf0WoNOFd+NZ+YmW57LKYAyhmL8D8hvSjoEZuUu7MGbjduplxvDZUPnpu3zQfobmMgzTEuoTnmxTRHDlBz+RG51PXrh789WKOAO09vd9fdWP1Fekr/J90lmlIf8Ve6Qu9Au+RTzhrsIZshrlQV5gVVL58gzoO0XF5G48UArLFMf9beUTe9kM8udC+4y/gA5g+cdVsvDB5mxPOoO3e8uWs5Gd8jf8WYK8+t6Zhb0Ie4/pjHFHfwuApFtc+TyBfKKwtAR5RpsP2DHIw0Y+H+PuJ1/frqot9OArWQ/7UY48eprdkBFGOeWocyd0L69agNI3tjjuLydKJscRFla6OC3+gJlI0xfLl+PV0ufJTC/vQz1Aj1lQ/dLh/6wCawGezRs+GX+dEBekKUA9IIAfrfh46eoU1kPemcnfiZyUToUuMUbnxwq8eIZOiH91MW/L0F+yrI7yD7Qm4FJ/X7gkHIv4vRyPsgmqqXohyLnLyIH+jDcNz8HDLSMH+ouGgrUel6orMTIHeBLeAw0ZkSyNfg/gTkR5DYQ5Wy2ynwBuw7IE+C4Y4/xq4H9yUOwSnn4j3bEOzBdejXNsKcnQGiXBq6ciqY7KZ3CPICMAakgr4h6Y100vfSVITkWbEQ/nOITp+AeTQket7ZjfDzPWR9J46zzZAX0y2nV/4tTt5LsU09+6abDy5TkiNLt4bAcWQ4+wBOS9VVM8ccbAE7xzO+PGebuubJ6IPFxgLaZX6J+asF1iX0LUbNsxno06Rt9eYAlqzvu33nI3k/xbFOKn8JfmX+EvyH6B48Yc4I/mA+HDxuPhI8gnEuvX0A6ybePMRzIs+XPJZ4veI1ga95ewD2o/RN+OG9gJq7MN/ynKj2BdD/1XWsk6yzKp2gJ/KH+UjNMZhfjMdpBbvJ2rQTYztFzak8Xw2j2zz9Uvl7iV5TeiN0bCOHehuT6Dbl933qrea/zUofZXuWihPzD+aFjizNF2gul5HdVRhIdlNr3N/oaeMUwq6ka8xXgsdZumEuwTgfX7betKIFnAbvjcSGYCb8vABeM0voTilpspWDciJOMx7lRnnMqxH3t3Qh9JL+xhHKMhvCnTB/POStG9Tc6I05Dml4+x8133N6zty9R+nqPL/z3ozrvDXlwn61pyMp6e4PzN6o9+POPo7XPmffRiavI76dNMh3neNHbnLazviUUtVa6O3/uO0RHuvNzRyfbw1dIOujjkrdtkY4+B/E+fD6RFm7s77G7c5xfk5TVLu3gfvd9JzvAcS1E/6foU5WFScd+B/ne5IOYk2bp/Ydf0dbvYQ6uBhlnYd2Rfmt1tST1yzu26p/H4KsS31NP2RHd//X0V37uM8jfrVGfIS4sO+Td8J9O+VZV2Gdmg9/T1MX80q4cTpZaB/Wv9/DOuSuk2iblpw+X1NrkrPvPKXW8nbU12qFONrCzyE3P9wXkX5ZuzelZDmCkq37US4ba6Qf46Q7ZfgvQ/kFxq3Tj27ztUVdPIQ1pTrsA+la88/Y8wlKL9MrMtEeV8HuSuskdFXoVxbaGn1rgn88TfK1p4e8dD1d2ZB83+jMnzFnWOAFh3++LYb8/KEY8ssQE3OGHIN0p1N91EEj1W5cd2hzVe+j6DJjG7UzbNg703Zuf24D7gOqHdD+quznZH3Izsh/uvk0NVV9qRftwlpabBmQT0EORD2Y6I8Lzu3fVD/htgrZJ6i65HsFaDdrCvTruzAfoe9w+4VKng+suZQI/aKKJ7mfl+W1q8rba2ZrjLPh1MLLk+qL2KN5cVm10Abp3L5wq0QfDtH/skPlefXi6sPePOzJyvRF7vuqj2GsqPKHSS+PXrvwmOF+67WPV09lcjotRXtO8EXTUutC9JP98H+KNsixCP8ibfAtozbWemrBern1CuqC9fTLkJ+WmAsKMSfyPgrzLY9tHl/+YTTI+gf6e2PE8zf0g0tonvU53aXmc+iL3j7P6we+dfDfhfqq9u6Lcg9B+SdB1nfuOZgWDQfDlPlCuNWjHcr8qXNNzqUdRnfaYY2gHebXmk/p79upp5lC63E9y0ylWzGXbpZ/ogclVlezCtY89rOFcsxbaJiZBn9Xl6WVJdeiryyC/R9olysQ593wF+uML/MqGqv0Jehi2qdE+hckta+CQdGFfFgnh6HtHf33UrRTP6XTKh3bSHZ0Yvm1e43XruZom48wfs4ouwpnfEJjZFX48dFCdtObBz/AXuOwOAudEdehMwY4DWMajZWt3Ph57/y2m248jRNTEe/b6j5SE/SJceYE1MU9iIvv4X3Oz4317nzGBwQd2K695TLSwfvRWuJ6P/bjhNVGYry8j9zUxMU32Czm8f1IbaQcivzn0xDRFzrx9ejPHVDGFuANx4z8btPexnzN1zuChXDvD/dx2AvCn7gY9ouwf9YhUV9GEFwJf6/B/izM90JuAN0oUeyB/5tonr6O5omBiOMCUNPJFdpqjvUezdFX0BHksVTdS+tKy8RuehJz8YsYs7eLT4IbWJqX0ix1T3AezTIuogUsGdmUHvUQS2i6AmEY/x6apdjoYI2iJYzxJsY30IcES3x9aBbmkNswTy+R7+HaKbTnp7SM0+A4OF0G+TtaCXsB9ER6CHXb34GOoo/9w+irFYFqqMerQF/wHJgLrgadXLLAHP1hdY94s3EdXcPl4jwhrmJ9ME31yloZoXUQTlmd/BpufYnS4AajM/jMkWXuoXUZVp9cj1yHFaHqFVhNYB8L/5Bczx5srwhuh3KgPc4jD+5cvpA24jaroM5ZjgHvhdZ5yP30ivjQ5VF1Tw97bJGl5mClByidZKejk5iP49pM2gU6Q1dlXWWXfoA6WxvhthdrZnc3DEEeQ1ydsQ7tw34Z19iN42E3RQvAdsBn5EA39AE+t4f9A13r2FlqqyAP6bNoL4M5JovRPw+WIM+FWA9nyRxaIGfSfHGU7pAmdEm2z8C8fi3y0oBmyiYYg12g//agG5CPXoqfaKjZANfvodGKRylTheGw6dRfVlF6aH9zEeKLc9zNK2gf3MdBHxlhDIB+N6AUeTuTWZ5SGzzNfkAdzLczBdFUzA9TxabgQeNGuk58h7Uii5ZBl8F+7Ewu6IIw/dg/5CrVXik0UjGcqiG/IxX5NFSVNwtrwRi61deBchnTphz5F8y9YzGvPktjsZ6zXj4A60YnawBNEfnoBz9ivXhV6ao5mMNmmR/CTyalSz8NsPogzM/oUz+57ifQZ97G2hag2XAfi7RzEH4W1scp5lmYS+C3FH4IedlPncxdiB9jRc6CDrAH5p0I8zUNMOLQVg3BU1jPFkCyvRbQqIk52r2WRMN890K2UMwye7v+cM283nHDHnEYZMBc5YRXfhoqOvF19NlhKnxD5LeJE0Y8QYluPDlKenkZh/CPQY5BGHZ70MmnWIE1dCXKFPbcwmR9oTyTFbxveBbXw6S1A3obdCxPchjXPNmTHF6Php4xBH12JF2vqAszk+bK7XS5SKL57K/sGvAVIY0eIB9x/Z0mn/es5RDcKoDzp8pTcX4nVyY5rBFP87X5ND/8uYv8CNfLM4WxrkeZ69Dm8+TtkBcjbk8uV3JKiDwpptB8S8IvQD+cbNVDnBb0Ugv5P0fPEJSbyXu8ptAp5kDOBZ703Cu7PgdpXoK6vYTamRquZ8DNlf/j6U5FugA68WS+P1EG2z1cN+y9is1GqONfIOvA7knPvbLrvyCdakgDbcjSfA994T3kxyHKtU8OdVd728tosm8K4mC7KxnjAOJ5DPEdOC+unr8Vl6+zE5eSnrsnC1x3V3L8qu8dhPmgsx936RmCckM/LjZ9SG8wZDPgSc+9suuDUTdDUZ7hAFJuRru6WA3CwH7XPH2+9NdDfvdXLjGHz5cG2oX3bOeYHIJywxxabHZFvXHfWOj2kYUh7pVdn+uWgeeHTzF2Bqr96WSXYo/K6tCrG1X+Q2o+ySvHu3SFy2SGn9nwvMD96bz54Ny8MNDFmQ/c8c1hzHVIcx3K4dAz1G7MwnXUBZfDN6JysA6ExqNkoCrN98CmR+HZ5cOwr1D9NbyflvVpmYbypVF9l8mhdtRNQI31JiCVJorXUNfMIuiDyE8AYzimikMUOXh28X6wRHwPXWVzsMSaGCzxXxwsCfwY5pbhupXC7TW4zYJbj2BJlC/E33i4pZ/zZ0rQH25POuHl5GCJUQX6VCwk626vUJR65l1IXdT9Cd7TfUQNxQnIgc7+QlxApJ7nFpCu7j9luM+9R0HnmaKeqTEZ/By27Dl4Oq003qN0Bd/veAjhvsRebwX2drWoZdnzDH6G0RprbwG9oO4DzEY4DrsNegX24+JOChhfkxTZlCuOg5aKgeIrrHtvU652NxN8RfSjXP0dyjWG4vobLj/Dz710mQjAPAMkBktFIY3HnrWZaEBXKLrQZbIl5B2UzWYx2EH/jAbpn9JV7KaNhU42GvsjflbQA/TH9Z/gr78LwmIvmSo601jxOnQk9jeYGom2NEU/g/1eEvwMRJhvKI3j4uclym+onz7Qv1w/fF+Ky8bPnuRgSkcbLOV8cJpeuip/N1Cy9knwG5VvxKdXp15aEPFXo17K/GlwMNu143StEGiTUrcMvRDmQ1WWCV4ZEF9PvU/wGy4H9Jzr0Zcv07+An0yUHfnUv6O24h5qqyQ/n0IY6KDXhtGNKbun5Dy3Lgp5xl12P7fcWYbfkL/3jAPfm+Zn6+XPNFCRK7e7zz5PmHzQPgF92XVHmck962DxPU/vDEO4VOcWrlDrrNCvCJ51zjUET7nyL3xvmJ8JhsvKzjf81tmGsmes3r1KV4addQiXg37rzMNvnX34w2cguL29My181sC9R/ZbMvxeXsi90ArPTah7SKlklD0H5bMAaG+gq3ZvRJvVPcbKztb8u+Tv7I+VSfSzYRjT3d0zNK/9VvtXJsvOcPyGDG+vsvMbvyHD71GHS96ziPcpRT2/+jW8s12SJDARzjJvJUMWkCW/J0M976oAWYjrwNqOcPvJtFrBfDvCuc/oK8PcjPifI8tXSNK3lUxfW5hHk2HlIPwyMvQX6RGwVH8x+Dx4mZ+NQR4E+8CbWC8s3UbaiSSBaSwhy9hPhvgbWYLzW8GZL9Uu45BuMdJ6Helyfmchvd3wz8/dfgWzB/ydQT5rIo8t0L/5ecqvcRvSeQ3pvIR0diOdpQj/FsLeALkG9ePWu6rHkc6zRuyNt6Nsi9SzRC/PXvpuvP9qO/6r7fLvKvev5V2+HCzl58FqLJN2n3purKQ6H7C1LL+dQvI9HmF+CX5l3Rks5efH6rkfdDewhcOgXr8Fn4OP3b70BfirOjN3HQlxAHpH9+AJ+L0HrFBphfWBsnMsnhuPMX6OvBs8HDyOOdByzj7QRywrqh9rLvzOCP5g3Qj5SPAIP3d2noGr8qmDup7Un+Rj70TaYHWOVp3F1R6Gw36q8Eedu/1c3SPksxVZPgfEx+dFgyUhZzyUVOclQiFqryjSMhj9WSqR11AJ4uCwRytO1b2Lj3wFdtCEmM9ogvY+XaCfpQuMJnRBqFnfSlEig9aAXeYW2i0+o2V835zzZo4NPs3oFCzw8f1Fok+0wfZ893xxoTWCestPaBkjTqsy8tncj10665u1uhyezeJhWsplV3Fu0dpBbz4t+9EFMI9i+H69eSOub6Hx6pwy4CcTf+RHtKZrlM7ZmrqCUeA6cDsYCgYa7dH3XLSfaRy4RbSCroZw6syteyb3D4VnXXiwq88uUvrrZeqMj3tORumNnAbruqWOvosOOZif44IRYA6fI3b1nexAC+z/VkL/+YY6mj3pBlzjc4Dc1y4Aibj+HmQL0B0MB3HmRZQNuY6vgzFyLAWgT1YFnUOA/cwANvsa0aUM65O+UtotU4Mfwt7JNx/7jb/RWn7WaD1Ku62vqRf2Lbq5X+lbfC53GPT0jnI50thN3UW/4BfQKVLM0fSm7ypqw2eccW2sXE171XOzm6ibOZsGmoNpr9WcnpF8b+ICTfgeCpbCb2M1r/yozjsO4TGnxt13VANzQfeyMyO96TqZr+6bTsfaeY3xMT0Bt0Gss/oeoPZiM42WP9EtMit4Rmyn2vICGox1qKc1mob5F9FKuYYayj+h/johT29jf3k31YSe+yR0Tx+w1FyxiK7BXDwMOsa1+rvUX383WM3sDL2qDV3pnb8O/FR2Dvv6EHkT6OraR3nntF3z7cYCmu+d15T3ok1vcspk3Uhxvh8pLjAf5mvUeZnO1mTq7I/BGMs+d6ae9WC1j3yGdsmaGJ/3uOfZpsP/CfgfDvMi5dbRXE4dsSfvqJ4xuOf5uE/5f6IpHBdL1ONEPuPD8SN/12CsYbxpT0Jmu9K1aynlUeMSfqg5qOb6W+eGWxdyPcy97NqkMMn+moJhYGOI/MS9fiHoD/7C8wE4CB49F1bIc/lmyux8ffI5f5TjppkT4pZVeX6Vfa1b5h0O5cqfda6uQuurrP5uc/21hf16yMsdWUZmebvyO9WhzD65fFrh+eW4nTTU+KmOPUkq5gnvPM8v9IgcFjzNwPwcI1+lw6FmWV1rbsbSakZmYTyEvN+h3g+pod2P/Eipa93BEPS9zmW8REfNArBFq40x/RyDcFijtULM86Mg41jKI/xM/hzYN2WbAyjbx2cOw8weKMsURk+ix1mG5Ovj0DyCJ9Q7FETvhbn/HsLjOmxudcD69C448H8RZzh/DsU3gpYzYiv2CBWlfy6MZ34vjN9Kb38Yr7ruofLV0PY4L44uLlvo5T+M27c8jKYO4e7nUUl50AZTGJhvAlMQ13fYg+314L6nWII+rqCFjDhFpjqvqNM/3XjOg93lURrJhNTPnxy0u0PzEXUjLWf+xb5wPMx+yEcij/W3EIZUNE49c/h1Vx7mM4zgTsz1D56bkxzE11pHV097y5Nmjn7KzMEc4kl+36Y29hNEP6vxtBP+dtJ9njSaac9hXDb1t6PVTNQAVy6kHJg1s5TyeF/E+re3DzKrUC32g2upmAcKy6MvOt/tnLsJ7dokWu/IUDOt57wgj22txUgL6WIPZWKOGCoTg7O5/JiHHvo9GO8HSxz0Gsb72t4K7N+Wt7P0zKH+Q8P9kevhhPv//yqh9aXluPYch/P8/QH335t2OfOyELw6vvucP9Vud4fkt0yajbGv+ZcQVc93kxMqv1benfvv70He7uDZjVscuN+Hgk2kojL7H/WnOEPjeS5lCe505a9itFVsNwchv7vPIWqSGUpZmPD8YW9bUT2E+vGdovHnXQ/PS2i8a3EdYK5XsBvmgA2Y70ZDZoECMBvMYYwVsDdTbgVWbZrOyBtouq8WTff/TAsDGi3FtSLwEmN0o1VuPDy3bHR5jNMIsW82jtEyyOddOd1153Sy5DDwCxXIdCowe1CBcZ2bPsKxlM8p8wbX7fcw13cNFXg4bvonLI1vsHYcdYD9Cau5NhDshPkXSAOUwDzcLR+7fwW3ZMg73Dz04H2ce60Q1y6BLAafwXw12AquBK0qcO/ruGuXwn0b5BDILyC7QW49Z6ePxZu0UdbmOtJyYN8B+4v6UdoojtGz2CNvNFPoXrcOV/8GXj27aBeZp7B2VMDvr1/Op8rrGPAmzDHGINWmU5y21ZpAvg6JvqZJB7TxGrSHH2v5S/SEfxTqvz3rP1oM1rR3IWdA+iFzXU4DXp8HgYC5U+kmzzttpw2FLGSwL8+B/QHQHf4Gh8J+TWevNtiVvUKu837oXsT5AmQzsBW0duUQwPp/BuQJSAHJcX0PSk1nPxaCdhWIBl1ct5fdfHM6A13zNS4tXfdWrrlVCOlOnughN55MN6wXnwdfe9rlcZexLl66j7tlWQ1mufYbXVQ8aJNRYGoYBc5eUoeerpv6ctoEcox+tAnkOGXU1oB+Tnoa19U9IB/mpQ56XQdtGzgCUkF7cDXA3k7fA25373s9/nv1Fqd//FvJdtszVFbGFyG4blpJmJ9mDlqSA+U6aJ3cNnD32WVt55kngjzT2dMx2dBVx4L+vAaJn6CL/kTPwf6S+qbBRMy7Ewl7dLoWDDWd+wT9/d0oOwo6LfBkZWaW2RgfhHHTvHLEvf/d1/9f5z9d///p6/9vY567l0eMnEz9FcdgPuZ866Oi+wceSj8+d7+ig0dgVfl7Wr9O8NUK3G9T3+H41+9B/av3rv4n4n7RvZ/qybZm2b1Sdf+zgutwL0Q7OVzO/NoeQen47HaKGir4XoFDA94/wO0Kht+pV994yA5+ZBykAJ8BMfhsVGrwa+98S9k5FvccBb9Tr96n5OcS/H79p9TZb1J363l1rmK0966t9w47PysWJ+gmftebz2Px+REV13aaZrxO6ca9NMB4j3KNF+hWqxcNkILIepRuN3bTA8YR7FEex/Uf6Q7YB1i30miEGW1OpAesiTA/C16BDjMS/h6jaerM9R74hx+jCOyAeQfy9TP0muEwv0SdjOdphPEU9bQGwL4H/l+nqYjjbtkAcbSmqbI5TbBq0URGZlOmzKFLZRJlGveos4pxZe/3xtJsOQl1GqQj6hs9J3Ad0gur3wK7QU1UPXalLkY757q8AJLPckgahzyPMzvQOPVO6c+0n5+TsF1Jgx6TcTTSi099T2iJOoubV5Y/fkbSEHr1NOqszkWddtvFcO+D94PbfFfyO/hdaTH3wfB7Yvys8w/srf4rUe/wuudW+VmR+y72aXUejJ/DdQ0eMmpAX/LeHeY+vMr93pP7Trd6bsX9e7H6Dk7HsvP9hvom1JMIX1zu207TaWl4n1Jtz+8Let8dyiYfnwfVsV8CDxpv0HMMm9nN2OLgfXdFfcPlRXrKe9fV15E6WZnUxfck+soOGm+9RwfNV2mXL5dutvrQbb552Ae0pr7+O6jYFxdynuxj5OEFmhD4hCb6GmFM+KiD2S14Wk5V75+q91C990or+vbB70U/RaMUknZ7qHcSDtN87HknMt5cZJlI/1lq6713qc6ZNqNx/iDFWcdpmj8f8lvIVMjDNM16A3W/IERudGTZM8CumPsKKFZOoGKRSruMp2mgGIM9zl2Yp56ggFd2NTcmBs/IY9ifpTvvQ6p3Gz9y3MtkNkWp92I/c88GbqaTQqd8/lYWf5OM64u/BaLeJ74adZ1BBuIxkA8Dc6yBPsTnYAz0HUP0dq6hfIY5OriS38VGX1Nn1dUzUfQT/0PUXXuRXte+okV6LI3V69AIPZWGsf08d8jf5Y7w4e78/Qz0m7xQjLU0VnGWxlp1ITfROLbL9rAjrDHBue4fCrkVFGH/c8oN8xL89Hfc5GHIAtTpade9ieuf2YY59iIar8wv0WzjbSeMUR/rxpMwb8S+1MvHOqRdG+Fhxtow1Zzsvo/ze2h4DrPP+Rg3oM9XBJ8XnE0tZcDB2uGAcd3S/Bz98lHaADb5l4LptCm6E23i90D55Iy+jnrLatTPPEybzItoiNUV/aE51tfXwEcwZ8NNoxE8X6t3PzdQP1cO4fdNPc577/RjGiq60lB+51RfS0ON0HdOx8FvuvuuqfeeaQXvmPI7qRyvChdU7+QOUe9GHqFZeodgiT4mWPLvtqt3HC+nWeJgsMSIPt/uvX9p/MDmP27n9zKhv0yvVH4S3GCMcd7NZOm9OyneRfq3Ib9/0M7vVJrVnXcrWXrlVO9ZxtISox3yVBgsUe9uvkpLvHAq/QbBDZ5/9S7mhnP19MdOA1X0w99E4R/+PgqRPoR8/N6ukjXoVsce4lZOBk+59hosy94rHu+8W6yPd94vVvl37eH5V9+GGO+8dxza/upd09609Lf6yb/c7mHtzO/fBjL43gzSSg2WnGfnd3MPwL4PbXHyfLt6B5rb8HrYl5xvV+9Gd+P3o5GXoyH2lo49vJ+rd3w30m1l9rD+we/vmlVoCeq8RH8Kbvx+9UBaaPSCOf9cvwuvV6+/ee3jtUt4+xhLgi2Q1xaQX0J+aSyh6shzdchBkIMq6lG+iynZjMU8eZT2GjMg34HMchD3Qt8l2mt1oDy9O+2VNeF+A+2NGgO3GJDlXMOcudf8AdcKsbb8GeHmwe1B6LY1EGY6zDnQtacibujRxiT4m6TizuJ0OV6W7I/fAf1P65L/zcgT0FUPQ0ddRF/LD6HHjHS+dyoa0ijRIJhnSrh1hi6ZQXugJ/Fz+XmyAHr0Wnpe7qU43yfU3byTbpfrof/2gS5WQMvVWS2WJTRObMP6yd8c+xJr2bv0V/3d4EeytWP2N1DvATnfrylwEMfc75duo7byb/Q8+mBn63IaLEdTX6xdnaEvDPmt77SKhbTy3/Gd1v+977GiTqvTbWCW++3aYWC5e07yEvXt2kQa83u/cRv4hvb+N2DO+e/A1/J/kUw6/L+aXjhD6GF/DvXxXUOd/Znnntli33BD6DNcl8UVuP3HqCCPqZ45+tB5/jvA/wiWXNaKIApuc7//N9H57t3ZaMh3Xd5yOLsK8q/qWw552EksOYdnL6dXh+oWIXqFd13bWt5/uK4Vqlf9llncQIR58xDmtir6d/YPMkd7MIRlLp59ElhQgfTMzOwQFvB3K7TmRHwfRn1TBYTqQuX0mDFKB93Fuo/3nVL17WH3bLN6Z689vab26Jj/zS3as+R8e6Yi1Ldp+BueKn7A3zAxHmSJcmdRZ5HF0nkv1tjBEnWivm3CsrzZ+SYJy/Lu/O0T83GWiEt9A4WlMnf2zOqbKDkswZco35cskacD1Fk/wBJtuBFry0aWCLMXYfeyRLzd+fspLMPyxt9SIZbgGO2Sx1giXvUdFZaw76Pxch/L8nGGhg0tV2jYcmb+JksLlmH+Q8z87cvf0kPMF7SVZd9l43Uyw9HvyzHG0fFDCdXtKzOX0/dDdf1QvT5Epy+3b63EXE6nDzHzd3xMjB8mdP8YqvOHmsP3nBWZy42Jyswhe4TKzK563/3fBM9SieBe7DpdROb5GIn/gyx3kOv/7zE/KI+13sE3/tfxI33/FodAQ5f88kQ3jBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQI/yY0oupHxSBqRqMpmnSKo4fJR2Qk6dUgjSJ9RmbwjC1OJ4p/polf0sXPeeKnWPGjLU7Z4h9p4odY8X2eOJkm/n7/JfLvtvguT5zIEyWnxbenxd9s8U0H8XU38ZUt/pouvvxioPwyT3wBj18MFJ9/1lJ+flp81lIct8WntjiWLv6SKD7JE0dtcSRB/Hm6OPyy+NgWH8L7h9PFoQ8uk4emiw8uEwf/VFsetMWfaov3bfGeLd61xTu2OJAn9u9LlvttsS9ZvJ0uim3x5px4+WYd8UY1sccWu23xui122WKnLV6zxau2eMUWO2zxsi22x4tt96XJbbYoeullWWSLl7YOly+9LF6aYWx9MU1uHZ4ZFFszjRfTxBZbvJAnNtvieVsU2uI5W2zKEs/Gio0b0uTGLLGhIEFuSBMFCeIZZPqZ02K9LZ62xVO2WJcg1triySdi5ZPp4olY8XiWyIeX/DzxmC3WPBot19ji0Wix+pGacnWWeGRVnHykplgVJx4OiIdssTIvRq60RV6MWIFAK/LE8mWxcvkFYlmsePC0WLrkZbnUFksWD5dLXhZLZhiLH0iTi4eLxZnGA2likS0WLmghF9piQQtxP4p5/yVi/rwoOT9RzIsSc+EwN0vch5q6L03MiRf32mL2rHg52xaz4sVMW8ywRa4tMoP3TJ8u77HF9Oni7iwxbVCSnJYmptpiii1yYsXkaDEpILJtcddpMfG0uPO0mHBajLfFOFuMtcXt9cVtthgT302OGShutcXo6eIWWEbZ4mZbZNlipC1ussWNHcSI0+L6aDHcFtfaYpgthg4JyKGnxZCAuKZaTXlNuhhsi6uR8tXdxKAkMVCLkwNriKsSxZW9q8orbTEgSvS3Rb8r4mQ/W1wRJ/raog+u9LFF715xsndV0atujOwVJy6PEZfZomee6JEnutviUv1Ceelp0e1lcUkfkWmLrrbo0jlBdkkUnTtVkZ0TRKeOMbJTZrCK6BgjOtiivS3atU2U7U6Ltm3iZNtE0aZ1lGwTJ1pHiYuTRUaMSL8oSqbb4qIo0apllGwVI1pGiRYX+mWLOHGhXzRPF82apslmWaJpkwTZNE00SRAXNE6TF1wiGqeJRmlRslEVkRYlGtoi1RYNqoj6KGf9BJGSJeqdFskoQnKWqBsj6qAG69ii9mlRq5uoCUtNW9TIEtVRU9VtUQ2BqtUUSbZItEVVWyTAQ4It4lHW+G4ibrqokiVibRETXU3G2CIavqOriShbBOKE3xY+ePPZwkoUZpYwcNFAD0gScBW20GHXLxRanCBbaEVa1pxFWrP/P/zQfzoDv/pT9/8ARA/QCQplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwvRGVzY2VudCAtMjQwL0NhcEhlaWdodCA2OTkvU3RlbVYgODAvVHlwZS9Gb250RGVzY3JpcHRvci9Gb250RmlsZTIgOCAwIFIvRmxhZ3MgMzIvRm9udEJCb3hbLTEwMjAgLTQxNSAxNjgwIDExNjZdL0ZvbnROYW1lL1pKSkdOSitEZWphVnVTYW5zL0l0YWxpY0FuZ2xlIDAvQXNjZW50IDc1OT4+CmVuZG9iago2IDAgb2JqCjw8L0RXIDEwMDAvU3VidHlwZS9DSURGb250VHlwZTIvQ0lEU3lzdGVtSW5mbzw8L1N1cHBsZW1lbnQgMC9SZWdpc3RyeShBZG9iZSkvT3JkZXJpbmcoSWRlbnRpdHkpPj4vVHlwZS9Gb250L0Jhc2VGb250L1pKSkdOSitEZWphVnVTYW5zL0ZvbnREZXNjcmlwdG9yIDcgMCBSL1dbM1szMTddIDE4WzMzNiA2MzYgNjM2IDYzNl0gMjNbNjM2XSAyOFs2MzZdIDUxWzYwM10gNTNbNjk0XSA2OFs2MTJdIDcyWzYxNV0gNzRbNjM0XSA4Mls2MTEgNjM0XSA4NVs0MTFdIDg3WzM5Ml0gOTFbNTkxXV0vQ0lEVG9HSURNYXAvSWRlbnRpdHk+PgplbmRvYmoKOSAwIG9iago8PC9GaWx0ZXIvRmxhdGVEZWNvZGUvTGVuZ3RoIDMxNj4+c3RyZWFtCnicXZJNa8MwDIbv/hU+buyQxI6TDoIuG4Me9sHajV5TRymBxTFOeui/nyN1LsyQB/zK+oik7Gn7vHXDIrOPMNkdLrIfXBdwns7BojziaXCiULIb7HK9Ee3YepFF591lXnDcun4STSOzz2icl3CRd/v94SG/F9l76DAM7hSVUn19R2V39v4HR3SLzAWA7LCPoV5b/9aOKDNyvIn7i0ep6F5wBXbqcPatxdC6E4omjweal3hAoOv+mYuavY797bmGRJXDKhUKElXPEtmZ+vqqhERdsGQgUSuWakjUJUsWEvUjSZoDEw2H1xyFaDhWSbmYFWcsN5BYGZZaSKxqkoyCxIp/yHAuYs0ZDeci1pzRUN3Mmqs3R0isN9Tkv26u/V5XIY3PnkOIk6V9ofmtkxscppXyk1+9ZPzEL4XAqqAKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjw8L1N1YnR5cGUvVHlwZTAvVHlwZS9Gb250L0Jhc2VGb250L1pKSkdOSitEZWphVnVTYW5zL0VuY29kaW5nL0lkZW50aXR5LUgvRGVzY2VuZGFudEZvbnRzWzYgMCBSXS9Ub1VuaWNvZGUgOSAwIFI+PgplbmRvYmoKMTIgMCBvYmoKPDwvTGVuZ3RoMSA1MjYwL0ZpbHRlci9GbGF0ZURlY29kZS9MZW5ndGggMzQ4OT4+c3RyZWFtCnic5Vd9VFvHlb/z3jx9oU+QEJYM78kyNiAwIEAgFyxhPgKWHQi2MThRLBlhAwGjCMyC6xbaBMeh/kqTON2kdd002W6anLUCLgZXiV3b9TpJs2vvdk+63c1JspsmJz3HiffEcfc4Rtr7HvJHHPJH/94RM+9379y5HzN3hpnByM5OUMMYsODt6AuGl2hSUgHgdwAktWNoUJBVPa9G/D7WH20Lb+97KL3kDwDsMNIV23tHto3U2M4B0CiA7GhXZzC0b985PUBKM+pwdSHjwbhagfRepJd29Q0O/z33xyKkX0E6v7e/I/hlCschjTohoy84HH6JfEqRvoK0sCPY13lqc8VWADXq5L4d7h8YHIamBIBhn9gfjnSGw7Gy95BGfQz6CAR/YhF9lok0w1JOJlcoVfD/s8iyZEbuCneJ7qZ+9l3QAyQ+TnwQH46H4u3sU8AnEnAYfgmzcB7+KZEsEIMz0ncIJuE0vJW4o8D34Cn4O8yPP8Jnt3g/giPwMkS/IndI4r4AL8E/wBSchLPI2wtPIPdFeOUOuX54DA7Cc3AU/pVkJnlnGSOZ9+ATUDOXyAA5ABbIh1p4AAbgu7AH/bpA1iKvCnnNyI3AMPwQubNwIfG1glKt4Ice2AGvosRvJF4ecjdACLnIS8o9DLvgcfgZ/AJ+jX7tQs+egGcX0Pc9xsbYYBD+hNreJE8z5+EVHDMuMwKmGXcJeNwRfrHF2f4AIB5KfIF7ZitzlXmeeQKOMT2w1qsudy3L5tNSNWqOMvlClM2us9fZg10TQl2XMGGvDdQW5Pta2upqrTZbe0G+gOxaIUoCQl20fqgrY6JOFIimOqJMdp1Ye6LeHwQQ2GttNhv2pN3umUmc3ndH16uAtro2tIkmxRroEqIUO6XGipykB2JfVwBbey06sCD/Ky7W2+sDExP1dqF+IjARnEmMbbULevvEqz7fRLguIEShuS1KkH/yB9Zo/b72qD7QRVZiZKIT9S1tHqvNgFp86+2++za3CXUTgaTeJKdCooARN7gccHOz+DGekDEUxFr49rtvS01xkc1gM2RjQ1Dq+hgHX4pfQCCeDxdwha7hGqlhxNveqiIVTAXnUvUzAbafC6hGmTA7yoVVKRuVrarNKWyIHWR3KllOxbBKoHpaSmvpBtpDZZTKU5QsEU+WFJZjjDCs1Wl5bbOW5dLkvRr9tct+rAazGzyVnspUd6E/1ewuLiL+CPgjNruB2InBbrApiY27dj6+dSjeOUu0ZD8ZI2kce+MZtvv6HHfpxlm2SvS5Kh6io5hRctjnraayUlmtrFkWkIVlMiUr5xaxZq6eNLJtsImMsEpGbsEhnIWytBHqKQMsQzlGzXQRgqchSwHTwbtEqS9Xw2JYg/m/CzjYr9QpCUvTaB3tpDspR7+v0H/oxxD8DozBXwgeT6pb8v8x/Rz+nSZ+8CuJPY2UKAkdnRt842K85ndkE9lM/dfl5F/o8hvn2ErR91lcLTPdDQ7o8TawS9nctKVpubVC7bITefLpbJLNZy5WmFfnLKGZHNEvVngLCF9QVOAtaC4IF3BgIUF9dspinUXPWyyLg7zeqx/Ts/pC/9U5p37O4Hbrr172+3GOKz2eyjmnAZ30Fxf5cYJLly1fQexLZPIsYjLcQSIuMa0iJc50s9Sa5OaYxmRuva/pSBNL5+G659bFYm3HOiI/XR6JPTRzjNndsCfHkd9UZa7Kmitjdq8Zz3E41n7rxuvUv7uxJbAxsPE9TCsGehIf0QDGmoF7f7PXu4w6NEX0W5rKrBrq0/iyNmua03s0AfOwZleWllTyvG5xlYmmpMg9OqVavcgCB206G2/z2FieWFPHBf21OacfAyzB6cfGcxnT6DJGR2zGdHMWOu8qLzFpiV0Agx5KnKmmZIg0cOONVa7Sg62Rj4tVW873xf8cv0AcV//rixPkycPPTKkZ6/a/LS4quj//7RwXKSAmkkpWx//387ynnp98FFdsVeLPzBx3BKzQ4M1XcxbOwbEpevkqTYqKs1rNHlbZlDmayWhhX6ZCo7eoFHKvRl8u37tYf83hdM45C/XXnLgkCDwlJdiix9no5ZJlZQZ7WYmhxGAz2Qy3I2Dmyr5T/PLk6GiMPBrfrchIX9e0IpSuUmlTZ95iWo6Q6vipI3G2rcORk21VJjOKjeBuSIUKrw00eo2gYdVKHZ65NSodp8TrhtFrDBsZtdyi3JsmTaJBnEIxQQoxQ8QZtH8tGdiIKq/Jtel5XywWfrm9OD+fPaRSrqu68TH1v7jZx8nF9T2G5h/h/kM6eYq8WaSW8aZoyhlWxnGKUSVR/hAC1EICoxzh9ipw73w49+FHOBMejwOXjWDwLNojj/z+9+pYjMs4ez0boyDQnfiY/Zz+Ddhgk7daZ2+yMw6yRJuXvjRjJSnTrkwvy2gkTapabVN6dUY72ajtJp3aXWRAm6bXGz1qarNZcEl0sN9utirHl+Cpo79WmUyYEnHySXL6MTvKxDxJN5vmwzcZ08UVWEXKS9jPH3xpy8ibDY3NpOAvgdl1qtYTm47O/uoF91BhboNJVV/gvKeh4T+fxEypcC2/VNPwzsU3/z0rw1RowFl5OPHf9CD3GSyBcgh56xR0Ec2lldmVjrIVa7PXOmpWtNEtZn9GizVMvp2tM2Q6G425jUZZJoNrvEamKjMo7TZQWuCIW+fm3Uy+zXK4Qjo/PzK49ZcL3e75XEp1Xy68PL96RkYuo2JEZSViEqWW34qvVIovPVV+c7+bbiXaKkIPtm++P/7pbOkDS1WZPdXvfmn0vxB84GlfWzvJ/0PvTN3GB970VhT2eg79wuUt6F1979F6wrKrz8bPhCO7U9SndFai/KSiaGlpVeyRD0lWTc36+JcvPBcrLVh+/Odbhgt4U16OKVe6f2Ltu7pN2KKr/AKsCuke9svv1ubevpXFQ3KzeD0FJc7ffMExipR4yx1XN3LXVS5FgSzZ63CBxqCKuYjn6gWYpeegh10Oq9gemGWccIw6oJtLx5sM4Bk0Au/AO2QdiTLAVDFdzAW2WdKaAhVJuwzeCAuRAvo08WBei7055KNbtmtu+UEw52uSmEG8JolZHH9fElPkjyUxh/9hH0tiGfKfTGI5yj8rWqIs6lHDGxLmJE/+TcIyif8nCcsl/v9IWCFiQiSMBwHsIYYkJqAlzyQxg/jFJGbhQTKVxBS0zE15DjIYPollyC9PYjk8yNRJWCX6wPxcwimiXeaYhNUS/5SEtRJ+S8J60S7zjoTTEKcy8/4bJZm/SNgk6mFZCaeLfDZNwovEsey8P1ZJpkDCmZJMlYR5CTdKeKkkv1HCBRLuELFC8pl9WMLz+r8jYvU8/3EJi/4D+/SGkXDntmBHpxDcERJCwcGg8JJQ7Ha7hHXdHZH+gf5tg0JNfyTcHwkOdvfvWCFU9/YKLd3buwYHhJbOgc7IUGeotTMSCu4ItnRu39kbjNwatzLJF5IdIj2AOoRiIeeWUG5S6Gafc0VJ2W2WNLx7QAgKg5FgqLMvGHlI6N+2sGtwL17UI9AHQehFtBVGiAY6pav+J1hv963H63oQOSFsIxBin2VfZV9jT2GdZU+yr+BTYATCOHIb9nfgV0hKC9IIcayATxkBisGNPxeiddCNkhG0MYB1G8oIuEFEi2GpFUd1I9oBK7CnGn3oxW8L8rZDF/YNSFQnfjtRegjbED5TRBySbAel3u2wE8eJPn/d3sq75IW7RtzsH0j6IXovQM4CmnLv0nT3OCfGUAJlC0rdtt4txSSiQSn+EPb3SZ48hDzR0l8za3eu7G0sUt0L9n3wFbletH3nmkur/g06e1Fm5E6aZtFi6qP30Cps3V+xsAP1fpOWe7EdkuIWM68a+RFcix2SF9885jbGHSqVxFp8zS5QxIt71mSu06WfFCa9k82T4cmxyaOT0cmLk+9Pqk5PXplkRJHwr8wZLr6W6Fr5VqZp45aNTP8G8tMNxzYw960305b16XR9i4muaWyh9Y3l9J5GJ23A2ljmppUeJ63yVNFVHhut8WTS1Z4WWo3Vi9VT5qTOkhAtKSulZaUbaGlZFr1Y+n7plVJ2JvHp1PHsBtdM4v2p43o7fj/1ao4rda7jlgY6NLVnCt26MjUlSVz3JqaUS11Txgb6+N40Gu4NDzO6H793hPH+JH2Ry/vjdKvL+4wZ0WGz1bVnPI3XPaob1x3QHdQd4h/lD/AHCw+MjY/tPfjEofFDjx3aq/N+X6l36SJ8hPE+rFS7dH1EuECEfySe85+dZ4Tfen/LwFYCW/VbGW/waJDR3U8KjAaab8ymDqOb5hnTaK7RRHljFrUJNVQwVtI3LHXUYr2HWi2V1GJ0UhPKpaG7qUYLNWANG4nXWF3j0mnzeJARzVkfrz7j41WnfbwSKxfz8fQ1H8/O+njmpI8n0z4eTvj4s2fy+NOn8vjXvK0xG39y1safmLbxZ86e05w6/RtN7LXX1bMnf62ePjGj1sfGYox3dmyW0U17ppumR6epbroQYT/CU9P/PJ2YVqiU5VStYTjKsAy+iJlmjsyQxPj+/ZnRw/gkj45lts8owIePfBIlB9qjCt/6JASHWAYGBwYcC5QoWxeV1XUFozJ77YBIaEVCi49+bV1UJ2KdvdZBosa6rqgR0deUDNwsjoFk57whqYGdC9kUfRnE1vF/cgnLaQplbmRzdHJlYW0KZW5kb2JqCjExIDAgb2JqCjw8L0Rlc2NlbnQgLTIwOS9DYXBIZWlnaHQgMTAwMC9TdGVtViA4MC9UeXBlL0ZvbnREZXNjcmlwdG9yL0ZvbnRGaWxlMiAxMiAwIFIvRmxhZ3MgNC9Gb250TmFtZS9CQUFBQUErVmVyZGFuYS9Gb250QkJveFstNDkgLTIwNiAxNDQ1IDEwMDBdL0l0YWxpY0FuZ2xlIDAvQXNjZW50IDEwMDU+PgplbmRvYmoKMTMgMCBvYmoKPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCAyNzA+PnN0cmVhbQp4nF2Ry2rDMBBF9/oKLdNFsPxIUoMxhISAF31Qtx8gS2NXUEtClhf++0qjtIUuJM4w9w5zpezSXTutfPbqjOjB01Fp6WAxqxNAB5iUJnlBpRL+XuEtZm5JFrz9tniYOz2apiHZW+gt3m10d5ZmgAeSvTgJTumJ7j4ufaj71dovmEF7ykjbUgljmPPE7TOfIUPXvpOhrfy2D5Y/wftmgRZY52kVYSQslgtwXE9AGsZa2txuLQEt//VylizDKD65C9I8SBmrrm3gAvlURy6RCxa5Qj6i5pD4EPmY9FXkU+Ii8mPS4Jw6cRn5jFzWuNh9g7hifMOf6FSszoXY+NCYNyZVGujvZ1hjow3PNxzggrUKZW5kc3RyZWFtCmVuZG9iagoxMCAwIG9iago8PC9TdWJ0eXBlL1RydWVUeXBlL0ZpcnN0Q2hhciAwL1R5cGUvRm9udC9CYXNlRm9udC9CQUFBQUErVmVyZGFuYS9Gb250RGVzY3JpcHRvciAxMSAwIFIvVG9Vbmljb2RlIDEzIDAgUi9MYXN0Q2hhciAxMC9XaWR0aHNbMTAwMCA4NDIgNTkxIDM1MSA5NzIgNTk1IDM5NCA0MjYgMjc0IDUyMCA2MzVdPj4KZW5kb2JqCjEgMCBvYmoKPDwvR3JvdXA8PC9TL1RyYW5zcGFyZW5jeS9JIHRydWUvQ1MvRGV2aWNlUkdCPj4vQ29udGVudHNbMiAwIFIgMyAwIFIgNCAwIFJdL1R5cGUvUGFnZS9SZXNvdXJjZXM8PC9Qcm9jU2V0Wy9QREYvVGV4dC9JbWFnZUIvSW1hZ2VDL0ltYWdlSV0vRm9udDw8L1hpMCA1IDAgUi9GMSAxMCAwIFI+Pj4+L1BhcmVudCAxNCAwIFIvTWVkaWFCb3hbMCAwIDU5NSA4NDJdPj4KZW5kb2JqCjE2IDAgb2JqCjw8L0E8PC9TL0dvVG8vRFsxIDAgUi9GaXRIIDg0Ml0+Pi9UaXRsZShSZXBvcnQgdG8gZXhwb3J0KS9QYXJlbnQgMTUgMCBSPj4KZW5kb2JqCjE1IDAgb2JqCjw8L1R5cGUvT3V0bGluZXMvQ291bnQgMS9GaXJzdCAxNiAwIFIvTGFzdCAxNiAwIFI+PgplbmRvYmoKMTQgMCBvYmoKPDwvS2lkc1sxIDAgUl0vVHlwZS9QYWdlcy9Db3VudCAxL0lUWFQoMi4xLjcpPj4KZW5kb2JqCjE3IDAgb2JqCjw8L1R5cGUvQ2F0YWxvZy9PdXRsaW5lcyAxNSAwIFIvUGFnZXMgMTQgMCBSPj4KZW5kb2JqCjE4IDAgb2JqCjw8L01vZERhdGUoRDoyMDE5MDEyNDE0NTg0OCswMScwMCcpL0NyZWF0aW9uRGF0ZShEOjIwMTkwMTI0MTQ1ODQ4KzAxJzAwJykvUHJvZHVjZXIoaVRleHQgMi4xLjcgYnkgMVQzWFQpPj4KZW5kb2JqCnhyZWYKMCAxOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMTk3NTAgMDAwMDAgbiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMDkxIDAwMDAwIG4gCjAwMDAwMDA1MjggMDAwMDAgbiAKMDAwMDAxNTM0MSAwMDAwMCBuIAowMDAwMDE0NjQyIDAwMDAwIG4gCjAwMDAwMTQ0NTggMDAwMDAgbiAKMDAwMDAwMDc0OSAwMDAwMCBuIAowMDAwMDE0OTU4IDAwMDAwIG4gCjAwMDAwMTk1NjIgMDAwMDAgbiAKMDAwMDAxOTA0MiAwMDAwMCBuIAowMDAwMDE1NDcxIDAwMDAwIG4gCjAwMDAwMTkyMjQgMDAwMDAgbiAKMDAwMDAyMDEzMCAwMDAwMCBuIAowMDAwMDIwMDYyIDAwMDAwIG4gCjAwMDAwMTk5NzIgMDAwMDAgbiAKMDAwMDAyMDE5NCAwMDAwMCBuIAowMDAwMDIwMjU3IDAwMDAwIG4gCnRyYWlsZXIKPDwvSW5mbyAxOCAwIFIvSUQgWzw3NmRmYWRjYmE2N2FmNmEyZjc5MWEwMDk3ZTFiOTYyZD48NWQ4NGY4ZDg0YzFkMTZlNWY1M2VjNTUzNmEzYmEyNjY+XS9Sb290IDE3IDAgUi9TaXplIDE5Pj4Kc3RhcnR4cmVmCjIwMzgwCiUlRU9GCg==
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:49 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:iudiKvpG6VpmKaNs4QLZeQ"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:50 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=98
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:iudiKvpG6VpmKaNs4QLZeQ:hX22eugAfkhyMZKu"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '28'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"reportDefinition":{"content":{"grid":{"sort":{"columns":[],"rows":[]},"columnWidths":[],"columns":["metricGroup"],"metrics":[{"alias":"My
+        metric","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/269"}],"rows":[]},"format":"grid","filters":[]},"links":{"explain2":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295/explain2"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295","tags":"","created":"2019-01-24
+        14:58:39","identifier":"aabe9XtNirKq","deprecated":"0","summary":"","isProduction":1,"title":"Untitled
+        report definition","category":"reportDefinition","updated":"2019-01-24 14:58:39","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:50 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/296
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:mfohPlvcZz4-dUUyyC-oZg"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:50 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '81'
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:mfohPlvcZz4-dUUyyC-oZg:0duFUFBQMb5hpWxC"
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:50 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/um2g0ncbycgqt13ikyo20d86n0htj1a9/obj/295
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:sdeicya1cmwWuFxlQisHzA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:58:51 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '52'
+      X-Gdc-Request:
+      - ":eEWKUL1m1EOkKymcyTXQGQ:sdeicya1cmwWuFxlQisHzA:2AI8UwX6K52ECOXM"
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:58:51 GMT
 recorded_with: VCR 4.0.0
