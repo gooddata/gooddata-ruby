@@ -187,7 +187,8 @@ module GoodData
             ignore_failures: ignore_failures,  
             remove_users_from_project: remove_users_from_project,  
             do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,  
-            create_non_existing_user_groups: create_non_existing_user_groups
+            create_non_existing_user_groups: create_non_existing_user_groups,
+            user_groups_cache: nil
           }
           results = case mode
                     when 'add_to_organization'

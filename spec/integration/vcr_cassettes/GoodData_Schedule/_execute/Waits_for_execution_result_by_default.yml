@@ -1,131 +1,6 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.3/x86_64-darwin16/2.3.3
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - UCyVsnFzNaUqga8LwoG0Zw:xk6x8UEyL2KcpI3hHhA3Tw
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 28 Nov 2018 16:59:01 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=100
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      - origin
-      X-Gdc-Request:
-      - UCyVsnFzNaUqga8LwoG0Zw:xk6x8UEyL2KcpI3hHhA3Tw:6oAfyz25uOsn91R4
-      X-Gdc-Request-Time:
-      - '29'
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
-        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
-        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
-        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
-        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
-        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
-        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
-        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
-        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
-        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
-        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
-        data staging area.","category":"uploads","title":"user-uploads"}]}}'
-    http_version: 
-  recorded_at: Wed, 28 Nov 2018 16:59:01 GMT
-- request:
-    method: put
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/GMHFEEFRHQIPQGKD
-    body:
-      encoding: ASCII-8BIT
-      string: !binary |-
-        UEsDBBQACAAIAGl9akUAAAAAAAAAAAAAAAATABAAZ29vZGRhdGFfdmVyc2lv
-        bi5yYlVYDABEz2BUBc9gVPUBFAArSi0szSxKVVBPz89PSUksSVTn4iooLSlW
-        UHIHCrgABayswlyDgj39/RR0FZSrMURrlbgAUEsHCMOIZH00AAAARAAAAFBL
-        AQIVAxQACAAIAGl9akXDiGR9NAAAAEQAAAATAAwAAAAAAAAAAECkgQAAAABn
-        b29kZGF0YV92ZXJzaW9uLnJiVVgIAETPYFQFz2BUUEsFBgAAAAABAAEATQAA
-        AIUAAAAAAA==
-    headers:
-      Accept:
-      - "*/*"
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.3/x86_64-darwin16/2.3.3
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      Content-Length:
-      - '232'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 201
-      message: Created
-    headers:
-      Date:
-      - Wed, 28 Nov 2018 16:59:01 GMT
-      Server:
-      - Apache
-      Location:
-      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/GMHFEEFRHQIPQGKD
-      Content-Security-Policy:
-      - frame-ancestors 'none'
-      X-Frame-Options:
-      - DENY
-      X-Content-Type-Options:
-      - nosniff
-      Content-Length:
-      - '201'
-      Content-Type:
-      - text/html; charset=ISO-8859-1
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: UTF-8
-      string: |
-        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-        <html><head>
-        <title>201 Created</title>
-        </head><body>
-        <h1>Created</h1>
-        <p>Resource /gdc/uploads/GMHFEEFRHQIPQGKD has been created.</p>
-        </body></html>
-    http_version: 
-  recorded_at: Wed, 28 Nov 2018 16:59:01 GMT
-- request:
     method: post
     uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ulqqp5kx5q1q01gwwdg6qfzt838w8qop/dataload/processes
     body:
@@ -864,4 +739,893 @@ http_interactions:
       string: ''
     http_version: 
   recorded_at: Wed, 28 Nov 2018 16:59:31 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:PgM8M8JcG5ugP0ODCNIFrg"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:23:50 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:PgM8M8JcG5ugP0ODCNIFrg:AYURLga4EgjlMFgA"
+      X-Gdc-Request-Time:
+      - '35'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:50 GMT
+- request:
+    method: put
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/uploads/SSIYXVFKMZGVEFPD
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        UEsDBBQACAAIAGl9akUAAAAAAAAAAAAAAAATABAAZ29vZGRhdGFfdmVyc2lvbi5yYlVYDABEz2BUBc9gVPUBFAArSi0szSxKVVBPz89PSUksSVTn4iooLSlWUHIHCrgABayswlyDgj39/RR0FZSrMURrlbgAUEsHCMOIZH00AAAARAAAAFBLAQIVAxQACAAIAGl9akXDiGR9NAAAAEQAAAATAAwAAAAAAAAAAECkgQAAAABnb29kZGF0YV92ZXJzaW9uLnJiVVgIAETPYFQFz2BUUEsFBgAAAAABAAEATQAAAIUAAAAAAA==
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Content-Length:
+      - '232'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 13:23:51 GMT
+      Server:
+      - Apache
+      Location:
+      - https://staging2-lcm-prod.intgdc.com/gdc/uploads/SSIYXVFKMZGVEFPD
+      Content-Security-Policy:
+      - frame-ancestors 'none'
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '201'
+      Content-Type:
+      - text/html; charset=ISO-8859-1
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: |
+        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+        <html><head>
+        <title>201 Created</title>
+        </head><body>
+        <h1>Created</h1>
+        <p>Resource /gdc/uploads/SSIYXVFKMZGVEFPD has been created.</p>
+        </body></html>
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:51 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes
+    body:
+      encoding: UTF-8
+      string: '{"process":{"name":"Test ETL zipped file GoodData Process","path":"/uploads/SSIYXVFKMZGVEFPD","type":"RUBY"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:fnN42pq11UlXxbiBIFESLQ"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '109'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:51 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:fnN42pq11UlXxbiBIFESLQ:JefvtCbX7fOCdiLe"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '386'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"RUBY","name":"Test ETL zipped file GoodData Process","graphs":["gooddata_version.rb"],"executables":["gooddata_version.rb"],"lastDeployed":"2019-01-24T13:23:52.048Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003","executions":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions","source":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/source"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:52 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:bBXCX575nOmHAqOqm1859A"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:52 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:bBXCX575nOmHAqOqm1859A:gWfrLMwTiiAwOUWv"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '95'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"RUBY","name":"Test ETL zipped file GoodData Process","graphs":["gooddata_version.rb"],"executables":["gooddata_version.rb"],"lastDeployed":"2019-01-24T13:23:52.048Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003","executions":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions","source":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/source"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:52 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules
+    body:
+      encoding: UTF-8
+      string: '{"schedule":{"name":null,"type":"MSETL","state":"ENABLED","timezone":"UTC","cron":"0
+        15 27 7 *","triggerScheduleId":null,"params":{"PROCESS_ID":"c51ef27a-8501-4ea0-8a94-550f95d57003","EXECUTABLE":"gooddata_version.rb"},"hiddenParams":{}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:RefC16ikKZr0oT3bNgh3jQ"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '238'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:53 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:RefC16ikKZr0oT3bNgh3jQ:YNBTeMjDAIIJfxtZ"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '27'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedule":{"name":"gooddata_version.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"gooddata_version.rb","PROCESS_ID":"c51ef27a-8501-4ea0-8a94-550f95d57003"},"cron":"0
+        15 27 7 *","timezone":"UTC","nextExecutionTime":"2019-07-27T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845","executions":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:53 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:kOioID5UZvjeBkrM2C7kqg"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:53 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:kOioID5UZvjeBkrM2C7kqg:8YJQ2uFnju9dDhZN"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '22'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedule":{"name":"gooddata_version.rb","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"gooddata_version.rb","PROCESS_ID":"c51ef27a-8501-4ea0-8a94-550f95d57003"},"cron":"0
+        15 27 7 *","timezone":"UTC","nextExecutionTime":"2019-07-27T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845","executions":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:54 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions
+    body:
+      encoding: UTF-8
+      string: '{"execution":{}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:2Al52-1uJbmEsUYyb5CXEA"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '16'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Location:
+      - "/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:55 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:2Al52-1uJbmEsUYyb5CXEA:ynRKymiovB76iyGA"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '105'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","status":"SCHEDULED","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:55 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:SWcJHeNvhXc4ECHRYThjeA"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:54 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:SWcJHeNvhXc4ECHRYThjeA:pjE3mzPbtC7ndFEy"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '17'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","startTime":"2019-01-24T13:23:55.409Z","log":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions/5c49bc6ae4b0209098241c1a/log","status":"RUNNING","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:55 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:o0yeQdbtld_4EFJG5SVxIg"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:56 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:o0yeQdbtld_4EFJG5SVxIg:1RkUVtXJDXeNmewF"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '19'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","startTime":"2019-01-24T13:23:55.409Z","log":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions/5c49bc6ae4b0209098241c1a/log","status":"RUNNING","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:57 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:YanHzcjBle6povKoEEW5Mw"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:23:59 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:YanHzcjBle6povKoEEW5Mw:LPQysEXc5koEZJKv"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '21'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","startTime":"2019-01-24T13:23:55.409Z","log":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions/5c49bc6ae4b0209098241c1a/log","status":"RUNNING","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:23:59 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:-cV4KkKsdyoQWMkf970mQA"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:24:02 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:-cV4KkKsdyoQWMkf970mQA:cZ3iHuwM9fnDvN28"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","startTime":"2019-01-24T13:23:55.409Z","log":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions/5c49bc6ae4b0209098241c1a/log","status":"RUNNING","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:24:02 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:hrzanwLDcvgJJKxBSqmFUg"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:24:06 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:hrzanwLDcvgJJKxBSqmFUg:mkKwKG1YH6Z23WNn"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '22'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","startTime":"2019-01-24T13:23:55.409Z","log":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions/5c49bc6ae4b0209098241c1a/log","status":"RUNNING","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:24:06 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:Oorb5QJMf9sa47OJMf3WCQ"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:24:12 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:Oorb5QJMf9sa47OJMf3WCQ:qfyZV6CFa1LJopMZ"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '19'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","startTime":"2019-01-24T13:23:55.409Z","log":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions/5c49bc6ae4b0209098241c1a/log","status":"RUNNING","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:24:12 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:4U-YQ9_I29N8NBiI71xq1Q"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:24:20 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:4U-YQ9_I29N8NBiI71xq1Q:sw8B7qPXfCkez6t9"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '20'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"execution":{"createdTime":"2019-01-24T13:23:54.945Z","startTime":"2019-01-24T13:23:55.409Z","endTime":"2019-01-24T13:24:15.952Z","log":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003/executions/5c49bc6ae4b0209098241c1a/log","status":"OK","trigger":"MANUAL","processLastDeployed":"2019-01-24T13:23:52.048Z","processLastDeployedBy":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845/executions/5c49bc6ae4b0209098241c1a"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:24:20 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49bc69e4b03efd64472845
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:G06M9DI5LbghegNY3sWpXQ"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Location:
+      - "/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:24:21 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '23'
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:G06M9DI5LbghegNY3sWpXQ:3j5wITbjluknwgzh"
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:24:21 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes/c51ef27a-8501-4ea0-8a94-550f95d57003
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:KwP3QvgUJSk-aBe5LEXWvA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Location:
+      - "/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/dataload/processes"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 13:24:22 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '269'
+      X-Gdc-Request:
+      - ":ADJCyexmTo3xdkURu5mqMg:KwP3QvgUJSk-aBe5LEXWvA:fo2fUNMgQPKFganY"
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 13:24:22 GMT
 recorded_with: VCR 4.0.0

@@ -1671,309 +1671,6 @@ http_interactions:
     http_version: 
   recorded_at: Fri, 05 Oct 2018 12:44:37 GMT
 - request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login
-    body:
-      encoding: UTF-8
-      string: '{"postUserLogin":{"login":"rubydev+admin@gooddata.com","password":"<PASSWORD>","remember":1,"verify_level":2}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - ''
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:9KG9CjxOrQ2uqh89GcJI2w
-      Dont-Reauth:
-      - 'true'
-      Content-Length:
-      - '110'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      X-Gdc-Authsst:
-      - "<X_GDC_AUTHSST>"
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-store, no-cache, must-revalidate, max-age=0
-      Pragma:
-      - no-cache
-      P3p:
-      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
-      X-Gdc-Log-Header:
-      - ''
-      Content-Type:
-      - application/json;charset=UTF-8
-      Date:
-      - Wed, 10 Oct 2018 10:41:36 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:9KG9CjxOrQ2uqh89GcJI2w:nUtBmkEBpAoFsvRN
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '62'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"userLogin":{"profile":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","state":"/gdc/account/login/5ad80b895edcc438e5a4418e222733fa","token":"<TOKEN>"}}'
-    http_version: 
-  recorded_at: Wed, 10 Oct 2018 10:41:37 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:cHCXIFjJP_TZtYlJJW6ltQ
-      X-Gdc-Authsst:
-      - "<X_GDC_AUTHSST>"
-      Dont-Reauth:
-      - 'true'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-store, no-cache, must-revalidate, max-age=0
-      Pragma:
-      - no-cache
-      P3p:
-      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Log-Header:
-      - ''
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 10 Oct 2018 10:41:38 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:cHCXIFjJP_TZtYlJJW6ltQ:WIT15MvHFPe6YZbD
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '19'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"userToken":{"token":"<TOKEN>"}}'
-    http_version: 
-  recorded_at: Wed, 10 Oct 2018 10:41:38 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:89RnAHe-ccAaHc7DpNbl4A
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 10 Oct 2018 10:41:38 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=99
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:89RnAHe-ccAaHc7DpNbl4A:XkY0xYDuItUw9Rse
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '27'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"accountSetting":{"position":null,"effectiveIpWhitelist":null,"email":"rubydev+admin@gooddata.com","updated":"2018-10-10
-        10:25:03","lastName":"1","phoneNumber":"","links":{"auditEvents":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/auditEvents","domain":"/gdc/domains/staging2-lcm-prod","self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects"},"firstName":"the","country":null,"ssoProvider":"test-ruby","timezone":null,"language":"en-US","ipWhitelist":null,"companyName":"","authenticationModes":["PASSWORD","SSO"],"login":"rubydev+admin@gooddata.com","created":"2017-02-10
-        12:18:01"}}'
-    http_version: 
-  recorded_at: Wed, 10 Oct 2018 10:41:39 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:Tv3WAOm5UOIKvmK4Zeukhw
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 10 Oct 2018 10:41:39 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=100
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      - origin
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:Tv3WAOm5UOIKvmK4Zeukhw:ybXIwFcMq8ryudti
-      X-Gdc-Request-Time:
-      - '25'
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
-        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
-        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
-        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
-        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
-        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
-        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
-        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
-        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
-        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
-        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
-        data staging area.","category":"uploads","title":"user-uploads"}]}}'
-    http_version: 
-  recorded_at: Wed, 10 Oct 2018 10:41:39 GMT
-- request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
-    body:
-      encoding: UTF-8
-      string: '{"project":{"meta":{"summary":"No summary","title":"my_bp"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"TESTING","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:7Wl-vPDZDVPEQcFrDpAnFQ
-      Content-Length:
-      - '168'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 10 Oct 2018 10:41:40 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=100
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      X-Gdc-Request:
-      - Z-97THmb14Zm6VeTmfRhtQ:7Wl-vPDZDVPEQcFrDpAnFQ:ajQlNvLPLS5KBqsj
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '595'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"uri":"/gdc/projects/ta78hcxcq6gz71lwp2ip90u6ly6lvtee"}'
-    http_version: 
-  recorded_at: Wed, 10 Oct 2018 10:41:40 GMT
-- request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta78hcxcq6gz71lwp2ip90u6ly6lvtee
     body:
@@ -2807,6 +2504,1338 @@ http_interactions:
     http_version: 
   recorded_at: Wed, 10 Oct 2018 10:42:21 GMT
 - request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ns2gP5fQkFx5C06fyVj3Ug:WdoCsjtWRrPC_MndCWAbHQ"
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      Dont-Reauth:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Www-Authenticate:
+      - GoodData realm="GoodData API" cookie=GDCAuthSST location=/gdc/account/login
+      Set-Cookie:
+      - GDCAuthSST=""; Expires=Thu, 01-Jan-1970 00:00:10 GMT; Path=/gdc/account; Secure
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Date:
+      - Thu, 24 Jan 2019 12:30:15 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '16'
+      X-Gdc-Request:
+      - ":ns2gP5fQkFx5C06fyVj3Ug:WdoCsjtWRrPC_MndCWAbHQ:lPKft1PsfxxWv5Jo"
+      Vary:
+      - origin
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:30:16 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ns2gP5fQkFx5C06fyVj3Ug:WdoCsjtWRrPC_MndCWAbHQ"
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      Dont-Reauth:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Www-Authenticate:
+      - GoodData realm="GoodData API" cookie=GDCAuthSST location=/gdc/account/login
+      Set-Cookie:
+      - GDCAuthSST=""; Expires=Thu, 01-Jan-1970 00:00:10 GMT; Path=/gdc/account; Secure
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Date:
+      - Thu, 24 Jan 2019 12:30:17 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '16'
+      X-Gdc-Request:
+      - ":ns2gP5fQkFx5C06fyVj3Ug:WdoCsjtWRrPC_MndCWAbHQ:USwn76c4LDoovekX"
+      Vary:
+      - origin
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:30:17 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":ns2gP5fQkFx5C06fyVj3Ug:WdoCsjtWRrPC_MndCWAbHQ"
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      Dont-Reauth:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Www-Authenticate:
+      - GoodData realm="GoodData API" cookie=GDCAuthSST location=/gdc/account/login
+      Set-Cookie:
+      - GDCAuthSST=""; Expires=Thu, 01-Jan-1970 00:00:10 GMT; Path=/gdc/account; Secure
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Date:
+      - Thu, 24 Jan 2019 12:30:17 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '15'
+      X-Gdc-Request:
+      - ":ns2gP5fQkFx5C06fyVj3Ug:WdoCsjtWRrPC_MndCWAbHQ:7rcy7GCHSFg3Efki"
+      Vary:
+      - origin
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:30:17 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login
+    body:
+      encoding: UTF-8
+      string: '{"postUserLogin":{"login":"rubydev+admin@gooddata.com","password":"<PASSWORD>","remember":1,"verify_level":2}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - ''
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:wZfWyDX6mX2a4S99vsOm7w"
+      Dont-Reauth:
+      - 'true'
+      Content-Length:
+      - '110'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 24 Jan 2019 12:56:50 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:wZfWyDX6mX2a4S99vsOm7w:bmwO09qaw52KJUOz"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '53'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userLogin":{"profile":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","state":"/gdc/account/login/5ad80b895edcc438e5a4418e222733fa","token":"<TOKEN>"}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:56:50 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:o62veNHi3C4LEClnKsUEBA"
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      Dont-Reauth:
+      - 'true'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 24 Jan 2019 12:56:50 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:o62veNHi3C4LEClnKsUEBA:adwu68mCZF6e7W3f"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '18'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userToken":{"token":"<TOKEN>"}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:56:51 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:ZPN8gq0FqCN_9eUHueF4hg"
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 24 Jan 2019 12:56:51 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:ZPN8gq0FqCN_9eUHueF4hg:iQ9I41Ia13VgiKsN"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '11'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"accountSetting":{"links":{"self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","auditEvents":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/auditEvents","domain":"/gdc/domains/staging2-lcm-prod"},"firstName":"the","lastName":"1","companyName":"","position":null,"created":"2017-02-10
+        12:18:01","updated":"2018-12-03 11:09:12","country":null,"phoneNumber":"","authenticationModes":["PASSWORD","SSO"],"login":"rubydev+admin@gooddata.com","timezone":null,"ssoProvider":"test-ruby","email":"rubydev+admin@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:56:52 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:AYE8yFBva-AeI3FRC1yVMg"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:56:52 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:AYE8yFBva-AeI3FRC1yVMg:ihOLCj5x7TkT3JG2"
+      X-Gdc-Request-Time:
+      - '29'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:56:52 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
+    body:
+      encoding: UTF-8
+      string: '{"project":{"meta":{"summary":"No summary","title":"my_bp"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"TESTING","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:rzf5nvEIonD6JUtlkvY33w"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '168'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:56:53 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:rzf5nvEIonD6JUtlkvY33w:0ChEBeMyHpKz3I4a"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '495'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz"}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:56:54 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:5Xy9_Qjau2epxY8qdFpKpw"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:56:54 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:5Xy9_Qjau2epxY8qdFpKpw:twLXufs5YUdgOGWf"
+      X-Gdc-Request-Time:
+      - '55'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"LOADING"},"links":{"ldm_thumbnail":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/ldm?thumbnail=1","self":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz","clearCaches":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/clearCaches","invitations":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/invitations","users":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/users?link=1&offset=0&limit=100","uploads":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/uploads/","ldm":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/ldm","metadata":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz","publicartifacts":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/publicartifacts","roles":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/roles","userRoles":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/dataload","connectors":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/connectors","execute":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/execute","config":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/config","projectFeatureFlags":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/projectFeatureFlags","schedules":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/schedules","templates":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/templates"},"meta":{"created":"2019-01-24
+        13:56:53","summary":"No summary","updated":"2019-01-24 13:56:54","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"my_bp","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:56:54 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:v-nMfN8kDHLVSMr2GACTRA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:56:58 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:v-nMfN8kDHLVSMr2GACTRA:eGu3XX0dMpwLh8r8"
+      X-Gdc-Request-Time:
+      - '58'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","authorizationToken":"<AUTHORIZATION_TOKEN>","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"ENABLED"},"links":{"ldm_thumbnail":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/ldm?thumbnail=1","self":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz","clearCaches":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/clearCaches","invitations":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/invitations","users":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/users?link=1&offset=0&limit=100","uploads":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/uploads/","ldm":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/ldm","metadata":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz","publicartifacts":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/publicartifacts","roles":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/roles","userRoles":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/dataload","connectors":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/connectors","execute":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/execute","config":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/config","projectFeatureFlags":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/projectFeatureFlags","schedules":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/schedules","templates":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/templates"},"meta":{"created":"2019-01-24
+        13:56:53","summary":"No summary","updated":"2019-01-24 13:56:55","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"my_bp","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:56:58 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff?includeGrain=true
+    body:
+      encoding: UTF-8
+      string: '{"diffRequest":{"targetModel":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.repos","title":"Dataset.Repos","anchor":{"attribute":{"identifier":"attr.repository","title":"Attr.Repository","folder":"Dataset.Repos","labels":[{"label":{"identifier":"label.repository.name","title":"Label.Repository.Name","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.repository.name"}},"attributes":[{"attribute":{"identifier":"attr.attribute1","title":"Some
+        attribute","folder":"Dataset.Repos","labels":[{"label":{"identifier":"label.attribute1.name","title":"Label.Attribute1.Name","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.attribute1.name"}}],"facts":[{"fact":{"identifier":"some_numbers","title":"Some
+        Numbers","folder":"Dataset.Repos","dataType":"INT","type":"fact"}}],"references":[],"bridges":[]}}],"dateDimensions":[]}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:AsqBM34qV7emojcT5TBUiw"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '911'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff/ed3bb30435ca2ce542384e5827f95773b0514099096a605300000018"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 12:57:02 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:AsqBM34qV7emojcT5TBUiw:JMiDe4Of5RNW05dX"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '54'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff/ed3bb30435ca2ce542384e5827f95773b0514099096a605300000018"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:02 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff/ed3bb30435ca2ce542384e5827f95773b0514099096a605300000018
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:9Dz96xEJ9yefgaeY15wiNg"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff/ed3bb30435ca2ce542384e5827f95773b0514099096a605300000018"
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 12:57:02 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:9Dz96xEJ9yefgaeY15wiNg:CnvQ11CMx3YsaI9p"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff/ed3bb30435ca2ce542384e5827f95773b0514099096a605300000018"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:03 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff/ed3bb30435ca2ce542384e5827f95773b0514099096a605300000018
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:rg1UJqytLZZ8CvIM78Gk4A"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 12:57:04 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '6028'
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:rg1UJqytLZZ8CvIM78Gk4A:eGXm6wGgSvO5OyQL"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '34'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[{"updateOperation":{"type":"dataset.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Dataset.Repos"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Attr.Repository"]}},{"updateOperation":{"type":"attribute.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        attribute ''%s''","parameters":["Some attribute"]}},{"updateOperation":{"type":"fact.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        fact ''%s''","parameters":["Some Numbers"]}}],"updateScripts":[{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};","maqlDdlChunks":["CREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};"],"preserveData":true,"cascadeDrops":false}},{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};","maqlDdlChunks":["CREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};"],"preserveData":false,"cascadeDrops":false}}]}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:05 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz/model/diff/ed3bb30435ca2ce542384e5827f95773b0514099096a605300000018
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:v5KJ6i9eBpopt5K9vPxUaA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Date:
+      - Thu, 24 Jan 2019 12:57:04 GMT
+      Server:
+      - GoodData WebApp
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '6028'
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:v5KJ6i9eBpopt5K9vPxUaA:LhY3W0mcL3hzAr66"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '24'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[{"updateOperation":{"type":"dataset.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Dataset.Repos"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Attr.Repository"]}},{"updateOperation":{"type":"attribute.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        attribute ''%s''","parameters":["Some attribute"]}},{"updateOperation":{"type":"fact.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        fact ''%s''","parameters":["Some Numbers"]}}],"updateScripts":[{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};","maqlDdlChunks":["CREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};"],"preserveData":true,"cascadeDrops":false}},{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};","maqlDdlChunks":["CREATE DATASET
+        {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE FOLDER {dim.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repository}
+        VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER ATTRIBUTE
+        {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE \"Label.Repository.Name\")
+        AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository} DEFAULT LABEL {label.repository.name};\nCREATE
+        ATTRIBUTE {attr.attribute1} VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos})
+        AS KEYS {d_repos_attribute1.id} FULLSET, {f_repos.attribute1_id};\nALTER DATASET
+        {dataset.repos} ADD {attr.attribute1};\nALTER ATTRIBUTE {attr.attribute1}
+        ADD LABELS {label.attribute1.name} VISUAL(TITLE \"Label.Attribute1.Name\")
+        AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE {attr.attribute1} DEFAULT
+        LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos} VISUAL(TITLE
+        \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE \"Some
+        Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};"],"preserveData":false,"cascadeDrops":false}}]}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:05 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:qPgedeJd_rE7JOGmQNdWFA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:57:06 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      - origin
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:qPgedeJd_rE7JOGmQNdWFA:jU9f6xz5tWE69xCf"
+      X-Gdc-Request-Time:
+      - '27'
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Metadata service for project ''ta11naxec7w3a37gz48asgcavh5sssuz''","category":"project","instance":"ta11naxec7w3a37gz48asgcavh5sssuz","links":[{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/data","summary":"Resources
+        for data set manipulation.","category":"data","title":"data"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/dml","summary":"Navigation
+        resource for physical data manipulation.","category":"dml","title":"dml"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/drillcrosspaths","summary":"Returns
+        a list of attributes available for drilling across.","category":"drillcrosspaths","title":"drillcrosspaths"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/etl","summary":"Resources
+        for data ETL.","category":"etl","title":"etl"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/datedimension","summary":"Resources
+        for Date Dimension manipulation","category":"datedimension","title":"datedimension"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/favorites","summary":"Returns
+        list of objects marked as favorites by the user.","category":"favorites","title":"favorites"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/favorite","summary":"Resource
+        for determining if an object is in a user''s favorites.","category":"favorite","title":"favorite"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/identifiers","summary":"Resource
+        for retrieving metadata object identifiers.","category":"instance-identifiers","title":"identifiers"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/labels","summary":"Resource
+        for retrieving uris for element labels.","category":"labels","title":"labels"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/ldm","summary":"Resources
+        for logical data model (LDM) manipulation.","category":"ldm","title":"ldm"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/log","summary":"Returns
+        a list of metadata events.","category":"logs","title":"logs"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/maintenance","summary":"Resource
+        for project maintenace.","category":"maintenance","title":"maintenance"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/maqlvalidator","summary":"Resource
+        for MAQL construct validation and tree representation.","category":"maqlvalidator","title":"MaqlValidator"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/obj","summary":"Resource
+        for creating new metadata objects.","category":"obj","title":"obj"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/objects","summary":"Resource
+        for batch operations MD objects.","category":"objects","title":"objects"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/query","summary":"Resources
+        for querying collections of metadata objects.","category":"query","title":"query"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/reportstatistics","summary":"Returns
+        report statistics for a specified report.","category":"report-statistic","title":"report
+        statistics"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/search","summary":"Resource
+        for full text search.","category":"search","title":"search"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/service","summary":"Services
+        for metadata configuration.","category":"service","title":"service"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tags","summary":"Returns
+        a list of tags.","category":"tags","title":"tags"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks","summary":"Task
+        resource.","category":"tasks","title":"tasks"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/templates","summary":"Returns
+        list of uris of templates from which the project was created.","category":"templates","title":"templates"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/translations","summary":"Resource
+        for project localization.","category":"translations","title":"translations"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/usedby2","summary":"Returns
+        list of objects connected to a certain object via a ''used'' edge.","category":"usedby2","title":"usedby"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/using2","summary":"Returns
+        list of objects connected to a certain object via a ''using'' edge.","category":"using2","title":"using"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/userfilters","summary":"Relation
+        userFilter - user management.","category":"userfilters","title":"userfilters"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/validate","summary":"Resources
+        for LDM, PDM, IO validation.","category":"validate-project","title":"validateproject"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/variables","summary":"Resources
+        for variable manipulation.","category":"vars","title":"variables"}]}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:06 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/ldm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:6s0gQmpOHf0W9Pq6n5D1tA"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:57:06 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:6s0gQmpOHf0W9Pq6n5D1tA:kJaQSS07M8nNXe4h"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '21'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Resources for logical data model (LDM) manipulation
+        within project ''ta11naxec7w3a37gz48asgcavh5sssuz''","category":"ldm","instance":"ta11naxec7w3a37gz48asgcavh5sssuz","links":[{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/ldm/manage2","summary":"Resources
+        for model manipulation with categorized result.","category":"ldm-manage2","title":"manage2"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/ldm/singleloadinterface","summary":"Single
+        interface for data loading.","category":"singleloadinterface","title":"singleloadinterface"},{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/ldm/attributeupperbound","summary":"Attribute
+        upper bounds for LDM.","category":"attributeupperbound","title":"attributeupperbound"}]}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:07 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/ldm/manage2
+    body:
+      encoding: UTF-8
+      string: '{"manage":{"maql":"CREATE DATASET {dataset.repos} VISUAL(TITLE \"Dataset.Repos\");\nCREATE
+        FOLDER {dim.datasetrepos} VISUAL(TITLE \"Dataset.Repos\") TYPE ATTRIBUTE;\nCREATE
+        ATTRIBUTE {attr.repository} VISUAL(TITLE \"Attr.Repository\", FOLDER {dim.datasetrepos})
+        AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repository};\nALTER
+        ATTRIBUTE {attr.repository} ADD LABELS {label.repository.name} VISUAL(TITLE
+        \"Label.Repository.Name\") AS {f_repos.nm_name};\nALTER ATTRIBUTE {attr.repository}
+        DEFAULT LABEL {label.repository.name};\nCREATE ATTRIBUTE {attr.attribute1}
+        VISUAL(TITLE \"Some attribute\", FOLDER {dim.datasetrepos}) AS KEYS {d_repos_attribute1.id}
+        FULLSET, {f_repos.attribute1_id};\nALTER DATASET {dataset.repos} ADD {attr.attribute1};\nALTER
+        ATTRIBUTE {attr.attribute1} ADD LABELS {label.attribute1.name} VISUAL(TITLE
+        \"Label.Attribute1.Name\") AS {d_repos_attribute1.nm_name};\nALTER ATTRIBUTE
+        {attr.attribute1} DEFAULT LABEL {label.attribute1.name};\nCREATE FOLDER {ffld.datasetrepos}
+        VISUAL(TITLE \"Dataset.Repos\") TYPE FACT;\nCREATE FACT {some_numbers} VISUAL(TITLE
+        \"Some Numbers\", FOLDER {ffld.datasetrepos}) AS {f_repos.f_some_numbers};\nALTER
+        DATATYPE {f_repos.f_some_numbers} INT;\nALTER DATASET {dataset.repos} ADD
+        {some_numbers};\nSYNCHRONIZE {dataset.repos};"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:wyc6uqpLf5LrQ-GGc8yQOQ"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '1308'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:57:07 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:wyc6uqpLf5LrQ-GGc8yQOQ:XuCNvhWB7Z5Y9idF"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '42'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entries":[{"link":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks/8ad51f89ba08bc864942a680b110d01700000007/status","category":"tasks-status"}]}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:07 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks/8ad51f89ba08bc864942a680b110d01700000007/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:D1_sqT97uznthq7wS6WoWg"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:57:08 GMT
+      Server:
+      - GoodData WebApp
+      Refresh:
+      - '2'
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:D1_sqT97uznthq7wS6WoWg:AM2C0k6TYcgbirgQ"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '29'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks/8ad51f89ba08bc864942a680b110d01700000007/status","status":"RUNNING","links":{"poll":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks/8ad51f89ba08bc864942a680b110d01700000007/status"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:08 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks/8ad51f89ba08bc864942a680b110d01700000007/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:3df6eq66o7fIVIKBussLuw"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:57:10 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:3df6eq66o7fIVIKBussLuw:w3mUb4rr1tZDiYxG"
+      Vary:
+      - origin
+      X-Gdc-Request-Time:
+      - '144'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks/8ad51f89ba08bc864942a680b110d01700000007/status","status":"OK","links":{"poll":"/gdc/md/ta11naxec7w3a37gz48asgcavh5sssuz/tasks/8ad51f89ba08bc864942a680b110d01700000007/status"}}}'
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:10 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ta11naxec7w3a37gz48asgcavh5sssuz
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:qE3zYvGWhpo6BBOhjTJf0Q"
+      Stats-On:
+      - ''
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Thu, 24 Jan 2019 12:57:35 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '60'
+      X-Gdc-Request:
+      - ":l5yi5kDkWAt5qERtsKhb-Q:qE3zYvGWhpo6BBOhjTJf0Q:X2qU9f2QmOw9PoWt"
+      Vary:
+      - origin
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 24 Jan 2019 12:57:35 GMT
+- request:
     method: delete
     uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login/5ad80b895edcc438e5a4418e222733fa
     body:
@@ -2818,13 +3847,13 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - gooddata-gem/1.3.2/x86_64-darwin16/2.3.3
+      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
       Content-Type:
       - application/json
       X-Gdc-Authtt:
       - "<X_GDC_AUTHTT>"
       X-Gdc-Request:
-      - QucdFI3BtZ9avhehK0eewQ:v2MIm1RSoiwnVArXrcRNDQ
+      - ":LGTSLsWa9ENlJvBODzOG_g:QG4EcucV6XDr1Pabg9hSSg"
       X-Gdc-Authsst:
       - "<X_GDC_AUTHSST>"
       Host:
@@ -2839,13 +3868,13 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store, must-revalidate
       Date:
-      - Wed, 10 Oct 2018 10:42:22 GMT
+      - Thu, 24 Jan 2019 12:57:35 GMT
       Server:
       - GoodData WebApp
       X-Gdc-Request-Time:
-      - '24'
+      - '26'
       X-Gdc-Request:
-      - QucdFI3BtZ9avhehK0eewQ:v2MIm1RSoiwnVArXrcRNDQ:jX9Wy3kzGi9KfATL
+      - ":LGTSLsWa9ENlJvBODzOG_g:QG4EcucV6XDr1Pabg9hSSg:1Un65H4zbLLrrIJB"
       Vary:
       - origin
       Strict-Transport-Security:
@@ -2854,5 +3883,5 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Wed, 10 Oct 2018 10:42:22 GMT
+  recorded_at: Thu, 24 Jan 2019 12:57:36 GMT
 recorded_with: VCR 4.0.0
