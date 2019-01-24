@@ -1,10 +1,21 @@
-example = 'GD_ENV=testing GD_SPEC_PASSWORD=secret bundle exec ruby bin/test_projects_cleanup.rb'
+require 'optparse'
 
-if ARGV.include?('-h')
-  puts 'Example:'
-  puts example
-  exit 0
-end
+example = 'Usage example: GD_ENV=testing GD_SPEC_PASSWORD=secret bundle exec ruby bin/test_projects_cleanup.rb'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = example
+  opts.on('-f', '--force', 'Mercilessly deletes matching projects.') do |v|
+    options[:force] = v
+  end
+  opts.on('-d N', '--days N', Integer, 'Number of days to keep projects for.') do |v|
+    options[:days] = v
+  end
+  opts.on_tail("-h", "--help", "Show this message.") do
+    puts opts
+    exit 0
+  end
+end.parse!
 
 require 'gooddata'
 require_relative '../spec/environment/environment'
@@ -72,6 +83,7 @@ def clean_up!(client, force, days)
   delete_project_by_title(/userprov-e2e-testing/, projects, days, force)
   delete_ads_by_title(/Development ADS/, client, days, force)
   delete_ads_by_title(/Production ADS/, client, days, force)
+  delete_ads_by_title(/^users brick load test/, client, days, force)
 end
 
 def init_client(username, password, server)
@@ -89,8 +101,8 @@ password = secrets[:password]
 dev_client = init_client(username, password, "https://#{config[:dev_server]}")
 prod_client = init_client(username, password, "https://#{config[:prod_server]}")
 
-force = ARGV.include?('-f')
-days = 14
+force = options[:force]
+days = options[:days] || 14
 clean_up!(dev_client, force, days)
 clean_up!(prod_client, force, days)
 

@@ -2,6 +2,7 @@ require_relative 'support/configuration_helper'
 require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
 require_relative 'support/lcm_helper'
+require_relative 'support/s3_helper'
 require 'gooddata_datawarehouse' unless GoodData::Environment::VCR_ON
 
 def create_suffix
@@ -139,22 +140,12 @@ shared_context 'lcm bricks' do |opts = {}|
       title: 'LCM spec Client With Conflicting LDM Changes'
     }
 
-    s3_endpoint = 'http://localstack:4572'
     workspace_csv = LcmHelper.create_workspace_csv(
       @workspaces,
       Support::CUSTOM_CLIENT_ID_COLUMN
     )
-    s3 = Aws::S3::Resource.new(access_key_id: 'foo',
-                               secret_access_key: 'foo',
-                               endpoint: s3_endpoint,
-                               region: 'us-west-2',
-                               force_path_style: true)
 
-    bucket_name = 'testbucket'
-    bucket = s3.bucket(bucket_name)
-    bucket = s3.create_bucket(bucket: bucket_name) unless bucket.exists?
-    obj = bucket.object(@workspace_table_name)
-    obj.upload_file(Pathname.new(workspace_csv))
+    s3_info = Support::S3Helper.upload_file(workspace_csv, @workspace_table_name)
 
     if GoodData::Environment::VCR_ON && GoodData::Helpers::VcrConfigurer.vcr_cassette_playing?
       @data_product_id = GoodData::Helpers::VcrConfigurer::VCR_DATAPRODUCT_ID
@@ -174,14 +165,12 @@ shared_context 'lcm bricks' do |opts = {}|
       segments_filter: segments_filter.to_json,
       data_product: @data_product_id,
       input_source_type: 's3',
-      s3_bucket: bucket_name,
-      s3_endpoint: s3_endpoint,
       custom_client_id_column: Support::CUSTOM_CLIENT_ID_COLUMN,
       transfer_all: true,
       conflicting_client_id: conflicting_client_id,
       schedule_additional_hidden_params: (opts[:schedule_additional_hidden_params] || {}).to_json,
       process_additional_hidden_params: (opts[:process_additional_hidden_params] || {}).to_json
-    }
+    }.merge(s3_info)
   end
 
   after(:each) do

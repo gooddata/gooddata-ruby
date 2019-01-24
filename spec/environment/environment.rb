@@ -42,6 +42,7 @@ module GoodData
         secrets_path = File.join(File.dirname(__FILE__), 'secrets.yaml')
         secrets = YAML.load_file(secrets_path)
         env_secrets = secrets[env.downcase].symbolize_keys
+        env_secrets.merge!(secrets['global'].symbolize_keys)
         encryption_key = ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
         env_secrets.each do |_, value|
           decrypted = GoodData::Helpers.decrypt(value, encryption_key)

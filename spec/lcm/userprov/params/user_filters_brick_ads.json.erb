@@ -4,15 +4,13 @@
   "CLIENT_GDC_PROTOCOL": "https",
   "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
   "gd_encoded_params": {
-    "GDC_USERNAME": "${username}",
-    "GDC_PASSWORD": "${password}",
     "filters_config": {
       "user_column": "login",
       "labels": [{"label": "label.csv_policies.state", "column": "state"}]
     },
     "ads_client": {
-      "username": "${username}",
-      "password": "${password}",
+      "username": "${GDC_USERNAME}",
+      "password": "${GDC_PASSWORD}",
       "jdbc_url": "<%= jdbc_url %>"
     },
     "input_source": {
@@ -28,8 +26,8 @@
   },
   "fail_early": "true",
   "strict": "true",
-  "username": "<%= config[:username] %>",
-  "password": "<%= config[:password] %>",
+  "GDC_USERNAME": "<%= config[:username] %>",
+  "GDC_PASSWORD": "<%= config[:password] %>",
   "sync_mode": "<%= sync_mode %>",
   "data_product": "<%= data_product %>"
 }

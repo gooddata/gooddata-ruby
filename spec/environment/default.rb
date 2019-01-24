@@ -6,6 +6,8 @@
 
 module GoodData
   module Environment
+    set_const :LOCALSTACK, ENV['GD_LOCALSTACK'] == 'true' || false
+
     module ConnectionHelper
       set_const :GD_PROJECT_TOKEN, ''
       set_const :GD_MAX_RETRY, Helpers::GD_MAX_RETRY

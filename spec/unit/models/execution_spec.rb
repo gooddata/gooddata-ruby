@@ -7,6 +7,8 @@
 require 'gooddata/models/schedule'
 
 describe GoodData::Execution do
+  let(:client) { double(GoodData::Rest::Client) }
+
   before(:each) do
     @data = {
       "execution" => {
@@ -22,6 +24,7 @@ describe GoodData::Execution do
       }
     }
     @execution = GoodData::Execution.new(@data)
+    @execution.client = client
   end
 
   describe '#created' do
@@ -104,6 +107,34 @@ describe GoodData::Execution do
       @data['execution']['endTime'] = nil
       running_execution = GoodData::Execution.new(@data)
       expect(running_execution.duration.class).to eq Float
+    end
+  end
+
+  describe '#wait_for_result' do
+    let(:result) { { result: 'foo' } }
+    it 'polls for a result' do
+      expect(client).to receive(:poll_on_response) { result }
+      expect(@execution.wait_for_result.json).to eq(result)
+    end
+
+    context 'timeout specified' do
+      subject { @execution.wait_for_result(timeout: 666) }
+
+      it 'passes' do
+        expect(client).to receive(:poll_on_response) do |&block|
+          block.call({})
+        end
+        subject
+      end
+
+      it 'fails when timeout exceeded' do
+        expect(client).to receive(:poll_on_response) do |&block|
+          far_in_the_future = Time.now + 999_999
+          expect(Time).to receive(:now) { far_in_the_future }
+          block.call({})
+        end
+        expect { subject }.to raise_exception('Waiting for schedule execution timed out.')
+      end
     end
   end
 end

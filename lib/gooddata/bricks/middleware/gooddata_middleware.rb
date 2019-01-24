@@ -82,6 +82,7 @@ module GoodData
           'development_client' => development_client
         }
 
+        # collect parent project if deployed as process
         if params['GDC_PROJECT_ID']
           new_params['gdc_project'] = GoodData.project = client.projects(params['GDC_PROJECT_ID'])
         end

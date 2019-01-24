@@ -3,8 +3,6 @@
   "CLIENT_GDC_PROTOCOL": "https",
   "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
   "gd_encoded_params": {
-    "GDC_USERNAME": "${username}",
-    "GDC_PASSWORD": "${password}",
     "input_source": {
       "type": "ads",
       "query": "SELECT distinct LOWER(login) as login, LOWER(login) as email, first_name, last_name, sso_provider, authentication_modes FROM lcm_user;"
@@ -16,8 +14,8 @@
       "vertica": "<%= config[:vertica_prod_token] %>"
     },
     "ads_client": {
-      "username": "${username}",
-      "password": "${password}",
+      "username": "${GDC_USERNAME}",
+      "password": "${GDC_PASSWORD}",
       "jdbc_url": "<%= jdbc_url %>"
     },
     "additional_params": {
@@ -30,13 +28,13 @@
       "update": "UPDATE \"<%= release_table_name %>\" SET master_project_id='#{master_project_id}', version=#{version} WHERE segment_id='#{segment_id}';"
     },
     "technical_user": [
-      "${username}"
+      "${GDC_USERNAME}"
     ],
     "development_client": {
       "protocol": "https",
       "hostname": "<%= config[:dev_server] %>",
-      "username": "${username}",
-      "password": "${password}"
+      "username": "${GDC_USERNAME}",
+      "password": "${GDC_PASSWORD}"
     }
   },
   "gd_encoded_hidden_params": {
@@ -47,6 +45,6 @@
   "release_table_name": "<%= release_table_name %>",
   "fail_early": "true",
   "strict": "true",
-  "username": "<%= config[:username] %>",
-  "password": "<%= config[:password] %>"
+  "GDC_USERNAME": "<%= config[:username] %>",
+  "GDC_PASSWORD": "<%= config[:password] %>"
 }
