@@ -14,12 +14,15 @@ describe 'Kubernetes component LCM brick deployment' do
     )
     @options = { project: @project, client: @rest_client }
 
-    component_name = ENV['LCM_BRICKS_COMPONENT_NAME']
-    if component_name.nil?
-      image_tag = ENV['LCM_BRICKS_IMAGE_TAG'] || 'M3'
-      @component_name = "lcm-brick[#{image_tag}]-help"
+    # setting the IMAGE_TAG explicitly means we are asking development/staging version
+    # leaving the tag empty implies latest stable version
+    # early access (aka RC) is not supported by this test yet
+    image_tag = ENV['LCM_BRICKS_IMAGE_TAG']
+
+    if image_tag.nil? || image_tag.empty?
+      @component_name = "lcm-brick-help"
     else
-      @component_name = component_name
+      @component_name = "lcm-brick[#{image_tag}]-help"
     end
     GoodData.logger.debug("Using component with name #{@component_name}")
   end
