@@ -7,8 +7,8 @@
     "GDC_USERNAME": "${username}",
     "GDC_PASSWORD": "${password}",
     "aws_client": {
-      "access_key_id": "foo",
-      "secret_access_key": "foo",
+      "access_key_id": "${s3_access_key}",
+      "secret_access_key": "${s3_secret_access_key}",
       "endpoint": "<%= s3_endpoint %>"
     },
     "input_source": {
@@ -28,5 +28,7 @@
   <% end %>
   <% if splunk_log_path %>
   "SPLUNK_LOG_PATH": "<%= splunk_log_path %>"
-  <% end %>
+  <% end %>,
+  "s3_secret_access_key": "<%= s3_secret_access_key %>",
+  "s3_access_key": "<%= s3_access_key %>"
 }

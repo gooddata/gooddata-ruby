@@ -56,29 +56,6 @@ shared_context 'user filters brick test context' do
                [promoted_login, state_label.uri, 'Washington']]
     @project.add_data_permissions(filters)
 
-    @test_context = {
-      project_id: @project.pid,
-      config: LcmConnectionHelper.environment,
-      s3_bucket: Support::S3Helper::BUCKET_NAME,
-      s3_endpoint: Support::S3Helper::S3_ENDPOINT,
-      s3_key: 'user_filters',
-      users_brick_input: {
-        s3_bucket: Support::S3Helper::BUCKET_NAME,
-        s3_endpoint: Support::S3Helper::S3_ENDPOINT,
-        s3_key: 'users_brick_input'
-      }
-    }
-    @template_path = File.expand_path(
-      '../params/user_filters_brick.json.erb',
-      __FILE__
-    )
-
-    upload_user_filters_csv([{
-                                 login: 'rubydev+admin@gooddata.com',
-                                 state: 'Washington',
-                                 client_id: 'testingclient'
-                             }])
-
     user_data = [
       {
         custom_login: 'rubydev+admin@gooddata.com',
@@ -102,7 +79,29 @@ shared_context 'user filters brick test context' do
       }
     ]
     users_csv = ConfigurationHelper.csv_from_hashes(user_data)
-    Support::S3Helper.upload_file(users_csv, @test_context[:users_brick_input][:s3_key])
+    users_s3_key = "users_brick_input_#{GoodData::Environment::RANDOM_STRING}"
+    filters_s3_key = "user_filters_#{GoodData::Environment::RANDOM_STRING}"
+    s3_info = Support::S3Helper.upload_file(users_csv, users_s3_key)
+
+    @test_context = {
+      project_id: @project.pid,
+      config: LcmConnectionHelper.environment,
+      s3_key: filters_s3_key,
+      users_brick_input: s3_info.merge(
+        s3_key: users_s3_key
+      )
+    }.merge(s3_info)
+
+    @template_path = File.expand_path(
+      'params/user_filters_brick.json.erb',
+      __dir__
+    )
+
+    upload_user_filters_csv([
+      login: 'rubydev+admin@gooddata.com',
+      state: 'Washington',
+      client_id: 'testingclient'
+    ])
   end
 
   after(:all) do
