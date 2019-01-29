@@ -4,7 +4,6 @@ require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/s3_helper'
 require_relative '../userprov/shared_contexts_for_user_bricks'
 require_relative '../integration/brick_runner'
-require_relative '../helpers/schedule_helper'
 require_relative 'shared_contexts_for_load_tests'
 
 def user_in_domain(user_name)

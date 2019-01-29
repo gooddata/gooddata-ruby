@@ -8,7 +8,6 @@ require_relative '../integration/support/configuration_helper'
 require_relative '../integration/shared_examples_for_synchronization_bricks'
 require_relative '../integration/shared_contexts_for_lcm'
 require_relative '../integration/brick_runner'
-require_relative '../helpers/schedule_helper'
 require_relative 'shared_contexts_for_load_tests'
 
 # global variables to simplify passing stuff between shared contexts and examples
