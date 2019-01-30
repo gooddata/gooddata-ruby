@@ -33,7 +33,8 @@ class BrickRunner
       decoded_params = GoodData::Helpers.decode_params(script_params(opts))
       params, hidden_params = extract_hidden_params(decoded_params)
       params.delete('gd_encoded_hidden_params')
-      deploy_string = "${PRODUCTION_APPSTORE}:branch/lcm2:/apps/#{brick_name}"
+      appstore_name = GoodData::Environment::ConnectionHelper::LCM_ENVIRONMENT[:appstore_deploy_name]
+      deploy_string = "${#{appstore_name}}:branch/lcm2:/apps/#{brick_name}"
 
       process = service_project.deploy_process(
         deploy_string,

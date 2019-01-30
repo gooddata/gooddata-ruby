@@ -16,7 +16,8 @@ module GoodData
                 prod_server: 'staging3-lcm-prod.intgdc.com',
                 dev_organization: 'staging3-lcm-dev',
                 prod_organization: 'staging3-lcm-prod',
-                username: 'rubydev+admin@gooddata.com'
+                username: 'rubydev+admin@gooddata.com',
+                appstore_deploy_name: 'PRODUCTION_APPSTORE'
     end
 
     module ProcessHelper
