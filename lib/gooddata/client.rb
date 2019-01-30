@@ -42,8 +42,6 @@ require_relative 'core/core'
 
 module GoodData
   class << self
-    RELEASE_INFO_PATH = '/gdc/releaseInfo'
-
     # Initializes required dynamically loaded classes
     def init_module
       # Metadata packages, such as report.rb, require this to be loaded first
@@ -54,11 +52,6 @@ module GoodData
 
       # Load collections
       Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
-    end
-
-    # Returns information about the GoodData API as a Hash (e.g. version, release time etc.)
-    def release_info
-      @release_info ||= @connection.get(RELEASE_INFO_PATH)['release']
     end
   end
 end
