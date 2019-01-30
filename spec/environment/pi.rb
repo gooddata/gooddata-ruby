@@ -20,7 +20,8 @@ module GoodData
                 prod_server: "#{pi_env}.na.intgdc.com",
                 dev_organization: 'default',
                 prod_organization: 'default',
-                username: DEFAULT_USERNAME
+                username: DEFAULT_USERNAME,
+                appstore_deploy_name: 'PRODUCTION_APPSTORE'
     end
   end
 end
