@@ -53,6 +53,12 @@ module GoodData
       # Load collections
       Dir[File.dirname(__FILE__) + '/collections/*.rb'].each { |file| require file }
     end
+
+    # Returns information about the GoodData API as a Hash (e.g. version, release time etc.)
+    # @deprecated The release info endpoint has been deprecated without a replacement.
+    def release_info
+      fail 'The release info endpoint has been deprecated without a replacement.'
+    end
   end
 end
 
