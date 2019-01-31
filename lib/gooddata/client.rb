@@ -42,8 +42,6 @@ require_relative 'core/core'
 
 module GoodData
   class << self
-    RELEASE_INFO_PATH = '/gdc/releaseInfo'
-
     # Initializes required dynamically loaded classes
     def init_module
       # Metadata packages, such as report.rb, require this to be loaded first
@@ -57,8 +55,9 @@ module GoodData
     end
 
     # Returns information about the GoodData API as a Hash (e.g. version, release time etc.)
+    # @deprecated The release info endpoint has been deprecated without a replacement.
     def release_info
-      @release_info ||= @connection.get(RELEASE_INFO_PATH)['release']
+      fail 'The release info endpoint has been deprecated without a replacement.'
     end
   end
 end
