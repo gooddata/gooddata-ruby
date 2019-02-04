@@ -206,7 +206,7 @@ module GoodData
       def disconnect
         if stats_on?
           GoodData.logger.info("API call statistics to server #{@connection.server}")
-          GoodData.logger.info(@connection.stats_table)
+          GoodData.logger.info(@connection.stats_table.to_s)
         end
         @connection.disconnect
       end

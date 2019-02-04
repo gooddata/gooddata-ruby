@@ -11,8 +11,8 @@
       "labels": [{"label": "label.csv_policies.state", "column": "state"}]
     },
     "aws_client": {
-      "access_key_id": "foo",
-      "secret_access_key": "foo",
+      "access_key_id": "${s3_access_key}",
+      "secret_access_key": "${s3_secret_access_key}",
       "endpoint": "<%= s3_endpoint %>"
     },
     "input_source": {
@@ -44,5 +44,7 @@
   "sync_mode": "<%= sync_mode %>",
   <% if data_product %>
   "data_product": "<%= data_product %>"
-  <% end %>
+  <% end %>,
+  "s3_secret_access_key": "<%= s3_secret_access_key %>",
+  "s3_access_key": "<%= s3_access_key %>"
 }

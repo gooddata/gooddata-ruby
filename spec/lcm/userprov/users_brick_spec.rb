@@ -22,14 +22,6 @@ describe 'UsersBrick' do
     }
     project_helper = Support::ProjectHelper.create(@opts)
     @project = project_helper.project
-    @test_context = {
-      project_id: @project.pid,
-      config: LcmConnectionHelper.environment,
-      s3_bucket: Support::S3Helper::BUCKET_NAME,
-      s3_endpoint: Support::S3Helper::S3_ENDPOINT,
-      s3_key: 'user_data'
-    }
-    @template_path = File.expand_path('../params/users_brick.json.erb', __FILE__)
     @user_name = "#{@suffix}@bar.baz"
     project_helper.ensure_user(@user_name, @domain)
     @user_data = {
@@ -45,7 +37,14 @@ describe 'UsersBrick' do
         client_id: 'testingclient'
     }
     users_csv = ConfigurationHelper.csv_from_hashes([@user_data])
-    Support::S3Helper.upload_file(users_csv, @test_context[:s3_key])
+    s3_key = 'user_data'
+    s3_info = Support::S3Helper.upload_file(users_csv, s3_key)
+    @test_context = {
+      s3_key: s3_key,
+      project_id: @project.pid,
+      config: LcmConnectionHelper.environment
+    }.merge(s3_info)
+    @template_path = File.expand_path('params/users_brick.json.erb', __dir__)
   end
 
   after(:each) do

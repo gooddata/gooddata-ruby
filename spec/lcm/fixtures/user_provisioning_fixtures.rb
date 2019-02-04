@@ -32,7 +32,7 @@ module Fixtures
         end
       end.flatten
 
-      Support::S3Helper.upload_file(ConfigurationHelper.csv_from_hashes(user_data), Support::S3Helper::USERS_KEY)
+      s3_info = Support::S3Helper.upload_file(ConfigurationHelper.csv_from_hashes(user_data), Support::S3Helper::USERS_KEY)
       users.map do |u|
         domain.add_user(login: u[:custom_login]) unless domain.users u[:custom_login]
       end
@@ -45,8 +45,6 @@ module Fixtures
       brick_params = {
         project_id: project_fixtures[:projects].first.pid, # this doesn't really matter for the runtime
         config: LcmConnectionHelper.environment,
-        s3_bucket: Support::S3Helper::BUCKET_NAME,
-        s3_endpoint: Support::S3Helper::S3_ENDPOINT,
         s3_key: Support::S3Helper::USER_FILTERS_KEY,
         data_source: 's3',
         column_name: 'value',
@@ -54,11 +52,9 @@ module Fixtures
         label_config: Support::UserProvisioningHelper.label_config(mufs).to_json,
         data_product: project_fixtures[:data_product].data_product_id,
         users_brick_input: {
-          s3_bucket: Support::S3Helper::BUCKET_NAME,
-          s3_endpoint: Support::S3Helper::S3_ENDPOINT,
           s3_key: Support::S3Helper::USERS_KEY
-        }
-      }
+        }.merge(s3_info)
+      }.merge(s3_info)
 
       # consider joining brick_params and the rest in the future!
       @objects = {

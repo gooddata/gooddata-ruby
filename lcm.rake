@@ -79,7 +79,7 @@ namespace :test do
   test_cases.each do |test_case|
     desc "Run #{test_case} tests"
     RSpec::Core::RakeTask.new(test_case) do |task|
-      task.pattern = "spec/lcm/#{test_case}/**/*.rb"
+      task.pattern = "spec/lcm/#{test_case}/**/*_spec.rb"
     end
   end
 
