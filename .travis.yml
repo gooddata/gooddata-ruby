@@ -71,10 +71,11 @@ jobs:
   - &lcm-slow-tests
     name: staging1 - lcm slow tests
     stage: after-merge
-    script: |
-      bundle exec rake -f lcm.rake docker:build
-      bundle exec rake -f lcm.rake docker:bundle
-      bundle exec rake -f lcm.rake test:docker:slow
+    script:
+      - sudo keytool -importcert -alias gooddata-2008 -file "./data/2008.crt" -keystore $JAVA_HOME/jre/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
+      - sudo keytool -importcert -alias gooddata-int -file "./data/new_ca.cer" -keystore $JAVA_HOME/jre/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
+      - sudo keytool -importcert -alias gooddata-prod -file "data/new_prodgdc_ca.crt" -keystore $JAVA_HOME/jre/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
+      - bundle exec rake -f lcm.rake test:slow
     env:
     - VCR_ON=false
     - GD_ENV=staging
