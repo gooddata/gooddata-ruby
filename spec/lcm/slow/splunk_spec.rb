@@ -3,6 +3,8 @@ require_relative '../userprov/support/user_provisioning_helper'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/s3_helper'
 
+file_name = nil
+
 describe GoodData::SplunkLogger do
   before(:all) do
     @fixtures = Fixtures::UserProvisioningFixtures.new projects_amount: 2,
@@ -19,7 +21,10 @@ describe GoodData::SplunkLogger do
   end
 
   context 'when splunk logging is switched on' do
-    let(:file_name) { "splunk_#{GoodData::Environment::RANDOM_STRING}.log" }
+    before do
+      file_name = "splunk_#{GoodData::Environment::RANDOM_STRING}.log"
+    end
+
     after(:all) do
       File.delete file_name if File.exist? file_name
     end
