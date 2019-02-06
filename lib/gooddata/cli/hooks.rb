@@ -1,4 +1,3 @@
-# encoding: UTF-8
 #
 # Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -11,7 +10,8 @@ require_relative '../helpers/auth_helpers'
 GoodData::CLI.module_eval do
   pre do |global, _command, _options, _args|
     require 'logger'
-    GoodData.logger = Logger.new(STDOUT) if global[:l]
+    GoodData.logger = Logger.new(STDERR)
+    GoodData.logger.level = Logger::Severity::ERROR
     username = global[:username]
     password = global[:password]
     token = global[:token]
@@ -21,6 +21,7 @@ GoodData::CLI.module_eval do
     username = creds[:username] if username.nil?
     password = creds[:password] if password.nil?
     token = creds[:auth_token] || creds[:token] if token.nil?
+    GoodData.logger.error 'SSL verification is turned off. I hope you are not in production!' unless global[:verify_ssl]
 
     global[:token] = token if global[:token].nil?
     if global[:login].nil?

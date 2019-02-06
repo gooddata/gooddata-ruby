@@ -1,4 +1,3 @@
-# encoding: UTF-8
 #
 # Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -67,7 +66,7 @@ module GoodData
             begin
               res = GoodData::Process.deploy(dir, options.merge(:files_to_exclude => params))
               block.call(res)
-            rescue => e
+            rescue StandardError => e
               GoodData.logger.error(e.inspect)
             ensure
               res.delete if res
@@ -106,11 +105,13 @@ module GoodData
       def deploy_simple_process(path, options = { client: GoodData.client, project: GoodData.project })
         client, project = GoodData.get_client_and_project(options)
 
-        path = Pathname(path) || fail('Path is not specified')
+        fail 'Path is not specified' unless path
+
+        path = Pathname(path) || fail('Path is not a valid pathname')
         files_to_exclude = options[:files_to_exclude].nil? ? [] : options[:files_to_exclude].map { |pname| Pathname(pname) }
 
         type = options[:type] || 'GRAPH'
-        deploy_name = options[:name]
+        deploy_name = options[:name] || "Process of #{path} script"
         fail ArgumentError, 'options[:name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
 
         verbose = options[:verbose] || false
@@ -157,9 +158,7 @@ module GoodData
 
             full_brick_path = File.join(dir, 'app_store', brick_path)
 
-            unless File.exist?(full_brick_path)
-              fail "Invalid brick name specified - '#{brick_name}'"
-            end
+            fail "Invalid brick name specified - '#{brick_name}'" unless File.exist?(full_brick_path)
 
             return deploy(full_brick_path, opts)
           end
@@ -167,8 +166,7 @@ module GoodData
       end
 
       def deploy_from_appstore(path, options = { :client => GoodData.client, :project => GoodData.project })
-        deploy_name = options[:name]
-        fail ArgumentError, 'options[:name] can not be nil or empty!' if deploy_name.nil? || deploy_name.empty?
+        deploy_name = options[:name] || "Process of #{path}"
 
         verbose = options[:verbose] || false
         GoodData.logger.info("Deploying #{path}") if verbose
@@ -211,9 +209,7 @@ module GoodData
           else
             client.put("/gdc/projects/#{project.pid}/dataload/processes/#{process_id}", data)
           end
-        if res.keys.first == 'asyncTask'
-          res = JSON.parse(client.poll_on_code(res['asyncTask']['links']['poll'], options.merge(process: false)))
-        end
+        res = JSON.parse(client.poll_on_code(res['asyncTask']['links']['poll'], options.merge(process: false))) if res.keys.first == 'asyncTask'
 
         client.create(Process, res, project: project)
       end
@@ -242,7 +238,7 @@ module GoodData
           # this branch expects a zipped file. Since the filename on webdav is by default
           # equal to the filename of a local file. I happened often that the name clashed
           # if ran in parallel. Create a randomized name to mitigate that
-          randomized_filename = (0...16).map { (65 + rand(26)).chr }.join
+          randomized_filename = (0...16).map { (rand(65..90)).chr }.join
           client.upload_to_user_webdav(path, { filename: randomized_filename }.merge(opts))
           randomized_filename
         else
@@ -357,9 +353,7 @@ module GoodData
         raise(e)
       ensure
         result = client.get(result['executionTask']['links']['detail'])
-        if result['executionDetail']['status'] == 'ERROR'
-          fail "Runing process failed. You can look at a log here #{result['executionDetail']['logFileName']}"
-        end
+        fail "Runing process failed. You can look at a log here #{result['executionDetail']['logFileName']}" if result['executionDetail']['status'] == 'ERROR'
       end
       client.create(GoodData::ExecutionDetail, result, client: client, project: project)
     end

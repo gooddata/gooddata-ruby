@@ -38,7 +38,7 @@ module GoodData
           end
 
           # Ask for token
-          auth_token = GoodData::CLI.terminal.ask('Authorization Token') do |q|
+          auth_token = GoodData::CLI.terminal.ask('Authorization (Project) Token') do |q|
             set_default_value(q, old_credentials[:auth_token])
           end
 
@@ -64,7 +64,7 @@ module GoodData
 
         # Ask for credentials and store them
         def store(credentials_file_path = Helpers::AuthHelper.credentials_file)
-          puts 'This will store credntials to GoodData in an enencrypted form to your harddrive to file ~/.gooddata.'
+          puts 'This will store credentials to GoodData in an UNencrypted form to your harddrive to file ~/.gooddata.'
           overwrite = GoodData::CLI.terminal.ask('Do you want to continue? (y/n)')
           return if overwrite != 'y'
 
