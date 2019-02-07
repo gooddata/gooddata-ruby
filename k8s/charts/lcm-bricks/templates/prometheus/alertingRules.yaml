@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lcm-bricks-service-monitoring-rules
+  namespace: monitoring
+  labels:
+    app: lcm-bricks
+    component: lcm
+    team: lcm
+    chart: lcm-bricks
+    release: {{ .Release.Name }}
+data:
+  lcm-bricks-service-monitoring-rules.yaml: |+
+    groups:
+    - name: lcm-bricks-service-monitoring-rules
+      rules:
+      - record: "container_pod:lcm_pod_container_status_restarts:increase10m"
+        expr: increase(kube_pod_container_status_restarts_total{namespace='{{ .Release.Namespace }}'}[10m])
+      - alert: "[LCM] Pod has too many restarts on cluster={{ .Values.clusterId }}"
+        expr: container_pod:lcm_pod_container_status_restarts:increase10m >= 1
+        labels:
+          severity: warning
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "There is more than 0 restarts of {{`{{ $labels.pod }}`}} pod in the last 10 minutes"
+          summary: "{{`{{ $labels.pod }}`}} pod has too many restarts"
+      - alert: "[LCM] Pod has too many restarts on cluster={{ .Values.clusterId }}"
+        expr: container_pod:lcm_pod_container_status_restarts:increase10m >= 2
+        labels:
+          severity: critical
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "There is more than 1 restart of {{`{{ $labels.pod }}`}} pod in the last 10 minutes"
+          summary: "{{`{{ $labels.pod }}`}} pod has too many restarts"
+      - record: "container_pod:lcm_pod_container_status_oomkilled:increase10m"
+        expr: increase(kube_pod_container_status_terminated_reason{namespace='{{ .Release.Namespace }}', reason='OOMKilled'}[10m])
+      - alert: "[LCM] OOMKill occured on cluster={{ .Values.clusterId }}"
+        expr: container_pod:lcm_pod_container_status_oomkilled:increase10m >= 1
+        labels:
+          severity: warning
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "{{`{{ $labels.pod }}`}} was OOMKilled in the last 30 minutes. Investigate and/or increase memoryRequest or memoryLimit."
+          summary: "{{`{{ $labels.pod }}`}} OOMKill occured"
+      - alert: "[LCM] OOMKill occured on cluster={{ .Values.clusterId }}"
+        expr: container_pod:lcm_pod_container_status_oomkilled:increase10m >= 2
+        labels:
+          severity: critical
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "{{`{{ $labels.pod }}`}} was OOMKilled in the last 10 minutes. Investigate and/or increase memoryRequest or memoryLimit."
+          summary: "{{`{{ $labels.pod }}`}} OOMKill occured"
+      - record: "container_pod:lcm_pod_container_status_error:increase10m"
+        expr: increase(kube_pod_container_status_terminated_reason{namespace='{{ .Release.Namespace }}', reason!~"Completed|OOMKilled"}[10m])
+      - alert: "[LCM] Container exited with error on cluster={{ .Values.clusterId }}"
+        expr: container_pod:lcm_pod_container_status_error:increase10m >= 1
+        labels:
+          severity: warning
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "{{`{{ $labels.pod }}`}} container exited with non-zero exit code in the last 10 minutes. Investigate and fix."
+          summary: "{{`{{ $labels.pod }}`}} Container exited with error"
+      - alert: "[LCM] Container exited with error on cluster={{ .Values.clusterId }}"
+        expr: container_pod:lcm_pod_container_status_error:increase10m >= 2
+        labels:
+          severity: critical
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "{{`{{ $labels.pod }}`}} container exited with non-zero exit code in the last 10 minutes. Investigate and fix."
+          summary: "{{`{{ $labels.pod }}`}} Container exited with error"
+      - alert: "[LCM] Container is being throttled on cluster={{ .Values.clusterId }}"
+        expr: rate(container_cpu_cfs_throttled_seconds_total{namespace='{{ .Release.Namespace }}'}[1m]) > 1
+        for: 5m
+        labels:
+          severity: critical
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "{{`{{ $labels.pod_name }}`}} container is beeing throttled and probably hit CPU limit. Investigate root cause and increase limit and/or number of replicas if necessary."
+          summary: "{{`{{ $labels.pod_name }}`}} Container is being throttled"
+      - alert: "[LCM] is doing too much pause GC on cluster={{ .Values.clusterId }}"
+        expr: rate(jvm_gc_pause_seconds_sum{kubernetes_namespace='{{ .Release.Namespace }}'}[1m]) > 1
+        for: 5m
+        labels:
+          severity: critical
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "{{`{{ $labels.kubernetes_pod_name }}`}} container is spending too much time in pause garbage collector. Investigate root cause and increase heap size and/or number of replicas if necessary."
+          summary: "{{`{{ $labels.kubernetes_pod_name }}`}} is doing too much pause GC"
