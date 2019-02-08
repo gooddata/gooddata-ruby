@@ -29,7 +29,7 @@ describe 'Kubernetes component LCM brick deployment' do
 
   after(:all) do
     @project.delete if @project
-    @rest_client.disconnect
+    @rest_client.disconnect if @rest_client
   end
 
   it 'deploys and run' do
