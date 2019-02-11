@@ -57,7 +57,6 @@ module GoodData
         Timeout::Error
       ]
 
-      RETRIES_ON_TOO_MANY_REQUESTS_ERROR = 12
       RETRY_TIME_INITIAL_VALUE = 1
       RETRY_TIME_COEFFICIENT = 1.5
       RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
@@ -86,11 +85,10 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &_block)
-          opts = { :tries => 1, :on => RETRYABLE_ERRORS }.merge(options)
+          opts = { :tries => 12, :on => RETRYABLE_ERRORS }.merge(options)
 
           retry_exception = opts[:on]
           retries = opts[:tries]
-          too_many_requests_tries = RETRIES_ON_TOO_MANY_REQUESTS_ERROR
 
           unless retry_exception.is_a?(Array)
             retry_exception = [retry_exception]
@@ -102,17 +100,23 @@ module GoodData
           rescue RestClient::Unauthorized, RestClient::Forbidden => e # , RestClient::Unauthorized => e
             raise e unless options[:refresh_token]
             raise e if options[:dont_reauth]
+
             options[:refresh_token].call # (dont_reauth: true)
-            retry if (retries -= 1) > 0
-          rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable
-            GoodData.logger.warn "Too many requests, retrying in #{retry_time} seconds"
+            if (retries -= 1) > 0
+              retry
+            else
+              fail e
+            end
+          rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable, *retry_exception => e
+            GoodData.logger.warn "#{e.message}, retrying in #{retry_time} seconds"
             sleep retry_time
             retry_time *= RETRY_TIME_COEFFICIENT
             # 10 requests with 1.5 coefficent should take ~ 3 mins to finish
-            retry if (too_many_requests_tries -= 1) > 1
-          rescue *retry_exception => e
-            GoodData.logger.warn e.inspect
-            retry if (retries -= 1) > 1
+            if (retries -= 1) > 0
+              retry
+            else
+              fail e
+            end
           end
           yield
         end
@@ -212,9 +216,14 @@ module GoodData
 
         begin
           clear_session_id
-          delete(url, :x_gdc_authsst => sst_token) if url
+          delete(url, :x_gdc_authsst => sst_token, :tries => 0) if url
         rescue RestClient::Unauthorized
-          GoodData.logger.info 'Already disconnected'
+          begin
+            refresh_token
+            delete(url, :x_gdc_authsst => sst_token, :tries => 0) if url
+          rescue RestClient::Unauthorized
+            GoodData.logger.info 'Already disconnected'
+          end
         end
 
         @auth = nil
@@ -337,20 +346,15 @@ module GoodData
         profile method.to_s.upcase, uri, request_id, stats_on do
           b = proc do
             params = fresh_request_params(request_id).merge(options)
-            begin
-              case method
-              when :get
-                @server[uri].get(params, &user_block)
-              when :put
-                @server[uri].put(payload, params)
-              when :delete
-                @server[uri].delete(params)
-              when :post
-                @server[uri].post(payload, params)
-              end
-            rescue RestClient::Exception => e
-              log_error(e, uri, params, options)
-              raise e
+            case method
+            when :get
+              @server[uri].get(params, &user_block)
+            when :put
+              @server[uri].put(payload, params)
+            when :delete
+              @server[uri].delete(params)
+            when :post
+              @server[uri].post(payload, params)
             end
           end
           process_response(options, &b)
@@ -589,9 +593,6 @@ ERR
           fail "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
         end
         result
-      rescue RestClient::Exception => e
-        GoodData.logger.error "Response: #{e.response}"
-        raise $ERROR_INFO
       end
 
       def profile(method, path, request_id, stats_on, &block)

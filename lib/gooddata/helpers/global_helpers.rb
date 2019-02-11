@@ -33,7 +33,7 @@ module GoodData
       include Hashie::Extensions::DeepMerge
     end
 
-    set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 3
+    set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 12
 
     class << self
       def error(msg)

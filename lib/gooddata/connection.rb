@@ -42,12 +42,9 @@ module GoodData
       Rest::Client.disconnect
     end
 
-    def with_connection(options = nil, second_options = nil, third_options = {}, &bl)
-      connection = connect(options, second_options, third_options)
-      bl.call(connection)
-    rescue Exception => e # rubocop:disable RescueException
-      GoodData.logger.error(e.message)
-      raise e
+    def with_connection(options = nil, second_options = nil, third_options = {}, &block)
+      client = connect(options, second_options, third_options)
+      block.call(client)
     ensure
       disconnect
     end
