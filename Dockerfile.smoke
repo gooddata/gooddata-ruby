@@ -2,6 +2,11 @@ ARG GIT_COMMIT=unspecified
 
 FROM harbor.intgdc.com/staging/lcm-bricks:$GIT_COMMIT
 
+LABEL image_name="GDC LCM Bricks smoke tests"
+LABEL maintainer="LCM <lcm@gooddata.com>"
+LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
+LABEL parent_image="harbor.intgdc.com/staging/lcm-bricks:$GIT_COMMIT"
+
 ADD ./lcm.rake .
 ADD ./spec ./spec
 ADD ./gooddata .
