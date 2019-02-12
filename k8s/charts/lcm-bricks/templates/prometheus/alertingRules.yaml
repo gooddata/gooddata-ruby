@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: lcm-bricks-service-monitoring-rules
+  name: lcm-bricks-monitoring-rules
   namespace: monitoring
   labels:
     app: lcm-bricks
@@ -10,9 +10,9 @@ metadata:
     chart: lcm-bricks
     release: {{ .Release.Name }}
 data:
-  lcm-bricks-service-monitoring-rules.yaml: |+
+  lcm-bricks-monitoring-rules.yaml: |+
     groups:
-    - name: lcm-bricks-service-monitoring-rules
+    - name: lcm-bricks-monitoring-rules
       rules:
       - record: "container_pod:lcm_pod_container_status_restarts:increase10m"
         expr: increase(kube_pod_container_status_restarts_total{namespace='{{ .Release.Namespace }}'}[10m])
