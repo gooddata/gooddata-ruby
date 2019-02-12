@@ -1,0 +1,7 @@
+ARG GIT_COMMIT=unspecified
+
+FROM harbor.intgdc.com/staging/lcm-bricks:$GIT_COMMIT
+
+ADD ./lcm.rake .
+ADD ./spec ./spec
+ADD ./gooddata .

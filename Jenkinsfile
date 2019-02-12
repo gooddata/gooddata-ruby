@@ -14,6 +14,11 @@ def config = [
                                         'BRICKS_VERSION': { readFile('./VERSION').trim() }
                                 ]
                         ]
+                ],
+                'lcm-bricks-smoke': [
+                        'docker': [
+                                'dockerfile': './Dockerfile.smoke'
+                        ]
                 ]
         ]
 ]
