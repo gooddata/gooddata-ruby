@@ -196,11 +196,10 @@ jobs:
     deploy:
       provider: rubygems
       gem: gooddata
-      api_key: blabla
+      api_key: $RUBYGEMS_API_KEY
       on:
         branch: master
         tags: true
-      # secure: "NBTqOr12k3urrViTmwLwX123OREEWrBUNf6GluCEIXP1qPutYDTVqljmqniigSfYJQgPjFhnJP82fQ0+cy8d3lt5zHtaSHQsmUPEgNtjd5qFo1aC30PlEVjtuZ0dMbakwJNyrFEhrgfek0IH9URv4GbBGZzYdWUezZZm8kmK/OU="
 
 notifications:
   email:
