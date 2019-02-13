@@ -1,4 +1,40 @@
 # GoodData Ruby SDK Changelog
+## 2.0.0
+
+This is a major version release because the method `.release_info` has been hard-deprecated.
+
+ - Release gem using travis
+ - TMA-1054: Rename monitoring rules definition
+ - TMA-1054: alertingRules for prometheus
+ - TMA-1295: Fix passing file_name to after block
+ - TMA-1295: Don't run slow tests in docker
+ - Fix logging connection stats
+ - Fix spec file pattern
+ - Fix splunk logger test
+ - TMA-1284: Fix passing s3 info to config
+ - Fail when deprecated release_info called
+ - Fix perf cluster appstore name
+ - FEATURE: GDP-539 remove of releaseInfo resource
+ - Recover schedule helper file
+ - Fix load tests
+ - Record vcr cassettes
+ - Run load tests on the server
+ - switched user groups cache from instance variable to param
+ - TMA-1060: correct the smoke test to allow testing both dev and stable versions
+ -  TMA-483 lowering the abusement of user groups resource
+ - TMA-807: up to code standards
+ - TMA-807: log profiling data to splunk
+ - Use latest version of Pronto
+ - TMA-1255: subscription spec utilizes project cache
+ - BUGFIX: TMA-1230 Log brick execution errors
+ - BUGFIX: TMA-1230 Log error message when client disconnecting fails
+ - BUGFIX: TMA-1230 Return inner logger class in MaskLoggerDecorator
+ - Fix path to version file in docs
+ - Fix path to version file in version:bump
+ - Mention rake task version:changelog in docs
+ - fix: remove containers after run
+ - SETI-2444: add missing curl-dev package to docker image
+
 ## 1.3.6
  - Make path to version file relative
 
@@ -270,7 +306,7 @@
 
 ## 1.1.0
  - TMA-860: use new roles API (#1169)
- - test passed locally 
+ - test passed locally
  - Avoid polling idle time in VCR tests
  - Enable vcr for metric specs
  - TMA-832: support for pluggable component process type
