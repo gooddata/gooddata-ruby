@@ -7,6 +7,8 @@ stages:
   if: type IN (api, cron)
 - name: platform-cleanup
   if: type IN (cron)
+- name: gem-release
+  if: branch = master AND type = push
 
 git:
   depth: false # this is needed for pronto
@@ -187,6 +189,19 @@ jobs:
   - <<: *cleanup
     name: staging3 - test environment clean-up
     env: GD_ENV=development
+
+  - stage: gem-release
+    rvm:
+      - 2.3
+      - jruby-9.1.14
+    script: echo "Deploying to rubygems.org ..."
+    deploy:
+      provider: rubygems
+      gem: gooddata
+      api_key: $RUBYGEMS_API_KEY
+      on:
+        branch: master
+        tags: true
 
 notifications:
   email:
