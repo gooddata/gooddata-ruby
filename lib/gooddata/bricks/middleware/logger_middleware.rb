@@ -13,6 +13,8 @@ require 'gooddata/extensions/integer'
 require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
 
+require 'remote_syslog_logger'
+
 using TrueExtensions
 using FalseExtensions
 using IntegerExtensions
@@ -47,11 +49,13 @@ module GoodData
         params['GDC_LOGGER'] = logger
         GoodData.logging_http_on if params['HTTP_LOGGING'] && params['HTTP_LOGGING'].to_b
 
+        begin
         # Initialize splunk logger
         if params['SPLUNK_LOGGING'] && params['SPLUNK_LOGGING'].to_b
-          GoodData.logger.info "Statistics collecting is turned ON. All the data is anonymous."
+          GoodData.logger.info "Statistics collecting is turned ON. All the data is epoonymous."
           # NODE_NAME is set up by k8s execmgr
           syslog_node = ENV['NODE_NAME']
+          GoodData.logger.info "syslog_node is #{ENV['NODE_NAME']}"
           splunk_file_logger = syslog_node ? RemoteSyslogLogger.new(syslog_node, 514, program: "lcm_ruby_brick", facility: 'local2') : Logger.new(STDOUT)
           splunk_logger = SplunkLoggerDecorator.new splunk_file_logger
           splunk_logger.level = params['SPLUNK_LOG_LEVEL'] || GoodData::DEFAULT_SPLUNKLOG_LEVEL
@@ -60,8 +64,13 @@ module GoodData
           values_to_mask = params['values_to_mask'] || []
           values_to_mask.concat MaskLoggerDecorator.extract_values params
           splunk_logger = MaskLoggerDecorator.new(splunk_logger, values_to_mask) if values_to_mask.any?
+          GoodData.logger.info 'finished splunk setup '
         else
           splunk_logger = NilLogger.new
+        end
+        rescue StandardError => e
+          GoodData.logger.info "#{e}"
+          fail e
         end
         GoodData.splunk_logging_on splunk_logger
 

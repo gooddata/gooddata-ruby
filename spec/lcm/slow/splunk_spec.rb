@@ -5,21 +5,7 @@ require_relative '../integration/support/s3_helper'
 
 file_name = nil
 
-describe GoodData::SplunkLogger do
-  before(:all) do
-    @fixtures = Fixtures::UserProvisioningFixtures.new projects_amount: 2,
-                                                       user_amount: 2
-  end
-  context 'when splunk logging is switched off' do
-    it 'does not log to splunk' do
-      params = @fixtures[:brick_params].merge(splunk_logging: false)
-      Support::UserProvisioningHelper.test_users_brick(projects: @fixtures[:projects],
-                                                       test_context: params,
-                                                       user_data: @fixtures[:user_data])
-      expect(GoodData.gd_logger.logging_on?(:splunk)).to be_falsey
-    end
-  end
-
+describe GoodData::SplunkLoggerDecorator do
   context 'when splunk logging is switched on' do
     before do
       file_name = "splunk_#{GoodData::Environment::RANDOM_STRING}.log"
@@ -30,14 +16,12 @@ describe GoodData::SplunkLogger do
     end
 
     it 'logs stuff into the expected file' do
-      params = @fixtures[:brick_params].merge(
-        splunk_logging: true,
-        splunk_log_path: file_name
-      )
-      Support::UserProvisioningHelper.test_users_brick(projects: @fixtures[:projects],
-                                                       test_context: params,
-                                                       user_data: @fixtures[:user_data])
+      params = {
+        "SPLUNK_LOGGING" => "true",
+        "SPLUNK_LOG_PATH" => file_name
+      }
 
+      GoodData::Bricks::Pipeline.help_brick_pipeline.call params
       expect(GoodData.gd_logger.logging_on?(:splunk)).to be_truthy
       contents = File.read(file_name)
 

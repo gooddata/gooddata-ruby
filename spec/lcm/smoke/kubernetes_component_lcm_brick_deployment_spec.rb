@@ -46,11 +46,12 @@ describe 'Kubernetes component LCM brick deployment' do
       expect(component_deployment.name).to eq @component_name
       expect(component_deployment.type).to eq :lcm
 
-      manual_schedule = component_deployment.create_manual_schedule
+      manual_schedule = component_deployment.create_manual_schedule params: { 'SPLUNK_LOGGING' => 'true'}
 
       execution_result = manual_schedule.execute
 
       expect(execution_result).to be_an_instance_of(GoodData::Execution)
+      puts execution_result.log unless execution_result.ok?
       expect(execution_result.status).to eq(:ok)
     ensure
       component_deployment.delete if component_deployment
