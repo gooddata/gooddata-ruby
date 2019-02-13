@@ -188,6 +188,20 @@ jobs:
     name: staging3 - test environment clean-up
     env: GD_ENV=development
 
+  - stage: gem release
+    rvm:
+      - 2.3
+      - jruby-9.1.14
+    script: echo "Deploying to rubygems.org ..."
+    deploy:
+      provider: rubygems
+      gem: gooddata
+      api_key: blabla
+      on:
+        branch: master
+        tags: true
+      # secure: "NBTqOr12k3urrViTmwLwX123OREEWrBUNf6GluCEIXP1qPutYDTVqljmqniigSfYJQgPjFhnJP82fQ0+cy8d3lt5zHtaSHQsmUPEgNtjd5qFo1aC30PlEVjtuZ0dMbakwJNyrFEhrgfek0IH9URv4GbBGZzYdWUezZZm8kmK/OU="
+
 notifications:
   email:
     recipients:
