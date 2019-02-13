@@ -6,7 +6,11 @@ require 'logger'
 
 module GoodData
   # Logger that process given message to format readable by splunk
-  class SplunkLogger < Logger
+  class SplunkLoggerDecorator < Logger
+    def initialize(logger = Logger)
+      @logger = logger
+    end
+
     def hash_to_string(hash)
       hash.map { |pair| " #{pair[0]}=#{pair[1]}" }.join ""
     end
@@ -17,7 +21,7 @@ module GoodData
     def add(severity, message = nil, progname = nil)
       message = hash_to_string(message) if message.is_a? Hash
       progname = hash_to_string(progname) if progname.is_a? Hash
-      super(severity, message, progname) unless (progname && progname.include?("\n")) || (message && message.include?("\n"))
+      @logger.add(severity, message, progname) unless (progname && progname.chomp == '') || (message && message.chomp == '')
     end
   end
 end

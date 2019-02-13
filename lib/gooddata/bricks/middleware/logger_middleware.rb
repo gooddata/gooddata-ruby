@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'logger'
-require 'gooddata/core/splunk_logger'
+require 'gooddata/core/splunk_logger_decorator'
 
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
@@ -50,7 +50,10 @@ module GoodData
         # Initialize splunk logger
         if params['SPLUNK_LOGGING'] && params['SPLUNK_LOGGING'].to_b
           GoodData.logger.info "Statistics collecting is turned ON. All the data is anonymous."
-          splunk_logger = SplunkLogger.new params['SPLUNK_LOG_PATH'] || GoodData::DEFAULT_SPLUNKLOG_OUTPUT
+          # NODE_NAME is set up by k8s execmgr
+          syslog_node = ENV['NODE_NAME']
+          splunk_file_logger = syslog_node ? RemoteSyslogLogger.new(syslog_node, 514, program: "lcm_ruby_brick", facility: 'local2') : Logger.new(STDOUT)
+          splunk_logger = SplunkLoggerDecorator.new splunk_file_logger
           splunk_logger.level = params['SPLUNK_LOG_LEVEL'] || GoodData::DEFAULT_SPLUNKLOG_LEVEL
           splunk_logger = splunk_logger.extend(ContextLoggerDecorator)
           splunk_logger.context_source = GoodData.gd_logger
