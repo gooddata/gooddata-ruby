@@ -1,5 +1,9 @@
 # Contributing
 
+## Pull requests
+
+Make pull requests to the `develop` branch. Once all tests are passing on `develop`, we will merge to `master` and release the gem.
+
 ## Tests
 ### CI setup
 gooddata-ruby has a robust CI setup in place to ensure easy contributing by both GD employees and outsiders. The CI is based on travis-ci and all of the environment specifics is versioned in .travis.yml
