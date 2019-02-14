@@ -36,7 +36,7 @@ begin
 rescue NoMethodError => e
   log.info "action=#{brick_type}_execution status=error Invalid brick type '#{brick_type}', #{e.message}"
   raise e
-rescue => e
+rescue StandardError => e
   log.info "action=#{brick_type}_execution status=error #{e.message}"
   raise e
 end
