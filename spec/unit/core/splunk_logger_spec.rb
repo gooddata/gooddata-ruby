@@ -4,8 +4,12 @@
 
 require 'gooddata/core/core'
 
-describe GoodData::SplunkLoggerDecorator do
-  subject { GoodData::SplunkLoggerDecorator.new Logger.new STDOUT }
+describe GoodData::SplunkLogger do
+  it "Has GoodData::SplunkLogger class" do
+    expect(GoodData::SplunkLogger).not_to be(nil)
+  end
+
+  subject { GoodData::SplunkLogger.new STDOUT }
 
   it "should not print to any output" do
     expect { subject.add(Logger::INFO, nil, "\n") }.not_to output.to_stdout_from_any_process
