@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'spec_helper'
-require 'gooddata/core/splunk_logger_decorator'
+require 'gooddata/core/splunk_logger'
 require 'gooddata/core/nil_logger'
 
 require 'gooddata/bricks/brick'
@@ -13,12 +13,10 @@ require 'gooddata/bricks/bricks'
 require 'gooddata/bricks/middleware/logger_middleware'
 require 'gooddata/bricks/middleware/mask_logger_decorator'
 
-require 'remote_syslog_logger'
-
 describe GoodData::Bricks::LoggerMiddleware do
   let(:app) { double(:app) }
   let(:logger) { double(Logger) }
-  let(:temp_splunk_logger) { double(GoodData::SplunkLoggerDecorator) }
+  let(:temp_splunk_logger) { double(GoodData::SplunkLogger) }
   let(:splunk_logger) { double(GoodData::Bricks::MaskLoggerDecorator) }
   let(:nil_logger) { double(GoodData::NilLogger) }
 
@@ -32,7 +30,7 @@ describe GoodData::Bricks::LoggerMiddleware do
     allow(Logger).to receive(:new) { logger }
     allow(logger).to receive(:info)
     allow(logger).to receive(:level=)
-    allow(GoodData::SplunkLoggerDecorator).to receive(:new) { temp_splunk_logger }
+    allow(GoodData::SplunkLogger).to receive(:new) { temp_splunk_logger }
     allow(temp_splunk_logger).to receive(:level=)
     allow(GoodData::Bricks::MaskLoggerDecorator).to receive(:new) { splunk_logger }
     allow(splunk_logger).to receive(:info)
@@ -59,16 +57,9 @@ describe GoodData::Bricks::LoggerMiddleware do
 
   context 'when SPLUNK_LOGGING parameter set to true' do
     let(:params) { { 'SPLUNK_LOGGING' => 'true' } }
-    let(:node_name) { '12.12.12.12' }
 
     it 'turns splunk logging on' do
       expect(GoodData).to receive(:splunk_logging_on).with(splunk_logger)
-      subject.call(params)
-    end
-
-    it 'creates a syslog forwarder' do
-      ENV['NODE_NAME'] = node_name
-      expect(RemoteSyslogLogger).to receive(:new).with(node_name, 514, program: 'lcm_ruby_brick', facility: 'local2')
       subject.call(params)
     end
 
@@ -85,7 +76,7 @@ describe GoodData::Bricks::LoggerMiddleware do
       let(:log_path) { 'path' }
       let(:params) { { 'SPLUNK_LOG_PATH' => log_path, 'SPLUNK_LOGGING' => 'true' } }
       it 'sets the specified log level' do
-        expect(GoodData::SplunkLoggerDecorator).to receive(:new).with(logger)
+        expect(GoodData::SplunkLogger).to receive(:new).with(log_path)
         subject.call(params)
       end
     end
