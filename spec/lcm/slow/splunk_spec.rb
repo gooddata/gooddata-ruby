@@ -5,12 +5,11 @@ require_relative '../integration/support/s3_helper'
 
 file_name = nil
 
-describe GoodData::SplunkLoggerDecorator do
+describe GoodData::SplunkLogger do
   before(:all) do
     @fixtures = Fixtures::UserProvisioningFixtures.new projects_amount: 2,
                                                        user_amount: 2
   end
-
   context 'when splunk logging is switched off' do
     it 'does not log to splunk' do
       params = @fixtures[:brick_params].merge(splunk_logging: false)
