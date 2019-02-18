@@ -191,17 +191,19 @@ jobs:
     env: GD_ENV=development
 
   - stage: gem-release
-    rvm:
-      - 2.3
-      - jruby-9.1.14
-    script: echo "Deploying to rubygems.org ..."
+    name: deploy MRI gem
+    rvm: 2.3
     deploy:
       provider: rubygems
       gem: gooddata
       api_key: $RUBYGEMS_API_KEY
-      on:
-        branch: master
-        tags: true
+  - stage: gem-release
+    name: deploy JRuby gem
+    rvm: jruby-9.1.14
+    script: |
+      echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
+      chmod 0600 ~/.gem/credentials
+      bundle exec rake gem:release
 
 notifications:
   email:
