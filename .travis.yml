@@ -197,6 +197,13 @@ jobs:
       provider: rubygems
       gem: gooddata
       api_key: $RUBYGEMS_API_KEY
+  - stage: gem-release
+    name: deploy JRuby gem
+    rvm: jruby-9.1.14
+    script: |
+      echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
+      chmod 0600 ~/.gem/credentials
+      bundle exec rake gem:release
   - &gem-smoke-test
     stage: gem-release
     name: smoke test MRI gem
