@@ -57,8 +57,8 @@ describe GoodData::Bricks::LoggerMiddleware do
     end
   end
 
-  context 'when SPLUNK_LOGGING parameter set to true' do
-    let(:params) { { 'SPLUNK_LOGGING' => 'true' } }
+  context 'when default' do
+    let(:params) { { it_does: 'not matter' } }
     let(:node_name) { '12.12.12.12' }
 
     it 'turns splunk logging on' do
@@ -91,11 +91,11 @@ describe GoodData::Bricks::LoggerMiddleware do
     end
   end
 
-  context 'when SPLUNK_LOGGING parameter set to false' do
-    let(:params) { { 'SPLUNK_LOGGING' => 'false' } }
+  context 'when splunk logging is disabled' do
+    let(:params) { { 'NO_SPLUNK_LOGGING' => 'true' } }
 
     it 'turns splunk logging off' do
-      expect(GoodData).to receive(:splunk_logging_on).with(nil_logger)
+      expect(GoodData).to_not receive(:splunk_logging_on)
       subject.call(params)
     end
   end

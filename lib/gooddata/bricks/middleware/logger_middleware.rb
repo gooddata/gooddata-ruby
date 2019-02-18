@@ -49,8 +49,7 @@ module GoodData
         params['GDC_LOGGER'] = logger
         GoodData.logging_http_on if params['HTTP_LOGGING'] && params['HTTP_LOGGING'].to_b
 
-        # Initialize splunk logger
-        if params['SPLUNK_LOGGING'] && params['SPLUNK_LOGGING'].to_b
+        unless params['NO_SPLUNK_LOGGING'] && params['NO_SPLUNK_LOGGING'].to_b
           GoodData.logger.info "Statistics collecting is turned ON. All the data is anonymous."
           # NODE_NAME is set up by k8s execmgr
           syslog_node = ENV['NODE_NAME']
@@ -62,10 +61,8 @@ module GoodData
           values_to_mask = params['values_to_mask'] || []
           values_to_mask.concat MaskLoggerDecorator.extract_values params
           splunk_logger = MaskLoggerDecorator.new(splunk_logger, values_to_mask) if values_to_mask.any?
-        else
-          splunk_logger = NilLogger.new
+          GoodData.splunk_logging_on splunk_logger
         end
-        GoodData.splunk_logging_on splunk_logger
 
         # Initialize context: Execution ID
         GoodData.gd_logger.execution_id = params['GDC_EXECUTION_ID'] || SecureRandom.urlsafe_base64(16)
