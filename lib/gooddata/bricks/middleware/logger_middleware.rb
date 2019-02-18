@@ -13,6 +13,8 @@ require 'gooddata/extensions/integer'
 require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
 
+require 'remote_syslog_logger'
+
 using TrueExtensions
 using FalseExtensions
 using IntegerExtensions

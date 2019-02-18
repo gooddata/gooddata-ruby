@@ -46,7 +46,7 @@ describe 'Kubernetes component LCM brick deployment' do
       expect(component_deployment.name).to eq @component_name
       expect(component_deployment.type).to eq :lcm
 
-      manual_schedule = component_deployment.create_manual_schedule
+      manual_schedule = component_deployment.create_manual_schedule params: { 'SPLUNK_LOGGING' => 'true'}
 
       execution_result = manual_schedule.execute
 
