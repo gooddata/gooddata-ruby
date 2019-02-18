@@ -43,9 +43,13 @@ module GoodData
         :user_agent => GoodData.gem_version_string
       }
 
+      CERTIFICATE_STORE = OpenSSL::X509::Store.new.freeze
+      CERTIFICATE_STORE.set_default_paths
+
       DEFAULT_LOGIN_PAYLOAD = {
         :headers => DEFAULT_HEADERS,
-        :verify_ssl => true
+        :verify_ssl => true,
+        :ssl_cert_store => CERTIFICATE_STORE
       }
 
       RETRYABLE_ERRORS = [
