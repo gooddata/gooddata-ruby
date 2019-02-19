@@ -7,7 +7,7 @@
 require 'rest-client'
 
 require_relative 'nil_logger'
-require_relative 'splunk_logger_decorator'
+require_relative 'splunk_logger'
 require_relative 'gd_logger'
 
 module GoodData
@@ -21,7 +21,7 @@ module GoodData
 
   DEFAULT_SPLUNKLOG_LEVEL = Logger::INFO
   DEFAULT_SPLUNKLOG_OUTPUT = STDERR
-  DEFAULT_SPLUNKLOGGER_CLASS = SplunkLoggerDecorator
+  DEFAULT_SPLUNKLOGGER_CLASS = SplunkLogger
 
   class << self
     attr_accessor :logger, :rest_logger, :gd_logger
