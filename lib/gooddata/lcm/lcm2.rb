@@ -369,7 +369,7 @@ module GoodData
       def run_action(action, params)
         begin
           GoodData.gd_logger.start_action action, GoodData.gd_logger
-          GoodData.logger.info("Running #{action.name} action ...")
+          GoodData.gd_logger.info("Running #{action.name} action ...")
           params.clear_filters
           # Check if all required parameters were passed
           BaseAction.check_params(action.const_get('PARAMS'), params)

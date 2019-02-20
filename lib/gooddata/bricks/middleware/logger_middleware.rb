@@ -5,13 +5,15 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'logger'
-require 'gooddata/core/splunk_logger'
+require 'gooddata/core/splunk_logger_decorator'
 
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
 require 'gooddata/extensions/integer'
 require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
+
+require 'remote_syslog_logger'
 
 using TrueExtensions
 using FalseExtensions
@@ -47,20 +49,20 @@ module GoodData
         params['GDC_LOGGER'] = logger
         GoodData.logging_http_on if params['HTTP_LOGGING'] && params['HTTP_LOGGING'].to_b
 
-        # Initialize splunk logger
-        if params['SPLUNK_LOGGING'] && params['SPLUNK_LOGGING'].to_b
+        unless params['NO_SPLUNK_LOGGING'] && params['NO_SPLUNK_LOGGING'].to_b
           GoodData.logger.info "Statistics collecting is turned ON. All the data is anonymous."
-          splunk_logger = SplunkLogger.new params['SPLUNK_LOG_PATH'] || GoodData::DEFAULT_SPLUNKLOG_OUTPUT
+          # NODE_NAME is set up by k8s execmgr
+          syslog_node = ENV['NODE_NAME']
+          splunk_file_logger = syslog_node ? RemoteSyslogLogger.new(syslog_node, 514, program: "lcm_ruby_brick", facility: 'local2') : Logger.new(STDOUT)
+          splunk_logger = SplunkLoggerDecorator.new splunk_file_logger
           splunk_logger.level = params['SPLUNK_LOG_LEVEL'] || GoodData::DEFAULT_SPLUNKLOG_LEVEL
           splunk_logger = splunk_logger.extend(ContextLoggerDecorator)
           splunk_logger.context_source = GoodData.gd_logger
           values_to_mask = params['values_to_mask'] || []
           values_to_mask.concat MaskLoggerDecorator.extract_values params
           splunk_logger = MaskLoggerDecorator.new(splunk_logger, values_to_mask) if values_to_mask.any?
-        else
-          splunk_logger = NilLogger.new
+          GoodData.splunk_logging_on splunk_logger
         end
-        GoodData.splunk_logging_on splunk_logger
 
         # Initialize context: Execution ID
         GoodData.gd_logger.execution_id = params['GDC_EXECUTION_ID'] || SecureRandom.urlsafe_base64(16)
