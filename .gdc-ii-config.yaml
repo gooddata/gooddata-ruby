@@ -1,0 +1,9 @@
+integratedTests:
+  - env: bash
+    path: .
+    vault:
+      GD_SPEC_PASSWORD: secret/v1/ruby/test/bia_encryption_key
+    command: ./bin/run_smoke_tests.sh
+    repo_mount_dir: /src
+    microservices:
+      - lcm-bricks
