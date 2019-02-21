@@ -4,6 +4,7 @@
 
 require_relative '../../mixins/property_accessor'
 require_relative '../../lcm/helpers/helpers'
+require_relative '../../version'
 
 module GoodData
   module ContextManager
