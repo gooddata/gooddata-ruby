@@ -1,3 +1,10 @@
+microservices:
+  lcm-bricks:
+    docker:
+      dockerfile: './Dockerfile'
+      argumentsFromFiles:
+        BRICKS_VERSION: 'VERSION'
+
 integratedTests:
   - env: bash
     path: .
