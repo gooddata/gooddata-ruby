@@ -1,4 +1,18 @@
 # GoodData Ruby SDK Changelog
+## 2.0.1
+ - Fix pronto branch
+ - Fix requiring version.rb
+ - TMA-693 fixed problem with logout after timeout
+ - fixup! TMA-807: splunk in k8s
+ - Revert "Revert "TMA-807: splunkLogger in bricks forwards messages to RemoteSyslogLogger""
+ - TMA-807: splunk in k8s
+ - Deploy jruby gem automatically
+ - Fix code style issue
+ - Revert "Fix splunk test"
+ - Revert "TMA-807: splunkLogger in bricks forwards messages to RemoteSyslogLogger"
+ - Fix splunk test
+ - TMA-807: splunkLogger in bricks forwards messages to RemoteSyslogLogger
+
 ## 2.0.0
 
 This is a major version release because the method `.release_info` has been hard-deprecated.

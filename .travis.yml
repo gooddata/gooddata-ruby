@@ -20,8 +20,8 @@ jobs:
     stage: before-merge
     script: |
       git remote add upstream https://github.com/gooddata/gooddata-ruby.git
-      git fetch upstream master
-      bundle exec pronto run -c upstream/master --exit-code
+      git fetch upstream develop
+      bundle exec pronto run -c upstream/develop --exit-code
 
   - name: unit tests
     stage: before-merge
@@ -197,13 +197,16 @@ jobs:
       provider: rubygems
       gem: gooddata
       api_key: $RUBYGEMS_API_KEY
-  - stage: gem-release
-    name: deploy JRuby gem
-    rvm: jruby-9.1.14
+  - &gem-smoke-test
+    stage: gem-release
+    name: smoke test MRI gem
+    rvm: 2.3
     script: |
-      echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
-      chmod 0600 ~/.gem/credentials
-      bundle exec rake gem:release
+      gem install gooddata
+      ruby -e "require 'gooddata';GoodData.version"
+  - <<: *gem-smoke-test
+    name: smoke test JRuby gem
+    rvm: jruby-9.1.14
 
 notifications:
   email:
