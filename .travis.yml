@@ -9,6 +9,8 @@ stages:
   if: type IN (cron)
 - name: gem-release
   if: branch = master AND type = push
+- name: gem-smoke-test
+  if: branch = master AND type = push
 
 git:
   depth: false # this is needed for pronto
@@ -205,7 +207,7 @@ jobs:
       chmod 0600 ~/.gem/credentials
       bundle exec rake gem:release
   - &gem-smoke-test
-    stage: gem-release
+    stage: gem-smoke-test
     name: smoke test MRI gem
     rvm: 2.3
     script: |
