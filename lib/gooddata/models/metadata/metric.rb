@@ -16,7 +16,7 @@ module GoodData
     extend GoodData::Mixin::ContentPropertyReader
     extend GoodData::Mixin::ContentPropertyWriter
 
-    content_property_reader :folders, :expression
+    content_property_reader :folders, :expression, :format
     content_property_writer :folders, :expression
 
     class << self
@@ -44,11 +44,13 @@ module GoodData
           extended_notation = options[:extended_notation] || false
           title = options[:title]
           summary = options[:summary]
+          format = options[:format]
         else
           metric ||= options
           title = metric[:title] || options[:title]
           summary = metric[:summary] || options[:summary]
           expression = metric[:expression] || options[:expression] || fail('Metric has to have its expression defined')
+          format = metric[:format] || options[:format]
           extended_notation = metric[:extended_notation] || options[:extended_notation] || false
         end
 
@@ -76,7 +78,7 @@ module GoodData
         metric = {
           'metric' => {
             'content' => {
-              'format' => '#,##0',
+              'format' => format || '#,##0',
               'expression' => expression
             },
             'meta' => {
