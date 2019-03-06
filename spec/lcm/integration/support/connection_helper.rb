@@ -16,7 +16,8 @@ class LcmConnectionHelper
       connection_parameters = {
         username: environment[:username],
         password: environment[:password],
-        server: "https://#{environment[which]}"
+        server: "https://#{environment[which]}",
+        verify_ssl: false
       }
       GoodData.connect(connection_parameters)
     end

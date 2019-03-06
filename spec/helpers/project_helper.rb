@@ -24,7 +24,7 @@ module GoodData
       ENVIRONMENT = 'TESTING'
       PROJECT_TITLE = 'DailyUse Project for gooddata-ruby integration tests - DO NOT DELETE'
       CACHE_DIR = 'spec/cache/integration_projects/'
-      @reuse_integration_project = ENV['REUSE_INTEGRATION_PROJECT']
+      @reuse_integration_project = GoodData::Environment::VCR_ON ? false : ENV['REUSE_INTEGRATION_PROJECT']
       @project_id = nil
       @process_id = nil
       @schedule_id = nil
@@ -79,38 +79,11 @@ module GoodData
         end
 
         def project_id(client)
-          GoodData::Helpers::VcrConfigurer.without_vcr do
-            if @project_id.nil?
-              if @reuse_integration_project
-                begin
-                  project_id = File.read(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'project'))
-                  project = client.projects(project_id)
-                  unless project.title == PROJECT_TITLE
-                    project.delete
-                    GoodData.logger.error("Cached project modified")
-                    raise CachedProjectError 'Cached project modified'
-                  end
-                  GoodData.logger.info("Reusing project ID: #{project_id}")
-                  @project_id = project.pid
-                  process_id = File.read(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'process'))
-                  project.processes(process_id)
-                  GoodData.logger.info("Reusing process ID: #{process_id}")
-                  @process_id = process_id
-                  schedule_id = File.read(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'schedule'))
-                  project.schedules(schedule_id)
-                  GoodData.logger.info("Reusing schedule ID: #{schedule_id}")
-                  @schedule_id = schedule_id
-                rescue CachedProjectError, Errno::ENOENT, RestClient::NotFound, RestClient::Gone => e
-                  GoodData.logger.warn("Cached project not found: #{e.message}")
-                  setup_platform_environment(client)
-                  FileUtils.mkpath(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN))
-                  File.write(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'project'), @project_id)
-                  File.write(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'process'), @process_id)
-                  File.write(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'schedule'), @schedule_id)
-                end
-              else
-                setup_platform_environment(client)
-              end
+          if @project_id.nil?
+            if @reuse_integration_project
+              reuse_project_id(client)
+            else
+              setup_platform_environment(client)
             end
           end
           @project_id
@@ -124,6 +97,35 @@ module GoodData
         def schedule_id(client)
           project_id(client) if @schedule_id.nil?
           @schedule_id
+        end
+
+        def reuse_project_id(client)
+          begin # rubocop:disable RedundantBegin
+            project_id = File.read(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'project'))
+            project = client.projects(project_id)
+            unless project.title == PROJECT_TITLE
+              project.delete
+              GoodData.logger.error("Cached project modified")
+              raise CachedProjectError 'Cached project modified'
+            end
+            GoodData.logger.info("Reusing project ID: #{project_id}")
+            @project_id = project.pid
+            process_id = File.read(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'process'))
+            project.processes(process_id)
+            GoodData.logger.info("Reusing process ID: #{process_id}")
+            @process_id = process_id
+            schedule_id = File.read(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'schedule'))
+            project.schedules(schedule_id)
+            GoodData.logger.info("Reusing schedule ID: #{schedule_id}")
+            @schedule_id = schedule_id
+          rescue CachedProjectError, Errno::ENOENT, RestClient::NotFound, RestClient::Gone => e
+            GoodData.logger.warn("Cached project not found: #{e.message}")
+            setup_platform_environment(client)
+            FileUtils.mkpath(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN))
+            File.write(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'project'), @project_id)
+            File.write(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'process'), @process_id)
+            File.write(File.join(CACHE_DIR, GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN, 'schedule'), @schedule_id)
+          end
         end
 
         def setup_platform_environment(client)

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 #
 # Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -37,26 +36,32 @@ module GoodData
 
         # Get resource
         # @param path Resource path
-        def get(path)
+        def get(args, opts)
+          path = args.first
           fail(GoodData::CommandFailed, 'Specify the path you want to GET.') if path.nil?
-          result = GoodData.get path
-          begin
-            result
-          rescue
-            puts result
-          end
+
+          client = GoodData.connect(opts)
+          client.get path
         end
 
         # Delete resource
         # @param path Resource path
-        def delete(path)
+        def delete(args, opts)
+          path = args.first
           fail(GoodData::CommandFailed, 'Specify the path you want to DELETE.') if path.nil?
-          result = GoodData.delete path
-          begin
-            result
-          rescue
-            puts result
-          end
+
+          client = GoodData.connect(opts)
+          client.delete path
+        end
+
+        def post(args, opts)
+          path = Array(args).shift
+          fail(GoodData::CommandFailed, 'Specify the path you want to POST to.') if path.nil?
+
+          payload = Array(args).shift
+          json = payload && File.exist?(payload) ? JSON.parse(File.read(payload)) : {}
+          client = GoodData.connect(opts)
+          client.post path, json
         end
       end
     end
