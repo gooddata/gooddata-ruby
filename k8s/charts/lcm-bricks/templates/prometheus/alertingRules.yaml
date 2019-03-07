@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: lcm-bricks-monitoring-rules
+  name: {{ template "lcm-bricks.fullname" . }}-monitoring-rules
   namespace: monitoring
   labels:
-    app: lcm-bricks
+    app: {{ template "lcm-bricks.name" . }}
     component: lcm
     team: lcm
-    chart: lcm-bricks
+    chart: {{ template "lcm-bricks.chart" . }}
     release: {{ .Release.Name }}
 data:
   lcm-bricks-monitoring-rules.yaml: |+

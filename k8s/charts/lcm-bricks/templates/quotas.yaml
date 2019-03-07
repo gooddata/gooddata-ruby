@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ template "lcm-bricks.fullname" . }}-quotas
+spec:
+  hard:
+    limits.cpu: "4"
+    limits.memory: 40Gi
+    pods: "200"
+    count/jobs.batch: "200"
