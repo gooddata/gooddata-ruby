@@ -1,0 +1,17 @@
+microservices:
+  lcm-bricks:
+    docker:
+      dockerfile: './Dockerfile'
+      argumentsFromFiles:
+        BRICKS_VERSION: 'VERSION'
+
+integratedTests:
+  - env: bash
+    path: .
+    vault:
+      GD_SPEC_PASSWORD: secret/v1/ruby/test/bia_encryption_key
+    command: ./bin/run_smoke_tests.sh
+    image: harbor.intgdc.com/staging/lcm-bricks:GIT_REV
+    repo_mount_dir: /src
+    microservices:
+      - lcm-bricks

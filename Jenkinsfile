@@ -5,17 +5,4 @@
 @Library('pipelines-shared-libs')
 import com.gooddata.pipeline.Pipeline
 
-def config = [
-        'microservices': [
-                'lcm-bricks': [
-                        'docker': [
-                                'dockerfile': './Dockerfile',
-                                'arguments': [
-                                        'BRICKS_VERSION': { readFile('./VERSION').trim() }
-                                ]
-                        ]
-                ]
-        ]
-]
-
-Pipeline.get(this, config).run()
+Pipeline.resolve(this).run()
