@@ -51,6 +51,7 @@ describe 'Kubernetes component LCM brick deployment' do
 
       manual_schedule = component_deployment.create_manual_schedule params: { 'SPLUNK_LOGGING' => 'true' }
 
+      manual_schedule.execute
       timeout = 1.hours
       result, = GoodData::AppStore::Helper.wait_for_executions([manual_schedule], timeout)
 
