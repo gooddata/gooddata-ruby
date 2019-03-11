@@ -1847,6 +1847,17 @@ module GoodData
       GoodData::Variable[id, options]
     end
 
+    # Applies blueprint to the project.
+    #
+    # @param [Hash] blueprint Blueprint to apply to the project.
+    # @option options [Hash] :update_preference (cascade_drops: false, preserve_data: true) Specifies how dropping LDM and data should be treated.
+    # @example Update with custom update preference.
+    #   GoodData.project.update_from_blueprint(
+    #     blueprint,
+    #     update_preference: {
+    #       cascade_drops: false, preserve_data: false
+    #     }
+    #   )
     def update_from_blueprint(blueprint, options = {})
       GoodData::Model::ProjectCreator.migrate(options.merge(spec: blueprint, token: options[:auth_token], client: client, project: self))
     end
