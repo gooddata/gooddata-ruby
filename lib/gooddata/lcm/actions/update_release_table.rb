@@ -13,7 +13,7 @@ module GoodData
 
       PARAMS = define_params(self) do
         description 'ADS Client'
-        param :ads_client, instance_of(Type::AdsClientType), required: true
+        param :ads_client, instance_of(Type::AdsClientType), required: false
 
         description 'Client Used for Connecting to GD'
         param :gdc_gd_client, instance_of(Type::GdClientType), required: true
@@ -55,7 +55,7 @@ module GoodData
               table_name: params.release_table_name || DEFAULT_TABLE_NAME
             }
 
-            update_release_table(params, placeholders)
+            update_release_table(params, placeholders, domain_name)
 
             {
               segment: segment_id,
@@ -74,13 +74,17 @@ module GoodData
           result
         end
 
-        def update_release_table(params, placeholders)
-          path = File.expand_path('../../data/insert_into_lcm_release.sql.erb', __FILE__)
-          default_query = GoodData::Helpers::ErbHelper.template_file(path, placeholders)
-          temp_query = (params.query && params.query.insert) || default_query
-          query = replace_placeholders(temp_query, placeholders)
+        def update_release_table(params, placeholders, domain_id)
+          if params.ads_client
+            path = File.expand_path('../data/insert_into_lcm_release.sql.erb', __dir__)
+            default_query = GoodData::Helpers::ErbHelper.template_file(path, placeholders)
+            temp_query = (params.query && params.query.insert) || default_query
+            query = replace_placeholders(temp_query, placeholders)
 
-          params.ads_client.execute(query)
+            params.ads_client.execute(query)
+          else
+            GoodData::LCM2::Helpers.update_latest_master_to_nfs(domain_id, placeholders[:segment_id], placeholders[:master_project_id], placeholders[:version])
+          end
         end
       end
     end

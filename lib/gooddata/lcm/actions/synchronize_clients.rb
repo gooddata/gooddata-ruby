@@ -31,7 +31,7 @@ module GoodData
         param :release_table_name, instance_of(Type::StringType), required: false
 
         description 'ADS Client'
-        param :ads_client, instance_of(Type::AdsClientType), required: true
+        param :ads_client, instance_of(Type::AdsClientType), required: false
 
         description 'Additional Hidden Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
@@ -61,14 +61,18 @@ module GoodData
           end
 
           results = segments.map do |segment|
-            current_master = GoodData::LCM2::Helpers.latest_master_project(
-              params.release_table_name,
-              params.ads_client,
-              segment.segment_id
-            )[:master_project_id]
+            if params.ads_client
+              current_master = GoodData::LCM2::Helpers.latest_master_project_from_ads(
+                params.release_table_name,
+                params.ads_client,
+                segment.segment_id
+              )
+            else
+              current_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, segment.segment_id)
+            end
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
-            master = client.projects(current_master)
+            master = client.projects(current_master[:master_project_id])
 
             segment.master_project = master
             segment.save
