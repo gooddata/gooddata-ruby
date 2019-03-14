@@ -1,4 +1,15 @@
 # GoodData Ruby SDK Changelog
+## 2.1.0
+- TMA-1401: print message and request id on http error
+- Add doc section to contributing.md
+- TMA-1400: Add docs for update_from_blueprint
+- TMA-1383 added ruby 2.6 to travis tests
+- TMA-1231: fix CL functionality
+- FEATURE: Make number format assignable for metrics
+- FEATURE: Run gem smoke test after release
+- FEATURE: Deploy jruby gem automatically
+- Fix certificate storage set_default_paths
+
 ## 2.0.1
  - Fix pronto branch
  - Fix requiring version.rb
