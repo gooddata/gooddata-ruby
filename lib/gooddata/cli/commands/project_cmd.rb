@@ -5,6 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'pathname'
+require 'json'
+require 'tty-spinner'
 
 require_relative '../shared'
 require_relative '../../commands/project'
@@ -19,7 +21,27 @@ module GoodData
       c.command :users do |users|
         users.action do |global_options, options, _args|
           opts = options.merge(global_options)
-          GoodData::Command::Project.list_users(opts)
+          spinner = TTY::Spinner.new ":spinner Listing users"
+          spinner.auto_spin
+          res = GoodData::Command::Project.list_users(opts)
+          spinner.stop
+          res
+        end
+      end
+
+      c.desc 'Create new project'
+      c.command :create do |create|
+        create.action do |global_options, options, _args|
+          opts = options.merge(global_options)
+          token = opts[:token]
+          title = opts[:title] || 'New project'
+          driver = opts[:driver] || 'Pg'
+          spinner = TTY::Spinner.new ":spinner Creating project"
+          spinner.auto_spin
+          client = GoodData.connect(opts)
+          res = GoodData::Command::Project.create(token: token, title: title, driver: driver, client: client)
+          spinner.stop
+          puts res.to_json
         end
       end
     end

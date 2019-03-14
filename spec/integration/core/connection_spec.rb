@@ -53,4 +53,16 @@ describe GoodData::Rest::Connection, :vcr do
       c.disconnect
     end
   end
+
+  describe 'error handling' do
+    it 'prints the error message' do
+      c = ConnectionHelper.create_default_connection
+
+      begin
+        c.post('/gdc/projects', 'project' => {})
+      rescue StandardError => e
+        expect { puts e }.to output(/Key 'meta' is compulsory/).to_stdout
+      end
+    end
+  end
 end

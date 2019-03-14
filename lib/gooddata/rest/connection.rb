@@ -43,9 +43,13 @@ module GoodData
         :user_agent => GoodData.gem_version_string
       }
 
+      CERTIFICATE_STORE = OpenSSL::X509::Store.new.freeze
+      CERTIFICATE_STORE.set_default_paths
+
       DEFAULT_LOGIN_PAYLOAD = {
         :headers => DEFAULT_HEADERS,
-        :verify_ssl => true
+        :verify_ssl => true,
+        :ssl_cert_store => CERTIFICATE_STORE
       }
 
       RETRYABLE_ERRORS = [
@@ -462,6 +466,17 @@ module GoodData
         "#{@execution_id}:#{session_id}:#{call_id}"
       end
 
+      def enrich_error_message(exception)
+        begin
+          response = JSON.parse(exception.response.body, symbolize_names: true)
+          return exception unless exception.message && response[:error] && response[:error][:message] && response[:error][:requestId]
+
+          exception.message = exception.message + ': ' + response[:error][:message] % response[:error][:parameters] + ' request_id: ' + response[:error][:requestId]
+        rescue JSON::ParserError # rubocop:disable Lint/HandleExceptions
+        end
+        exception
+      end
+
       private
 
       def create_webdav_dir_if_needed(url)
@@ -561,8 +576,12 @@ ERR
         dont_reauth = options[:dont_reauth]
         options = options.reject { |k, _| [:process, :dont_reauth].include?(k) }
         opts = { tries: retries, refresh_token: proc { refresh_token unless dont_reauth } }.merge(options)
-        response = GoodData::Rest::Connection.retryable(opts) do
-          block.call
+        begin
+          response = GoodData::Rest::Connection.retryable(opts) do
+            block.call
+          end
+        rescue RestClient::Exception => e
+          fail enrich_error_message(e)
         end
         merge_headers! response.headers
         content_type = response.headers[:content_type]

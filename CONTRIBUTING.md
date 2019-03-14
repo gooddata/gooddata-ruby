@@ -48,6 +48,16 @@ We use [Pronto](https://github.com/prontolabs/pronto) to detect code smells usin
 - [Reek](https://github.com/troessner/reek#editor-integrations)
 - [Flay](https://github.com/seattlerb/flay)
 
+## Documentation
+
+#### Yard
+
+We use `yard` to auto-generate [documentation from comments](https://www.rubydoc.info/gems/gooddata/). Document all new and modified public methods using [`yard` tags](https://www.rubydoc.info/gems/yard/file/docs/Tags.md). Run `./yard-server.sh` to see the result.
+
+#### Cookbook
+
+Usage examples can be found [here](https://sdk.gooddata.com/gooddata-ruby-doc). If your change deserves an example, make a PR to [this repo](https://github.com/gooddata/gooddata-ruby-doc).
+
 ## Acceptance criteria
 
 1. The change is as small as possible. It fixes one specific issue or implements
@@ -71,5 +81,6 @@ We use [Pronto](https://github.com/prontolabs/pronto) to detect code smells usin
 1. If the pull request adds any new libraries, they should be in line with our
    [license](/LICENSE).
 1. Use `GoodData.logger` for logging instead of `puts`.
+1. Public methods [are documented](#documentation) and examples are added to the [cookbook](#cookbook) when applicable.
 
 _Based on [GitLab's contribution guide](https://github.com/gitlabhq/gitlabhq/blob/master/CONTRIBUTING.md)._
