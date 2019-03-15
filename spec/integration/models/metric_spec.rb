@@ -28,4 +28,12 @@ describe GoodData::Metric, :vcr do
     @folder.delete if @folder
     @project.delete if @project
   end
+
+  it 'should allow updating metric format' do
+    metric = @project.create_metric("SELECT COUNT([#{@attribute.uri}])", title: 'Title')
+    metric.save
+    metric.format = '#,##0%'
+    metric.save
+    expect(metric.format).to eq('#,##0%')
+  end
 end
