@@ -51,6 +51,8 @@ module Fixtures
         sync_mode: 'sync_domain_client_workspaces',
         label_config: Support::UserProvisioningHelper.label_config(mufs).to_json,
         data_product: project_fixtures[:data_product].data_product_id,
+        gdc_log_directory: 'directory',
+        gdc_execution_id: 'execution_id',
         users_brick_input: {
           s3_key: Support::S3Helper::USERS_KEY
         }.merge(s3_info)
