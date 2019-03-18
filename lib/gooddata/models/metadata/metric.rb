@@ -17,7 +17,7 @@ module GoodData
     extend GoodData::Mixin::ContentPropertyWriter
 
     content_property_reader :folders, :expression, :format
-    content_property_writer :folders, :expression
+    content_property_writer :folders, :expression, :format
 
     class << self
       # Method intended to get all objects of that type in a specified project
