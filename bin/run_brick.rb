@@ -35,4 +35,5 @@ begin
   brick_pipeline.call(params)
 rescue StandardError => e
   log.info "action=#{brick_type}_execution status=failed commit_hash=#{commit_hash} execution_id=#{execution_id} exception=#{e}"
+  raise
 end
