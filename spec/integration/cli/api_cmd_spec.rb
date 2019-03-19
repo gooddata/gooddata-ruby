@@ -4,6 +4,7 @@ require_relative '../../lcm/integration/support/connection_helper'
 describe 'GoodData::CLI - api commands', :vcr do
   before(:all) do
     env = LcmConnectionHelper.environment
+    @client = LcmConnectionHelper.production_server_connection
     @credential_params = [
       "-U #{env[:username]}",
       "-P #{env[:password]}",
@@ -14,14 +15,14 @@ describe 'GoodData::CLI - api commands', :vcr do
 
   after(:all) do
     if @new_project_uri
-      client = LcmConnectionHelper.production_server_connection
-      client.delete @new_project_uri
+      @client.delete @new_project_uri
     end
   end
 
   describe '#get' do
     it 'makes a request' do
-      expect(`gooddata #{@credential_params} api get /releaseInfo`)
+      cmd = "#{@credential_params} api get /releaseInfo"
+      expect { GoodData::CLI.main(cmd.split) }
     end
   end
 
@@ -30,8 +31,8 @@ describe 'GoodData::CLI - api commands', :vcr do
       data = '{"name": "gd_ruby_cmd_test", "type" : "etl","component": {"name": "gdc-etl-sql-executor", "version":"1"}}'
       File.write('json.json', data)
       uri = "/gdc/projects/#{ProjectHelper.project_id(@client)}/dataload/processes"
-      result = `gooddata #{@credential_params} api post #{uri} json.json`
-      expect(result)
+      cmd = "#{@credential_params} api post #{uri} json.json"
+      expect { GoodData::CLI.main(cmd.split) }
     end
   end
 end
