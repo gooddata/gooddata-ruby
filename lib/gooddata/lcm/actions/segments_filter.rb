@@ -29,6 +29,8 @@ module GoodData
           fail "Parameter 'segments' contains duplicate segment id(s): #{duplicated_segment_ids.join(', ')}" if duplicated_segment_ids.any?
 
           if params.segments_filter
+            fail 'Segments filter should be a non-empty array!' if !params.segments_filter.is_a?(Array) || params.segments_filter.empty?
+
             segments_filter = params.segments_filter.map(&:downcase)
 
             filtered_segments = params.segments.select do |segment|
