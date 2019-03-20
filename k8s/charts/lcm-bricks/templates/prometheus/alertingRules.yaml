@@ -54,26 +54,6 @@ data:
         annotations:
           description: "{{`{{ $labels.pod }}`}} was OOMKilled in the last 10 minutes. Investigate and/or increase memoryRequest or memoryLimit."
           summary: "{{`{{ $labels.pod }}`}} OOMKill occured"
-      - record: "container_pod:lcm_pod_container_status_error:increase10m"
-        expr: increase(kube_pod_container_status_terminated_reason{namespace='{{ .Release.Namespace }}', reason!~"Completed|OOMKilled"}[10m])
-      - alert: "[LCM] Container exited with error on cluster={{ .Values.clusterId }}"
-        expr: container_pod:lcm_pod_container_status_error:increase10m >= 1
-        labels:
-          severity: warning
-          team: lcm # switch to msf in production
-          cluster_id: {{ .Values.clusterId }}
-        annotations:
-          description: "{{`{{ $labels.pod }}`}} container exited with non-zero exit code in the last 10 minutes. Investigate and fix."
-          summary: "{{`{{ $labels.pod }}`}} Container exited with error"
-      - alert: "[LCM] Container exited with error on cluster={{ .Values.clusterId }}"
-        expr: container_pod:lcm_pod_container_status_error:increase10m >= 2
-        labels:
-          severity: critical
-          team: lcm # switch to msf in production
-          cluster_id: {{ .Values.clusterId }}
-        annotations:
-          description: "{{`{{ $labels.pod }}`}} container exited with non-zero exit code in the last 10 minutes. Investigate and fix."
-          summary: "{{`{{ $labels.pod }}`}} Container exited with error"
       - alert: "[LCM] Container is being throttled on cluster={{ .Values.clusterId }}"
         expr: rate(container_cpu_cfs_throttled_seconds_total{namespace='{{ .Release.Namespace }}'}[1m]) > 1
         for: 5m
