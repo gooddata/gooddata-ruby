@@ -162,7 +162,7 @@ module GoodData
         headers = options[:headers] || {}
 
         options = options.merge(headers)
-        @server = RestClient::Resource.new server, options
+        @server = RestClient::Resource.new fix_server_url(server), options
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
@@ -468,6 +468,8 @@ module GoodData
 
       def enrich_error_message(exception)
         begin
+          return exception unless exception.response
+
           response = JSON.parse(exception.response.body, symbolize_names: true)
           return exception unless exception.message && response[:error] && response[:error][:message] && response[:error][:requestId]
 
@@ -702,6 +704,17 @@ ERR
             false if e.http_code == 404
           end
         end
+      end
+
+      def fix_server_url(server)
+        server = server.chomp('/')
+        if server.starts_with? 'http://'
+          server = server.sub 'http://', 'https://'
+          GoodData.logger.warn 'You specified the HTTP protocol in your server string. It has been autofixed to HTTPS.'
+        end
+
+        server = 'https://' + server unless server.starts_with? 'https://'
+        server
       end
     end
   end
