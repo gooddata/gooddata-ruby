@@ -1,4 +1,6 @@
 # GoodData Ruby SDK Changelog
+## 2.1.1
+
 ## 2.1.0
 - TMA-1401: print message and request id on http error
 - Add doc section to contributing.md
