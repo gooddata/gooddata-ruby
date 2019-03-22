@@ -25,19 +25,36 @@ jobs:
       git fetch upstream develop
       bundle exec pronto run -c upstream/develop --exit-code
 
-  - name: unit tests
+    #  UNIT TESTS ON LINUX IN ALL SUPPORTED RUBY VERSIONS
+  - name: unit tests 2.2
     stage: before-merge
     script: bundle exec rake test:unit
-    rvm:
-    - 2.2
-    - 2.3
-    - 2.4
-    - 2.5
-    - 2.6
-    - jruby-1.7.19
-    - jruby-9.1.5
-    - jruby-9.1.7
-    - jruby-9.1.14
+    rvm: 2.2
+
+  - name: unit tests 2.3
+    stage: before-merge
+    script: bundle exec rake test:unit
+    rvm: 2.3
+
+  - name: unit tests 2.4
+    stage: before-merge
+    script: bundle exec rake test:unit
+    rvm: 2.4
+
+  - name: unit tests 2.5
+    stage: before-merge
+    script: bundle exec rake test:unit
+    rvm: 2.5
+
+  - name: unit tests 2.6
+    stage: before-merge
+    script: bundle exec rake test:unit
+    rvm: 2.6
+
+  - name: unit tests jruby-9.1.14
+    stage: before-merge
+    script: bundle exec rake test:unit
+    rvm: jruby-9.1.14
 
   - name: sdk integration (vcr) tests - base
     stage: before-merge
@@ -192,6 +209,50 @@ jobs:
   - <<: *cleanup
     name: staging3 - test environment clean-up
     env: GD_ENV=development
+
+  # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM 
+
+  - name: unit tests 2.3
+    stage: after-merge
+    script: bundle exec rake test:unit
+    os: osx
+    osx_image: xcode7.3
+    rvm: 2.3
+
+  - name: unit tests 2.4
+    stage: after-merge
+    script: bundle exec rake test:unit
+    os: osx
+    osx_image: xcode9.3 
+    rvm: 2.4
+
+  - name: unit tests 2.5
+    stage: after-merge
+    script: bundle exec rake test:unit
+    os: osx
+    osx_image: xcode9
+    rvm: 2.5
+
+  - name: unit tests 2.6
+    stage: after-merge
+    script: bundle exec rake test:unit
+    os: osx
+    osx_image: xcode9
+    rvm: 2.6
+
+  - name: unit tests jruby-9.1.14
+    stage: after-merge
+    script: bundle exec rake test:unit
+    os: osx
+    rvm: jruby-9.1.14
+
+  - name: unit tests 2.2
+    stage: after-merge
+    before_install:
+      - gem install bundler -v 1.17
+    script: bundle exec rake test:unit
+    os: osx
+    rvm: 2.2
 
   - stage: gem-release
     name: deploy MRI gem

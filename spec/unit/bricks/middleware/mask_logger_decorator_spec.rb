@@ -32,6 +32,7 @@ describe GoodData::Bricks::MaskLoggerDecorator do
         expect(logger).to receive(level).with("{:key1=>[\"This is ******.\"], :key2=>{:inner=>\"Also ******\"}}")
         subject.send(level, key1: ["This is secret_password."], key2: { inner: "Also sensitive" })
       end
+
       it "should not mask nil" do
         expect(logger).to receive(level).with(nil)
         subject.send(level, nil)

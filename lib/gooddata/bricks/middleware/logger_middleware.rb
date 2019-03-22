@@ -38,7 +38,8 @@ module GoodData
           FileUtils.mkpath log_directory
           logger = Logger.new("#{log_directory}/#{execution_id}.log")
           logger.level = params['GDC_LOG_LEVEL'] || 'info'
-          logger = MaskLoggerDecorator.new(logger, params)
+          values_to_mask = params['values_to_mask'] || []
+          logger = MaskLoggerDecorator.new(logger, values_to_mask)
         else
           logger = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
           logger.level = params['GDC_LOG_LEVEL'] || 'info'
