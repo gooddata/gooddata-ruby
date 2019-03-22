@@ -1,4 +1,10 @@
 # GoodData Ruby SDK Changelog
+## 2.1.1
+ - TMA-1423: handle windows shell in a healthy manner
+ - TMA-1424: fix server strings that cause trouble
+ - TMA-1404: explicitly fail when segments filter is not array
+ - TMA-1412: fix api cmd spec
+
 ## 2.1.0
 - TMA-1401: print message and request id on http error
 - Add doc section to contributing.md
