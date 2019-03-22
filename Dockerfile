@@ -18,8 +18,8 @@ RUN yum install -y curl which patch make git \
 # Switch to directory with sources
 WORKDIR /src
 
-RUN groupadd -g 1003 lcmuser && \
-    useradd -r -u 1003 -g lcmuser lcmuser && \
+RUN groupadd -g 271 lcmuser && \
+    useradd -r -u 271 -g lcmuser lcmuser && \
     mkhomedir_helper lcmuser && \
     chown lcmuser: /home && \
     chown lcmuser: /src
