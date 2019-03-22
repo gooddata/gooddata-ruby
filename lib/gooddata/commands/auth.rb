@@ -62,13 +62,52 @@ module GoodData
           }
         end
 
+        def ask_for_credentials_on_windows(credentials_file_path = Helpers::AuthHelper.credentials_file)
+          puts 'Enter your GoodData credentials.'
+
+          old_credentials = Helpers::AuthHelper.read_credentials(credentials_file_path)
+
+          puts 'Email'
+          input = $stdin.gets.chomp
+          user = input.empty? ? old_credentials[:username] : input
+
+          puts 'Password'
+          input = $stdin.gets.chomp
+          password = input.empty? ? old_credentials[:password] : input
+
+          puts 'Authorization (Project) Token'
+          input = $stdin.gets.chomp
+          auth_token = input.empty? ? old_credentials[:auth_token] : input
+
+          puts 'Environment'
+          input = $stdin.gets.chomp
+          environment = input.empty? ? old_credentials[:environment] : input
+          # in windows console, an empty input does not flush the previous buffer
+          # so if you do not fill any environment, the previous value is still present in $stdin
+          # so this is a default
+          environment = GoodData::Project::DEFAULT_ENVIRONMENT if environment == auth_token
+
+          puts 'Server'
+          input = $stdin.gets.chomp
+          server = input.empty? ? old_credentials[:server] : input
+
+          # Return as struct
+          {
+            :username => user,
+            :password => password,
+            :auth_token => auth_token,
+            :environment => environment,
+            :server => server
+          }
+        end
+
         # Ask for credentials and store them
         def store(credentials_file_path = Helpers::AuthHelper.credentials_file)
           puts 'This will store credentials to GoodData in an UNencrypted form to your harddrive to file ~/.gooddata.'
           overwrite = GoodData::CLI.terminal.ask('Do you want to continue? (y/n)')
           return if overwrite != 'y'
 
-          credentials = ask_for_credentials
+          credentials = GoodData::Helpers.running_on_windows? ? ask_for_credentials_on_windows : ask_for_credentials
 
           ovewrite = if File.exist?(credentials_file_path)
                        GoodData::CLI.terminal.ask('Overwrite existing stored credentials (y/n)')
