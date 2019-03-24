@@ -708,12 +708,12 @@ ERR
 
       def fix_server_url(server)
         server = server.chomp('/')
-        if server.starts_with? 'http://'
+        if server.start_with? 'http://'
           server = server.sub 'http://', 'https://'
           GoodData.logger.warn 'You specified the HTTP protocol in your server string. It has been autofixed to HTTPS.'
         end
 
-        server = 'https://' + server unless server.starts_with? 'https://'
+        server = 'https://' + server unless server.start_with? 'https://'
         server
       end
     end
