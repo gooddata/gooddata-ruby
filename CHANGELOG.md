@@ -1,4 +1,7 @@
 # GoodData Ruby SDK Changelog
+## 2.1.2
+ - TMA-1429 fixed method name
+
 ## 2.1.1
  - TMA-1423: handle windows shell in a healthy manner
  - TMA-1424: fix server strings that cause trouble
