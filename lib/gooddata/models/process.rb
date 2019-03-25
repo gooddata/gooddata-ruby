@@ -186,14 +186,18 @@ module GoodData
         client, project = GoodData.get_client_and_project(options)
         data = { process: data } unless data[:process]
         data[:process] = GoodData::Helpers.symbolize_keys(data[:process]).select { |k| %i[type name component].include? k }
-        data[:process][:component] = GoodData::Helpers.symbolize_keys(data[:process][:component]).select { |k| %i[name version configLocation].include? k }
+        data[:process][:component] = GoodData::Helpers.symbolize_keys(data[:process][:component]).select { |k| %i[name version configLocation config].include? k }
 
-        # a feature flag is required to create component type processes
-        client.post "/gdc/projects/#{project.pid}/projectFeatureFlags",
-                    featureFlag: {
-                      key: 'enableEtlComponent',
-                      value: true
-                    }
+        # a feature flag is required to create ADDv2 components
+        if data[:process][:component][:name] == 'gdc-data-distribution'
+          client.post(
+            "/gdc/projects/#{project.pid}/projectFeatureFlags",
+            featureFlag: {
+              key: 'enableDataDistribution',
+              value: true
+            }
+          )
+        end
 
         save(data, options)
       end
@@ -331,6 +335,12 @@ module GoodData
 
     def component
       process['component']
+    end
+
+    # Determines whether the process is an ADDv2 component.
+    # @return [Bool] True if the process is an ADDv2 component.
+    def add_v2_component?
+      process['component'] && process['component']['name'] == 'gdc-data-distribution'
     end
 
     def schedules

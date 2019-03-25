@@ -83,7 +83,9 @@ module GoodData
             if @reuse_integration_project
               reuse_project_id(client)
             else
-              setup_platform_environment(client)
+              GoodData::Helpers::VcrConfigurer.without_vcr do
+                setup_platform_environment(client)
+              end
             end
           end
           @project_id

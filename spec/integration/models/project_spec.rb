@@ -223,4 +223,123 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
       end
     end
   end
+
+  describe '#transfer_processes and #transfer_schedules' do
+    let(:extra_process_name) { 'this process should be deleted' }
+    before(:all) do
+      @to_project = @client.create_project(
+        title: '#transfer_processes and #transfer_schedules test',
+        auth_token: ConnectionHelper::SECRETS[:gd_project_token],
+        environment: ProjectHelper::ENVIRONMENT
+      )
+      @to_project.deploy_process(
+        RUBY_HELLO_WORLD_PROCESS_PATH,
+        name: 'this process should be deleted'
+      )
+
+      process_in_both_projects = @to_project.deploy_process(
+        RUBY_HELLO_WORLD_PROCESS_PATH,
+        name: 'Simple Ruby Process'
+      )
+      process_in_both_projects.create_schedule(
+        nil,
+        'main.rb',
+        name: 'this schedule should be deleted'
+      )
+
+      etl_component = {
+        name: 'test etl component',
+        type: :etl,
+        component: {
+          name: 'gdc-etl-sql-executor',
+          version: '1'
+        }
+      }
+
+      @dataload_component = @project.deploy_process(etl_component)
+
+      @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@client)
+
+      add_component_data = {
+        name: ADD_V2_COMPONENT_NAME,
+        type: :etl,
+        component: {
+          name: 'gdc-data-distribution',
+          version: '1',
+          config: {
+            dataDistribution: {
+              dataSource: @data_source_id
+            }
+          }
+        }
+      }
+
+      @add_component = GoodData::Process.deploy_component(
+        add_component_data,
+        project: @project,
+        client: @client
+      )
+      @add_component.create_schedule(nil, 'add-component-schedule')
+
+      @from_processes = @project.processes.map(&:name).sort
+      @from_schedules = @project.schedules.map(&:name).sort
+      @project.transfer_processes(@to_project)
+      @project.transfer_schedules(@to_project)
+      @to_processes = @to_project.processes.map(&:name).sort
+      @to_schedules = @to_project.schedules.map(&:name).sort
+    end
+
+    after(:all) do
+      @to_project.delete if @to_project
+      GoodData::Helpers::DataSourceHelper.delete(@data_source_id) if @data_source_id
+      @add_component.delete if @add_component
+      @dataload_component.delete if @dataload_component
+    end
+
+    it 'keeps processes in the original project untouched' do
+      expect(@from_processes).to eq(@project.processes.map(&:name).sort)
+    end
+
+    it 'transfers processes to the target project' do
+      transferrable_processes = @from_processes - [ADD_V2_COMPONENT_NAME]
+      expect(@to_processes).to eq(transferrable_processes)
+    end
+
+    it 'transfers etl components' do
+      expect(@from_processes).to include('test etl component')
+      expect(@to_processes).to include('test etl component')
+    end
+
+    it 'does not transfer ADDv2 components' do
+      expect(@from_processes).to include(ADD_V2_COMPONENT_NAME)
+      expect(@to_processes).not_to include(ADD_V2_COMPONENT_NAME)
+    end
+
+    it 'deletes extra processes in the target project' do
+      expect(@from_processes).not_to include(extra_process_name)
+      expect(@to_processes).not_to include(extra_process_name)
+    end
+
+    it 'keeps schedules in the original project untouched' do
+      expect(@from_schedules).to eq(@project.schedules.map(&:name).sort)
+    end
+
+    it 'transfers schedules to the target project' do
+      transferrable_schedules = @from_schedules - ['add-component-schedule']
+      expect(@to_schedules).to eq(transferrable_schedules)
+    end
+
+    it 'deletes extra schedules in the target project' do
+      expect(@to_schedules).not_to include(
+        'this schedule should be deleted'
+      )
+    end
+
+    it 'is idempotent' do
+      @project.transfer_processes(@to_project)
+      @project.transfer_schedules(@to_project)
+      expect(@to_processes).to eq(@to_project.processes.map(&:name).sort)
+      expect(@to_schedules).to eq(@to_project.schedules.map(&:name).sort)
+    end
+  end
 end
