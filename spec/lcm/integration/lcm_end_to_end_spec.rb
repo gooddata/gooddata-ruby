@@ -4,6 +4,7 @@ require_relative 'support/lcm_helper'
 require_relative 'brick_runner'
 require_relative 'shared_examples_for_synchronization_bricks'
 require_relative 'shared_contexts_for_lcm'
+require_relative 'shared_examples_for_release_brick'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []
@@ -57,6 +58,11 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+    end
+
+    it_behaves_like 'a release brick' do
+      let(:original_project) { @project }
+      let(:projects) { $master_projects }
     end
   end
 
@@ -161,6 +167,11 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+    end
+
+    it_behaves_like 'a release brick' do
+      let(:original_project) { @project }
+      let(:projects) { $master_projects }
     end
   end
 

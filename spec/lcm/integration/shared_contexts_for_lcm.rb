@@ -82,7 +82,11 @@ shared_context 'lcm bricks' do |opts = {}|
       environment: @config[:environment]
     )
 
-    project_helper.deploy_processes(@ads) unless $reuse_project
+    unless $reuse_project
+      project_helper.deploy_processes(@ads)
+      @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@rest_client)
+      project_helper.deploy_add_v2_process(@data_source_id)
+    end
 
     @project = project_helper.project
 
@@ -221,6 +225,8 @@ shared_context 'lcm bricks' do |opts = {}|
       GoodData.logger.warn("Failed to delete segments. #{e}")
       GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
     end
+
+    GoodData::Helpers::DataSourceHelper.delete(@data_source_id) if @data_source_id
 
     @rest_client.disconnect if @rest_client
     @prod_rest_client.disconnect if @rest_client

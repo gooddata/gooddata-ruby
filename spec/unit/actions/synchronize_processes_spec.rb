@@ -82,6 +82,7 @@ describe GoodData::LCM2::SynchronizeProcesses do
     allow(process).to receive(:to_hash).and_return(process_hash)
 
     allow(process).to receive(:project).and_return(src_project)
+    allow(process).to receive(:add_v2_component?).and_return(false)
   end
   it 'merges the process params with the component part' do
     expect(GoodData::Process).to receive(:deploy_component).with(

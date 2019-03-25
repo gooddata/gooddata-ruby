@@ -16,6 +16,7 @@ shared_examples 'a synchronization brick' do
 
   it 'migrates processes' do
     original_processes = original_project.processes.to_a
+    original_processes.reject! { |p| p.name == ADD_V2_COMPONENT_NAME }
     projects.each do |target_project|
       target_processes = target_project.processes.to_a
       expect(target_processes.length).to be original_processes.length
@@ -81,6 +82,7 @@ shared_examples 'a synchronization brick' do
 
   it 'migrates schedules' do
     original_schedules = original_project.schedules.to_a
+    original_schedules.reject! { |s| s.name == ADD_COMPONENT_SCHEDULE_NAME }
     projects.each do |target_project|
       target_schedules = target_project.schedules
       expect(target_schedules.all? { |sch| sch.state == schedules_status }).to be_truthy
