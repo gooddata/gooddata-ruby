@@ -33,13 +33,18 @@ class BrickRunner
       decoded_params = GoodData::Helpers.decode_params(script_params(opts))
       params, hidden_params = extract_hidden_params(decoded_params)
       params.delete('gd_encoded_hidden_params')
-      appstore_name = GoodData::Environment::ConnectionHelper::LCM_ENVIRONMENT[:appstore_deploy_name]
-      deploy_string = "${#{appstore_name}}:branch/lcm2:/apps/#{brick_name}"
+      component_brick_name = brick_name.sub('_brick', '')
+      component_brick_name = 'provision' if component_brick_name == 'provisioning'
+      image_tag = opts[:image_tag]
 
-      process = service_project.deploy_process(
-        deploy_string,
-        name: "test of #{brick_name}"
-      )
+      process = service_project.deploy_process({
+        name: "lcm-spec-#{component_brick_name}-brick",
+        type: 'LCM',
+        component: {
+          name: "lcm-brick#{ '[' + image_tag + ']' if image_tag }-#{component_brick_name}",
+          version: '3'
+        }
+      })
 
       schedule = process.create_schedule(
         opts[:run_after],
