@@ -13,11 +13,13 @@
       "pg": "<%= config[:prod_token] %>",
       "vertica": "<%= config[:vertica_prod_token] %>"
     },
+    <% if defined? jdbc_url %>
     "ads_client": {
       "username": "${GDC_USERNAME}",
       "password": "${GDC_PASSWORD}",
       "jdbc_url": "<%= jdbc_url %>"
     },
+    <% end %>
     "additional_params": {
       "msg_from_release_brick": "Hi, I was set by release brick",
       "print_reverted": "hidden_msg_from_release_brick,SECURE_PARAM_2"

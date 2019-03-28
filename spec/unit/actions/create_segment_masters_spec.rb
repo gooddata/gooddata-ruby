@@ -94,6 +94,7 @@ describe GoodData::LCM2::CreateSegmentMasters do
       allow(gdc_gd_client).to receive(:domain).and_return(domain)
       allow(domain).to receive(:segments) { [] }
       allow(GoodData::LCM2::Helpers).to receive(:latest_master_project)
+      allow(ads_client).to receive(:execute_select) { [{ version: '1.2' }] }
     end
 
     it 'passes ads_output_stage_prefix parameter' do

@@ -13,7 +13,7 @@ module GoodData
 
       PARAMS = define_params(self) do
         description 'ADS Client'
-        param :ads_client, instance_of(Type::AdsClientType), required: true
+        param :ads_client, instance_of(Type::AdsClientType), required: false
 
         description 'Table Name'
         param :release_table_name, instance_of(Type::StringType), required: false
@@ -28,24 +28,32 @@ module GoodData
 
       class << self
         def call(params)
-          replacements = {
-            table_name: params.release_table_name || DEFAULT_TABLE_NAME
-          }
-
-          path = File.expand_path('../../data/create_lcm_release.sql.erb', __FILE__)
-          query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
-
-          sql_result = params.ads_client.execute(query)
-
-          # TODO: Format
-          GoodData.logger.info(JSON.pretty_generate(sql_result))
-
-          [
-            {
-              table_name: replacements[:table_name],
-              status: 'ok'
+          if params.ads_client
+            replacements = {
+              table_name: params.release_table_name || DEFAULT_TABLE_NAME
             }
-          ]
+
+            path = File.expand_path('../data/create_lcm_release.sql.erb', __dir__)
+            query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
+
+            sql_result = params.ads_client.execute(query)
+
+            # TODO: Format
+            GoodData.logger.info(JSON.pretty_generate(sql_result))
+
+            [
+              {
+                table_name: replacements[:table_name],
+                status: 'ok'
+              }
+            ]
+          else
+            [
+              {
+                status: 'ok'
+              }
+            ]
+          end
         end
       end
     end

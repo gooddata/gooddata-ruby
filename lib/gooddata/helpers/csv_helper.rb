@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'csv'
+require 'fileutils'
 
 module GoodData
   module Helpers
@@ -38,6 +39,18 @@ module GoodData
           res
         end
 
+        # Read data from csv as an array of hashes with symbol keys and parsed integers
+        # @option filename String
+        def read_as_hash(filename)
+          res = []
+          return res unless File.exist? filename
+
+          CSV.parse(File.read(filename), headers: true, header_converters: :symbol, converters: :integer).map do |row|
+            res << row.to_hash
+          end
+          res
+        end
+
         # Write data to CSV
         # @option opts [String] :path File to write data to
         # @option opts [Array] :data Mandatory array of data to write
@@ -52,6 +65,20 @@ module GoodData
             data.each do |entry|
               res = yield entry
               csv << res if res
+            end
+          end
+        end
+
+        # Ammend a hash to CSV in a smart manner
+        # @option filename String
+        # @option data Hash
+        def ammend_line(filename, data)
+          current_data = read_as_hash(filename)
+          data_to_write = (current_data << data).map(&:sort).map { |r| Hash[r] }
+          FileUtils.mkpath(filename.split('/')[0...-1].join('/'))
+          CSV.open(filename, 'w', write_headers: true, headers: data_to_write.first.keys) do |csv|
+            data_to_write.each do |d|
+              csv << d.values
             end
           end
         end

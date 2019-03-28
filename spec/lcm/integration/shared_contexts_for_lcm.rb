@@ -3,7 +3,6 @@ require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
 require_relative 'support/lcm_helper'
 require_relative 'support/s3_helper'
-require 'gooddata_datawarehouse' unless GoodData::Environment::VCR_ON
 
 def create_suffix
   hostname = Socket.gethostname
@@ -49,26 +48,26 @@ shared_context 'lcm bricks' do |opts = {}|
       verify_ssl: false
     }
     @rest_client = GoodData.connect(connection_parameters)
-    @ads = ConfigurationHelper.create_development_datawarehouse(client: @rest_client,
-                                                                title: 'Development ADS',
-                                                                auth_token: @config[:vertica_dev_token])
-    @config[:ads_client][:jdbc_url] = @ads.data['connectionUrl']
+    use_ads = opts.fetch(:ads, true)
+    use_output_stages = use_ads && !GoodData::Environment::VCR_ON
+    if use_ads
+      require 'gooddata_datawarehouse' unless GoodData::Environment::VCR_ON
+      @ads = ConfigurationHelper.create_development_datawarehouse(client: @rest_client,
+                                                                  title: 'Development ADS',
+                                                                  auth_token: @config[:vertica_dev_token])
+      @config[:ads_client][:jdbc_url] = @ads.data['connectionUrl']
+      @ads_client = GoodData::Datawarehouse.new(
+        @config[:ads_client][:username],
+        @config[:ads_client][:password],
+        @config[:ads_client][:ads_id],
+        jdbc_url: @ads.data['connectionUrl']
+      )
 
-    @ads_client = GoodData::Datawarehouse.new(
-      @config[:ads_client][:username],
-      @config[:ads_client][:password],
-      @config[:ads_client][:ads_id],
-      jdbc_url: @ads.data['connectionUrl']
-    )
+      @release_table_name = 'LCM_RELEASE'
+      LcmHelper.create_release_table(@release_table_name, @ads_client)
+    end
 
-    @release_table_name = 'LCM_RELEASE'
-    LcmHelper.create_release_table(@release_table_name, @ads_client)
     @workspace_table_name = 'LCM_WORKSPACE'
-    LcmHelper.create_workspace_table(
-      @workspace_table_name,
-      @ads_client,
-      Support::CUSTOM_CLIENT_ID_COLUMN
-    )
 
     $reuse_project = ENV['REUSE_PROJECT']
 
@@ -76,9 +75,9 @@ shared_context 'lcm bricks' do |opts = {}|
       client: @rest_client,
       title: 'LCM spec Development Project',
       auth_token: @config[:dev_token],
-      environment: @config[:environment],
-      ads: @ads
+      environment: @config[:environment]
     )
+
     project_helper.deploy_processes(@ads) unless $reuse_project
 
     @project = project_helper.project
@@ -95,10 +94,11 @@ shared_context 'lcm bricks' do |opts = {}|
       verify_ssl: false
     }
     @prod_rest_client = GoodData.connect(prod_connection_parameters)
-    @prod_ads = ConfigurationHelper.create_development_datawarehouse(client: @prod_rest_client,
-                                                                     title: 'Production ADS',
-                                                                     auth_token: @config[:vertica_prod_token])
-    unless GoodData::Environment::VCR_ON
+
+    if use_output_stages
+      @prod_ads = ConfigurationHelper.create_development_datawarehouse(client: @prod_rest_client,
+                                                                       title: 'Production ADS',
+                                                                       auth_token: @config[:vertica_prod_token])
       @prod_output_stage_project = ConfigurationHelper.create_output_stage_project(
         @prod_rest_client,
         @suffix,
@@ -117,7 +117,7 @@ shared_context 'lcm bricks' do |opts = {}|
         master_name: "LCM spec master project (#{segment} #{i}) " + '##{version}' # rubocop:disable Lint/InterpolationCheck
       }
 
-      unless GoodData::Environment::VCR_ON
+      if use_output_stages
         data[:ads_output_stage_uri] = production_output_stage_uri
         data[:ads_output_stage_prefix] = Support::OUTPUT_STAGE_PREFIX
       end
@@ -158,8 +158,6 @@ shared_context 'lcm bricks' do |opts = {}|
       release_table_name: @release_table_name,
       workspace_table_name: @workspace_table_name,
       config: @config,
-      ads_client: @ads_client,
-      jdbc_url: @ads.data['connectionUrl'],
       development_pid: @project.obj_id,
       segments: segments.to_json,
       segments_filter: segments_filter.to_json,
@@ -171,6 +169,11 @@ shared_context 'lcm bricks' do |opts = {}|
       schedule_additional_hidden_params: (opts[:schedule_additional_hidden_params] || {}).to_json,
       process_additional_hidden_params: (opts[:process_additional_hidden_params] || {}).to_json
     }.merge(s3_info)
+
+    if use_ads
+      @test_context[:jdbc_url] = @ads.data['connectionUrl']
+      @test_context[:ads] = @ads_client
+    end
   end
 
   after(:each) do
@@ -202,8 +205,8 @@ shared_context 'lcm bricks' do |opts = {}|
       end
     end
 
-    ConfigurationHelper.delete_datawarehouse(@prod_ads)
-    ConfigurationHelper.delete_datawarehouse(@ads)
+    ConfigurationHelper.delete_datawarehouse(@prod_ads) if @prod_ads
+    ConfigurationHelper.delete_datawarehouse(@ads) if @ads
 
     begin
       GoodData.logger.info("Deleting segments")

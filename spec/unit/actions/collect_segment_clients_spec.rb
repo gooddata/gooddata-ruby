@@ -11,6 +11,7 @@ require_relative '../datawarehouse_mock'
 describe GoodData::LCM2::CollectSegmentClients do
   let(:gdc_gd_client) { double('gdc_gd_client') }
   let(:domain) { double('domain') }
+  let(:domain_name) { 'domain-name' }
   let(:segment_mock) { double('segment') }
   let(:segments) { [segment_mock] }
   let(:client) { double('client') }
@@ -79,7 +80,7 @@ describe GoodData::LCM2::CollectSegmentClients do
         gdc_gd_client: gdc_gd_client,
         synchronize: [{}],
         segments: [segment],
-        domain: domain,
+        domain: domain_name,
         ads_client: ads_client
       }
     end

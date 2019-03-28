@@ -16,15 +16,17 @@
     "query": {
       "release": "SELECT segment_id, master_project_id, version from \"<%= release_table_name %>\";"
     },
-    "apply_maql_ddl": "true",
-    "technical_user": [
-      "${GDC_USERNAME}"
-    ],
+    <% if defined? jdbc_url %>
     "ads_client": {
       "username": "${GDC_USERNAME}",
       "password": "${GDC_PASSWORD}",
       "jdbc_url": "<%= jdbc_url %>"
-    }
+    },
+    <% end %>
+    "apply_maql_ddl": "true",
+    "technical_user": [
+      "${GDC_USERNAME}"
+    ]
   },
   "gd_encoded_hidden_params": {
     "schedule_additional_hidden_params": <%= schedule_additional_hidden_params %>,
