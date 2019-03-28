@@ -3,7 +3,7 @@ require 'fileutils'
 require 'pathname'
 require 'rspec/core/rake_task'
 
-test_cases = %i[integration slow userprov load smoke]
+test_cases = %i[integration slow userprov load]
 
 # Schema for new Bricks.
 brick_info_schema = {
@@ -81,6 +81,20 @@ namespace :test do
     RSpec::Core::RakeTask.new(test_case) do |task|
       task.pattern = "spec/lcm/#{test_case}/**/*_spec.rb"
     end
+  end
+
+  desc 'Run smoke tests'
+  RSpec::Core::RakeTask.new(:smoke) do |task|
+    ENV['GD_LCM_SPEC_SEGMENTS_MULTIPLIER'] = '1'
+    ENV['GD_LCM_SPEC_WORKSPACES_MULTIPLIER'] = '1'
+
+    ENV['GD_LCM_SPEC_USER_COUNT'] = '1'
+    ENV['GD_LCM_SPEC_PROJECT_COUNT'] = '1'
+
+    ENV['VCR_ON'] = 'false'
+    ENV['GD_LCM_SMOKE_TEST'] = 'true'
+
+    task.pattern = 'spec/lcm/load/**/*_spec.rb'
   end
 
   namespace :docker do
