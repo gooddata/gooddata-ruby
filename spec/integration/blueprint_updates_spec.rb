@@ -103,5 +103,50 @@ describe 'Create project using GoodData client - blueprint', :vcr, :constraint =
     expect(report.execute.without_top_headers.to_a).to eq [["jirka@gmail.com", 3],
                                                            ["petr@gmail.com", 2],
                                                            ["tomas@gmail.com", 1]]
+    # return atribute back where it came from
+    @blueprint.move!('some_attr_id', 'dataset.commits', 'dataset.repos')
+    @project.update_from_blueprint(@blueprint)
+  end
+
+  context 'when working with column mapping' do
+    let(:data) do
+      [
+        %w[lines date developer repository],
+        [1, '01/01/2011', '1', '1'],
+        [2, '01/01/2011', '2', '2'],
+        [3, '01/01/2011', '3', '3']
+      ]
+    end
+    let(:column_mapping) do
+      {
+        lines_changed: 'lines',
+        committed_on: 'date',
+        dev_id: 'developer',
+        repo_id: 'repository'
+      }
+    end
+
+    it 'uploads data correctly' do
+      @project.upload(data, @blueprint, 'dataset.commits', column_mapping: column_mapping)
+    end
+
+    it 'uploads data correctly from a file' do
+      begin
+        file = Tempfile.new
+        data.each do |row|
+          file.write row.to_csv
+        end
+        file.close
+
+        @project.upload(file.path, @blueprint, 'dataset.commits', column_mapping: column_mapping)
+      ensure
+        file.delete if file
+      end
+    end
+
+    it 'fails with a human readable output when column_mapping is not correct' do
+      wrong_column_mapping = column_mapping.tap { |c| c[:lines_changed] = 'wrong_one' }
+      expect { @project.upload(data, @blueprint, 'dataset.commits', column_mapping: wrong_column_mapping) }.to raise_exception(/lines_changed/)
+    end
   end
 end
