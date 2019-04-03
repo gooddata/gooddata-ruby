@@ -1,4 +1,9 @@
 # GoodData Ruby SDK Changelog
+## 2.1.3
+ - TMA-1394: upload_data takes mapping of gd labels to csv columns into account
+ - TMA-1292: K8s load and smoke spec
+ - TMA-1259: support file as ADS replacement
+
 ## 2.1.2
  - TMA-1429 fixed method name
 
