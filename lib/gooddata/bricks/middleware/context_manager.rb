@@ -37,7 +37,7 @@ module GoodData
     end
 
     def time_from_action_start(now = Time.now)
-      fail_if_development 'No action is being profiled' unless action
+      GoodData::LCM2::Helpers.fail_if_development 'No action is being profiled' unless action
       (now - @action_start) * 1000
     end
 
@@ -47,7 +47,7 @@ module GoodData
     # @param [Logger] logger, logger that should log current context info
     # @param [Time] now, allows to specify exact time, when outer call was performed
     def start_action(next_action, logger = nil, now = Time.now)
-      fail_if_development 'An action is already being profiled' if action
+      GoodData::LCM2::Helpers.fail_if_development 'An action is already being profiled' if action
 
       self.action = next_action
       @action_start = now
@@ -59,7 +59,7 @@ module GoodData
     #
     # @param [Logger] logger, logger that should log current context info
     def end_action(logger = nil)
-      fail_if_development 'No matching action to start found' unless action
+      GoodData::LCM2::Helpers.fail_if_development 'No matching action to start found' unless action
 
       logger.info '' if logger
       self.status = :not_in_action
