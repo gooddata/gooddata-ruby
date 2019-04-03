@@ -17,6 +17,7 @@ require 'fileutils'
 require 'multi_json'
 require 'open-uri'
 require 'zip'
+require 'csv'
 
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
@@ -181,7 +182,8 @@ module GoodData
 
               zip.get_output_stream(filename) do |file|
                 data_to_upload.each_with_index do |row, index|
-                  row = row.split(',').map(&:chomp) unless inline_data
+                  row = CSV.parse(row).first unless inline_data
+
                   if index.zero?
                     row.map! { |h| column_mapping.key(h) || h } if column_mapping
                     csv_headers << row
