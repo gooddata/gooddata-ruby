@@ -1,5 +1,3 @@
-require 'active_support/core_ext/hash'
-
 class BrickRunner
   class << self
     def user_filters_brick(opts)

@@ -1,3 +1,5 @@
+require 'fileutils'
+
 require_relative 'support/configuration_helper'
 require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
@@ -65,6 +67,8 @@ shared_context 'lcm bricks' do |opts = {}|
 
       @release_table_name = 'LCM_RELEASE'
       LcmHelper.create_release_table(@release_table_name, @ads_client)
+    else
+      FileUtils.rm_rf(GoodData::LCM2::Helpers::DEFAULT_NFS_DIRECTORY) if Dir.exist? GoodData::LCM2::Helpers::DEFAULT_NFS_DIRECTORY
     end
 
     @workspace_table_name = 'LCM_WORKSPACE'
