@@ -5,9 +5,6 @@ require_relative '../integration/support/s3_helper'
 require_relative '../integration/support/project_helper'
 require_relative '../integration/shared_examples_for_synchronization_bricks'
 
-require 'active_support'
-require 'active_support/core_ext'
-
 describe 'Contains M to N relation' do
   before(:all) do
     @config = {

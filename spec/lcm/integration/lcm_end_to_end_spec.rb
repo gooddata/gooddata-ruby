@@ -1,8 +1,3 @@
-require 'pp'
-require 'aws-sdk-s3'
-require 'tempfile'
-require 'csv'
-
 require_relative 'support/constants'
 require_relative 'support/configuration_helper'
 require_relative 'support/lcm_helper'

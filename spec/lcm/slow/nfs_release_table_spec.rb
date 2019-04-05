@@ -1,9 +1,3 @@
-require 'pp'
-require 'aws-sdk-s3'
-require 'tempfile'
-require 'csv'
-require 'fileutils'
-
 require_relative '../integration/support/constants'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/lcm_helper'
@@ -28,7 +22,6 @@ describe 'when using NFS instead of ADS for release data storage' do
 
   describe '1 - Initial Release' do
     before(:all) do
-      FileUtils.rm_rf(GoodData::LCM2::Helpers::DEFAULT_NFS_DIRECTORY) if Dir.exist? GoodData::LCM2::Helpers::DEFAULT_NFS_DIRECTORY
       $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
       $master = $master_projects.first
     end

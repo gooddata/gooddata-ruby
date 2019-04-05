@@ -5,9 +5,6 @@ require_relative '../integration/support/s3_helper'
 require_relative '../integration/support/project_helper'
 require_relative '../integration/shared_examples_for_synchronization_bricks'
 
-require 'active_support'
-require 'active_support/core_ext'
-
 def prepare_visualisation_object(rest_client, project)
   visualization_classes = GoodData::MdObject.query('visualizationClass', GoodData::MdObject, client: rest_client, project: project)
   visualization_class = visualization_classes.first
