@@ -1,0 +1,60 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes
+    body:
+      encoding: UTF-8
+      string: '{"process":{"name":"test component","type":"etl","component":{"name":"gdc-etl-csv-downloader","version":"1","configLocation":{"s3":{"path":"s3://s3_bucket/s3_folder/","accessKey":"s3_access_key","secretKey":"s3_secret_key","serverSideEncryption":true}}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - gooddata-gem/2.1.3/x86_64-darwin18/2.4.5
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":J8wR3UELESieZADrbGpV-g:GUdka7wtnTaBX728kYp6uw"
+      Stats-On:
+      - ''
+      Content-Length:
+      - '255'
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 18 Apr 2019 11:08:10 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request:
+      - ":J8wR3UELESieZADrbGpV-g:GUdka7wtnTaBX728kYp6uw:PXNe3VOQzRyJRCPT"
+      Vary:
+      - origin
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '75'
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"process":{"type":"ETL","name":"test component","graphs":[],"executables":[],"lastDeployed":"2019-04-18T11:08:10.380Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1","executions":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1/executions","source":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1/source"},"component":{"name":"gdc-etl-csv-downloader","version":"1","configLocation":{"s3":{"path":"s3://s3_bucket/s3_folder/","accessKey":"s3_access_key","serverSideEncryption":true}}}}}'
+    http_version: 
+  recorded_at: Thu, 18 Apr 2019 11:08:10 GMT
+recorded_with: VCR 4.0.0
