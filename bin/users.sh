@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-/bin/bash -l -c ". /home/lcmuser/.rvm/scripts/rvm && bundle exec ./bin/run_brick.rb users_brick"
+/bin/bash -l -c ". /home/updater/.rvm/scripts/rvm && bundle exec ./bin/run_brick.rb users_brick"
