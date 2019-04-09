@@ -23,14 +23,14 @@ jobs:
     script: |
       git remote add upstream https://github.com/gooddata/gooddata-ruby.git
       git fetch upstream develop
-      bundle exec pronto run -c upstream/develop --exit-code
+      failed=0
+      PRONTO_FLAY_MASS_THRESHOLD=50 bundle exec pronto run -c upstream/develop --exit-code lib || failed=1
+      PRONTO_FLAY_MASS_THRESHOLD=100 bundle exec pronto run -c upstream/develop --exit-code spec || failed=1
+      if [ "$failed" -ne 0 ] ; then
+          exit 1
+      fi
 
     #  UNIT TESTS ON LINUX IN ALL SUPPORTED RUBY VERSIONS
-  - name: unit tests 2.2
-    stage: before-merge
-    script: bundle exec rake test:unit
-    rvm: 2.2
-
   - name: unit tests 2.3
     stage: before-merge
     script: bundle exec rake test:unit
@@ -245,14 +245,6 @@ jobs:
     script: bundle exec rake test:unit
     os: osx
     rvm: jruby-9.1.14
-
-  - name: unit tests 2.2
-    stage: after-merge
-    before_install:
-      - gem install bundler -v 1.17
-    script: bundle exec rake test:unit
-    os: osx
-    rvm: 2.2
 
   - stage: gem-release
     name: deploy MRI gem
