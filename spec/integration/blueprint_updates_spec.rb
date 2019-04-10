@@ -148,5 +148,18 @@ describe 'Create project using GoodData client - blueprint', :vcr, :constraint =
       wrong_column_mapping = column_mapping.tap { |c| c[:lines_changed] = 'wrong_one' }
       expect { @project.upload(data, @blueprint, 'dataset.commits', column_mapping: wrong_column_mapping) }.to raise_exception(/lines_changed/)
     end
+
+    it 'works with #upload_multiple' do
+      @project.upload_multiple(
+        [{
+          data: data,
+          dataset: 'dataset.commits',
+          options: {
+            column_mapping: column_mapping
+          }
+        }],
+        @blueprint
+      )
+    end
   end
 end
