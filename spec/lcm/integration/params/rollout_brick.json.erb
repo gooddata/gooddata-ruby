@@ -22,6 +22,12 @@
       "password": "${GDC_PASSWORD}",
       "jdbc_url": "<%= jdbc_url %>"
     },
+    "dynamic_params": {
+      "input_source": {
+        "type": "ads",
+        "query": "<%= dynamic_params_query %>"
+      }
+    },
     <% end %>
     "apply_maql_ddl": "true",
     "technical_user": [

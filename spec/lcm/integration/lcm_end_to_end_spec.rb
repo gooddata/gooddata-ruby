@@ -80,7 +80,9 @@ describe 'the whole life-cycle', :vcr do
         [['+', 'params.msg_from_provisioning_brick', 'Hi, I was set by provisioning brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
-      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:schedule_additional_hidden_params) {
+        schedule_additional_hidden_params.merge(Hash[@dynamic_schedule_data.map { |d| [d[:param_name], d[:param_value]] }])
+      }
       let(:output_stage_prefix) { output_stage_prefix }
     end
   end
@@ -101,7 +103,9 @@ describe 'the whole life-cycle', :vcr do
         [['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER }
-      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:schedule_additional_hidden_params) {
+        schedule_additional_hidden_params.merge(Hash[@dynamic_schedule_data.map { |d| [d[:param_name], d[:param_value]] }])
+      }
       let(:output_stage_prefix) { output_stage_prefix }
     end
   end
@@ -210,7 +214,9 @@ describe 'the whole life-cycle', :vcr do
         [['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
       end
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
-      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
+      let(:schedule_additional_hidden_params) {
+        schedule_additional_hidden_params.merge(Hash[@dynamic_schedule_data.map { |d| [d[:param_name], d[:param_value]] }])
+      }
       let(:output_stage_prefix) { output_stage_prefix }
     end
   end

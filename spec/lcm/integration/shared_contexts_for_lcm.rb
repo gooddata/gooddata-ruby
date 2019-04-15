@@ -5,6 +5,7 @@ require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
 require_relative 'support/lcm_helper'
 require_relative 'support/s3_helper'
+require_relative 'support/constants'
 
 def create_suffix
   hostname = Socket.gethostname
@@ -149,6 +150,19 @@ shared_context 'lcm bricks' do |opts = {}|
       Support::CUSTOM_CLIENT_ID_COLUMN
     )
 
+    if use_ads
+      @dynamic_schedule_data = @workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: 'dynamic_param_name',
+          param_value: w[:client_id]
+        }
+      end
+      LcmHelper.fill_dynamic_params_table(@ads_client, @dynamic_schedule_data)
+    else
+      @dynamic_schedule_data = []
+    end
+
     s3_info = Support::S3Helper.upload_file(workspace_csv, @workspace_table_name)
 
     if GoodData::Environment::VCR_ON && GoodData::Helpers::VcrConfigurer.vcr_cassette_playing?
@@ -177,6 +191,7 @@ shared_context 'lcm bricks' do |opts = {}|
     if use_ads
       @test_context[:jdbc_url] = @ads.data['connectionUrl']
       @test_context[:ads] = @ads_client
+      @test_context[:dynamic_params_query] = 'SELECT client_id, param_name, param_value, schedule_title as schedule_name from \"LCM_DYNAMIC_PARAMS\";'
     end
   end
 
