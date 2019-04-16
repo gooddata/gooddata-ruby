@@ -12,7 +12,7 @@ module GoodData
             result = execution.wait_for_result(
               timeout: remaining_time(start_time, timeout)
             )
-            puts result.log.body
+            # puts result.log.body
             result
           end
         end
