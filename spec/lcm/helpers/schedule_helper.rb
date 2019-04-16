@@ -12,7 +12,7 @@ module GoodData
             result = execution.wait_for_result(
               timeout: remaining_time(start_time, timeout)
             )
-            puts result.log.body
+            # puts result.log.body
             result
           end
         end
@@ -23,6 +23,7 @@ module GoodData
           start_time = Time.now
           until schedule.executions.any?
             puts 'Waiting for execution to begin.'
+            p schedule.executions
             elapsed_time = Time.now - start_time
             fail 'Timeout reached.' if elapsed_time > timeout
 
