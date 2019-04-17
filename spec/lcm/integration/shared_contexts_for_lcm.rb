@@ -154,10 +154,20 @@ shared_context 'lcm bricks' do |opts = {}|
       @dynamic_schedule_data = @workspaces.map do |w|
         {
           client_id: w[:client_id],
-          param_name: 'dynamic_param_name',
-          param_value: w[:client_id]
+          param_name: Support::ALL_DYNAMIC_PARAMS_KEY,
+          param_value: w[:client_id],
+          schedule_title: nil
         }
       end
+      individual_schedule_data = @workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: Support::DYNAMIC_PARAMS_KEY,
+          param_value: w[:client_id],
+          schedule_title: Support::RUBY_HELLO_WORLD_SCHEDULE_NAME
+        }
+      end
+      @dynamic_schedule_data.concat(individual_schedule_data)
       LcmHelper.fill_dynamic_params_table(@ads_client, @dynamic_schedule_data)
     else
       @dynamic_schedule_data = []

@@ -31,4 +31,8 @@ module Support
   USER_GROUP_NAME = 'My Test Group'
 
   OUTPUT_STAGE_PREFIX = 'my_prefix'
+
+  ALL_DYNAMIC_PARAMS_KEY = 'all_dynamic_param'
+  ALL_DYNAMIC_PARAMS_VALUE = 'is_in_every_schedule'
+  DYNAMIC_PARAMS_KEY = 'dynamic_param'
 end

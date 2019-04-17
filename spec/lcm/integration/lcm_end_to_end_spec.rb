@@ -3,6 +3,7 @@ require_relative 'support/configuration_helper'
 require_relative 'support/lcm_helper'
 require_relative 'brick_runner'
 require_relative 'shared_examples_for_synchronization_bricks'
+require_relative 'shared_examples_for_provisioning_and_rollout'
 require_relative 'shared_contexts_for_lcm'
 
 # global variables to simplify passing stuff between shared contexts and examples
@@ -85,6 +86,10 @@ describe 'the whole life-cycle', :vcr do
       }
       let(:output_stage_prefix) { output_stage_prefix }
     end
+
+    it_behaves_like 'a provisioning/rollout brick' do
+      let(:projects) { $client_projects }
+    end
   end
 
   describe '3 - Initial Rollout' do
@@ -107,6 +112,10 @@ describe 'the whole life-cycle', :vcr do
         schedule_additional_hidden_params.merge(Hash[@dynamic_schedule_data.map { |d| [d[:param_name], d[:param_value]] }])
       }
       let(:output_stage_prefix) { output_stage_prefix }
+    end
+
+    it_behaves_like 'a provisioning/rollout brick' do
+      let(:projects) { $client_projects }
     end
   end
 
@@ -196,6 +205,10 @@ describe 'the whole life-cycle', :vcr do
     it 'deletes extra client projects' do
       expect($client_projects.map(&:pid)).to_not include @deleted_workspace.pid
     end
+
+    it_behaves_like 'a provisioning/rollout brick' do
+      let(:projects) { $client_projects }
+    end
   end
 
   describe '7 - Subsequent Rollout' do
@@ -218,6 +231,10 @@ describe 'the whole life-cycle', :vcr do
         schedule_additional_hidden_params.merge(Hash[@dynamic_schedule_data.map { |d| [d[:param_name], d[:param_value]] }])
       }
       let(:output_stage_prefix) { output_stage_prefix }
+    end
+
+    it_behaves_like 'a provisioning/rollout brick' do
+      let(:projects) { $client_projects }
     end
   end
 end

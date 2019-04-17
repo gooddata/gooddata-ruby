@@ -123,7 +123,7 @@ module GoodData
 
               client_id = entry[:client_id]
               params_for_this_client = schedule_params[client_id] || {}
-              params_for_all_schedules_in_this_client = params_for_this_client[nil]
+              params_for_all_schedules_in_this_client = params_for_this_client[:all_schedules]
 
               to_project.set_metadata('GOODOT_CUSTOM_PROJECT_ID', client_id) # TMA-210
 
