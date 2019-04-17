@@ -471,9 +471,11 @@ module GoodData
           return exception unless exception.response
 
           response = JSON.parse(exception.response.body, symbolize_names: true)
-          return exception unless exception.message && response[:error] && response[:error][:message] && response[:error][:requestId]
+          return exception unless exception.message && response[:error] && response[:error][:message]
 
-          exception.message = exception.message + ': ' + response[:error][:message] % response[:error][:parameters] + ' request_id: ' + response[:error][:requestId]
+          request_id = exception.response.headers[:x_gdc_request] || 'unknown'
+
+          exception.message = exception.message + ': ' + response[:error][:message] % response[:error][:parameters] + ' request_id: ' + request_id
         rescue JSON::ParserError # rubocop:disable Lint/HandleExceptions
         end
         exception
