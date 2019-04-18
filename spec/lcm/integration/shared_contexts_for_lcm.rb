@@ -155,7 +155,7 @@ shared_context 'lcm bricks' do |opts = {}|
         {
           client_id: w[:client_id],
           param_name: Support::ALL_DYNAMIC_PARAMS_KEY,
-          param_value: w[:client_id],
+          param_value: Support::ALL_DYNAMIC_PARAMS_VALUE,
           schedule_title: nil
         }
       end
