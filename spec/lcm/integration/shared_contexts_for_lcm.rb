@@ -201,7 +201,7 @@ shared_context 'lcm bricks' do |opts = {}|
     if use_ads
       @test_context[:jdbc_url] = @ads.data['connectionUrl']
       @test_context[:ads] = @ads_client
-      @test_context[:dynamic_params_query] = 'SELECT client_id, param_name, param_value, schedule_title as schedule_name from \"LCM_DYNAMIC_PARAMS\";'
+      @test_context[:dynamic_params_query] = "SELECT #{Support::CUSTOM_CLIENT_ID_COLUMN} client_id, param_name, param_value, schedule_title from LCM_DYNAMIC_PARAMS;"
     end
   end
 
