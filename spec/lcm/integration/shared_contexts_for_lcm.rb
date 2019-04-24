@@ -151,7 +151,8 @@ shared_context 'lcm bricks' do |opts = {}|
     )
 
     if use_ads
-      @dynamic_schedule_data = @workspaces.map do |w|
+      dynamic_params_workspaces = @workspaces.dup << { client_id: "INSURANCE_DEMO_NEW_" }
+      @dynamic_schedule_data = dynamic_params_workspaces.map do |w|
         {
           client_id: w[:client_id],
           param_name: Support::ALL_DYNAMIC_PARAMS_KEY,
@@ -159,7 +160,7 @@ shared_context 'lcm bricks' do |opts = {}|
           schedule_title: nil
         }
       end
-      individual_schedule_data = @workspaces.map do |w|
+      individual_schedule_data = dynamic_params_workspaces.map do |w|
         {
           client_id: w[:client_id],
           param_name: Support::DYNAMIC_PARAMS_KEY,
@@ -201,7 +202,7 @@ shared_context 'lcm bricks' do |opts = {}|
     if use_ads
       @test_context[:jdbc_url] = @ads.data['connectionUrl']
       @test_context[:ads] = @ads_client
-      @test_context[:dynamic_params_query] = "SELECT #{Support::CUSTOM_CLIENT_ID_COLUMN} client_id, param_name, param_value, schedule_title from LCM_DYNAMIC_PARAMS;"
+      @test_context[:dynamic_params_query] = "SELECT #{Support::CUSTOM_CLIENT_ID_COLUMN}, param_name, param_value, schedule_title from LCM_DYNAMIC_PARAMS;"
     end
   end
 

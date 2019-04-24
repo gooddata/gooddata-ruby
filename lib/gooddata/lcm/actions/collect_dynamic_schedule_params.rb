@@ -57,7 +57,10 @@ module GoodData
             GoodData.logger.debug("Processing row: #{safe_to_print_row}")
             results << safe_to_print_row
 
+
+            fail "Client ID column #{client_id_column} is not in the input." unless row.key?(client_id_column)
             client_id = row[client_id_column].blank? ? :all_clients : row[client_id_column]
+            fail "Schedule title column #{schedule_title_column} is not in the input." unless row.key?(schedule_title_column)
             schedule_name = row[schedule_title_column].blank? ? :all_schedules : row[schedule_title_column]
 
             schedule_params[client_id] ||= {}
