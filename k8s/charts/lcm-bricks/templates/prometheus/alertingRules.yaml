@@ -94,3 +94,12 @@ data:
         annotations:
           description: "{{`{{ $labels.kubernetes_pod_name }}`}} container is spending too much time in pause garbage collector. Investigate root cause and increase heap size and/or number of replicas if necessary."
           summary: "{{`{{ $labels.kubernetes_pod_name }}`}} is doing too much pause GC"
+      - alert: "[LCM] there is more than 100 jobs on cluster={{ .Values.clusterId }}"
+        expr: count(kube_job_info{namespace="lcm"}) > 100
+        labels:
+          severity: critical
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "There is more than 100 jobs in LCM namespace. They are likely not deleted."
+          summary: "There is more than 100 jobs in LCM namespace."
