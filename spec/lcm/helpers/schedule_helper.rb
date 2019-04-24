@@ -12,7 +12,10 @@ module GoodData
             result = execution.wait_for_result(
               timeout: remaining_time(start_time, timeout)
             )
-            puts result.log.body
+            if result.error?
+              puts result.log.body
+              throw "Execution of schedule #{schedule.uri} failed."
+            end
             result
           end
         end

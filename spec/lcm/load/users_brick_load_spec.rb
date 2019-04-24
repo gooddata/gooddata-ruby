@@ -1,3 +1,5 @@
+require 'active_support/core_ext/numeric/time'
+
 require_relative '../integration/support/project_helper'
 require_relative '../integration/support/connection_helper'
 require_relative '../integration/support/configuration_helper'
@@ -15,10 +17,12 @@ end
 # set up by execmgr-k8s
 image_tag = ENV['LCM_BRICKS_IMAGE_TAG']
 
+GoodData::Environment.const_set('VCR_ON', false)
+
 user_array = []
-user_count = ENV['GD_LCM_SPEC_USER_COUNT'].to_i || 20
+user_count = ENV['GD_LCM_SPEC_USER_COUNT'] ? ENV['GD_LCM_SPEC_USER_COUNT'].to_i : 20
 project_array = []
-project_count = ENV['GD_LCM_SPEC_PROJECT_COUNT'].to_i || 20
+project_count = ENV['GD_LCM_SPEC_PROJECT_COUNT'] ? ENV['GD_LCM_SPEC_PROJECT_COUNT'].to_i : 20
 service_project = nil
 users_schedule = nil
 user_filters_schedule = nil
