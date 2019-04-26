@@ -4,11 +4,11 @@ metadata:
   name: lcm-bricks-monitoring-rules
   namespace: monitoring
   labels:
-    app: lcm-bricks
-    component: lcm
+    app.kubernetes.io/name: {{ include "lcm-bricks.name" . }}
     team: lcm
-    chart: lcm-bricks
-    release: {{ .Release.Name }}
+    helm.sh/chart: {{ include "lcm-bricks.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
   lcm-bricks-monitoring-rules.yaml: |+
     groups:
