@@ -9,9 +9,9 @@ module GoodData
       # entry-point
       # @param [Logger] logger logger to decorated
       # @param [Array] values_to_mask sensitive values to be masked out from logs
-      def initialize(logger, values_to_mask = [])
+      def initialize(logger, params = [])
         @logger = logger
-        @values_to_mask = values_to_mask
+        @values_to_mask = GoodData::Bricks::MaskLoggerDecorator.extract_values(params)
       end
 
       class << self
@@ -37,6 +37,14 @@ module GoodData
         define_method level do |message|
           @logger.send(level, mask(message))
         end
+      end
+
+      def debug?
+        true
+      end
+
+      %i[warn? error? fatal? info?].each do |level|
+        alias_method level, :debug?
       end
 
       # Decorator pretends being inner logger itselfs.

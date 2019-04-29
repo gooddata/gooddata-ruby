@@ -43,9 +43,13 @@ module GoodData
         :user_agent => GoodData.gem_version_string
       }
 
+      CERTIFICATE_STORE = OpenSSL::X509::Store.new.freeze
+      CERTIFICATE_STORE.set_default_paths
+
       DEFAULT_LOGIN_PAYLOAD = {
         :headers => DEFAULT_HEADERS,
-        :verify_ssl => true
+        :verify_ssl => true,
+        :ssl_cert_store => CERTIFICATE_STORE
       }
 
       RETRYABLE_ERRORS = [
@@ -158,7 +162,7 @@ module GoodData
         headers = options[:headers] || {}
 
         options = options.merge(headers)
-        @server = RestClient::Resource.new server, options
+        @server = RestClient::Resource.new fix_server_url(server), options
 
         # Install at_exit handler first
         unless @at_exit_handler_installed
@@ -462,6 +466,19 @@ module GoodData
         "#{@execution_id}:#{session_id}:#{call_id}"
       end
 
+      def enrich_error_message(exception)
+        begin
+          return exception unless exception.response
+
+          response = JSON.parse(exception.response.body, symbolize_names: true)
+          return exception unless exception.message && response[:error] && response[:error][:message] && response[:error][:requestId]
+
+          exception.message = exception.message + ': ' + response[:error][:message] % response[:error][:parameters] + ' request_id: ' + response[:error][:requestId]
+        rescue JSON::ParserError # rubocop:disable Lint/HandleExceptions
+        end
+        exception
+      end
+
       private
 
       def create_webdav_dir_if_needed(url)
@@ -561,8 +578,12 @@ ERR
         dont_reauth = options[:dont_reauth]
         options = options.reject { |k, _| [:process, :dont_reauth].include?(k) }
         opts = { tries: retries, refresh_token: proc { refresh_token unless dont_reauth } }.merge(options)
-        response = GoodData::Rest::Connection.retryable(opts) do
-          block.call
+        begin
+          response = GoodData::Rest::Connection.retryable(opts) do
+            block.call
+          end
+        rescue RestClient::Exception => e
+          fail enrich_error_message(e)
         end
         merge_headers! response.headers
         content_type = response.headers[:content_type]
@@ -683,6 +704,17 @@ ERR
             false if e.http_code == 404
           end
         end
+      end
+
+      def fix_server_url(server)
+        server = server.chomp('/')
+        if server.start_with? 'http://'
+          server = server.sub 'http://', 'https://'
+          GoodData.logger.warn 'You specified the HTTP protocol in your server string. It has been autofixed to HTTPS.'
+        end
+
+        server = 'https://' + server unless server.start_with? 'https://'
+        server
       end
     end
   end

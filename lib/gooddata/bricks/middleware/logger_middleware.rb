@@ -39,7 +39,7 @@ module GoodData
           logger = Logger.new("#{log_directory}/#{execution_id}.log")
           logger.level = params['GDC_LOG_LEVEL'] || 'info'
           values_to_mask = params['values_to_mask'] || []
-          logger = MaskLoggerDecorator.new(logger, values_to_mask) if values_to_mask.any?
+          logger = MaskLoggerDecorator.new(logger, values_to_mask)
         else
           logger = params[:GDC_LOGGER_FILE].nil? ? Logger.new(STDOUT) : Logger.new(params[:GDC_LOGGER_FILE])
           logger.level = params['GDC_LOG_LEVEL'] || 'info'
@@ -58,9 +58,7 @@ module GoodData
           splunk_logger.level = params['SPLUNK_LOG_LEVEL'] || GoodData::DEFAULT_SPLUNKLOG_LEVEL
           splunk_logger = splunk_logger.extend(ContextLoggerDecorator)
           splunk_logger.context_source = GoodData.gd_logger
-          values_to_mask = params['values_to_mask'] || []
-          values_to_mask.concat MaskLoggerDecorator.extract_values params
-          splunk_logger = MaskLoggerDecorator.new(splunk_logger, values_to_mask) if values_to_mask.any?
+          splunk_logger = MaskLoggerDecorator.new(splunk_logger, params)
           GoodData.splunk_logging_on splunk_logger
         end
 

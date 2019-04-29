@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'pathname'
+require 'tty-spinner'
 
 require_relative '../shared'
 require_relative '../../commands/domain'
@@ -19,7 +20,11 @@ module GoodData
       c.command :users do |users|
         users.action do |global_options, options, args|
           opts = options.merge(global_options)
-          GoodData::Command::Domain.list_users(args[0], opts)
+          spinner = TTY::Spinner.new ":spinner Fetching users from domain"
+          spinner.auto_spin
+          res = GoodData::Command::Domain.list_users(args[0], opts)
+          spinner.stop
+          res
         end
       end
     end

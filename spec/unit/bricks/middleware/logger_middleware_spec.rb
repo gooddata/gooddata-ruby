@@ -131,7 +131,7 @@ describe GoodData::Bricks::LoggerMiddleware do
     it 'set MSF compatible file logger' do
       subject.call(params)
       expect(File.directory?(log_dir))
-      expect(logger).to eq(GoodData.logger)
+      expect(logger.class).to eq(GoodData.logger.class)
     end
   end
 end

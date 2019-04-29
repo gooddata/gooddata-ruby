@@ -43,4 +43,31 @@ describe GoodData::LCM2::SegmentsFilter do
       expect(results[:results].first.segment_id).to eq 'correct-segment'
     end
   end
+
+  context 'when segments filter is an invalid type' do
+    let(:params) do
+      GoodData::LCM2.convert_to_smart_hash(
+        segments: [
+          { segment_id: 'a-segment' }
+        ],
+        segments_filter: segments_filter
+      )
+    end
+
+    context 'when its not an array' do
+      let(:segments_filter) { 'a-string' }
+
+      it 'fails' do
+        expect { subject.class.call(params) }.to raise_exception(/Segments filter should be a non-empty array/)
+      end
+    end
+
+    context 'when its an empty array' do
+      let(:segments_filter) { [] }
+
+      it 'fails' do
+        expect { subject.class.call(params) }.to raise_exception(/Segments filter should be a non-empty array/)
+      end
+    end
+  end
 end

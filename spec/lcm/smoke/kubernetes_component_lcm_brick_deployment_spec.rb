@@ -3,6 +3,9 @@
 # LICENSE file in the root directory of this source tree.
 
 require 'gooddata'
+require 'active_support/core_ext/numeric/time.rb'
+
+require_relative '../helpers/schedule_helper'
 
 describe 'Kubernetes component LCM brick deployment' do
   before(:all) do
@@ -48,10 +51,12 @@ describe 'Kubernetes component LCM brick deployment' do
 
       manual_schedule = component_deployment.create_manual_schedule params: { 'SPLUNK_LOGGING' => 'true' }
 
-      execution_result = manual_schedule.execute
+      manual_schedule.execute
+      timeout = 1.hours
+      result, = GoodData::AppStore::Helper.wait_for_executions([manual_schedule], timeout)
 
-      expect(execution_result).to be_an_instance_of(GoodData::Execution)
-      expect(execution_result.status).to eq(:ok)
+      expect(result).to be_an_instance_of(GoodData::Execution)
+      expect(result.status).to eq(:ok)
     ensure
       component_deployment.delete if component_deployment
     end
