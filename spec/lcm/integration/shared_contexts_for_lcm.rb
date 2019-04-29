@@ -190,7 +190,7 @@ shared_context 'lcm bricks' do |opts = {}|
     projects_to_delete += [@prod_output_stage_project] unless GoodData::Environment::VCR_ON
     projects_to_delete += [@project] unless ENV['REUSE_PROJECT']
 
-    projects_to_delete.each do |project|
+    projects_to_delete.reject(&:nil?).each do |project|
       begin
         # We need to delete the output stage explicitly
         # because of https://jira.intgdc.com/browse/DSS-2967

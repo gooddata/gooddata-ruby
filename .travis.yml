@@ -115,6 +115,15 @@ jobs:
     - GD_ENV=staging
     rvm: jruby-9.1.14
 
+  - &bricks-smoke-tests
+    name: staging1 - bricks smoke tests
+    stage: after-merge
+    script: bundle exec rake -f lcm.rake test:smoke
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+    rvm: jruby-9.1.14
+
   - &sdk-integration-tests
     name: staging1 - sdk integration tests - base
     stage: after-merge
@@ -143,13 +152,19 @@ jobs:
   - <<: *lcm-slow-tests
     name: staging2 - lcm slow tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=testing
     - VCR_ON=false
 
   - <<: *userprov-tests
     name: staging2 - lcm user provisioning tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=testing
+    - VCR_ON=false
+
+  - <<: *bricks-smoke-tests
+    name: staging2 - bricks smoke tests
+    env:
+    - GD_ENV=testing
     - VCR_ON=false
 
   - <<: *sdk-integration-tests
@@ -174,13 +189,20 @@ jobs:
   - <<: *lcm-slow-tests
     name: staging3 - lcm slow tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=development
     - VCR_ON=false
 
   - <<: *userprov-tests
     name: staging3 - lcm user provisioning tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=development
+    - VCR_ON=false
+
+
+  - <<: *bricks-smoke-tests
+    name: staging3 - bricks smoke tests
+    env:
+    - GD_ENV=development
     - VCR_ON=false
 
   - <<: *sdk-integration-tests
@@ -210,7 +232,7 @@ jobs:
     name: staging3 - test environment clean-up
     env: GD_ENV=development
 
-  # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM 
+  # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM
 
   - name: unit tests 2.3
     stage: after-merge
@@ -223,7 +245,7 @@ jobs:
     stage: after-merge
     script: bundle exec rake test:unit
     os: osx
-    osx_image: xcode9.3 
+    osx_image: xcode9.3
     rvm: 2.4
 
   - name: unit tests 2.5
