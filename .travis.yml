@@ -55,6 +55,7 @@ jobs:
     stage: before-merge
     script: bundle exec rake test:unit
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - name: sdk integration (vcr) tests - base
     stage: before-merge
@@ -89,6 +90,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &lcm-slow-tests
     name: staging1 - lcm slow tests
@@ -102,6 +104,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &userprov-tests
     name: staging1 - user provisioning tests
@@ -114,6 +117,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &bricks-smoke-tests
     name: staging1 - bricks smoke tests
@@ -123,6 +127,7 @@ jobs:
     - GD_ENV=staging
     - VCR_ON=false
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &sdk-integration-tests
     name: staging1 - sdk integration tests - base
@@ -132,6 +137,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &sdk-integration-tests-project
     name: staging1 - sdk integration tests - project
@@ -141,6 +147,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   # staging 2
   - <<: *lcm-integration-tests
@@ -267,6 +274,7 @@ jobs:
     script: bundle exec rake test:unit
     os: osx
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - stage: gem-release
     name: deploy MRI gem
@@ -278,6 +286,7 @@ jobs:
   - stage: gem-release
     name: deploy JRuby gem
     rvm: jruby-9.1.14
+    jdk: openjdk8
     script: |
       echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
       chmod 0600 ~/.gem/credentials
@@ -292,6 +301,7 @@ jobs:
   - <<: *gem-smoke-test
     name: smoke test JRuby gem
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
 notifications:
   email:
