@@ -53,7 +53,7 @@ module Support
       )
     end
 
-    def deploy_processes(ads)
+    def deploy_processes(ads = nil)
       GoodData.with_project @project.pid do |project|
         cc_process = project.deploy_process(
           CC_PROCESS_ARCHIVE,
@@ -106,7 +106,7 @@ module Support
         }
         project.deploy_process component_data
 
-        unless ads.data[:mocked?]
+        if ads && !ads.data[:mocked?]
           associate_output_stage ads
           add_process = project.add.process
           add_process.create_schedule(

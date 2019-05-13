@@ -25,7 +25,7 @@ module GoodData
         param :domain, instance_of(Type::StringType), required: false
 
         description 'ADS Client'
-        param :ads_client, instance_of(Type::AdsClientType), required: true
+        param :ads_client, instance_of(Type::AdsClientType), required: false
 
         description 'Segments to manage'
         param :segments, array_of(instance_of(Type::SegmentType)), required: true
@@ -71,7 +71,7 @@ module GoodData
             ads_output_stage_prefix = segment_in.ads_output_stage_prefix
 
             # Create master project Postgres
-            version = get_project_version(params, segment_id) + 1
+            version = get_project_version(params, domain_name, segment_id) + 1
 
             master_name = segment_in.master_name.gsub('#{version}', version.to_s)
 
@@ -150,12 +150,16 @@ module GoodData
           }
         end
 
-        def get_project_version(params, segment_id)
-          current_master = GoodData::LCM2::Helpers.latest_master_project(
-            params.release_table_name,
-            params.ads_client,
-            segment_id
-          )
+        def get_project_version(params, domain_name, segment_id)
+          if params.ads_client
+            current_master = GoodData::LCM2::Helpers.latest_master_project_from_ads(
+              params.release_table_name,
+              params.ads_client,
+              segment_id
+            )
+          else
+            current_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, segment_id)
+          end
           return 0 unless current_master
           current_master[:version].to_i
         end

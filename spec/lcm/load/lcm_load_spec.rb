@@ -1,7 +1,7 @@
-require 'gooddata_datawarehouse'
 require 'aws-sdk-s3'
 require 'tempfile'
 require 'csv'
+require 'active_support/core_ext/numeric/time'
 
 require_relative '../integration/support/constants'
 require_relative '../integration/support/configuration_helper'
@@ -11,9 +11,11 @@ require_relative '../integration/brick_runner'
 require_relative '../helpers/schedule_helper'
 require_relative 'shared_contexts_for_load_tests'
 
+# set up by execmgr-k8s
+image_tag = ENV['LCM_BRICKS_IMAGE_TAG']
 # global variables to simplify passing stuff between shared contexts and examples
-$segments_multiplier = ENV['GD_LCM_SEGMENTS_MULTIPLIER'] || 2
-$workspaces_multiplier = ENV['GD_LCM_WORKSPACES_MULTIPLIER'] || 100
+$segments_multiplier = ENV['GD_LCM_SPEC_SEGMENTS_MULTIPLIER'] ? ENV['GD_LCM_SPEC_SEGMENTS_MULTIPLIER'].to_i : 2
+$workspaces_multiplier = ENV['GD_LCM_SPEC_WORKSPACES_MULTIPLIER'] ? ENV['GD_LCM_SPEC_WORKSPACES_MULTIPLIER'].to_i : 1000
 $master_projects = []
 $client_projects = []
 service_project = nil
@@ -21,9 +23,11 @@ release_schedule = nil
 provisioning_schedule = nil
 rollout_schedule = nil
 
+GoodData::Environment.const_set('VCR_ON', false)
+
 describe 'LCM load test' do
   include_context 'lcm bricks'
-  include_context 'load tests'
+  include_context 'load tests cleanup' unless ENV['GD_LCM_SMOKE_TEST'] == 'true'
 
   describe 'release/provisioning/rollout' do
     it 'schedules bricks' do
@@ -35,21 +39,24 @@ describe 'LCM load test' do
       release_schedule = BrickRunner.schedule_brick(
         'release_brick',
         service_project,
-        context: @test_context
+        context: @test_context,
+        image_tag: image_tag
       )
 
       provisioning_schedule = BrickRunner.schedule_brick(
         'provisioning_brick',
         service_project,
         context: @test_context,
-        run_after: release_schedule
+        run_after: release_schedule,
+        image_tag: image_tag
       )
 
       rollout_schedule = BrickRunner.schedule_brick(
         'rollout_brick',
         service_project,
         context: @test_context,
-        run_after: provisioning_schedule
+        run_after: provisioning_schedule,
+        image_tag: image_tag
       )
 
       release_schedule.execute(wait: false)

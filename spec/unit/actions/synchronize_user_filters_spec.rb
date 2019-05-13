@@ -1,4 +1,3 @@
-require 'active_support/core_ext/hash'
 require 'gooddata/lcm/lcm2'
 
 require_relative 'shared_examples_for_user_actions'

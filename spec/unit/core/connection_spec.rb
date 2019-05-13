@@ -21,6 +21,7 @@ describe GoodData::Rest::Connection do
             }
         }.to_json
       }
+      allow(request_error).to receive(:headers) { { x_gdc_request: request_id } }
     end
     it 'enriches the exception' do
       expect(exception).to receive(:message=).with("StandardError: Checking 'project', result STRUCTURE INVALID request_id: random_request_id_string")

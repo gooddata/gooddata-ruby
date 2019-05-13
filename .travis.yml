@@ -23,14 +23,14 @@ jobs:
     script: |
       git remote add upstream https://github.com/gooddata/gooddata-ruby.git
       git fetch upstream develop
-      bundle exec pronto run -c upstream/develop --exit-code
+      failed=0
+      PRONTO_FLAY_MASS_THRESHOLD=50 bundle exec pronto run -c upstream/develop --exit-code lib || failed=1
+      PRONTO_FLAY_MASS_THRESHOLD=100 bundle exec pronto run -c upstream/develop --exit-code spec || failed=1
+      if [ "$failed" -ne 0 ] ; then
+          exit 1
+      fi
 
     #  UNIT TESTS ON LINUX IN ALL SUPPORTED RUBY VERSIONS
-  - name: unit tests 2.2
-    stage: before-merge
-    script: bundle exec rake test:unit
-    rvm: 2.2
-
   - name: unit tests 2.3
     stage: before-merge
     script: bundle exec rake test:unit
@@ -55,6 +55,7 @@ jobs:
     stage: before-merge
     script: bundle exec rake test:unit
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - name: sdk integration (vcr) tests - base
     stage: before-merge
@@ -89,6 +90,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &lcm-slow-tests
     name: staging1 - lcm slow tests
@@ -102,6 +104,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &userprov-tests
     name: staging1 - user provisioning tests
@@ -114,6 +117,21 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
+
+  - &bricks-smoke-tests
+    name: staging1 - bricks smoke tests
+    stage: after-merge
+    script:
+      - sudo keytool -importcert -alias gooddata-2008 -file "./data/2008.crt" -keystore $JAVA_HOME/jre/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
+      - sudo keytool -importcert -alias gooddata-int -file "./data/new_ca.cer" -keystore $JAVA_HOME/jre/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
+      - sudo keytool -importcert -alias gooddata-prod -file "data/new_prodgdc_ca.crt" -keystore $JAVA_HOME/jre/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
+      - bundle exec rake -f lcm.rake test:smoke
+    env:
+    - GD_ENV=staging
+    - VCR_ON=false
+    rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &sdk-integration-tests
     name: staging1 - sdk integration tests - base
@@ -123,6 +141,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   - &sdk-integration-tests-project
     name: staging1 - sdk integration tests - project
@@ -132,6 +151,7 @@ jobs:
     - VCR_ON=false
     - GD_ENV=staging
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
   # staging 2
   - <<: *lcm-integration-tests
@@ -143,13 +163,19 @@ jobs:
   - <<: *lcm-slow-tests
     name: staging2 - lcm slow tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=testing
     - VCR_ON=false
 
   - <<: *userprov-tests
     name: staging2 - lcm user provisioning tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=testing
+    - VCR_ON=false
+
+  - <<: *bricks-smoke-tests
+    name: staging2 - bricks smoke tests
+    env:
+    - GD_ENV=testing
     - VCR_ON=false
 
   - <<: *sdk-integration-tests
@@ -174,13 +200,20 @@ jobs:
   - <<: *lcm-slow-tests
     name: staging3 - lcm slow tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=development
     - VCR_ON=false
 
   - <<: *userprov-tests
     name: staging3 - lcm user provisioning tests
     env:
-    - GD_ENV=staging
+    - GD_ENV=development
+    - VCR_ON=false
+
+
+  - <<: *bricks-smoke-tests
+    name: staging3 - bricks smoke tests
+    env:
+    - GD_ENV=development
     - VCR_ON=false
 
   - <<: *sdk-integration-tests
@@ -210,7 +243,7 @@ jobs:
     name: staging3 - test environment clean-up
     env: GD_ENV=development
 
-  # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM 
+  # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM
 
   - name: unit tests 2.3
     stage: after-merge
@@ -223,7 +256,7 @@ jobs:
     stage: after-merge
     script: bundle exec rake test:unit
     os: osx
-    osx_image: xcode9.3 
+    osx_image: xcode9.3
     rvm: 2.4
 
   - name: unit tests 2.5
@@ -246,14 +279,6 @@ jobs:
     os: osx
     rvm: jruby-9.1.14
 
-  - name: unit tests 2.2
-    stage: after-merge
-    before_install:
-      - gem install bundler -v 1.17
-    script: bundle exec rake test:unit
-    os: osx
-    rvm: 2.2
-
   - stage: gem-release
     name: deploy MRI gem
     rvm: 2.3
@@ -264,6 +289,7 @@ jobs:
   - stage: gem-release
     name: deploy JRuby gem
     rvm: jruby-9.1.14
+    jdk: openjdk8
     script: |
       echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
       chmod 0600 ~/.gem/credentials
@@ -278,6 +304,7 @@ jobs:
   - <<: *gem-smoke-test
     name: smoke test JRuby gem
     rvm: jruby-9.1.14
+    jdk: openjdk8
 
 notifications:
   email:

@@ -1,3 +1,5 @@
+require 'active_support/core_ext/numeric/time'
+
 require_relative '../integration/support/project_helper'
 require_relative '../integration/support/connection_helper'
 require_relative '../integration/support/configuration_helper'
@@ -12,16 +14,21 @@ def user_in_domain(user_name)
   domain.find_user_by_login(user_name)
 end
 
+# set up by execmgr-k8s
+image_tag = ENV['LCM_BRICKS_IMAGE_TAG']
+
+GoodData::Environment.const_set('VCR_ON', false)
+
 user_array = []
-user_count = 20
+user_count = ENV['GD_LCM_SPEC_USER_COUNT'] ? ENV['GD_LCM_SPEC_USER_COUNT'].to_i : 20
 project_array = []
-project_count = 20
+project_count = ENV['GD_LCM_SPEC_PROJECT_COUNT'] ? ENV['GD_LCM_SPEC_PROJECT_COUNT'].to_i : 20
 service_project = nil
 users_schedule = nil
 user_filters_schedule = nil
 
 describe 'UsersBrick' do
-  include_context 'load tests'
+  include_context 'load tests cleanup' unless ENV['GD_LCM_SMOKE_TEST'] == 'true'
 
   before(:all) do
     @suffix = ConfigurationHelper.suffix
@@ -123,7 +130,8 @@ describe 'UsersBrick' do
       )
       opts = {
         context: @test_context,
-        template_path: '../../userprov/params/users_brick.json.erb'
+        template_path: '../../userprov/params/users_brick.json.erb',
+        image_tag: image_tag
       }
       users_schedule = BrickRunner.schedule_brick('users_brick', service_project, opts)
     end
@@ -171,6 +179,7 @@ describe 'UsersBrick' do
         service_project,
         context: @test_context,
         template_path: '../../userprov/params/user_filters_brick_ads.json.erb',
+        image_tag: image_tag,
         run_after: users_schedule
       )
     end

@@ -17,6 +17,7 @@ require 'fileutils'
 require 'multi_json'
 require 'open-uri'
 require 'zip'
+require 'csv'
 
 ##
 # Module containing classes that counter-part GoodData server-side meta-data
@@ -152,11 +153,9 @@ module GoodData
       # @return [Hash] Batch upload result
       def upload_multiple_data(data, project_blueprint, options = { :client => GoodData.connection, :project => GoodData.project })
         client, project = GoodData.get_client_and_project(options)
-
         project ||= GoodData.project
 
         manifest = {
-
           'dataSetSLIManifestList' => data.map do |d|
             mode = d[:options] && d[:options][:mode] ? d[:options][:mode] : options[:mode] || 'FULL'
             GoodData::Model::ToManifest.dataset_to_manifest(project_blueprint, d[:dataset], mode)
@@ -165,7 +164,6 @@ module GoodData
 
         csv_headers = []
 
-        # create a temporary zip file
         dir = Dir.mktmpdir
         begin
           Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
@@ -173,26 +171,27 @@ module GoodData
             zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(manifest) }
 
             data.zip(manifest['dataSetSLIManifestList']).each do |item|
+              column_mapping = item[0][:options] ? item[0][:options][:column_mapping] : nil
               path = item[0][:data]
               path = item[0][:data].path if item[0][:data].respond_to? :path
               inline_data = !path.is_a?(String)
-              csv_header = nil
+
+              data_to_upload = inline_data ? path : File.open(path)
 
               filename = item[1]['dataSetSLIManifest']['file']
 
-              if inline_data
-                csv_header = path.first
-                zip.get_output_stream(filename) do |f|
-                  path.each do |row|
-                    f.puts row.to_csv
-                  end
-                end
-              else
-                csv_header = File.open(path, &:gets).chomp.split(',')
-                zip.add(filename, path)
-              end
+              zip.get_output_stream(filename) do |file|
+                data_to_upload.each_with_index do |row, index|
+                  row = CSV.parse(row).first unless inline_data
 
-              csv_headers << csv_header
+                  if index.zero?
+                    row.map! { |h| column_mapping.key(h) || h } if column_mapping
+                    csv_headers << row
+                  end
+
+                  file.puts row.to_csv
+                end
+              end
             end
           end
 
@@ -240,6 +239,8 @@ module GoodData
           manifest_cols = parts.flatten.map { |c| c['columnName'] }
 
           # extract some human readable error message from the webdav file
+          csv_headers.map!(&:to_sym)
+          manifest_cols.map!(&:to_sym)
           manifest_extra = manifest_cols - csv_headers
           csv_extra = csv_headers - manifest_cols
 
