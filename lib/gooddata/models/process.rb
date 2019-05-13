@@ -188,17 +188,6 @@ module GoodData
         data[:process] = GoodData::Helpers.symbolize_keys(data[:process]).select { |k| %i[type name component].include? k }
         data[:process][:component] = GoodData::Helpers.symbolize_keys(data[:process][:component]).select { |k| %i[name version configLocation config].include? k }
 
-        # a feature flag is required to create ADDv2 components
-        if data[:process][:component][:name] == 'gdc-data-distribution'
-          client.post(
-            "/gdc/projects/#{project.pid}/projectFeatureFlags",
-            featureFlag: {
-              key: 'enableDataDistribution',
-              value: true
-            }
-          )
-        end
-
         save(data, options)
       end
 

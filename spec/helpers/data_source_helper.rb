@@ -27,9 +27,8 @@ module GoodData
           data_source['dataSource']['id']
         end
 
-        def delete(id)
-          # uncomment this after R181 code drop (May 4th)
-          # @rest_client.delete("/gdc/dataload/dataSources/#{id}")
+        def delete(rest_client, id)
+          rest_client.delete("/gdc/dataload/dataSources/#{id}")
         end
       end
     end

@@ -291,7 +291,7 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
 
     after(:all) do
       @to_project.delete if @to_project
-      GoodData::Helpers::DataSourceHelper.delete(@data_source_id) if @data_source_id
+      GoodData::Helpers::DataSourceHelper.delete(@client, @data_source_id) if @data_source_id
       @add_component.delete if @add_component
       @dataload_component.delete if @dataload_component
     end

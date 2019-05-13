@@ -77,7 +77,7 @@ describe GoodData::Process, :vcr do
 
       after do
         @component.delete if @component
-        GoodData::Helpers::DataSourceHelper.delete(@data_source_id) if @data_source_id
+        GoodData::Helpers::DataSourceHelper.delete(@rest_client, @data_source_id) if @data_source_id
       end
 
       it_behaves_like 'a component process' do

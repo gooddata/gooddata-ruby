@@ -226,7 +226,7 @@ shared_context 'lcm bricks' do |opts = {}|
       GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
     end
 
-    GoodData::Helpers::DataSourceHelper.delete(@data_source_id) if @data_source_id
+    GoodData::Helpers::DataSourceHelper.delete(@rest_client, @data_source_id) if @data_source_id
 
     @rest_client.disconnect if @rest_client
     @prod_rest_client.disconnect if @rest_client
