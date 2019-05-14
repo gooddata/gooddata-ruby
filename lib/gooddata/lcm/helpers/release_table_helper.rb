@@ -25,22 +25,22 @@ module GoodData
           sorted.last
         end
 
-        def latest_master_project_from_nfs(domain_id, segment_id)
-          data = GoodData::Helpers::Csv.read_as_hash(path_to_release_table_file(domain_id, segment_id))
+        def latest_master_project_from_nfs(domain_id, data_product_id, segment_id)
+          data = GoodData::Helpers::Csv.read_as_hash(path_to_release_table_file(domain_id, data_product_id, segment_id))
           data.sort_by { |master| master[:version] }
               .reverse.first
         end
 
-        def update_latest_master_to_nfs(domain_id, segment_id, master_pid, version)
+        def update_latest_master_to_nfs(domain_id, data_product_id, segment_id, master_pid, version)
           GoodData::Helpers::Csv.ammend_line(
-            path_to_release_table_file(domain_id, segment_id),
+            path_to_release_table_file(domain_id, data_product_id, segment_id),
             master_project_id: master_pid,
             version: version
           )
         end
 
-        def path_to_release_table_file(domain_id, segment_id)
-          [DEFAULT_NFS_DIRECTORY, domain_id, segment_id + '.csv'].join('/')
+        def path_to_release_table_file(domain_id, data_prod_id, segment_id)
+          [DEFAULT_NFS_DIRECTORY, domain_id, data_prod_id + '-' + segment_id + '.csv'].join('/')
         end
       end
     end
