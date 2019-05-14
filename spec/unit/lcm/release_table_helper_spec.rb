@@ -37,6 +37,7 @@ describe GoodData::LCM2::Helpers do
 
   context 'when working with a file' do
     let(:domain_id) { 'mydomain' }
+    let(:data_prod_id) { 'myprod' }
     let(:first_segment) do
       [
         { master_project_id: 'asdf12', version: 1 },
@@ -48,13 +49,13 @@ describe GoodData::LCM2::Helpers do
     end
 
     before do
-      allow(GoodData::Helpers::Csv).to receive(:read_as_hash).with(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, 'first_segment')) { first_segment }
-      allow(GoodData::Helpers::Csv).to receive(:read_as_hash).with(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, 'second_segment')) { second_segment }
+      allow(GoodData::Helpers::Csv).to receive(:read_as_hash).with(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, 'first_segment')) { first_segment }
+      allow(GoodData::Helpers::Csv).to receive(:read_as_hash).with(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, 'second_segment')) { second_segment }
     end
 
     describe '.latest_master_project_from_nfs' do
       it 'returns latest master' do
-        expect(GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_id, 'first_segment')).to eq(master_project_id: 'ghjk34', version: 2)
+        expect(GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_id, data_prod_id, 'first_segment')).to eq(master_project_id: 'ghjk34', version: 2)
       end
     end
 
@@ -65,8 +66,8 @@ describe GoodData::LCM2::Helpers do
       let(:segment) { 'second_segment' }
 
       it 'ammends the master record to the file' do
-        GoodData::LCM2::Helpers.update_latest_master_to_nfs(domain_id, segment, new_data[:master_project_id], new_data[:version])
-        data = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_id, segment)
+        GoodData::LCM2::Helpers.update_latest_master_to_nfs(domain_id, data_prod_id, segment, new_data[:master_project_id], new_data[:version])
+        data = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_id, data_prod_id, segment)
         expect(data).to eq(new_data)
       end
     end
@@ -76,7 +77,7 @@ describe GoodData::LCM2::Helpers do
       let(:segment_id) { 'mysegment' }
 
       it 'returns a valid filepath' do
-        expect(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, segment_id)).to eq 'release-tables/mydomain/mysegment.csv'
+        expect(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, segment_id)).to eq 'release-tables/mydomain/myprod-mysegment.csv'
       end
     end
   end
