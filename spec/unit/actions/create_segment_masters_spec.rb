@@ -26,6 +26,7 @@ describe GoodData::LCM2::CreateSegmentMasters do
     allow(project).to receive(:pid) { '123' }
     allow(segment).to receive(:synchronize_clients) {}
     allow(data_product).to receive(:create_segment) { segment }
+    allow(data_product).to receive(:data_product_id) { 'default' }
     allow(segment).to receive(:master_project) {}
     allow(segment).to receive(:master_project=) {}
     allow(segment).to receive(:save) {}

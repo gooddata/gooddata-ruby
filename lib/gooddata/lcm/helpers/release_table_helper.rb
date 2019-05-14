@@ -8,7 +8,7 @@ module GoodData
   module LCM2
     class Helpers
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'
-      DEFAULT_NFS_DIRECTORY = 'release-tables'
+      DEFAULT_NFS_DIRECTORY = '/release-tables'
 
       class << self
         def latest_master_project_from_ads(release_table_name, ads_client, segment_id)
@@ -25,22 +25,30 @@ module GoodData
           sorted.last
         end
 
-        def latest_master_project_from_nfs(domain_id, segment_id)
-          data = GoodData::Helpers::Csv.read_as_hash(path_to_release_table_file(domain_id, segment_id))
-          data.sort_by { |master| master[:version] }
+        def latest_master_project_from_nfs(domain_id, data_product_id, segment_id)
+          file_path = path_to_release_table_file(domain_id, data_product_id, segment_id)
+          data = GoodData::Helpers::Csv.read_as_hash(file_path)
+          latest_master_project = data.sort_by { |master| master[:version] }
               .reverse.first
+
+          version_info =  latest_master_project ? "master_pid=#{latest_master_project[:master_project_id]} version=#{latest_master_project[:version]}" : ""
+          GoodData.gd_logger.info "Getting latest master project: file=#{file_path} domain=#{domain_id} data_product=#{data_product_id} segment=#{segment_id} #{version_info}"
+          latest_master_project
         end
 
-        def update_latest_master_to_nfs(domain_id, segment_id, master_pid, version)
+        def update_latest_master_to_nfs(domain_id, data_product_id, segment_id, master_pid, version)
+          file_path = path_to_release_table_file(domain_id, data_product_id, segment_id)
+          GoodData.gd_logger.info "Updating release table: file=#{file_path} domain=#{domain_id} data_product=#{data_product_id} segment=#{segment} master_pid=#{master_pid} version=#{version}"
           GoodData::Helpers::Csv.ammend_line(
-            path_to_release_table_file(domain_id, segment_id),
+            file_path,
             master_project_id: master_pid,
             version: version
           )
         end
 
-        def path_to_release_table_file(domain_id, segment_id)
-          [DEFAULT_NFS_DIRECTORY, domain_id, segment_id + '.csv'].join('/')
+        def path_to_release_table_file(domain_id, data_prod_id, segment_id)
+          nsf_directory = ENV['RELEASE_TABLE_NFS_DIRECTORY'] || DEFAULT_NFS_DIRECTORY
+          [nsf_directory, domain_id, data_prod_id + '-' + segment_id + '.csv'].join('/')
         end
       end
     end
