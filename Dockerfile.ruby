@@ -8,11 +8,12 @@ RUN ln -s /usr/bin/make /usr/bin/gmake
 
 # Switch to directory with sources
 WORKDIR /src
+ENV HOME=/src
+ENV BUNDLE_PATH=$HOME/bundle
 
 RUN gem update --system \
-    && gem install bundler
-
-ENV BUNDLE_PATH=/bundle
+    && gem install --install-dir $BUNDLE_PATH bundler -v 1.17.3 \
+    && gem install --install-dir $BUNDLE_PATH rake -v 11.3.0
 
 ADD . .
 
