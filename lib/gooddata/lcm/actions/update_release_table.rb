@@ -49,6 +49,7 @@ module GoodData
             segment_id = segment_in.segment_id
 
             placeholders = {
+              data_product_id: segment_in[:data_product_id],
               segment_id: segment_in[:segment_id],
               master_project_id: segment_in[:master_pid],
               version: segment_in[:version],
@@ -84,7 +85,11 @@ module GoodData
 
             params.ads_client.execute(query)
           else
-            GoodData::LCM2::Helpers.update_latest_master_to_nfs(domain_id, placeholders[:segment_id], placeholders[:master_project_id], placeholders[:version])
+            data_product_id = placeholders[:data_product_id]
+            segment_id = placeholders[:segment_id]
+            master_pid = placeholders[:master_project_id]
+            version = placeholders[:version]
+            GoodData::LCM2::Helpers.update_latest_master_to_nfs(domain_id, data_product_id, segment_id, master_pid, version)
           end
         end
       end
