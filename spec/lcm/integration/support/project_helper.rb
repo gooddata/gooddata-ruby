@@ -120,6 +120,30 @@ module Support
       end
     end
 
+    def deploy_add_v2_process(data_source_id)
+      component_data = {
+        name: ADD_V2_COMPONENT_NAME,
+        type: :etl,
+        component: {
+          name: 'gdc-data-distribution',
+          version: '1',
+          config: {
+            dataDistribution: {
+              dataSource: data_source_id
+            }
+          }
+        }
+      }
+
+      add_component = GoodData::Process.deploy_component(
+        component_data,
+        project: project,
+        client: client
+      )
+
+      add_component.create_schedule(nil, 'add-component-schedule')
+    end
+
     def create_metrics
       GoodData.with_project @project.pid do |project|
         metrics = JSON.parse(File.read(METRICS_FILE)).to_hash
