@@ -75,7 +75,8 @@ module Support
           'main.rb',
           params: RUBY_PARAMS,
           hidden_params: RUBY_SECURE_PARAMS,
-          state: 'DISABLED'
+          state: 'DISABLED',
+          name: RUBY_HELLO_WORLD_SCHEDULE_NAME
         )
 
         component_data = {

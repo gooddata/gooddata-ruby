@@ -3,6 +3,7 @@ require_relative 'support/configuration_helper'
 require_relative 'support/lcm_helper'
 require_relative 'brick_runner'
 require_relative 'shared_examples_for_synchronization_bricks'
+require_relative 'shared_examples_for_provisioning_and_rollout'
 require_relative 'shared_contexts_for_lcm'
 require_relative 'shared_examples_for_release_brick'
 
@@ -89,6 +90,10 @@ describe 'the whole life-cycle', :vcr do
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
     end
+
+    it_behaves_like 'a provisioning or rollout brick' do
+      let(:projects) { $client_projects }
+    end
   end
 
   describe '3 - Initial Rollout' do
@@ -109,6 +114,10 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+    end
+
+    it_behaves_like 'a provisioning or rollout brick' do
+      let(:projects) { $client_projects }
     end
   end
 
@@ -203,6 +212,10 @@ describe 'the whole life-cycle', :vcr do
     it 'deletes extra client projects' do
       expect($client_projects.map(&:pid)).to_not include @deleted_workspace.pid
     end
+
+    it_behaves_like 'a provisioning or rollout brick' do
+      let(:projects) { $client_projects }
+    end
   end
 
   describe '7 - Subsequent Rollout' do
@@ -223,6 +236,10 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+    end
+
+    it_behaves_like 'a provisioning or rollout brick' do
+      let(:projects) { $client_projects }
     end
   end
 end

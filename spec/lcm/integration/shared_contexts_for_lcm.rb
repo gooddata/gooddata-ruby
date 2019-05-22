@@ -5,6 +5,7 @@ require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
 require_relative 'support/lcm_helper'
 require_relative 'support/s3_helper'
+require_relative 'support/constants'
 
 def create_suffix
   hostname = Socket.gethostname
@@ -153,6 +154,30 @@ shared_context 'lcm bricks' do |opts = {}|
       Support::CUSTOM_CLIENT_ID_COLUMN
     )
 
+    if use_ads
+      dynamic_params_workspaces = @workspaces.dup << { client_id: "INSURANCE_DEMO_NEW_" }
+      @dynamic_schedule_data = dynamic_params_workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: Support::ALL_DYNAMIC_PARAMS_KEY,
+          param_value: Support::ALL_DYNAMIC_PARAMS_VALUE,
+          schedule_title: nil
+        }
+      end
+      individual_schedule_data = dynamic_params_workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: Support::DYNAMIC_PARAMS_KEY,
+          param_value: w[:client_id],
+          schedule_title: Support::RUBY_HELLO_WORLD_SCHEDULE_NAME
+        }
+      end
+      @dynamic_schedule_data.concat(individual_schedule_data)
+      LcmHelper.fill_dynamic_params_table(@ads_client, @dynamic_schedule_data)
+    else
+      @dynamic_schedule_data = []
+    end
+
     s3_info = Support::S3Helper.upload_file(workspace_csv, @workspace_table_name)
 
     if GoodData::Environment::VCR_ON && GoodData::Helpers::VcrConfigurer.vcr_cassette_playing?
@@ -181,6 +206,7 @@ shared_context 'lcm bricks' do |opts = {}|
     if use_ads
       @test_context[:jdbc_url] = @ads.data['connectionUrl']
       @test_context[:ads] = @ads_client
+      @test_context[:dynamic_params_query] = "SELECT #{Support::CUSTOM_CLIENT_ID_COLUMN}, param_name, param_value, schedule_title from LCM_DYNAMIC_PARAMS;"
     end
   end
 
