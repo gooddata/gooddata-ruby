@@ -85,7 +85,7 @@ shared_context 'lcm bricks' do |opts = {}|
     unless $reuse_project
       project_helper.deploy_processes(@ads)
       @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@rest_client)
-      project_helper.deploy_add_v2_process(@data_source_id)
+      @component = project_helper.deploy_add_v2_process(@data_source_id)
     end
 
     @project = project_helper.project
@@ -189,6 +189,11 @@ shared_context 'lcm bricks' do |opts = {}|
   end
 
   after(:all) do
+    begin
+      @component.delete if @component
+    rescue StandardError => e
+      GoodData.logger.warn("Failed to delete ADDv2 process. #{e}")
+    end
     projects_to_delete = $master_projects + $client_projects
 
     projects_to_delete += [@prod_output_stage_project] unless GoodData::Environment::VCR_ON

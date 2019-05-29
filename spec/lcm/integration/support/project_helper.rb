@@ -142,6 +142,7 @@ module Support
       )
 
       add_component.create_schedule(nil, 'add-component-schedule')
+      add_component
     end
 
     def create_metrics
