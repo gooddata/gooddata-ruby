@@ -326,8 +326,15 @@ module GoodData
     # Gets the array of projects
     #
     # @return [Array<GoodData::Project>] Array of project where account settings belongs to
-    def projects
-      projects = client.get @json['accountSetting']['links']['projects']
+    def projects(limit = nil)
+      url = @json['accountSetting']['links']['projects']
+      query_params = ''
+      if !limit.nil? && limit.is_a?(Integer) && limit > 0
+        limit = [limit, 500].min
+        query_params += "limit=#{limit}"
+      end
+      url += "?#{query_params}" unless query_params.empty?
+      projects = client.get url
       projects['projects'].map do |project|
         client.create(GoodData::Project, project)
       end
