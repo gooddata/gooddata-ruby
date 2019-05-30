@@ -201,7 +201,7 @@ describe GoodData::Profile, :vcr do
 
   describe '#projects' do
     it 'Returns user projects as array of GoodData::Project' do
-      projects = @user1.projects
+      projects = @user1.projects(100)
       expect(projects).to be_an_instance_of(Array)
 
       projects.each do |project|

@@ -19,7 +19,7 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
 
   describe 'projects' do
     it 'Can get all projects' do
-      projects = @client.projects
+      projects = @client.projects(:all, 100)
       expect(projects).to_not be_nil
       expect(projects).to be_a_kind_of(Array)
       projects.pmap do |project|
@@ -47,7 +47,7 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
 
   describe '#all' do
     it 'Returns all projects' do
-      projects = GoodData::Project.all(:client => @client)
+      projects = GoodData::Project.all({ client: @client }, 100)
       expect(projects).to_not be_nil
       expect(projects).to be_a_kind_of(Array)
     end
