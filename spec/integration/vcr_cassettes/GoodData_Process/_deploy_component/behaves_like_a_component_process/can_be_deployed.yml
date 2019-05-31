@@ -5,7 +5,7 @@ http_interactions:
     uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes
     body:
       encoding: UTF-8
-      string: '{"process":{"name":"test component","type":"etl","component":{"name":"gdc-etl-csv-downloader","version":"1","configLocation":{"s3":{"path":"s3://s3_bucket/s3_folder/","accessKey":"s3_access_key","secretKey":"s3_secret_key","serverSideEncryption":true}}}}}'
+      string: '{"process":{"name":"test component csv downloader","type":"etl","component":{"name":"gdc-etl-csv-downloader","version":"1","configLocation":{"s3":{"path":"s3://s3_bucket/s3_folder/","accessKey":"s3_access_key","secretKey":"s3_secret_key","serverSideEncryption":true}}}}}'
     headers:
       Accept:
       - application/json, application/zip
@@ -54,7 +54,7 @@ http_interactions:
       - max-age=10886400; includeSubDomains; preload;
     body:
       encoding: ASCII-8BIT
-      string: '{"process":{"type":"ETL","name":"test component","graphs":[],"executables":[],"lastDeployed":"2019-04-18T11:08:10.380Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1","executions":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1/executions","source":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1/source"},"component":{"name":"gdc-etl-csv-downloader","version":"1","configLocation":{"s3":{"path":"s3://s3_bucket/s3_folder/","accessKey":"s3_access_key","serverSideEncryption":true}}}}}'
+      string: '{"process":{"type":"ETL","name":"test component csv downloader","graphs":[],"executables":[],"lastDeployed":"2019-04-18T11:08:10.380Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1","executions":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1/executions","source":"/gdc/projects/pv5dnp356eakikwzd7o18rprn5e77yoc/dataload/processes/71123e6e-8a1d-467b-bf1c-63b1379107f1/source"},"component":{"name":"gdc-etl-csv-downloader","version":"1","configLocation":{"s3":{"path":"s3://s3_bucket/s3_folder/","accessKey":"s3_access_key","serverSideEncryption":true}}}}}'
     http_version: 
   recorded_at: Thu, 18 Apr 2019 11:08:10 GMT
 recorded_with: VCR 4.0.0
