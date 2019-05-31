@@ -7,10 +7,9 @@
 require 'gooddata'
 
 shared_examples 'a component process' do
-  let(:name) { 'test component' }
   it 'can be deployed' do
     @component = GoodData::Process.deploy_component component_data, client: @rest_client, project: @project
-    expect(@component.name).to eq name
+    expect(@component.name).to eq component_data[:name]
     expect(@component.type).to eq :etl
   end
 end
@@ -39,20 +38,7 @@ describe GoodData::Process, :vcr do
     it_behaves_like 'a component process' do
       let(:component_data) do
         {
-          name: name,
-          type: :etl,
-          component: {
-            name: 'gdc-etl-sql-executor',
-            version: '1'
-          }
-        }
-      end
-    end
-
-    it_behaves_like 'a component process' do
-      let(:component_data) do
-        {
-          name: name,
+          name: 'test component csv downloader',
           type: :etl,
           component: {
             name: 'gdc-etl-csv-downloader',
@@ -83,7 +69,7 @@ describe GoodData::Process, :vcr do
       it_behaves_like 'a component process' do
         let(:component_data) do
           {
-            name: name,
+            name: 'test component add-v2',
             type: :etl,
             component: {
               name: 'gdc-data-distribution',
