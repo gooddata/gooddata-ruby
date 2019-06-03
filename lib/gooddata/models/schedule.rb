@@ -77,7 +77,8 @@ module GoodData
           de_synchronize_all = options[:de_synchronize_all] || options['GDC_DE_SYNCHRONIZE_ALL']
         else
           lcm_component = process.type == :lcm
-          executable_missing = !lcm_component && executable.blank?
+          add_component = process.add_v2_component?
+          executable_missing = !lcm_component && !add_component && executable.blank?
           fail 'Executable has to be provided' if executable_missing
         end
 

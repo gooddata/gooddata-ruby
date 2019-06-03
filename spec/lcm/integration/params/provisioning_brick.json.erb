@@ -26,6 +26,12 @@
       "password": "${GDC_PASSWORD}",
       "jdbc_url": "<%= jdbc_url %>"
     },
+    "dynamic_params": {
+      "input_source": {
+        "type": "ads",
+        "query": "<%= dynamic_params_query %>"
+      }
+    },
     <% end %>
     "aws_client": {
       "access_key_id": "${s3_access_key}",

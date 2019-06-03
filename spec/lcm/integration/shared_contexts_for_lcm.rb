@@ -5,6 +5,7 @@ require_relative 'support/project_helper'
 require_relative 'support/connection_helper'
 require_relative 'support/lcm_helper'
 require_relative 'support/s3_helper'
+require_relative 'support/constants'
 
 def create_suffix
   hostname = Socket.gethostname
@@ -82,7 +83,11 @@ shared_context 'lcm bricks' do |opts = {}|
       environment: @config[:environment]
     )
 
-    project_helper.deploy_processes(@ads) unless $reuse_project
+    unless $reuse_project
+      project_helper.deploy_processes(@ads)
+      @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@rest_client)
+      @component = project_helper.deploy_add_v2_process(@data_source_id)
+    end
 
     @project = project_helper.project
 
@@ -149,6 +154,30 @@ shared_context 'lcm bricks' do |opts = {}|
       Support::CUSTOM_CLIENT_ID_COLUMN
     )
 
+    if use_ads
+      dynamic_params_workspaces = @workspaces.dup << { client_id: "INSURANCE_DEMO_NEW_" }
+      @dynamic_schedule_data = dynamic_params_workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: Support::ALL_DYNAMIC_PARAMS_KEY,
+          param_value: Support::ALL_DYNAMIC_PARAMS_VALUE,
+          schedule_title: nil
+        }
+      end
+      individual_schedule_data = dynamic_params_workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: Support::DYNAMIC_PARAMS_KEY,
+          param_value: w[:client_id],
+          schedule_title: Support::RUBY_HELLO_WORLD_SCHEDULE_NAME
+        }
+      end
+      @dynamic_schedule_data.concat(individual_schedule_data)
+      LcmHelper.fill_dynamic_params_table(@ads_client, @dynamic_schedule_data)
+    else
+      @dynamic_schedule_data = []
+    end
+
     s3_info = Support::S3Helper.upload_file(workspace_csv, @workspace_table_name)
 
     if GoodData::Environment::VCR_ON && GoodData::Helpers::VcrConfigurer.vcr_cassette_playing?
@@ -177,6 +206,7 @@ shared_context 'lcm bricks' do |opts = {}|
     if use_ads
       @test_context[:jdbc_url] = @ads.data['connectionUrl']
       @test_context[:ads] = @ads_client
+      @test_context[:dynamic_params_query] = "SELECT #{Support::CUSTOM_CLIENT_ID_COLUMN}, param_name, param_value, schedule_title from LCM_DYNAMIC_PARAMS;"
     end
   end
 
@@ -185,6 +215,11 @@ shared_context 'lcm bricks' do |opts = {}|
   end
 
   after(:all) do
+    begin
+      @component.delete if @component
+    rescue StandardError => e
+      GoodData.logger.warn("Failed to delete ADDv2 process. #{e}")
+    end
     projects_to_delete = $master_projects + $client_projects
 
     projects_to_delete += [@prod_output_stage_project] unless GoodData::Environment::VCR_ON
@@ -221,6 +256,8 @@ shared_context 'lcm bricks' do |opts = {}|
       GoodData.logger.warn("Failed to delete segments. #{e}")
       GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
     end
+
+    GoodData::Helpers::DataSourceHelper.delete(@rest_client, @data_source_id) if @data_source_id
 
     @rest_client.disconnect if @rest_client
     @prod_rest_client.disconnect if @rest_client

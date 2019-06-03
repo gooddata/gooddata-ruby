@@ -188,8 +188,12 @@ module GoodData
         end
       end
 
-      def projects(id = :all)
-        GoodData::Project[id, client: self]
+      def projects(id = :all, limit = nil)
+        if limit.nil?
+          GoodData::Project[id, client: self]
+        else
+          GoodData::Project.all({ client: self }, limit)
+        end
       end
 
       def processes(id = :all)

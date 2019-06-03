@@ -75,7 +75,8 @@ module Support
           'main.rb',
           params: RUBY_PARAMS,
           hidden_params: RUBY_SECURE_PARAMS,
-          state: 'DISABLED'
+          state: 'DISABLED',
+          name: RUBY_HELLO_WORLD_SCHEDULE_NAME
         )
 
         component_data = {
@@ -118,6 +119,31 @@ module Support
           )
         end
       end
+    end
+
+    def deploy_add_v2_process(data_source_id)
+      component_data = {
+        name: ADD_V2_COMPONENT_NAME,
+        type: :etl,
+        component: {
+          name: 'gdc-data-distribution',
+          version: '1',
+          config: {
+            dataDistribution: {
+              dataSource: data_source_id
+            }
+          }
+        }
+      }
+
+      add_component = GoodData::Process.deploy_component(
+        component_data,
+        project: project,
+        client: client
+      )
+
+      add_component.create_schedule(nil, 'add-component-schedule')
+      add_component
     end
 
     def create_metrics
