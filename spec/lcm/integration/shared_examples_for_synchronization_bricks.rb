@@ -91,7 +91,7 @@ shared_examples 'a synchronization brick' do
         actual = target_schedules.find { |d| d.name == expected.name }
         expect(actual).not_to be_nil
         diff = Support::ComparisonHelper.compare_schedules(expected, actual)
-        expect(diff).to match_array(schedule_diff)
+        expect(schedule_diff - diff).to be_empty
       end
     end
   end

@@ -18,6 +18,7 @@ module Support
 
   RUBY_HELLO_WORLD_PROCESS_PATH = '${PUBLIC_APPSTORE}:branch/master:/apps/hello_world_brick'
   RUBY_HELLO_WORLD_PROCESS_NAME = 'Simple Ruby Process'
+  RUBY_HELLO_WORLD_SCHEDULE_NAME = 'SimpleRubySchedule'
   RUBY_PARAMS = { param_1: 'a', param_2: 'b' }
   RUBY_SECURE_PARAMS = { secure_param_1: 'secretive_baz', secure_param_2: 'secretive_qux' }
 
@@ -30,4 +31,8 @@ module Support
   USER_GROUP_NAME = 'My Test Group'
 
   OUTPUT_STAGE_PREFIX = 'my_prefix'
+
+  ALL_DYNAMIC_PARAMS_KEY = 'all_dynamic_param'
+  ALL_DYNAMIC_PARAMS_VALUE = 'is_in_every_schedule'
+  DYNAMIC_PARAMS_KEY = 'dynamic_param'
 end
