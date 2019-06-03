@@ -1,4 +1,37 @@
 # GoodData Ruby SDK Changelog
+## 2.1.4
+ - BUGFIX: TMA-906 LCM Rollout/Provisioning does not set dynamic params in case apply for all schedules on client
+ - BUGFIX: TMA-1519 Don't use same name for etl component processes
+ - BUGFIX: TMA-1519 clean up ADDv2 process before deleting dataSource
+ - BUGFIX: TMA-1519 Add limit param when get all projects
+ - FEATURE: TMA-1275 clean up ADDv2 process before deleting dataSource
+ - II-448: Move configuration from Jenkinsfile
+ - FEATURE: TMA-1275 fix VCR cassetes
+ - TMA-1515: version bump
+ - TRIVIAL: remove obsolete hello_world brick
+ - TMA-1515: run the bricks as user apache
+ - FEATURE: TMA-1487: Delete testing snowflake data sources and fixing CR
+ - TMA-1502 release bricks 3.7.0
+ - Switch end to end test to staging 2
+ - TMA-1275: Record vcr cassetes
+ - TMA-1275: Skip cloning ADDv2 process into LCM master
+ - BUGFIX: TMA-1505 import gooddata certificate when run smoke test
+ - TMA-1502: remove jdk8 from tavis config return to inocence, for unknown reason openjdk8 and default mac-osx image does not work together on travis
+ - TMA-1502: set travis to use jdk8
+ - TMA-1502: use numeric user-id for docker does not operate properly with user-name
+ - II-456 Use kubernetes recommended labels and latest chart templates
+ - TMA-1486: Alerts for job count in LCM namespace
+ - TMA-1292: more resilient k8s smoke spec
+ - Fix adding server response to error message
+ - TMA-1395 fix username in smoke test
+ - TMA-1468: add #upload_multiple spec
+ - TMA-1395 fix username in help.sh
+ - TMA-1395 fix username in docker container
+ - TRIVIAL: use forked pronto-flay with high mass thresholds setup in travis
+ - Automated base image update (gdc-docker-images, d0f5e08)
+ - TMA-1454: remove activesupport dependencies from spec
+ - Automated base image update (gdc-docker-images, d38e8ad)
+
 ## 2.1.3
  - TMA-1394: upload_data takes mapping of gd labels to csv columns into account
  - TMA-1292: K8s load and smoke spec
