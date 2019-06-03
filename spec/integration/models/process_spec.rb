@@ -6,6 +6,14 @@
 
 require 'gooddata'
 
+shared_examples 'a component process' do
+  it 'can be deployed' do
+    @component = GoodData::Process.deploy_component component_data, client: @rest_client, project: @project
+    expect(@component.name).to eq component_data[:name]
+    expect(@component.type).to eq :etl
+  end
+end
+
 describe GoodData::Process, :vcr do
   before(:all) do
     @rest_client = ConnectionHelper.create_default_connection
@@ -27,42 +35,54 @@ describe GoodData::Process, :vcr do
   end
 
   describe '.deploy_component' do
-    let(:name) { 'test component' }
-
-    it 'deploys sql executor etl pluggable component' do
-      component_data = {
-        name: name,
-        type: :etl,
-        component: {
-          name: 'gdc-etl-sql-executor',
-          version: '1'
-        }
-      }
-      component = GoodData::Process.deploy_component component_data, client: @rest_client, project: @project
-      expect(component.name).to eq name
-      expect(component.type).to eq :etl
-    end
-
-    it 'deploys csv downloader etl pluggable component' do
-      component_data = {
-        name: name,
-        type: :etl,
-        component: {
-          name: 'gdc-etl-csv-downloader',
-          version: '1',
-          configLocation: {
-            s3: {
-              path: 's3://s3_bucket/s3_folder/',
-              accessKey: 's3_access_key',
-              secretKey: 's3_secret_key',
-              serverSideEncryption: true
+    it_behaves_like 'a component process' do
+      let(:component_data) do
+        {
+          name: 'test component csv downloader',
+          type: :etl,
+          component: {
+            name: 'gdc-etl-csv-downloader',
+            version: '1',
+            configLocation: {
+              s3: {
+                path: 's3://s3_bucket/s3_folder/',
+                accessKey: 's3_access_key',
+                secretKey: 's3_secret_key',
+                serverSideEncryption: true
+              }
             }
           }
         }
-      }
-      component = GoodData::Process.deploy_component component_data, client: @rest_client, project: @project
-      expect(component.name).to eq name
-      expect(component.type).to eq :etl
+      end
+    end
+
+    context 'when component type is add-v2' do
+      before do
+        @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@rest_client)
+      end
+
+      after do
+        @component.delete if @component
+        GoodData::Helpers::DataSourceHelper.delete(@rest_client, @data_source_id) if @data_source_id
+      end
+
+      it_behaves_like 'a component process' do
+        let(:component_data) do
+          {
+            name: 'test component add-v2',
+            type: :etl,
+            component: {
+              name: 'gdc-data-distribution',
+              version: '1',
+              config: {
+                dataDistribution: {
+                  dataSource: @data_source_id
+                }
+              }
+            }
+          }
+        end
+      end
     end
   end
 

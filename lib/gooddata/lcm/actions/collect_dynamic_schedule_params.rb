@@ -57,8 +57,11 @@ module GoodData
             GoodData.logger.debug("Processing row: #{safe_to_print_row}")
             results << safe_to_print_row
 
-            client_id = row[client_id_column] || :all_clients
-            schedule_name = row[schedule_title_column] || :all_schedules
+            client_id_column_value = row[client_id_column]
+            client_id = client_id_column_value.blank? ? :all_clients : client_id_column_value
+
+            schedule_title_column_value = row[schedule_title_column]
+            schedule_name = schedule_title_column_value.blank? ? :all_schedules : schedule_title_column_value
 
             schedule_params[client_id] ||= {}
             schedule_params[client_id][schedule_name] ||= {}

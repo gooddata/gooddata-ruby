@@ -67,9 +67,9 @@ module GoodData
     class << self
       # Returns an array of all projects accessible by
       # current user
-      def all(opts = { client: GoodData.connection })
+      def all(opts = { client: GoodData.connection }, limit = nil)
         c = GoodData.get_client(opts)
-        c.user.projects
+        c.user.projects(limit)
       end
 
       # Returns a Project object identified by given string
@@ -265,7 +265,8 @@ module GoodData
         additional_hidden_params = options[:additional_hidden_params] || {}
         result = from_project.processes.uniq(&:name).map do |process|
           fail "The process name #{process.name} must be unique in transfered project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
-          next if process.type == :dataload
+          next if process.type == :dataload || process.add_v2_component?
+
           to_process = to_project_processes.find { |p| p.name == process.name }
 
           to_process = if process.path
@@ -310,6 +311,7 @@ module GoodData
         res = (from_project.processes + to_project.processes).map { |p| [p, p.name, p.type] }
         res.group_by { |x| [x[1], x[2]] }
           .select { |_, procs| procs.length == 1 && procs[2] != :dataload }
+          .reject { |_, procs| procs.first.first.add_v2_component? }
           .flat_map { |_, procs| procs.select { |p| p[0].project.pid == to_project.pid }.map { |p| p[0] } }
           .peach(&:delete)
 
@@ -355,6 +357,7 @@ module GoodData
       def transfer_schedules(from_project, to_project)
         to_project_processes = to_project.processes.sort_by(&:name)
         from_project_processes = from_project.processes.sort_by(&:name)
+        from_project_processes.reject!(&:add_v2_component?)
 
         GoodData.logger.debug("Processes in from project #{from_project.pid}: #{from_project_processes.map(&:name).join(', ')}")
         GoodData.logger.debug("Processes in to project #{to_project.pid}: #{to_project_processes.map(&:name).join(', ')}")
@@ -414,6 +417,8 @@ module GoodData
             remote_process, process_spec = cache.find do |_remote, local, schedule|
               (schedule_spec[:process_id] == local.process_id) && (schedule.name == schedule_spec[:name])
             end
+
+            next unless remote_process || process_spec
 
             GoodData.logger.info("Creating schedule #{schedule_spec[:name]} for process #{remote_process.name}")
 

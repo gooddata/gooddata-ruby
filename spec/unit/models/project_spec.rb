@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+require_relative '../support/mock_factory'
+
 shared_examples 'a blueprint provider' do
   it 'requests model view with includeCA=true' do
     expect(client).to receive(:get).with(
@@ -153,6 +155,53 @@ describe GoodData::Project do
           hash_including(params: hash_including(includeCA: false))
         )
         subject.blueprint(include_ca: false)
+      end
+    end
+  end
+
+  describe 'transferring processes and schedules' do
+    let(:project) { GoodData::MockFactory.project_mock }
+    let(:target_project) { GoodData::MockFactory.project_mock }
+    let(:add_component) { double(GoodData::Process) }
+    let(:add) { double(GoodData::AutomatedDataDistribution) }
+    let(:output_stage) { double(GoodData::AdsOutputStage) }
+
+    before do
+      allow(project).to receive(:processes) { [add_component] }
+      allow(project).to receive(:add) { add }
+      allow(target_project).to receive(:processes) { [] }
+      allow(add_component).to receive(:component) do
+        { 'name' => 'gdc-data-distribution' }
+      end
+      allow(add_component).to receive(:name)
+      allow(add_component).to receive(:project) { project }
+      allow(add_component).to receive(:type) { :etl }
+      allow(add_component).to receive(:add_v2_component?) { true }
+      allow(add).to receive(:output_stage) { output_stage }
+      allow(output_stage).to receive(:output_stage_prefix)
+      allow(output_stage).to receive(:schema)
+    end
+
+    describe '#transfer_processes' do
+      it 'skips ADDv2 components' do
+        subject.transfer_processes(project, target_project)
+        expect(target_project).not_to receive(:deploy_process)
+      end
+    end
+
+    describe '#transfer_schedules' do
+      let(:add_schedule) { double(GoodData::Schedule) }
+
+      before do
+        allow(project).to receive(:schedules).and_return([add_schedule])
+        allow(target_project).to receive(:schedules).and_return([])
+        allow(add_schedule).to receive(:to_hash).and_return(params: {})
+        allow(add_schedule).to receive(:trigger_id)
+        allow(add_schedule).to receive(:obj_id).and_return('add_schedule_id')
+      end
+
+      it 'skips ADDv2 component schedules' do
+        subject.transfer_schedules(project, target_project)
       end
     end
   end

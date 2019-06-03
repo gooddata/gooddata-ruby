@@ -17,6 +17,13 @@ module GoodData
         allow(mock).to receive(:process_id) { id }
         mock
       end
+
+      def project_mock
+        mock = double(GoodData::Project)
+        allow(mock).to receive(:pid)
+        allow(mock).to receive(:name)
+        mock
+      end
     end
   end
 end
