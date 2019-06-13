@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018, GoodData(R) Corporation. All rights reserved.
+ * Copyright (C) 2007-2019, GoodData(R) Corporation. All rights reserved.
  */
 
 @Library('pipelines-shared-libs')
