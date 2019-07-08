@@ -14,8 +14,12 @@ module GoodData
               connectionInfo: {
                 snowflake: {
                   url: 'jdbc:snowflake://acme.snowflakecomputing.com',
-                  userName: 'test',
-                  password: 'test',
+                  authentication: {
+                    basic: {
+                      userName: 'test',
+                      password: 'test'
+                    }
+                  },
                   database: 'TEST',
                   schema: 'SCHEMA',
                   warehouse: 'DWH'
