@@ -26,11 +26,8 @@ describe GoodData::LCM2::CollectDymanicScheduleParams do
 
     it 'collects them' do
       result = GoodData::LCM2.run_action(subject.class, params)
-      expected = {
+      expected_params = {
         'client_1' => {
-          'rollout' => {
-            'MODE' => 'mode_a'
-          },
           all_schedules: {
             'MODE' => 'mode_x'
           },
@@ -49,7 +46,17 @@ describe GoodData::LCM2::CollectDymanicScheduleParams do
           }
         }
       }
-      expect(result[:params][:schedule_params]).to eq(expected)
+
+      expected_hidden_params = {
+        'client_1' => {
+          'rollout' => {
+            'MODE' => 'mode_a'
+          }
+        }
+      }
+
+      expect(result[:params][:schedule_params]).to eq(expected_params)
+      expect(result[:params][:schedule_hidden_params]).to eq(expected_hidden_params)
     end
 
     it 'does not print the one with param_secure' do

@@ -173,9 +173,31 @@ shared_context 'lcm bricks' do |opts = {}|
         }
       end
       @dynamic_schedule_data.concat(individual_schedule_data)
-      LcmHelper.fill_dynamic_params_table(@ads_client, @dynamic_schedule_data)
+
+      @dynamic_hidden_schedule_data = dynamic_params_workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: Support::ALL_DYNAMIC_HIDDEN_PARAMS_KEY,
+          param_value: GoodData::Helpers.simple_encrypt(Support::ALL_DYNAMIC_HIDDEN_PARAMS_VALUE, Support::DYNAMIC_PARAMS_ENCRYPTION_KEY),
+          schedule_title: nil,
+          param_secure: 'true'
+        }
+      end
+      individual_hidden_schedule_data = dynamic_params_workspaces.map do |w|
+        {
+          client_id: w[:client_id],
+          param_name: Support::DYNAMIC_HIDDEN_PARAMS_KEY,
+          param_value: GoodData::Helpers.simple_encrypt(w[:client_id], Support::DYNAMIC_PARAMS_ENCRYPTION_KEY),
+          schedule_title: Support::RUBY_HELLO_WORLD_SCHEDULE_NAME,
+          param_secure: 'true'
+        }
+      end
+      @dynamic_hidden_schedule_data.concat(individual_hidden_schedule_data)
+
+      LcmHelper.fill_dynamic_params_table(@ads_client, @dynamic_schedule_data, @dynamic_hidden_schedule_data)
     else
       @dynamic_schedule_data = []
+      @dynamic_hidden_schedule_data = []
     end
 
     s3_info = Support::S3Helper.upload_file(workspace_csv, @workspace_table_name)
@@ -200,13 +222,14 @@ shared_context 'lcm bricks' do |opts = {}|
       transfer_all: true,
       conflicting_client_id: conflicting_client_id,
       schedule_additional_hidden_params: (opts[:schedule_additional_hidden_params] || {}).to_json,
-      process_additional_hidden_params: (opts[:process_additional_hidden_params] || {}).to_json
+      process_additional_hidden_params: (opts[:process_additional_hidden_params] || {}).to_json,
+      dynamic_params_encryption_key: Support::DYNAMIC_PARAMS_ENCRYPTION_KEY
     }.merge(s3_info)
 
     if use_ads
       @test_context[:jdbc_url] = @ads.data['connectionUrl']
       @test_context[:ads] = @ads_client
-      @test_context[:dynamic_params_query] = "SELECT #{Support::CUSTOM_CLIENT_ID_COLUMN}, param_name, param_value, schedule_title from LCM_DYNAMIC_PARAMS;"
+      @test_context[:dynamic_params_query] = "SELECT #{Support::CUSTOM_CLIENT_ID_COLUMN}, param_name, param_value, schedule_title, param_secure from LCM_DYNAMIC_PARAMS;"
     end
   end
 

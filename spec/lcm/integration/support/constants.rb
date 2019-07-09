@@ -35,4 +35,10 @@ module Support
   ALL_DYNAMIC_PARAMS_KEY = 'all_dynamic_param'
   ALL_DYNAMIC_PARAMS_VALUE = 'is_in_every_schedule'
   DYNAMIC_PARAMS_KEY = 'dynamic_param'
+
+  ALL_DYNAMIC_HIDDEN_PARAMS_KEY = 'all_dynamic_hidden_param'
+  ALL_DYNAMIC_HIDDEN_PARAMS_VALUE = 'is_in_every_hidden_param_value'
+  DYNAMIC_HIDDEN_PARAMS_KEY = 'dynamic_hidden_param'
+
+  DYNAMIC_PARAMS_ENCRYPTION_KEY = 'B63777DA2A5FC94551339340E7CAF19EB395245C814DD35B'
 end
