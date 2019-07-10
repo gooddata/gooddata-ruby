@@ -8,7 +8,13 @@
     "GDC_PASSWORD": "${password}",
     "filters_config": {
       "user_column": "login",
-      "labels": [{"label": "label.csv_policies.state", "column": "state"}]
+      "labels": [
+        <% if defined? multiple_labels %>
+        {"label": "label.csv_policies.coverage", "column": "coverage"},
+        {"label": "label.csv_policies.education", "column": "education"},
+        <% end %>
+        {"label": "label.csv_policies.state", "column": "state"}
+      ]
     },
     "aws_client": {
       "access_key_id": "${s3_access_key}",
@@ -37,6 +43,9 @@
     ]
     <% end %>
   },
+  <% if defined? restrict_if_missing_all_values %>
+  "restrict_if_missing_all_values": "<%= restrict_if_missing_all_values %>",
+  <% end %>
   "fail_early": "true",
   "strict": "true",
   "username": "<%= config[:username] %>",
