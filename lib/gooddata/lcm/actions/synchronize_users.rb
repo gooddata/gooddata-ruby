@@ -262,6 +262,8 @@ module GoodData
                         fail "Client id cannot be empty" if client_id.blank?
 
                         c = domain_clients.detect { |specific_client| specific_client.id == client_id }
+                        fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\"" if c.nil?
+
                         if params.segments && !segment_uris.include?(c.segment_uri)
                           GoodData.logger.info("Client #{client_id} is outside segments_filter #{params.segments}")
                           next
