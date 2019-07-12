@@ -230,6 +230,17 @@ module GoodData
         Base64.encode64(random_iv + encrypted)
       end
 
+      # Simple encrypt data with given key
+      def simple_encrypt(data, key)
+        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+        cipher.encrypt
+        cipher.key = key
+        encrypted = cipher.update(data)
+        encrypted << cipher.final
+
+        Base64.encode64(encrypted)
+      end
+
       def decrypt(database64, key)
         if key.nil? || key.empty?
           GoodData.logger.warn('WARNING: No encryption key provided.')
@@ -244,6 +255,23 @@ module GoodData
         random_iv = data[0..15] # extract iv from first 16 bytes
         data = data[16..data.size - 1]
         cipher.iv = Digest::SHA256.digest(random_iv + cipher_key)[0..15]
+        decrypted = cipher.update(data)
+        decrypted << cipher.final
+        decrypted
+      end
+
+      # Simple decrypt data with given key
+      def simple_decrypt(database64, key)
+        if key.nil? || key.empty?
+          GoodData.logger.warn('WARNING: No encryption key provided.')
+          return 'no_key_provided'
+        end
+
+        data = Base64.decode64(database64)
+
+        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+        cipher.decrypt
+        cipher.key = key
         decrypted = cipher.update(data)
         decrypted << cipher.final
         decrypted
