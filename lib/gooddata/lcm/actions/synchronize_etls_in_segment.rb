@@ -33,6 +33,9 @@ module GoodData
         description 'Schedule Parameters'
         param :schedule_params, instance_of(Type::HashType), required: false, default: {}
 
+        description 'Schedule Hidden Parameters'
+        param :schedule_hidden_params, instance_of(Type::HashType), required: false, default: {}
+
         description 'DataProduct to manage'
         param :data_product, instance_of(Type::GDDataProductType), required: false
 
@@ -98,9 +101,15 @@ module GoodData
           end
 
           delete_extra_process_schedule = GoodData::Helpers.to_boolean(params.delete_extra_process_schedule)
+
           schedule_params = params.schedule_params || {}
+          schedule_hidden_params = params.schedule_hidden_params || {}
+
           params_for_all_projects = schedule_params[:all_clients] || {}
           params_for_all_schedules_in_all_projects = params_for_all_projects[:all_schedules]
+
+          hidden_params_for_all_projects = schedule_hidden_params[:all_clients] || {}
+          hidden_params_for_all_schedules_in_all_projects = hidden_params_for_all_projects[:all_schedules]
 
           params.synchronize.peach do |info|
             from_project_etl_names = get_process_n_schedule_names(client, info.from) if delete_extra_process_schedule
@@ -122,8 +131,12 @@ module GoodData
               end
 
               client_id = entry[:client_id]
+
               params_for_this_client = schedule_params[client_id] || {}
               params_for_all_schedules_in_this_client = params_for_this_client[:all_schedules]
+
+              hidden_params_for_this_client = schedule_hidden_params[client_id] || {}
+              hidden_params_for_all_schedules_in_this_client = hidden_params_for_this_client[:all_schedules]
 
               to_project.set_metadata('GOODOT_CUSTOM_PROJECT_ID', client_id) # TMA-210
 
@@ -136,13 +149,17 @@ module GoodData
                 end
 
                 schedule.update_params(schedule_additional_params) if schedule_additional_params
-
                 schedule.update_params(params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
                 schedule.update_params(params_for_all_projects[schedule.name]) if params_for_all_projects[schedule.name]
                 schedule.update_params(params_for_all_schedules_in_this_client) if params_for_all_schedules_in_this_client
                 schedule.update_params(params_for_this_client[schedule.name]) if params_for_this_client[schedule.name]
 
                 schedule.update_hidden_params(schedule_additional_hidden_params) if schedule_additional_hidden_params
+                schedule.update_hidden_params(hidden_params_for_all_schedules_in_all_projects) if hidden_params_for_all_schedules_in_all_projects
+                schedule.update_hidden_params(hidden_params_for_all_projects[schedule.name]) if hidden_params_for_all_projects[schedule.name]
+                schedule.update_hidden_params(hidden_params_for_all_schedules_in_this_client) if hidden_params_for_all_schedules_in_this_client
+                schedule.update_hidden_params(hidden_params_for_this_client[schedule.name]) if hidden_params_for_this_client[schedule.name]
+
                 schedule.enable
                 schedule.save
               end

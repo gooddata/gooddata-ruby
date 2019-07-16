@@ -38,12 +38,18 @@ class LcmHelper
       temp_file
     end
 
-    def fill_dynamic_params_table(ads_client, dynamic_params)
+    def fill_dynamic_params_table(ads_client, dynamic_params, dynamic_hidden_params)
       ensure_table_query = "CREATE TABLE IF NOT EXISTS \"LCM_DYNAMIC_PARAMS\" (#{Support::CUSTOM_CLIENT_ID_COLUMN} VARCHAR(255) NULL, param_name VARCHAR(255) NULL," \
                            'param_value VARCHAR(255) NOT NULL, schedule_title VARCHAR(255) NULL, param_secure VARCHAR(255) NULL)'
       ads_client.execute(ensure_table_query)
+
       dynamic_params.each do |row|
         insert_query = "INSERT INTO \"LCM_DYNAMIC_PARAMS\" VALUES ('#{row[:client_id]}', '#{row[:param_name]}', '#{row[:param_value]}', '#{row[:schedule_title]}',  NULL)"
+        ads_client.execute(insert_query)
+      end
+
+      dynamic_hidden_params.each do |row|
+        insert_query = "INSERT INTO \"LCM_DYNAMIC_PARAMS\" VALUES ('#{row[:client_id]}', '#{row[:param_name]}', '#{row[:param_value]}', '#{row[:schedule_title]}',  'true')"
         ads_client.execute(insert_query)
       end
     end

@@ -366,4 +366,128 @@ describe 'UsersFiltersBrick' do
       expect(filters.length).to be 3
     end
   end
+
+  context 'when using multiple fields' do
+    include_context 'user filters brick test context'
+    before(:all) do
+      filters_s3_key = "user_filters_multiple_fields_#{GoodData::Environment::RANDOM_STRING}"
+
+      @test_context[:sync_mode] = 'sync_project'
+      @test_context[:data_product] = 'default'
+      @test_context[:multiple_labels] = true
+      @test_context[:s3_key] = filters_s3_key
+      @test_context[:restrict_if_missing_all_values] = true
+    end
+
+    it 'has filters on all fields' do
+      upload_user_filters_csv([
+                                login: @test_user.login,
+                                state: 'Washington',
+                                coverage: 'Basic',
+                                education: 'Bachelor',
+                                client_id: 'testingclient'
+                              ])
+
+      config_path = ConfigurationHelper.create_interpolated_tempfile(
+        @template_path,
+        @test_context
+      )
+
+      $SCRIPT_PARAMS = JSON.parse(File.read(config_path))
+      GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
+      filters = @project.user_filters.to_a
+      expect(filters.length).to be(4)
+
+      test_user_filters = filters.select do |f|
+        f.related.login == @test_user.login
+      end
+      expect(test_user_filters.length).to be(3)
+      test_user_filters.map!(&:pretty_expression)
+      expect(test_user_filters).to include('[State] IN ([Washington])')
+      expect(test_user_filters).to include('[Coverage] IN ([Basic])')
+      expect(test_user_filters).to include('[Education] IN ([Bachelor])')
+    end
+
+    it 'has filters on one field, use can see all values of another fields' do
+      upload_user_filters_csv([
+                                login: @test_user.login,
+                                state: nil,
+                                coverage: nil,
+                                education: 'Bachelor',
+                                client_id: 'testingclient'
+                              ])
+
+      config_path = ConfigurationHelper.create_interpolated_tempfile(
+        @template_path,
+        @test_context
+      )
+
+      $SCRIPT_PARAMS = JSON.parse(File.read(config_path))
+      GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
+      filters = @project.user_filters.to_a
+      expect(filters.length).to be(2)
+
+      test_user_filters = filters.select do |f|
+        f.related.login == @test_user.login
+      end
+      expect(test_user_filters.one?).to be(true)
+      expression = test_user_filters.first.pretty_expression
+      expect(expression).to eq('[Education] IN ([Bachelor])')
+    end
+
+    it 'has filters on two fields, use can see all values of another field' do
+      upload_user_filters_csv([
+                                login: @test_user.login,
+                                state: nil,
+                                coverage: 'Basic',
+                                education: 'Bachelor',
+                                client_id: 'testingclient'
+                              ])
+
+      config_path = ConfigurationHelper.create_interpolated_tempfile(
+        @template_path,
+        @test_context
+      )
+
+      $SCRIPT_PARAMS = JSON.parse(File.read(config_path))
+      GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
+      filters = @project.user_filters.to_a
+      expect(filters.length).to be(3)
+
+      test_user_filters = filters.select do |f|
+        f.related.login == @test_user.login
+      end
+      expect(test_user_filters.length).to be(2)
+      test_user_filters.map!(&:pretty_expression)
+      expect(test_user_filters).to include('[Coverage] IN ([Basic])')
+      expect(test_user_filters).to include('[Education] IN ([Bachelor])')
+    end
+
+    it 'do not have filter on any fields, user cannot see anything' do
+      upload_user_filters_csv([
+                                login: @test_user.login,
+                                state: nil,
+                                coverage: nil,
+                                education: nil,
+                                client_id: 'testingclient'
+                              ])
+
+      config_path = ConfigurationHelper.create_interpolated_tempfile(
+        @template_path,
+        @test_context
+      )
+
+      $SCRIPT_PARAMS = JSON.parse(File.read(config_path))
+      GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
+      filters = @project.user_filters.to_a
+      expect(filters.length).to be(2)
+
+      test_user_filters = filters.select do |f|
+        f.related.login == @test_user.login
+      end
+      expect(test_user_filters.one?).to be(true)
+      expression = test_user_filters.first.pretty_expression
+      expect(expression).to eq('1 <> 1')
+    end
+  end
 end

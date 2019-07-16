@@ -29,6 +29,9 @@ module GoodData
 
         description 'Should the param be hidden?'
         param :param_secure_column, instance_of(Type::StringType), required: false
+
+        description 'Dynamic params encryption key'
+        param :dynamic_params_encryption_key, instance_of(Type::StringType), required: false
       end
 
       class << self
@@ -40,6 +43,10 @@ module GoodData
           param_name_column = params.param_name_column || 'param_name'
           param_value_column = params.param_value_column || 'param_value'
           param_secure_column = params.param_secure_column || 'param_secure'
+
+          encryption_key = params.dynamic_params_encryption_key || ''
+          exist_encryption_key = encryption_key.blank? ? false : true
+
           results = []
 
           input_source = params.dynamic_params.input_source
@@ -49,9 +56,14 @@ module GoodData
           end
 
           schedule_params = {}
+          schedule_hidden_params = {}
+          exist_param_secure = false
 
           CSV.foreach(input_data, :headers => true, :return_headers => false, encoding: 'utf-8') do |row|
             is_param_secure = row[param_secure_column] == 'true'
+            is_decrypt_secure_value = is_param_secure && exist_encryption_key ? true : false
+            exist_param_secure = true if is_param_secure
+
             safe_to_print_row = row.to_hash
             safe_to_print_row[param_value_column] = '******' if is_param_secure
             GoodData.logger.debug("Processing row: #{safe_to_print_row}")
@@ -63,18 +75,30 @@ module GoodData
             schedule_title_column_value = row[schedule_title_column]
             schedule_name = schedule_title_column_value.blank? ? :all_schedules : schedule_title_column_value
 
-            schedule_params[client_id] ||= {}
-            schedule_params[client_id][schedule_name] ||= {}
+            param_name = row[param_name_column]
+            param_value = row[param_value_column]
+            param_value = GoodData::Helpers.simple_decrypt(param_value, encryption_key) if is_decrypt_secure_value
 
-            schedule_params[client_id][schedule_name].merge!(row[param_name_column] => row[param_value_column])
+            add_dynamic_param(is_param_secure ? schedule_hidden_params : schedule_params, client_id, schedule_name, param_name, param_value)
           end
+
+          GoodData.logger.warn("dynamic_params_encryption_key parameter doesn't exist") if exist_param_secure && !exist_encryption_key
 
           {
             results: results,
             params: {
-              schedule_params: schedule_params
+              schedule_params: schedule_params,
+              schedule_hidden_params: schedule_hidden_params
             }
           }
+        end
+
+        private
+
+        def add_dynamic_param(params, client_id, schedule_name, param_name, param_value)
+          params[client_id] ||= {}
+          params[client_id][schedule_name] ||= {}
+          params[client_id][schedule_name].merge!(param_name => param_value)
         end
       end
     end
