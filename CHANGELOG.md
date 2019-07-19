@@ -1,4 +1,14 @@
 # GoodData Ruby SDK Changelog
+## 2.1.5
+ - BUGFIX: TMA-1534 LCM Dynamic Params do not work correctly for secure params
+ - BUGFIX: TMA-1520 fix NPE when given client does not exist in data product
+ - BUGFIX: TMA-1361 Allow user see all values of one label when set MUF on multiple labels
+ - BUGFIX: TMA-1521 update datasource payload to new json format
+ - BUGFIX: TMA-1506 fixing unit tests 2.4 failed on xcode9.3
+ - II-371: Handle multitple configuration files
+ - FEATURE: TMA-1275 release bricks 3.7.2
+ - Bump version to 2.1.4
+
 ## 2.1.4
  - BUGFIX: TMA-906 LCM Rollout/Provisioning does not set dynamic params in case apply for all schedules on client
  - BUGFIX: TMA-1519 Add limit param when get all projects
