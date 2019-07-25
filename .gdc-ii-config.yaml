@@ -9,7 +9,7 @@ integratedTests:
   - env: bash
     path: .
     vault:
-      GD_SPEC_PASSWORD: secret/v1/ruby/test/bia_encryption_key
+      GD_SPEC_PASSWORD: ruby/test/bia_encryption_key
     command: ./bin/run_smoke_tests.sh
     image: harbor.intgdc.com/staging/lcm-bricks:GIT_REV
     repo_mount_dir: /src
