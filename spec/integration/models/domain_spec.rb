@@ -124,16 +124,11 @@ describe GoodData::Domain, :vcr do
       old_email = user.email
       old_sso_provider = user.sso_provider || ''
       user.email = 'john.doe@gooddata.com'
-      user.sso_provider = 'some_sso_provider'
+      user.sso_provider = 'salesforce.com'
       @domain.update_user(user)
       updated_user = @domain.find_user_by_login(user.login)
       expect(updated_user.email).to eq 'john.doe@gooddata.com'
-      expect(updated_user.sso_provider).to eq 'some_sso_provider'
-
-      updated_user.sso_provider = 'some_sso_provider'.reverse
-      @domain.update_user(updated_user)
-      updated_user = @domain.find_user_by_login(user.login)
-      expect(updated_user.sso_provider).to eq 'some_sso_provider'.reverse
+      expect(updated_user.sso_provider).to eq 'salesforce.com'
 
       updated_user.email = old_email
       updated_user.sso_provider = old_sso_provider
