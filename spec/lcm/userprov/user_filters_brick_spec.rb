@@ -268,7 +268,7 @@ describe 'UsersFiltersBrick' do
 
         config_path = ConfigurationHelper.create_interpolated_tempfile(
           ads_template_path,
-          @test_context
+          @test_context.merge(sst_token: @rest_client.connection.sst_token)
         )
 
         $SCRIPT_PARAMS = JSON.parse(File.read(config_path))
