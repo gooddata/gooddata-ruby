@@ -1,4 +1,12 @@
 # GoodData Ruby SDK Changelog
+## 2.1.6
+ - FEATURE: TMA-783 Use SST for ADS connection as default
+ - BUGFIX: TMA-1549 Using valid sso provider during testing update users
+ - II-566: Use new Vault secret paths
+ - CONFIG: TMA-1504 rotate GD_SPEC_PASSWORD
+ - BUGFIX: TMA-1539 set version lock for hashdiff
+ - BUGFIX: TMA-1534, TMA-1361, TMA-1520 release LCM version 3.7.3
+
 ## 2.1.5
  - BUGFIX: TMA-1534 LCM Dynamic Params do not work correctly for secure params
  - BUGFIX: TMA-1520 fix NPE when given client does not exist in data product

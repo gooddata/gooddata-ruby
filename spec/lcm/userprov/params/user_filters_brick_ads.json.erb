@@ -9,8 +9,6 @@
       "labels": [{"label": "label.csv_policies.state", "column": "state"}]
     },
     "ads_client": {
-      "username": "${GDC_USERNAME}",
-      "password": "${GDC_PASSWORD}",
       "jdbc_url": "<%= jdbc_url %>"
     },
     "input_source": {
@@ -26,8 +24,12 @@
   },
   "fail_early": "true",
   "strict": "true",
+  <% if defined? sst_token %>
+  "GDC_SST": "<%= sst_token %>",
+  <% else %>
   "GDC_USERNAME": "<%= config[:username] %>",
   "GDC_PASSWORD": "<%= config[:password] %>",
+  <% end %>
   "sync_mode": "<%= sync_mode %>",
   "data_product": "<%= data_product %>"
 }

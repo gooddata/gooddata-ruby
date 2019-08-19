@@ -15,22 +15,28 @@ module GoodData
       def call(params)
         if params.key?('ads_client')
           GoodData.logger.info "Setting up ADS connection to #{params['ads_client']['ads_id'] || params['ads_client']['jdbc_url']}"
-          unless params['ads_client']['username'] || params['GDC_USERNAME']
-            raise "ADS middleware needs username either as part of " \
-                  "ads_client spec or as a global 'GDC_USERNAME' parameter"
-          end
 
-          unless params['ads_client']['password'] || params['GDC_PASSWORD']
-            raise "ADS middleware needs password either as part of " \
-                  "ads_client spec or as a global 'GDC_PASSWORD' parameter"
-          end
+          username = params['ads_client']['username'] || params['GDC_USERNAME']
+          password = params['ads_client']['password'] || params['GDC_PASSWORD']
+          instance_id = params['ads_client']['ads_id']
+          jdbc_url = params['ads_client']['jdbc_url']
+          sst_token = params['ads_client']['sst'] || params['GDC_SST']
 
-          ads = GoodData::Datawarehouse.new(
-            params['ads_client']['username'] || params['GDC_USERNAME'],
-            params['ads_client']['password'] || params['GDC_PASSWORD'],
-            params['ads_client']['ads_id'],
-            jdbc_url: params['ads_client']['jdbc_url']
-          )
+          ads = if username.nil? || password.nil?
+                  GoodData.logger.info 'Using SST for ADS connection'
+                  GoodData::Datawarehouse.new_instance(
+                    instance_id: instance_id,
+                    jdbc_url: jdbc_url,
+                    sst: sst_token
+                  )
+                else
+                  GoodData::Datawarehouse.new(
+                    username,
+                    password,
+                    instance_id,
+                    jdbc_url: jdbc_url
+                  )
+                end
           @app.call(params.merge('ads_client' => ads, :ads_client => ads))
         else
           @app.call(params)
