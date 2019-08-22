@@ -6,7 +6,8 @@ microservices:
         BRICKS_VERSION: 'VERSION'
 
 integratedTests:
-  - env: bash
+  - kind: 'image'
+    env: bash
     path: .
     vault:
       GD_SPEC_PASSWORD: ruby/test/bia_encryption_key
