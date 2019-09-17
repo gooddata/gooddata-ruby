@@ -377,6 +377,7 @@ describe 'UsersFiltersBrick' do
       @test_context[:multiple_labels] = true
       @test_context[:s3_key] = filters_s3_key
       @test_context[:restrict_if_missing_all_values] = true
+      @test_context[:ignore_missing_values] = true
     end
 
     it 'has filters on all fields' do
@@ -463,12 +464,12 @@ describe 'UsersFiltersBrick' do
       expect(test_user_filters).to include('[Education] IN ([Bachelor])')
     end
 
-    it 'do not have filter on any fields, user cannot see anything' do
+    it 'do not have filter on fields when its value is not existed' do
       upload_user_filters_csv([
                                 login: @test_user.login,
-                                state: nil,
+                                state: 'non_existing_value',
                                 coverage: nil,
-                                education: nil,
+                                education: 'Bachelor',
                                 client_id: 'testingclient'
                               ])
 
@@ -480,14 +481,15 @@ describe 'UsersFiltersBrick' do
       $SCRIPT_PARAMS = JSON.parse(File.read(config_path))
       GoodData::Bricks::Pipeline.user_filters_brick_pipeline.call($SCRIPT_PARAMS)
       filters = @project.user_filters.to_a
-      expect(filters.length).to be(2)
+      expect(filters.length).to be(3)
 
       test_user_filters = filters.select do |f|
         f.related.login == @test_user.login
       end
-      expect(test_user_filters.one?).to be(true)
-      expression = test_user_filters.first.pretty_expression
-      expect(expression).to eq('1 <> 1')
+      expect(test_user_filters.length).to be(2)
+      test_user_filters.map!(&:pretty_expression)
+      expect(test_user_filters).to include('1 <> 1')
+      expect(test_user_filters).to include('[Education] IN ([Bachelor])')
     end
   end
 end

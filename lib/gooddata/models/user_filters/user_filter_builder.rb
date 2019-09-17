@@ -199,16 +199,6 @@ module GoodData
       attr_cache
     end
 
-    def self.create_muf_expression_cache(filters)
-      filters.reduce({}) do |a, e|
-        a[e[:login]] = e[:filters].reduce({}) do |h, filter|
-          h[filter[:label]] = :none
-          h
-        end
-        a
-      end
-    end
-
     # Walks over provided labels and picks those that have fewer than certain amount of values
     # This tries to balance for speed when working with small datasets (like users)
     # so it precaches the values and still be able to function for larger ones even
@@ -223,9 +213,12 @@ module GoodData
     # @param lookups_cache e.g. { 'label_uri': { "jirka@gooddata.com": 'value_uri' }}
     def self.create_expression(filter, labels_cache, lookups_cache, attr_cache, options = {})
       values = filter[:values]
+      # Do not create MUF for label when all its values is NULL (https://jira.intgdc.com/browse/TMA-1361)
+      non_null_values = values.select { |value| !value.nil? && value.downcase != 'null' }
+      return ['TRUE', []] if non_null_values.empty?
+
       label = labels_cache[filter[:label]]
       errors = []
-      muf_expression_cache = options[:muf_expression_cache]
 
       element_uris_by_values = Hash[values.map do |v|
         if lookups_cache.key?(label.uri)
@@ -254,12 +247,7 @@ module GoodData
                      # as the proper MUF can not be constructed yet
                      case options[:type]
                      when :muf
-                       muf_expression_cache[filter[:label]] = :all
-                       if muf_expression_cache.value?(:none) || muf_expression_cache.value?(:restrict)
-                         'TRUE'
-                       else
-                         '1 <> 1'
-                       end
+                       '1 <> 1'
                      when :variable
                        nil
                      end
@@ -267,12 +255,10 @@ module GoodData
                      # create a filter that is always true to ensure the user can see all data
                      'TRUE'
                    elsif filter[:over] && filter[:to]
-                     muf_expression_cache[filter[:label]] = :restrict
                      over = attr_cache[filter[:over]]
                      to = attr_cache[filter[:to]]
                      "([#{label.attribute_uri}] IN (#{element_uris.sort.map { |e| '[' + e + ']' }.join(', ')})) OVER [#{over && over.uri}] TO [#{to && to.uri}]"
                    else
-                     muf_expression_cache[filter[:label]] = :restrict
                      "[#{label.attribute_uri}] IN (#{element_uris.sort.map { |e| '[' + e + ']' }.join(', ')})"
                    end
       [expression, errors]
@@ -305,9 +291,8 @@ module GoodData
       small_labels = get_small_labels(labels_cache)
       lookups_cache = create_lookups_cache(small_labels)
       attrs_cache = create_attrs_cache(filters, options)
-      muf_expression_cache = create_muf_expression_cache(filters)
       create_filter_proc = proc do |login, f|
-        expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options.merge(muf_expression_cache: muf_expression_cache[login]))
+        expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
         safe_login = login.downcase
         profiles_uri = if options[:type] == :muf
                          project_user = project_users.find { |u| u.login == safe_login }
