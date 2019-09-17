@@ -46,6 +46,9 @@
   <% if defined? restrict_if_missing_all_values %>
   "restrict_if_missing_all_values": "<%= restrict_if_missing_all_values %>",
   <% end %>
+  <% if defined? ignore_missing_values %>
+  "ignore_missing_values": "<%= ignore_missing_values %>",
+  <% end %>
   "fail_early": "true",
   "strict": "true",
   "username": "<%= config[:username] %>",
