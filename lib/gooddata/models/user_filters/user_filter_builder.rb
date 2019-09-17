@@ -255,7 +255,7 @@ module GoodData
                      case options[:type]
                      when :muf
                        muf_expression_cache[filter[:label]] = :all
-                       if muf_expression_cache.value?(:none) || muf_expression_cache.value?(:restrict)
+                       if (muf_expression_cache.value?(:none) || muf_expression_cache.value?(:restrict)) && values.all?('NULL')
                          'TRUE'
                        else
                          '1 <> 1'
