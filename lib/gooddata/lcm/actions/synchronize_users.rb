@@ -347,7 +347,7 @@ module GoodData
             tmp = without_check(PARAMS, params) do
               File.open(data_source.realize(params), 'r:UTF-8')
             end
-            data = CSV.read(tmp, headers: true)
+            data = read_csv_file(tmp, params)
           end
 
           data.map do |row|
@@ -386,6 +386,28 @@ module GoodData
               :ip_whitelist => ip_whitelist
             }
           end
+        end
+
+        def read_csv_file(path, params)
+          params.gdc_logger.debug('Start reading csv file')
+          res = []
+          row_count = 0
+
+          CSV.foreach(path, :headers => true) do |row|
+            row_count += 1
+
+            if block_given?
+              data = yield row
+            else
+              data = row
+            end
+
+            res << data if data
+            params.gdc_logger.debug("Read #{row_count} rows") if (row_count % 50_000).zero?
+          end
+
+          params.gdc_logger.debug("Done reading csv file, total #{row_count} rows")
+          res
         end
       end
     end
