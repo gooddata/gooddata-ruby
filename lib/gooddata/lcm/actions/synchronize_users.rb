@@ -347,7 +347,13 @@ module GoodData
             tmp = without_check(PARAMS, params) do
               File.open(data_source.realize(params), 'r:UTF-8')
             end
-            data = read_csv_file(tmp, params)
+
+            begin
+              data = read_csv_file(tmp, params)
+            rescue Exception => e # rubocop:disable RescueException
+              params.gdc_logger.debug("Failed to read csv file. Message: #{e.message}. Error: #{e}")
+              fail 'There was an error during loading users from csv file'
+            end
           end
 
           data.map do |row|
