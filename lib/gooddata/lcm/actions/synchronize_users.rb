@@ -142,9 +142,11 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
           domain_name = params.organization || params.domain
-          fail "Either organisation or domain has to be specified in params" unless domain_name
+          fail "Either organization or domain has to be specified in params" unless domain_name
+
           project = client.projects(params.gdc_project) || client.projects(params.gdc_project_id)
           fail "Either project or project_id has to be specified in params" unless project
+
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
           data_product = params.data_product
           mode = params.sync_mode
@@ -165,7 +167,7 @@ module GoodData
           do_not_touch_users_that_are_not_mentioned = GoodData::Helpers.to_boolean(params.do_not_touch_users_that_are_not_mentioned)
           create_non_existing_user_groups = GoodData::Helpers.to_boolean(params.create_non_existing_user_groups || true)
 
-          new_users = load_data(params, data_source).compact
+          new_users = load_data(params, data_source)
 
           # There are several scenarios we want to provide with this brick
           # 1) Sync only domain
@@ -182,11 +184,11 @@ module GoodData
           #     value of a project id in the data since he does not know it upfront
           #     and we cannot influence its value.
           common_params = {
-            domain: domain, 
-            whitelists: whitelists,  
-            ignore_failures: ignore_failures,  
-            remove_users_from_project: remove_users_from_project,  
-            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,  
+            domain: domain,
+            whitelists: whitelists,
+            ignore_failures: ignore_failures,
+            remove_users_from_project: remove_users_from_project,
+            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
             create_non_existing_user_groups: create_non_existing_user_groups,
             user_groups_cache: nil
           }
@@ -328,116 +330,155 @@ module GoodData
         end
 
         def load_data(params, data_source)
-          first_name_column           = params.first_name_column || 'first_name'
-          last_name_column            = params.last_name_column || 'last_name'
-          login_column                = params.login_column || 'login'
-          password_column             = params.password_column || 'password'
-          email_column                = params.email_column || 'email'
-          role_column                 = params.role_column || 'role'
-          sso_provider_column         = params.sso_provider_column || 'sso_provider'
-          authentication_modes_column = params.authentication_modes_column || 'authentication_modes'
-          user_groups_column          = params.user_groups_column || 'user_groups'
-          language_column             = params.language_column || 'language'
-          company_column              = params.company_column || 'company'
-          position_column             = params.position_column || 'position'
-          country_column              = params.country_column || 'country'
-          phone_column                = params.phone_column || 'phone'
-          ip_whitelist_column         = params.ip_whitelist_column || 'ip_whitelist'
-
-          sso_provider = params.sso_provider
-          authentication_modes = params.authentication_modes || []
-
           dwh = params.ads_client
+          user_data_config_cols = get_user_data_config_cols(params)
+
           if dwh
             data = dwh.execute_select(params.input_source.query)
+            data = data.compact
+            result = []
+            row_count = 0
+
+            data.each do |item|
+              row_count += 1
+              opts = {
+                :is_csv_data => false,
+                :allow_log_user_data => row_count <= 50_000
+              }
+              result << get_user(params, item, user_data_config_cols, opts)
+            end
+            result
           else
             tmp = without_check(PARAMS, params) do
               File.open(data_source.realize(params), 'r:UTF-8')
             end
 
             begin
-              data_result = read_csv_file(tmp, params)
-              data = data_result[:data]
-              header_cols = data_result[:header_cols]
+              csv_data = read_csv_file(tmp, params, user_data_config_cols)
             rescue Exception => e # rubocop:disable RescueException
               params.gdc_logger.debug("Failed to read csv file. Message: #{e.message}. Error: #{e}")
               fail 'There was an error during loading users from csv file'
             end
-          end
-
-          data.map do |item|
-            if dwh
-              row = item
-            else
-              row = CSV::Row.new(header_cols, item)
-            end
-
-            params.gdc_logger.debug("Processing row: #{row}")
-
-            modes = if authentication_modes.empty?
-                      row[authentication_modes_column] || row[authentication_modes_column.to_sym] || []
-                    else
-                      authentication_modes
-                    end
-
-            modes = modes.split(',').map(&:strip).map { |x| x.to_s.upcase } unless modes.is_a? Array
-
-            user_group = row[user_groups_column] || row[user_groups_column.to_sym]
-            user_group = user_group.split(',').map(&:strip) if user_group
-
-            ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
-            ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
-
-            {
-              :first_name => row[first_name_column] || row[first_name_column.to_sym],
-              :last_name => row[last_name_column] || row[last_name_column.to_sym],
-              :login => row[login_column] || row[login_column.to_sym],
-              :password => row[password_column] || row[password_column.to_sym],
-              :email => row[email_column] || row[login_column] || row[email_column.to_sym] || row[login_column.to_sym],
-              :role => row[role_column] || row[role_column.to_sym],
-              :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
-              :authentication_modes => modes,
-              :user_group => user_group,
-              :pid => params.multiple_projects_column.nil? ? nil : (row[params.multiple_projects_column] || row[params.multiple_projects_column.to_sym]),
-              :language => row[language_column] || row[language_column.to_sym],
-              :company => row[company_column] || row[company_column.to_sym],
-              :position => row[position_column] || row[position_column.to_sym],
-              :country => row[country_column] || row[country_column.to_sym],
-              :phone => row[phone_column] || row[phone_column.to_sym],
-              :ip_whitelist => ip_whitelist
-            }
+            csv_data
           end
         end
 
-        def read_csv_file(path, params)
+        def get_user(params, user_data, user_data_config_cols, opts)
+          first_name_column           = user_data_config_cols[:first_name_column]
+          last_name_column            = user_data_config_cols[:last_name_column]
+          login_column                = user_data_config_cols[:login_column]
+          password_column             = user_data_config_cols[:password_column]
+          email_column                = user_data_config_cols[:email_column]
+          role_column                 = user_data_config_cols[:role_column]
+          sso_provider_column         = user_data_config_cols[:sso_provider_column]
+          authentication_modes_column = user_data_config_cols[:authentication_modes_column]
+          user_groups_column          = user_data_config_cols[:user_groups_column]
+          language_column             = user_data_config_cols[:language_column]
+          company_column              = user_data_config_cols[:company_column]
+          position_column             = user_data_config_cols[:position_column]
+          country_column              = user_data_config_cols[:country_column]
+          phone_column                = user_data_config_cols[:phone_column]
+          ip_whitelist_column         = user_data_config_cols[:ip_whitelist_column]
+
+          sso_provider = params.sso_provider
+          authentication_modes = params.authentication_modes || []
+          multiple_projects_column = params.multiple_projects_column
+
+          if opts[:is_csv_data]
+            row = CSV::Row.new(opts[:csv_header], CSV.parse_line(user_data))
+          else
+            row = user_data
+          end
+
+          params.gdc_logger.debug("Processing row: #{row}") if opts[:allow_log_user_data]
+
+          modes = if authentication_modes.empty?
+                    row[authentication_modes_column] || row[authentication_modes_column.to_sym] || []
+                  else
+                    authentication_modes
+                  end
+
+          modes = modes.split(',').map(&:strip).map { |x| x.to_s.upcase } unless modes.is_a? Array
+
+          user_group = row[user_groups_column] || row[user_groups_column.to_sym]
+          user_group = user_group.split(',').map(&:strip) if user_group
+
+          ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
+          ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
+
+          {
+            :first_name => row[first_name_column] || row[first_name_column.to_sym],
+            :last_name => row[last_name_column] || row[last_name_column.to_sym],
+            :login => row[login_column] || row[login_column.to_sym],
+            :password => row[password_column] || row[password_column.to_sym],
+            :email => row[email_column] || row[login_column] || row[email_column.to_sym] || row[login_column.to_sym],
+            :role => row[role_column] || row[role_column.to_sym],
+            :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
+            :authentication_modes => modes,
+            :user_group => user_group,
+            :pid => multiple_projects_column.nil? ? nil : (row[multiple_projects_column] || row[multiple_projects_column.to_sym]),
+            :language => row[language_column] || row[language_column.to_sym],
+            :company => row[company_column] || row[company_column.to_sym],
+            :position => row[position_column] || row[position_column.to_sym],
+            :country => row[country_column] || row[country_column.to_sym],
+            :phone => row[phone_column] || row[phone_column.to_sym],
+            :ip_whitelist => ip_whitelist
+          }.compact
+        end
+
+        def read_csv_file(csv_file, params, user_data_config_cols)
           params.gdc_logger.debug('Start reading csv file')
           res = []
           csv_header = []
-          csv_data = []
           row_count = 0
+          is_header = true
 
-          CSV.foreach(path, :headers => false, :return_headers => true, encoding: 'utf-8') do |row|
-            row_count += 1
-
+          csv_file.each_line do |line|
             if block_given?
-              data = yield row
+              data = yield line
             else
-              data = row
+              data = line
             end
 
-            res << data if data
+            if data
+              row_count += 1
+              if is_header
+                is_header = false
+                csv_header = CSV.parse_line(data)
+              else
+                opts = {
+                  :is_csv_data => true,
+                  :csv_header => csv_header,
+                  :allow_log_user_data => row_count <= 50_000
+                }
+                res << get_user(params, data, user_data_config_cols, opts)
+              end
+            end
+
             params.gdc_logger.debug("Read #{row_count} rows") if (row_count % 50_000).zero?
           end
 
-          if row_count > 1
-            csv_header = res.first
-            csv_data = res.drop(1)
-          end
-
           params.gdc_logger.debug("Done reading csv file, total #{row_count} rows")
+          res
+        end
+
+        def get_user_data_config_cols(params)
           {
-            :header_cols => csv_header,
-            :data => csv_data
+            :first_name_column => params.first_name_column || 'first_name',
+            :last_name_column => params.last_name_column || 'last_name',
+            :login_column => params.login_column || 'login',
+            :password_column => params.password_column || 'password',
+            :email_column => params.email_column || 'email',
+            :role_column => params.role_column || 'role',
+            :sso_provider_column => params.sso_provider_column || 'sso_provider',
+            :authentication_modes_column => params.authentication_modes_column || 'authentication_modes',
+            :user_groups_column => params.user_groups_column || 'user_groups',
+            :language_column => params.language_column || 'language',
+            :company_column => params.company_column || 'company',
+            :position_column => params.position_column || 'position',
+            :country_column => params.country_column || 'country',
+            :phone_column => params.phone_column || 'phone',
+            :ip_whitelist_column => params.ip_whitelist_column || 'ip_whitelist'
           }
         end
       end
