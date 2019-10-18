@@ -315,7 +315,7 @@ module GoodData
           # Invoke action
           begin
             out = run_action action, params
-          rescue => e
+          rescue Exception => e # rubocop:disable RescueException
             errors << {
               action: action,
               err: e,

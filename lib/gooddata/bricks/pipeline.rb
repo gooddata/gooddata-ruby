@@ -30,8 +30,8 @@ module GoodData
 
       def self.users_brick_pipeline
         prepare([
-          DecodeParamsMiddleware,
           LoggerMiddleware,
+          DecodeParamsMiddleware,
           BenchMiddleware,
           GoodDataMiddleware,
           AWSMiddleware,
@@ -42,8 +42,8 @@ module GoodData
 
       def self.user_filters_brick_pipeline
         prepare([
-          DecodeParamsMiddleware,
           LoggerMiddleware,
+          DecodeParamsMiddleware,
           BenchMiddleware,
           GoodDataMiddleware,
           AWSMiddleware,
@@ -55,8 +55,8 @@ module GoodData
 
       def self.release_brick_pipeline
         prepare([
-        DecodeParamsMiddleware,
         LoggerMiddleware,
+        DecodeParamsMiddleware,
         BenchMiddleware,
         GoodDataMiddleware,
         AWSMiddleware,
@@ -67,8 +67,8 @@ module GoodData
 
       def self.provisioning_brick_pipeline
         prepare([
-        DecodeParamsMiddleware,
         LoggerMiddleware,
+        DecodeParamsMiddleware,
         BenchMiddleware,
         GoodDataMiddleware,
         AWSMiddleware,
@@ -79,8 +79,8 @@ module GoodData
 
       def self.rollout_brick_pipeline
         prepare([
-        DecodeParamsMiddleware,
         LoggerMiddleware,
+        DecodeParamsMiddleware,
         BenchMiddleware,
         GoodDataMiddleware,
         AWSMiddleware,
@@ -92,8 +92,8 @@ module GoodData
       def self.hello_world_brick_pipeline
         prepare(
           [
-            DecodeParamsMiddleware,
             LoggerMiddleware,
+            DecodeParamsMiddleware,
             BenchMiddleware,
             HelloWorldBrick
           ]
@@ -103,8 +103,8 @@ module GoodData
       def self.help_brick_pipeline
         prepare(
           [
-            DecodeParamsMiddleware,
             LoggerMiddleware,
+            DecodeParamsMiddleware,
             BenchMiddleware,
             HelpBrick
           ]
