@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../rest/resource'
-require_relative '../extensions/hash'
 require_relative '../mixins/rest_resource'
 require_relative '../helpers/global_helpers'
 
