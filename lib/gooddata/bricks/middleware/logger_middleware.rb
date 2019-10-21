@@ -45,7 +45,8 @@ module GoodData
           logger.level = params['GDC_LOG_LEVEL'] || 'info'
         end
         GoodData.logger = logger
-        logger.info('Pipeline starts')
+        request_id = params.include?('GDC_REQUEST_ID') ? ", request_id=#{params['GDC_REQUEST_ID']}" : ''
+        logger.info("Pipeline starts #{request_id}")
         params['GDC_LOGGER'] = logger
         GoodData.logging_http_on if params['HTTP_LOGGING'] && params['HTTP_LOGGING'].to_b
 
