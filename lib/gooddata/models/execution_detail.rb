@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative '../rest/resource'
-require_relative '../extensions/hash'
 
 module GoodData
   class ExecutionDetail < Rest::Resource
