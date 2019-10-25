@@ -253,7 +253,8 @@ module GoodData
                         project.import_users(users, common_params)
                       end
                     when 'sync_domain_client_workspaces'
-                      domain_clients = domain.clients(:all, data_product)
+                      all_domain_clients = domain.clients(:all, data_product)
+                      domain_clients = all_domain_clients
                       if params.segments
                         segment_uris = params.segments.map(&:uri)
                         domain_clients = domain_clients.select { |c| segment_uris.include?(c.segment_uri) }
@@ -264,7 +265,13 @@ module GoodData
                         fail "Client id cannot be empty" if client_id.blank?
 
                         c = domain_clients.detect { |specific_client| specific_client.id == client_id }
-                        fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\"" if c.nil?
+                        if c.nil?
+                          filtered_client = all_domain_clients.detect { |f_client| f_client.id == client_id }
+                          fail "The client \"#{client_id}\" does not exist in data product \"#{data_product.data_product_id}\"" if filtered_client.nil?
+
+                          GoodData.logger.info("Client \"#{client_id}\" is not belong to filtered segments")
+                          next
+                        end
 
                         if params.segments && !segment_uris.include?(c.segment_uri)
                           GoodData.logger.info("Client #{client_id} is outside segments_filter #{params.segments}")
