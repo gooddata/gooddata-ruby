@@ -356,8 +356,7 @@ module GoodData
             begin
               csv_data = read_csv_file(tmp, params, user_data_config_cols)
             rescue Exception => e # rubocop:disable RescueException
-              params.gdc_logger.debug("Failed to read csv file. Message: #{e.message}. Error: #{e}")
-              fail 'There was an error during loading users from csv file'
+              fail "There was an error during loading users from csv file. Message: #{e.message}. Error: #{e}"
             end
             csv_data
           end
@@ -427,7 +426,7 @@ module GoodData
         end
 
         def read_csv_file(csv_file, params, user_data_config_cols)
-          params.gdc_logger.debug('Start reading csv file')
+          GoodData.logger.info('Start reading csv file')
           res = []
           csv_header = []
           row_count = 0
@@ -455,10 +454,10 @@ module GoodData
               end
             end
 
-            params.gdc_logger.debug("Read #{row_count} rows") if (row_count % 50_000).zero?
+            GoodData.logger.info("Read #{row_count} rows") if (row_count % 50_000).zero?
           end
 
-          params.gdc_logger.debug("Done reading csv file, total #{row_count} rows")
+          GoodData.logger.info("Done reading csv file, total #{row_count} rows")
           res
         end
 
