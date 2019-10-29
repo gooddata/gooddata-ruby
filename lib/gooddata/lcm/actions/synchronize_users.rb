@@ -356,22 +356,14 @@ module GoodData
             end
 
             begin
-              data_result = read_csv_file(tmp, params)
-              data = data_result[:data]
-              header_cols = data_result[:header_cols]
+              data = read_csv_file(tmp, params)
             rescue Exception => e # rubocop:disable RescueException
               params.gdc_logger.debug("Failed to read csv file. Message: #{e.message}. Error: #{e}")
               fail 'There was an error during loading users from csv file'
             end
           end
 
-          data.map do |item|
-            if dwh
-              row = item
-            else
-              row = CSV::Row.new(header_cols, item)
-            end
-
+          data.map do |row|
             params.gdc_logger.debug("Processing row: #{row}")
 
             modes = if authentication_modes.empty?
@@ -412,11 +404,9 @@ module GoodData
         def read_csv_file(path, params)
           params.gdc_logger.debug('Start reading csv file')
           res = []
-          csv_header = []
-          csv_data = []
           row_count = 0
 
-          CSV.foreach(path, :headers => false, :return_headers => true, encoding: 'utf-8') do |row|
+          CSV.foreach(path, :headers => true) do |row|
             row_count += 1
 
             if block_given?
@@ -429,16 +419,8 @@ module GoodData
             params.gdc_logger.debug("Read #{row_count} rows") if (row_count % 50_000).zero?
           end
 
-          if row_count > 1
-            csv_header = res.first
-            csv_data = res.drop(1)
-          end
-
           params.gdc_logger.debug("Done reading csv file, total #{row_count} rows")
-          {
-            :header_cols => csv_header,
-            :data => csv_data
-          }
+          res
         end
       end
     end
