@@ -1,4 +1,16 @@
 # GoodData Ruby SDK Changelog
+## 2.1.7
+ - BUGFIX: TMA-1577 Bump brick version to 3.7.9
+ - FEATURE: MSF-16279 Allow gooddata-ruby to be installed on rails 5.2
+ - BUGFIX: TMA-1580 Increase java heap space and logging loading rows
+ - BUGFIX: TMA-1577 fix user group cache
+ - BUGFIX: TMA-1589 K8s bricks don't propagate errors to execution log
+ - BUGFIX: TMA-1571 Users Brick fails when segments_filter is used
+ - BUGFIX: TMA-1569 Don't create MUF when all its value is NULL
+ - II-603: Start using new NGVault secret paths
+ - II-550: Update structure of integrated tests
+ - CONFIG: TMA-1555 Separate test results for sdk and project test
+
 ## 2.1.6
  - FEATURE: TMA-783 Use SST for ADS connection as default
  - BUGFIX: TMA-1549 Using valid sso provider during testing update users
