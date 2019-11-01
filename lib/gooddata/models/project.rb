@@ -1611,7 +1611,7 @@ module GoodData
       whitelisted_new_users, whitelisted_users = whitelist_users(new_users.map(&:to_hash), users_list, options[:whitelists])
 
       # First check that if groups are provided we have them set up
-      options[:user_groups_cache] = check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq, options[:user_groups_cache], options)
+      user_groups_cache = check_groups(new_users.map(&:to_hash).flat_map { |u| u[:user_group] || [] }.uniq, options[:user_groups_cache], options)
 
       # conform the role on list of new users so we can diff them with the users coming from the project
       diffable_new_with_default_role = whitelisted_new_users.map do |u|
@@ -1707,11 +1707,17 @@ module GoodData
         end
         mappings.group_by { |_, g| g }.each do |g, mapping|
           remote_users = mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri }.reject(&:nil?)
+          GoodData.logger.info("Assigning users #{remote_users} to group #{g}")
           next if remote_users.empty?
-          user_groups(g).set_members(remote_users)
+          existing_group = user_groups(g)
+          if existing_group.nil?
+            GoodData.logger.warn("Group #{g} not found!!!")
+          else
+            existing_group.set_members(remote_users)
+          end
         end
         mentioned_groups = mappings.map(&:last).uniq
-        groups_to_cleanup = options[:user_groups_cache].reject { |g| mentioned_groups.include?(g.name) }
+        groups_to_cleanup = user_groups_cache.reject { |g| mentioned_groups.include?(g.name) }
         # clean all groups not mentioned with exception of whitelisted users
         groups_to_cleanup.each do |g|
           g.set_members(whitelist_users(g.members.map(&:to_hash), [], options[:whitelists], :include).first.map { |x| x[:uri] })
@@ -1750,11 +1756,12 @@ module GoodData
     end
 
     def check_groups(specified_groups, user_groups_cache = nil, options = {})
-      user_groups_cache = user_groups if user_groups_cache.nil? || user_groups_cache.empty?
-      groups = user_groups_cache.map(&:name)
+      current_user_groups = user_groups if user_groups_cache.nil? || user_groups_cache.empty?
+      groups = current_user_groups.map(&:name)
       missing_groups = specified_groups - groups
       if options[:create_non_existing_user_groups]
         missing_groups.each do |g|
+          GoodData.logger.info("Creating group #{g}")
           create_group(name: g, description: g)
         end
       else
@@ -1764,7 +1771,7 @@ module GoodData
             "#{groups.join(',')} and you asked for #{missing_groups.join(',')}"
         end
       end
-      user_groups_cache
+      current_user_groups
     end
 
     # Update user
@@ -1778,7 +1785,8 @@ module GoodData
       payload = generate_user_payload(user_uri, 'ENABLED', roles)
       res = client.post(url, payload)
       failure = GoodData::Helpers.get_path(res, %w(projectUsersUpdateResult failed))
-      fail ArgumentError, "User #{user_uri} could not be aded. #{failure.first['message']}" unless failure.blank?
+      fail ArgumentError, "User #{user_uri} could not be added. #{failure.first['message']}" unless failure.blank?
+
       res
     end
     alias_method :add_user, :set_user_roles
