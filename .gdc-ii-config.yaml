@@ -6,10 +6,11 @@ microservices:
         BRICKS_VERSION: 'VERSION'
 
 integratedTests:
-  - env: bash
+  - kind: 'image'
+    env: bash
     path: .
     vault:
-      GD_SPEC_PASSWORD: ruby/test/bia_encryption_key
+      GD_SPEC_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-bia-encryption-key"
     command: ./bin/run_smoke_tests.sh
     image: harbor.intgdc.com/staging/lcm-bricks:GIT_REV
     repo_mount_dir: /src
