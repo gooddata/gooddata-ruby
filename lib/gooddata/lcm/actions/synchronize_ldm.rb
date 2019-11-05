@@ -44,6 +44,9 @@ module GoodData
 
         description 'Specifies how to synchronize LDM and resolve possible conflicts'
         param :synchronize_ldm, instance_of(Type::SynchronizeLDM), required: false, default: 'diff_against_master_with_fallback'
+
+        description 'Enables handling of deprecated objects in the logical data model.'
+        param :include_deprecated, instance_of(Type::BooleanType), required: false, default: false
       end
 
       class << self
@@ -70,6 +73,7 @@ module GoodData
           results = []
           client = params.gdc_gd_client
           exclude_fact_rule = params.exclude_fact_rule.to_b
+          include_deprecated = params.include_deprecated.to_b
           from_pid = segment_info[:from]
           from = params.development_client.projects(from_pid) || fail("Invalid 'from' project specified - '#{from_pid}'")
 
@@ -82,6 +86,7 @@ module GoodData
           if previous_master && diff_against_master
             maql_diff_params = [:includeGrain]
             maql_diff_params << :excludeFactRule if exclude_fact_rule
+            maql_diff_params << :includeDeprecated if include_deprecated
             maql_diff = previous_master.maql_diff(blueprint: blueprint, params: maql_diff_params)
           end
 
@@ -96,7 +101,8 @@ module GoodData
                 update_preference: params[:update_preference],
                 exclude_fact_rule: exclude_fact_rule,
                 execute_ca_scripts: false,
-                maql_diff: maql_diff
+                maql_diff: maql_diff,
+                include_deprecated: include_deprecated
               )
             rescue MaqlExecutionError => e
               GoodData.logger.info("Applying MAQL to project #{to_project.title} - #{pid} failed. Reason: #{e}")
@@ -106,7 +112,8 @@ module GoodData
                 blueprint,
                 update_preference: params[:update_preference],
                 exclude_fact_rule: exclude_fact_rule,
-                execute_ca_scripts: false
+                execute_ca_scripts: false,
+                include_deprecated: include_deprecated
               )
             end
 

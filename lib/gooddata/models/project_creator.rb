@@ -47,6 +47,8 @@ module GoodData
           unless response
             maql_diff_params = [:includeGrain]
             maql_diff_params << :excludeFactRule if opts[:exclude_fact_rule]
+            maql_diff_params << :includeDeprecated if opts[:include_deprecated]
+
             maql_diff_time = Benchmark.realtime do
               response = project.maql_diff(blueprint: bp, params: maql_diff_params)
             end
