@@ -80,8 +80,7 @@ module GoodData
             res = GoodData::Helpers.symbolize_keys(res)
 
             if res[:syncedResult][:errors]
-              params.gdc_logger.error "Error: #{res[:syncedResult][:errors].pretty_inspect}"
-              fail "Failed to sync processes/schedules for segment #{segment_id}"
+              fail "Failed to sync processes/schedules for segment #{segment_id}. Error: #{res[:syncedResult][:errors].pretty_inspect}"
             end
 
             if res[:syncedResult][:clients]
