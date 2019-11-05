@@ -51,8 +51,7 @@ module GoodData
             begin
               project = segment.master_project
             rescue RestClient::BadRequest => e
-              params.gdc_logger.error "Failed to retrieve master project for segment #{segment.id}. Error: #{e}"
-              raise
+              raise "Failed to retrieve master project for segment #{segment.id}. Error: #{e}"
             end
 
             raise "Master project for segment #{segment.id} doesn't exist." unless project
