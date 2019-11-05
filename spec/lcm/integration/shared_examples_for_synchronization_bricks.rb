@@ -46,13 +46,32 @@ shared_examples 'a synchronization brick' do
   end
 
   it 'migrates LDM' do
-    projects.each do |target_project|
-      blueprint = GoodData::Model::ProjectBlueprint.new(original_project.blueprint)
-      diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
-      expect(diff['updateOperations']).to eq([])
-      expect(diff['updateScripts']).to eq([])
+    unless include_deprecated
+      projects.each do |target_project|
+        blueprint = GoodData::Model::ProjectBlueprint.new(original_project.blueprint)
+        diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
+        expect(diff['updateOperations']).to eq([])
+        expect(diff['updateScripts']).to eq([])
+      end
     end
   end
+
+  it 'migrates LDM with include_deprecated' do
+    if include_deprecated
+      projects.each do |target_project|
+        blueprint = GoodData::Model::ProjectBlueprint.new(original_project.blueprint)
+        diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
+        if target_project.pid == client_project.pid
+          expect(diff['updateOperations'].empty?).to eq(false)
+        else
+          expect(diff['updateOperations']).to eq([])
+          expect(diff['updateScripts']).to eq([])
+        end
+      end
+    end
+  end
+
+
 
   it 'transfer computed attributes' do
     projects.each do |p|
@@ -70,13 +89,21 @@ shared_examples 'a synchronization brick' do
   it 'migrates label types' do
     original_attributes = original_project.attributes.to_a
     new_attributes = projects && projects[0].attributes.to_a
-    expect(new_attributes.length).to be original_attributes.length
-    original_attributes.each do |attribute|
-      next unless attribute.content['displayForms'] && attribute.content['displayForms'].any?
-      new_attribute = new_attributes.find { |a| a.identifier == attribute.identifier }
-      label_type = attribute.content['displayForms'].first['content']['type']
-      new_label_type = new_attribute.content['displayForms'].first['content']['type']
-      expect(new_label_type).to eq label_type
+
+    if include_deprecated
+      expect(new_attributes.length + 3).to be original_attributes.length
+    else
+      expect(new_attributes.length).to be original_attributes.length
+    end
+
+    unless include_deprecated
+      original_attributes.each do |attribute|
+        next unless attribute.content['displayForms'] && attribute.content['displayForms'].any?
+        new_attribute = new_attributes.find { |a| a.identifier == attribute.identifier }
+        label_type = attribute.content['displayForms'].first['content']['type']
+        new_label_type = new_attribute.content['displayForms'].first['content']['type']
+        expect(new_label_type).to eq label_type
+      end
     end
   end
 
