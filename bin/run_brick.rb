@@ -35,7 +35,7 @@ begin
   brick_pipeline.call(params)
 rescue Exception => e # rubocop:disable RescueException
 	execution_log = GoodData.logger
-	execution_log.error "Execution failed. Message: #{e.message}. Error: #{e}" unless execution_log.nil?
+	execution_log.error "Execution failed. Error: #{e}" unless execution_log.nil?
   log.info "action=#{brick_type}_execution status=failed commit_hash=#{commit_hash} execution_id=#{execution_id} exception=#{e}"
   raise
 end
