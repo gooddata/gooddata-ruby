@@ -1,0 +1,53 @@
+{
+  "organization": "<%= config[:prod_organization] %>",
+  "CLIENT_GDC_PROTOCOL": "https",
+  "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
+  "gd_encoded_params": {
+    "SEGMENTS_FILTER": <%= segments_filter %>,
+    "DATA_PRODUCT": "<%= data_product %>",
+    "input_source": {
+      "type": "ads",
+      "query": "SELECT DISTINCT client_id, segment_id, project_title FROM \"<%= workspace_table_name %>\";"
+    },
+    "additional_params": {
+      "msg_from_rollout_brick": "Hi, I was set by rollout brick",
+      "print_reverted": "hidden_msg_from_rollout_brick,SECURE_PARAM_2"
+    },
+    "query": {
+      "release": "SELECT segment_id, master_project_id, version from \"<%= release_table_name %>\";"
+    },
+    <% if defined? jdbc_url %>
+    "ads_client": {
+      "username": "${GDC_USERNAME}",
+      "password": "${GDC_PASSWORD}",
+      "jdbc_url": "<%= jdbc_url %>"
+    },
+    "dynamic_params": {
+      "input_source": {
+        "type": "ads",
+        "query": "<%= dynamic_params_query %>"
+      }
+    },
+    <% end %>
+    "apply_maql_ddl": "true",
+    "technical_user": [
+      "${GDC_USERNAME}"
+    ]
+  },
+  "gd_encoded_hidden_params": {
+    "schedule_additional_hidden_params": <%= schedule_additional_hidden_params %>,
+    "process_additional_hidden_params": <%= process_additional_hidden_params %>,
+    "dynamic_params_encryption_key": "<%= dynamic_params_encryption_key %>"
+  },
+  "update_preference": {
+    "allow_cascade_drops": true
+  },
+  "release_table_name": "<%= release_table_name %>",
+  "fail_early": "true",
+  "strict": "true",
+  "GDC_USERNAME": "<%= config[:username] %>",
+  "GDC_PASSWORD": "<%= config[:password] %>",
+  "synchronize_ldm": "diff_against_clients",
+  "client_id_column": "<%= custom_client_id_column %>",
+  "include_deprecated": "true"
+}
