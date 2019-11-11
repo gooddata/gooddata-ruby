@@ -83,6 +83,7 @@ module GoodData
           previous_master = segment_info[:previous_master]
           diff_against_master = %w(diff_against_master_with_fallback diff_against_master)
             .include?(params[:synchronize_ldm].downcase)
+          GoodData.logger.info "Synchronize LDM mode: '#{params[:synchronize_ldm].downcase}'"
           if previous_master && diff_against_master
             maql_diff_params = [:includeGrain]
             maql_diff_params << :excludeFactRule if exclude_fact_rule
