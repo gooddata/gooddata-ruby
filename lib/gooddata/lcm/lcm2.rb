@@ -118,7 +118,8 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         CollectDymanicScheduleParams,
-        SynchronizeETLsInSegment
+        SynchronizeETLsInSegment,
+        LocalizeMetricFormats
       ],
 
       rollout: [
@@ -132,7 +133,8 @@ module GoodData
         SynchronizeClients,
         SynchronizeComputedAttributes,
         CollectDymanicScheduleParams,
-        SynchronizeETLsInSegment
+        SynchronizeETLsInSegment,
+        LocalizeMetricFormats
       ],
 
       users: [
