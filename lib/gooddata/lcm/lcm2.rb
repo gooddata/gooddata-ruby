@@ -357,10 +357,11 @@ module GoodData
 
         if errors.any?
           error_message = JSON.pretty_generate(errors)
-          GoodData.logger.error(error_message)
-
-          # Fail whole execution if there is any failed action
-          fail(error_message) if strict_mode
+          if strict_mode
+            fail(error_message)
+          else
+            GoodData.logger.error(error_message)
+          end
         end
 
         result

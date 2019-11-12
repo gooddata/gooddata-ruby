@@ -307,7 +307,6 @@ module GoodData
           # Remove when TT sent in headers. Currently we need to parse from body
           merge_headers!(:x_gdc_authtt => GoodData::Helpers.get_path(response, %w(userToken token)))
         rescue Exception => e # rubocop:disable RescueException
-          GoodData.logger.error(e.message)
           raise e
         end
       end
@@ -514,8 +513,7 @@ module GoodData
         begin
           request.execute
         rescue => e
-          GoodData.logger.error("Error when uploading file #{filename}")
-          raise e
+          raise "Error when uploading file #{filename}. Error: #{e}"
         end
       end
 
