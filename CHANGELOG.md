@@ -1,4 +1,7 @@
 # GoodData Ruby SDK Changelog
+## 2.1.8
+ - FEATURE: TMA-1604 Upgrade Restforce version to 3.x
+
 ## 2.1.7
  - BUGFIX: TMA-1577 Bump brick version to 3.7.9
  - FEATURE: MSF-16279 Allow gooddata-ruby to be installed with Rails 6 apps
