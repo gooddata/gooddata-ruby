@@ -59,6 +59,7 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a release brick' do
@@ -89,6 +90,7 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a provisioning or rollout brick' do
@@ -114,6 +116,7 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a provisioning or rollout brick' do
@@ -150,8 +153,7 @@ describe 'the whole life-cycle', :vcr do
       mf.save
 
       # remove fact in client project to create LDM conflict
-      conflicting_ldm_project = $client_projects
-        .find { |p| p.title.include?('Client With Conflicting LDM') }
+      conflicting_ldm_project = $client_projects.find { |p| p.title.include?('Client With Conflicting LDM') }
       conflicting_ldm_project.facts(Support::FACT_IDENTIFIER).delete
     end
   end
@@ -176,6 +178,7 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a release brick' do
@@ -196,9 +199,9 @@ describe 'the whole life-cycle', :vcr do
       )
       # add another workspace to provision
       @workspaces << {
-          client_id: "INSURANCE_DEMO_NEW_#{@suffix}",
-          segment_id: @workspaces.first[:segment_id],
-          title: "Insurance Demo Workspace NEW #{@suffix}"
+        client_id: "INSURANCE_DEMO_NEW_#{@suffix}",
+        segment_id: @workspaces.first[:segment_id],
+        title: "Insurance Demo Workspace NEW #{@suffix}"
       }
       # copy existing workspaces to ADS as we change data source
       @workspaces.each do |ws|
@@ -236,6 +239,7 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
+      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a provisioning or rollout brick' do
