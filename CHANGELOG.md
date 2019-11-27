@@ -1,4 +1,8 @@
 # GoodData Ruby SDK Changelog
+## 2.1.9
+ - FEATURE: TMA-1588 support schedule param include deprecated
+ - FEATURE: TMA-1597 Logging lcm execution result
+
 ## 2.1.8
  - FEATURE: TMA-1604 Upgrade Restforce version to 3.x
 
