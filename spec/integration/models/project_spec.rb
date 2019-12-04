@@ -18,12 +18,40 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
   end
 
   describe 'projects' do
-    it 'Can get all projects' do
-      projects = @client.projects(:all, 100)
+    it 'Can get all projects and not limit' do
+      projects = @client.projects(:all)
+      expect(projects).to_not be_nil
+      expect(projects).to be_a_kind_of(Array)
+
+      projects.pmap do |project|
+        expect(project).to be_an_instance_of(GoodData::Project)
+      end
+    end
+
+    it 'Can get all projects with max limit' do
+      projects = @client.projects(:all, 3000)
       expect(projects).to_not be_nil
       expect(projects).to be_a_kind_of(Array)
       projects.pmap do |project|
         expect(project).to be_an_instance_of(GoodData::Project)
+      end
+
+      expect(projects.length).to eq @client.projects(:all).length
+    end
+
+
+    it 'Can get all projects with limit and offset' do
+      number_project = @client.projects(:all).length
+      if (number_project > 200)
+        projects = @client.projects(:all, 500, 200)
+        expect(projects).to_not be_nil
+        expect(projects).to be_a_kind_of(Array)
+
+        projects.pmap do |project|
+          expect(project).to be_an_instance_of(GoodData::Project)
+        end
+
+        expect(projects.length).to eq number_project - 200
       end
     end
 
