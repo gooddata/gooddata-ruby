@@ -50,7 +50,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"schedules":{"paging":{"offset":0,"count":2},"schedulesLink":"/gdc/projects/ulqqp5kx5q1q01gwwdg6qfzt838w8qop/schedules","items":[{"schedule":{"name":"main.rb","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"main.rb","param_2":"b","PROCESS_ID":"8190558e-414d-44bd-8b6e-eb0f128a248e"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/ulqqp5kx5q1q01gwwdg6qfzt838w8qop/schedules/5bfec937e4b0f3ce81febf22","executions":"/gdc/projects/ulqqp5kx5q1q01gwwdg6qfzt838w8qop/schedules/5bfec937e4b0f3ce81febf22/executions"},"triggerScheduleId":"5bfec936e4b0f3ce81febf21"}},{"schedule":{"name":"graph.grf","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"graph/graph.grf","param_2":"b","PROCESS_ID":"15ec85ec-2c93-4f60-9038-29e87c246db0"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"cron":"0
         15 10 3 *","timezone":"UTC","nextExecutionTime":"2019-03-10T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/ulqqp5kx5q1q01gwwdg6qfzt838w8qop/schedules/5bfec936e4b0f3ce81febf21","executions":"/gdc/projects/ulqqp5kx5q1q01gwwdg6qfzt838w8qop/schedules/5bfec936e4b0f3ce81febf21/executions"}}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 28 Nov 2018 16:58:35 GMT
 - request:
     method: get
@@ -104,6 +104,62 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"schedules":{"paging":{"offset":0,"count":2},"schedulesLink":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules","items":[{"schedule":{"name":"main.rb","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"main.rb","param_2":"b","PROCESS_ID":"1e9a44cc-c128-41f5-a85f-26c5f71c9679"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49b319e4b0209098241c0c","executions":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49b319e4b0209098241c0c/executions"},"triggerScheduleId":"5c49b317e4b0209098241c0b"}},{"schedule":{"name":"graph.grf","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"graph/graph.grf","param_2":"b","PROCESS_ID":"adab59da-48e8-4958-860b-214ba4771f7c"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"cron":"0
         15 10 3 *","timezone":"UTC","nextExecutionTime":"2019-03-10T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49b317e4b0209098241c0b","executions":"/gdc/projects/fanw3gqnpv87lmocwqj0x79k8i9zfepd/schedules/5c49b317e4b0209098241c0b/executions"}}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 24 Jan 2019 13:23:18 GMT
-recorded_with: VCR 4.0.0
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ckggg1kn1hwetn3giedb8i2g7em2ykir/schedules
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":6R-eYvIIdIipxhY5OybcTg:tGVeU-HRUs7CtHBjn7FjJA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 15 Jan 2020 06:14:12 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '10'
+      X-Gdc-Request:
+      - ":6R-eYvIIdIipxhY5OybcTg:tGVeU-HRUs7CtHBjn7FjJA:I6OddlA8tcBs1qRU"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedules":{"paging":{"offset":0,"count":2},"schedulesLink":"/gdc/projects/ckggg1kn1hwetn3giedb8i2g7em2ykir/schedules","items":[{"schedule":{"name":"graph.grf","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"graph/graph.grf","param_2":"b","PROCESS_ID":"7df1e6c1-27a3-4bfb-9e02-47921759bd57"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"cron":"0
+        15 10 3 *","timezone":"UTC","nextExecutionTime":"2020-03-10T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/ckggg1kn1hwetn3giedb8i2g7em2ykir/schedules/5e1e95f6701b85277cbdf13a","executions":"/gdc/projects/ckggg1kn1hwetn3giedb8i2g7em2ykir/schedules/5e1e95f6701b85277cbdf13a/executions"}}},{"schedule":{"name":"main.rb","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"main.rb","param_2":"b","PROCESS_ID":"74693e9c-7da7-40af-9dbf-1bf909ac55b4"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/ckggg1kn1hwetn3giedb8i2g7em2ykir/schedules/5e1e95f8701b85277cbdf13b","executions":"/gdc/projects/ckggg1kn1hwetn3giedb8i2g7em2ykir/schedules/5e1e95f8701b85277cbdf13b/executions"},"triggerScheduleId":"5e1e95f6701b85277cbdf13a"}}]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 06:14:12 GMT
+recorded_with: VCR 5.0.0

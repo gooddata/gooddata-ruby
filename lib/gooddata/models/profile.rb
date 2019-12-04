@@ -324,20 +324,42 @@ module GoodData
     end
 
     # Gets the array of projects
-    #
+    # @param limit [Integer] maximum number of projects to get.
+    # @param offset [Integer] offset of the first project, start from 0.
     # @return [Array<GoodData::Project>] Array of project where account settings belongs to
-    def projects(limit = nil)
+    def projects(limit = nil, offset = nil)
       url = @json['accountSetting']['links']['projects']
-      query_params = ''
-      if !limit.nil? && limit.is_a?(Integer) && limit > 0
-        limit = [limit, 500].min
-        query_params += "limit=#{limit}"
+
+      all_projects = []
+
+      raise ArgumentError, 'Params limit and offset are expected' if !offset.nil? && limit.nil?
+
+      if limit.nil?
+        url += "?limit=500"
+        loop do
+          projects = client.get url
+          projects['projects']['items'].each do |project|
+            all_projects << client.create(GoodData::Project, project)
+          end
+          if !projects['projects']['paging'].nil? && !projects['projects']['paging']['next'].nil?
+            url = projects['projects']['paging']['next']
+          else
+            break
+          end
+        end
+      else
+        limit = [limit, 500].min if limit.is_a?(Integer) && limit > 0
+
+        url += "?limit=#{limit}"
+        url += "&offset=#{offset}" if !offset.nil? && offset.is_a?(Integer) && offset > 0
+
+        projects = client.get url
+        projects['projects']['items'].each do |project|
+          all_projects << client.create(GoodData::Project, project)
+        end
       end
-      url += "?#{query_params}" unless query_params.empty?
-      projects = client.get url
-      projects['projects'].map do |project|
-        client.create(GoodData::Project, project)
-      end
+
+      all_projects
     end
 
     # Saves object if dirty, clears dirty flag
