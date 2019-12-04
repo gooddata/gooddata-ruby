@@ -51,7 +51,7 @@ http_interactions:
       string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
         Test Group","id":"bLUrfsF7kWLeDzHZvQr3tCg","description":"My Test Description","domain":null,"project":"/gdc/projects/wui586yjfzy44eccxox9loj28xn8bsvx"},"meta":{"created":"2018-05-31
         17:20:03","updated":"2018-05-31 17:20:03"},"links":{"self":"/gdc/userGroups/bLUrfsF7kWLeDzHZvQr3tCg","members":"/gdc/userGroups/bLUrfsF7kWLeDzHZvQr3tCg/members","modifyMembers":"/gdc/userGroups/bLUrfsF7kWLeDzHZvQr3tCg/modifyMembers"}}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 31 May 2018 15:20:05 GMT
 - request:
     method: get
@@ -104,7 +104,7 @@ http_interactions:
       string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
         Test Group","id":"bYht_3jsC3p73mhemtw3L-Q","description":"My Test Description","domain":null,"project":"/gdc/projects/ap35zyp060umrcvx8ltwux0zrsk7raag"},"meta":{"created":"2018-10-10
         11:04:29","updated":"2018-10-10 11:04:29"},"links":{"self":"/gdc/userGroups/bYht_3jsC3p73mhemtw3L-Q","members":"/gdc/userGroups/bYht_3jsC3p73mhemtw3L-Q/members","modifyMembers":"/gdc/userGroups/bYht_3jsC3p73mhemtw3L-Q/modifyMembers"}}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Oct 2018 09:04:31 GMT
 - request:
     method: get
@@ -157,7 +157,7 @@ http_interactions:
       string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
         Test Group","id":"bhxOVVNgzAPW9jUtv-eJmTA","description":"My Test Description","domain":null,"project":"/gdc/projects/zvejmh4faimgxnm545bbotrglh54tes0"},"meta":{"created":"2018-10-10
         13:54:02","updated":"2018-10-10 13:54:02"},"links":{"self":"/gdc/userGroups/bhxOVVNgzAPW9jUtv-eJmTA","members":"/gdc/userGroups/bhxOVVNgzAPW9jUtv-eJmTA/members","modifyMembers":"/gdc/userGroups/bhxOVVNgzAPW9jUtv-eJmTA/modifyMembers"}}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Oct 2018 11:54:08 GMT
 - request:
     method: get
@@ -212,6 +212,63 @@ http_interactions:
       string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
         Test Group","id":"bPzgfviBztA-U8ztc0aKuew","description":"My Test Description","domain":null,"project":"/gdc/projects/guyx3nopmd2l4e2jhbzkmqgl5z4lryt5"},"meta":{"created":"2019-01-24
         14:42:27","updated":"2019-01-24 14:42:27"},"links":{"self":"/gdc/userGroups/bPzgfviBztA-U8ztc0aKuew","members":"/gdc/userGroups/bPzgfviBztA-U8ztc0aKuew/members","modifyMembers":"/gdc/userGroups/bPzgfviBztA-U8ztc0aKuew/modifyMembers"}}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 24 Jan 2019 13:42:29 GMT
-recorded_with: VCR 4.0.0
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/userGroups?project=bzlmn8xs2mc4uqo8al788rvuxjmdgzpz
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":9ayKUMlzPr99oJjqtlKSVA:0k9snjBN3l2C37EU4wN4Xg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 15 Jan 2020 06:37:48 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '22'
+      X-Gdc-Request:
+      - ":9ayKUMlzPr99oJjqtlKSVA:0k9snjBN3l2C37EU4wN4Xg:tsN7haWdidxFfyqz"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
+        Test Group","id":"bw1TZSB3oV5NqSMeQ7PwfPA","description":"My Test Description","domain":null,"project":"/gdc/projects/bzlmn8xs2mc4uqo8al788rvuxjmdgzpz"},"meta":{"created":"2020-01-15
+        07:37:48","updated":"2020-01-15 07:37:48"},"links":{"self":"/gdc/userGroups/bw1TZSB3oV5NqSMeQ7PwfPA","members":"/gdc/userGroups/bw1TZSB3oV5NqSMeQ7PwfPA/members","modifyMembers":"/gdc/userGroups/bw1TZSB3oV5NqSMeQ7PwfPA/modifyMembers"}}}]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 06:37:50 GMT
+recorded_with: VCR 5.0.0

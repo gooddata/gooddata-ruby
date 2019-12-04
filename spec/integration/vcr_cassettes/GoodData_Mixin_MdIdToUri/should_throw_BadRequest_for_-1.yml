@@ -58,7 +58,7 @@ http_interactions:
         of structure:''IdentifierToUri''(tag:identifierToUri),  /identifierToUri/<list:1>/Identifier:
         STRING|(?^:^[a-zA-Z0-9_\\.]{1,255}$)| does not match with value ''-1''"],"requestId":"oTcKo3v63KR_5D8pM_6UwQ:1VdVUM7AnY2IQ3zooU9wDg:gst7erITqf5aGuJu:elHSgs9ll5ThgK4n:3quju50eyy8d98hv","component":"Apache::REST","errorClass":"GDC::Exception::User","message":"Checking
         ''%s'', result %s"}}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 04 May 2018 09:39:37 GMT
 - request:
     method: post
@@ -118,7 +118,7 @@ http_interactions:
         of structure:''IdentifierToUri''(tag:identifierToUri),  /identifierToUri/<list:1>/Identifier:
         STRING|(?^:^[a-zA-Z0-9_\\.]{1,255}$)| does not match with value ''-1''"],"requestId":"TaaGkE5H7m7hMN9WWNiwKw:lKKtHefgGMuJhXYRWp_QLA:Qm5WavILl5GBJjpu:4PnC5Ly1Js6yUkxt:atpqfu8cj6bqjf6o","component":"Apache::REST","errorClass":"GDC::Exception::User","message":"Checking
         ''%s'', result %s"}}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 05 Oct 2018 12:47:23 GMT
 - request:
     method: post
@@ -178,7 +178,7 @@ http_interactions:
         of structure:''IdentifierToUri''(tag:identifierToUri),  /identifierToUri/<list:1>/Identifier:
         STRING|(?^:^[a-zA-Z0-9_\\.]{1,255}$)| does not match with value ''-1''"],"requestId":"RzUQv35oJVsvSogWaEf5vA:-yp2zruUF7bb05xZCyvq_Q:MtGEG1tlHZZXjoDy:nlBXYxwFG6sNPiaL:sfygw8jwpzjt6rlv","component":"Apache::REST","errorClass":"GDC::Exception::User","message":"Checking
         ''%s'', result %s"}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Oct 2018 10:45:43 GMT
 - request:
     method: post
@@ -241,6 +241,70 @@ http_interactions:
         STRING|REST::GrammarStructure::BasicType=HASH(0x5612c48f1858)->regexp| does
         not match with value ''-1''"],"requestId":":r3EGKYaKnLdW_rHqLJU47g:fvw2bit38i-IMosxbUwFlw:f9RPWBPsegJ88Hop:J2IpbpSuZuhuPneM:gsnd8x4eda1zm1a7","component":"Apache::REST","errorClass":"GDC::Exception::User","message":"Checking
         ''%s'', result %s"}}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 24 Jan 2019 13:00:45 GMT
-recorded_with: VCR 4.0.0
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/nv3xczuxbvzm5wd05rw4dz3omukc11ib/identifiers
+    body:
+      encoding: UTF-8
+      string: '{"identifierToUri":["-1"]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":yfpZyhRwuGqmePMs3vWzNg:fUeqdG4F7jcnF6wxVVgjZA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '26'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:57:01 GMT
+      Server:
+      - GoodData WebApp
+      Expires:
+      - Mon, 26 Jul 1997 05:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '27'
+      X-Gdc-Request:
+      - ":yfpZyhRwuGqmePMs3vWzNg:fUeqdG4F7jcnF6wxVVgjZA:b6WSES1CQyxqq1L5"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"parameters":["identifierToUri","STRUCTURE INVALID - name
+        of structure:''IdentifierToUri''(tag:identifierToUri),  /identifierToUri/<list:0>/Identifier:
+        STRING|(?^:^[a-zA-Z0-9_\\.]{1,255}$)| does not match with value ''-1''"],"requestId":":yfpZyhRwuGqmePMs3vWzNg:fUeqdG4F7jcnF6wxVVgjZA:b6WSES1CQyxqq1L5:lFaRs8pjmlOJyG3x:64y7lqa31lmkwpi6","component":"Apache::REST","errorClass":"GDC::Exception::User","message":"Checking
+        ''%s'', result %s"}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:57:01 GMT
+recorded_with: VCR 5.0.0
