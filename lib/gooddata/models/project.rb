@@ -67,9 +67,9 @@ module GoodData
     class << self
       # Returns an array of all projects accessible by
       # current user
-      def all(opts = { client: GoodData.connection }, limit = nil)
+      def all(opts = { client: GoodData.connection }, limit = nil, offset = 0 )
         c = GoodData.get_client(opts)
-        c.user.projects(limit)
+        c.user.projects(limit, offset)
       end
 
       # Returns a Project object identified by given string

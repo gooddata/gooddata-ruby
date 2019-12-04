@@ -30,6 +30,7 @@ module GoodData
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
       KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
+      API_LEVEL = 2
 
       ID_LENGTH = 16
 
@@ -349,6 +350,9 @@ module GoodData
         profile method.to_s.upcase, uri, request_id, stats_on do
           b = proc do
             params = fresh_request_params(request_id).merge(options)
+
+            params['X-GDC-VERSION'] = API_LEVEL
+
             case method
             when :get
               @server[uri].get(params, &user_block)

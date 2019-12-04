@@ -188,11 +188,11 @@ module GoodData
         end
       end
 
-      def projects(id = :all, limit = nil)
+      def projects(id = :all, limit = nil, offset = 0)
         if limit.nil?
           GoodData::Project[id, client: self]
         else
-          GoodData::Project.all({ client: self }, limit)
+          GoodData::Project.all({ client: self }, limit, offset)
         end
       end
 
