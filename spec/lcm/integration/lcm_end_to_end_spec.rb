@@ -59,7 +59,6 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
-      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a release brick' do
@@ -90,7 +89,6 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
-      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a provisioning or rollout brick' do
@@ -116,7 +114,6 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
-      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a provisioning or rollout brick' do
@@ -178,7 +175,6 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
-      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a release brick' do
@@ -239,7 +235,6 @@ describe 'the whole life-cycle', :vcr do
       let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
-      let(:include_deprecated) { false }
     end
 
     it_behaves_like 'a provisioning or rollout brick' do
