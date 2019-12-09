@@ -26,6 +26,7 @@ module GoodData
           return true if matches_project_cache_fake_id?(client_path, recorded_path)
           return true if client_request.uri.start_with?('https://s3.amazonaws.com/no_key_provided')
           return true if client_request.uri.start_with?('https://no_key_provided.s3.amazonaws.com/no_key_provided/')
+          return true if client_request.uri.start_with?('https://no_key_provided.s3.us-east-1.amazonaws.com/no_key_provided/')
 
           uploads_regex = %r{(\/gdc\/uploads\/)[^\/]+(.*)}
           if client_path.match(uploads_regex) && recorded_path.match(uploads_regex)

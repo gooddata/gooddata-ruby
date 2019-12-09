@@ -2,10 +2,7 @@ require_relative 'support/constants'
 require_relative 'support/configuration_helper'
 require_relative 'support/lcm_helper'
 require_relative 'brick_runner'
-require_relative 'shared_examples_for_synchronization_bricks'
-require_relative 'shared_examples_for_provisioning_and_rollout'
 require_relative 'shared_contexts_for_lcm'
-require_relative 'shared_examples_for_release_brick'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []
@@ -41,13 +38,12 @@ describe 'the whole life-cycle', :vcr do
 
   describe '1 - Initial Release' do
     before(:all) do
-      ENV['VCR_RECORD_MODE'] = 'all'
 
       $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
 
       $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../params/provisioning_brick.json.erb', client: @prod_rest_client
 
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick_include_deprecated.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
 
       $master = $master_projects.first
 
@@ -98,25 +94,17 @@ describe 'the whole life-cycle', :vcr do
 
     end
 
-    it_behaves_like 'a synchronization brick' do
-      let(:original_project) { $master }
-      let(:projects) { $client_projects }
-      let(:client_project) { $client_project}
-      let(:schedules_status) { 'ENABLED' }
-      let(:lcm_managed_tag) { true }
-      let(:client_id_schedule_parameter) { true }
-      let(:user_group) { false }
-      let(:schedule_diff) do
-        [['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
+    it 'migrates LDM' do
+      $client_projects.each do |target_project|
+        blueprint = GoodData::Model::ProjectBlueprint.new($master.blueprint)
+        diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
+        if target_project.pid == $client_project.pid
+          expect(diff['updateOperations'].empty?).to eq(false)
+        else
+          expect(diff['updateOperations']).to eq([])
+          expect(diff['updateScripts']).to eq([])
+        end
       end
-      let(:fact_id) { Support::FACT_IDENTIFIER }
-      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
-      let(:output_stage_prefix) { output_stage_prefix }
-      let(:include_deprecated) { true }
-    end
-
-    it_behaves_like 'a provisioning or rollout brick' do
-      let(:projects) { $client_projects }
     end
   end
 end
