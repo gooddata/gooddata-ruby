@@ -29,6 +29,7 @@ def delete_project_by_title(title, projects, days = 14, force = false)
     p.title.match(title) && p.created < dead_line
   end
   filtered_projects.each do |project|
+    begin
     if force
       puts "Deleting: #{project.pid} - #{project.title} - #{project.created}"
       project_add = project.add
@@ -36,6 +37,9 @@ def delete_project_by_title(title, projects, days = 14, force = false)
       project.delete
     else
       puts "Would delete: #{project.pid} - #{project.title} - #{project.created}"
+    end
+    rescue StandardError => ex
+      puts "Failed to delete project #{project.pid}, reason: #{ex}"
     end
   end
   puts "#{filtered_projects.length} projects matching \"#{title}\" #{'would be ' unless force}deleted."

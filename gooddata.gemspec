@@ -54,7 +54,11 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'sqlite3' if RUBY_PLATFORM != 'java'
 
-  s.add_dependency 'activesupport', '> 4.2.9', '< 6.1'
+  if RUBY_VERSION >= '2.5'
+    s.add_dependency 'activesupport', '> 4.2.9', '< 6.1'
+  else
+    s.add_dependency 'activesupport', '> 4.2.9', '< 6.0'
+  end
 
   s.add_dependency 'aws-sdk-s3', '~> 1.16'
   s.add_dependency 'docile', '~> 1.1'
