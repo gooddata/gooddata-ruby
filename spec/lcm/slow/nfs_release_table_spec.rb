@@ -40,7 +40,6 @@ describe 'when using NFS instead of ADS for release data storage' do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { nil }
-      let(:include_deprecated) { false }
     end
   end
 
@@ -66,7 +65,6 @@ describe 'when using NFS instead of ADS for release data storage' do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { nil }
-      let(:include_deprecated) { false }
     end
   end
 
@@ -88,7 +86,6 @@ describe 'when using NFS instead of ADS for release data storage' do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { nil }
-      let(:include_deprecated) { false }
     end
   end
 
@@ -137,7 +134,6 @@ describe 'when using NFS instead of ADS for release data storage' do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { nil }
-      let(:include_deprecated) { false }
     end
   end
 
@@ -159,7 +155,6 @@ describe 'when using NFS instead of ADS for release data storage' do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { nil }
-      let(:include_deprecated) { false }
     end
   end
 end
