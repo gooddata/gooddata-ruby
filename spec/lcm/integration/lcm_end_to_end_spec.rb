@@ -150,8 +150,7 @@ describe 'the whole life-cycle', :vcr do
       mf.save
 
       # remove fact in client project to create LDM conflict
-      conflicting_ldm_project = $client_projects
-        .find { |p| p.title.include?('Client With Conflicting LDM') }
+      conflicting_ldm_project = $client_projects.find { |p| p.title.include?('Client With Conflicting LDM') }
       conflicting_ldm_project.facts(Support::FACT_IDENTIFIER).delete
     end
   end
@@ -196,9 +195,9 @@ describe 'the whole life-cycle', :vcr do
       )
       # add another workspace to provision
       @workspaces << {
-          client_id: "INSURANCE_DEMO_NEW_#{@suffix}",
-          segment_id: @workspaces.first[:segment_id],
-          title: "Insurance Demo Workspace NEW #{@suffix}"
+        client_id: "INSURANCE_DEMO_NEW_#{@suffix}",
+        segment_id: @workspaces.first[:segment_id],
+        title: "Insurance Demo Workspace NEW #{@suffix}"
       }
       # copy existing workspaces to ADS as we change data source
       @workspaces.each do |ws|

@@ -61,7 +61,8 @@ describe GoodData::LCM2::SynchronizeLdm do
       .with(any_args, :update_preference => nil,
                       :exclude_fact_rule => false,
                       :execute_ca_scripts => false,
-                      :maql_diff => nil)
+                      :maql_diff => nil,
+                      :include_deprecated=>false)
     subject
   end
 
