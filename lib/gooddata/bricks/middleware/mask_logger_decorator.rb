@@ -20,7 +20,11 @@ module GoodData
         # @return [[String]] array of all String in values
         def extract_values(values)
           if values.is_a?(String)
-            [values]
+            if values.nil? || values.empty? || values.gsub(/[*|\s]/, '') == ''
+              []
+            else
+              [values]
+            end
           elsif values.is_a?(Hash) || values.is_a?(Array)
             (values.is_a?(Hash) ? values.values : values).reduce([]) do |strings, item|
               strings.concat extract_values(item)

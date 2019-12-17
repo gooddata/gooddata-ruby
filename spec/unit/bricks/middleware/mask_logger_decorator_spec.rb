@@ -57,10 +57,22 @@ describe GoodData::Bricks::MaskLoggerDecorator do
       expect(extracted_values).to eq(%w[secret_password sensitive])
     end
 
+    it "should extract Array ignore mask values" do
+      values_to_extract = %w[secret_password sensitive ****** **12ab**]
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(%w[secret_password sensitive **12ab**])
+    end
+
     it "should extract Hash" do
       values_to_extract = { key1: "secret_password", key2: "sensitive" }
       extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
       expect(extracted_values).to eq(%w[secret_password sensitive])
+    end
+
+    it "should extract Hash ignore mask values" do
+      values_to_extract = { key1: "secret_password", key2: "sensitive", key3: "", key4: "***********", key5: "*abc123**" }
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(%w[secret_password sensitive *abc123**])
     end
 
     it "should extract structured data" do
@@ -69,10 +81,22 @@ describe GoodData::Bricks::MaskLoggerDecorator do
       expect(extracted_values).to eq(%w[secret_password sensitive])
     end
 
+    it "should extract structured data ignore mask values" do
+      values_to_extract = { key1: ["secret_password"], key2: { inner: "sensitive", empty: "", mask: "************", miss: "abc***123" } }
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(%w[secret_password sensitive abc***123])
+    end
+
     it "shouldn't extract not String types" do
       values_to_extract = [nil, true, 342, 4.2]
       extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
       expect(extracted_values).to eq([])
+    end
+
+    it "shouldn't extract empty String and mask value" do
+      values_to_extract = ['', '****', 'secret_password', '**12***abc']
+      extracted_values = GoodData::Bricks::MaskLoggerDecorator.extract_values(values_to_extract)
+      expect(extracted_values).to eq(%w[secret_password **12***abc])
     end
   end
 
