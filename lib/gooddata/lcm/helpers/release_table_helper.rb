@@ -21,12 +21,14 @@ module GoodData
           query = GoodData::Helpers::ErbHelper.template_file(path, replacements)
 
           res = ads_client.execute_select(query)
+
           sorted = res.sort_by { |row| row[:version] }
           sorted.last
         end
 
         def latest_master_project_from_nfs(domain_id, data_product_id, segment_id)
           data = GoodData::Helpers::Csv.read_as_hash(path_to_release_table_file(domain_id, data_product_id, segment_id))
+
           data.sort_by { |master| master[:version] }
               .reverse.first
         end
