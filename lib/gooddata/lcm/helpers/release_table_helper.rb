@@ -8,7 +8,7 @@ module GoodData
   module LCM2
     class Helpers
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'
-      DEFAULT_NFS_DIRECTORY = 'release-tables'
+      DEFAULT_NFS_DIRECTORY = '/release-tables'
 
       class << self
         def latest_master_project_from_ads(release_table_name, ads_client, segment_id)
@@ -40,7 +40,8 @@ module GoodData
         end
 
         def path_to_release_table_file(domain_id, data_prod_id, segment_id)
-          [DEFAULT_NFS_DIRECTORY, domain_id, data_prod_id + '-' + segment_id + '.csv'].join('/')
+          nsf_directory = ENV['RELEASE_TABLE_NFS_DIRECTORY'] || DEFAULT_NFS_DIRECTORY
+          [nsf_directory, domain_id, data_prod_id + '-' + segment_id + '.csv'].join('/')
         end
       end
     end

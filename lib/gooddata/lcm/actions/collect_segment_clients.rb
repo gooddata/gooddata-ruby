@@ -69,7 +69,9 @@ module GoodData
               data_product_id = data_product.data_product_id
               latest_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, data_product_id, segment.segment_id)
             end
+            raise 'Release table has no data' unless latest_master
 
+            GoodData.logger.info "Collecting latest master project #{latest_master[:master_project_id]}, version #{latest_master[:version]}"
             latest_master = client.projects(latest_master[:master_project_id])
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?

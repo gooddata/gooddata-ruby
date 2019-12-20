@@ -118,12 +118,22 @@ end
 namespace :docker do
   desc 'Build Docker image'
   task :build do
+    Rake::Task["maven:build_redshift"].invoke
     system('docker build -f Dockerfile.jruby -t gooddata/appstore .')
   end
 
   desc 'Bundles gems using cache'
   task :bundle do
     system('docker-compose -f docker-compose.lcm.yml run appstore bundle')
+  end
+end
+
+namespace :maven do
+  task :build_redshift do
+    system("cp -rf spec/lcm/redshift_driver_pom.xml tmp/pom.xml")
+    system('mvn -f tmp/pom.xml clean install -P binary-packaging')
+    system('cp -rf tmp/target/*.jar lib/gooddata/cloud_resources/redshift/drivers/')
+    system('rm -rf lib/gooddata/cloud_resources/redshift/drivers/lcm-redshift-driver*.jar')
   end
 end
 
