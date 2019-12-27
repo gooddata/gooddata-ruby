@@ -1,7 +1,7 @@
 namespace :docker do
   desc 'Build Docker image'
   task :build do
-    system('docker-compose build')
+    system('docker-compose build --no-cache')
   end
 
   desc 'Bundles gems using cache'
