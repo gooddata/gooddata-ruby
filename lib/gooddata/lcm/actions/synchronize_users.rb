@@ -393,12 +393,18 @@ module GoodData
             ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
             ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
 
+            user_login = row[login_column] || row[login_column.to_sym]
+            user_login = user_login.strip unless user_login.nil?
+
+            user_email = row[email_column] || row[login_column] || row[email_column.to_sym] || row[login_column.to_sym]
+            user_email = user_email.strip unless user_email.nil?
+
             {
               :first_name => row[first_name_column] || row[first_name_column.to_sym],
               :last_name => row[last_name_column] || row[last_name_column.to_sym],
-              :login => row[login_column] || row[login_column.to_sym],
+              :login => user_login,
               :password => row[password_column] || row[password_column.to_sym],
-              :email => row[email_column] || row[login_column] || row[email_column.to_sym] || row[login_column.to_sym],
+              :email => user_email,
               :role => row[role_column] || row[role_column.to_sym],
               :sso_provider => sso_provider || row[sso_provider_column] || row[sso_provider_column.to_sym],
               :authentication_modes => modes,

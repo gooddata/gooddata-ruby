@@ -53,7 +53,7 @@ module GoodData
             fail "The set multiple_projects_column '#{params.multiple_projects_column}' of the users input is empty" if !pid && MULTIPLE_COLUMN_MODES.include?(params.sync_mode)
 
             users_brick_users << {
-              login: row[login_column].downcase,
+              login: row[login_column].nil? ? nil : row[login_column].strip.downcase,
               pid: pid
             }
           end
