@@ -121,6 +121,7 @@ module GoodData
             users_brick_input: params.users_brick_users
           }
           all_clients = domain.clients(:all, data_product).to_a
+          GoodData.gd_logger.info("Synchronizing in mode=#{mode}, number_of_clients=#{all_clients.size}, data_rows=#{user_filters.size}")
 
           GoodData.logger.info("Synchronizing in mode \"#{mode}\"")
           case mode
@@ -131,6 +132,8 @@ module GoodData
               filter = UserBricksHelper.resolve_client_id(domain, project, params.data_product)
             end
             user_filters = user_filters.select { |f| f[:pid] == filter } if filter
+
+            GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project.pid}, data_rows=#{user_filters.size}")
             sync_user_filters(project, user_filters, run_params, symbolized_config)
           when 'sync_multiple_projects_based_on_pid', 'sync_multiple_projects_based_on_custom_id'
             users_by_project = run_params[:users_brick_input].group_by { |u| u[:pid] }
@@ -144,6 +147,8 @@ module GoodData
               elsif mode == 'sync_multiple_projects_based_on_pid'
                 current_project = client.projects(id)
               end
+
+              GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{id}, data_rows=#{new_filters.size}")
               sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
             end
           when 'sync_domain_client_workspaces'
@@ -170,6 +175,8 @@ module GoodData
               fail "Client #{client_id} does not have project." unless current_project
 
               working_client_ids << client_id
+
+              GoodData.gd_logger.info("Synchronizing in mode=#{mode}, client_id=#{client_id}, data_rows=#{new_filters.size}")
               partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
               results.concat(partial_results[:results])
             end
@@ -182,6 +189,8 @@ module GoodData
                   current_project = c.project
                   users = users_by_project[c.client_id]
                   params.gdc_logger.info "Delete all filters in project #{current_project.pid} of client #{c.client_id}"
+
+                  GoodData.gd_logger.info("Delete all filters in project_id=#{current_project.pid}, client_id=#{c.client_id}")
                   current_results = sync_user_filters(current_project, [], run_params.merge(users_brick_input: users), symbolized_config)
 
                   results.concat(current_results[:results])
@@ -214,10 +223,21 @@ module GoodData
           multiple_projects_column = params.multiple_projects_column
           data_source = GoodData::Helpers::DataSource.new(params.input_source)
 
-          without_check(PARAMS, params) do
-            CSV.foreach(File.open(data_source.realize(params), 'r:UTF-8'), headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
+          tmp = without_check(PARAMS, params) do
+            File.open(data_source.realize(params), 'r:UTF-8')
+          end
+
+          begin
+            GoodData.logger.info('Start reading data')
+            row_count = 0
+            CSV.foreach(tmp, headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
               filters << row.to_hash.merge(pid: row[multiple_projects_column])
+              row_count += 1
+              GoodData.logger.info("Read #{row_count} rows") if (row_count % 50_000).zero?
             end
+            GoodData.logger.info("Done reading data, total #{row_count} rows")
+          rescue Exception => e # rubocop:disable RescueException
+            fail "There was an error during loading data. Message: #{e.message}. Error: #{e}"
           end
 
           if filters.empty? && %w(sync_multiple_projects_based_on_pid sync_multiple_projects_based_on_custom_id).include?(params.sync_mode)

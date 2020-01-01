@@ -39,6 +39,7 @@ module GoodData
       class << self
         def call(params)
           client = params.gdc_gd_client
+          GoodData.gd_logger.info("Update release table: use_nfs=#{params.ads_client.nil?}")
 
           domain_name = params.organization || params.domain
           fail "Either organisation or domain has to be specified in params" unless domain_name
