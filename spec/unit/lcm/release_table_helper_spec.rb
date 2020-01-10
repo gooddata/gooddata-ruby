@@ -65,7 +65,9 @@ describe GoodData::LCM2::Helpers do
       end
       let(:segment) { 'second_segment' }
 
-      it 'ammends the master record to the file' do
+      xit 'ammends the master record to the file' do
+        allow(GoodData::Helpers::Csv).to receive(:ammend_line).with(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, segment), new_data)
+
         GoodData::LCM2::Helpers.update_latest_master_to_nfs(domain_id, data_prod_id, segment, new_data[:master_project_id], new_data[:version])
         data = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_id, data_prod_id, segment)
         expect(data).to eq(new_data)
