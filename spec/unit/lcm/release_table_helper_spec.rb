@@ -77,7 +77,7 @@ describe GoodData::LCM2::Helpers do
       let(:segment_id) { 'mysegment' }
 
       it 'returns a valid filepath' do
-        expect(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, segment_id)).to eq 'release-tables/mydomain/myprod-mysegment.csv'
+        expect(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, segment_id)).to eq '/release-tables/mydomain/myprod-mysegment.csv'
       end
     end
   end

@@ -8,7 +8,7 @@ module GoodData
   module LCM2
     class Helpers
       DEFAULT_TABLE_NAME = 'LCM_RELEASE'
-      DEFAULT_NFS_DIRECTORY = 'release-tables'
+      DEFAULT_NFS_DIRECTORY = '/release-tables'
 
       class << self
         def latest_master_project_from_ads(release_table_name, ads_client, segment_id)

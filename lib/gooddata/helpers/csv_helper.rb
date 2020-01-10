@@ -73,6 +73,8 @@ module GoodData
         # @option filename String
         # @option data Hash
         def ammend_line(filename, data)
+          GoodData.logger.info "Writing data to file #{filename}"
+
           current_data = read_as_hash(filename)
           data_to_write = (current_data << data).map(&:sort).map { |r| Hash[r] }
           FileUtils.mkpath(filename.split('/')[0...-1].join('/'))
