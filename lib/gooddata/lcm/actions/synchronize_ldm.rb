@@ -45,7 +45,7 @@ module GoodData
         description 'Specifies how to synchronize LDM and resolve possible conflicts'
         param :synchronize_ldm, instance_of(Type::SynchronizeLDM), required: false, default: 'diff_against_master_with_fallback'
 
-        description 'Allows to have include deprecated with model diff/view'
+        description 'Enables handling of deprecated objects in the logical data model.'
         param :include_deprecated, instance_of(Type::BooleanType), required: false, default: false
       end
 
