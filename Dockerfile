@@ -1,3 +1,8 @@
+FROM maven:3.5.2-jdk-8-alpine AS MAVEN_TOOL_CHAIN
+COPY spec/lcm/redshift_driver_pom.xml /tmp/pom.xml
+WORKDIR /tmp/
+RUN mvn clean install -P binary-packaging
+
 FROM harbor.intgdc.com/tools/gdc-java-8-jre:0dec94a
 
 ARG RVM_VERSION=stable
@@ -48,6 +53,8 @@ ADD ./SDK_VERSION .
 ADD ./VERSION .
 ADD ./Gemfile .
 ADD ./gooddata.gemspec .
+
+COPY --from=MAVEN_TOOL_CHAIN /tmp/target/*.jar ./lib/gooddata/cloud_resources/redshift/drivers/
 
 RUN bundle install
 
