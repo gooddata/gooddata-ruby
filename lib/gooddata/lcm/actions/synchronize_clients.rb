@@ -68,7 +68,7 @@ module GoodData
                 segment.segment_id
               )
             else
-              current_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, segment.segment_id)
+              current_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, data_product.data_product_id, segment.segment_id)
             end
 
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
