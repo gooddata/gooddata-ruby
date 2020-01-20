@@ -50,6 +50,7 @@ describe GoodData::LCM2::Helpers do
 
     before do
       ENV['RELEASE_TABLE_NFS_DIRECTORY'] = 'release-tables'
+      GoodData.gd_logger = Logger.new(STDOUT)
       allow(GoodData::Helpers::Csv).to receive(:read_as_hash).with(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, 'first_segment')) { first_segment }
       allow(GoodData::Helpers::Csv).to receive(:read_as_hash).with(GoodData::LCM2::Helpers.path_to_release_table_file(domain_id, data_prod_id, 'second_segment')) { second_segment }
     end
