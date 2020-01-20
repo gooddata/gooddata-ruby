@@ -31,14 +31,14 @@ module GoodData
           latest_master_project = data.sort_by { |master| master[:version] }
               .reverse.first
 
-          version_info =  latest_master_project ? "master_pid=#{latest_master_project[:master_project_id]} version=#{latest_master_project[:version]}" : ""
+          version_info = latest_master_project ? "master_pid=#{latest_master_project[:master_project_id]} version=#{latest_master_project[:version]}" : ""
           GoodData.gd_logger.info "Getting latest master project: file=#{file_path} domain=#{domain_id} data_product=#{data_product_id} segment=#{segment_id} #{version_info}"
           latest_master_project
         end
 
         def update_latest_master_to_nfs(domain_id, data_product_id, segment_id, master_pid, version)
           file_path = path_to_release_table_file(domain_id, data_product_id, segment_id)
-          GoodData.gd_logger.info "Updating release table: file=#{file_path} domain=#{domain_id} data_product=#{data_product_id} segment=#{segment} master_pid=#{master_pid} version=#{version}"
+          GoodData.gd_logger.info "Updating release table: file=#{file_path} domain=#{domain_id} data_product=#{data_product_id} segment=#{segment_id} master_pid=#{master_pid} version=#{version}" # rubocop:disable Metrics/LineLength
           GoodData::Helpers::Csv.ammend_line(
             file_path,
             master_project_id: master_pid,
