@@ -57,8 +57,6 @@ module GoodData
             fail "Either organisation or domain has to be specified in params" unless domain_name
 
             client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-            data_product = params.data_product
-            data_product_id = data_product.data_product_id
 
             if params.ads_client
               latest_master = GoodData::LCM2::Helpers.latest_master_project_from_ads(
@@ -67,6 +65,8 @@ module GoodData
                 segment.segment_id
               )
             else
+              data_product = params.data_product
+              data_product_id = data_product.data_product_id
               latest_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, data_product_id, segment.segment_id)
             end
             raise 'Release table has no data' unless latest_master
