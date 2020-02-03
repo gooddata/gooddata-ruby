@@ -24,7 +24,7 @@ iam_params = {
   },
   "input_source"=> {
     "type"=> "redshift",
-    "query"=> "SELECT * FROM lcm_project_users"
+    "query"=> "SELECT * FROM lcm_project_users order by client_id"
   }
 }
 
@@ -44,7 +44,7 @@ basic_params = {
   },
   "input_source"=> {
     "type"=> "redshift",
-    "query"=> "SELECT * FROM lcm_project_users"
+    "query"=> "SELECT * FROM lcm_project_users order by client_id"
   }
 }
 
@@ -63,7 +63,7 @@ basic_params_without_schema = {
   },
   "input_source"=> {
     "type"=> "redshift",
-    "query"=> "SELECT * FROM lcm_test"
+    "query"=> "SELECT * FROM lcm_test order by client_id"
   }
 }
 
@@ -74,13 +74,13 @@ describe 'data helper', :vcr do
 
   it 'connect to redshift with IAM authentication' do
     file_path = @data_helper.realize(iam_params)
-    data = File.open('spec/data/redshift_data.csv').read
+    data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
 
   it 'connect to redshift with BASIC authentication' do
     file_path = @data_helper.realize(basic_params)
-    data = File.open('spec/data/redshift_data.csv').read
+    data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
 
