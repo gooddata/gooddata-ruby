@@ -29,7 +29,7 @@ module GoodData
         if options['redshift_client']['connection'].is_a?(Hash)
           @database = options['redshift_client']['connection']['database']
           @schema = options['redshift_client']['connection']['schema'] || 'public'
-          @url = options['redshift_client']['connection']['url'].chomp('/')
+          @url = options['redshift_client']['connection']['url']
           @authentication = options['redshift_client']['connection']['authentication']
         else
           raise('Missing connection info for Redshift client')
@@ -42,11 +42,10 @@ module GoodData
         org.apache.log4j.PropertyConfigurator.configure("#{base}/drivers/log4j.properties")
       end
 
-      def realize_query(params)
+      def realize_query(query, _params)
         GoodData.gd_logger.info("Realize SQL query: type=redshift status=started")
 
         connect
-        query = params['input_source']['query']
         filename = "#{SecureRandom.urlsafe_base64(6)}_#{Time.now.to_i}.csv"
         measure = Benchmark.measure do
           statement = @connection.create_statement
@@ -72,7 +71,9 @@ module GoodData
       end
 
       def connect
-        GoodData.logger.info "Setting up connection to Redshift #{@url}"
+        full_url = build_url(@url, @database)
+        GoodData.logger.info "Setting up connection to Redshift #{full_url}"
+
         prop = java.util.Properties.new
         if @authentication['basic']
           prop.setProperty('UID', @authentication['basic']['userName'])
@@ -82,8 +83,17 @@ module GoodData
           prop.setProperty('SecretAccessKey', @authentication['iam']['secretAccessKey'])
           prop.setProperty('DbUser', @authentication['iam']['dbUser'])
         end
-        @url += "/#{@database}" if @database && !@url.end_with?(@database)
-        @connection = java.sql.DriverManager.getConnection(@url, prop)
+
+        @connection = java.sql.DriverManager.getConnection(full_url, prop)
+      end
+
+      private
+
+      def build_url(url, database)
+        url_parts = url.split('?')
+        url_path = url_parts[0].chomp('/')
+        url_path += "/#{database}" if database && !url_path.end_with?("/#{database}")
+        url_parts.length > 1 ? url_path + '?' + url_parts[1] : url_path
       end
     end
   end

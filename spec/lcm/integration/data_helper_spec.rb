@@ -48,6 +48,48 @@ basic_params = {
   }
 }
 
+basic_params_dynamic_source = {
+  "redshift_client"=> {
+    "connection"=> {
+      "url"=> "jdbc:redshift://explorer.cbrgkmwhlu9v.us-east-2.redshift.amazonaws.com:5439",
+      "authentication"=> {
+        "basic"=> {
+          "userName"=> "cornflake",
+          "password"=> ConnectionHelper::SECRETS[:redshift_password]
+        }
+      },
+      "database"=> "dev",
+      "schema"=> "lcm_integration_test"
+    }
+  },
+  "dynamic_params" => {
+    "input_source"=> {
+      "type"=> "redshift",
+      "query"=> "SELECT * FROM lcm_project_users order by client_id"
+    }
+  }
+}
+
+basic_params_url_parameters = {
+  "redshift_client"=> {
+    "connection"=> {
+      "url"=> "jdbc:redshift://explorer.cbrgkmwhlu9v.us-east-2.redshift.amazonaws.com:5439/?ssl=true",
+      "authentication"=> {
+        "basic"=> {
+          "userName"=> "cornflake",
+          "password"=> ConnectionHelper::SECRETS[:redshift_password]
+        }
+      },
+      "database"=> "dev",
+      "schema"=> "lcm_integration_test"
+    }
+  },
+  "input_source"=> {
+    "type"=> "redshift",
+    "query"=> "SELECT * FROM lcm_project_users order by client_id"
+  }
+}
+
 basic_params_without_schema = {
   "redshift_client"=> {
     "connection"=> {
@@ -68,25 +110,39 @@ basic_params_without_schema = {
 }
 
 describe 'data helper', :vcr do
-  before(:each) do
-    @data_helper = GoodData::Helpers::DataSource.new(type: :redshift)
-  end
 
   it 'connect to redshift with IAM authentication' do
-    file_path = @data_helper.realize(iam_params)
+    data_helper = GoodData::Helpers::DataSource.new(iam_params['input_source'])
+    file_path = data_helper.realize(iam_params)
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
 
   it 'connect to redshift with BASIC authentication' do
-    file_path = @data_helper.realize(basic_params)
+    data_helper = GoodData::Helpers::DataSource.new(basic_params['input_source'])
+    file_path = data_helper.realize(basic_params)
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
 
   it 'connect to redshift with BASIC authentication without schema' do
-    file_path = @data_helper.realize(basic_params_without_schema)
+    data_helper = GoodData::Helpers::DataSource.new(basic_params_without_schema['input_source'])
+    file_path = data_helper.realize(basic_params_without_schema)
     data = File.open('spec/data/redshift_data.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to redshift with BASIC authentication and dynamic source' do
+    data_helper = GoodData::Helpers::DataSource.new(basic_params_dynamic_source['dynamic_params']['input_source'])
+    file_path = data_helper.realize(basic_params_dynamic_source)
+    data = File.open('spec/data/redshift_data2.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to redshift with BASIC authentication and url has parameter' do
+    data_helper = GoodData::Helpers::DataSource.new(basic_params_url_parameters['input_source'])
+    file_path = data_helper.realize(basic_params_url_parameters)
+    data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
 end
