@@ -305,6 +305,12 @@ module GoodData
           skip_actions.include?(action.name.split('::').last)
         end
 
+        sync_mode = params.fetch(:sync_mode, nil)
+        if mode == 'users' && %w[add_to_organization remove_from_organization].include?(sync_mode)
+          actions = actions.reject do |action|
+            %w[CollectDataProduct CollectSegments].include?(action.name.split('::').last)
+          end
+        end
         check_unused_params(actions, params)
         print_action_names(mode, actions)
 
