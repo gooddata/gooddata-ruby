@@ -9,7 +9,7 @@ LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:0dec94a"
 
 # which is required by RVM
-RUN yum install -y curl which patch make git \
+RUN yum install -y curl which patch make git maven \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -43,11 +43,16 @@ RUN groupadd -g 48 apache \
 USER apache
 
 ADD ./bin ./bin
-ADD ./lib ./lib
+ADD --chown=apache:apache ./lib ./lib
 ADD ./SDK_VERSION .
 ADD ./VERSION .
 ADD ./Gemfile .
 ADD ./gooddata.gemspec .
+
+RUN mkdir -p tmp
+COPY spec/lcm/redshift_driver_pom.xml tmp/pom.xml
+RUN mvn -f tmp/pom.xml clean install -P binary-packaging
+RUN cp -rf tmp/target/*.jar ./lib/gooddata/cloud_resources/redshift/drivers/
 
 RUN bundle install
 

@@ -44,6 +44,11 @@ module GoodData
           realize_link
         when 's3'
           realize_s3(params)
+        when 'redshift'
+          raise GoodData::InvalidEnvError, "DataSource does not support type \"#{source}\" on the platform #{RUBY_PLATFORM}" unless RUBY_PLATFORM =~ /java/
+
+          require_relative '../cloud_resources/cloud_resources'
+          realize_cloud_resource(source, params)
         else
           raise "DataSource does not support type \"#{source}\""
         end
@@ -54,6 +59,11 @@ module GoodData
       end
 
       private
+
+      def realize_cloud_resource(type, params)
+        cloud_resource_client = GoodData::CloudResources::CloudResourceFactory.create(type, params)
+        cloud_resource_client.realize_query(@options[:query], params)
+      end
 
       def realize_query(params)
         query = DataSource.interpolate_sql_params(@options[:query], params)

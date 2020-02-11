@@ -65,8 +65,11 @@ module GoodData
                 segment.segment_id
               )
             else
-              latest_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, segment.segment_id)
+              data_product = params.data_product
+              data_product_id = data_product.data_product_id
+              latest_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, data_product_id, segment.segment_id)
             end
+            raise 'Release table has no data' unless latest_master
 
             latest_master = client.projects(latest_master[:master_project_id])
 

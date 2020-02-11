@@ -11,6 +11,8 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
     @client = ConnectionHelper.create_default_connection
     @project = ProjectHelper.get_default_project(:client => @client)
     @domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+    projects = @client.projects(:all)
+    @number_project = projects.nil? ? 0 : projects.length
   end
 
   after(:all) do
@@ -18,12 +20,56 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
   end
 
   describe 'projects' do
-    it 'Can get all projects' do
-      projects = @client.projects(:all, 100)
+    it 'Can get all projects and not limit' do
+      projects = @client.projects(:all)
+      expect(projects).to_not be_nil
+      expect(projects).to be_a_kind_of(Array)
+
+      projects.pmap do |project|
+        expect(project).to be_an_instance_of(GoodData::Project)
+      end
+    end
+
+    it 'Can get all projects with number limit' do
+      projects = @client.projects(:all, 450)
       expect(projects).to_not be_nil
       expect(projects).to be_a_kind_of(Array)
       projects.pmap do |project|
         expect(project).to be_an_instance_of(GoodData::Project)
+      end
+
+      count_expected = @number_project > 450 ? 450 : @number_project
+
+      expect(projects.length).to eq count_expected
+    end
+
+    it 'Can get all projects with max limit' do
+      projects = @client.projects(:all, 1000)
+      expect(projects).to_not be_nil
+      expect(projects).to be_a_kind_of(Array)
+      projects.pmap do |project|
+        expect(project).to be_an_instance_of(GoodData::Project)
+      end
+
+      count_expected = @number_project > 500 ? 500 : @number_project
+
+      expect(projects.length).to eq count_expected
+    end
+
+
+    it 'Can get all projects with limit and offset' do
+      if (@number_project > 100)
+        projects = @client.projects(:all, 400, 100)
+        expect(projects).to_not be_nil
+        expect(projects).to be_a_kind_of(Array)
+
+        projects.pmap do |project|
+          expect(project).to be_an_instance_of(GoodData::Project)
+        end
+
+        count_expected = @number_project > 500 ? 500 : @number_project
+
+        expect(projects.length).to eq count_expected - 100
       end
     end
 

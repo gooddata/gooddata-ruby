@@ -52,7 +52,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"error":{"errorClass":"com.gooddata.webapp.rest.resource.lifecycle.ClientException","trace":"","message":"Changing
         client ''%s'' to ''%s'' is not allowed","component":"Webapp","errorId":"1fbda1a3-a192-4cd8-9994-c9fe89e586d2","errorCode":"gdc.c4.bad_request.dataproduct.client_id.mismatch","parameters":["tenant_a722561d-a7dd-4978-83a9-2388d4485b57","different_id"]}}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 04 Jun 2018 13:05:03 GMT
 - request:
     method: put
@@ -106,7 +106,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"error":{"errorClass":"com.gooddata.webapp.rest.resource.lifecycle.ClientException","trace":"","message":"Changing
         client ''%s'' to ''%s'' is not allowed","component":"Webapp","errorId":"23056d1e-6cfc-40ca-823a-e77fe7f83c48","errorCode":"gdc.c4.bad_request.dataproduct.client_id.mismatch","parameters":["tenant_a530707e-3d02-4a99-b958-546a362088da","different_id"]}}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 05 Oct 2018 12:33:20 GMT
 - request:
     method: put
@@ -160,7 +160,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"error":{"errorClass":"com.gooddata.webapp.rest.resource.lifecycle.ClientException","trace":"","message":"Changing
         client ''%s'' to ''%s'' is not allowed","component":"Webapp","errorId":"5408c120-e5ce-417e-b70a-69050382769f","errorCode":"gdc.c4.bad_request.dataproduct.client_id.mismatch","parameters":["tenant_bcd3b336-e319-494d-bb6a-0c728ff5718d","different_id"]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Oct 2018 10:29:10 GMT
 - request:
     method: put
@@ -216,6 +216,64 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"error":{"errorClass":"com.gooddata.webapp.rest.resource.lifecycle.ClientException","trace":"","message":"Changing
         client ''%s'' to ''%s'' is not allowed","component":"Webapp","errorId":"147bbae6-a3fd-43f2-887b-96fed733252c","errorCode":"gdc.c4.bad_request.dataproduct.client_id.mismatch","parameters":["tenant_e7319584-7261-48aa-a691-375a3de519f4","different_id"]}}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 24 Jan 2019 12:42:11 GMT
-recorded_with: VCR 4.0.0
+- request:
+    method: put
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/domains/staging2-lcm-prod/dataproducts/default/clients/tenant_3799680e-5345-40d7-bd92-dfd9d4f2e0e8
+    body:
+      encoding: UTF-8
+      string: '{"client":{"id":"different_id","segment":"/gdc/domains/staging2-lcm-prod/segments/segment-1fb507b0-c9fb-4e52-8ec4-dcda57468817","project":"/gdc/projects/d4wz0829otzckt56re11zevxcq2mw7t4","links":{"self":"/gdc/domains/staging2-lcm-prod/dataproducts/default/clients/tenant_3799680e-5345-40d7-bd92-dfd9d4f2e0e8"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":Q8zktsCSozedYOeqV6NreQ:U7lXiRIrCxLNTgvw2QeJhg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '311'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 15 Jan 2020 04:35:30 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '18'
+      X-Gdc-Request:
+      - ":Q8zktsCSozedYOeqV6NreQ:U7lXiRIrCxLNTgvw2QeJhg:miajysULqjkvbxad"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"errorClass":"com.gooddata.webapp.rest.resource.lifecycle.ClientException","trace":"","message":"Changing
+        client ''%s'' to ''%s'' is not allowed","component":"Webapp","errorId":"62b157a0-0d7c-48b7-95d8-2fbdad7328d8","errorCode":"gdc.c4.bad_request.dataproduct.client_id.mismatch","parameters":["tenant_3799680e-5345-40d7-bd92-dfd9d4f2e0e8","different_id"]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:35:31 GMT
+recorded_with: VCR 5.0.0

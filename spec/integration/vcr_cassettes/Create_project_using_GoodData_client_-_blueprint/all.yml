@@ -1,311 +1,6 @@
 ---
 http_interactions:
 - request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login
-    body:
-      encoding: UTF-8
-      string: '{"postUserLogin":{"login":"rubydev+admin@gooddata.com","password":"<PASSWORD>","remember":1,"verify_level":2}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/2.1.3/x86_64-darwin16/2.3.4
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - ''
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:sLZfyIl4bE8hVoPRU-vHhw"
-      Dont-Reauth:
-      - 'true'
-      Content-Length:
-      - '110'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      X-Gdc-Authsst:
-      - "<X_GDC_AUTHSST>"
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-store, no-cache, must-revalidate, max-age=0
-      Pragma:
-      - no-cache
-      P3p:
-      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
-      X-Gdc-Log-Header:
-      - ''
-      Content-Type:
-      - application/json;charset=UTF-8
-      Date:
-      - Wed, 10 Apr 2019 08:56:58 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:sLZfyIl4bE8hVoPRU-vHhw:6iMN0fzb6jXSq4Ie"
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '55'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"userLogin":{"profile":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","state":"/gdc/account/login/5ad80b895edcc438e5a4418e222733fa","token":"<TOKEN>"}}'
-    http_version: 
-  recorded_at: Wed, 10 Apr 2019 08:56:58 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/2.1.3/x86_64-darwin16/2.3.4
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:m8Vpshily-tNyQESt7UNcw"
-      X-Gdc-Authsst:
-      - "<X_GDC_AUTHSST>"
-      Dont-Reauth:
-      - 'true'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-store, no-cache, must-revalidate, max-age=0
-      Pragma:
-      - no-cache
-      P3p:
-      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Log-Header:
-      - ''
-      Content-Type:
-      - application/json
-      Date:
-      - Wed, 10 Apr 2019 08:56:58 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:m8Vpshily-tNyQESt7UNcw:M6uNZz9X2fc3cOUS"
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '16'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"userToken":{"token":"<TOKEN>"}}'
-    http_version: 
-  recorded_at: Wed, 10 Apr 2019 08:56:59 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/2.1.3/x86_64-darwin16/2.3.4
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:nommT3nZ_hZ3pN9a08KSZg"
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Date:
-      - Wed, 10 Apr 2019 08:57:00 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:nommT3nZ_hZ3pN9a08KSZg:tKY9BSHNuitejX8q"
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '10'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"accountSetting":{"links":{"self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","auditEvents":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/auditEvents","domain":"/gdc/domains/staging2-lcm-prod"},"firstName":"the","lastName":"1","companyName":"","position":null,"created":"2017-02-10
-        12:18:01","updated":"2019-03-15 10:00:00","country":null,"phoneNumber":"","authenticationModes":["PASSWORD","SSO"],"login":"rubydev+admin@gooddata.com","timezone":null,"ssoProvider":"test-ruby","email":"rubydev+admin@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
-    http_version: 
-  recorded_at: Wed, 10 Apr 2019 08:57:00 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/2.1.3/x86_64-darwin16/2.3.4
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:e33G9OszU2MtdN7yX0zn5Q"
-      Stats-On:
-      - ''
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 10 Apr 2019 08:57:00 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=70
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      - origin
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:e33G9OszU2MtdN7yX0zn5Q:NPtrLHwTApxy58Q5"
-      X-Gdc-Request-Time:
-      - '29'
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
-        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
-        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
-        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
-        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
-        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
-        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
-        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
-        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
-        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
-        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
-        data staging area.","category":"uploads","title":"user-uploads"}]}}'
-    http_version: 
-  recorded_at: Wed, 10 Apr 2019 08:57:00 GMT
-- request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
-    body:
-      encoding: UTF-8
-      string: '{"project":{"meta":{"summary":"No summary","title":"RubyGem Dev Week
-        test"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"TESTING","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/2.1.3/x86_64-darwin16/2.3.4
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:f4nY1FpZ6iRb0clR3E2NdQ"
-      Stats-On:
-      - ''
-      Content-Length:
-      - '184'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 10 Apr 2019 08:57:01 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=64
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      X-Gdc-Request:
-      - ":O4addbUIap8JiJn0P6Q-rg:f4nY1FpZ6iRb0clR3E2NdQ:V5neyaDDFwc7vMGT"
-      Vary:
-      - origin
-      X-Gdc-Request-Time:
-      - '563'
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"uri":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe"}'
-    http_version: 
-  recorded_at: Wed, 10 Apr 2019 08:57:02 GMT
-- request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe
     body:
@@ -361,7 +56,7 @@ http_interactions:
       string: '{"project":{"content":{"environment":"TESTING","cluster":"","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"PREPARING"},"links":{"ldm_thumbnail":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/ldm?thumbnail=1","self":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe","clearCaches":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/clearCaches","invitations":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/invitations","users":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/users?link=1&offset=0&limit=100","checkXaeCompatibility":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/checkXaeCompatibility","uploads":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/uploads/","ldm":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/ldm","metadata":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe","publicartifacts":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/publicartifacts","roles":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/roles","userRoles":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/dataload","connectors":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/connectors","execute":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/execute","config":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/config","projectFeatureFlags":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/projectFeatureFlags","schedules":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/schedules","templates":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/templates"},"meta":{"created":"2019-04-10
         10:57:01","summary":"No summary","updated":"2019-04-10 10:57:02","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"RubyGem
         Dev Week test","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:03 GMT
 - request:
     method: get
@@ -419,7 +114,7 @@ http_interactions:
       string: '{"project":{"content":{"environment":"TESTING","cluster":"","authorizationToken":"<AUTHORIZATION_TOKEN>","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"ENABLED"},"links":{"ldm_thumbnail":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/ldm?thumbnail=1","self":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe","clearCaches":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/clearCaches","invitations":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/invitations","users":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/users?link=1&offset=0&limit=100","checkXaeCompatibility":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/checkXaeCompatibility","uploads":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/uploads/","ldm":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/ldm","metadata":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe","publicartifacts":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/publicartifacts","roles":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/roles","userRoles":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/dataload","connectors":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/connectors","execute":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/execute","config":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/config","projectFeatureFlags":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/projectFeatureFlags","schedules":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/schedules","templates":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/templates"},"meta":{"created":"2019-04-10
         10:57:01","summary":"No summary","updated":"2019-04-10 10:57:03","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"RubyGem
         Dev Week test","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:06 GMT
 - request:
     method: post
@@ -485,7 +180,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"asyncTask":{"link":{"poll":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/model/diff/3de62c0f2cb8833d2bc4490b9bfb73d681e297d65c127c2500000018"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:10 GMT
 - request:
     method: get
@@ -542,7 +237,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"asyncTask":{"link":{"poll":"/gdc/projects/z731txz55xvey6djylkrjsgyq178qhbe/model/diff/3de62c0f2cb8833d2bc4490b9bfb73d681e297d65c127c2500000018"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:10 GMT
 - request:
     method: get
@@ -738,7 +433,7 @@ http_interactions:
         ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
         {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.repos},
         {dataset.devs}, {dataset.commits};"],"preserveData":false,"cascadeDrops":false}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:12 GMT
 - request:
     method: get
@@ -932,7 +627,7 @@ http_interactions:
         ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
         {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.repos},
         {dataset.devs}, {dataset.commits};"],"preserveData":false,"cascadeDrops":false}}]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:13 GMT
 - request:
     method: get
@@ -1017,7 +712,7 @@ http_interactions:
         userFilter - user management.","category":"userfilters","title":"userfilters"},{"link":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/validate","summary":"Resources
         for LDM, PDM, IO validation.","category":"validate-project","title":"validateproject"},{"link":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/variables","summary":"Resources
         for variable manipulation.","category":"vars","title":"variables"}]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:13 GMT
 - request:
     method: get
@@ -1076,7 +771,7 @@ http_interactions:
         for model manipulation with categorized result.","category":"ldm-manage2","title":"manage2"},{"link":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/ldm/singleloadinterface","summary":"Single
         interface for data loading.","category":"singleloadinterface","title":"singleloadinterface"},{"link":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/ldm/attributeupperbound","summary":"Attribute
         upper bounds for LDM.","category":"attributeupperbound","title":"attributeupperbound"}]}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:14 GMT
 - request:
     method: post
@@ -1165,7 +860,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"entries":[{"link":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/8b46e9811af309fbe149e437937b9acf00000007/status","category":"tasks-status"}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:14 GMT
 - request:
     method: get
@@ -1224,7 +919,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"wTaskStatus":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/8b46e9811af309fbe149e437937b9acf00000007/status","status":"RUNNING","links":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/8b46e9811af309fbe149e437937b9acf00000007/status"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:15 GMT
 - request:
     method: get
@@ -1283,7 +978,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"wTaskStatus":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/8b46e9811af309fbe149e437937b9acf00000007/status","status":"RUNNING","links":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/8b46e9811af309fbe149e437937b9acf00000007/status"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:17 GMT
 - request:
     method: get
@@ -1342,7 +1037,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"wTaskStatus":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/c187610792cc572a5887ccaf69a0a5e500000007/status","status":"OK","links":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/c187610792cc572a5887ccaf69a0a5e500000007/status"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:19 GMT
 - request:
     method: get
@@ -1399,7 +1094,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"wTaskStatus":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/c187610792cc572a5887ccaf69a0a5e500000007/status","status":"OK","links":{"poll":"/gdc/md/z731txz55xvey6djylkrjsgyq178qhbe/tasks/c187610792cc572a5887ccaf69a0a5e500000007/status"}}}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:57:20 GMT
 - request:
     method: delete
@@ -1450,8 +1145,1500 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Wed, 10 Apr 2019 08:59:11 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login
+    body:
+      encoding: UTF-8
+      string: '{"postUserLogin":{"login":"rubydev+admin@gooddata.com","password":"<PASSWORD>","remember":1,"verify_level":2}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - ''
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:7YOnm9pHvBzYCocXmCr14w"
+      Dont-Reauth:
+      - 'true'
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '110'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 15 Jan 2020 04:27:39 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '60'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:7YOnm9pHvBzYCocXmCr14w:TVAftcP7Cu2mCZSb"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userLogin":{"profile":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","state":"/gdc/account/login/5ad80b895edcc438e5a4418e222733fa","token":"<TOKEN>"}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:39 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:JvpX_TicZCwMigVKGccMKQ"
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      Dont-Reauth:
+      - 'true'
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 15 Jan 2020 04:27:39 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '19'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:JvpX_TicZCwMigVKGccMKQ:KN8gvogrnXeykp6a"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userToken":{"token":"<TOKEN>"}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:40 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:GRDk9JxyUisKySoUR0hvWw"
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 15 Jan 2020 04:27:39 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '11'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:GRDk9JxyUisKySoUR0hvWw:29wJwxN6E3xvU8Y0"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"accountSetting":{"links":{"self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","auditEvents":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/auditEvents","domain":"/gdc/domains/staging2-lcm-prod"},"firstName":"the","lastName":"1","companyName":"","position":null,"created":"2017-02-10
+        12:18:01","updated":"2019-03-15 10:00:00","country":null,"phoneNumber":"","authenticationModes":["PASSWORD","SSO"],"login":"rubydev+admin@gooddata.com","timezone":null,"ssoProvider":"test-ruby","email":"rubydev+admin@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:41 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:H5CQ3pI0CGzyZyaWezzIAQ"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:41 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '29'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:H5CQ3pI0CGzyZyaWezzIAQ:liKp0X9yU7NpVygv"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:41 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
+    body:
+      encoding: UTF-8
+      string: '{"project":{"meta":{"summary":"No summary","title":"RubyGem Dev Week
+        test"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"TESTING","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:XS8y8gEGviLHJgbUcV3FYA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '184'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:42 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '357'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:XS8y8gEGviLHJgbUcV3FYA:9KaUHQqH3xnmzflI"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise"}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:43 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:h2k1INnhwJUuk2mSCloulg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:43 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '60'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:h2k1INnhwJUuk2mSCloulg:KJStvvkDfoOBTZ03"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"LOADING"},"links":{"ldm_thumbnail":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/ldm?thumbnail=1","self":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise","clearCaches":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/clearCaches","invitations":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/invitations","users":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/users?link=1&offset=0&limit=100","checkXaeCompatibility":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/checkXaeCompatibility","uploads":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/uploads/","ldm":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/ldm","metadata":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise","publicartifacts":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/publicartifacts","roles":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/roles","userRoles":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/dataload","connectors":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/connectors","execute":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/execute","config":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/config","projectFeatureFlags":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/projectFeatureFlags","schedules":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/schedules","templates":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/templates"},"meta":{"created":"2020-01-15
+        05:27:42","summary":"No summary","updated":"2020-01-15 05:27:43","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"RubyGem
+        Dev Week test","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:44 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:7rUu08WgNvLSFFh59lPEZA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:47 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '56'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:7rUu08WgNvLSFFh59lPEZA:sLWkCEw6JybQUj50"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","authorizationToken":"<AUTHORIZATION_TOKEN>","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"ENABLED"},"links":{"ldm_thumbnail":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/ldm?thumbnail=1","self":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise","clearCaches":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/clearCaches","invitations":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/invitations","users":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/users?link=1&offset=0&limit=100","checkXaeCompatibility":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/checkXaeCompatibility","uploads":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/uploads/","ldm":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/ldm","metadata":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise","publicartifacts":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/publicartifacts","roles":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/roles","userRoles":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/dataload","connectors":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/connectors","execute":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/execute","config":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/config","projectFeatureFlags":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/projectFeatureFlags","schedules":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/schedules","templates":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/templates"},"meta":{"created":"2020-01-15
+        05:27:42","summary":"No summary","updated":"2020-01-15 05:27:44","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"RubyGem
+        Dev Week test","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:47 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff?includeGrain=true
+    body:
+      encoding: UTF-8
+      string: '{"diffRequest":{"targetModel":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.repos","title":"Repositories","anchor":{"attribute":{"identifier":"attr.repos.repo_id","title":"Repository
+        Id","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_label_id","title":"Repository
+        Id","type":"GDC.text","dataType":"VARCHAR(128)"}}],"description":"This is
+        anchor description","defaultLabel":"some_label_id"}},"attributes":[{"attribute":{"identifier":"some_attr_id","title":"Repository
+        Name","folder":"Foldered Repos","labels":[{"label":{"identifier":"some_attr_label_id","title":"Repository
+        Name","type":"GDC.text","dataType":"VARCHAR(10000)"}}],"defaultLabel":"some_attr_label_id"}}],"facts":[],"references":[],"bridges":[]}},{"dataset":{"identifier":"dataset.devs","title":"Developers","anchor":{"attribute":{"identifier":"attr.devs.dev_id","title":"Dev","folder":"Anchor
+        folder","labels":[{"label":{"identifier":"label.devs.dev_id.id","title":"Id","type":"GDC.text","dataType":"VARCHAR(128)"}},{"label":{"identifier":"label.devs.dev_id.email","title":"Email","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.devs.dev_id.email"}},"attributes":[],"facts":[],"references":[],"bridges":["dataset.commits"]}},{"dataset":{"identifier":"dataset.commits","title":"Commits","anchor":{"attribute":{"identifier":"attr.commits.factsof","title":"Attr.Commits.Factsof","folder":"Commits"}},"attributes":[],"facts":[{"fact":{"identifier":"fact.commits.lines_changed","title":"Lines
+        Changed","folder":"Commits","dataType":"DECIMAL(12,2)","type":"fact","description":"Fact
+        description"}}],"references":["committed_on","dataset.devs","dataset.repos"],"bridges":[]}}],"dateDimensions":[{"dateDimension":{"name":"committed_on","title":"Committed
+        On","bridges":[]}}]}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:IJil1MHIdGVnc7w6PaqkOw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '1824'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff/67aae1a238acd04262060302d6cb7eecb440f7489fb58fc700000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 15 Jan 2020 04:27:51 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '34'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:IJil1MHIdGVnc7w6PaqkOw:skU74uVh0mkoRlmz"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff/67aae1a238acd04262060302d6cb7eecb440f7489fb58fc700000015"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:51 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff/67aae1a238acd04262060302d6cb7eecb440f7489fb58fc700000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:n5BR_HuvsBx8LFLNz06yGg"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff/67aae1a238acd04262060302d6cb7eecb440f7489fb58fc700000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 15 Jan 2020 04:27:52 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '18'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:n5BR_HuvsBx8LFLNz06yGg:1XllN9vsQXAbOudx"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff/67aae1a238acd04262060302d6cb7eecb440f7489fb58fc700000015"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:52 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff/67aae1a238acd04262060302d6cb7eecb440f7489fb58fc700000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:xqy3RhpE0IbrJHyBetjhqQ"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 15 Jan 2020 04:27:54 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '16'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:xqy3RhpE0IbrJHyBetjhqQ:NspVu1roFvW2wKqx"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[{"updateOperation":{"type":"dataset.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Developers"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Commits"]}},{"updateOperation":{"type":"date-dimension.create","destructive":false,"description":"Create
+        date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Attr.Commits.Factsof"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Dev"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Repository Id"]}},{"updateOperation":{"type":"attribute.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        attribute ''%s''","parameters":["Repository Name"]}},{"updateOperation":{"type":"fact.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        fact ''%s''","parameters":["Lines Changed"]}},{"updateOperation":{"type":"dataset.references.add.dd","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"dataset.references.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.referenceAndBridge.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference and bridge to dataset ''%s''","parameters":["Developers"]}}],"updateScripts":[{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.devs},
+        {dataset.repos}, {dataset.commits};","maqlDdlChunks":["CREATE DATASET {dataset.repos}
+        VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE
+        \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE
+        TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\", TITLE
+        \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.devs},
+        {dataset.repos}, {dataset.commits};"],"preserveData":true,"cascadeDrops":false}},{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.repos},
+        {dataset.devs}, {dataset.commits};","maqlDdlChunks":["CREATE DATASET {dataset.repos}
+        VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE
+        \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE
+        TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\", TITLE
+        \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.repos},
+        {dataset.devs}, {dataset.commits};"],"preserveData":false,"cascadeDrops":false}}]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:54 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise/model/diff/67aae1a238acd04262060302d6cb7eecb440f7489fb58fc700000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:0bH-qHMxozcrbBe4GuwSbg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 15 Jan 2020 04:27:55 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '17'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:0bH-qHMxozcrbBe4GuwSbg:s1d275MwRPurQfwh"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[{"updateOperation":{"type":"dataset.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Developers"]}},{"updateOperation":{"type":"dataset.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        dataset ''%s''","parameters":["Commits"]}},{"updateOperation":{"type":"date-dimension.create","destructive":false,"description":"Create
+        date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Attr.Commits.Factsof"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.devs","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Dev"]}},{"updateOperation":{"type":"anchor.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        anchor ''%s''","parameters":["Repository Id"]}},{"updateOperation":{"type":"attribute.create","dataset":"dataset.repos","destructive":false,"description":"Create
+        attribute ''%s''","parameters":["Repository Name"]}},{"updateOperation":{"type":"fact.create","dataset":"dataset.commits","destructive":false,"description":"Create
+        fact ''%s''","parameters":["Lines Changed"]}},{"updateOperation":{"type":"dataset.references.add.dd","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to date dimension ''%s''","parameters":["Committed On"]}},{"updateOperation":{"type":"dataset.references.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference to dataset ''%s''","parameters":["Repositories"]}},{"updateOperation":{"type":"dataset.referenceAndBridge.add.ds","dataset":"dataset.commits","destructive":false,"description":"Add
+        reference and bridge to dataset ''%s''","parameters":["Developers"]}}],"updateScripts":[{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.devs},
+        {dataset.repos}, {dataset.commits};","maqlDdlChunks":["CREATE DATASET {dataset.repos}
+        VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE
+        \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE
+        TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\", TITLE
+        \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.devs},
+        {dataset.repos}, {dataset.commits};"],"preserveData":true,"cascadeDrops":false}},{"updateScript":{"maqlDdl":"CREATE
+        DATASET {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs}
+        VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE
+        \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\",
+        TITLE \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.repos},
+        {dataset.devs}, {dataset.commits};","maqlDdlChunks":["CREATE DATASET {dataset.repos}
+        VISUAL(TITLE \"Repositories\");\nCREATE DATASET {dataset.devs} VISUAL(TITLE
+        \"Developers\");\nCREATE DATASET {dataset.commits} VISUAL(TITLE \"Commits\");\nINCLUDE
+        TEMPLATE \"URN:GOODDATA:DATE\" MODIFY (IDENTIFIER \"committed_on\", TITLE
+        \"Committed On\");\nCREATE FOLDER {dim.commits} VISUAL(TITLE \"Commits\")
+        TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof} VISUAL(TITLE \"Attr.Commits.Factsof\",
+        FOLDER {dim.commits}) AS KEYS {f_commits.id} FULLSET;\nALTER DATASET {dataset.commits}
+        ADD {attr.commits.factsof};\nCREATE FOLDER {dim.anchorfolder} VISUAL(TITLE
+        \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE
+        \"Dev\", FOLDER {dim.anchorfolder}) AS KEYS {f_devs.id} FULLSET;\nALTER DATASET
+        {dataset.devs} ADD {attr.devs.dev_id};\nALTER ATTRIBUTE {attr.devs.dev_id}
+        ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE \"Id\") AS {f_devs.nm_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.email} VISUAL(TITLE
+        \"Email\") AS {f_devs.nm_email};\nALTER ATTRIBUTE {attr.devs.dev_id} DEFAULT
+        LABEL {label.devs.dev_id.email};\nCREATE FOLDER {dim.folderedrepos} VISUAL(TITLE
+        \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.repos.repo_id}
+        VISUAL(TITLE \"Repository Id\", DESCRIPTION \"This is anchor description\",
+        FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id} FULLSET;\nALTER DATASET {dataset.repos}
+        ADD {attr.repos.repo_id};\nALTER ATTRIBUTE {attr.repos.repo_id} ADD LABELS
+        {some_label_id} VISUAL(TITLE \"Repository Id\") AS {f_repos.nm_some_label_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE
+        {some_attr_id} VISUAL(TITLE \"Repository Name\", FOLDER {dim.folderedrepos})
+        AS KEYS {d_repos_some_attr_id.id} FULLSET, {f_repos.some_attr_id_id};\nALTER
+        DATASET {dataset.repos} ADD {some_attr_id};\nALTER ATTRIBUTE {some_attr_id}
+        ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER
+        DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id} VARCHAR(10000);\nALTER
+        ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE FOLDER
+        {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.repos},
+        {dataset.devs}, {dataset.commits};"],"preserveData":false,"cascadeDrops":false}}]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:55 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:UvJaL6vSAOqGJpy8Lhl1eA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:56 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '27'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:UvJaL6vSAOqGJpy8Lhl1eA:WR3ONtULgFWRdJSa"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Metadata service for project ''h729cndwufz85shs6zcp6b7m3tcikise''","category":"project","instance":"h729cndwufz85shs6zcp6b7m3tcikise","links":[{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/data","summary":"Resources
+        for data set manipulation.","category":"data","title":"data"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/dml","summary":"Navigation
+        resource for physical data manipulation.","category":"dml","title":"dml"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/drillcrosspaths","summary":"Returns
+        a list of attributes available for drilling across.","category":"drillcrosspaths","title":"drillcrosspaths"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/etl","summary":"Resources
+        for data ETL.","category":"etl","title":"etl"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/datedimension","summary":"Resources
+        for Date Dimension manipulation","category":"datedimension","title":"datedimension"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/favorites","summary":"Returns
+        list of objects marked as favorites by the user.","category":"favorites","title":"favorites"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/favorite","summary":"Resource
+        for determining if an object is in a user''s favorites.","category":"favorite","title":"favorite"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/identifiers","summary":"Resource
+        for retrieving metadata object identifiers.","category":"instance-identifiers","title":"identifiers"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/labels","summary":"Resource
+        for retrieving uris for element labels.","category":"labels","title":"labels"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/ldm","summary":"Resources
+        for logical data model (LDM) manipulation.","category":"ldm","title":"ldm"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/log","summary":"Returns
+        a list of metadata events.","category":"logs","title":"logs"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/maintenance","summary":"Resource
+        for project maintenace.","category":"maintenance","title":"maintenance"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/maqlvalidator","summary":"Resource
+        for MAQL construct validation and tree representation.","category":"maqlvalidator","title":"MaqlValidator"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/obj","summary":"Resource
+        for creating new metadata objects.","category":"obj","title":"obj"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/objects","summary":"Resource
+        for batch operations MD objects.","category":"objects","title":"objects"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/query","summary":"Resources
+        for querying collections of metadata objects.","category":"query","title":"query"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/reportstatistics","summary":"Returns
+        report statistics for a specified report.","category":"report-statistic","title":"report
+        statistics"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/search","summary":"Resource
+        for full text search.","category":"search","title":"search"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/service","summary":"Services
+        for metadata configuration.","category":"service","title":"service"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tags","summary":"Returns
+        a list of tags.","category":"tags","title":"tags"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks","summary":"Task
+        resource.","category":"tasks","title":"tasks"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/templates","summary":"Returns
+        list of uris of templates from which the project was created.","category":"templates","title":"templates"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/translations","summary":"Resource
+        for project localization.","category":"translations","title":"translations"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/usedby2","summary":"Returns
+        list of objects connected to a certain object via a ''used'' edge.","category":"usedby2","title":"usedby"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/using2","summary":"Returns
+        list of objects connected to a certain object via a ''using'' edge.","category":"using2","title":"using"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/userfilters","summary":"Relation
+        userFilter - user management.","category":"userfilters","title":"userfilters"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/validate","summary":"Resources
+        for LDM, PDM, IO validation.","category":"validate-project","title":"validateproject"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/variables","summary":"Resources
+        for variable manipulation.","category":"vars","title":"variables"}]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:56 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/ldm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:eaD4_EZKIHO474bZuRQecw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:57 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '24'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:eaD4_EZKIHO474bZuRQecw:acuQOL0OYbZQc5v3"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Resources for logical data model (LDM) manipulation
+        within project ''h729cndwufz85shs6zcp6b7m3tcikise''","category":"ldm","instance":"h729cndwufz85shs6zcp6b7m3tcikise","links":[{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/ldm/manage2","summary":"Resources
+        for model manipulation with categorized result.","category":"ldm-manage2","title":"manage2"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/ldm/singleloadinterface","summary":"Single
+        interface for data loading.","category":"singleloadinterface","title":"singleloadinterface"},{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/ldm/attributeupperbound","summary":"Attribute
+        upper bounds for LDM.","category":"attributeupperbound","title":"attributeupperbound"}]}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:57 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/ldm/manage2
+    body:
+      encoding: UTF-8
+      string: '{"manage":{"maql":"CREATE DATASET {dataset.repos} VISUAL(TITLE \"Repositories\");\nCREATE
+        DATASET {dataset.devs} VISUAL(TITLE \"Developers\");\nCREATE DATASET {dataset.commits}
+        VISUAL(TITLE \"Commits\");\nINCLUDE TEMPLATE \"URN:GOODDATA:DATE\" MODIFY
+        (IDENTIFIER \"committed_on\", TITLE \"Committed On\");\nCREATE FOLDER {dim.commits}
+        VISUAL(TITLE \"Commits\") TYPE ATTRIBUTE;\nCREATE ATTRIBUTE {attr.commits.factsof}
+        VISUAL(TITLE \"Attr.Commits.Factsof\", FOLDER {dim.commits}) AS KEYS {f_commits.id}
+        FULLSET;\nALTER DATASET {dataset.commits} ADD {attr.commits.factsof};\nCREATE
+        FOLDER {dim.anchorfolder} VISUAL(TITLE \"Anchor folder\") TYPE ATTRIBUTE;\nCREATE
+        ATTRIBUTE {attr.devs.dev_id} VISUAL(TITLE \"Dev\", FOLDER {dim.anchorfolder})
+        AS KEYS {f_devs.id} FULLSET;\nALTER DATASET {dataset.devs} ADD {attr.devs.dev_id};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} ADD LABELS {label.devs.dev_id.id} VISUAL(TITLE
+        \"Id\") AS {f_devs.nm_id};\nALTER ATTRIBUTE {attr.devs.dev_id} ADD LABELS
+        {label.devs.dev_id.email} VISUAL(TITLE \"Email\") AS {f_devs.nm_email};\nALTER
+        ATTRIBUTE {attr.devs.dev_id} DEFAULT LABEL {label.devs.dev_id.email};\nCREATE
+        FOLDER {dim.folderedrepos} VISUAL(TITLE \"Foldered Repos\") TYPE ATTRIBUTE;\nCREATE
+        ATTRIBUTE {attr.repos.repo_id} VISUAL(TITLE \"Repository Id\", DESCRIPTION
+        \"This is anchor description\", FOLDER {dim.folderedrepos}) AS KEYS {f_repos.id}
+        FULLSET;\nALTER DATASET {dataset.repos} ADD {attr.repos.repo_id};\nALTER ATTRIBUTE
+        {attr.repos.repo_id} ADD LABELS {some_label_id} VISUAL(TITLE \"Repository
+        Id\") AS {f_repos.nm_some_label_id};\nALTER ATTRIBUTE {attr.repos.repo_id}
+        DEFAULT LABEL {some_label_id};\nCREATE ATTRIBUTE {some_attr_id} VISUAL(TITLE
+        \"Repository Name\", FOLDER {dim.folderedrepos}) AS KEYS {d_repos_some_attr_id.id}
+        FULLSET, {f_repos.some_attr_id_id};\nALTER DATASET {dataset.repos} ADD {some_attr_id};\nALTER
+        ATTRIBUTE {some_attr_id} ADD LABELS {some_attr_label_id} VISUAL(TITLE \"Repository
+        Name\") AS {d_repos_some_attr_id.nm_some_attr_label_id};\nALTER DATATYPE {d_repos_some_attr_id.nm_some_attr_label_id}
+        VARCHAR(10000);\nALTER ATTRIBUTE {some_attr_id} DEFAULT LABEL {some_attr_label_id};\nCREATE
+        FOLDER {ffld.commits} VISUAL(TITLE \"Commits\") TYPE FACT;\nCREATE FACT {fact.commits.lines_changed}
+        VISUAL(TITLE \"Lines Changed\", DESCRIPTION \"Fact description\", FOLDER {ffld.commits})
+        AS {f_commits.f_lines_changed};\nALTER DATASET {dataset.commits} ADD {fact.commits.lines_changed};\nALTER
+        ATTRIBUTE {committed_on.date} ADD KEYS {f_commits.dt_committed_on_id};\nALTER
+        ATTRIBUTE {attr.repos.repo_id} ADD KEYS {f_commits.repos_id};\nALTER ATTRIBUTE
+        {attr.devs.dev_id} ADD KEYS {f_commits.devs_id} MULTIVALUE;\nSYNCHRONIZE {dataset.devs},
+        {dataset.repos}, {dataset.commits};"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:_3mA-9QfBS1ar-RrazHk1g"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '2736'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:58 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '50'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:_3mA-9QfBS1ar-RrazHk1g:IIoQWFaBNcZAjsOj"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entries":[{"link":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status","category":"tasks-status"}]}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:58 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:ovqM3elbYZA8-Lm0VKr1Ag"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:27:59 GMT
+      Server:
+      - GoodData WebApp
+      Refresh:
+      - '2'
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '33'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:ovqM3elbYZA8-Lm0VKr1Ag:CwG5gN1oHFU4VKrv"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status","status":"RUNNING","links":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:27:59 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:GkqmIPfurxBLKP-LMAKkCQ"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:28:00 GMT
+      Server:
+      - GoodData WebApp
+      Refresh:
+      - '2'
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '26'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:GkqmIPfurxBLKP-LMAKkCQ:cnICmFzV1xJLNIkX"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status","status":"RUNNING","links":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:28:01 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/e223f8909f7e6251d8f44ff45921056400000088/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:W9x-4YsVWVbdX-6hf4evyw"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 303
+      message: See Other
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:28:03 GMT
+      Server:
+      - GoodData WebApp
+      Location:
+      - "/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/ddf13f38389f815b608e2c57573fafa900000088/status"
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '42'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:W9x-4YsVWVbdX-6hf4evyw:cKQWxVfuWzrwqPq7"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/ddf13f38389f815b608e2c57573fafa900000088/status","status":"OK","links":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/ddf13f38389f815b608e2c57573fafa900000088/status"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:28:03 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/ddf13f38389f815b608e2c57573fafa900000088/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:W9x-4YsVWVbdX-6hf4evyw"
+      Process:
+      - 'true'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:28:04 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '38'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:W9x-4YsVWVbdX-6hf4evyw:VeSuM4AaluGtNMie"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"wTaskStatus":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/ddf13f38389f815b608e2c57573fafa900000088/status","status":"OK","links":{"poll":"/gdc/md/h729cndwufz85shs6zcp6b7m3tcikise/tasks/ddf13f38389f815b608e2c57573fafa900000088/status"}}}'
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:28:04 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/h729cndwufz85shs6zcp6b7m3tcikise
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.9/java/2.5.0
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:9lah-YJ4dpbbBZkIsVH6Nw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Wed, 15 Jan 2020 04:30:15 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=99
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '69'
+      X-Gdc-Request:
+      - ":7zIWnhZrlv8FZjfM6-eXbg:9lah-YJ4dpbbBZkIsVH6Nw:2AiBAzTLMOb2niw7"
+      Vary:
+      - origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:30:15 GMT
 - request:
     method: delete
     uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login/5ad80b895edcc438e5a4418e222733fa
@@ -1461,20 +2648,22 @@ http_interactions:
     headers:
       Accept:
       - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
       User-Agent:
-      - gooddata-gem/2.1.3/x86_64-darwin16/2.3.4
+      - gooddata-gem/2.1.9/java/2.5.0
       Content-Type:
       - application/json
       X-Gdc-Authtt:
       - "<X_GDC_AUTHTT>"
       X-Gdc-Request:
-      - ":dhLfREs03Khw-zh0MS0_qQ:Drnq41bIpEYEauW4WZpz7A"
+      - ":RkzarEgA_vXaFoaQowtL3Q:wu2XWDQtEryNUnWsbetddQ"
       X-Gdc-Authsst:
       - "<X_GDC_AUTHSST>"
       Tries:
       - '0'
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Host:
       - staging2-lcm-prod.intgdc.com
   response:
@@ -1487,20 +2676,20 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store, must-revalidate
       Date:
-      - Wed, 10 Apr 2019 08:59:12 GMT
+      - Wed, 15 Jan 2020 04:30:15 GMT
       Server:
       - GoodData WebApp
       X-Gdc-Request-Time:
-      - '32'
+      - '20'
       X-Gdc-Request:
-      - ":dhLfREs03Khw-zh0MS0_qQ:Drnq41bIpEYEauW4WZpz7A:fKwp25t2gfvkjZj1"
+      - ":RkzarEgA_vXaFoaQowtL3Q:wu2XWDQtEryNUnWsbetddQ:E41SL15HdEaC8gHh"
       Vary:
-      - origin
+      - origin,X-GDC-VERSION
       Strict-Transport-Security:
       - max-age=10886400; includeSubDomains; preload;
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
-  recorded_at: Wed, 10 Apr 2019 08:59:12 GMT
-recorded_with: VCR 4.0.0
+    http_version:
+  recorded_at: Wed, 15 Jan 2020 04:30:16 GMT
+recorded_with: VCR 5.0.0

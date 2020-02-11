@@ -34,6 +34,7 @@ end
 
 shared_context 'lcm bricks' do |opts = {}|
   before(:all) do
+    ENV['RELEASE_TABLE_NFS_DIRECTORY'] = 'release-tables'
     @config = {
       verify_ssl: false,
       environment: 'TESTING',
@@ -283,6 +284,6 @@ shared_context 'lcm bricks' do |opts = {}|
     GoodData::Helpers::DataSourceHelper.delete(@rest_client, @data_source_id) if @data_source_id
 
     @rest_client.disconnect if @rest_client
-    @prod_rest_client.disconnect if @rest_client
+    @prod_rest_client.disconnect if @prod_rest_client
   end
 end
