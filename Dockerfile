@@ -1,8 +1,3 @@
-FROM maven:3.5.2-jdk-8-alpine AS MAVEN_TOOL_CHAIN
-COPY spec/lcm/redshift_driver_pom.xml /tmp/pom.xml
-WORKDIR /tmp/
-RUN mvn clean install -P binary-packaging
-
 FROM harbor.intgdc.com/tools/gdc-java-8-jre:0dec94a
 
 ARG RVM_VERSION=stable
@@ -14,7 +9,7 @@ LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:0dec94a"
 
 # which is required by RVM
-RUN yum install -y curl which patch make git \
+RUN yum install -y curl which patch make git maven \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -48,13 +43,16 @@ RUN groupadd -g 48 apache \
 USER apache
 
 ADD ./bin ./bin
-ADD ./lib ./lib
+ADD --chown=apache:apache ./lib ./lib
 ADD ./SDK_VERSION .
 ADD ./VERSION .
 ADD ./Gemfile .
 ADD ./gooddata.gemspec .
 
-COPY --from=MAVEN_TOOL_CHAIN /tmp/target/*.jar ./lib/gooddata/cloud_resources/redshift/drivers/
+RUN mkdir -p tmp
+COPY spec/lcm/redshift_driver_pom.xml tmp/pom.xml
+RUN mvn -f tmp/pom.xml clean install -P binary-packaging
+RUN cp -rf tmp/target/*.jar ./lib/gooddata/cloud_resources/redshift/drivers/
 
 RUN bundle install
 
