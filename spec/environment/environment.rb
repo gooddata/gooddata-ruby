@@ -26,7 +26,7 @@ module GoodData
         # VCR is enabled by default - set VCR_ON=false to disable
         vcr_on = ENV['VCR_ON'].nil? || ENV['VCR_ON'].downcase == 'true'
         GoodData::Environment.set_const(:VCR_ON, vcr_on)
-        suffix = SecureRandom.urlsafe_base64(5)
+        suffix = SecureRandom.urlsafe_base64(5).gsub('-', '_')
         GoodData::Environment.set_const(:RANDOM_STRING, suffix)
       end
 
