@@ -109,6 +109,43 @@ basic_params_without_schema = {
   }
 }
 
+snowflake_basic_params = {
+  "snowflake_client"=> {
+    "connection"=> {
+      "url"=> "jdbc:snowflake://gooddata.snowflakecomputing.com",
+      "authentication"=> {
+        "basic"=> {
+          "userName"=> "cornflake",
+          "password"=> ConnectionHelper::SECRETS[:redshift_password]
+        }
+      },
+      "database"=> "PHONG_DEV",
+      "warehouse"=> "PHONG_DEV_DWH"
+    }
+  },
+  "input_source"=> {
+    "type"=> "snowflake",
+    "query"=> "SELECT * FROM customers where CP__CUSTKEY='cus3'"
+  }
+}
+
+bigquery_basic_params = {
+  "bigquery_client"=> {
+    "connection"=> {
+      "authentication"=> {
+        "serviceAccount"=> {
+          "clientEmail"=> "gdc-bigquery-pipe@gdc-us-dev.iam.gserviceaccount.com",
+          }
+      },
+      "project"=> "gdc-us-dev",
+      "schema"=> "mtt_team_checklist"
+    }
+  },
+  "input_source"=> {
+    "type"=> "bigquery",
+    "query"=> "select * from employees;"
+  }
+}
 describe 'data helper', :vcr do
 
   it 'connect to redshift with IAM authentication' do
@@ -143,6 +180,25 @@ describe 'data helper', :vcr do
     data_helper = GoodData::Helpers::DataSource.new(basic_params_url_parameters['input_source'])
     file_path = data_helper.realize(basic_params_url_parameters)
     data = File.open('spec/data/redshift_data2.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to snowflake with BASIC authentication' do
+    data_helper = GoodData::Helpers::DataSource.new(snowflake_basic_params['input_source'])
+    file_path = data_helper.realize(snowflake_basic_params)
+    data = File.open('spec/data/snowflake_data.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to bigquery with BASIC authentication' do
+    encryption_key = ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
+    bigquery_secret = File.open('spec/environment/bigquery_encrypted').read
+    decrypted = GoodData::Helpers.decrypt(bigquery_secret, encryption_key)
+    bigquery_basic_params['bigquery_client']['connection']['authentication']['serviceAccount']['privateKey'] = decrypted
+
+    data_helper = GoodData::Helpers::DataSource.new(bigquery_basic_params['input_source'])
+    file_path = data_helper.realize(bigquery_basic_params)
+    data = File.open('spec/data/bigquery_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
 end

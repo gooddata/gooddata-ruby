@@ -43,16 +43,24 @@ RUN groupadd -g 48 apache \
 USER apache
 
 ADD ./bin ./bin
+ADD --chown=apache:apache ./ci ./ci
 ADD --chown=apache:apache ./lib ./lib
 ADD ./SDK_VERSION .
 ADD ./VERSION .
 ADD ./Gemfile .
 ADD ./gooddata.gemspec .
 
-RUN mkdir -p tmp
-COPY spec/lcm/redshift_driver_pom.xml tmp/pom.xml
-RUN mvn -f tmp/pom.xml clean install -P binary-packaging
-RUN cp -rf tmp/target/*.jar ./lib/gooddata/cloud_resources/redshift/drivers/
+#build redshift dependencies
+RUN mvn -f ci/redshift/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/redshift/target/*.jar ./lib/gooddata/cloud_resources/redshift/drivers/
+
+#build snowflake dependencies
+RUN mvn -f ci/snowflake/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/snowflake/target/*.jar ./lib/gooddata/cloud_resources/snowflake/drivers/
+
+#build bigquery dependencies
+RUN mvn -f ci/bigquery/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/bigquery/target/*.jar ./lib/gooddata/cloud_resources/bigquery/drivers/
 
 RUN bundle install
 
