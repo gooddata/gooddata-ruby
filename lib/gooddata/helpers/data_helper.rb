@@ -62,7 +62,7 @@ module GoodData
 
       def realize_cloud_resource(type, params)
         cloud_resource_client = GoodData::CloudResources::CloudResourceFactory.create(type, params)
-        cloud_resource_client.realize_query(params)
+        cloud_resource_client.realize_query(@options[:query], params)
       end
 
       def realize_query(params)

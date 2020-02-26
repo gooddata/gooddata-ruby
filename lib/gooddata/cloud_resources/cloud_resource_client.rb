@@ -16,7 +16,7 @@ module GoodData
         @descendants || []
       end
 
-      def realize_query(_params)
+      def realize_query(_query, _params)
         raise NotImplementedError, 'Must be implemented in subclass'
       end
     end

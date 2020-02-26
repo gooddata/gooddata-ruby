@@ -190,6 +190,8 @@ module GoodData
             create_non_existing_user_groups: create_non_existing_user_groups,
             user_groups_cache: nil
           }
+          GoodData.gd_logger.info("Synchronizing in mode=#{mode}, data_rows=#{new_users.size}")
+
           GoodData.logger.info("Synchronizing in mode \"#{mode}\"")
           results = case mode
                     when 'add_to_organization'
@@ -198,6 +200,8 @@ module GoodData
                       user_ids = new_users.uniq { |u| u[:login] || u[:email] }.map { |u| u[:login] || u[:email] }
                       users = user_ids.map { |u| domain.users(u, client: client) }
                       params.gdc_logger.warn "Deleting #{users.count} users from domain #{domain_name}"
+
+                      GoodData.gd_logger.info("Synchronizing in mode=#{mode}, domain=#{domain_name}, data_rows=#{users.count}")
                       users.map(&:delete)
                     when 'sync_project'
                       project.import_users(new_users, common_params)
@@ -205,6 +209,8 @@ module GoodData
                       new_users.group_by { |u| u[:pid] }.flat_map do |project_id, users|
                         begin
                           project = client.projects(project_id)
+
+                          GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project_id}, data_rows=#{users.count}")
                           project.import_users(users, common_params)
                         rescue RestClient::ResourceNotFound
                           fail "Project \"#{project_id}\" was not found. Please check your project ids in the source file"
@@ -216,6 +222,8 @@ module GoodData
                       end
                     when 'sync_one_project_based_on_pid'
                       filtered_users = new_users.select { |u| u[:pid] == project.pid }
+
+                      GoodData.gd_logger.info("Synchronizing in mode=#{mode}, data_rows=#{filtered_users.count}")
                       project.import_users(filtered_users, common_params)
                     when 'sync_one_project_based_on_custom_id'
                       filter_value = UserBricksHelper.resolve_client_id(domain, project, data_product)
@@ -236,6 +244,7 @@ module GoodData
                       end
 
                       GoodData.logger.info("Project #{project.pid} will receive #{filtered_users.count} from #{new_users.count} users")
+                      GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project.pid}, filtered_users=#{filtered_users.count}, data_rows=#{new_users.count}")
                       project.import_users(filtered_users, common_params)
                     when 'sync_multiple_projects_based_on_custom_id'
                       all_clients = domain.clients(:all, data_product).to_a
@@ -249,6 +258,8 @@ module GoodData
                         fail "Client #{client_id} does not have project." unless project
 
                         GoodData.logger.info("Project #{project.pid} of client #{client_id} will receive #{users.count} users")
+
+                        GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project.pid}, data_rows=#{users.count}")
                         project.import_users(users, common_params)
                       end
                     when 'sync_domain_client_workspaces'
@@ -281,6 +292,8 @@ module GoodData
 
                         working_client_ids << client_id.to_s
                         GoodData.logger.info("Project #{project.pid} of client #{client_id} will receive #{users.count} users")
+
+                        GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project.pid}, data_rows=#{users.count}")
                         project.import_users(users, common_params)
                       end
 
@@ -304,13 +317,18 @@ module GoodData
                             next
                           end
                           GoodData.logger.info("Synchronizing all users in project #{project.pid} of client #{c.client_id}")
+
+                          GoodData.gd_logger.info("Synchronizing all users in project_id=#{project.pid}, client_id=#{c.client_id}")
                           res += project.import_users([], common_params)
                         end
                       end
 
                       res
                     when 'sync_domain_and_project'
+                      GoodData.gd_logger.info("Create users in mode=#{mode}, data_rows=#{new_users.count}")
                       domain.create_users(new_users, ignore_failures: ignore_failures)
+
+                      GoodData.gd_logger.info("Import users in mode=#{mode}, data_rows=#{new_users.count}")
                       project.import_users(new_users, common_params)
                     end
 

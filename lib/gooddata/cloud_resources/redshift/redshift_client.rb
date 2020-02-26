@@ -24,11 +24,17 @@ module GoodData
       end
 
       def initialize(options = {})
-        GoodData.logger.info "Setting up connection to Redshift #{options['redshift_client']['url']}"
-        @url = options['redshift_client']['url'].chomp('/')
-        @database = options['redshift_client']['database']
-        @schema = options['redshift_client']['schema'] || 'public'
-        @authentication = options['redshift_client']['authentication']
+        raise("Data Source needs a client to Redshift to be able to query the storage but 'redshift_client' is empty.") unless options['redshift_client']
+
+        if options['redshift_client']['connection'].is_a?(Hash)
+          @database = options['redshift_client']['connection']['database']
+          @schema = options['redshift_client']['connection']['schema'] || 'public'
+          @url = options['redshift_client']['connection']['url']
+          @authentication = options['redshift_client']['connection']['authentication']
+        else
+          raise('Missing connection info for Redshift client')
+
+        end
         @debug = options['debug'] == true || options['debug'] == 'true'
 
         Java.com.amazon.redshift.jdbc42.Driver
@@ -36,11 +42,10 @@ module GoodData
         org.apache.log4j.PropertyConfigurator.configure("#{base}/drivers/log4j.properties")
       end
 
-      def realize_query(params)
+      def realize_query(query, _params)
         GoodData.gd_logger.info("Realize SQL query: type=redshift status=started")
 
         connect
-        query = params['input_source']['query']
         filename = "#{SecureRandom.urlsafe_base64(6)}_#{Time.now.to_i}.csv"
         measure = Benchmark.measure do
           statement = @connection.create_statement
@@ -52,9 +57,9 @@ module GoodData
             result = statement.get_result_set
             metadata = result.get_meta_data
             col_count = metadata.column_count
-            File.open(filename, 'w') do |file|
-              file.puts Array(1..col_count).map { |i| metadata.get_column_name(i) }.join(',') # build the header
-              file.puts Array(1..col_count).map { |i| result.get_string(i) }.join(',') while result.next
+            CSV.open(filename, 'wb', :force_quotes => true) do |csv|
+              csv << Array(1..col_count).map { |i| metadata.get_column_name(i) } # build the header
+              csv << Array(1..col_count).map { |i| result.get_string(i) } while result.next
             end
           end
         end
@@ -66,6 +71,9 @@ module GoodData
       end
 
       def connect
+        full_url = build_url(@url, @database)
+        GoodData.logger.info "Setting up connection to Redshift #{full_url}"
+
         prop = java.util.Properties.new
         if @authentication['basic']
           prop.setProperty('UID', @authentication['basic']['userName'])
@@ -75,8 +83,17 @@ module GoodData
           prop.setProperty('SecretAccessKey', @authentication['iam']['secretAccessKey'])
           prop.setProperty('DbUser', @authentication['iam']['dbUser'])
         end
-        @url += "/#{@database}" unless @url.ends_with?(@database)
-        @connection = java.sql.DriverManager.getConnection(@url, prop)
+
+        @connection = java.sql.DriverManager.getConnection(full_url, prop)
+      end
+
+      private
+
+      def build_url(url, database)
+        url_parts = url.split('?')
+        url_path = url_parts[0].chomp('/')
+        url_path += "/#{database}" if database && !url_path.end_with?("/#{database}")
+        url_parts.length > 1 ? url_path + '?' + url_parts[1] : url_path
       end
     end
   end
