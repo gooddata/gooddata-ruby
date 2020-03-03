@@ -347,38 +347,33 @@ module GoodData
         end
 
         def load_data(params, data_source)
-          first_name_column           = params.first_name_column || 'first_name'
-          last_name_column            = params.last_name_column || 'last_name'
-          login_column                = params.login_column || 'login'
-          password_column             = params.password_column || 'password'
-          email_column                = params.email_column || 'email'
-          role_column                 = params.role_column || 'role'
-          sso_provider_column         = params.sso_provider_column || 'sso_provider'
-          authentication_modes_column = params.authentication_modes_column || 'authentication_modes'
-          user_groups_column          = params.user_groups_column || 'user_groups'
-          language_column             = params.language_column || 'language'
-          company_column              = params.company_column || 'company'
-          position_column             = params.position_column || 'position'
-          country_column              = params.country_column || 'country'
-          phone_column                = params.phone_column || 'phone'
-          ip_whitelist_column         = params.ip_whitelist_column || 'ip_whitelist'
+          first_name_column           = params.first_name_column&.downcase || 'first_name'
+          last_name_column            = params.last_name_column&.downcase || 'last_name'
+          login_column                = params.login_column&.downcase || 'login'
+          password_column             = params.password_column&.downcase || 'password'
+          email_column                = params.email_column&.downcase || 'email'
+          role_column                 = params.role_column&.downcase || 'role'
+          sso_provider_column         = params.sso_provider_column&.downcase || 'sso_provider'
+          authentication_modes_column = params.authentication_modes_column&.downcase || 'authentication_modes'
+          user_groups_column          = params.user_groups_column&.downcase || 'user_groups'
+          language_column             = params.language_column&.downcase || 'language'
+          company_column              = params.company_column&.downcase || 'company'
+          position_column             = params.position_column&.downcase || 'position'
+          country_column              = params.country_column&.downcase || 'country'
+          phone_column                = params.phone_column&.downcase || 'phone'
+          ip_whitelist_column         = params.ip_whitelist_column&.downcase || 'ip_whitelist'
 
           sso_provider = params.sso_provider
           authentication_modes = params.authentication_modes || []
 
-          dwh = params.ads_client
-          if dwh
-            data = dwh.execute_select(params.input_source.query)
-          else
-            tmp = without_check(PARAMS, params) do
-              File.open(data_source.realize(params), 'r:UTF-8')
-            end
+          tmp = without_check(PARAMS, params) do
+            File.open(data_source.realize(params), 'r:UTF-8')
+          end
 
-            begin
-              data = read_csv_file(tmp)
-            rescue Exception => e # rubocop:disable RescueException
-              fail "There was an error during loading users from csv file. Message: #{e.message}. Error: #{e}"
-            end
+          begin
+            data = read_csv_file(tmp)
+          rescue Exception => e # rubocop:disable RescueException
+            fail "There was an error during loading users from csv file. Message: #{e.message}. Error: #{e}"
           end
 
           data.map do |row|
@@ -424,7 +419,7 @@ module GoodData
           res = []
           row_count = 0
 
-          CSV.foreach(path, :headers => true) do |row|
+          CSV.foreach(path, :headers => true, :header_converters => :downcase, :encoding => 'utf-8') do |row|
             if block_given?
               data = yield row
             else

@@ -230,8 +230,8 @@ module GoodData
           begin
             GoodData.logger.info('Start reading data')
             row_count = 0
-            CSV.foreach(tmp, headers: csv_with_headers, return_headers: false, encoding: 'utf-8') do |row|
-              filters << row.to_hash.merge(pid: row[multiple_projects_column])
+            CSV.foreach(tmp, :headers => csv_with_headers, :return_headers => false, :header_converters => :downcase, :encoding => 'utf-8') do |row|
+              filters << row.to_hash.merge(pid: row[multiple_projects_column.downcase])
               row_count += 1
               GoodData.logger.info("Read #{row_count} rows") if (row_count % 50_000).zero?
             end
