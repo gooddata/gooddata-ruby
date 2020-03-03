@@ -68,7 +68,7 @@ module GoodData
             end
           end
         end
-        GoodData.gd_logger.info("Realize SQL query: type=redshift status=finished duration=#{measure.real}")
+        GoodData.gd_logger.info("Realize SQL query: type=bigquery status=finished duration=#{measure.real}")
         filename
       end
 
