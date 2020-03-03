@@ -10,8 +10,10 @@ class BrickRunner
 
     def release_brick(opts)
       result = GoodData::Bricks::Pipeline.release_brick_pipeline.call script_params opts
-      master_ids = result[:results]['CreateSegmentMasters'].map { |r| r[:master_pid] }
-      fetch_projects(master_ids, opts) if opts[:client]
+      unless opts[:set_master_project]
+        master_ids = result[:results]['CreateSegmentMasters'].map { |r| r[:master_pid] }
+        fetch_projects(master_ids, opts) if opts[:client]
+      end
     end
 
     def provisioning_brick(opts)

@@ -1,4 +1,5 @@
 # encoding: UTF-8
+# frozen_string_literal: true
 #
 # Copyright (c) 2010-2019 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -62,7 +63,7 @@ module GoodData
         GoodData.gd_logger.info("Realize SQL query: type=snowflake status=finished duration=#{measure.real}")
         filename
       ensure
-        @connection.close unless @connection.nil?
+        @connection&.close
         @connection = nil
       end
 

@@ -106,6 +106,14 @@ module GoodData
         UpdateReleaseTable
       ],
 
+      release_set_master_project: [
+        EnsureReleaseTable,
+        CollectDataProduct,
+        SegmentsFilter,
+        SetMasterProject,
+        UpdateReleaseTable
+      ],
+
       provision: [
         EnsureReleaseTable,
         CollectDataProduct,
@@ -271,8 +279,14 @@ module GoodData
 
         GoodData.gd_logger.brick = mode
 
+        final_mode = if params.set_master_project && mode == 'release'
+                       'release_set_master_project'
+                     else
+                       mode
+                     end
+
         # Get actions for mode specified
-        actions = get_mode_actions(mode)
+        actions = get_mode_actions(final_mode)
 
         if params.actions
           actions = params.actions.map do |action|

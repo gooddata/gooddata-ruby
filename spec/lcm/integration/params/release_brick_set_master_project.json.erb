@@ -1,0 +1,22 @@
+{
+  "organization": "<%= config[:prod_organization] %>",
+  "CLIENT_GDC_PROTOCOL": "https",
+  "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
+  "gd_encoded_params": {
+    <% if defined? jdbc_url %>
+    "ads_client": {
+      "username": "${GDC_USERNAME}",
+      "password": "${GDC_PASSWORD}",
+      "jdbc_url": "<%= jdbc_url %>"
+    },
+    <% end %>
+    "SEGMENTS": <%= segments %>,
+    "DATA_PRODUCT": "<%= data_product %>"
+  },
+  "release_table_name": "<%= release_table_name %>",
+  "fail_early": "true",
+  "strict": "true",
+  "GDC_USERNAME": "<%= config[:username] %>",
+  "GDC_PASSWORD": "<%= config[:password] %>",
+  "set_master_project": "<%= master_project_id %>"
+}
