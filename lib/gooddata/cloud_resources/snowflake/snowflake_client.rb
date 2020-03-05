@@ -54,9 +54,9 @@ module GoodData
             result = statement.get_result_set
             metadata = result.get_meta_data
             col_count = metadata.column_count
-            CSV.open(filename, 'wb', :force_quotes => true) do |csv|
+            CSV.open(filename, 'wb') do |csv|
               csv << Array(1..col_count).map { |i| metadata.get_column_name(i) } # build the header
-              csv << Array(1..col_count).map { |i| result.get_string(i) } while result.next
+              csv << Array(1..col_count).map { |i| result.get_string(i)&.to_s } while result.next
             end
           end
         end
