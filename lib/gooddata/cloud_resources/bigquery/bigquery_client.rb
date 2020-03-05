@@ -60,10 +60,10 @@ module GoodData
             result = table_result.iterateAll
             field_list = table_result.getSchema.getFields
             col_count = field_list.size
-            CSV.open(filename, 'wb', :force_quotes => true) do |csv|
+            CSV.open(filename, 'wb') do |csv|
               csv << Array(1..col_count).map { |i| field_list.get(i - 1).getName } # build the header
               result.each do |row|
-                csv << Array(1..col_count).map { |i| row.get(i - 1).getStringValue }
+                csv << Array(1..col_count).map { |i| row.get(i - 1).getValue&.to_s }
               end
             end
           end
