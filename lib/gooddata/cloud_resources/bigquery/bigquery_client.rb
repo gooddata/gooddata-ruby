@@ -1,4 +1,5 @@
 # encoding: UTF-8
+# frozen_string_literal: true
 #
 # Copyright (c) 2010-2019 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -55,19 +56,19 @@ module GoodData
           query_config = QueryJobConfiguration.newBuilder(query).setDefaultDataset(@schema).build
           table_result = client.query(query_config)
 
-          if table_result.getTotalRows > 0
+          if table_result.getTotalRows.positive?
             result = table_result.iterateAll
             field_list = table_result.getSchema.getFields
             col_count = field_list.size
-            CSV.open(filename, 'wb', :force_quotes => true) do |csv|
+            CSV.open(filename, 'wb') do |csv|
               csv << Array(1..col_count).map { |i| field_list.get(i - 1).getName } # build the header
               result.each do |row|
-                csv << Array(1..col_count).map { |i| row.get(i - 1).getStringValue }
+                csv << Array(1..col_count).map { |i| row.get(i - 1).getValue&.to_s }
               end
             end
           end
         end
-        GoodData.gd_logger.info("Realize SQL query: type=redshift status=finished duration=#{measure.real}")
+        GoodData.gd_logger.info("Realize SQL query: type=bigquery status=finished duration=#{measure.real}")
         filename
       end
 

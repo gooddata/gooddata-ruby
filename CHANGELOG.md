@@ -1,4 +1,20 @@
 # GoodData Ruby SDK Changelog
+## 2.1.9
+ - FEATURE: TMA-1076 support new version api 2
+ - BUGFIX: TMA-1637 handle input_source of dynamic params
+ - BUGFIX: TMA-1636 Build csv file with force_quotes
+ - FEATURE: TMA-1614 Support redshift input source
+ - FEATURE: TMA-1259 Start using dataproduct in NFS release table
+ - FEATURE: MSF-16455 support yellow WARNING status into RubySDK
+ - CONFIG: TMA-1625 update version lock for test docker images
+ - BUGFIX: TMA-1602 User filter brick failed - K8s bricks don't show error properly
+ - BUGFIX: TMA-1593 Increase java heap space during execute bricks
+ - BUGFIX: TMA-1558 K8s bricks don't show error when config invalid
+ - BUGFIX: TMA-1596 The error propagated from a LCM brick is shown multiple times in the log
+ - BUGFIX: TMA-1582 show synchronize ldm mode is running
+ - FEATURE: TMA-1588 support schedule param include deprecated
+ - FEATURE: TMA-1597 Logging lcm execution result
+
 ## 2.1.8
  - FEATURE: TMA-1604 Upgrade Restforce version to 3.x
 

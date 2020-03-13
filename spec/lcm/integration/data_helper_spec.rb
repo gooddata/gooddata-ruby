@@ -138,19 +138,21 @@ bigquery_basic_params = {
           }
       },
       "project"=> "gdc-us-dev",
-      "schema"=> "mtt_team_checklist"
+      "schema"=> "lcm_test"
     }
   },
   "input_source"=> {
     "type"=> "bigquery",
-    "query"=> "select * from employees;"
+    "query"=> "select * from employees order by EmployeeID"
   }
 }
+
 describe 'data helper', :vcr do
 
   it 'connect to redshift with IAM authentication' do
     data_helper = GoodData::Helpers::DataSource.new(iam_params['input_source'])
     file_path = data_helper.realize(iam_params)
+    puts "redshift iam: #{file_path}"
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
@@ -158,6 +160,7 @@ describe 'data helper', :vcr do
   it 'connect to redshift with BASIC authentication' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params['input_source'])
     file_path = data_helper.realize(basic_params)
+    puts "redshift basic 1: #{file_path}"
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
@@ -165,6 +168,7 @@ describe 'data helper', :vcr do
   it 'connect to redshift with BASIC authentication without schema' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params_without_schema['input_source'])
     file_path = data_helper.realize(basic_params_without_schema)
+    puts "redshift basic 2: #{file_path}"
     data = File.open('spec/data/redshift_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
@@ -172,6 +176,7 @@ describe 'data helper', :vcr do
   it 'connect to redshift with BASIC authentication and dynamic source' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params_dynamic_source['dynamic_params']['input_source'])
     file_path = data_helper.realize(basic_params_dynamic_source)
+    puts "redshift basic 3: #{file_path}"
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
@@ -179,6 +184,7 @@ describe 'data helper', :vcr do
   it 'connect to redshift with BASIC authentication and url has parameter' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params_url_parameters['input_source'])
     file_path = data_helper.realize(basic_params_url_parameters)
+    puts "redshift basic 4: #{file_path}"
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
@@ -186,6 +192,7 @@ describe 'data helper', :vcr do
   it 'connect to snowflake with BASIC authentication' do
     data_helper = GoodData::Helpers::DataSource.new(snowflake_basic_params['input_source'])
     file_path = data_helper.realize(snowflake_basic_params)
+    puts "snowflake: #{file_path}"
     data = File.open('spec/data/snowflake_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
@@ -198,6 +205,7 @@ describe 'data helper', :vcr do
 
     data_helper = GoodData::Helpers::DataSource.new(bigquery_basic_params['input_source'])
     file_path = data_helper.realize(bigquery_basic_params)
+    puts "bigquery: #{file_path}"
     data = File.open('spec/data/bigquery_data.csv').read
     expect(data).to eq File.open(file_path).read
   end

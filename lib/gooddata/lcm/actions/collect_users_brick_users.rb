@@ -35,7 +35,7 @@ module GoodData
       class << self
         def call(params)
           users_brick_users = []
-          login_column = params.users_brick_config.login_column || 'login'
+          login_column = params.users_brick_config.login_column&.downcase || 'login'
           users_brick_data_source = GoodData::Helpers::DataSource.new(params.users_brick_config.input_source)
 
           users_brick_data_source_file = without_check(PARAMS, params) do
@@ -45,14 +45,15 @@ module GoodData
             )
           end
           CSV.foreach(users_brick_data_source_file,
-                      headers: true,
-                      return_headers: false,
-                      encoding: 'utf-8') do |row|
-            pid = row[params.multiple_projects_column]
+                      :headers => true,
+                      :return_headers => false,
+                      :header_converters => :downcase,
+                      :encoding => 'utf-8') do |row|
+            pid = row[params.multiple_projects_column&.downcase]
             fail "The set multiple_projects_column '#{params.multiple_projects_column}' of the users input is empty" if !pid && MULTIPLE_COLUMN_MODES.include?(params.sync_mode)
 
             users_brick_users << {
-              login: row[login_column].downcase,
+              login: row[login_column].nil? ? nil : row[login_column].strip.downcase,
               pid: pid
             }
           end
