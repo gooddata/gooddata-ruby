@@ -99,6 +99,16 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
     end
   end
 
+  describe '#get_all_users' do
+    it 'Returns all user in project' do
+      users = @project.users
+      expect(users).to be_instance_of(Array)
+      users.each do |user|
+        expect(user).to be_an_instance_of(GoodData::Membership)
+      end
+    end
+  end
+
   describe '#get_role_by_identifier' do
     it 'Looks up for role by identifier' do
       role = @project.get_role_by_identifier('readOnlyUserRole')
