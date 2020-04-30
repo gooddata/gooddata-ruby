@@ -222,22 +222,23 @@ module GoodData
         domain = client.domain(domain)
         if id == :all
           GoodData.logger.warn("Retrieving all users from domain #{domain.name}")
-          Enumerator.new do |y|
-            page_limit = opts[:page_limit] || 1000
-            offset = opts[:offset] || 0
-            loop do
-              begin
-                tmp = client(opts).get("#{domain.uri}/users", params: { offset: offset, limit: page_limit })
-              end
-
-              tmp['accountSettings']['items'].each do |user_data|
-                user = client.create(GoodData::Profile, user_data)
-                y << user if user
-              end
-              break if tmp['accountSettings']['items'].count < page_limit
-              offset += page_limit
+          all_users = []
+          page_limit = opts[:page_limit] || 1000
+          offset = opts[:offset] || 0
+          loop do
+            begin
+              tmp = client(opts).get("#{domain.uri}/users", params: { offset: offset, limit: page_limit })
             end
+
+            tmp['accountSettings']['items'].each do |user_data|
+              user = client.create(GoodData::Profile, user_data)
+              all_users << user if user
+            end
+            break if tmp['accountSettings']['items'].count < page_limit
+            offset += page_limit
           end
+
+          all_users
         else
           find_user_by_login(domain, id)
         end
