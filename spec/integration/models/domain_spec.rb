@@ -57,7 +57,7 @@ describe GoodData::Domain, :vcr do
   describe '#users' do
     it 'Should list users' do
       users = @domain.users
-      expect(users).to be_instance_of(Enumerator)
+      expect(users).to be_instance_of(Array)
       users.each do |user|
         expect(user).to be_an_instance_of(GoodData::Profile)
       end
