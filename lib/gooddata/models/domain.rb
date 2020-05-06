@@ -235,6 +235,7 @@ module GoodData
               all_users << user if user
             end
             break if tmp['accountSettings']['items'].count < page_limit
+
             offset += page_limit
           end
 

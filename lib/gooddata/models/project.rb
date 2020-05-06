@@ -1557,12 +1557,13 @@ module GoodData
           if opts[:all]
             all_users << user
           elsif opts[:disabled]
-            all_users << user if user && user.disabled?
+            all_users << user if user&.disabled?
           else
-            all_users << user if user && user.enabled?
+            all_users << user if user&.enabled?
           end
         end
         break if tmp['users'].count < limit
+
         offset += limit
       end
 
