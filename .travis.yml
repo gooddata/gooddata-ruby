@@ -15,11 +15,9 @@ stages:
 git:
   depth: false # this is needed for pronto
 
-matrix:
+jobs:
   allow_failures:
     - rvm: jruby-9.1.14
-
-jobs:
   include:
   # BEFORE MERGE
   - name: pronto code review
