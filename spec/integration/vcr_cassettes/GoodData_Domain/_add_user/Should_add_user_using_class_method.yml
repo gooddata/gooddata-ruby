@@ -220,65 +220,6 @@ http_interactions:
     http_version:
   recorded_at: Thu, 24 Jan 2019 13:01:29 GMT
 - request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/domains/staging2-lcm-prod/users
-    body:
-      encoding: UTF-8
-      string: '{"accountSetting":{"login":"gemtest_103909@gooddata.com","firstName":"FirstName","lastName":"LastName","password":"<PASSWORD>","verifyPassword":"<PASSWORD>","email":"gemtest_103909@gooddata.com","language":"en-US"}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      User-Agent:
-      - gooddata-gem/2.1.9/java/2.5.0
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":1Gq71eG6RbrEd6gZJ3x_rQ:l5-A2JCtMuPhOGyL11EL9g"
-      Stats-On:
-      - ''
-      X-Gdc-Version:
-      - '2'
-      Content-Length:
-      - '291'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 201
-      message: Created
-    headers:
-      Location:
-      - "/gdc/account/profile/3994c3677fadaed87065663768afc956"
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Date:
-      - Wed, 15 Jan 2020 05:00:56 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request-Time:
-      - '162'
-      X-Gdc-Request:
-      - ":1Gq71eG6RbrEd6gZJ3x_rQ:l5-A2JCtMuPhOGyL11EL9g:JiU2s7lc0AaiTlOo"
-      Vary:
-      - origin,X-GDC-VERSION
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"uri":"/gdc/account/profile/3994c3677fadaed87065663768afc956"}'
-    http_version:
-  recorded_at: Wed, 15 Jan 2020 05:00:56 GMT
-- request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/3994c3677fadaed87065663768afc956
     body:
@@ -334,4 +275,175 @@ http_interactions:
         06:00:56","updated":"2020-01-15 06:00:56","country":null,"phoneNumber":null,"authenticationModes":[],"login":"gemtest_103909@gooddata.com","timezone":null,"ssoProvider":null,"email":"gemtest_103909@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
     http_version:
   recorded_at: Wed, 15 Jan 2020 05:00:57 GMT
-recorded_with: VCR 5.0.0
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/0458ad8dc60f1ae6bce72079486e3320
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":_vgo6VaNQFuMYTO2uTqQHg:GzC3CsLVKyW09QYJD4Eytg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:27:04 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '21'
+      X-Gdc-Request:
+      - ":_vgo6VaNQFuMYTO2uTqQHg:GzC3CsLVKyW09QYJD4Eytg:pJwYw2jDxjPo0qgt"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"accountSetting":{"links":{"self":"/gdc/account/profile/0458ad8dc60f1ae6bce72079486e3320","projects":"/gdc/account/profile/0458ad8dc60f1ae6bce72079486e3320/projects","auditEvents":"/gdc/account/profile/0458ad8dc60f1ae6bce72079486e3320/auditEvents","domain":"/gdc/domains/staging2-lcm-prod"},"firstName":"FirstName","lastName":"LastName","companyName":null,"position":null,"created":"2020-05-07
+        08:27:03","updated":"2020-05-07 08:27:03","country":null,"phoneNumber":null,"authenticationModes":[],"login":"gemtest_141888@gooddata.com","timezone":null,"ssoProvider":null,"email":"gemtest_141888@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:27:02 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/domains/staging2-lcm-prod/users
+    body:
+      encoding: UTF-8
+      string: '{"accountSetting":{"login":"gemtest_804848@gooddata.com","firstName":"FirstName","lastName":"LastName","password":"<PASSWORD>","verifyPassword":"<PASSWORD>","email":"gemtest_804848@gooddata.com","language":"en-US"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":z9wnCBkzTiMl_eKlqLeIsA:NYr9mzCPzEqFL7bPiOcQHQ"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '291'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/gdc/account/profile/d1ba80d8ec1e66bcf70086ee8bfb4f39"
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:39:01 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '133'
+      X-Gdc-Request:
+      - ":z9wnCBkzTiMl_eKlqLeIsA:NYr9mzCPzEqFL7bPiOcQHQ:5eiTd0kqkqmNoC0M"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/account/profile/d1ba80d8ec1e66bcf70086ee8bfb4f39"}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:39:01 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/d1ba80d8ec1e66bcf70086ee8bfb4f39
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":z9wnCBkzTiMl_eKlqLeIsA:-ZpK_CMZ28APR6JZkUr6vw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:39:02 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '14'
+      X-Gdc-Request:
+      - ":z9wnCBkzTiMl_eKlqLeIsA:-ZpK_CMZ28APR6JZkUr6vw:8Hyv1f0QL3ldu8Bx"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"accountSetting":{"links":{"self":"/gdc/account/profile/d1ba80d8ec1e66bcf70086ee8bfb4f39","projects":"/gdc/account/profile/d1ba80d8ec1e66bcf70086ee8bfb4f39/projects","auditEvents":"/gdc/account/profile/d1ba80d8ec1e66bcf70086ee8bfb4f39/auditEvents","domain":"/gdc/domains/staging2-lcm-prod"},"firstName":"FirstName","lastName":"LastName","companyName":null,"position":null,"created":"2020-05-07
+        08:39:01","updated":"2020-05-07 08:39:01","country":null,"phoneNumber":null,"authenticationModes":[],"login":"gemtest_804848@gooddata.com","timezone":null,"ssoProvider":null,"email":"gemtest_804848@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:39:02 GMT
+recorded_with: VCR 5.1.0

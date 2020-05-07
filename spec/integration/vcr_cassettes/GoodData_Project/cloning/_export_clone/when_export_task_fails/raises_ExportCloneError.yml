@@ -352,4 +352,63 @@ http_interactions:
       string: '{"exportArtifact":{"status":{"uri":"/gdc/md/m6j94r8h9s0d8gma8gk5tcwbohebc5mt/etltask/cdc9c40a30cb44d27dcb2becafb75a6900000089"},"token":"<TOKEN>"}}'
     http_version:
   recorded_at: Wed, 15 Jan 2020 07:39:48 GMT
-recorded_with: VCR 5.0.0
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/md/c23p5hbt5b80msw97zurr15aukbix0zu/maintenance/export
+    body:
+      encoding: UTF-8
+      string: '{"exportProject":{"exportUsers":0,"exportData":1}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":CK3llvpDdTBBgO_YgOE6eQ:gmRmz2SubzCz6IN2sBCHRg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '50'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:58:50 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '43'
+      X-Gdc-Request:
+      - ":CK3llvpDdTBBgO_YgOE6eQ:gmRmz2SubzCz6IN2sBCHRg:743iEoUOjmPlCNdI"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"exportArtifact":{"status":{"uri":"/gdc/md/c23p5hbt5b80msw97zurr15aukbix0zu/etltask/03baccb31e4b4143fe1dbae8a43de52d00000089"},"token":"<TOKEN>"}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:58:50 GMT
+recorded_with: VCR 5.1.0

@@ -1448,63 +1448,6 @@ http_interactions:
       X-Gdc-Request-Time:
       - '15'
       X-Gdc-Request:
-      - ":agjAxF0Tol3OSJTLczaLQg:DESSJQlFmoDbw7FB2Uddiw:GviGb0j9ZN0tOQsJ"
-      Vary:
-      - origin
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: ''
-    http_version:
-  recorded_at: Thu, 24 Jan 2019 12:32:51 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - gooddata-gem/1.3.6/x86_64-linux/2.3.6
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":agjAxF0Tol3OSJTLczaLQg:DESSJQlFmoDbw7FB2Uddiw"
-      X-Gdc-Authsst:
-      - "<X_GDC_AUTHSST>"
-      Dont-Reauth:
-      - 'true'
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 401
-      message: Unauthorized
-    headers:
-      Www-Authenticate:
-      - GoodData realm="GoodData API" cookie=GDCAuthSST location=/gdc/account/login
-      Set-Cookie:
-      - GDCAuthSST=""; Expires=Thu, 01-Jan-1970 00:00:10 GMT; Path=/gdc/account; Secure
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Date:
-      - Thu, 24 Jan 2019 12:32:51 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request-Time:
-      - '15'
-      X-Gdc-Request:
       - ":agjAxF0Tol3OSJTLczaLQg:DESSJQlFmoDbw7FB2Uddiw:ny4gyg28ZOBMV7DN"
       Vary:
       - origin
@@ -1994,73 +1937,6 @@ http_interactions:
     http_version:
   recorded_at: Thu, 24 Jan 2019 13:42:44 GMT
 - request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login
-    body:
-      encoding: UTF-8
-      string: '{"postUserLogin":{"login":"rubydev+admin@gooddata.com","password":"<PASSWORD>","remember":1,"verify_level":2}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      User-Agent:
-      - gooddata-gem/2.1.9/java/2.5.0
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - ''
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:XnhlCGjgFzRfBOXsDpR_qg"
-      Dont-Reauth:
-      - 'true'
-      X-Gdc-Version:
-      - '2'
-      Content-Length:
-      - '110'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      X-Gdc-Authsst:
-      - "<X_GDC_AUTHSST>"
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-store, no-cache, must-revalidate, max-age=0
-      Pragma:
-      - no-cache
-      P3p:
-      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
-      X-Gdc-Log-Header:
-      - ''
-      Content-Type:
-      - application/json;charset=UTF-8
-      Date:
-      - Wed, 15 Jan 2020 06:37:32 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request-Time:
-      - '240'
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:XnhlCGjgFzRfBOXsDpR_qg:tONp13qBMgihKnQw"
-      Vary:
-      - origin,X-GDC-VERSION
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"userLogin":{"profile":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","state":"/gdc/account/login/5ad80b895edcc438e5a4418e222733fa","token":"<TOKEN>"}}'
-    http_version:
-  recorded_at: Wed, 15 Jan 2020 06:37:32 GMT
-- request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
     body:
@@ -2125,188 +2001,6 @@ http_interactions:
       string: '{"userToken":{"token":"<TOKEN>"}}'
     http_version:
   recorded_at: Wed, 15 Jan 2020 06:37:33 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      User-Agent:
-      - gooddata-gem/2.1.9/java/2.5.0
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:p6YS4WcMJ0zIANHW-My4wQ"
-      X-Gdc-Version:
-      - '2'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Date:
-      - Wed, 15 Jan 2020 06:37:34 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request-Time:
-      - '11'
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:p6YS4WcMJ0zIANHW-My4wQ:6YXNTY9tqTwHInmo"
-      Vary:
-      - origin,X-GDC-VERSION
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"accountSetting":{"links":{"self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","auditEvents":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/auditEvents","domain":"/gdc/domains/staging2-lcm-prod"},"firstName":"the","lastName":"1","companyName":"","position":null,"created":"2017-02-10
-        12:18:01","updated":"2019-03-15 10:00:00","country":null,"phoneNumber":"","authenticationModes":["PASSWORD","SSO"],"login":"rubydev+admin@gooddata.com","timezone":null,"ssoProvider":"test-ruby","email":"rubydev+admin@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
-    http_version:
-  recorded_at: Wed, 15 Jan 2020 06:37:34 GMT
-- request:
-    method: get
-    uri: https://staging2-lcm-prod.intgdc.com/gdc
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json, application/zip
-      User-Agent:
-      - gooddata-gem/2.1.9/java/2.5.0
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:hzCnOIEmvHTGg4ay4hAglw"
-      Stats-On:
-      - ''
-      X-Gdc-Version:
-      - '2'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 15 Jan 2020 06:37:35 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=100
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Transfer-Encoding:
-      - chunked
-      X-Gdc-Request-Time:
-      - '40'
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:hzCnOIEmvHTGg4ay4hAglw:aMJjZQVSEWtrfxsr"
-      Vary:
-      - Accept-Encoding,origin,X-GDC-VERSION
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
-        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
-        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
-        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
-        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
-        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
-        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
-        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
-        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
-        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
-        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
-        data staging area.","category":"uploads","title":"user-uploads"}]}}'
-    http_version:
-  recorded_at: Wed, 15 Jan 2020 06:37:35 GMT
-- request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
-    body:
-      encoding: UTF-8
-      string: '{"project":{"meta":{"summary":"No summary","title":"UserGroup Testing
-        Project"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"TESTING","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      User-Agent:
-      - gooddata-gem/2.1.9/java/2.5.0
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:s2cMM-MSjWryRlFl55UHQQ"
-      Stats-On:
-      - ''
-      X-Gdc-Version:
-      - '2'
-      Content-Length:
-      - '188'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 15 Jan 2020 06:37:36 GMT
-      Server:
-      - GoodData WebApp
-      Keep-Alive:
-      - timeout=5, max=100
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      X-Gdc-Request-Time:
-      - '418'
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:s2cMM-MSjWryRlFl55UHQQ:PptNSaFs3CvpxHCp"
-      Vary:
-      - origin,X-GDC-VERSION
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"uri":"/gdc/projects/bzlmn8xs2mc4uqo8al788rvuxjmdgzpz"}'
-    http_version:
-  recorded_at: Wed, 15 Jan 2020 06:37:36 GMT
 - request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/bzlmn8xs2mc4uqo8al788rvuxjmdgzpz
@@ -2628,64 +2322,6 @@ http_interactions:
     http_version:
   recorded_at: Wed, 15 Jan 2020 06:37:47 GMT
 - request:
-    method: post
-    uri: https://staging2-lcm-prod.intgdc.com/gdc/userGroups
-    body:
-      encoding: UTF-8
-      string: '{"userGroup":{"content":{"name":"My Test Group","description":"My Test
-        Description","project":"/gdc/projects/bzlmn8xs2mc4uqo8al788rvuxjmdgzpz"}}}'
-    headers:
-      Accept:
-      - application/json, application/zip
-      User-Agent:
-      - gooddata-gem/2.1.9/java/2.5.0
-      Content-Type:
-      - application/json
-      X-Gdc-Authtt:
-      - "<X_GDC_AUTHTT>"
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:nFyfYFqiD4pSEZ4FYSVhnA"
-      Stats-On:
-      - ''
-      X-Gdc-Version:
-      - '2'
-      Content-Length:
-      - '145'
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Host:
-      - staging2-lcm-prod.intgdc.com
-  response:
-    status:
-      code: 201
-      message: Created
-    headers:
-      X-Gdc-Log-Header:
-      - ''
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Content-Type:
-      - application/json;charset=UTF-8
-      Date:
-      - Wed, 15 Jan 2020 06:37:48 GMT
-      Server:
-      - GoodData WebApp
-      X-Gdc-Request-Time:
-      - '51'
-      X-Gdc-Request:
-      - ":9ayKUMlzPr99oJjqtlKSVA:nFyfYFqiD4pSEZ4FYSVhnA:rjHYYc3WwSRTl1Kf"
-      Vary:
-      - origin,X-GDC-VERSION
-      Transfer-Encoding:
-      - chunked
-      Strict-Transport-Security:
-      - max-age=10886400; includeSubDomains; preload;
-    body:
-      encoding: ASCII-8BIT
-      string: '{"uri":"/gdc/userGroups/bw1TZSB3oV5NqSMeQ7PwfPA"}'
-    http_version:
-  recorded_at: Wed, 15 Jan 2020 06:37:48 GMT
-- request:
     method: get
     uri: https://staging2-lcm-prod.intgdc.com/gdc/userGroups/bw1TZSB3oV5NqSMeQ7PwfPA
     body:
@@ -2796,6 +2432,867 @@ http_interactions:
     http_version:
   recorded_at: Wed, 15 Jan 2020 06:38:06 GMT
 - request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login
+    body:
+      encoding: UTF-8
+      string: '{"postUserLogin":{"login":"rubydev+admin@gooddata.com","password":"<PASSWORD>","remember":1,"verify_level":2}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - ''
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:oJaajUgfOAkvvCn0q1ALWw"
+      Dont-Reauth:
+      - 'true'
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '110'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:09:51 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '85'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:oJaajUgfOAkvvCn0q1ALWw:xTinXOewSqlS4lBN"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userLogin":{"profile":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","state":"/gdc/account/login/5ad80b895edcc438e5a4418e222733fa","token":"<TOKEN>"}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:09:49 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:mL3Ds_i_hXAhvru0tdUYCw"
+      X-Gdc-Authsst:
+      - "<X_GDC_AUTHSST>"
+      Dont-Reauth:
+      - 'true'
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-store, no-cache, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      P3p:
+      - CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 07 May 2020 06:09:52 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '34'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:mL3Ds_i_hXAhvru0tdUYCw:kjV1bcTiIIG8Z9SX"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userToken":{"token":"<TOKEN>"}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:09:50 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:xOX260JJzN-wEJ8sK17mjg"
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:09:53 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '17'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:xOX260JJzN-wEJ8sK17mjg:KhuNM0PSvxephZNf"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"accountSetting":{"links":{"self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","auditEvents":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/auditEvents","domain":"/gdc/domains/staging2-lcm-prod"},"firstName":"the","lastName":"1","companyName":"","position":null,"created":"2017-02-10
+        12:18:01","updated":"2019-03-15 10:00:00","country":null,"phoneNumber":"","authenticationModes":["PASSWORD","SSO"],"login":"rubydev+admin@gooddata.com","timezone":null,"ssoProvider":"test-ruby","email":"rubydev+admin@gooddata.com","language":"en-US","ipWhitelist":null,"effectiveIpWhitelist":null}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:09:51 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:zLBpLa7Bejw8-hnQ6u3MjQ"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:09:54 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=95
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '30'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:zLBpLa7Bejw8-hnQ6u3MjQ:Mi8ejHYqsKpOkp9c"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"about":{"summary":"Use links to navigate the services.","category":"GoodData
+        API root","links":[{"link":"/gdc/","summary":"","category":"home","title":"home"},{"link":"/gdc/account/token","summary":"Temporary
+        token generator.","category":"token","title":"token"},{"link":"/gdc/account/login","summary":"Authentication
+        service.","category":"login","title":"login"},{"link":"/gdc/md","summary":"Metadata
+        resources.","category":"md","title":"metadata"},{"link":"/gdc/xtab2","summary":"Report
+        execution resource.","category":"xtab","title":"xtab"},{"link":"/gdc/exporter","summary":"Report
+        exporting resource.","category":"report-exporter","title":"exporter"},{"link":"/gdc/account","summary":"Resource
+        for logged in account manipulation.","category":"account","title":"account"},{"link":"/gdc/projects","summary":"Resource
+        for user and project management.","category":"projects","title":"projects"},{"link":"/gdc/tool","summary":"Miscellaneous
+        resources.","category":"tool","title":"tool"},{"link":"/gdc/releaseInfo","summary":"Release
+        information.","category":"releaseInfo","title":"releaseInfo"},{"link":"/gdc/uploads","summary":"User
+        data staging area.","category":"uploads","title":"user-uploads"}]}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:09:52 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects
+    body:
+      encoding: UTF-8
+      string: '{"project":{"meta":{"summary":"No summary","title":"UserGroup Testing
+        Project"},"content":{"guidedNavigation":1,"driver":"Pg","environment":"TESTING","authorizationToken":"<AUTHORIZATION_TOKEN>"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:zFwD9Gew20HNkAlBwem7cA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '188'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:09:55 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=93
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '625'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:zFwD9Gew20HNkAlBwem7cA:EfFTrxJO0uso802c"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw"}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:09:54 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:IQ99BRke1eT5nkGyqTNycA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:09:56 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=90
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '57'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:IQ99BRke1eT5nkGyqTNycA:Cl3aYCm0pqZI4QhY"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"PREPARING"},"links":{"ldm_thumbnail":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/ldm?thumbnail=1","self":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw","clearCaches":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/clearCaches","invitations":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/invitations","users":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users?link=1&offset=0&limit=100","checkXaeCompatibility":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/checkXaeCompatibility","uploads":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/uploads/","ldm":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/ldm","metadata":"/gdc/md/i4uzs3fy6sltz19p00gaylm42b9iqxlw","publicartifacts":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/publicartifacts","roles":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles","userRoles":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/dataload","connectors":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/connectors","execute":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/execute","config":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/config","projectFeatureFlags":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/projectFeatureFlags","schedules":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/schedules","templates":"/gdc/md/i4uzs3fy6sltz19p00gaylm42b9iqxlw/templates"},"meta":{"created":"2020-05-07
+        08:09:55","summary":"No summary","updated":"2020-05-07 08:09:55","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"UserGroup
+        Testing Project","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:09:55 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:MMjWnOIDQ9PiNWJCt_VoTw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:10:00 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=89
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '49'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:MMjWnOIDQ9PiNWJCt_VoTw:U3K7Cz10tFSrLsHC"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"project":{"content":{"environment":"TESTING","cluster":"","authorizationToken":"<AUTHORIZATION_TOKEN>","guidedNavigation":"1","isPublic":"0","driver":"Pg","state":"ENABLED"},"links":{"ldm_thumbnail":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/ldm?thumbnail=1","self":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw","clearCaches":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/clearCaches","invitations":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/invitations","users":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users?link=1&offset=0&limit=100","checkXaeCompatibility":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/checkXaeCompatibility","uploads":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/uploads/","ldm":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/ldm","metadata":"/gdc/md/i4uzs3fy6sltz19p00gaylm42b9iqxlw","publicartifacts":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/publicartifacts","roles":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles","userRoles":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/roles","userPermissions":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/permissions","dataload":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/dataload","connectors":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/connectors","execute":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/execute","config":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/config","projectFeatureFlags":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/projectFeatureFlags","schedules":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/schedules","templates":"/gdc/md/i4uzs3fy6sltz19p00gaylm42b9iqxlw/templates"},"meta":{"created":"2020-05-07
+        08:09:55","summary":"No summary","updated":"2020-05-07 08:09:57","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"UserGroup
+        Testing Project","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:09:59 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/internal/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:C-Wsr4SoEtao6PTHzru3Ug"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:10:05 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=92
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      X-Gdc-Request-Time:
+      - '99'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:C-Wsr4SoEtao6PTHzru3Ug:WA05wj2Co0lYEYrv"
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"internalProjectRoles":{"roles":[{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"1","canExportDashboard":"1","canManageComment":"1","canExecute":"1","canInitData":"1","canManageIntegration":"1","canCreateExecutionContext":"1","canManageFolder":"1","canInviteUserToProject":"1","canCreateTableDataLoad":"1","canCreateDomain":"1","canSeeOtherUserDetails":"1","canManageACL":"1","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"1","canCreateHelp":"1","canManageDomain":"1","canManageAttributeLabel":"1","canManageReport":"1","canExportReport":"1","canCreateColumn":"1","canManageDataSet":"1","canSetUserVariables":"1","canCreateAttributeGroup":"1","canValidateProject":"1","canSetStyle":"1","canMaintainProject":"1","canCreateETLFile":"1","canCreateScheduledMail":"1","canSuspendUserFromProject":"1","canManageIsProduction":"1","canMaintainUserFilterRelation":"1","canManageAttribute":"1","canManageReportDefinition":"1","canManageTranslations":"1","canMaintainUserFilter":"1","canCreateReport":"1","canSetLocale":"1","canEnrichData":"1","canUploadNonProductionCSV":"1","canManageETLFile":"1","canCreateComment":"1","canCreateDataSet":"1","canManageExecutionContext":"1","canCreateTable":"1","canManageTableDataLoad":"1","canRefreshData":"1","canCreateMetric":"1","canManageFilterSettings":"1","canManageProjectDashboard":"1","canManageProject":"1","canManagePrompt":"1","canAccessWorkbench":"1","canCreateAttributeLabel":"1","canCreateVisualizationClass":"1","canManageColumn":"1","canCreatePrompt":"1","canManagePublicAccessCode":"0","canListUsersInProject":"1","canManageAttributeGroup":"1","canManageMetric":"1","canManageHelp":"1","canSetProjectVariables":"1","canManageTable":"1","canCreateVisualization":"1","canCreateFolder":"1","canManageFact":"1","canManageScheduledMail":"1","canListInvitationsInProject":"1","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"1","canCreateAttribute":"1","canAssignUserWithRole":"1","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/6","created":"2020-05-07
+        08:09:57","identifier":"superAdminRole","summary":"the ultimate project admin","title":"SuperAdmin","updated":"2020-05-07
+        08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"1","canExportDashboard":"1","canManageComment":"1","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"1","canInviteUserToProject":"1","canCreateTableDataLoad":"0","canCreateDomain":"1","canSeeOtherUserDetails":"1","canManageACL":"1","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"1","canManageAttributeLabel":"0","canManageReport":"1","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"1","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"1","canCreateScheduledMail":"1","canSuspendUserFromProject":"1","canManageIsProduction":"0","canMaintainUserFilterRelation":"1","canManageAttribute":"0","canManageReportDefinition":"1","canManageTranslations":"0","canMaintainUserFilter":"1","canCreateReport":"1","canSetLocale":"0","canEnrichData":"1","canUploadNonProductionCSV":"1","canManageETLFile":"1","canCreateComment":"1","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"1","canCreateMetric":"1","canManageFilterSettings":"1","canManageProjectDashboard":"1","canManageProject":"0","canManagePrompt":"1","canAccessWorkbench":"1","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"1","canManagePublicAccessCode":"0","canListUsersInProject":"1","canManageAttributeGroup":"0","canManageMetric":"1","canManageHelp":"0","canSetProjectVariables":"1","canManageTable":"0","canCreateVisualization":"1","canCreateFolder":"1","canManageFact":"0","canManageScheduledMail":"1","canListInvitationsInProject":"1","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"1","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/11","created":"2020-05-07
+        08:09:57","identifier":"editorUserAdminRole","summary":"Editor + User Admin","title":"Editor
+        + User Admin","updated":"2020-05-07 08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"0","canCreateProjectDashboard":"0","canExportDashboard":"1","canManageComment":"0","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"0","canInviteUserToProject":"0","canCreateTableDataLoad":"0","canCreateDomain":"0","canSeeOtherUserDetails":"0","canManageACL":"0","canManageAnalyticalDashboard":"0","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"0","canManageAttributeLabel":"0","canManageReport":"0","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"0","canCreateScheduledMail":"1","canSuspendUserFromProject":"0","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"0","canManageReportDefinition":"0","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"0","canSetLocale":"0","canEnrichData":"0","canUploadNonProductionCSV":"0","canManageETLFile":"0","canCreateComment":"0","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"0","canCreateMetric":"0","canManageFilterSettings":"0","canManageProjectDashboard":"0","canManageProject":"0","canManagePrompt":"0","canAccessWorkbench":"0","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"0","canManageAttributeGroup":"0","canManageMetric":"0","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"0","canCreateVisualization":"0","canCreateFolder":"0","canManageFact":"0","canManageScheduledMail":"0","canListInvitationsInProject":"0","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"0","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"0"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/3","created":"2020-05-07
+        08:09:57","identifier":"dashboardOnlyRole","summary":"dashboard only","title":"Viewer
+        (embedded only)","updated":"2020-05-07 08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"0","canExportDashboard":"1","canManageComment":"0","canExecute":"0","canInitData":"1","canManageIntegration":"1","canCreateExecutionContext":"0","canManageFolder":"0","canInviteUserToProject":"0","canCreateTableDataLoad":"0","canCreateDomain":"0","canSeeOtherUserDetails":"0","canManageACL":"0","canManageAnalyticalDashboard":"0","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"0","canManageAttributeLabel":"1","canManageReport":"0","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"1","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"0","canCreateScheduledMail":"0","canSuspendUserFromProject":"0","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"1","canManageReportDefinition":"0","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"0","canSetLocale":"0","canEnrichData":"0","canUploadNonProductionCSV":"0","canManageETLFile":"1","canCreateComment":"0","canCreateDataSet":"0","canManageExecutionContext":"0","canCreateTable":"0","canManageTableDataLoad":"1","canRefreshData":"1","canCreateMetric":"0","canManageFilterSettings":"0","canManageProjectDashboard":"0","canManageProject":"1","canManagePrompt":"0","canAccessWorkbench":"0","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"1","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"0","canManageAttributeGroup":"1","canManageMetric":"1","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"1","canCreateVisualization":"0","canCreateFolder":"0","canManageFact":"1","canManageScheduledMail":"0","canListInvitationsInProject":"0","canCreateFilterSettings":"0","canExecuteRaw":"0","canSeePublicAccessCode":"0","canCreateReportDefinition":"0","canManageVisualization":"0","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"0"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/7","created":"2020-05-07
+        08:09:57","identifier":"connectorsSystemRole","summary":"the connectors system
+        user","title":"Connectors System User","updated":"2020-05-07 08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"0","canExportDashboard":"1","canManageComment":"0","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"0","canInviteUserToProject":"0","canCreateTableDataLoad":"0","canCreateDomain":"0","canSeeOtherUserDetails":"0","canManageACL":"0","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"0","canManageAttributeLabel":"0","canManageReport":"0","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"0","canCreateScheduledMail":"1","canSuspendUserFromProject":"0","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"0","canManageReportDefinition":"0","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"0","canSetLocale":"0","canEnrichData":"0","canUploadNonProductionCSV":"0","canManageETLFile":"0","canCreateComment":"0","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"0","canCreateMetric":"0","canManageFilterSettings":"1","canManageProjectDashboard":"0","canManageProject":"0","canManagePrompt":"0","canAccessWorkbench":"0","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"0","canManageAttributeGroup":"0","canManageMetric":"0","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"0","canCreateVisualization":"1","canCreateFolder":"0","canManageFact":"0","canManageScheduledMail":"0","canListInvitationsInProject":"0","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/9","created":"2020-05-07
+        08:09:57","identifier":"explorerOnlyRole","summary":"explorer only","title":"Explorer
+        (embedded only)","updated":"2020-05-07 08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"0","canExportDashboard":"1","canManageComment":"0","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"0","canInviteUserToProject":"0","canCreateTableDataLoad":"0","canCreateDomain":"0","canSeeOtherUserDetails":"0","canManageACL":"0","canManageAnalyticalDashboard":"0","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"0","canManageAttributeLabel":"0","canManageReport":"0","canExportReport":"0","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"0","canCreateScheduledMail":"1","canSuspendUserFromProject":"0","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"0","canManageReportDefinition":"0","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"0","canSetLocale":"0","canEnrichData":"0","canUploadNonProductionCSV":"0","canManageETLFile":"0","canCreateComment":"0","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"0","canCreateMetric":"0","canManageFilterSettings":"0","canManageProjectDashboard":"0","canManageProject":"0","canManagePrompt":"0","canAccessWorkbench":"1","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"0","canManageAttributeGroup":"0","canManageMetric":"0","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"0","canCreateVisualization":"0","canCreateFolder":"0","canManageFact":"0","canManageScheduledMail":"0","canListInvitationsInProject":"0","canCreateFilterSettings":"1","canExecuteRaw":"0","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"0","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"0"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/12","created":"2020-05-07
+        08:09:57","identifier":"readOnlyNoExportRole","summary":"Viewer (Disabled
+        Exports)","title":"Viewer (Disabled Exports)","updated":"2020-05-07 08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"1","canExportDashboard":"1","canManageComment":"1","canExecute":"1","canInitData":"1","canManageIntegration":"1","canCreateExecutionContext":"1","canManageFolder":"1","canInviteUserToProject":"1","canCreateTableDataLoad":"1","canCreateDomain":"1","canSeeOtherUserDetails":"1","canManageACL":"1","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"1","canManageDomain":"1","canManageAttributeLabel":"1","canManageReport":"1","canExportReport":"1","canCreateColumn":"1","canManageDataSet":"1","canSetUserVariables":"1","canCreateAttributeGroup":"1","canValidateProject":"1","canSetStyle":"1","canMaintainProject":"1","canCreateETLFile":"1","canCreateScheduledMail":"1","canSuspendUserFromProject":"1","canManageIsProduction":"1","canMaintainUserFilterRelation":"1","canManageAttribute":"1","canManageReportDefinition":"1","canManageTranslations":"1","canMaintainUserFilter":"1","canCreateReport":"1","canSetLocale":"1","canEnrichData":"1","canUploadNonProductionCSV":"1","canManageETLFile":"1","canCreateComment":"1","canCreateDataSet":"1","canManageExecutionContext":"1","canCreateTable":"1","canManageTableDataLoad":"1","canRefreshData":"1","canCreateMetric":"1","canManageFilterSettings":"1","canManageProjectDashboard":"1","canManageProject":"1","canManagePrompt":"1","canAccessWorkbench":"1","canCreateAttributeLabel":"1","canCreateVisualizationClass":"1","canManageColumn":"1","canCreatePrompt":"1","canManagePublicAccessCode":"0","canListUsersInProject":"1","canManageAttributeGroup":"1","canManageMetric":"1","canManageHelp":"1","canSetProjectVariables":"1","canManageTable":"1","canCreateVisualization":"1","canCreateFolder":"1","canManageFact":"1","canManageScheduledMail":"1","canListInvitationsInProject":"1","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"1","canCreateAttribute":"1","canAssignUserWithRole":"1","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2","created":"2020-05-07
+        08:09:57","identifier":"adminRole","summary":"project master","title":"Admin","updated":"2020-05-07
+        08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"0","canExportDashboard":"1","canManageComment":"0","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"0","canInviteUserToProject":"0","canCreateTableDataLoad":"0","canCreateDomain":"0","canSeeOtherUserDetails":"0","canManageACL":"0","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"0","canManageAttributeLabel":"0","canManageReport":"0","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"0","canCreateScheduledMail":"1","canSuspendUserFromProject":"0","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"0","canManageReportDefinition":"0","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"0","canSetLocale":"0","canEnrichData":"0","canUploadNonProductionCSV":"1","canManageETLFile":"0","canCreateComment":"0","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"0","canCreateMetric":"0","canManageFilterSettings":"1","canManageProjectDashboard":"0","canManageProject":"0","canManagePrompt":"0","canAccessWorkbench":"1","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"0","canManageAttributeGroup":"0","canManageMetric":"0","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"0","canCreateVisualization":"1","canCreateFolder":"0","canManageFact":"0","canManageScheduledMail":"0","canListInvitationsInProject":"0","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/8","created":"2020-05-07
+        08:09:57","identifier":"explorerRole","summary":"explorer","title":"Explorer","updated":"2020-05-07
+        08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"1","canExportDashboard":"1","canManageComment":"1","canExecute":"1","canInitData":"1","canManageIntegration":"1","canCreateExecutionContext":"1","canManageFolder":"1","canInviteUserToProject":"0","canCreateTableDataLoad":"1","canCreateDomain":"1","canSeeOtherUserDetails":"1","canManageACL":"0","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"1","canManageDomain":"1","canManageAttributeLabel":"1","canManageReport":"1","canExportReport":"1","canCreateColumn":"1","canManageDataSet":"1","canSetUserVariables":"1","canCreateAttributeGroup":"1","canValidateProject":"1","canSetStyle":"1","canMaintainProject":"0","canCreateETLFile":"1","canCreateScheduledMail":"0","canSuspendUserFromProject":"1","canManageIsProduction":"1","canMaintainUserFilterRelation":"0","canManageAttribute":"1","canManageReportDefinition":"1","canManageTranslations":"1","canMaintainUserFilter":"0","canCreateReport":"1","canSetLocale":"1","canEnrichData":"1","canUploadNonProductionCSV":"1","canManageETLFile":"1","canCreateComment":"1","canCreateDataSet":"1","canManageExecutionContext":"1","canCreateTable":"1","canManageTableDataLoad":"1","canRefreshData":"1","canCreateMetric":"1","canManageFilterSettings":"1","canManageProjectDashboard":"1","canManageProject":"1","canManagePrompt":"1","canAccessWorkbench":"1","canCreateAttributeLabel":"1","canCreateVisualizationClass":"1","canManageColumn":"1","canCreatePrompt":"1","canManagePublicAccessCode":"0","canListUsersInProject":"1","canManageAttributeGroup":"1","canManageMetric":"1","canManageHelp":"1","canSetProjectVariables":"1","canManageTable":"1","canCreateVisualization":"1","canCreateFolder":"1","canManageFact":"1","canManageScheduledMail":"0","canListInvitationsInProject":"1","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"1","canCreateAttribute":"1","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/1","created":"2020-05-07
+        08:09:57","identifier":"unverifiedAdminRole","summary":"project unverified
+        admin","title":"Unverified Admin","updated":"2020-05-07 08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"0","canExportDashboard":"1","canManageComment":"0","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"0","canInviteUserToProject":"0","canCreateTableDataLoad":"0","canCreateDomain":"0","canSeeOtherUserDetails":"0","canManageACL":"0","canManageAnalyticalDashboard":"0","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"0","canManageAttributeLabel":"0","canManageReport":"0","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"0","canCreateScheduledMail":"1","canSuspendUserFromProject":"0","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"0","canManageReportDefinition":"0","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"0","canSetLocale":"0","canEnrichData":"0","canUploadNonProductionCSV":"0","canManageETLFile":"0","canCreateComment":"0","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"0","canCreateMetric":"0","canManageFilterSettings":"0","canManageProjectDashboard":"0","canManageProject":"0","canManagePrompt":"0","canAccessWorkbench":"1","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"0","canManageAttributeGroup":"0","canManageMetric":"0","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"0","canCreateVisualization":"0","canCreateFolder":"0","canManageFact":"0","canManageScheduledMail":"0","canListInvitationsInProject":"0","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"0","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"0"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/4","created":"2020-05-07
+        08:09:57","identifier":"readOnlyUserRole","summary":"read only user role","title":"Viewer","updated":"2020-05-07
+        08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"1","canExportDashboard":"1","canManageComment":"1","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"1","canInviteUserToProject":"1","canCreateTableDataLoad":"0","canCreateDomain":"1","canSeeOtherUserDetails":"1","canManageACL":"1","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"1","canManageAttributeLabel":"0","canManageReport":"1","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"1","canCreateScheduledMail":"1","canSuspendUserFromProject":"1","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"0","canManageReportDefinition":"1","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"1","canSetLocale":"0","canEnrichData":"1","canUploadNonProductionCSV":"1","canManageETLFile":"1","canCreateComment":"1","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"1","canCreateMetric":"1","canManageFilterSettings":"1","canManageProjectDashboard":"1","canManageProject":"0","canManagePrompt":"0","canAccessWorkbench":"1","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"1","canManageAttributeGroup":"0","canManageMetric":"1","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"0","canCreateVisualization":"1","canCreateFolder":"1","canManageFact":"0","canManageScheduledMail":"1","canListInvitationsInProject":"1","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"1","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/10","created":"2020-05-07
+        08:09:57","identifier":"editorInviteRole","summary":"Editor + Invitations","title":"Editor
+        + Invitations","updated":"2020-05-07 08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}},{"projectRole":{"permissions":{"canAccessIntegration":"1","canCreateProjectDashboard":"1","canExportDashboard":"1","canManageComment":"1","canExecute":"1","canInitData":"0","canManageIntegration":"0","canCreateExecutionContext":"1","canManageFolder":"1","canInviteUserToProject":"0","canCreateTableDataLoad":"0","canCreateDomain":"1","canSeeOtherUserDetails":"1","canManageACL":"1","canManageAnalyticalDashboard":"1","canCreateRole":"0","canCreateProjectTemplates":"0","canCreateHelp":"0","canManageDomain":"1","canManageAttributeLabel":"0","canManageReport":"1","canExportReport":"1","canCreateColumn":"0","canManageDataSet":"0","canSetUserVariables":"0","canCreateAttributeGroup":"0","canValidateProject":"0","canSetStyle":"0","canMaintainProject":"0","canCreateETLFile":"1","canCreateScheduledMail":"1","canSuspendUserFromProject":"0","canManageIsProduction":"0","canMaintainUserFilterRelation":"0","canManageAttribute":"0","canManageReportDefinition":"1","canManageTranslations":"0","canMaintainUserFilter":"0","canCreateReport":"1","canSetLocale":"0","canEnrichData":"1","canUploadNonProductionCSV":"1","canManageETLFile":"1","canCreateComment":"1","canCreateDataSet":"0","canManageExecutionContext":"1","canCreateTable":"0","canManageTableDataLoad":"0","canRefreshData":"1","canCreateMetric":"1","canManageFilterSettings":"1","canManageProjectDashboard":"1","canManageProject":"0","canManagePrompt":"0","canAccessWorkbench":"1","canCreateAttributeLabel":"0","canCreateVisualizationClass":"0","canManageColumn":"0","canCreatePrompt":"0","canManagePublicAccessCode":"0","canListUsersInProject":"1","canManageAttributeGroup":"0","canManageMetric":"1","canManageHelp":"0","canSetProjectVariables":"0","canManageTable":"0","canCreateVisualization":"1","canCreateFolder":"1","canManageFact":"0","canManageScheduledMail":"1","canListInvitationsInProject":"0","canCreateFilterSettings":"1","canExecuteRaw":"1","canSeePublicAccessCode":"0","canCreateReportDefinition":"1","canManageVisualization":"1","canCreateFact":"0","canCreateAttribute":"0","canAssignUserWithRole":"0","canCreateAnalyticalDashboard":"1"},"meta":{"author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","uri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/5","created":"2020-05-07
+        08:09:57","identifier":"editorRole","summary":"invited user","title":"Editor","updated":"2020-05-07
+        08:09:57","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}],"links":{"project":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw"}}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:10:03 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users?limit=1000&offset=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:UXmKpFKaCEwrtwkaFFkoPQ"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:10:06 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=78
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '47'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:UXmKpFKaCEwrtwkaFFkoPQ:mHht28XTdIRiUOIX"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"users":[{"user":{"content":{"email":"rubydev+admin@gooddata.com","firstname":"the","userRoles":["/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2"],"phonenumber":"","status":"ENABLED","lastname":"1","login":"rubydev+admin@gooddata.com"},"links":{"roles":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/roles","permissions":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/permissions","self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","projectRelUri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa"},"meta":{"created":"2017-02-10
+        12:18:01","updated":"2019-03-15 10:00:00","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"the
+        1","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:10:04 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users
+    body:
+      encoding: UTF-8
+      string: '{"users":[{"user":{"content":{"status":"ENABLED","userRoles":["/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2"]},"links":{"self":"/gdc/account/profile/gemtest-user+group+spec-0@gooddata.com"}}},{"user":{"content":{"status":"ENABLED","userRoles":["/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2"]},"links":{"self":"/gdc/account/profile/gemtest-user+group+spec-1@gooddata.com"}}},{"user":{"content":{"status":"ENABLED","userRoles":["/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2"]},"links":{"self":"/gdc/account/profile/gemtest-user+group+spec-2@gooddata.com"}}},{"user":{"content":{"status":"ENABLED","userRoles":["/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2"]},"links":{"self":"/gdc/account/profile/gemtest-user+group+spec-3@gooddata.com"}}},{"user":{"content":{"status":"ENABLED","userRoles":["/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2"]},"links":{"self":"/gdc/account/profile/gemtest-user+group+spec-4@gooddata.com"}}}]}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:HUJ0jAgOsOIOyg_P_x-LUw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '971'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:10:07 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '29'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:HUJ0jAgOsOIOyg_P_x-LUw:SHFLuowA730b7jkT"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectUsersUpdateResult":{"successful":[],"failed":[{"user":"/gdc/account/profile/gemtest-user+group+spec-0@gooddata.com","message":"Cannot
+        add user to project. User doesn''t exist"},{"user":"/gdc/account/profile/gemtest-user+group+spec-1@gooddata.com","message":"Cannot
+        add user to project. User doesn''t exist"},{"user":"/gdc/account/profile/gemtest-user+group+spec-2@gooddata.com","message":"Cannot
+        add user to project. User doesn''t exist"},{"user":"/gdc/account/profile/gemtest-user+group+spec-3@gooddata.com","message":"Cannot
+        add user to project. User doesn''t exist"},{"user":"/gdc/account/profile/gemtest-user+group+spec-4@gooddata.com","message":"Cannot
+        add user to project. User doesn''t exist"}]}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:10:05 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users?limit=1000&offset=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:kOQYv-pdaooomyI1NFzcaA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:10:08 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=97
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '53'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:kOQYv-pdaooomyI1NFzcaA:h9s1n1jW1H9Alp9v"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"users":[{"user":{"content":{"email":"rubydev+admin@gooddata.com","firstname":"the","userRoles":["/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/roles/2"],"phonenumber":"","status":"ENABLED","lastname":"1","login":"rubydev+admin@gooddata.com"},"links":{"roles":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/roles","permissions":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa/permissions","self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","projectRelUri":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw/users/5ad80b895edcc438e5a4418e222733fa"},"meta":{"created":"2017-02-10
+        12:18:01","updated":"2019-03-15 10:00:00","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"the
+        1","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:10:06 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/userGroups
+    body:
+      encoding: UTF-8
+      string: '{"userGroup":{"content":{"name":"My Test Group","description":"My Test
+        Description","project":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw"}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:gpGKaSup1UBalwKHo6OscA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '145'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:10:09 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '65'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:gpGKaSup1UBalwKHo6OscA:vqfWTW3Y9n1ObBVr"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"uri":"/gdc/userGroups/b0I9K8FRFgAUzu_qGAqkqCw"}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:10:08 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/userGroups/b0I9K8FRFgAUzu_qGAqkqCw
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:G-nfC5aZyBPp8RqvSrPi5Q"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 06:10:09 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '21'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:G-nfC5aZyBPp8RqvSrPi5Q:82Xa5UfW2FeaD5zm"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userGroup":{"content":{"name":"My Test Group","id":"b0I9K8FRFgAUzu_qGAqkqCw","description":"My
+        Test Description","domain":null,"project":"/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw"},"meta":{"created":"2020-05-07
+        08:10:09","updated":"2020-05-07 08:10:09"},"links":{"self":"/gdc/userGroups/b0I9K8FRFgAUzu_qGAqkqCw","members":"/gdc/userGroups/b0I9K8FRFgAUzu_qGAqkqCw/members","modifyMembers":"/gdc/userGroups/b0I9K8FRFgAUzu_qGAqkqCw/modifyMembers"}}}'
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:10:08 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/i4uzs3fy6sltz19p00gaylm42b9iqxlw
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/java/2.5.3
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:baQEB2BreIJeeBIsPV-slw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Thu, 07 May 2020 06:10:31 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=47
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Gdc-Request-Time:
+      - '64'
+      X-Gdc-Request:
+      - ":PAeldRzl0uM6p00xnpKezA:baQEB2BreIJeeBIsPV-slw:05m7LlxjGaAaOjAg"
+      Vary:
+      - origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Thu, 07 May 2020 06:10:29 GMT
+- request:
     method: delete
     uri: https://staging2-lcm-prod.intgdc.com/gdc/account/login/5ad80b895edcc438e5a4418e222733fa
     body:
@@ -2805,13 +3302,13 @@ http_interactions:
       Accept:
       - application/json, application/zip
       User-Agent:
-      - gooddata-gem/2.1.9/java/2.5.0
+      - gooddata-gem/2.1.10/java/2.5.3
       Content-Type:
       - application/json
       X-Gdc-Authtt:
       - "<X_GDC_AUTHTT>"
       X-Gdc-Request:
-      - ":oA4OKmYeeXl6Gm0R-2Zaag:58VWmZ3nvFQOKXvxRG8tcw"
+      - ":PVj0VwDAmREgYrlZYG8RRg:ExM-Pn_QHSJDh6fgXZ1yXQ"
       X-Gdc-Authsst:
       - "<X_GDC_AUTHSST>"
       Tries:
@@ -2832,13 +3329,13 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store, must-revalidate
       Date:
-      - Wed, 15 Jan 2020 06:38:07 GMT
+      - Thu, 07 May 2020 06:10:31 GMT
       Server:
       - GoodData WebApp
       X-Gdc-Request-Time:
-      - '19'
+      - '22'
       X-Gdc-Request:
-      - ":oA4OKmYeeXl6Gm0R-2Zaag:58VWmZ3nvFQOKXvxRG8tcw:QMIH32RF51jtMEFn"
+      - ":PVj0VwDAmREgYrlZYG8RRg:ExM-Pn_QHSJDh6fgXZ1yXQ:pzFEvBFfZG4hcSUx"
       Vary:
       - origin,X-GDC-VERSION
       Strict-Transport-Security:
@@ -2847,5 +3344,5 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version:
-  recorded_at: Wed, 15 Jan 2020 06:38:07 GMT
-recorded_with: VCR 5.0.0
+  recorded_at: Thu, 07 May 2020 06:10:30 GMT
+recorded_with: VCR 5.1.0
