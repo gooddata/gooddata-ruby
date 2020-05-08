@@ -34,7 +34,7 @@ process_additional_hidden_params = {
   }
 }
 
-describe 'the whole life-cycle', :vcr do
+describe 'E2E the whole life-cycle', :vcr, :constraint => 'slow' do
   include_context 'lcm bricks',
                   schedule_additional_hidden_params: schedule_additional_hidden_params,
                   process_additional_hidden_params: process_additional_hidden_params
