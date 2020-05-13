@@ -1,4 +1,7 @@
 # GoodData Ruby SDK Changelog
+## 2.1.11
+ - FEATURE: TMA-1647 Replace or downgrade vcr due to incompatible license of the latest version
+ 
 ## 2.1.10
  - BUGFIX: TMA-1653 fix performance issue in functions project.users and domain.users
  - BUGFIX: TMA-1643 Don't convert null value to empty string
@@ -7,6 +10,7 @@
  - BUGFIX: TMA-1528: remove CollectSegments and CollectDataProduct for add and remove in users brick
  - FEATURE: TMA-1629 Add parameter "set_master_project" to support reset latest master project
  - FEATURE: TMA-1630 Support Snowflake, BigQuery as input source
+ 
 ## 2.1.9
  - FEATURE: TMA-1076 support new version api 2
  - BUGFIX: TMA-1637 handle input_source of dynamic params
