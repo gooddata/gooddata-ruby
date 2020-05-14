@@ -1,0 +1,1425 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view?includeCA=true&includeDeprecated=true&includeGrain=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:fZooGz1n2qbmmXZZ9XPNTw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/6c05e501946cecad31bcc8d2456c3008fc00e01a86eb355a00000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:36:51 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '20'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:fZooGz1n2qbmmXZZ9XPNTw:ydIcebNAaZCWPXpm"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/6c05e501946cecad31bcc8d2456c3008fc00e01a86eb355a00000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:50 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/6c05e501946cecad31bcc8d2456c3008fc00e01a86eb355a00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:cYxnWy_0EVM7yMzHos5ZFQ"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 13:36:52 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '19'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:cYxnWy_0EVM7yMzHos5ZFQ:QUJptV1XrACwSumt"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)"}}],"references":["effective_to_date"],"production":true}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.comp.my_computed_attr","relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"]}},"production":true}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","title":"Effective
+        To Date","production":true,"urn":"urn:gooddata:date","identifier":"effective_to_date.dataset.dt","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:51 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/6c05e501946cecad31bcc8d2456c3008fc00e01a86eb355a00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:OOaJHvn52Ka2EI0GeK-vsg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 13:36:53 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '22'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:OOaJHvn52Ka2EI0GeK-vsg:eKb7ZXmY3UVdqd0D"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)"}}],"references":["effective_to_date"],"production":true}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.comp.my_computed_attr","relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"]}},"production":true}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","title":"Effective
+        To Date","production":true,"urn":"urn:gooddata:date","identifier":"effective_to_date.dataset.dt","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:53 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff?includeCA=true&includeGrain=true
+    body:
+      encoding: UTF-8
+      string: '{"diffRequest":{"targetModel":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}}],"references":["effective_to_date"],"bridges":[]}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"],"defaultLabel":"label.comp.my_computed_attr"}},"attributes":[],"facts":[],"references":[],"bridges":[]}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","urn":"urn:gooddata:date","title":"Effective
+        To Date","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:B2uOfx2I_RXqZqEnyC865g"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '5373'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff/c59960c30dc7c59963bab03c0ddf8aee6ea73de01fe9698f00000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:36:55 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '324'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:B2uOfx2I_RXqZqEnyC865g:CTNMCdWfQ6ZoEFIx"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff/c59960c30dc7c59963bab03c0ddf8aee6ea73de01fe9698f00000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:54 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff/c59960c30dc7c59963bab03c0ddf8aee6ea73de01fe9698f00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:J4RA0KcGMKv3lM-eOHh6oA"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff/c59960c30dc7c59963bab03c0ddf8aee6ea73de01fe9698f00000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:36:56 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '17'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:J4RA0KcGMKv3lM-eOHh6oA:qrk1mrL02kx5Y25b"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff/c59960c30dc7c59963bab03c0ddf8aee6ea73de01fe9698f00000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:55 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff/c59960c30dc7c59963bab03c0ddf8aee6ea73de01fe9698f00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:JcE0JajlCr3DfhlF4g7JCw"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:36:58 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '14'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:JcE0JajlCr3DfhlF4g7JCw:TTG8D8OsndKRwm9S"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[],"updateScripts":[]}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:57 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/avdksllbhnyjvfeuyp2p3kg0xvp2zx64/model/diff/c59960c30dc7c59963bab03c0ddf8aee6ea73de01fe9698f00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:Tsoi4J_PHKe63GtYCJW8rQ"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:36:58 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '17'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:Tsoi4J_PHKe63GtYCJW8rQ:ZUTv3inFaZgcDTOC"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[],"updateScripts":[]}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:58 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view?includeCA=true&includeDeprecated=true&includeGrain=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:UWUJGlcHmESw_NsoIU3z8Q"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/89fdba0cc68c45874be95336572de272e02c20a4be5ca3bc00000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:00 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '15'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:UWUJGlcHmESw_NsoIU3z8Q:glwBwJ7v60mPH4u7"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/89fdba0cc68c45874be95336572de272e02c20a4be5ca3bc00000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:36:59 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/89fdba0cc68c45874be95336572de272e02c20a4be5ca3bc00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:NhTQYsBsSLOSrT3lqwQTVw"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 13:37:01 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '19'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:NhTQYsBsSLOSrT3lqwQTVw:CZLDZRJbncJL5QLI"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)"}}],"references":["effective_to_date"],"production":true}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.comp.my_computed_attr","relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"]}},"production":true}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","title":"Effective
+        To Date","production":true,"urn":"urn:gooddata:date","identifier":"effective_to_date.dataset.dt","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:00 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/89fdba0cc68c45874be95336572de272e02c20a4be5ca3bc00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:iD_2pNbg-TXioRlx1YySow"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 13:37:01 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '15'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:iD_2pNbg-TXioRlx1YySow:zxejbAvs3lPvgca7"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)"}}],"references":["effective_to_date"],"production":true}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.comp.my_computed_attr","relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"]}},"production":true}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","title":"Effective
+        To Date","production":true,"urn":"urn:gooddata:date","identifier":"effective_to_date.dataset.dt","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:01 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff?includeCA=true&includeGrain=true
+    body:
+      encoding: UTF-8
+      string: '{"diffRequest":{"targetModel":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}}],"references":["effective_to_date"],"bridges":[]}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"],"defaultLabel":"label.comp.my_computed_attr"}},"attributes":[],"facts":[],"references":[],"bridges":[]}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","urn":"urn:gooddata:date","title":"Effective
+        To Date","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:XzTJD-poUWK0gqzLwtAIKA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '5373'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff/2bc6e13cbe02e2b0eadbff1642f1091f60ea8ac8ab37bc6700000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:03 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '319'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:XzTJD-poUWK0gqzLwtAIKA:oohfxsSnziKdJiRL"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff/2bc6e13cbe02e2b0eadbff1642f1091f60ea8ac8ab37bc6700000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:02 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff/2bc6e13cbe02e2b0eadbff1642f1091f60ea8ac8ab37bc6700000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:f8N_vshvABefUlJcxzXLkQ"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff/2bc6e13cbe02e2b0eadbff1642f1091f60ea8ac8ab37bc6700000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:03 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '21'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:f8N_vshvABefUlJcxzXLkQ:UiIXNbGA0jyPs1I7"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff/2bc6e13cbe02e2b0eadbff1642f1091f60ea8ac8ab37bc6700000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:03 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff/2bc6e13cbe02e2b0eadbff1642f1091f60ea8ac8ab37bc6700000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:uv6W4D7DeHo2APf_14YySA"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:06 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '19'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:uv6W4D7DeHo2APf_14YySA:Q4p4GMfTZrIydgs2"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[],"updateScripts":[]}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:05 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/ebq21r3kfv796qibuvauin0kx86t4jst/model/diff/2bc6e13cbe02e2b0eadbff1642f1091f60ea8ac8ab37bc6700000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:TmYjeBAWy82VV4yAgaX06g"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:06 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '14'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:TmYjeBAWy82VV4yAgaX06g:ohSAFvCcWC8n8dfJ"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[],"updateScripts":[]}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:06 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view?includeCA=true&includeDeprecated=true&includeGrain=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:7pn-VFRnx7XWPVui78o-Yg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/949986f6a8f733d3e7eba2d622a92a6776194ebd6ca7e48a00000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:08 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '16'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:7pn-VFRnx7XWPVui78o-Yg:Dst4TdEnvAkid451"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/949986f6a8f733d3e7eba2d622a92a6776194ebd6ca7e48a00000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:07 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/949986f6a8f733d3e7eba2d622a92a6776194ebd6ca7e48a00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:pytR7zr6YW9MZxgN9rme1Q"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 13:37:08 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '20'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:pytR7zr6YW9MZxgN9rme1Q:bzLIi7pp7waQ5j1k"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)"}}],"references":["effective_to_date"],"production":true}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.comp.my_computed_attr","relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"]}},"production":true}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","title":"Effective
+        To Date","production":true,"urn":"urn:gooddata:date","identifier":"effective_to_date.dataset.dt","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:08 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/aa9kzlzod3nq7oj9zj6q2ixk021j1v3v/model/view/949986f6a8f733d3e7eba2d622a92a6776194ebd6ca7e48a00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:jpmb4dKYU-BGwC6UoPOJww"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 13:37:10 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '16'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:jpmb4dKYU-BGwC6UoPOJww:cw3TnBNX1CtsYwsR"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelView":{"model":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)"}}],"references":["effective_to_date"],"production":true}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"defaultLabel":"label.comp.my_computed_attr","relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"]}},"production":true}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","title":"Effective
+        To Date","production":true,"urn":"urn:gooddata:date","identifier":"effective_to_date.dataset.dt","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:09 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff?includeCA=true&includeGrain=true
+    body:
+      encoding: UTF-8
+      string: '{"diffRequest":{"targetModel":{"projectModel":{"modelMetadata":{"containCA":true},"datasets":[{"dataset":{"identifier":"dataset.csv_policies","title":"Policies","anchor":{"attribute":{"identifier":"attr.csv_policies.factsof","title":"Records
+        of Policies","folder":"Policies"}},"attributes":[{"attribute":{"identifier":"attr.csv_policies.customer","title":"Customer","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.customer","title":"Customer","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.customer"}},{"attribute":{"identifier":"attr.csv_policies.state","title":"State","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.state","title":"State","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.state"}},{"attribute":{"identifier":"attr.csv_policies.coverage","title":"Coverage","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.coverage","title":"Coverage","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.coverage"}},{"attribute":{"identifier":"attr.csv_policies.education","title":"Education","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.education","title":"Education","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.education"}},{"attribute":{"identifier":"attr.csv_policies.employmentstatus","title":"Employmentstatus","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.employmentstatus","title":"Employmentstatus","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.employmentstatus"}},{"attribute":{"identifier":"attr.csv_policies.gender","title":"Gender","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.gender","title":"Gender","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.gender"}},{"attribute":{"identifier":"attr.csv_policies.marital_status","title":"Marital
+        Status","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.marital_status","title":"Marital
+        Status","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.marital_status"}},{"attribute":{"identifier":"attr.csv_policies.policy_type","title":"Policy
+        Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.policy_type","title":"Policy
+        Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.policy_type"}},{"attribute":{"identifier":"attr.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.renew_offer_type","title":"Renew
+        Offer Type","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.renew_offer_type"}},{"attribute":{"identifier":"attr.csv_policies.sales_channel","title":"Sales
+        Channel","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.sales_channel","title":"Sales
+        Channel","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.sales_channel"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_class","title":"Vehicle
+        Class","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_class","title":"Vehicle
+        Class","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_class"}},{"attribute":{"identifier":"attr.csv_policies.vehicle_size","title":"Vehicle
+        Size","folder":"Policies","labels":[{"label":{"identifier":"label.csv_policies.vehicle_size","title":"Vehicle
+        Size","type":"GDC.text","dataType":"VARCHAR(255)"}}],"defaultLabel":"label.csv_policies.vehicle_size"}}],"facts":[{"fact":{"identifier":"fact.csv_policies.customer_lifetime_value","title":"Customer
+        Lifetime Value","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.income","title":"Income","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.monthly_premium_auto","title":"Monthly
+        Premium Auto","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}},{"fact":{"identifier":"fact.csv_policies.total_claim_amount","title":"Total
+        Claim Amount","folder":"Policies","dataType":"DECIMAL(15,6)","type":"fact"}}],"references":["effective_to_date"],"bridges":[]}},{"dataset":{"identifier":"dataset.comp.my_computed_attr","title":"My
+        computed attribute","anchor":{"attribute":{"identifier":"attr.comp.my_computed_attr","title":"My
+        computed attribute","folder":"My computed attribute","labels":[{"label":{"identifier":"label.comp.my_computed_attr","title":"Label.Comp.My
+        Computed Attr","type":"GDC.text","dataType":"VARCHAR(128)"}}],"relations":["to
+        {attr.csv_policies.state} as case when {metric.customers.count} <= 1000 then
+        {attr.comp.my_computed_attr?\"Small\"}, when {metric.customers.count} <= 2000
+        then {attr.comp.my_computed_attr?\"Medium\"}, when {metric.customers.count}
+        > 2000 then {attr.comp.my_computed_attr?\"Large\"} else {attr.comp.my_computed_attr?\"\"}
+        end"],"defaultLabel":"label.comp.my_computed_attr"}},"attributes":[],"facts":[],"references":[],"bridges":[]}}],"dateDimensions":[{"dateDimension":{"name":"effective_to_date","urn":"urn:gooddata:date","title":"Effective
+        To Date","identifierPrefix":"effective_to_date","bridges":[]}}]}}}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:yJiVDxIRMHofS4Jxe7r_Tw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '5373'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff/daf372d756808e548166d2d93f19ca8e3f9361c480062aca00000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:11 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '239'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:yJiVDxIRMHofS4Jxe7r_Tw:ZicuGSmr4qCqR5mS"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff/daf372d756808e548166d2d93f19ca8e3f9361c480062aca00000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:10 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff/daf372d756808e548166d2d93f19ca8e3f9361c480062aca00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:-bAVda2j4LDUiuj3ai3XCw"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Location:
+      - "/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff/daf372d756808e548166d2d93f19ca8e3f9361c480062aca00000015"
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:11 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '13'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:-bAVda2j4LDUiuj3ai3XCw:IkcUBCyPOzXn0WFQ"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"asyncTask":{"link":{"poll":"/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff/daf372d756808e548166d2d93f19ca8e3f9361c480062aca00000015"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:11 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff/daf372d756808e548166d2d93f19ca8e3f9361c480062aca00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:lxeUEjQzl41dY1ZyOEBBeQ"
+      Process:
+      - 'false'
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:14 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '20'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:lxeUEjQzl41dY1ZyOEBBeQ:p2DPsb28yEUAOPQj"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[],"updateScripts":[]}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:13 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/q3z8wbzkhnppkkj7gk9ovboc7ctjxx8o/model/diff/daf372d756808e548166d2d93f19ca8e3f9361c480062aca00000015
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:bSt0P3dUaLBl1RYxa6NmTA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Thu, 07 May 2020 13:37:15 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '17'
+      X-Gdc-Request:
+      - ":bRskxGTtAwaCcYwF7SRZHA:bSt0P3dUaLBl1RYxa6NmTA:kNNF9QUgBLva8BV2"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"projectModelDiff":{"updateOperations":[],"updateScripts":[]}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 13:37:14 GMT
+recorded_with: VCR 5.1.0

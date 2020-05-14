@@ -1,0 +1,62 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/users?limit=1000&offset=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":QZkBbPddTOwMJONR29UzHw:CbKzh6isWvsmVSQY58ppQg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 May 2020 11:54:21 GMT
+      Server:
+      - GoodData WebApp
+      Keep-Alive:
+      - timeout=5, max=100
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      X-Gdc-Request-Time:
+      - '43'
+      X-Gdc-Request:
+      - ":QZkBbPddTOwMJONR29UzHw:CbKzh6isWvsmVSQY58ppQg:A4BCHEkgPK99jEyI"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"users":[{"user":{"content":{"email":"rubydev+admin@gooddata.com","firstname":"the","userRoles":["/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/roles/2"],"phonenumber":"","status":"ENABLED","lastname":"1","login":"rubydev+admin@gooddata.com"},"links":{"roles":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/users/5ad80b895edcc438e5a4418e222733fa/roles","permissions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/users/5ad80b895edcc438e5a4418e222733fa/permissions","self":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","projects":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa/projects","projectRelUri":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/users/5ad80b895edcc438e5a4418e222733fa"},"meta":{"created":"2017-02-10
+        12:18:01","updated":"2019-03-15 10:00:00","author":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa","title":"the
+        1","contributor":"/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa"}}}]}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 11:54:21 GMT
+recorded_with: VCR 5.1.0

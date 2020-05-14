@@ -274,7 +274,7 @@ shared_context 'lcm bricks' do |opts = {}|
     begin
       GoodData.logger.info("Deleting segments")
       domain = @rest_client.domain(@config[:prod_organization])
-      data_product = domain.data_products(@data_product_id)
+      data_product = domain.data_products(@test_context[:data_product])
       data_product.delete(force: true)
     rescue StandardError => e
       GoodData.logger.warn("Failed to delete segments. #{e}")

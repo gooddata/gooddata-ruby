@@ -1,5 +1,25 @@
 # GoodData Ruby SDK Changelog
+## 2.1.10
+ - BUGFIX: TMA-1653 fix performance issue in functions project.users and domain.users
+ - BUGFIX: TMA-1643 Don't convert null value to empty string
+ - BUGFIX: TMA-1620 Users Brick, sometimes update users are conflicted
+ - BUGFIX: TMA-1642 parse csv from input source with case insensitive
+ - BUGFIX: TMA-1528: remove CollectSegments and CollectDataProduct for add and remove in users brick
+ - FEATURE: TMA-1629 Add parameter "set_master_project" to support reset latest master project
+ - FEATURE: TMA-1630 Support Snowflake, BigQuery as input source
 ## 2.1.9
+ - FEATURE: TMA-1076 support new version api 2
+ - BUGFIX: TMA-1637 handle input_source of dynamic params
+ - BUGFIX: TMA-1636 Build csv file with force_quotes
+ - FEATURE: TMA-1614 Support redshift input source
+ - FEATURE: TMA-1259 Start using dataproduct in NFS release table
+ - FEATURE: MSF-16455 support yellow WARNING status into RubySDK
+ - CONFIG: TMA-1625 update version lock for test docker images
+ - BUGFIX: TMA-1602 User filter brick failed - K8s bricks don't show error properly
+ - BUGFIX: TMA-1593 Increase java heap space during execute bricks
+ - BUGFIX: TMA-1558 K8s bricks don't show error when config invalid
+ - BUGFIX: TMA-1596 The error propagated from a LCM brick is shown multiple times in the log
+ - BUGFIX: TMA-1582 show synchronize ldm mode is running
  - FEATURE: TMA-1588 support schedule param include deprecated
  - FEATURE: TMA-1597 Logging lcm execution result
 

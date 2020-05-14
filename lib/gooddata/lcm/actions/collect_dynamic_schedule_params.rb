@@ -38,11 +38,11 @@ module GoodData
         def call(params)
           return [] unless params.dynamic_params
 
-          schedule_title_column = params.schedule_title_column || 'schedule_title'
-          client_id_column = params.client_id_column || 'client_id'
-          param_name_column = params.param_name_column || 'param_name'
-          param_value_column = params.param_value_column || 'param_value'
-          param_secure_column = params.param_secure_column || 'param_secure'
+          schedule_title_column = params.schedule_title_column&.downcase || 'schedule_title'
+          client_id_column = params.client_id_column&.downcase || 'client_id'
+          param_name_column = params.param_name_column&.downcase || 'param_name'
+          param_value_column = params.param_value_column&.downcase || 'param_value'
+          param_secure_column = params.param_secure_column&.downcase || 'param_secure'
 
           encryption_key = params.dynamic_params_encryption_key || ''
           exist_encryption_key = encryption_key.blank? ? false : true
@@ -59,7 +59,7 @@ module GoodData
           schedule_hidden_params = {}
           exist_param_secure = false
 
-          CSV.foreach(input_data, :headers => true, :return_headers => false, encoding: 'utf-8') do |row|
+          CSV.foreach(input_data, :headers => true, :return_headers => false, :header_converters => :downcase, :encoding => 'utf-8') do |row|
             is_param_secure = row[param_secure_column] == 'true'
             is_decrypt_secure_value = is_param_secure && exist_encryption_key ? true : false
             exist_param_secure = true if is_param_secure

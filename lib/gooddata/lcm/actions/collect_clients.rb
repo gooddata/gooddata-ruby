@@ -67,11 +67,11 @@ module GoodData
         end
 
         def collect_clients(params, segment_names = nil)
-          client_id_column = params.client_id_column || 'client_id'
-          segment_id_column = params.segment_id_column || 'segment_id'
-          project_id_column = params.project_id_column || 'project_id'
-          project_title_column = params.project_title_column || 'project_title'
-          project_token_column = params.project_token_column || 'project_token'
+          client_id_column = params.client_id_column&.downcase || 'client_id'
+          segment_id_column = params.segment_id_column&.downcase || 'segment_id'
+          project_id_column = params.project_id_column&.downcase || 'project_id'
+          project_title_column = params.project_title_column&.downcase || 'project_title'
+          project_token_column = params.project_token_column&.downcase || 'project_token'
           client = params.gdc_gd_client
 
           clients = []
@@ -82,7 +82,7 @@ module GoodData
           end
           GoodData.logger.debug("Input data: #{input_data.read}")
           GoodData.logger.debug("Segment names: #{segment_names}")
-          CSV.foreach(input_data, :headers => true, :return_headers => false, encoding: 'utf-8') do |row|
+          CSV.foreach(input_data, :headers => true, :return_headers => false, :header_converters => :downcase, :encoding => 'utf-8') do |row|
             GoodData.logger.debug("Processing row: #{row}")
             segment_name = row[segment_id_column]
             GoodData.logger.debug("Segment name: #{segment_name}")

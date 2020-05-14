@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":QZkBbPddTOwMJONR29UzHw:G6wM1QOtIIgchN2TwM6XeQ"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 11:56:48 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '7'
+      X-Gdc-Request:
+      - ":QZkBbPddTOwMJONR29UzHw:G6wM1QOtIIgchN2TwM6XeQ:DiwTqxwkVr2a6K89"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"processes":{"items":[{"process":{"type":"RUBY","name":"Simple Ruby
+        Process","path":"${PUBLIC_APPSTORE}:branch/master:/apps/hello_world_brick","graphs":["main.rb"],"executables":["main.rb"],"lastDeployed":"2020-05-07T11:52:04.245Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/1b35db0c-47c6-46bb-9c8d-e193d6d4b371","executions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/1b35db0c-47c6-46bb-9c8d-e193d6d4b371/executions","source":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/1b35db0c-47c6-46bb-9c8d-e193d6d4b371/source"}}},{"process":{"type":"GRAPH","name":"Test
+        process pepa GRAPH","graphs":["graph/graph.grf"],"executables":["graph/graph.grf"],"lastDeployed":"2020-05-07T11:52:02.676Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/a2579396-c1ab-4554-b15e-7f6dae19fac8","executions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/a2579396-c1ab-4554-b15e-7f6dae19fac8/executions","source":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/a2579396-c1ab-4554-b15e-7f6dae19fac8/source"}}},{"process":{"type":"ETL","name":"lcm-end-to-end-add-component","graphs":[],"executables":[],"lastDeployed":"2020-05-07T11:56:09.970Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/3a81859d-2166-4978-ba31-fd9f384b4c3f","executions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/3a81859d-2166-4978-ba31-fd9f384b4c3f/executions","source":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/3a81859d-2166-4978-ba31-fd9f384b4c3f/source"},"component":{"name":"gdc-data-distribution","version":"1","config":{"dataDistribution":{"dataSource":"5eb3f7581be1fc69e67c5eb5"}}}}},{"process":{"type":"ETL","name":"test
+        etl component","graphs":[],"executables":[],"lastDeployed":"2020-05-07T11:56:07.696Z","ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/413171ef-e932-43c2-9320-b6bf7215738e","executions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/413171ef-e932-43c2-9320-b6bf7215738e/executions","source":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes/413171ef-e932-43c2-9320-b6bf7215738e/source"},"component":{"name":"gdc-etl-sql-executor","version":"1"}}}],"links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/dataload/processes"}}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 11:56:49 GMT
+recorded_with: VCR 5.1.0

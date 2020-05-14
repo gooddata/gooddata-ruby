@@ -6,7 +6,7 @@
 
 require 'gooddata'
 
-describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => 'slow' do
+describe "GoodData Model Project", :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @project = ProjectHelper.get_default_project(:client => @client)
@@ -96,6 +96,16 @@ describe GoodData::Project, :vcr, :vcr_all_cassette => 'model', :constraint => '
       projects = GoodData::Project.all({ client: @client }, 100)
       expect(projects).to_not be_nil
       expect(projects).to be_a_kind_of(Array)
+    end
+  end
+
+  describe '#get_all_users' do
+    it 'Returns all user in project' do
+      users = @project.users
+      expect(users).to be_instance_of(Array)
+      users.each do |user|
+        expect(user).to be_an_instance_of(GoodData::Membership)
+      end
     end
   end
 

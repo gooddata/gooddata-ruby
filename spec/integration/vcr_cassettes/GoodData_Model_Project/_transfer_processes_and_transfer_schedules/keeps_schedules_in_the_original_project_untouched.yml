@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":QZkBbPddTOwMJONR29UzHw:sPNXD_bRG02vLYjw1o-NXw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 07 May 2020 11:56:50 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '10'
+      X-Gdc-Request:
+      - ":QZkBbPddTOwMJONR29UzHw:sPNXD_bRG02vLYjw1o-NXw:tYvO03qa43QGtCrC"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"schedules":{"paging":{"offset":0,"count":3},"schedulesLink":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules","items":[{"schedule":{"name":"graph.grf","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"graph/graph.grf","param_2":"b","PROCESS_ID":"a2579396-c1ab-4554-b15e-7f6dae19fac8"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"cron":"0
+        15 10 3 *","timezone":"UTC","nextExecutionTime":"2021-03-10T15:00:00.000Z","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules/5eb3f6661be1fc1de0fd028c","executions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules/5eb3f6661be1fc1de0fd028c/executions"}}},{"schedule":{"name":"main.rb","type":"MSETL","state":"DISABLED","params":{"param_1":"a","EXECUTABLE":"main.rb","param_2":"b","PROCESS_ID":"1b35db0c-47c6-46bb-9c8d-e193d6d4b371"},"hiddenParams":{"secure_param_1":null,"secure_param_2":null},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules/5eb3f6691be1fc1de0fd028d","executions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules/5eb3f6691be1fc1de0fd028d/executions"},"triggerScheduleId":"5eb3f6661be1fc1de0fd028c"}},{"schedule":{"name":"add-component-schedule","type":"MSETL","state":"ENABLED","params":{"EXECUTABLE":"add-component-schedule","PROCESS_ID":"3a81859d-2166-4978-ba31-fd9f384b4c3f"},"timezone":"UTC","consecutiveFailedExecutionCount":0,"ownerLogin":"rubydev+admin@gooddata.com","links":{"self":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules/5eb3f75c701b854f340f7be1","executions":"/gdc/projects/px0sugvog1moq0y2pzps4o0cczy6civf/schedules/5eb3f75c701b854f340f7be1/executions"}}}]}}'
+    http_version: null
+  recorded_at: Thu, 07 May 2020 11:56:50 GMT
+recorded_with: VCR 5.1.0
