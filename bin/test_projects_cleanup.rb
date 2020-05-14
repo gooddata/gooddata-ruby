@@ -90,7 +90,11 @@ def clean_up!(client, force, days)
   delete_project_by_title(/LCM spec Client With Conflicting LDM Changes/, projects, days, force)
   delete_project_by_title(/LCM spec master project/, projects, days, force)
   delete_project_by_title(/users brick load test/, projects, days, force)
-  delete_project_by_title(/#transfer_processes and #transfer_schedules test/, projects, days, force)
+  delete_project_by_title(/transfer_processes and #transfer_schedules test/, projects, days, force)
+  delete_project_by_title(/DailyUse Project for gooddata-ruby integration tests/, projects, days, force)
+  delete_project_by_title(/^New project$/, projects, days, force)
+  delete_project_by_title(/RubyGem Dev Week test/, projects, days, force)
+  delete_project_by_title(/My project from blueprint/, projects, days, force)
   delete_ads_by_title(/Development ADS/, client, days, force)
   delete_ads_by_title(/Production ADS/, client, days, force)
   delete_ads_by_title(/TEST ADS/, client, days, force)
@@ -112,7 +116,7 @@ dev_client = init_client(username, password, "https://#{config[:dev_server]}")
 prod_client = init_client(username, password, "https://#{config[:prod_server]}")
 
 force = options[:force]
-days = options[:days] || 14
+days = options[:days] || 3
 clean_up!(dev_client, force, days)
 clean_up!(prod_client, force, days)
 
