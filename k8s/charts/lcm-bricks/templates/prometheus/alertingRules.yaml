@@ -20,7 +20,7 @@ data:
         expr: container_pod:lcm_pod_container_status_restarts:increase10m >= 1
         labels:
           severity: warning
-          team: lcm # switch to msf in production
+          team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
           description: "There is more than 0 restarts of {{`{{ $labels.pod }}`}} pod in the last 10 minutes"
@@ -28,8 +28,8 @@ data:
       - alert: "[LCM] Pod has too many restarts on cluster={{ .Values.clusterId }}"
         expr: container_pod:lcm_pod_container_status_restarts:increase10m >= 2
         labels:
-          severity: critical
-          team: lcm # switch to msf in production
+          severity: warning
+          team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
           description: "There is more than 1 restart of {{`{{ $labels.pod }}`}} pod in the last 10 minutes"
@@ -40,7 +40,7 @@ data:
         expr: container_pod:lcm_pod_container_status_oomkilled:increase10m >= 1
         labels:
           severity: warning
-          team: lcm # switch to msf in production
+          team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
           description: "{{`{{ $labels.pod }}`}} was OOMKilled in the last 30 minutes. Investigate and/or increase memoryRequest or memoryLimit."
@@ -48,8 +48,8 @@ data:
       - alert: "[LCM] OOMKill occured on cluster={{ .Values.clusterId }}"
         expr: container_pod:lcm_pod_container_status_oomkilled:increase10m >= 2
         labels:
-          severity: critical
-          team: lcm # switch to msf in production
+          severity: warning
+          team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
           description: "{{`{{ $labels.pod }}`}} was OOMKilled in the last 10 minutes. Investigate and/or increase memoryRequest or memoryLimit."
@@ -58,8 +58,8 @@ data:
         expr: rate(container_cpu_cfs_throttled_seconds_total{namespace='{{ .Release.Namespace }}'}[1m]) > 1
         for: 5m
         labels:
-          severity: critical
-          team: lcm # switch to msf in production
+          severity: warning
+          team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
           description: "{{`{{ $labels.pod_name }}`}} container is beeing throttled and probably hit CPU limit. Investigate root cause and increase limit and/or number of replicas if necessary."
@@ -68,8 +68,8 @@ data:
         expr: rate(jvm_gc_pause_seconds_sum{kubernetes_namespace='{{ .Release.Namespace }}'}[1m]) > 1
         for: 5m
         labels:
-          severity: critical
-          team: lcm # switch to msf in production
+          severity: warning
+          team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
           description: "{{`{{ $labels.kubernetes_pod_name }}`}} container is spending too much time in pause garbage collector. Investigate root cause and increase heap size and/or number of replicas if necessary."
@@ -77,9 +77,19 @@ data:
       - alert: "[LCM] there is more than 100 jobs on cluster={{ .Values.clusterId }}"
         expr: count(kube_job_info{namespace="lcm"}) > 100
         labels:
-          severity: critical
-          team: lcm # switch to msf in production
+          severity: warning
+          team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
           description: "There is more than 100 jobs in LCM namespace. They are likely not deleted."
           summary: "There is more than 100 jobs in LCM namespace."
+      - alert: "[LCM] Resource quotas hit CPU limit on cluster={{ .Values.clusterId }}"
+        expr: kube_resourcequota{namespace='{{ .Release.Namespace }}',resource="limits.cpu",type="hard"} - ignoring(type) kube_resourcequota{namespace='{{ .Release.Namespace }}',resource="limits.cpu",type="used"} == 0
+        labels:
+          severity: critical
+          team: lcm
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "We are hitting CPU limit in LCM namespace."
+          summary: "We are hitting CPU limit in LCM namespace."
+
