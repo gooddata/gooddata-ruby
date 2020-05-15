@@ -89,6 +89,13 @@ module GoodData
             maql_diff_params << :excludeFactRule if exclude_fact_rule
             maql_diff_params << :includeDeprecated if include_deprecated
             maql_diff = previous_master.maql_diff(blueprint: blueprint, params: maql_diff_params)
+            chunks = maql_diff['projectModelDiff']['updateScripts']
+            if chunks.empty?
+              GoodData.logger.info "Synchronize LDM to clients will not proceed in mode \
+'#{params[:synchronize_ldm].downcase}' due to no LDM changes in the new master project. \
+If you had changed LDM of clients manually, please use mode 'diff_against_clients' \
+to force synchronize LDM to clients"
+            end
           end
 
           segment_info[:to] = segment_info[:to].pmap do |entry|
