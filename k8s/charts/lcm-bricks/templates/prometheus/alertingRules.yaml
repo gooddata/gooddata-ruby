@@ -83,3 +83,13 @@ data:
         annotations:
           description: "There is more than 100 jobs in LCM namespace. They are likely not deleted."
           summary: "There is more than 100 jobs in LCM namespace."
+      - alert: "[LCM] Resource quotas hit CPU limit on cluster={{ .Values.clusterId }}"
+        expr: kube_resourcequota{namespace='{{ .Release.Namespace }}',resource="limits.cpu",type="hard"} - ignoring(type) kube_resourcequota{namespace='{{ .Release.Namespace }}',resource="limits.cpu",type="used"} == 0
+        labels:
+          severity: critical
+          team: lcm # switch to msf in production
+          cluster_id: {{ .Values.clusterId }}
+        annotations:
+          description: "We are hitting CPU limit in LCM namespace."
+          summary: "We are hitting CPU limit in LCM namespace."
+
