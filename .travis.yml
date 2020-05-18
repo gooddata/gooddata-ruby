@@ -264,14 +264,14 @@ jobs:
     stage: after-merge
     script: bundle exec rake test:unit
     os: osx
-    osx_image: xcode9
+    osx_image: xcode9.4
     rvm: 2.5
 
   - name: unit tests 2.6
     stage: after-merge
     script: bundle exec rake test:unit
     os: osx
-    osx_image: xcode9
+    osx_image: xcode10
     rvm: 2.6
 
   - name: unit tests jruby-9.1.14
