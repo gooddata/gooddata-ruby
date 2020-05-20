@@ -1,4 +1,7 @@
 # GoodData Ruby SDK Changelog
+## 2.1.11
+ - FEATURE: TMA-1647 Set VCR version to 5.0.0 due to incompatible license of the latest version
+
 ## 2.1.10
  - BUGFIX: TMA-1653 fix performance issue in functions project.users and domain.users
  - BUGFIX: TMA-1643 Don't convert null value to empty string
