@@ -1,7 +1,6 @@
 # GoodData Ruby SDK Changelog
 ## 2.1.11
  - FEATURE: TMA-1647 Set VCR version to 5.0.0 due to incompatible license of the latest version
- - Automated base image update (BUILD pipeline from gdc-docker-images, 2fce51b)
 
 ## 2.1.10
  - BUGFIX: TMA-1653 fix performance issue in functions project.users and domain.users
