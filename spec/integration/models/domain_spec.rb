@@ -44,16 +44,6 @@ describe GoodData::Domain, :vcr do
     end
   end
 
-  describe '#find_user_by_login' do
-    it 'Should find user by login' do
-      domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
-      user = domain.find_user_by_login(ConnectionHelper::DEFAULT_USERNAME)
-
-      expect(user).to be_an_instance_of(GoodData::Profile)
-      expect(user.login).to eq ConnectionHelper::DEFAULT_USERNAME
-    end
-  end
-
   describe '#users' do
     it 'Should list users' do
       users = @domain.users
@@ -119,7 +109,7 @@ describe GoodData::Domain, :vcr do
 
     it 'updates properties of a profile' do
       user = @domain.users
-        .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.first
+               .reject { |u| u.login == ConnectionHelper::DEFAULT_USERNAME }.first
 
       old_email = user.email
       old_sso_provider = user.sso_provider || ''
@@ -135,6 +125,40 @@ describe GoodData::Domain, :vcr do
       @domain.update_user(updated_user)
       expect(@domain.find_user_by_login(user.login).email).to eq old_email
       expect(@domain.find_user_by_login(user.login).sso_provider).to eq old_sso_provider
+    end
+  end
+
+  describe '#find_user_by_login' do
+    it 'Should find user by login' do
+      domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+      user = domain.find_user_by_login(ConnectionHelper::DEFAULT_USERNAME)
+
+      expect(user).to be_an_instance_of(GoodData::Profile)
+      expect(user.login).to eq ConnectionHelper::DEFAULT_USERNAME
+    end
+
+    it 'Should find user by users with same  result' do
+      domain = @client.domain(ConnectionHelper::DEFAULT_DOMAIN)
+      login = "gemtest_871382_persistent@gooddata.com"
+      password = 'gemtest871382persistent'
+      user = domain.find_user_by_login(login)
+      user.delete if user
+      user = domain.add_user(:login => login, :password => password, :first_name => 'X', :last_name => 'X')
+      @users_to_delete << user
+      client_normal = GoodData.connect(login, password, :server => GoodData::Environment::ConnectionHelper::DEFAULT_SERVER, :verify_ssl => OpenSSL::SSL::VERIFY_NONE)
+      begin
+        client_normal.domain(ConnectionHelper::DEFAULT_DOMAIN).find_user_by_login(login)
+        raise 'Must be domain admin'
+      rescue RestClient::Forbidden => e
+        expect(e.message).to include('Can be accessed only by domain admin')
+      end
+      user = domain.find_user_by_login(login)
+      expect(user).to be_an_instance_of(GoodData::Profile)
+      expect(user.login).to eq login
+      user = domain.users(login)
+      expect(user).to be_an_instance_of(GoodData::Profile)
+      expect(user.login).to eq login
+      client_normal.disconnect
     end
   end
 
