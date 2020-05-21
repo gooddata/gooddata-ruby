@@ -241,7 +241,7 @@ module GoodData
 
           all_users
         else
-          find_user_by_login(domain, id)
+          find_user_by_login(domain, id, opts)
         end
       end
 
