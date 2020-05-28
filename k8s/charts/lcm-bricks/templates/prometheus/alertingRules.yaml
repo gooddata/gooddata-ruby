@@ -86,7 +86,7 @@ data:
       - alert: "[LCM] Resource quotas hit CPU limit on cluster={{ .Values.clusterId }}"
         expr: kube_resourcequota{namespace='{{ .Release.Namespace }}',resource="limits.cpu",type="hard"} - ignoring(type) kube_resourcequota{namespace='{{ .Release.Namespace }}',resource="limits.cpu",type="used"} == 0
         labels:
-          severity: critical
+          severity: warning
           team: lcm
           cluster_id: {{ .Values.clusterId }}
         annotations:
