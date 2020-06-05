@@ -37,10 +37,10 @@ describe 'UsersBrick' do
         client_id: 'testingclient'
     }
     users_csv = ConfigurationHelper.csv_from_hashes([@user_data])
-    s3_key = 'user_data'
-    s3_info = Support::S3Helper.upload_file(users_csv, s3_key)
+    @s3_key = 'user_data'
+    s3_info = Support::S3Helper.upload_file(users_csv, @s3_key)
     @test_context = {
-      s3_key: s3_key,
+      s3_key: @s3_key,
       project_id: @project.pid,
       config: LcmConnectionHelper.environment
     }.merge(s3_info)
@@ -86,6 +86,62 @@ describe 'UsersBrick' do
       expect(group).not_to be_nil
 
       expect(group.member?(new_user)).to be_truthy
+    end
+
+    it 'adds users to domain' do
+      suffix = ConfigurationHelper.suffix
+      params = JSON.parse(File.read(@config_path))
+      GoodData::Bricks::Pipeline.users_brick_pipeline.call(params)
+      user_name = "#{suffix}@bar.baz"
+      user_data = {
+        login: user_name,
+        first_name: 'first name',
+        last_name: 'last name',
+        company: 'GoodData',
+        position: 'developer',
+        country: 'CZech',
+        phone: '12345678',
+        language: 'fr-FR',
+        user_groups: 'Test_Group',
+        client_id: 'testingclient'
+      }
+      users_csv = ConfigurationHelper.csv_from_hashes([user_data, @user_data])
+      s3_case_sensitivity = Support::S3Helper.upload_file(users_csv, @s3_key)
+      test_context = {
+        s3_key: @s3_key,
+        project_id: @project.pid,
+        config: LcmConnectionHelper.environment
+      }.merge(s3_case_sensitivity)
+      test_context[:data_product] = 'default'
+      test_context[:sync_mode] = 'sync_domain_and_project'
+      config_path = ConfigurationHelper.create_interpolated_tempfile(
+        @template_path,
+        test_context
+      )
+      params = JSON.parse(File.read(config_path))
+      GoodData::Bricks::Pipeline.users_brick_pipeline.call(params)
+      new_user = user_in_domain(@user_name)
+      expect(new_user).to be
+      expect(new_user.first_name).to eq 'first'
+      expect(new_user.last_name).to eq 'last'
+      expect(new_user.language).to eq 'fr-FR'
+      expect(new_user.company).to eq 'GoodData'
+      expect(new_user.position).to eq 'developer'
+      expect(new_user.country).to eq 'CZech'
+      expect(new_user.phone).to eq '123'
+      new_user = user_in_domain(user_name)
+      expect(new_user).to be
+      expect(new_user.first_name).to eq 'first name'
+      expect(new_user.last_name).to eq 'last name'
+      expect(new_user.language).to eq 'fr-FR'
+      expect(new_user.company).to eq 'GoodData'
+      expect(new_user.position).to eq 'developer'
+      expect(new_user.country).to eq 'CZech'
+      expect(new_user.phone).to eq '12345678'
+      group = @project.user_groups('test_group')
+      expect(group).not_to be_nil
+      expect(group.member?(new_user)).to be_truthy
+      expect(group.members.count).to eq(2)
     end
   end
 

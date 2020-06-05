@@ -8,6 +8,9 @@ DEFAULT_BRICK = 'hello_world_brick'
 BRICK_PARAM_PREFIX = 'BRICK_PARAM_'
 HIDDEN_BRICK_PARAMS_PREFIX = 'HIDDEN_BRICK_PARAM_'
 
+# MSF-17345 Set umask so files are group-writable
+File.umask(0002)
+
 brick_type = !ARGV.empty? ? ARGV[0] : DEFAULT_BRICK
 
 def get_brick_params(prefix)
