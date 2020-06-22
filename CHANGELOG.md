@@ -1,4 +1,13 @@
 # GoodData Ruby SDK Changelog
+## 2.1.12
+ - FEATURE: MSF-17621 Apply patched version for activesupport to fix vulnerable issue
+ - CONFIG: SETI-4379 Add gdc-fossa configuration for gooddata-ruby
+ - CONFIG: MSF-17345 Set umask 0002 for lcm brick
+ - BUGFIX: TMA-1015 check case sensitivity for group name
+ - BUGFIX: MSF-17219 Fixed incorrect client used in domain.users
+ - BUGFIX: TMA-1022 Add more logs for case roll out without LDM change in master
+ - FEATURE: TMA-1640 Add alert for CPU limit hit
+
 ## 2.1.11
  - FEATURE: TMA-1647 Set VCR version to 5.0.0 due to incompatible license of the latest version
 
