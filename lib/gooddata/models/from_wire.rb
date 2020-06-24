@@ -105,6 +105,7 @@ module GoodData
           d[:title] = date_dim['dateDimension']['title']
           d[:urn] = date_dim['dateDimension']['urn']
           d[:identifier_prefix] = date_dim['dateDimension']['identifierPrefix']
+          d[:identifier] = date_dim['dateDimension']['identifier'] if date_dim['dateDimension']['identifier']
           d[:columns] = parse_bridges(date_dim)
         end
       end

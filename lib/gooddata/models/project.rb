@@ -625,6 +625,7 @@ module GoodData
     def blueprint(options = {})
       options = { include_ca: true }.merge(options)
       result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true, includeCA: options[:include_ca] })
+
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
       bp = GoodData::Model::FromWire.from_wire(model, options)
@@ -1920,6 +1921,20 @@ module GoodData
         role.uri
       end
       [user, roles]
+    end
+
+    def upgrade_custom_v2(message, options = {})
+      uri = "/gdc/md/#{pid}/datedimension/upgrade"
+      poll_result = client&.post(uri, message)
+
+      return poll_result['wTaskStatus']['status'] if poll_result['wTaskStatus'] && poll_result['wTaskStatus']['status']
+
+      polling_uri = poll_result['asyncTask']['link']['poll']
+      result = client&.poll_on_response(polling_uri, options) do |body|
+        body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+      end
+
+      result['wTaskStatus']['status'] == 'OK' ? 'OK' : 'FAIL'
     end
 
     def add
