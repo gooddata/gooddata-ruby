@@ -49,6 +49,8 @@ module GoodData
         param :include_deprecated, instance_of(Type::BooleanType), required: false, default: false
       end
 
+      RESULT_HEADER = %i[from to status]
+
       class << self
         def call(params)
           results = []
@@ -76,7 +78,6 @@ module GoodData
           include_deprecated = params.include_deprecated.to_b
           from_pid = segment_info[:from]
           from = params.development_client.projects(from_pid) || fail("Invalid 'from' project specified - '#{from_pid}'")
-
           GoodData.logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from_pid}"
           blueprint = from.blueprint(include_ca: params.include_computed_attributes.to_b)
           maql_diff = nil

@@ -78,6 +78,13 @@ jobs:
     - VCR_RECORD_MODE=none
     rvm: 2.3
 
+  - name: lcm integration (vcr) upgrade custom v2
+      stage: before-merge
+      script: bundle exec rspec spec/lcm/integration/lcm_upgrade_custom_v2_spec.rb
+      env:
+        - VCR_RECORD_MODE=none
+      rvm: 2.3
+
   #  AFTER MERGE
   #  staging 1
   - &lcm-integration-tests

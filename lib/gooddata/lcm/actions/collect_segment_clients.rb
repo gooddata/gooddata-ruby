@@ -85,6 +85,7 @@ module GoodData
               segment_id: segment.segment_id,
               from: master_pid,
               previous_master: previous_master,
+              latest_master: latest_master,
               to: segment_clients.map do |segment_client|
                 client_project = segment_client.project
                 to_pid = client_project.pid
