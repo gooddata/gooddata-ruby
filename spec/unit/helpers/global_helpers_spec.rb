@@ -157,6 +157,33 @@ describe GoodData::Helpers do
       expect(result).to eq(expected_result)
     end
 
+    it 'should encode multiple reference parameters in gd_encoded_params' do
+      params = {
+          'x' => 'y',
+          'ads_password' => 'ads_123',
+          'my_password' => 'login_123',
+          'alias.user' => 'qa+test@gooddata.com',
+          'alias.segment' => 'UserTestSegmentK8s',
+          'gd_encoded_params' => '{"login_username": "${alias.user}",
+                  "login_password": "abc_${my_password}_123" ,
+                  "SEGMENTS_FILTER": ["${alias.segment}"],
+                  "technical_user": ["${alias.user}"]}'
+      }
+      expected_result = {
+          'x' => 'y',
+          'ads_password' => 'ads_123',
+          'my_password' => 'login_123',
+          'alias.user' => 'qa+test@gooddata.com',
+          'alias.segment' => 'UserTestSegmentK8s',
+          'login_username' => 'qa+test@gooddata.com',
+          'login_password' => 'abc_login_123_123',
+          'SEGMENTS_FILTER' => ["UserTestSegmentK8s"],
+          'technical_user' => ["qa+test@gooddata.com"]
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
     it 'should encode escape reference parameters in gd_encoded_params' do
       params = {
         'x' => 'y',
