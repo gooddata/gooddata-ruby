@@ -37,7 +37,9 @@ RUN rvm install jruby-${JRUBY_VERSION} && gem update --system \
 WORKDIR /src
 
 RUN groupadd -g 48 apache \
+    && groupadd -g 65065 gdcshare \
     && useradd -u 48 -m --no-log-init -r -g apache -G rvm apache \
+    && usermod -a -G gdcshare apache \
     && chown apache: /src
 
 USER apache
