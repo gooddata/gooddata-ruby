@@ -118,11 +118,13 @@ module GoodData
         GoodData.logger.info("Deploying #{path}") if verbose
 
         deployed_path = Process.upload_package(path, files_to_exclude, client: client, project: project)
+        data_sources = options[:data_sources] || []
         data = {
           :process => {
             :name => deploy_name,
             :path => "/uploads/#{File.basename(deployed_path)}",
-            :type => type
+            :type => type,
+            :dataSources => data_sources
           }
         }
 
@@ -171,10 +173,12 @@ module GoodData
         verbose = options[:verbose] || false
         GoodData.logger.info("Deploying #{path}") if verbose
 
+        data_sources = options[:data_sources] || []
         data = {
           process: {
             name: deploy_name,
             path: path,
+            dataSources: data_sources,
             type: 'RUBY'
           }
         }
@@ -185,7 +189,7 @@ module GoodData
       def deploy_component(data, options = { client: GoodData.client, project: GoodData.project })
         client, project = GoodData.get_client_and_project(options)
         data = { process: data } unless data[:process]
-        data[:process] = GoodData::Helpers.symbolize_keys(data[:process]).select { |k| %i[type name component].include? k }
+        data[:process] = GoodData::Helpers.symbolize_keys(data[:process]).select { |k| %i[type name component dataSources].include? k }
         data[:process][:component] = GoodData::Helpers.symbolize_keys(data[:process][:component]).select { |k| %i[name version configLocation config].include? k }
 
         save(data, options)
@@ -266,7 +270,7 @@ module GoodData
     # @option options [String] :name Readable name of the process
     # @option options [Boolean] :verbose (false) Switch on verbose mode for detailed logging
     def deploy(path, options = {})
-      Process.deploy(path, { client: client, process_id: process_id, :project => project, :name => name, :type => type }.merge(options))
+      Process.deploy(path, { client: client, process_id: process_id, :project => project, :name => name, :type => type, :data_sources => data_sources }.merge(options))
     end
 
     # Downloads the process from S3 in a zipped form.
@@ -324,6 +328,10 @@ module GoodData
 
     def component
       process['component']
+    end
+
+    def data_sources
+      process['dataSources']
     end
 
     # Determines whether the process is an ADDv2 component.

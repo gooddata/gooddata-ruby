@@ -271,11 +271,11 @@ module GoodData
 
           to_process = if process.path
                          to_process.delete if to_process
-                         GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
+                         Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project, data_sources: process.data_sources)
                        elsif process.component
                          to_process.delete if to_process
                          process_hash = GoodData::Helpers::DeepMergeableHash[GoodData::Helpers.symbolize_keys(process.to_hash)].deep_merge(additional_hidden_params)
-                         GoodData::Process.deploy_component(process_hash, project: to_project, client: to_project.client)
+                         Process.deploy_component(process_hash, project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
                            dir = Pathname(dir)
@@ -285,9 +285,9 @@ module GoodData
                            end
 
                            if to_process
-                             to_process.deploy(filename, type: process.type, name: process.name)
+                             to_process.deploy(filename, type: process.type, name: process.name, data_sources: process.data_sources)
                            else
-                             to_project.deploy_process(filename, type: process.type, name: process.name)
+                             to_project.deploy_process(filename, type: process.type, name: process.name, data_sources: process.data_sources)
                            end
                          end
                        end
