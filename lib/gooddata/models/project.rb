@@ -271,11 +271,11 @@ module GoodData
 
           to_process = if process.path
                          to_process.delete if to_process
-                         GoodData::Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project)
+                         Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project, data_sources: process.data_sources)
                        elsif process.component
                          to_process.delete if to_process
                          process_hash = GoodData::Helpers::DeepMergeableHash[GoodData::Helpers.symbolize_keys(process.to_hash)].deep_merge(additional_hidden_params)
-                         GoodData::Process.deploy_component(process_hash, project: to_project, client: to_project.client)
+                         Process.deploy_component(process_hash, project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
                            dir = Pathname(dir)
@@ -285,9 +285,9 @@ module GoodData
                            end
 
                            if to_process
-                             to_process.deploy(filename, type: process.type, name: process.name)
+                             to_process.deploy(filename, type: process.type, name: process.name, data_sources: process.data_sources)
                            else
-                             to_project.deploy_process(filename, type: process.type, name: process.name)
+                             to_project.deploy_process(filename, type: process.type, name: process.name, data_sources: process.data_sources)
                            end
                          end
                        end
@@ -625,6 +625,7 @@ module GoodData
     def blueprint(options = {})
       options = { include_ca: true }.merge(options)
       result = client.get("/gdc/projects/#{pid}/model/view", params: { includeDeprecated: true, includeGrain: true, includeCA: options[:include_ca] })
+
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
       bp = GoodData::Model::FromWire.from_wire(model, options)
@@ -1920,6 +1921,20 @@ module GoodData
         role.uri
       end
       [user, roles]
+    end
+
+    def upgrade_custom_v2(message, options = {})
+      uri = "/gdc/md/#{pid}/datedimension/upgrade"
+      poll_result = client&.post(uri, message)
+
+      return poll_result['wTaskStatus']['status'] if poll_result['wTaskStatus'] && poll_result['wTaskStatus']['status']
+
+      polling_uri = poll_result['asyncTask']['link']['poll']
+      result = client&.poll_on_response(polling_uri, options) do |body|
+        body && body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
+      end
+
+      result['wTaskStatus']['status'] == 'OK' ? 'OK' : 'FAIL'
     end
 
     def add

@@ -242,7 +242,7 @@ module GoodData
 
       def resolve_reference_params(data_params, params)
         reference_values = []
-        regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{(\w+)\}/)
+        regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{([\w\s\.]+)\}/)
         resolve_reference = lambda do |v|
           if v.is_a? Hash
             Hash[
@@ -262,7 +262,7 @@ module GoodData
                 data_params.is_a?(Hash) ? '\\' : '\\\\' # rubocop: disable Metrics/BlockNesting
               elsif match =~ /\\\$/
                 '$'
-              elsif match =~ /\$\{(\w+)\}/
+              elsif match =~ /\$\{([\w\s\.]+)\}/
                 val = params["#{$1}"]
                 if val
                   reference_values << val
