@@ -261,20 +261,25 @@ module GoodData
       # @option ads_output_stage_uri Uri of the source output stage. It must be in the same domain as the target project.
       def transfer_processes(from_project, to_project, options = {})
         options = GoodData::Helpers.symbolize_keys(options)
+        aliases = {}
         to_project_processes = to_project.processes
         additional_hidden_params = options[:additional_hidden_params] || {}
         result = from_project.processes.uniq(&:name).map do |process|
-          fail "The process name #{process.name} must be unique in transfered project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
+          fail "The process name #{process.name} must be unique in transferred project #{to_project}" if to_project_processes.count { |p| p.name == process.name } > 1
           next if process.type == :dataload || process.add_v2_component?
+          collect_process_aliases(process.data, from_project.client, aliases)
 
           to_process = to_project_processes.find { |p| p.name == process.name }
 
+          data_sources = GoodData::Helpers.symbolize_keys_recursively!(process.data_sources)
+          data_sources = replace_data_source_ids(data_sources, to_project.client, aliases)
           to_process = if process.path
                          to_process.delete if to_process
-                         Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project, data_sources: process.data_sources)
+                         Process.deploy_from_appstore(process.path, name: process.name, client: to_project.client, project: to_project, data_sources: data_sources)
                        elsif process.component
                          to_process.delete if to_process
                          process_hash = GoodData::Helpers::DeepMergeableHash[GoodData::Helpers.symbolize_keys(process.to_hash)].deep_merge(additional_hidden_params)
+                         process_hash = replace_process_data_source_ids(process_hash, to_project.client, aliases)
                          Process.deploy_component(process_hash, project: to_project, client: to_project.client)
                        else
                          Dir.mktmpdir('etl_transfer') do |dir|
@@ -283,11 +288,10 @@ module GoodData
                            File.open(filename, 'w') do |f|
                              f << process.download
                            end
-
                            if to_process
-                             to_process.deploy(filename, type: process.type, name: process.name, data_sources: process.data_sources)
+                             to_process.deploy(filename, type: process.type, name: process.name, data_sources: data_sources)
                            else
-                             to_project.deploy_process(filename, type: process.type, name: process.name, data_sources: process.data_sources)
+                             to_project.deploy_process(filename, type: process.type, name: process.name, data_sources: data_sources)
                            end
                          end
                        end
@@ -316,6 +320,56 @@ module GoodData
           .peach(&:delete)
 
         result.compact
+      end
+
+      def collect_process_aliases(process_data, client, aliases)
+        data_sources = process_data.dig('process', 'dataSources')
+        unless data_sources.blank?
+          data_sources.map do |data_source|
+            get_data_source_alias(data_source['id'], client, aliases)
+          end
+        end
+        component = process_data.dig('process', 'component')
+        get_data_source_alias(component['configLocation']['dataSourceConfig']['id'], client, aliases) if component&.dig('configLocation', 'dataSourceConfig')
+        aliases
+      end
+
+      def get_data_source_alias(data_source_id, client, aliases)
+        unless aliases[data_source_id]
+          data_source = GoodData::Helpers.get_data_source_by_id(data_source_id, client)
+          if data_source&.dig('dataSource', 'alias')
+            aliases[data_source_id] = {
+              :type => get_data_source_type(data_source),
+              :alias => data_source['dataSource']['alias']
+            }
+          end
+        end
+        aliases[data_source_id]
+      end
+
+      def get_data_source_type(data_source_data)
+        data_source_data&.dig('dataSource', 'connectionInfo') ? data_source_data['dataSource']['connectionInfo'].first[0].upcase : ""
+      end
+
+      def replace_process_data_source_ids(process_data, client, aliases)
+        component = process_data.dig(:process, :component)
+        if component&.dig(:configLocation, :dataSourceConfig)
+          the_alias = aliases[component[:configLocation][:dataSourceConfig][:id]]
+          process_data[:process][:component][:configLocation][:dataSourceConfig][:id] = GoodData::Helpers.verify_data_source_alias(the_alias, client)
+        end
+        process_data[:process][:dataSources] = replace_data_source_ids(process_data[:process][:dataSources], client, aliases)
+        process_data
+      end
+
+      def replace_data_source_ids(data_sources, client, aliases)
+        array_data_sources = []
+        if data_sources && !data_sources.empty?
+          data_sources.map do |data_source|
+            new_id = GoodData::Helpers.verify_data_source_alias(aliases[data_source[:id]], client)
+            array_data_sources.push(:id => new_id)
+          end
+        end
+        array_data_sources
       end
 
       def transfer_user_groups(from_project, to_project)
