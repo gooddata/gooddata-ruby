@@ -67,6 +67,7 @@ describe GoodData::LCM2::SynchronizeProcesses do
     allow(dest_project).to receive(:client).and_return(dest_client)
     allow(src_project).to receive(:add).and_return(add)
     allow(dest_project).to receive(:add).and_return(add)
+    allow(src_project).to receive(:client).and_return(development_client)
 
     allow(add).to receive(:output_stage).and_return(output_stage)
     allow(output_stage).to receive(:output_stage_prefix).and_return('prefix')
@@ -80,6 +81,8 @@ describe GoodData::LCM2::SynchronizeProcesses do
     allow(process).to receive(:path).and_return(nil)
     allow(process).to receive(:component).and_return(process_component)
     allow(process).to receive(:to_hash).and_return(process_hash)
+    allow(process).to receive(:data).and_return(process_hash)
+    allow(process).to receive(:data_sources).and_return([])
 
     allow(process).to receive(:project).and_return(src_project)
     allow(process).to receive(:add_v2_component?).and_return(false)
@@ -93,7 +96,8 @@ describe GoodData::LCM2::SynchronizeProcesses do
             secretConfig: {
               key: 'val'
             }
-          }
+          },
+          dataSources: []
         }
       },
       client: dest_client,
