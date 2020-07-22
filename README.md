@@ -9,6 +9,8 @@ The best documentation for the GoodData API can be found using these resources:
  * http://developer.gooddata.com/api
  * https://secure.gooddata.com/gdc
  * http://rubydoc.info/gems/gooddata/frames
+ 
+Feel free to check out the [GoodData community website](http://community.gooddata.com/) if you have any questions about the GoodData Analytics platform, our API, or this library.
 
 ## Status
 
