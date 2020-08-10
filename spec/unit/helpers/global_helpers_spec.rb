@@ -184,6 +184,33 @@ describe GoodData::Helpers do
       expect(result).to eq(expected_result)
     end
 
+    it 'should encode special character in gd_encoded_params param' do
+      params = {
+
+          'alias-dash.email' => 'qa+test@gooddata.com',
+          'alias.user-name' => 'UserName',
+          'alias-name.connection|snowflake|secretKey' => 'secret_key_value',
+          'special!@#$%*+- Params' => 'Special_value',
+          'gd_encoded_params' => '{"login_username": "${alias.user-name}", "user_email": "${alias-dash.email}",
+                  "login_password": "abc_${special!@#$%*+- Params}_123" ,
+                  "secret": ["${alias-name.connection|snowflake|secretKey}"],
+                  "technical_user": ["${alias-dash.email}"]}'
+      }
+      expected_result = {
+          'alias-dash.email' => 'qa+test@gooddata.com',
+          'alias.user-name' => 'UserName',
+          'alias-name.connection|snowflake|secretKey' => 'secret_key_value',
+          'special!@#$%*+- Params' => 'Special_value',
+          'login_username' => 'UserName',
+          'login_password' => 'abc_Special_value_123',
+          'user_email' => 'qa+test@gooddata.com',
+          'secret' => ["secret_key_value"],
+          'technical_user' => ["qa+test@gooddata.com"]
+      }
+      result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
+      expect(result).to eq(expected_result)
+    end
+
     it 'should encode escape reference parameters in gd_encoded_params' do
       params = {
         'x' => 'y',
