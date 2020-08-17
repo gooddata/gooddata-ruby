@@ -1,4 +1,11 @@
 # GoodData Ruby SDK Changelog
+## 2.1.13
+ - FEATURE: TMA-1676 Support LCM release across domain
+ - FEATURE: TMA-1672 Support sync process with generic datasource
+ - FEATURE: MSF-17743 upgrade custom v2 for rollout brick
+ - BUGFIX: MSF-17975 Introduce gdcshare to lcm bricks
+ - BUGFIX: TMA-1673 Update params processing to accept dot and space
+
 ## 2.1.12
  - FEATURE: MSF-17621 Apply patched version for activesupport to fix vulnerable issue
  - CONFIG: SETI-4379 Add gdc-fossa configuration for gooddata-ruby
