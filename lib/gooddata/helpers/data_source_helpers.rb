@@ -32,12 +32,12 @@ module GoodData
 
         uri = "/gdc/dataload/dataSources/internal/availableAlias?alias=#{ds_alias[:alias]}"
         res = client.get(uri)
-        fail "Unable to get information about the Data Source '#{ds_alias[:alias]}' in the domain '#{domain}'" unless res
-        fail "Unable to find the #{ds_alias[:type]} Data Source '#{ds_alias[:alias]}' in the domain '#{domain}'" if res['availableAlias']['available']
+        fail "Unable to get information of data source has alias #{ds_alias} in the domain '#{domain}'" unless res
+        fail "Unable to find the #{ds_alias[:type]} data source with the alias: '#{ds_alias[:alias]}' in the domain '#{domain}'" if res['availableAlias']['available']
 
         ds_type = res['availableAlias']['existingDataSource']['type']
         if ds_type && ds_type != ds_alias[:type]
-          fail "Wrong Data Source type - the '#{ds_type}' type is expected but the Data Source '#{ds_alias[:alias]}' in the domain '#{domain}' has the '#{ds_alias[:type]}' type"
+          fail "The data source in the domain '#{domain}' is not type compatible, required '#{ds_alias[:type]}' but got #{ds_type}"
         else
           res['availableAlias']['existingDataSource']['id']
         end
