@@ -61,7 +61,7 @@ describe GoodData::Rest::Connection, :vcr do
       begin
         c.post('/gdc/projects', 'project' => {})
       rescue StandardError => e
-        expect { puts e }.to output(/Key 'meta' is compulsory/).to_stdout
+        expect { puts e }.to output(/400 Bad Request/).to_stdout
       end
     end
   end
