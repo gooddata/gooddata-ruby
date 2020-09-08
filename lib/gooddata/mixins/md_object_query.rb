@@ -52,6 +52,7 @@ module GoodData
             items << (klass ? client.create(klass, item, project: project) : item)
           end
           break if result['objects']['paging']['count'] < page_limit
+
           offset += page_limit
         end
         items
