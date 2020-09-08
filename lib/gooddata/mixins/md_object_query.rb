@@ -45,16 +45,16 @@ module GoodData
 
         offset = 0
         page_limit = 50
-        Enumerator.new do |y|
-          loop do
-            result = client.get(project.md['objects'] + '/query', params: { category: query_obj_type, limit: page_limit, offset: offset })
-            result['objects']['items'].each do |item|
-              y << (klass ? client.create(klass, item, project: project) : item)
-            end
-            break if result['objects']['paging']['count'] < page_limit
-            offset += page_limit
+        items = []
+        loop do
+          result = client.get(project.md['objects'] + '/query', params: { category: query_obj_type, limit: page_limit, offset: offset })
+          result['objects']['items'].each do |item|
+            items << (klass ? client.create(klass, item, project: project) : item)
           end
+          break if result['objects']['paging']['count'] < page_limit
+          offset += page_limit
         end
+        items
       end
 
       def dependency(uri, key = nil, opts = { :client => GoodData.connection })
