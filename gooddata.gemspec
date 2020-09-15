@@ -79,4 +79,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'thread_safe'
   s.add_dependency 'backports'
   s.add_dependency 'tty-spinner'
+  s.add_dependency 'jruby-openssl', '= 0.10.4'
 end
