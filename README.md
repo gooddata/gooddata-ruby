@@ -21,6 +21,21 @@ Feel free to check out the [GoodData community website](http://community.gooddat
 [![Build Status](https://travis-ci.org/gooddata/gooddata-ruby.png)](https://travis-ci.org/gooddata/gooddata-ruby)
 [![Coverage Status](https://coveralls.io/repos/gooddata/gooddata-ruby/badge.png)](https://coveralls.io/r/gooddata/gooddata-ruby)
 
+## Supported versions
+ 
+In order to make the user experience with integrating GoodData Ruby SDK as smooth and secure as possible and to ensure that the SDK is using the latest features of the platform, we only provide support to the two most recent major versions of Ruby SDK. 
+ 
+The most recent majors will be supported in the following modes:
+ 
+- The latest major version will receive all new functionality and all bug fixes. 
+- The previous major version will only receive fixes to critical issues and security fixes. These fixes will be applied on top of last released version of the previous major.
+- GoodData customer support will provide support for the latest major and previous major version only.
+
+- The customers are encouraged to always use the latest version of the Ruby SDK.
+- In case of using older versions, the user might face API incompatibility, performance or security issues.
+ 
+Please follow the installation instructions in the repository to update to the newest version.
+
 ## Install
 
 If you are using bundler, add
