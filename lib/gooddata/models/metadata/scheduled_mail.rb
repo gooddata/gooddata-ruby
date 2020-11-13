@@ -30,7 +30,7 @@ module GoodData
       :deprecated => 0,
 
       # Content When options
-      :recurrency => '0:0:0:12:0:0',
+      :recurrency => '0:0:0:1*12:0:0',
       :startDate => '2012-06-05',
       :timeZone => 'America/Los_Angeles',
 

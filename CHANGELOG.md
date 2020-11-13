@@ -1,4 +1,10 @@
 # GoodData Ruby SDK Changelog
+## 2.1.14
+ - BUGFIX: MSF-18892 Change default option of recurrency field to valid value 
+ - FEATURE:TMA-1687 - Release/Rollout sync theme object 
+ - CONFIG: MSF-18574 Add support notice to the readme
+ - BUGFIX: MSF-18223 - Update param placeholder pattern
+
 ## 2.1.13
  - FEATURE: TMA-1676 Support LCM release across domain
  - FEATURE: TMA-1672 Support sync process with generic datasource

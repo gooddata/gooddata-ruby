@@ -30,8 +30,8 @@ describe GoodData, :vcr, :vcr_all_cassette => 'sso' do
       server: GoodData::Environment::ConnectionHelper::DEFAULT_SERVER,
       verify_ssl: false
     )
-    user = rest_client.domain(GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN).users(login, client: rest_client)
-    expect(user).to be_truthy
+    res = rest_client.get(GoodData::Environment::ConnectionHelper::DEFAULT_USER_URL)
+    expect(res).to be_truthy
   end
 
   after do
