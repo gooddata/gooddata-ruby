@@ -336,7 +336,7 @@ module GoodData
 
       def get_data_source_alias(data_source_id, client, aliases)
         unless aliases[data_source_id]
-          data_source = GoodData::Helpers.get_data_source_by_id(data_source_id, client)
+          data_source = GoodData::DataSource.get_data_source_by_id(data_source_id, client)
           if data_source&.dig('dataSource', 'alias')
             aliases[data_source_id] = {
               :type => get_data_source_type(data_source),
@@ -355,7 +355,7 @@ module GoodData
         component = process_data.dig(:process, :component)
         if component&.dig(:configLocation, :dataSourceConfig)
           the_alias = aliases[component[:configLocation][:dataSourceConfig][:id]]
-          process_data[:process][:component][:configLocation][:dataSourceConfig][:id] = GoodData::Helpers.verify_data_source_alias(the_alias, client)
+          process_data[:process][:component][:configLocation][:dataSourceConfig][:id] = GoodData::DataSource.verify_data_source_alias(the_alias, client)
         end
         process_data[:process][:dataSources] = replace_data_source_ids(process_data[:process][:dataSources], client, aliases)
         process_data
@@ -365,7 +365,7 @@ module GoodData
         array_data_sources = []
         if data_sources && !data_sources.empty?
           data_sources.map do |data_source|
-            new_id = GoodData::Helpers.verify_data_source_alias(aliases[data_source[:id]], client)
+            new_id = GoodData::DataSource.verify_data_source_alias(aliases[data_source[:id]], client)
             array_data_sources.push(:id => new_id)
           end
         end
