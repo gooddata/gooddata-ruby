@@ -92,4 +92,14 @@ data:
         annotations:
           description: "We are hitting CPU limit in LCM namespace."
           summary: "We are hitting CPU limit in LCM namespace."
-
+      - alert: "[LCM] POD is in undesirable state on cluster={{ .Values.clusterId }}"
+        expr: kube_pod_status_phase{namespace='{{ .Release.Namespace }}', phase!~"Running|Succeeded|Failed"} > 0
+        for: 5m
+        labels:
+          cluster_id: {{ .Values.clusterId }}
+          severity: critical
+          team: lcm
+        annotations:
+          description: "POD {{`{{ $labels.pod }}`}} is not in desirable state"
+          summary: "POD is not in desirable state"
+          runbook: "https://confluence.intgdc.com/display/plat/Generic+runbooks#Genericrunbooks-Podisinundesirablestate"
