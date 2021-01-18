@@ -1,0 +1,262 @@
+---
+http_interactions:
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/60049a093578a141e440aac5
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:z7OxAKr_9TKNqeMvvxhuMA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: ''
+    headers:
+      Location:
+      - "/gdc/dataload/dataSources"
+      Date:
+      - Sun, 17 Jan 2021 20:11:55 GMT
+      X-Gdc-Request-Time:
+      - '61'
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:z7OxAKr_9TKNqeMvvxhuMA:5ytpy8hf7jqfLUmv"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Sun, 17 Jan 2021 20:11:55 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/60049a093578a141e440aac5
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:SWEOO_7iHdCCvHf5i8sbNw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 404
+      message: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Sun, 17 Jan 2021 20:11:56 GMT
+      X-Gdc-Request-Time:
+      - '7'
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:SWEOO_7iHdCCvHf5i8sbNw:UlfdqRhI4Zu5vYTC"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"errorClass":"com.gooddata.commons.http.exception.NotFoundException","trace":"","message":"The
+        server has not found anything matching the Request-URI. No indication is given
+        of whether the condition is temporary or permanent.","component":"cloud-resource-restapi","errorId":"417ec90c-f5aa-4a4f-a71c-654c12e5d766","errorCode":"gdc.http.client.status.404","parameters":[]}}'
+    http_version:
+  recorded_at: Sun, 17 Jan 2021 20:11:56 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources
+    body:
+      encoding: UTF-8
+      string: '{"dataSource":{"name":"RedshiftDS_IAM","connectionInfo":{"redshift":{"url":"jdbc:redshift://test","authentication":{"iam":{"dbUser":"user_iam_test","accessKeyId":"OWIUEWQIO723628","secretAccessKey":"abc123"}},"database":"database_test","schema":"schema_test"}},"alias":"5bmbk4P7asUEAh2KMutfDQ","prefix":"prefix_"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:DRItxuZbUHTAd3WZWtiO4g"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '314'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: ''
+    headers:
+      Location:
+      - "/gdc/dataload/dataSources/6004f6f73578a141e440aaea"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 18 Jan 2021 02:48:23 GMT
+      X-Gdc-Request-Time:
+      - '22'
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:DRItxuZbUHTAd3WZWtiO4g:s4GgJIYWX46dQyRo"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"dataSource":{"id":"6004f6f73578a141e440aaea","owner":"5ad80b895edcc438e5a4418e222733fa","name":"RedshiftDS_IAM","prefix":"prefix_","alias":"5bmbk4P7asUEAh2KMutfDQ","lastModified":"2021-01-18T02:48:23.871Z","connectionInfo":{"redshift":{"url":"jdbc:redshift://test","authentication":{"iam":{"dbUser":"user_iam_test","accessKeyId":"OWIUEWQIO723628","secretAccessKey":""}},"database":"database_test","schema":"schema_test"}},"links":{"parent":"/gdc/dataload/dataSources","self":"/gdc/dataload/dataSources/6004f6f73578a141e440aaea","buildModelMapping":"/gdc/dataload/dataSources/6004f6f73578a141e440aaea/buildModelMapping","dataMapping":"/gdc/dataload/dataSources/6004f6f73578a141e440aaea/dataMapping","generateModel":"/gdc/dataload/dataSources/6004f6f73578a141e440aaea/generateModel","generateOutputStage":"/gdc/dataload/dataSources/6004f6f73578a141e440aaea/generateOutputStage","validateConnection":"/gdc/dataload/dataSources/6004f6f73578a141e440aaea/validateConnection"}}}'
+    http_version:
+  recorded_at: Mon, 18 Jan 2021 02:48:24 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/6004f6f73578a141e440aaea
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:awoJu6epFZUQ-raWlhJatw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: ''
+    headers:
+      Location:
+      - "/gdc/dataload/dataSources"
+      Date:
+      - Mon, 18 Jan 2021 02:48:24 GMT
+      X-Gdc-Request-Time:
+      - '25'
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:awoJu6epFZUQ-raWlhJatw:xqCIBhk6ImeRbXnv"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Mon, 18 Jan 2021 02:48:25 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/6004f6f73578a141e440aaea
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:MqJGlBDtxzW51DErtZPGHA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 404
+      message: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 18 Jan 2021 02:48:26 GMT
+      X-Gdc-Request-Time:
+      - '5'
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:MqJGlBDtxzW51DErtZPGHA:1N5GtJpq7lEPPVjr"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"errorClass":"com.gooddata.commons.http.exception.NotFoundException","trace":"","message":"The
+        server has not found anything matching the Request-URI. No indication is given
+        of whether the condition is temporary or permanent.","component":"cloud-resource-restapi","errorId":"00c478d0-e5ee-4c39-b3a9-4052f0f6f99b","errorCode":"gdc.http.client.status.404","parameters":[]}}'
+    http_version:
+  recorded_at: Mon, 18 Jan 2021 02:48:26 GMT
+recorded_with: VCR 5.0.0

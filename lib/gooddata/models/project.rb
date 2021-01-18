@@ -336,7 +336,7 @@ module GoodData
 
       def get_data_source_alias(data_source_id, client, aliases)
         unless aliases[data_source_id]
-          data_source = GoodData::Helpers.get_data_source_by_id(data_source_id, client)
+          data_source = GoodData::DataSource.from_id(data_source_id, client: client)
           if data_source&.dig('dataSource', 'alias')
             aliases[data_source_id] = {
               :type => get_data_source_type(data_source),
@@ -355,7 +355,7 @@ module GoodData
         component = process_data.dig(:process, :component)
         if component&.dig(:configLocation, :dataSourceConfig)
           the_alias = aliases[component[:configLocation][:dataSourceConfig][:id]]
-          process_data[:process][:component][:configLocation][:dataSourceConfig][:id] = GoodData::Helpers.verify_data_source_alias(the_alias, client)
+          process_data[:process][:component][:configLocation][:dataSourceConfig][:id] = verify_data_source_alias(the_alias, client)
         end
         process_data[:process][:dataSources] = replace_data_source_ids(process_data[:process][:dataSources], client, aliases)
         process_data
@@ -365,11 +365,33 @@ module GoodData
         array_data_sources = []
         if data_sources && !data_sources.empty?
           data_sources.map do |data_source|
-            new_id = GoodData::Helpers.verify_data_source_alias(aliases[data_source[:id]], client)
+            new_id = verify_data_source_alias(aliases[data_source[:id]], client)
             array_data_sources.push(:id => new_id)
           end
         end
         array_data_sources
+      end
+
+      # Verify whether the data source exists in the domain using its alias
+      #
+      # @param [String] ds_alias The data source's alias
+      # @param [Object] client The Rest Client object
+      # @return [String] Id of the data source or failed with the reason
+      def verify_data_source_alias(ds_alias, client)
+        domain = client.connection.server.url
+        fail "The data source alias is empty, check your data source configuration." unless ds_alias
+
+        uri = "/gdc/dataload/dataSources/internal/availableAlias?alias=#{ds_alias[:alias]}"
+        res = client.get(uri)
+        fail "Unable to get information about the Data Source '#{ds_alias[:alias]}' in the domain '#{domain}'" unless res
+        fail "Unable to find the #{ds_alias[:type]} Data Source '#{ds_alias[:alias]}' in the domain '#{domain}'" if res['availableAlias']['available']
+
+        ds_type = res['availableAlias']['existingDataSource']['type']
+        if ds_type && ds_type != ds_alias[:type]
+          fail "Wrong Data Source type - the '#{ds_type}' type is expected but the Data Source '#{ds_alias[:alias]}' in the domain '#{domain}' has the '#{ds_alias[:type]}' type"
+        else
+          res['availableAlias']['existingDataSource']['id']
+        end
       end
 
       def transfer_user_groups(from_project, to_project)
