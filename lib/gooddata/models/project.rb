@@ -13,7 +13,6 @@ require 'zip'
 require 'net/smtp'
 
 require 'active_support/core_ext/hash/except'
-require 'active_support/core_ext/hash/compact'
 require 'active_support/core_ext/hash/slice'
 
 require_relative '../exceptions/no_project_error'
