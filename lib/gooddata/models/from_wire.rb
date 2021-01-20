@@ -58,20 +58,20 @@ module GoodData
       end
 
       def self.select_primary_label(attribute)
-
         return nil if attribute.nil?
 
         labels = attribute['labels']
-        return nil if labels.nil? || labels.count == 0
+        return nil if labels.nil? || labels.count.zero?
 
         return labels.first if labels.count == 1
+
         attribute_id = attribute['identifier']
         attribute_id_suffix = attribute_id[ATTRIBUTE_PREFIX.size..-1]
-        p_label = labels.find {  |label|
+        p_label = labels.find do |label|
           label_id = label['label']['identifier']
           label_id_suffix = label_id[LABEL_PREFIX.size..-1]
           label if label_id_suffix == attribute_id_suffix
-        }
+          end
 
         return p_label unless p_label.nil?
 
@@ -94,7 +94,8 @@ module GoodData
         after_default_label = p_label.nil? ? "" : p_label['label']['identifier']
         is_label_identical = before_default_label == after_default_label
         project_id = opt['pid']
-        log.info("action=dataload-remove-default-label projectId=#{project_id} before_label_id=#{before_default_label} after_label_id=#{after_default_label} identical=#{is_label_identical}")
+        log.info("action=dataload-remove-default-label projectId=#{project_id} before_label_id=#{before_default_label}
+            after_label_id=#{after_default_label} identical=#{is_label_identical}")
 
         rl = regular_labels.map do |label|
           parse_label(attribute, label, :label)

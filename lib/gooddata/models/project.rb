@@ -682,7 +682,7 @@ module GoodData
 
       polling_url = result['asyncTask']['link']['poll']
       model = client.poll_on_code(polling_url, options)
-      options['pid'] = pid;
+      options['pid'] = pid
       bp = GoodData::Model::FromWire.from_wire(model, options)
       bp.title = title
       bp
