@@ -17,7 +17,7 @@ describe GoodData::Model::FromWire do
   describe '#parse_label' do
     it "should be able to parse the attribute" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'][3]
-      a = FromWire.parse_attribute(model['dataset']['attributes'].first['attribute'])
+      a = FromWire.parse_attribute(model['dataset']['attributes'].first['attribute'], {})
       expect(a.to_set).to eq Set.new([
         {
           type: :attribute,
@@ -49,7 +49,7 @@ describe GoodData::Model::FromWire do
 
     it "should be able to parse the anchor" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'][3]
-      x = FromWire.parse_attribute(model['dataset']['anchor']['attribute'], :anchor)
+      x = FromWire.parse_attribute(model['dataset']['anchor']['attribute'], {} ,:anchor)
       expect(x.to_set).to eq Set.new([
         {
           type: :anchor,
@@ -74,7 +74,7 @@ describe GoodData::Model::FromWire do
   describe '#parse_attributes' do
     it "should be able to parse the attributes with one label" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'].first
-      x = FromWire.parse_attributes(model)
+      x = FromWire.parse_attributes(model, {})
       expect(x.to_set).to eq Set.new([
         {
           type: :attribute,
@@ -97,7 +97,7 @@ describe GoodData::Model::FromWire do
 
     it "should be able to parse the attributes with several labels" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'][3]
-      x = FromWire.parse_attributes(model)
+      x = FromWire.parse_attributes(model, {})
       expect(x.to_set).to eq Set.new([
         {
           type: :attribute,
@@ -145,7 +145,7 @@ describe GoodData::Model::FromWire do
 
     it "should be able to parse the attributes with no labels" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'][7]
-      x = FromWire.parse_attributes(model)
+      x = FromWire.parse_attributes(model, {})
       expect(x.to_set).to eq Set.new
     end
   end
@@ -153,7 +153,7 @@ describe GoodData::Model::FromWire do
   describe '#parse_anchor' do
     it "should be able to parse the anchor without label" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'].first
-      x = FromWire.parse_anchor(model)
+      x = FromWire.parse_anchor(model, {})
       expect(x.to_set).to eq Set.new([
         {
           type: :anchor,
@@ -167,7 +167,7 @@ describe GoodData::Model::FromWire do
 
     it "should be able to parse the anchor out of dataset when there are multiple labels" do
       model = @model_view['projectModelView']['model']['projectModel']['datasets'][7]
-      x = FromWire.parse_anchor(model)
+      x = FromWire.parse_anchor(model, {})
       expect(x.to_set).to eq Set.new([
         {
           type: :anchor,
@@ -261,7 +261,7 @@ describe GoodData::Model::FromWire do
     end
 
     it 'should be able to parse dataset' do
-      dataset = GoodData::Model::FromWire.dataset_from_wire(model_view['projectModelView']['model']['projectModel']['datasets'].first)
+      dataset = GoodData::Model::FromWire.dataset_from_wire(model_view['projectModelView']['model']['projectModel']['datasets'].first, {})
       expect(dataset).to have_key(:type)
       expect(dataset[:type]).to eq :dataset
       expect(dataset[:id]).to eq 'dataset.bookingsactual'
@@ -273,7 +273,7 @@ describe GoodData::Model::FromWire do
 
     it 'should parse bridges too' do
       dataset = GoodData::Model::FromWire.dataset_from_wire(
-        model_view['projectModelView']['model']['projectModel']['datasets'].detect { |d| d['dataset']['identifier'].eql? "dataset.parentplanbookings" }
+        model_view['projectModelView']['model']['projectModel']['datasets'].detect { |d| d['dataset']['identifier'].eql? "dataset.parentplanbookings" }, {}
       )
       expect(dataset[:columns].select { |c| c[:type] == :bridge }.first[:dataset]).to eq 'dataset.oracleebsreports'
     end

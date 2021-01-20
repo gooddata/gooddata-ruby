@@ -9,13 +9,13 @@ module GoodData
       #
       # @param dataset [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.dataset_from_wire(dataset)
+      def self.dataset_from_wire(dataset, opt)
         {}.tap do |d|
           id = dataset['dataset']['identifier']
           d[:type] = :dataset
           d[:title] = dataset['dataset']['title']
           d[:id] = id
-          d[:columns] = (parse_anchor(dataset) + parse_attributes(dataset) + parse_facts(dataset) + parse_references(dataset) + parse_bridges(dataset))
+          d[:columns] = (parse_anchor(dataset, opt) + parse_attributes(dataset, opt) + parse_facts(dataset) + parse_references(dataset) + parse_bridges(dataset))
         end
       end
 
@@ -28,9 +28,10 @@ module GoodData
         model = wire_model['projectModelView']['model']['projectModel']
         datasets = model['datasets'] || []
         dims = model['dateDimensions'] || []
+        @logger = RemoteSyslogLogger.new(ENV['NODE_NAME'], 514, :program => "lcm-brick", :facility => 'local2')
         ProjectBlueprint.new(
           include_ca: options[:include_ca],
-          datasets: datasets.map { |ds| dataset_from_wire(ds) },
+          datasets: datasets.map { |ds| dataset_from_wire(ds, options) },
           date_dimensions: dims.map { |dd| parse_date_dimensions(dd) }
         )
       end
@@ -39,11 +40,11 @@ module GoodData
       #
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.parse_attributes(stuff)
+      def self.parse_attributes(stuff, opt)
         dataset = stuff['dataset']
         attributes = dataset['attributes'] || []
         attributes.mapcat do |a|
-          parse_attribute(a['attribute'])
+          parse_attribute(a['attribute'], opt)
         end
       end
 
@@ -51,17 +52,50 @@ module GoodData
       #
       # @param stuff [Hash] Whatever comes from wire
       # @return [Hash] Manifest for a particular reference
-      def self.parse_anchor(stuff)
+      def self.parse_anchor(stuff, opt)
         anchor = stuff['dataset']['anchor']['attribute']
-        parse_attribute(anchor, :anchor)
+        parse_attribute(anchor, opt, :anchor)
       end
 
-      def self.parse_attribute(attribute, type = :attribute)
+      def self.select_primary_label(attribute)
+
+        return nil if attribute.nil?
+
+        labels = attribute['labels']
+        return nil if labels.nil? || labels.count == 0
+
+        return labels.first if labels.count == 1
+        attribute_id = attribute['identifier']
+        attribute_id_suffix = attribute_id[ATTRIBUTE_PREFIX.size..-1]
+        p_label = labels.find {  |label|
+          label_id = label['label']['identifier']
+          label_id_suffix = label_id[LABEL_PREFIX.size..-1]
+          label if label_id_suffix == attribute_id_suffix
+        }
+
+        return p_label unless p_label.nil?
+
+        default_label_id = attribute['defaultLabel']
+        default_label = labels.find { |l| l['label']['identifier'] == default_label_id } || labels.last
+        default_label
+      end
+
+      def self.parse_attribute(attribute, opt, type = :attribute)
+        log = @logger
+        p_label = select_primary_label(attribute)
+
         labels = attribute['labels'] || []
         default_label_id = attribute['defaultLabel']
         default_label = labels.find { |l| l['label']['identifier'] == default_label_id } || labels.first
         regular_labels = labels - [default_label]
         pl = default_label.nil? ? [] : [parse_label(attribute, default_label, :default_label)]
+        # Write log to check default label for removing
+        before_default_label = default_label.nil? ? "" : default_label['label']['identifier']
+        after_default_label = p_label.nil? ? "" : p_label['label']['identifier']
+        is_label_identical = before_default_label == after_default_label
+        project_id = opt['pid']
+        log.info("action=dataload-remove-default-label projectId=#{project_id} before_label_id=#{before_default_label} after_label_id=#{after_default_label} identical=#{is_label_identical}")
+
         rl = regular_labels.map do |label|
           parse_label(attribute, label, :label)
         end
