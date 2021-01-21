@@ -71,7 +71,7 @@ module GoodData
           label_id = label['label']['identifier']
           label_id_suffix = label_id[LABEL_PREFIX.size..-1]
           label if label_id_suffix == attribute_id_suffix
-          end
+        end
 
         return p_label unless p_label.nil?
 
