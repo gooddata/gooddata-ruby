@@ -7,7 +7,6 @@
 require_relative '../project_log_formatter'
 
 require 'active_support/core_ext/hash/indifferent_access'
-require 'active_support/core_ext/hash/compact'
 
 require 'gooddata/extensions/true'
 require 'gooddata/extensions/false'
