@@ -18,6 +18,7 @@ module GoodData
     GENERIC = 'generic'
     S3 = 's3'
     ADS = 'ads'
+    ERROR_MESSAGE_NO_SCHEMA = 'Data source schema has to be provided'
 
     class << self
       # Get all data sources or get a specify data source from data source identify
@@ -270,6 +271,7 @@ module GoodData
         @json
       end
 
+      # Abstract function
       def validate
       end
     end
@@ -347,7 +349,7 @@ module GoodData
       def validate
         fail 'Data source url has to be provided' if url.nil? || url.blank?
         fail 'Data source database has to be provided' if database.nil? || database.blank?
-        fail 'Data source schema has to be provided' if schema.nil? || schema.blank?
+        fail ERROR_MESSAGE_NO_SCHEMA if schema.nil? || schema.blank?
         fail 'Data source warehouse has to be provided' if warehouse.nil? || warehouse.blank?
         fail 'Data source username has to be provided' if user_name.nil? || user_name.blank?
       end
@@ -466,7 +468,7 @@ module GoodData
       def validate
         fail 'Data source url has to be provided' if url.nil? || url.blank?
         fail 'Data source database has to be provided' if database.nil? || database.blank?
-        fail 'Data source schema has to be provided' if schema.nil? || schema.blank?
+        fail ERROR_MESSAGE_NO_SCHEMA if schema.nil? || schema.blank?
 
         if basic_authentication
           fail 'Data source username has to be provided' if user_name.nil? || user_name.blank?
@@ -532,7 +534,7 @@ module GoodData
       def validate
         fail 'Data source client email has to be provided' if client_email.nil? || client_email.blank?
         fail 'Data source project has to be provided' if project.nil? || project.blank?
-        fail 'Data source schema has to be provided' if schema.nil? || schema.blank?
+        fail ERROR_MESSAGE_NO_SCHEMA if schema.nil? || schema.blank?
       end
     end
 
