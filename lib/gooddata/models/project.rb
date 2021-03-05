@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2021 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -37,7 +37,8 @@ require_relative 'metadata/scheduled_mail/report_attachment'
 
 module GoodData
   class Project < Rest::Resource
-    USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
+    USER_ACCOUNT_PATH = '/gdc/account/profile/'
+    USERSPROJECTS_PATH = USER_ACCOUNT_PATH + '%s/projects'
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
     SLIS_PATH = '/ldm/singleloadinterface'
@@ -1737,7 +1738,7 @@ module GoodData
         end
       end
       diff_results = diff_results.map do |u|
-        u[:login_uri] = "/gdc/account/profile/" + u[:login]
+        u[:login_uri] = USER_ACCOUNT_PATH + u[:login]
         u
       end
       return diff_results if options[:dry_run]
@@ -1973,17 +1974,17 @@ module GoodData
 
     def resolve_roles(login, desired_roles, options = {})
       user = if login.is_a?(String) && login.include?('@')
-               '/gdc/account/profile/' + login
+               USER_ACCOUNT_PATH + login
              elsif login.is_a?(String)
                login
              elsif login.is_a?(Hash) && login[:login]
-               '/gdc/account/profile/' + login[:login]
+               USER_ACCOUNT_PATH + login[:login]
              elsif login.is_a?(Hash) && login[:uri]
                login[:uri]
              elsif login.respond_to?(:uri) && login.uri
                login.uri
              elsif login.respond_to?(:login) && login.login
-               '/gdc/account/profile/' + login.login
+               USER_ACCOUNT_PATH + login.login
              else
                fail "Unsupported user specification #{login}"
              end

@@ -1,6 +1,6 @@
 require 'optparse'
 
-example = 'Usage example: GD_ENV=testing GD_SPEC_PASSWORD=secret bundle exec ruby bin/test_projects_cleanup.rb'
+example = 'Usage example: GD_ENV=testing GD_SPEC_PASSWORD= bundle exec ruby bin/test_projects_cleanup.rb'
 
 options = {}
 OptionParser.new do |opts|
