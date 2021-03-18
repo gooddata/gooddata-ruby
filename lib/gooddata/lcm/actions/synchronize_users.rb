@@ -182,11 +182,11 @@ module GoodData
           #     value of a project id in the data since he does not know it upfront
           #     and we cannot influence its value.
           common_params = {
-            domain: domain, 
-            whitelists: whitelists,  
-            ignore_failures: ignore_failures,  
-            remove_users_from_project: remove_users_from_project,  
-            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,  
+            domain: domain,
+            whitelists: whitelists,
+            ignore_failures: ignore_failures,
+            remove_users_from_project: remove_users_from_project,
+            do_not_touch_users_that_are_not_mentioned: do_not_touch_users_that_are_not_mentioned,
             create_non_existing_user_groups: create_non_existing_user_groups,
             user_groups_cache: nil
           }
@@ -198,7 +198,7 @@ module GoodData
                       domain.create_users(new_users.uniq { |u| u[:login] || u[:email] })
                     when 'remove_from_organization'
                       user_ids = new_users.uniq { |u| u[:login] || u[:email] }.map { |u| u[:login] || u[:email] }
-                      users = user_ids.map { |u| domain.users(u, client: client) }
+                      users = user_ids.map { |u| domain.users(u, client: client) }.reject(&:nil?)
                       params.gdc_logger.warn "Deleting #{users.count} users from domain #{domain_name}"
 
                       GoodData.gd_logger.info("Synchronizing in mode=#{mode}, domain=#{domain_name}, data_rows=#{users.count}")
