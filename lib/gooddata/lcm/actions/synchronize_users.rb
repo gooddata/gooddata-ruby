@@ -199,6 +199,7 @@ module GoodData
                     when 'remove_from_organization'
                       user_ids = new_users.uniq { |u| u[:login] || u[:email] }.map { |u| u[:login] || u[:email] }
                       users = user_ids.map { |u| domain.users(u, client: client) }.reject(&:nil?)
+                      params.gdc_logger.info "#{user_ids.count - users.count} users were not found (or were deleted) in domain #{domain_name}" if user_ids.count > users.count
                       params.gdc_logger.warn "Deleting #{users.count} users from domain #{domain_name}"
 
                       GoodData.gd_logger.info("Synchronizing in mode=#{mode}, domain=#{domain_name}, data_rows=#{users.count}")
