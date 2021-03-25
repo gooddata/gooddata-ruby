@@ -167,6 +167,10 @@ module GoodData
               fail "Client id cannot be empty" if client_id.blank?
 
               c = all_clients.detect { |specific_client| specific_client.id == client_id }
+              if c.nil?
+                params.gdc_logger.warn "Client #{client_id} is not found"
+                next
+              end
               if params.segments && !segment_uris.include?(c.segment_uri)
                 params.gdc_logger.warn "Client #{client_id} is outside segments_filter #{params.segments}"
                 next
