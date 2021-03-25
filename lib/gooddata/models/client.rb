@@ -40,20 +40,22 @@ module GoodData
         if id == :all
           tenants_uri = base_uri(domain, data_product)
           tenants_uri += "?segment=#{CGI.escape(segment.segment_id)}" if segment
-          Enumerator.new do |y|
-            loop do
-              res = client.get tenants_uri
-              res['clients']['paging']['next']
-              res['clients']['items'].each do |i|
-                p = i['client']['project']
-                tenant = client.create(GoodData::Client, i.merge('domain' => domain))
-                tenant.project = p
-                y << tenant
-              end
-              url = res['clients']['paging']['next']
-              break unless url
+
+          all_clients = []
+          loop do
+            res = client.get tenants_uri
+            res['clients']['paging']['next']
+            res['clients']['items'].each do |i|
+              p = i['client']['project']
+              tenant = client.create(GoodData::Client, i.merge('domain' => domain))
+              tenant.project = p
+              all_clients << tenant
             end
+            url = res['clients']['paging']['next']
+            break unless url
           end
+
+          all_clients
         else
           id = id.respond_to?(:client_id) ? id.client_id : id
           tenant_uri = base_uri(domain, data_product)
