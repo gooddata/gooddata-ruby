@@ -20,8 +20,9 @@ describe GoodData::Segment, :vcr do
   end
 
   after(:each) do
-    @master_project.delete if @master_project
     @segment && @segment.delete(force: true)
+    @master_project.delete if @master_project
+    @different_master.delete if @different_master
   end
 
   after(:all) do
@@ -55,7 +56,6 @@ describe GoodData::Segment, :vcr do
 
   describe '#save' do
     after do
-      @different_master.delete if @different_master
       @different_data_product.delete if @different_data_product
     end
 

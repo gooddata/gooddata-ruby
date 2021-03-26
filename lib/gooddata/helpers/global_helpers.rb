@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2021 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -34,6 +34,7 @@ module GoodData
     end
 
     set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 12
+    AES_256_CBC_CIPHER = 'aes-256-cbc'
 
     class << self
       def error(msg)
@@ -222,7 +223,7 @@ module GoodData
       # encrypts data with the given key. returns a binary data with the
       # unhashed random iv in the first 16 bytes
       def encrypt(data, key)
-        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+        cipher = OpenSSL::Cipher::Cipher.new(AES_256_CBC_CIPHER)
         cipher.encrypt
         cipher.key = key = Digest::SHA256.digest(key)
         random_iv = cipher.random_iv
@@ -236,7 +237,7 @@ module GoodData
 
       # Simple encrypt data with given key
       def simple_encrypt(data, key)
-        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+        cipher = OpenSSL::Cipher::Cipher.new(AES_256_CBC_CIPHER)
         cipher.encrypt
         cipher.key = key
         encrypted = cipher.update(data)
@@ -253,7 +254,7 @@ module GoodData
 
         data = Base64.decode64(database64)
 
-        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+        cipher = OpenSSL::Cipher::Cipher.new(AES_256_CBC_CIPHER)
         cipher.decrypt
         cipher.key = cipher_key = Digest::SHA256.digest(key)
         random_iv = data[0..15] # extract iv from first 16 bytes
@@ -273,7 +274,7 @@ module GoodData
 
         data = Base64.decode64(database64)
 
-        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+        cipher = OpenSSL::Cipher::Cipher.new(AES_256_CBC_CIPHER)
         cipher.decrypt
         cipher.key = key
         decrypted = cipher.update(data)

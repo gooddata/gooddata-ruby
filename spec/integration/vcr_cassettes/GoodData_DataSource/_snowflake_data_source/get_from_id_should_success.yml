@@ -1,0 +1,258 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/600499f0386d7541e4b35fdf
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:UaEOu_vz9azd5PexXFMv1g"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Sun, 17 Jan 2021 20:11:29 GMT
+      X-Gdc-Request-Time:
+      - '14'
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:UaEOu_vz9azd5PexXFMv1g:kvZEVLjTHm7gTExw"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"dataSource":{"id":"600499f0386d7541e4b35fdf","owner":"5ad80b895edcc438e5a4418e222733fa","name":"SnowflakeDS","prefix":"prefix_","alias":"BPMe9EA-TJ9sftXC__xpmA","lastModified":"2021-01-17T20:11:28.501Z","connectionInfo":{"snowflake":{"url":"jdbc:snowflake://test","authentication":{"basic":{"userName":"test","password":""}},"database":"database_test","schema":"schema_test","warehouse":"warehouse_test"}},"links":{"parent":"/gdc/dataload/dataSources","self":"/gdc/dataload/dataSources/600499f0386d7541e4b35fdf","buildModelMapping":"/gdc/dataload/dataSources/600499f0386d7541e4b35fdf/buildModelMapping","dataMapping":"/gdc/dataload/dataSources/600499f0386d7541e4b35fdf/dataMapping","generateModel":"/gdc/dataload/dataSources/600499f0386d7541e4b35fdf/generateModel","generateOutputStage":"/gdc/dataload/dataSources/600499f0386d7541e4b35fdf/generateOutputStage","validateConnection":"/gdc/dataload/dataSources/600499f0386d7541e4b35fdf/validateConnection"}}}'
+    http_version:
+  recorded_at: Sun, 17 Jan 2021 20:11:29 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/600499f0386d7541e4b35fdf
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:iuD74NHW1ef9BJzdbSJKyg"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: ''
+    headers:
+      Location:
+      - "/gdc/dataload/dataSources"
+      Date:
+      - Sun, 17 Jan 2021 20:11:30 GMT
+      X-Gdc-Request-Time:
+      - '33'
+      X-Gdc-Request:
+      - ":x1HzaCNJ7a82132oxc6Yxw:iuD74NHW1ef9BJzdbSJKyg:NVEdfXoi0NTUXPQW"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Sun, 17 Jan 2021 20:11:30 GMT
+- request:
+    method: post
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources
+    body:
+      encoding: UTF-8
+      string: '{"dataSource":{"name":"SnowflakeDS","connectionInfo":{"snowflake":{"url":"jdbc:snowflake://test","authentication":{"basic":{"userName":"test","password":"<PASSWORD>"}},"database":"database_test","schema":"schema_test","warehouse":"warehouse_test"}},"alias":"-57-gqfEED3D-YlraqMeQQ","prefix":"prefix_"}}'
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:JrL-jjeeosO9OjPCPa1Mdw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Content-Length:
+      - '298'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 201
+      message: ''
+    headers:
+      Location:
+      - "/gdc/dataload/dataSources/6004f6e0386d7541e4b36011"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 18 Jan 2021 02:48:00 GMT
+      X-Gdc-Request-Time:
+      - '25'
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:JrL-jjeeosO9OjPCPa1Mdw:T1ZtQDispP7BHbpt"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"dataSource":{"id":"6004f6e0386d7541e4b36011","owner":"5ad80b895edcc438e5a4418e222733fa","name":"SnowflakeDS","prefix":"prefix_","alias":"-57-gqfEED3D-YlraqMeQQ","lastModified":"2021-01-18T02:48:00.460Z","connectionInfo":{"snowflake":{"url":"jdbc:snowflake://test","authentication":{"basic":{"userName":"test","password":""}},"database":"database_test","schema":"schema_test","warehouse":"warehouse_test"}},"links":{"parent":"/gdc/dataload/dataSources","self":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011","buildModelMapping":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/buildModelMapping","dataMapping":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/dataMapping","generateModel":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/generateModel","generateOutputStage":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/generateOutputStage","validateConnection":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/validateConnection"}}}'
+    http_version:
+  recorded_at: Mon, 18 Jan 2021 02:48:00 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/6004f6e0386d7541e4b36011
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:srb7fuaomvugXzI5G022gw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 18 Jan 2021 02:48:01 GMT
+      X-Gdc-Request-Time:
+      - '19'
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:srb7fuaomvugXzI5G022gw:8fRi3CoubUU6zZ43"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"dataSource":{"id":"6004f6e0386d7541e4b36011","owner":"5ad80b895edcc438e5a4418e222733fa","name":"SnowflakeDS","prefix":"prefix_","alias":"-57-gqfEED3D-YlraqMeQQ","lastModified":"2021-01-18T02:48:00.460Z","connectionInfo":{"snowflake":{"url":"jdbc:snowflake://test","authentication":{"basic":{"userName":"test","password":""}},"database":"database_test","schema":"schema_test","warehouse":"warehouse_test"}},"links":{"parent":"/gdc/dataload/dataSources","self":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011","buildModelMapping":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/buildModelMapping","dataMapping":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/dataMapping","generateModel":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/generateModel","generateOutputStage":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/generateOutputStage","validateConnection":"/gdc/dataload/dataSources/6004f6e0386d7541e4b36011/validateConnection"}}}'
+    http_version:
+  recorded_at: Mon, 18 Jan 2021 02:48:01 GMT
+- request:
+    method: delete
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/dataSources/6004f6e0386d7541e4b36011
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.14/java/2.5.7
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:0MfktlZQYJ786kkwxb1Gmw"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 204
+      message: ''
+    headers:
+      Location:
+      - "/gdc/dataload/dataSources"
+      Date:
+      - Mon, 18 Jan 2021 02:48:01 GMT
+      X-Gdc-Request-Time:
+      - '26'
+      X-Gdc-Request:
+      - ":_HekE3-vVakAnA6hjcdBdA:0MfktlZQYJ786kkwxb1Gmw:VcPNuztjHx4cNhpH"
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Vary:
+      - origin,X-GDC-VERSION
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version:
+  recorded_at: Mon, 18 Jan 2021 02:48:02 GMT
+recorded_with: VCR 5.0.0

@@ -8,8 +8,6 @@ require 'gooddata/extensions/integer'
 require 'gooddata/extensions/string'
 require 'gooddata/extensions/nil'
 
-require 'active_support/core_ext/hash/compact'
-
 require_relative '../dsl/dsl'
 require_relative '../helpers/helpers'
 require_relative '../types/types'

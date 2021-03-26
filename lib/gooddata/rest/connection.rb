@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2021 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -26,6 +26,8 @@ module GoodData
     class Connection
       include MonitorMixin
 
+      HTTPS_PROTOCOL = 'https://'
+      HTTP_PROTOCOL = 'http://'
       DEFAULT_URL = 'https://secure.gooddata.com'
       LOGIN_PATH = '/gdc/account/login'
       TOKEN_PATH = '/gdc/account/token'
@@ -712,12 +714,12 @@ ERR
 
       def fix_server_url(server)
         server = server.chomp('/')
-        if server.start_with? 'http://'
-          server = server.sub 'http://', 'https://'
+        if server.start_with? HTTP_PROTOCOL
+          server = server.sub HTTP_PROTOCOL, HTTPS_PROTOCOL
           GoodData.logger.warn 'You specified the HTTP protocol in your server string. It has been autofixed to HTTPS.'
         end
 
-        server = 'https://' + server unless server.start_with? 'https://'
+        server = HTTPS_PROTOCOL + server unless server.start_with? HTTPS_PROTOCOL
         server
       end
     end
