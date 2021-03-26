@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2021 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -13,7 +13,6 @@ require 'zip'
 require 'net/smtp'
 
 require 'active_support/core_ext/hash/except'
-require 'active_support/core_ext/hash/compact'
 require 'active_support/core_ext/hash/slice'
 
 require_relative '../exceptions/no_project_error'
@@ -38,7 +37,8 @@ require_relative 'metadata/scheduled_mail/report_attachment'
 
 module GoodData
   class Project < Rest::Resource
-    USERSPROJECTS_PATH = '/gdc/account/profile/%s/projects'
+    USER_ACCOUNT_PATH = '/gdc/account/profile/'
+    USERSPROJECTS_PATH = USER_ACCOUNT_PATH + '%s/projects'
     PROJECTS_PATH = '/gdc/projects'
     PROJECT_PATH = '/gdc/projects/%s'
     SLIS_PATH = '/ldm/singleloadinterface'
@@ -336,7 +336,7 @@ module GoodData
 
       def get_data_source_alias(data_source_id, client, aliases)
         unless aliases[data_source_id]
-          data_source = GoodData::Helpers.get_data_source_by_id(data_source_id, client)
+          data_source = GoodData::DataSource.from_id(data_source_id, client: client)
           if data_source&.dig('dataSource', 'alias')
             aliases[data_source_id] = {
               :type => get_data_source_type(data_source),
@@ -355,7 +355,7 @@ module GoodData
         component = process_data.dig(:process, :component)
         if component&.dig(:configLocation, :dataSourceConfig)
           the_alias = aliases[component[:configLocation][:dataSourceConfig][:id]]
-          process_data[:process][:component][:configLocation][:dataSourceConfig][:id] = GoodData::Helpers.verify_data_source_alias(the_alias, client)
+          process_data[:process][:component][:configLocation][:dataSourceConfig][:id] = verify_data_source_alias(the_alias, client)
         end
         process_data[:process][:dataSources] = replace_data_source_ids(process_data[:process][:dataSources], client, aliases)
         process_data
@@ -365,11 +365,33 @@ module GoodData
         array_data_sources = []
         if data_sources && !data_sources.empty?
           data_sources.map do |data_source|
-            new_id = GoodData::Helpers.verify_data_source_alias(aliases[data_source[:id]], client)
+            new_id = verify_data_source_alias(aliases[data_source[:id]], client)
             array_data_sources.push(:id => new_id)
           end
         end
         array_data_sources
+      end
+
+      # Verify whether the data source exists in the domain using its alias
+      #
+      # @param [String] ds_alias The data source's alias
+      # @param [Object] client The Rest Client object
+      # @return [String] Id of the data source or failed with the reason
+      def verify_data_source_alias(ds_alias, client)
+        domain = client.connection.server.url
+        fail "The data source alias is empty, check your data source configuration." unless ds_alias
+
+        uri = "/gdc/dataload/dataSources/internal/availableAlias?alias=#{ds_alias[:alias]}"
+        res = client.get(uri)
+        fail "Unable to get information about the Data Source '#{ds_alias[:alias]}' in the domain '#{domain}'" unless res
+        fail "Unable to find the #{ds_alias[:type]} Data Source '#{ds_alias[:alias]}' in the domain '#{domain}'" if res['availableAlias']['available']
+
+        ds_type = res['availableAlias']['existingDataSource']['type']
+        if ds_type && ds_type != ds_alias[:type]
+          fail "Wrong Data Source type - the '#{ds_type}' type is expected but the Data Source '#{ds_alias[:alias]}' in the domain '#{domain}' has the '#{ds_alias[:type]}' type"
+        else
+          res['availableAlias']['existingDataSource']['id']
+        end
       end
 
       def transfer_user_groups(from_project, to_project)
@@ -1716,7 +1738,7 @@ module GoodData
         end
       end
       diff_results = diff_results.map do |u|
-        u[:login_uri] = "/gdc/account/profile/" + u[:login]
+        u[:login_uri] = USER_ACCOUNT_PATH + u[:login]
         u
       end
       return diff_results if options[:dry_run]
@@ -1952,17 +1974,17 @@ module GoodData
 
     def resolve_roles(login, desired_roles, options = {})
       user = if login.is_a?(String) && login.include?('@')
-               '/gdc/account/profile/' + login
+               USER_ACCOUNT_PATH + login
              elsif login.is_a?(String)
                login
              elsif login.is_a?(Hash) && login[:login]
-               '/gdc/account/profile/' + login[:login]
+               USER_ACCOUNT_PATH + login[:login]
              elsif login.is_a?(Hash) && login[:uri]
                login[:uri]
              elsif login.respond_to?(:uri) && login.uri
                login.uri
              elsif login.respond_to?(:login) && login.login
-               '/gdc/account/profile/' + login.login
+               USER_ACCOUNT_PATH + login.login
              else
                fail "Unsupported user specification #{login}"
              end

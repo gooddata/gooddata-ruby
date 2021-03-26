@@ -1,4 +1,8 @@
 # GoodData Ruby SDK Changelog
+## 2.1.15
+ - FEATURE: BCO-1119 Introduce data sources API
+ - Upgrade active_support to be able used with Rails 6.1
+
 ## 2.1.14
  - BUGFIX: MSF-18892 Change default option of recurrency field to valid value 
  - FEATURE:TMA-1687 - Release/Rollout sync theme object 
