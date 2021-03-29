@@ -64,6 +64,10 @@ RUN cp -rf ci/snowflake/target/*.jar ./lib/gooddata/cloud_resources/snowflake/dr
 RUN mvn -f ci/bigquery/pom.xml clean install -P binary-packaging
 RUN cp -rf ci/bigquery/target/*.jar ./lib/gooddata/cloud_resources/bigquery/drivers/
 
+#build postgresql dependencies
+RUN mvn -f ci/postgresql/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/postgresql/target/*.jar ./lib/gooddata/cloud_resources/postgresql/drivers/
+
 RUN bundle install
 
 ARG GIT_COMMIT=unspecified
