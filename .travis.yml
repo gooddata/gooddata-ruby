@@ -233,15 +233,15 @@ jobs:
   - &cleanup
     stage: after-merge
     name: staging1 - test environment clean-up
-    script: bundle exec ruby bin/test_projects_cleanup.rb -f
+    script: travis_wait 30 bundle exec ruby bin/test_projects_cleanup.rb -f
     env: GD_ENV=staging
 
   - <<: *cleanup
-    name: staging2 - test environment clean-up
+    name: travis_wait 30 staging2 - test environment clean-up
     env: GD_ENV=testing
 
   - <<: *cleanup
-    name: staging3 - test environment clean-up
+    name: travis_wait 30 staging3 - test environment clean-up
     env: GD_ENV=development
 
   # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM
@@ -279,6 +279,7 @@ jobs:
     script: bundle exec rake test:unit
     os: osx
     rvm: jruby-9.1.14
+    osx_image: xcode7.3
 
   - stage: gem-release
     name: deploy MRI gem
