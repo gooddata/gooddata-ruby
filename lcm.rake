@@ -101,8 +101,14 @@ namespace :test do
     test_cases.each do |t|
       desc "Run #{t} tests in Docker"
       task t do
-        system("docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake -f lcm.rake test:#{t}") ||
-          fail('Test execution failed!')
+        if t.to_s == 'integration'
+          system("docker-compose -f docker-compose.lcm.yml run --rm appstore /bin/bash -c ./spec/integration_with_postgresql.sh") ||
+            fail('Test execution failed!')
+        else
+          system("docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake -f lcm.rake test:#{t}") ||
+            fail('Test execution failed!')
+        end
+
       end
     end
   end
