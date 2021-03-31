@@ -79,7 +79,7 @@ namespace :test do
   test_cases.each do |test_case|
     desc "Run #{test_case} tests"
     RSpec::Core::RakeTask.new(test_case) do |task|
-      task.pattern = "spec/lcm/#{test_case}/**/*_spec.rb"
+      task.pattern = "spec/lcm/#{test_case}/**/data_helper_spec.rb"
     end
   end
 
@@ -101,7 +101,7 @@ namespace :test do
     test_cases.each do |t|
       desc "Run #{t} tests in Docker"
       task t do
-        system("docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake -f lcm.rake test:#{t}") ||
+        system("docker-compose -f docker-compose.lcm.yml run --rm appstore /bin/bash -c ./postgresql.sh && bundle exec rake -f lcm.rake test:#{t}") ||
           fail('Test execution failed!')
       end
     end

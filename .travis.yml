@@ -78,6 +78,19 @@ jobs:
     - VCR_RECORD_MODE=none
     rvm: 2.3
 
+  - &lcm-postgres-integration-tests
+    name: staging1 - lcm integration tests
+    stage: before-merge
+    script: |
+      bundle exec rake -f lcm.rake docker:build
+      bundle exec rake -f lcm.rake docker:bundle
+      bundle exec rake -f lcm.rake test:docker:integration
+    env:
+      - VCR_ON=false
+      - GD_ENV=staging
+    rvm: jruby-9.1.14
+    jdk: openjdk8
+
   #  AFTER MERGE
   #  staging 1
   - &lcm-integration-tests
