@@ -62,7 +62,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'aws-sdk-s3', '~> 1.16'
   s.add_dependency 'docile', '~> 1.1'
-  s.add_dependency 'erubis', '~> 2.7'
   s.add_dependency 'gli', '~> 2.15'
   s.add_dependency 'gooddata_datawarehouse', '~> 0.0.10' if RUBY_PLATFORM == 'java'
   s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
