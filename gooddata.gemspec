@@ -5,7 +5,7 @@ require 'gooddata/version'
 Gem::Specification.new do |s|
   s.name = 'gooddata'
   s.version = GoodData::VERSION
-  s.licenses = ['BSD']
+  s.licenses = ['BSD-3-Clause']
   s.platform = 'java' if RUBY_PLATFORM =~ /java/
 
   s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
