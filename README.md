@@ -95,4 +95,5 @@ For full contributor info see [contributors page](https://github.com/gooddata/go
 
 ## Copyright
 
-Copyright (c) 2010 - 2021 GoodData Corporation and Thomas Watson Steen. See [LICENSE](/LICENSE) for details.
+c) 2010-2021 GoodData Corporation
+This repository is governed by the terms and conditions in the EULA. This repository contains a number of open source packages detailed in NOTICES, including the GoodData Ruby SDK, which is licensed under the BSD-3-Clause license and contains additional open source components detailed in the file called LICENSE FOR RUBY SDK COMPONENT.
