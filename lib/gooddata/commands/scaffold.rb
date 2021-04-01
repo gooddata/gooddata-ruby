@@ -25,7 +25,7 @@ module GoodData
               input = File.read(TEMPLATES_PATH + 'project/model/model.rb.erb')
               erb = ERB.new(input)
               File.open('model.rb', 'w') do |f|
-                f.write(erb.result_with_hash( :name => name ))
+                f.write(erb.result_with_hash(:name => name))
               end
             end
 
