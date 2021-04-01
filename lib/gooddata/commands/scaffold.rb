@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-require 'erubis'
+require 'erb'
 require 'fileutils'
 require 'pathname'
 
@@ -18,15 +18,14 @@ module GoodData
         # TODO: Add option for custom output dir
         def project(name)
           fail ArgumentError, 'No name specified' if name.nil?
-
           FileUtils.mkdir(name)
           FileUtils.cd(name) do
             FileUtils.mkdir('model')
             FileUtils.cd('model') do
               input = File.read(TEMPLATES_PATH + 'project/model/model.rb.erb')
-              eruby = Erubis::Eruby.new(input)
+              erb = ERB.new(input)
               File.open('model.rb', 'w') do |f|
-                f.write(eruby.result(:name => name))
+                f.write(erb.result_with_hash(:name => name))
               end
             end
 
@@ -36,9 +35,9 @@ module GoodData
             end
 
             input = File.read(TEMPLATES_PATH + 'project/Goodfile.erb')
-            eruby = Erubis::Eruby.new(input)
+            erb = ERB.new(input)
             File.open('Goodfile', 'w') do |f|
-              f.write(eruby.result)
+              f.write(erb.result)
             end
           end
         end
@@ -51,15 +50,15 @@ module GoodData
           FileUtils.mkdir(name)
           FileUtils.cd(name) do
             input = File.read(TEMPLATES_PATH + 'bricks/brick.rb.erb')
-            eruby = Erubis::Eruby.new(input)
+            erb = ERB.new(input)
             File.open('brick.rb', 'w') do |f|
-              f.write(eruby.result)
+              f.write(erb.result)
             end
 
             input = File.read(TEMPLATES_PATH + 'bricks/main.rb.erb')
-            eruby = Erubis::Eruby.new(input)
+            erb = ERB.new(input)
             File.open('main.rb', 'w') do |f|
-              f.write(eruby.result)
+              f.write(erb.result)
             end
           end
         end
