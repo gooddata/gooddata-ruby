@@ -96,4 +96,26 @@ describe GoodData::Segment, :vcr do
       expect(result).to be_an_instance_of(Enumerator)
     end
   end
+
+  describe '#clients' do
+    after do
+      @client_project_01 && @client_project_01.delete
+      @client_project_02 && @client_project_02.delete
+      @client_project_03 && @client_project_03.delete
+      @segment_client_01 && @segment_client_01.delete
+      @segment_client_02 && @segment_client_02.delete
+      @segment_client_03 && @segment_client_03.delete
+    end
+
+    it 'get all clients' do
+      @client_project_01 = @client.create_project(title: 'client_1 project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
+      @client_project_02 = @client.create_project(title: 'client_2 project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
+      @client_project_03 = @client.create_project(title: 'client_3 project', auth_token: ConnectionHelper::SECRETS[:gd_project_token])
+      @segment_client_01 = @segment.create_client(id: 'tenant_1', project: @client_project_01)
+      @segment_client_02 = @segment.create_client(id: 'tenant_2', project: @client_project_02)
+      @segment_client_03 = @segment.create_client(id: 'tenant_3', project: @client_project_03)
+      all_clients = @segment.clients
+      expect(all_clients.count).to eq 3
+    end
+  end
 end
