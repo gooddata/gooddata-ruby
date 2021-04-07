@@ -181,6 +181,7 @@ describe 'UsersBrick' do
       end
 
       after do
+        @segment && @segment.delete(force: true)
         @master_project.delete if @master_project
       end
     end
