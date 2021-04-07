@@ -1,15 +1,11 @@
 # GoodData Ruby SDK Changelog
 ## 2.1.16
- - SETI-5466: Add attribution-file config to fossa-yaml 
  - BUGFIX:TMA-1704 - Enhance error message when not found clientId in source table 
- - LR-358: Update the license file for Gooddata-ruby 
- - BUGFIX: TMA-1694 [UsersBrick] sync_mode remove_from_organization fail when not find user in domain 
  - BUGFIX: TMA-1694 [UsersBrick] Enhance messages add more log for missing users when running remove_from_organization 
  - FEATURE:TMA-1717 - replace Erbis by standard ERB 
- - FEATURE: TMA-1718 - Update license files for gooddata-ruby repo and gooddata gem 
  - BUGFIX: MSF-20222 Fixing issue using find function of Enumerator 
  - LR-428: Update the license file for Gooddata-ruby
- - BUGFIX: TMA-1714 Fixed failed delete master project and timeout 
+ - BUGFIX: TMA-1714 Fixed test failed due to deleting master project and increase timeout 
 
 ## 2.1.15
  - FEATURE: BCO-1119 Introduce data sources API
