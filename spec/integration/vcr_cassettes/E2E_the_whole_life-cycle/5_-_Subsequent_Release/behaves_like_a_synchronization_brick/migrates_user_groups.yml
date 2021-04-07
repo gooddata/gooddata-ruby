@@ -55,7 +55,7 @@ http_interactions:
       string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
         Test Group","id":"bQHcagbYR-7WY8k2FaDLpTQ","description":"My Test Description","domain":null,"project":"/gdc/projects/v8pvoj7ccszm2o1tmsv59xuogm0mbkga"},"meta":{"created":"2020-05-07
         15:46:02","updated":"2020-05-07 15:46:02"},"links":{"self":"/gdc/userGroups/bQHcagbYR-7WY8k2FaDLpTQ","members":"/gdc/userGroups/bQHcagbYR-7WY8k2FaDLpTQ/members","modifyMembers":"/gdc/userGroups/bQHcagbYR-7WY8k2FaDLpTQ/modifyMembers"}}}]}}'
-    http_version: null
+    http_version:
   recorded_at: Thu, 07 May 2020 13:46:40 GMT
 - request:
     method: get
@@ -112,6 +112,120 @@ http_interactions:
       string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
         Test Group","id":"b6XuJC5p-PoeAHtna2u6XJA","description":"My Test Description","domain":null,"project":"/gdc/projects/stp6jv2id7msbitjkk40jfm7720dw1gf"},"meta":{"created":"2020-05-07
         15:46:15","updated":"2020-05-07 15:46:15"},"links":{"self":"/gdc/userGroups/b6XuJC5p-PoeAHtna2u6XJA","members":"/gdc/userGroups/b6XuJC5p-PoeAHtna2u6XJA/members","modifyMembers":"/gdc/userGroups/b6XuJC5p-PoeAHtna2u6XJA/modifyMembers"}}}]}}'
-    http_version: null
+    http_version:
   recorded_at: Thu, 07 May 2020 13:46:41 GMT
-recorded_with: VCR 5.1.0
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/userGroups?project=x6igu80ldbvosmjedfixj9m7sio1q3b3
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.15/x86_64-darwin19/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":evIkI5mR2md6VWHPY_lTYw:m8TjG_O0FT8-kLCvVgDhcA"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Fri, 02 Apr 2021 06:44:08 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '15'
+      X-Gdc-Request:
+      - ":evIkI5mR2md6VWHPY_lTYw:m8TjG_O0FT8-kLCvVgDhcA:DNct8xKoBuvXZxGm"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
+        Test Group","id":"bprI0murxRnRftjwrroMKTg","description":"My Test Description","domain":null,"project":"/gdc/projects/x6igu80ldbvosmjedfixj9m7sio1q3b3"},"meta":{"created":"2021-04-02
+        08:43:21","updated":"2021-04-02 08:43:21"},"links":{"self":"/gdc/userGroups/bprI0murxRnRftjwrroMKTg","members":"/gdc/userGroups/bprI0murxRnRftjwrroMKTg/members","modifyMembers":"/gdc/userGroups/bprI0murxRnRftjwrroMKTg/modifyMembers"}}}]}}'
+    http_version:
+  recorded_at: Fri, 02 Apr 2021 06:44:08 GMT
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/userGroups?project=z4nxso83miqohzqdmasaqvn3rt694apf
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json, application/zip
+      User-Agent:
+      - gooddata-gem/2.1.15/x86_64-darwin19/2.3.8
+      Content-Type:
+      - application/json
+      X-Gdc-Authtt:
+      - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+      - ":evIkI5mR2md6VWHPY_lTYw:AV8RvodzT6Zm1MqlgIBd5Q"
+      Stats-On:
+      - ''
+      X-Gdc-Version:
+      - '2'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+      - ''
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Fri, 02 Apr 2021 06:44:09 GMT
+      Server:
+      - GoodData WebApp
+      X-Gdc-Request-Time:
+      - '14'
+      X-Gdc-Request:
+      - ":evIkI5mR2md6VWHPY_lTYw:AV8RvodzT6Zm1MqlgIBd5Q:7w3tiyOQZkEXn515"
+      Vary:
+      - origin,X-GDC-VERSION
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"userGroups":{"paging":{"offset":null,"limit":1000,"next":null},"items":[{"userGroup":{"content":{"name":"My
+        Test Group","id":"br2_cWUXpvZK1x32mTZt_XA","description":"My Test Description","domain":null,"project":"/gdc/projects/z4nxso83miqohzqdmasaqvn3rt694apf"},"meta":{"created":"2021-04-02
+        08:43:39","updated":"2021-04-02 08:43:39"},"links":{"self":"/gdc/userGroups/br2_cWUXpvZK1x32mTZt_XA","members":"/gdc/userGroups/br2_cWUXpvZK1x32mTZt_XA/members","modifyMembers":"/gdc/userGroups/br2_cWUXpvZK1x32mTZt_XA/modifyMembers"}}}]}}'
+    http_version:
+  recorded_at: Fri, 02 Apr 2021 06:44:10 GMT
+recorded_with: VCR 5.0.0

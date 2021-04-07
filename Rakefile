@@ -33,7 +33,11 @@ namespace :gem do
   desc "Release gem version #{GoodData::VERSION} to rubygems"
   task :release do
     gem = "gooddata-#{GoodData::VERSION}.gem"
-
+    origin_license_file = 'LICENSE'
+    new_license_file = 'LICENSE_FOR_RUBY_SDK_COMPONENT.txt'
+    File.delete(origin_license_file) if File.exist?(origin_license_file)
+    File.cp(new_license_file, origin_license_file) if File.exists?(new_license_file)
+    puts "Copied file #{new_license_file} to #{origin_license_file}"
     puts "Building #{gem} ..."
     res = `gem build ./gooddata.gemspec`
     file = res.match('File: (.*)')[1]
