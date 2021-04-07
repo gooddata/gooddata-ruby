@@ -11,7 +11,15 @@ module GoodData
   module CloudResources
     class CloudResourceFactory
       class << self
+        def load_cloud_resource(type)
+          base = "#{Pathname(__FILE__).dirname.expand_path}#{File::SEPARATOR}#{type}#{File::SEPARATOR}"
+          Dir.glob(base + '**/*.rb').each do |file|
+            require file
+          end
+        end
+
         def create(type, data = {}, opts = {})
+          load_cloud_resource(type)
           clients = CloudResourceClient.descendants.select { |c| c.respond_to?("accept?") && c.send("accept?", type) }
           raise "DataSource does not support type \"#{type}\"" if clients.empty?
 
