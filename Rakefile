@@ -36,7 +36,7 @@ namespace :gem do
     origin_license_file = 'LICENSE'
     new_license_file = 'LICENSE_FOR_RUBY_SDK_COMPONENT.txt'
     File.delete(origin_license_file) if File.exist?(origin_license_file)
-    File.cp(new_license_file, origin_license_file) if File.exists?(new_license_file)
+    FileUtils.cp(new_license_file, origin_license_file) if File.exists?(new_license_file)
     puts "Copied file #{new_license_file} to #{origin_license_file}"
     puts "Building #{gem} ..."
     res = `gem build ./gooddata.gemspec`
