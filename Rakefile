@@ -35,9 +35,12 @@ namespace :gem do
     gem = "gooddata-#{GoodData::VERSION}.gem"
     origin_license_file = 'LICENSE'
     new_license_file = 'LICENSE_FOR_RUBY_SDK_COMPONENT.txt'
+    notices_file = 'NOTICES.txt'
     File.delete(origin_license_file) if File.exist?(origin_license_file)
-    FileUtils.cp(new_license_file, origin_license_file) if File.exists?(new_license_file)
-    puts "Copied file #{new_license_file} to #{origin_license_file}"
+    File.delete(notices_file) if File.exist?(notices_file)
+    puts "Deleted files: #{origin_license_file} and #{notices_file}"
+    File.rename(new_license_file, origin_license_file) if File.exists?(new_license_file)
+    puts "Renamed file #{new_license_file} to #{origin_license_file}"
     puts "Building #{gem} ..."
     res = `gem build ./gooddata.gemspec`
     file = res.match('File: (.*)')[1]
