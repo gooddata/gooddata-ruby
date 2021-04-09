@@ -1,5 +1,5 @@
 # GoodData Ruby SDK Changelog
-## 2.1.16
+## 2.1.17
  - BUGFIX:TMA-1704 - Enhance error message when not found clientId in source table 
  - BUGFIX: TMA-1694 [UsersBrick] Enhance messages add more log for missing users when running remove_from_organization 
  - FEATURE:TMA-1717 - replace Erbis by standard ERB 
