@@ -1,18 +1,18 @@
-require_relative 'support/constants'
-require_relative 'support/configuration_helper'
-require_relative 'support/lcm_helper'
-require_relative 'brick_runner'
-require_relative 'shared_examples_for_synchronization_bricks'
-require_relative 'shared_examples_for_provisioning_and_rollout'
-require_relative 'shared_contexts_for_lcm'
-require_relative 'shared_examples_for_release_brick'
+require_relative '../../support/constants'
+require_relative '../../support/configuration_helper'
+require_relative '../../support/lcm_helper'
+require_relative '../brick_runner'
+require_relative '../shared_examples_for_synchronization_bricks'
+require_relative '../shared_examples_for_provisioning_and_rollout'
+require_relative '../shared_contexts_for_lcm'
+require_relative '../shared_examples_for_release_brick'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []
 $client_projects = []
 $master = false
 
-output_stage_prefix = GoodData::Environment::VCR_ON ? nil : Support::OUTPUT_STAGE_PREFIX
+output_stage_prefix = nil
 
 schedule_additional_hidden_params = {
   hidden_msg_from_release_brick: 'Hi, I was set by a brick but keep it secret',
@@ -34,14 +34,15 @@ process_additional_hidden_params = {
   }
 }
 
-describe 'E2E the whole life-cycle', :vcr, :constraint => 'slow' do
+describe 'the whole life-cycle', :vcr do
   include_context 'lcm bricks',
+                  ads: false,
                   schedule_additional_hidden_params: schedule_additional_hidden_params,
                   process_additional_hidden_params: process_additional_hidden_params
 
   describe '1 - Initial Release' do
     before(:all) do
-      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick.json.erb', client: @prod_rest_client
       $master = $master_projects.first
     end
 
@@ -69,7 +70,7 @@ describe 'E2E the whole life-cycle', :vcr, :constraint => 'slow' do
 
   describe '2 - Initial Provisioning' do
     before(:all) do
-      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../params/provisioning_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../../params/provisioning_brick.json.erb', client: @prod_rest_client
     end
 
     it 'creates client projects only for filtered segments' do
@@ -90,15 +91,11 @@ describe 'E2E the whole life-cycle', :vcr, :constraint => 'slow' do
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
     end
-
-    it_behaves_like 'a provisioning or rollout brick' do
-      let(:projects) { $client_projects }
-    end
   end
 
   describe '3 - Initial Rollout' do
     before(:all) do
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../params/rollout_brick.json.erb', client: @prod_rest_client
     end
 
     it_behaves_like 'a synchronization brick' do
@@ -114,10 +111,6 @@ describe 'E2E the whole life-cycle', :vcr, :constraint => 'slow' do
       let(:fact_id) { Support::FACT_IDENTIFIER }
       let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
       let(:output_stage_prefix) { output_stage_prefix }
-    end
-
-    it_behaves_like 'a provisioning or rollout brick' do
-      let(:projects) { $client_projects }
     end
   end
 
@@ -157,7 +150,7 @@ describe 'E2E the whole life-cycle', :vcr, :constraint => 'slow' do
 
   describe '5 - Subsequent Release' do
     before(:all) do
-      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick.json.erb', client: @prod_rest_client
       $master = $master_projects.first
     end
 
@@ -180,65 +173,6 @@ describe 'E2E the whole life-cycle', :vcr, :constraint => 'slow' do
     it_behaves_like 'a release brick' do
       let(:original_project) { @project }
       let(:projects) { $master_projects }
-    end
-  end
-
-  describe '6 - Subsequent Provisioning' do
-    before(:all) do
-      deleted_workspace = @workspaces.delete(@workspaces.first)
-      @deleted_workspace = @prod_rest_client.projects(:all).find { |p| p.title == deleted_workspace[:title] }
-      @test_context[:input_source_type] = 'ads'
-      LcmHelper.create_workspace_table(
-        @workspace_table_name,
-        @ads_client,
-        Support::CUSTOM_CLIENT_ID_COLUMN
-      )
-      # add another workspace to provision
-      @workspaces << {
-        client_id: "INSURANCE_DEMO_NEW_#{@suffix}",
-        segment_id: @workspaces.first[:segment_id],
-        title: "Insurance Demo Workspace NEW #{@suffix}"
-      }
-      # copy existing workspaces to ADS as we change data source
-      @workspaces.each do |ws|
-        query = "INSERT INTO \"#{@workspace_table_name}\" VALUES('#{ws[:client_id]}', '#{ws[:segment_id]}', NULL, '#{ws[:title]}');"
-        @ads_client.execute(query)
-      end
-
-      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../params/provisioning_brick.json.erb', client: @prod_rest_client
-    end
-
-    it 'deletes extra client projects' do
-      expect($client_projects.map(&:pid)).to_not include @deleted_workspace.pid
-    end
-
-    it_behaves_like 'a provisioning or rollout brick' do
-      let(:projects) { $client_projects }
-    end
-  end
-
-  describe '7 - Subsequent Rollout' do
-    before(:all) do
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
-    end
-
-    it_behaves_like 'a synchronization brick' do
-      let(:original_project) { $master }
-      let(:projects) { $client_projects }
-      let(:schedules_status) { 'ENABLED' }
-      let(:lcm_managed_tag) { true }
-      let(:client_id_schedule_parameter) { true }
-      let(:user_group) { false }
-      let(:schedule_diff) do
-        [['+', 'params.msg_from_rollout_brick', 'Hi, I was set by rollout brick']]
-      end
-      let(:fact_id) { Support::FACT_IDENTIFIER_RENAMED }
-      let(:schedule_additional_hidden_params) { schedule_additional_hidden_params }
-      let(:output_stage_prefix) { output_stage_prefix }
-    end
-
-    it_behaves_like 'a provisioning or rollout brick' do
-      let(:projects) { $client_projects }
     end
   end
 end

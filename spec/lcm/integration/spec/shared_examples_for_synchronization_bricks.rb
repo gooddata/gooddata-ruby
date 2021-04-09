@@ -1,4 +1,4 @@
-require_relative 'support/comparison_helper'
+require_relative '../support/comparison_helper'
 
 shared_examples 'a synchronization brick' do
   it 'transfers projects' do

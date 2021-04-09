@@ -1,11 +1,11 @@
 require 'fileutils'
 
-require_relative 'support/configuration_helper'
-require_relative 'support/project_helper'
-require_relative 'support/connection_helper'
-require_relative 'support/lcm_helper'
-require_relative 'support/s3_helper'
-require_relative 'support/constants'
+require_relative '../support/configuration_helper'
+require_relative '../support/project_helper'
+require_relative '../support/connection_helper'
+require_relative '../support/lcm_helper'
+require_relative '../support/s3_helper'
+require_relative '../support/constants'
 
 def create_suffix
   hostname = Socket.gethostname
@@ -249,6 +249,16 @@ shared_context 'lcm bricks' do |opts = {}|
     projects_to_delete += [@prod_output_stage_project] unless GoodData::Environment::VCR_ON
     projects_to_delete += [@project] unless ENV['REUSE_PROJECT']
 
+    begin
+      GoodData.logger.info("Deleting segments")
+      domain = @rest_client.domain(@config[:prod_organization])
+      data_product = domain.data_products(@test_context[:data_product])
+      data_product.delete(force: true)
+    rescue StandardError => e
+      GoodData.logger.warn("Failed to delete segments. #{e}")
+      GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
+    end
+
     projects_to_delete.reject(&:nil?).each do |project|
       begin
         # We need to delete the output stage explicitly
@@ -270,16 +280,6 @@ shared_context 'lcm bricks' do |opts = {}|
 
     ConfigurationHelper.delete_datawarehouse(@prod_ads) if @prod_ads
     ConfigurationHelper.delete_datawarehouse(@ads) if @ads
-
-    begin
-      GoodData.logger.info("Deleting segments")
-      domain = @rest_client.domain(@config[:prod_organization])
-      data_product = domain.data_products(@test_context[:data_product])
-      data_product.delete(force: true)
-    rescue StandardError => e
-      GoodData.logger.warn("Failed to delete segments. #{e}")
-      GoodData.logger.warn("Backtrace:\n#{e.backtrace.join("\n")}")
-    end
 
     GoodData::Helpers::DataSourceHelper.delete(@rest_client, @data_source_id) if @data_source_id
 

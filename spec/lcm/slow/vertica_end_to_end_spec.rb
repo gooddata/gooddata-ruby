@@ -3,8 +3,8 @@ require_relative '../integration/support/lcm_helper'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/connection_helper'
 require_relative '../integration/support/project_helper'
-require_relative '../integration/brick_runner'
-require_relative '../integration/shared_contexts_for_lcm'
+require_relative '../integration/spec/brick_runner'
+require_relative '../integration/spec/shared_contexts_for_lcm'
 
 shared_examples 'a HLL fact synchronizer' do
   it 'migrates hll fact' do

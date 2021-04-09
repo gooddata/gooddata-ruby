@@ -1,4 +1,4 @@
-require_relative '../../integration/brick_runner'
+require_relative '../../integration/spec/brick_runner'
 
 module Support
   class UserProvisioningHelper
@@ -50,7 +50,7 @@ module Support
         mufs = options[:mufs]
         projects = options[:projects]
 
-        BrickRunner.user_filters_brick context: test_context, template_path: '../../userprov/params/user_filters_brick_e2e.json.erb'
+        BrickRunner.user_filters_brick context: test_context, template_path: '../../../userprov/params/user_filters_brick_e2e.json.erb'
 
         projects.each do |p|
           filters = p.user_filters.to_a
@@ -74,7 +74,7 @@ module Support
         projects = options[:projects]
         user_data = options[:user_data]
 
-        BrickRunner.users_brick context: test_context, template_path: '../../userprov/params/users_brick_e2e.json.erb'
+        BrickRunner.users_brick context: test_context, template_path: '../../../userprov/params/users_brick_e2e.json.erb'
 
         projects.each do |p|
           users = p.users.to_a
