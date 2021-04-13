@@ -456,10 +456,12 @@ Available values for setting language are: #{available_languages}."
     alias_method :add_clients_settings, :update_clients_settings
 
     def update_clients(data, options = {})
+      results = []
       data.group_by(&:data_product_id).each do |data_product_id, client_update_data|
         data_product = data_products(data_product_id)
-        data_product.update_clients(client_update_data, options)
+        results.concat data_product.update_clients(client_update_data, options)
       end
+      results
     end
 
     # Update user in domain
