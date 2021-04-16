@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.email = 'lcm@gooddata.com'
   s.extra_rdoc_files = %w(LICENSE README.md)
 
-  s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
+  s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR).map { |f| f unless %w(NOTICES.txt LICENSE_FOR_RUBY_SDK_COMPONENT.txt).include?(f) }
   s.files.reject! { |fn| fn.start_with? 'spec/' }
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
 
