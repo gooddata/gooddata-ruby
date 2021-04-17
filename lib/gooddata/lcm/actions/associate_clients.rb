@@ -43,7 +43,7 @@ module GoodData
       RESULT_HEADER = [
         :id,
         :status,
-        :originalProject,
+        :project,
         :client,
         :type
       ]
@@ -102,7 +102,13 @@ module GoodData
           options = { delete_projects: delete_projects }
           options.merge!(delete_extra_option(params, delete_extra)) if delete_extra
 
-          domain.update_clients(params.clients, options)
+          results = domain.update_clients(params.clients, options)
+          # Update status to CREATED if the client has no project
+          results&.each do |r|
+            r[:status] = 'CREATED' if r[:originalProject].nil?
+            r[:project] = r[:originalProject]
+          end
+          results
         end
 
         private
