@@ -1,8 +1,8 @@
-require_relative 'support/constants'
-require_relative 'support/configuration_helper'
-require_relative 'support/lcm_helper'
-require_relative 'brick_runner'
-require_relative 'shared_contexts_for_lcm'
+require_relative '../../support/constants'
+require_relative '../../support/configuration_helper'
+require_relative '../../support/lcm_helper'
+require_relative '../brick_runner'
+require_relative '../shared_contexts_for_lcm'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []
@@ -39,11 +39,11 @@ describe 'the whole life-cycle', :vcr do
   describe '1 - Initial Release' do
     before(:all) do
 
-      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick.json.erb', client: @prod_rest_client
 
-      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../params/provisioning_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../../params/provisioning_brick.json.erb', client: @prod_rest_client
 
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../params/rollout_brick.json.erb', client: @prod_rest_client
 
       $master = $master_projects.first
 
@@ -88,9 +88,9 @@ describe 'the whole life-cycle', :vcr do
         end
       end
 
-      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick.json.erb', client: @prod_rest_client
 
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick_include_deprecated.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../params/rollout_brick_include_deprecated.json.erb', client: @prod_rest_client
 
     end
 

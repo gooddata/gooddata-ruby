@@ -73,23 +73,52 @@ jobs:
 
   - name: lcm integration (vcr) tests - e2e
     stage: before-merge
-    script: bundle exec rspec spec/lcm/integration/lcm_end_to_end_spec.rb
+    script: bundle exec rspec spec/lcm/integration/spec/e2e/lcm_end_to_end_spec.rb
     env:
     - VCR_RECORD_MODE=none
     rvm: 2.3
 
   #  AFTER MERGE
   #  staging 1
-  - &lcm-integration-tests
-    name: staging1 - lcm integration tests
+  - &lcm-integration-e2e-tests
+    name: staging1 - lcm integration-e2e tests
     stage: after-merge
     script: |
       bundle exec rake -f lcm.rake docker:build
       bundle exec rake -f lcm.rake docker:bundle
-      bundle exec rake -f lcm.rake test:docker:integration
+      bundle exec rake -f lcm.rake test:docker:integration-e2e
     env:
     - VCR_ON=false
     - GD_ENV=staging
+    - GD_MAX_RETRY=2
+    rvm: jruby-9.1.14
+    jdk: openjdk8
+
+  - &lcm-integration-release-tests
+    name: staging1 - lcm integration-release tests
+    stage: after-merge
+    script: |
+      bundle exec rake -f lcm.rake docker:build
+      bundle exec rake -f lcm.rake docker:bundle
+      bundle exec rake -f lcm.rake test:docker:integration-release
+    env:
+      - VCR_ON=false
+      - GD_ENV=staging
+      - GD_MAX_RETRY=2
+    rvm: jruby-9.1.14
+    jdk: openjdk8
+
+  - &lcm-integration-others-tests
+    name: staging1 - lcm integration-others tests
+    stage: after-merge
+    script: |
+      bundle exec rake -f lcm.rake docker:build
+      bundle exec rake -f lcm.rake docker:bundle
+      bundle exec rake -f lcm.rake test:docker:integration-others
+    env:
+      - VCR_ON=false
+      - GD_ENV=staging
+      - GD_MAX_RETRY=2
     rvm: jruby-9.1.14
     jdk: openjdk8
 
@@ -155,11 +184,26 @@ jobs:
     jdk: openjdk8
 
   # staging 2
-  - <<: *lcm-integration-tests
-    name: staging2 - lcm integration tests
+  - <<: *lcm-integration-e2e-tests
+    name: staging2 - lcm integration-e2e tests
     env:
     - GD_ENV=testing
     - VCR_ON=false
+    - GD_MAX_RETRY=2
+
+  - <<: *lcm-integration-release-tests
+      name: staging2 - lcm integration-release tests
+      env:
+        - GD_ENV=testing
+        - VCR_ON=false
+        - GD_MAX_RETRY=2
+
+  - <<: *lcm-integration-others-tests
+      name: staging2 - lcm integration-others tests
+      env:
+        - GD_ENV=testing
+        - VCR_ON=false
+        - GD_MAX_RETRY=2
 
   - <<: *lcm-slow-tests
     name: staging2 - lcm slow tests
@@ -192,11 +236,26 @@ jobs:
     - VCR_ON=false
 
   # staging 3
-  - <<: *lcm-integration-tests
-    name: staging3 - lcm integration tests
+  - <<: *lcm-integration-e2e-tests
+    name: staging3 - lcm integration-e2e tests
     env:
     - GD_ENV=development
     - VCR_ON=false
+    - GD_MAX_RETRY=2
+
+  - <<: *lcm-integration-release-tests
+    name: staging3 - lcm integration-release tests
+    env:
+      - GD_ENV=development
+      - VCR_ON=false
+      - GD_MAX_RETRY=2
+
+  - <<: *lcm-integration-others-tests
+    name: staging3 - lcm integration-others tests
+    env:
+      - GD_ENV=development
+      - VCR_ON=false
+      - GD_MAX_RETRY=2
 
   - <<: *lcm-slow-tests
     name: staging3 - lcm slow tests
@@ -234,15 +293,21 @@ jobs:
     stage: after-merge
     name: staging1 - test environment clean-up
     script: travis_wait 30 bundle exec ruby bin/test_projects_cleanup.rb -f
-    env: GD_ENV=staging
+    env:
+    - GD_ENV=staging
+    - GD_MAX_RETRY=2
 
   - <<: *cleanup
-    name: travis_wait 30 staging2 - test environment clean-up
-    env: GD_ENV=testing
+    name: staging2 - test environment clean-up
+    env:
+    - GD_ENV=testing
+    - GD_MAX_RETRY=2
 
   - <<: *cleanup
-    name: travis_wait 30 staging3 - test environment clean-up
-    env: GD_ENV=development
+    name: staging3 - test environment clean-up
+    env:
+    - GD_ENV=development
+    - GD_MAX_RETRY=2
 
   # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM
 
@@ -279,7 +344,7 @@ jobs:
     script: bundle exec rake test:unit
     os: osx
     rvm: jruby-9.1.14
-    osx_image: xcode7.3
+    osx_image: xcode9
 
   - stage: gem-release
     name: deploy MRI gem

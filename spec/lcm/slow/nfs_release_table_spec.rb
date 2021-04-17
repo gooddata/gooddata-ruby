@@ -1,9 +1,9 @@
 require_relative '../integration/support/constants'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/lcm_helper'
-require_relative '../integration/brick_runner'
-require_relative '../integration/shared_examples_for_synchronization_bricks'
-require_relative '../integration/shared_contexts_for_lcm'
+require_relative '../integration/spec/brick_runner'
+require_relative '../integration/spec/shared_examples_for_synchronization_bricks'
+require_relative '../integration/spec/shared_contexts_for_lcm'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []

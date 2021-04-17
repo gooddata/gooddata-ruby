@@ -29,7 +29,7 @@ class BrickRunner
     end
 
     def schedule_brick(brick_name, service_project, opts)
-      opts[:template_path] = "../../integration/params/#{brick_name}.json.erb" unless opts[:template_path]
+      opts[:template_path] = "../../../integration/params/#{brick_name}.json.erb" unless opts[:template_path]
       decoded_params = GoodData::Helpers.decode_params(script_params(opts))
       params, hidden_params = extract_hidden_params(decoded_params)
       params.delete('gd_encoded_hidden_params')
