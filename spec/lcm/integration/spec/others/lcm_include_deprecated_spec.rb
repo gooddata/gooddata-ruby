@@ -1,6 +1,7 @@
 require_relative '../../support/constants'
 require_relative '../../support/configuration_helper'
 require_relative '../../support/lcm_helper'
+require_relative '../../support/comparison_helper'
 require_relative '../brick_runner'
 require_relative '../shared_contexts_for_lcm'
 

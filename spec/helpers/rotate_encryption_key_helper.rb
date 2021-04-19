@@ -19,6 +19,9 @@ module GoodData
             end
           end
           File.write(yaml_file, secrets.to_yaml)
+          # Update BigQuery encryption key in bigquery_encrypted file
+          bigquery_encrypted_file = 'spec/environment/bigquery_encrypted'
+          File.write(bigquery_encrypted_file, GoodData::Helpers.encrypt(GoodData::Helpers.decrypt(File.read(bigquery_encrypted_file), current_key), new_key))
           # Update PGP encryption key in rubydev_secret_keys.gpg.encrypted file
           secret_keys_file = 'rubydev_secret_keys.gpg.encrypted'
           File.write(secret_keys_file, GoodData::Helpers.encrypt(GoodData::Helpers.decrypt(File.read(secret_keys_file), current_key), new_key))

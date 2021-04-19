@@ -53,7 +53,7 @@ describe 'the whole life-cycle upgrade custom v2', :vcr do
 
       $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick.json.erb', client: @prod_rest_client
       $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../../params/provisioning_brick.json.erb', client: @prod_rest_client
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../params/rollout_brick.json.erb', client: @prod_rest_client
 
       $master_before = $master_projects.first
 
