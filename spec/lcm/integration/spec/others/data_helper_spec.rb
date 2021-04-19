@@ -115,8 +115,8 @@ snowflake_basic_params = {
       "url"=> "jdbc:snowflake://gooddata.snowflakecomputing.com",
       "authentication"=> {
         "basic"=> {
-          "userName"=> "cornflake",
-          "password"=> ConnectionHelper::SECRETS[:redshift_password]
+          "userName"=> "mekong-qa",
+          "password"=> ConnectionHelper::SECRETS[:snowflake_password]
         }
       },
       "database"=> "PHONG_DEV",

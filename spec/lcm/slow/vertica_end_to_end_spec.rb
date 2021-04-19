@@ -93,7 +93,7 @@ describe 'the whole life-cycle with vertica dwh' do
 
   describe '1 - Initial Release' do
     before(:all) do
-      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../slow/params/release_brick.json.erb', client: @prod_rest_client
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../../slow/params/release_brick.json.erb', client: @prod_rest_client
     end
 
     it_behaves_like 'a HLL fact synchronizer' do
@@ -103,7 +103,7 @@ describe 'the whole life-cycle with vertica dwh' do
 
   describe '2 - Initial Provisioning' do
     before(:all) do
-      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../../slow/params/provisioning_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../../../slow/params/provisioning_brick.json.erb', client: @prod_rest_client
     end
 
     it_behaves_like 'a HLL fact synchronizer' do
@@ -113,7 +113,7 @@ describe 'the whole life-cycle with vertica dwh' do
 
   describe '3 - Initial Rollout' do
     before(:all) do
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../slow/params/rollout_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../../slow/params/rollout_brick.json.erb', client: @prod_rest_client
     end
 
     it_behaves_like 'a HLL fact synchronizer' do
