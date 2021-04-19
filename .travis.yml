@@ -102,9 +102,9 @@ jobs:
       bundle exec rake -f lcm.rake docker:bundle
       bundle exec rake -f lcm.rake test:docker:integration-release
     env:
-      - VCR_ON=false
-      - GD_ENV=staging
-      - GD_MAX_RETRY=2
+    - VCR_ON=false
+    - GD_ENV=staging
+    - GD_MAX_RETRY=2
     rvm: jruby-9.1.14
     jdk: openjdk8
 
@@ -116,9 +116,9 @@ jobs:
       bundle exec rake -f lcm.rake docker:bundle
       bundle exec rake -f lcm.rake test:docker:integration-others
     env:
-      - VCR_ON=false
-      - GD_ENV=staging
-      - GD_MAX_RETRY=2
+    - VCR_ON=false
+    - GD_ENV=staging
+    - GD_MAX_RETRY=2
     rvm: jruby-9.1.14
     jdk: openjdk8
 
@@ -192,18 +192,18 @@ jobs:
     - GD_MAX_RETRY=2
 
   - <<: *lcm-integration-release-tests
-      name: staging2 - lcm integration-release tests
-      env:
-        - GD_ENV=testing
-        - VCR_ON=false
-        - GD_MAX_RETRY=2
+    name: staging2 - lcm integration-release tests
+    env:
+    - GD_ENV=testing
+    - VCR_ON=false
+    - GD_MAX_RETRY=2
 
   - <<: *lcm-integration-others-tests
-      name: staging2 - lcm integration-others tests
-      env:
-        - GD_ENV=testing
-        - VCR_ON=false
-        - GD_MAX_RETRY=2
+    name: staging2 - lcm integration-others tests
+    env:
+    - GD_ENV=testing
+    - VCR_ON=false
+    - GD_MAX_RETRY=2
 
   - <<: *lcm-slow-tests
     name: staging2 - lcm slow tests
@@ -246,16 +246,16 @@ jobs:
   - <<: *lcm-integration-release-tests
     name: staging3 - lcm integration-release tests
     env:
-      - GD_ENV=development
-      - VCR_ON=false
-      - GD_MAX_RETRY=2
+    - GD_ENV=development
+    - VCR_ON=false
+    - GD_MAX_RETRY=2
 
   - <<: *lcm-integration-others-tests
     name: staging3 - lcm integration-others tests
     env:
-      - GD_ENV=development
-      - VCR_ON=false
-      - GD_MAX_RETRY=2
+    - GD_ENV=development
+    - VCR_ON=false
+    - GD_MAX_RETRY=2
 
   - <<: *lcm-slow-tests
     name: staging3 - lcm slow tests
