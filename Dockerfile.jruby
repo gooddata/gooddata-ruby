@@ -2,7 +2,7 @@ FROM jruby:9.1-alpine
 
 MAINTAINER Tomas Korcak <korczis@gmail.com>
 
-RUN apk add --no-cache curl make gcc git g++ python linux-headers binutils-gold gnupg libstdc++
+RUN apk add --no-cache curl make gcc git g++ python linux-headers binutils-gold gnupg libstdc++ postgresql postgresql-client openssl
 
 # Switch to directory with sources
 WORKDIR /src
@@ -20,3 +20,13 @@ ADD . .
 RUN keytool -importcert -alias gooddata-2008 -file "./data/2008.crt" -keystore $JAVA_HOME/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
 RUN keytool -importcert -alias gooddata-int -file "./data/new_ca.cer" -keystore $JAVA_HOME/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
 RUN keytool -importcert -alias gooddata-prod -file "data/new_prodgdc_ca.crt" -keystore $JAVA_HOME/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
+
+ENV LANG en_US.utf8
+RUN adduser -D -g '' gooddata
+RUN rm -rf $HOME/spec/postgresql
+RUN mkdir $HOME/spec/postgresql
+RUN chmod -R 0750 $HOME/spec/postgresql
+RUN chown gooddata $HOME/spec/postgresql
+RUN mkdir /run/postgresql; chmod 1777 -R /run;
+RUN mkdir $HOME/pre-exec.d; mkdir $HOME/pre-init.d; chmod -R 1755 $HOME/pre-exec.d; chmod -R 1755 $HOME/pre-exec.d
+USER gooddata
