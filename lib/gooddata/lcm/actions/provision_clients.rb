@@ -48,7 +48,8 @@ module GoodData
           domain_name = params.organization || params.domain
           fail "Either organisation or domain has to be specified in params" unless domain_name
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
-
+          error_message = nil
+          invalid_client_ids = []
           begin
             results = params.segments.map do |segment|
               segment_object = domain.segments(segment.segment_id, data_product)
@@ -57,33 +58,53 @@ module GoodData
               end
 
               unless tmp.empty?
-                synchronize_projects << {
+                synchronize_project = {
                   segment_id: segment.segment_id,
                   from: segment.development_pid,
                   to: tmp.map do |entry|
                     unless entry[:project_uri]
-                      raise "Provisioning project for client id #{entry[:id]} has error: #{entry[:error]}"
+                      error_message = "There was error during provisioning clients: #{entry[:error]}" unless error_message
+                      invalid_client_ids << entry[:id]
+                      next
                     end
                     {
                       pid: entry[:project_uri].split('/').last,
                       client_id: entry[:id]
                     }
-                  end
+                  end.compact
                 }
+              end
+              
+              synchronize_projects << synchronize_project unless synchronize_project[:to].empty?
+
+              if error_message
+                params.gdc_logger.debug "#{error_message}. Purge all invalid clients now ..."
+                deleted_client_ids = []
+
+                segment_object.clients.map do |segment_client|
+                  project = segment_client.project
+                  if (project.nil? || project.deleted?)
+                    client_id =  segment_client.client_id
+                    if invalid_client_ids.include?(client_id)
+                      segment_client.delete
+                      deleted_client_ids << client_id
+                    end
+                  end
+                end
+
+                params.gdc_logger.debug "Deleted clients: #{deleted_client_ids.join(', ')}"
+                raise error_message unless error_message['TooManyProjectsCreatedException'] || error_message['Max number registered projects']
+                break tmp
               end
 
               tmp
             end
           rescue => e
-            params.gdc_logger.error "Problem occurs when provisioning clients. Purge all invalid clients now ..."
-            res = LCM2.run_action PurgeClients, params
-            params.gdc_logger.debug "Purge clients result: #{res}"
-            deleted_client_ids = res[:results].select { |r| r[:status] == 'purged' }.map { |r| r[:client_id] }
-            params.gdc_logger.error "Deleted clients: #{deleted_client_ids.join(', ')}"
+            params.gdc_logger.error "Problem occurs when provisioning clients."
             raise e
           end
 
-          results.flatten!
+          results.flatten! if results
 
           # Return results
           {
