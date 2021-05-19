@@ -73,9 +73,9 @@ module GoodData
                     }
                   end.compact
                 }
+
+                synchronize_projects << synchronize_project unless synchronize_project[:to].empty?
               end
-              
-              synchronize_projects << synchronize_project unless synchronize_project[:to].empty?
 
               if error_message
                 params.gdc_logger.debug "#{error_message}. Purge all invalid clients now ..."
