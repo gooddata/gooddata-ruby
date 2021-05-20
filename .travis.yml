@@ -7,8 +7,6 @@ stages:
   if: type IN (api, cron)
 - name: platform-cleanup
   if: type IN (cron)
-- name: license-update
-  if: branch = master AND type = push
 - name: gem-release
   if: branch = master AND type = push
 - name: gem-smoke-test
@@ -348,16 +346,6 @@ jobs:
     rvm: jruby-9.1.14
     osx_image: xcode9.4
 
-  - stage: license-update
-    name: Update license file
-    rvm: 2.3
-    script: |
-      bundle exec rake license:update
-  - stage: license-update
-    name: Update license file
-    rvm: jruby-9.1.14
-    script: |
-      bundle exec rake license:update
   - stage: gem-release
     name: deploy MRI gem
     rvm: 2.3
