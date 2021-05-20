@@ -33,13 +33,14 @@ namespace :gem do
   desc "Release gem version #{GoodData::VERSION} to rubygems"
   task :release do
     gem = "gooddata-#{GoodData::VERSION}.gem"
+    origin_license_file = 'LICENSE'
+    new_license_file = 'LICENSE_FOR_RUBY_SDK_COMPONENT.txt'
     notices_file = 'NOTICES.txt'
-
-    if File.exist?(notices_file)
-      File.delete(notices_file)
-      puts "Deleted files: #{notices_file}"
-    end
-
+    File.delete(origin_license_file) if File.exist?(origin_license_file)
+    File.delete(notices_file) if File.exist?(notices_file)
+    puts "Deleted files: #{origin_license_file} and #{notices_file}"
+    File.rename(new_license_file, origin_license_file) if File.exists?(new_license_file)
+    puts "Renamed file #{new_license_file} to #{origin_license_file}"
     puts "Building #{gem} ..."
     res = `gem build ./gooddata.gemspec`
     file = res.match('File: (.*)')[1]
@@ -109,24 +110,6 @@ namespace :license do
     fail 'License check error' unless res.include?('1 file changed, 1 insertion(+), 1 deletion(-)')
 
     puts 'All licenses seem to be OK'
-  end
-
-  desc 'Update LICENSE file'
-  task :update do
-    origin_license_file = 'LICENSE'
-    new_license_file = 'LICENSE_FOR_RUBY_SDK_COMPONENT.txt'
-
-    if File.exist?(origin_license_file)
-      File.delete(origin_license_file)
-      puts "Deleted files: #{origin_license_file}"
-    end
-
-    if File.exists?(new_license_file)
-      File.rename(new_license_file, origin_license_file)
-      puts "Renamed file #{new_license_file} to #{origin_license_file}"
-    end
-
-    puts 'Update LICENSE seem to be OK'
   end
 
   desc 'Add license header to each file'
