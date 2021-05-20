@@ -1,4 +1,12 @@
 # GoodData Ruby SDK Changelog
+## 2.1.18
+ - BUGFIX: TMA-1700 Failed Provisioning Brick created clients without ETL 
+ - FEATURE: BCO-1300 Add model for analytical dashboard and visualization object  
+ - FEATURE: MSF-20118 Support PostgreSQL as input for LCM provisioning bricks 
+ - BUGFIX: TMA-999 Improve API call statistics log: add grouping on PID for roles 
+ - CONFIG: TMA-1714 Ruby SDK travis build is failing
+ - BUGFIX: TMA-707 Provisioning brick does not log client deletion 
+
 ## 2.1.17
  - BUGFIX:TMA-1704 - Enhance error message when not found clientId in source table 
  - BUGFIX: TMA-1694 [UsersBrick] Enhance messages add more log for missing users when running remove_from_organization 
