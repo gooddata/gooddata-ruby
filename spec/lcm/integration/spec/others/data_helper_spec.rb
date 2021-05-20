@@ -115,8 +115,8 @@ snowflake_basic_params = {
       "url"=> "jdbc:snowflake://gooddata.snowflakecomputing.com",
       "authentication"=> {
         "basic"=> {
-          "userName"=> "cornflake",
-          "password"=> ConnectionHelper::SECRETS[:redshift_password]
+          "userName"=> "mekong-qa",
+          "password"=> ConnectionHelper::SECRETS[:snowflake_password]
         }
       },
       "database"=> "PHONG_DEV",
@@ -145,6 +145,27 @@ bigquery_basic_params = {
     "type"=> "bigquery",
     "query"=> "select * from employees order by EmployeeID"
   }
+}
+
+postgresql_basic_params = {
+    "postgresql_client" => {
+        "connection" => {
+            "url" => "jdbc:postgresql://127.0.0.1:5432/",
+            "authentication" => {
+                "basic" => {
+                    "userName" => "gooddata",
+                    "password" => "changeit",
+                }
+            },
+            "database" => "gooddata",
+            "schema" => "public",
+            "sslMode" => "prefer"
+        }
+    },
+    "input_source" => {
+        "type" => "postgresql",
+        "query" => "SELECT DISTINCT id, client_id, segment_id, project_title FROM clients ORDER BY id"
+    }
 }
 
 describe 'data helper', :vcr do
@@ -207,6 +228,13 @@ describe 'data helper', :vcr do
     file_path = data_helper.realize(bigquery_basic_params)
     puts "bigquery: #{file_path}"
     data = File.open('spec/data/bigquery_data.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to postgres with BASIC authentication' do
+    data_helper = GoodData::Helpers::DataSource.new(postgresql_basic_params['input_source'])
+    file_path = data_helper.realize(postgresql_basic_params)
+    data = File.open('spec/data/postgresql_data_expected.csv').read
     expect(data).to eq File.open(file_path).read
   end
 end

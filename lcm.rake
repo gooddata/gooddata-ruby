@@ -3,7 +3,7 @@ require 'fileutils'
 require 'pathname'
 require 'rspec/core/rake_task'
 
-test_cases = %i[integration slow userprov load]
+test_cases = %i[integration-e2e integration-release integration-others slow userprov load]
 
 # Schema for new Bricks.
 brick_info_schema = {
@@ -79,7 +79,7 @@ namespace :test do
   test_cases.each do |test_case|
     desc "Run #{test_case} tests"
     RSpec::Core::RakeTask.new(test_case) do |task|
-      task.pattern = "spec/lcm/#{test_case}/**/*_spec.rb"
+      task.pattern = test_case['integration'] ? "spec/lcm/integration/spec/#{test_case.to_s.split('-')[-1]}/*_spec.rb" : "spec/lcm/#{test_case}/**/*_spec.rb"
     end
   end
 
@@ -101,8 +101,14 @@ namespace :test do
     test_cases.each do |t|
       desc "Run #{t} tests in Docker"
       task t do
-        system("docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake -f lcm.rake test:#{t}") ||
-          fail('Test execution failed!')
+        if t.to_s == 'integration'
+          system("docker-compose -f docker-compose.lcm.yml run --rm appstore /bin/bash -c ./spec/integration_with_postgresql.sh") ||
+            fail('Test execution failed!')
+        else
+          system("docker-compose -f docker-compose.lcm.yml run --rm appstore bundle exec rake -f lcm.rake test:#{t}") ||
+            fail('Test execution failed!')
+        end
+
       end
     end
   end

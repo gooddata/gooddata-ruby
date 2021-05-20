@@ -13,6 +13,9 @@ services:
      - JRUBY_OPTS=-J-Xmx1g
      - GD_SPEC_PASSWORD
      - VCR_ON
+     - POSTGRES_DB=gooddata
+     - POSTGRES_USER=gooddata
+     - POSTGRES_PASSWORD=changeit
     volumes:
       - .:/src
     volumes_from:

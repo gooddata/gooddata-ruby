@@ -3,7 +3,7 @@ require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/s3_helper'
 
 require_relative '../integration/support/project_helper'
-require_relative '../integration/shared_examples_for_synchronization_bricks'
+require_relative '../integration/spec/shared_examples_for_synchronization_bricks'
 
 def prepare_visualisation_object(rest_client, project)
   visualization_classes = GoodData::MdObject.query('visualizationClass', GoodData::MdObject, client: rest_client, project: project)

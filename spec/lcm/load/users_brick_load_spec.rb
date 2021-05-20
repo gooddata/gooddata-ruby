@@ -5,7 +5,7 @@ require_relative '../integration/support/connection_helper'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/s3_helper'
 require_relative '../userprov/shared_contexts_for_user_bricks'
-require_relative '../integration/brick_runner'
+require_relative '../integration/spec/brick_runner'
 require_relative '../helpers/schedule_helper'
 require_relative 'shared_contexts_for_load_tests'
 
@@ -130,7 +130,7 @@ describe 'UsersBrick' do
       )
       opts = {
         context: @test_context,
-        template_path: '../../userprov/params/users_brick.json.erb',
+        template_path: '../../../userprov/params/users_brick.json.erb',
         image_tag: image_tag
       }
       users_schedule = BrickRunner.schedule_brick('users_brick', service_project, opts)
@@ -178,7 +178,7 @@ describe 'UsersBrick' do
         'user_filters_brick',
         service_project,
         context: @test_context,
-        template_path: '../../userprov/params/user_filters_brick_ads.json.erb',
+        template_path: '../../../userprov/params/user_filters_brick_ads.json.erb',
         image_tag: image_tag,
         run_after: users_schedule
       )

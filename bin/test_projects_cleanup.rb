@@ -22,6 +22,39 @@ require_relative '../spec/environment/environment'
 GoodData::Environment.load
 config = GoodData::Environment::ConnectionHelper::LCM_ENVIRONMENT
 secrets = GoodData::Environment::ConnectionHelper::SECRETS
+default_domain = GoodData::Environment::ConnectionHelper::DEFAULT_DOMAIN
+
+def delete_segment_by_title(title, segments, days = 14, force = false)
+  return if segments.empty?
+  dead_line = Time.now - days * 60 * 60 * 24
+
+  filtered_segments = segments.select do |s|
+    if s.id.match(title) && s.id.length > 14 && s.id[s.id.length-14..-1]
+      segment_created = s.id[s.id.length-14..-1]
+      created = Time.parse(segment_created) if segment_created
+
+      s if created.year >= Time.new.year && created < dead_line
+    end
+  end
+
+  filtered_segments.each do |segment|
+    begin
+      if force
+        segment.clients.each do |segment_client|
+          GoodData.logger.info("Deleting segment: #{segment.id} - client: #{segment_client.client_id}")
+          segment_client.dissociate
+        end
+
+        puts "Deleting segment: #{segment.id}"
+        segment && segment.delete(force: true)
+      else
+        puts "Would delete segment: #{segment.id}"
+      end
+    rescue RuntimeError, StandardError => ex
+      puts "Failed to delete segment #{segment.id}, reason: #{ex}"
+    end
+  end
+end
 
 def delete_project_by_title(title, projects, days = 14, force = false)
   dead_line = Time.now - days * 60 * 60 * 24
@@ -73,8 +106,16 @@ def delete_ads_by_title(title, client, days = 14, force = false)
   puts "#{deleted} ADS instances with title \"#{title}\" #{'would be ' unless force}deleted."
 end
 
-def clean_up!(client, force, days)
+def clean_up!(client, force, days, opts = {})
   projects = client.projects
+
+  if opts[:domain_id]
+    domain = client.domain(opts[:domain_id])
+
+    # segments id format: {title}_{hostname}_{datetime}
+    delete_segment_by_title(/CAR_DEMO_PREMIUM/, domain.segments, days, force)
+  end
+
   delete_project_by_title(/Insurance Demo Master/, projects, days, force)
   delete_project_by_title(/Car Demo Master/, projects, days, force)
   delete_project_by_title(/Insurance Demo Workspace/, projects, days, force)
@@ -117,7 +158,8 @@ prod_client = init_client(username, password, "https://#{config[:prod_server]}")
 
 force = options[:force]
 days = options[:days] || 3
+
 clean_up!(dev_client, force, days)
-clean_up!(prod_client, force, days)
+clean_up!(prod_client, force, days, {domain_id: default_domain})
 
 dev_client.disconnect

@@ -1,9 +1,9 @@
 require_relative '../integration/support/constants'
 require_relative '../integration/support/configuration_helper'
 require_relative '../integration/support/lcm_helper'
-require_relative '../integration/brick_runner'
-require_relative '../integration/shared_examples_for_synchronization_bricks'
-require_relative '../integration/shared_contexts_for_lcm'
+require_relative '../integration/spec/brick_runner'
+require_relative '../integration/spec/shared_examples_for_synchronization_bricks'
+require_relative '../integration/spec/shared_contexts_for_lcm'
 
 # global variables to simplify passing stuff between shared contexts and examples
 $master_projects = []
@@ -22,7 +22,7 @@ describe 'when using NFS instead of ADS for release data storage' do
 
   describe '1 - Initial Release' do
     before(:all) do
-      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick.json.erb', client: @prod_rest_client
       $master = $master_projects.first
     end
 
@@ -45,7 +45,7 @@ describe 'when using NFS instead of ADS for release data storage' do
 
   describe '2 - Initial Provisioning' do
     before(:all) do
-      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../params/provisioning_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.provisioning_brick context: @test_context, template_path: '../../params/provisioning_brick.json.erb', client: @prod_rest_client
     end
 
     it 'creates client projects only for filtered segments' do
@@ -70,7 +70,7 @@ describe 'when using NFS instead of ADS for release data storage' do
 
   describe '3 - Initial Rollout' do
     before(:all) do
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../params/rollout_brick.json.erb', client: @prod_rest_client
     end
 
     it_behaves_like 'a synchronization brick' do
@@ -116,7 +116,7 @@ describe 'when using NFS instead of ADS for release data storage' do
 
   describe '5 - Subsequent Release' do
     before(:all) do
-      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../params/release_brick.json.erb', client: @prod_rest_client
+      $master_projects = BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick.json.erb', client: @prod_rest_client
       $master = $master_projects.first
     end
 
@@ -139,7 +139,7 @@ describe 'when using NFS instead of ADS for release data storage' do
 
   describe '6 - Subsequent Rollout' do
     before(:all) do
-      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../params/rollout_brick.json.erb', client: @prod_rest_client
+      $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../params/rollout_brick.json.erb', client: @prod_rest_client
     end
 
     it_behaves_like 'a synchronization brick' do
