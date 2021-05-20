@@ -1,4 +1,8 @@
 # GoodData Ruby SDK Changelog
+## 2.1.19
+ - BUGFIX: MSF-20827 Fix gem-smoke-test failed when release ruby SDK 
+ - BUGFIX: MSF-20826 Failure update license file when release ruby SDK 
+
 ## 2.1.18
  - BUGFIX: TMA-1700 Failed Provisioning Brick created clients without ETL 
  - FEATURE: BCO-1300 Add model for analytical dashboard and visualization object  
