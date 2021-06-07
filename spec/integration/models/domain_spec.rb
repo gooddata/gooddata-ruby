@@ -86,6 +86,7 @@ describe GoodData::Domain, :vcr do
       user.first_name = name.reverse
       choice = :password
       user.authentication_modes = choice
+      user.sso_provider = 'test-ruby'
       @domain.create_users([user])
       changed_user = @domain.get_user(login)
       expect(changed_user.first_name).to eq name.reverse
@@ -114,11 +115,11 @@ describe GoodData::Domain, :vcr do
       old_email = user.email
       old_sso_provider = user.sso_provider || ''
       user.email = 'john.doe@gooddata.com'
-      user.sso_provider = 'salesforce.com'
+      user.sso_provider = 'test-ruby'
       @domain.update_user(user)
       updated_user = @domain.find_user_by_login(user.login)
       expect(updated_user.email).to eq 'john.doe@gooddata.com'
-      expect(updated_user.sso_provider).to eq 'salesforce.com'
+      expect(updated_user.sso_provider).to eq 'test-ruby'
 
       updated_user.email = old_email
       updated_user.sso_provider = old_sso_provider
