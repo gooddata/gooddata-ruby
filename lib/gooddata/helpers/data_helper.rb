@@ -7,6 +7,7 @@
 require 'csv'
 require 'digest'
 require 'open-uri'
+require_relative '../cloud_resources/blobstorage/blobstorage_client'
 
 module GoodData
   module Helpers
@@ -48,6 +49,9 @@ module GoodData
           raise GoodData::InvalidEnvError, "DataSource does not support type \"#{source}\" on the platform #{RUBY_PLATFORM}" unless RUBY_PLATFORM =~ /java/
           require_relative '../cloud_resources/cloud_resources'
           realize_cloud_resource(source, params)
+        when 'blobStorage'
+          blob_storage_client = GoodData::BlobStorageClient.new(params)
+          blob_storage_client.realize_blob(@options[:file], params)
         else
           raise "DataSource does not support type \"#{source}\""
         end
