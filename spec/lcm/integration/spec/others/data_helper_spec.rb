@@ -147,6 +147,18 @@ bigquery_basic_params = {
   }
 }
 
+blob_storage_params = {
+    "blobStorage_client"=> {
+        "connectionString"=> ConnectionHelper::SECRETS[:blob_storage_connection],
+        "container"=> "msftest",
+        "path"=> "",
+    },
+    "input_source"=> {
+        "type"=> "blobStorage",
+        "file"=> "clients.csv"
+    }
+}
+
 describe 'data helper', :vcr do
 
   it 'connect to redshift with IAM authentication' do
@@ -207,6 +219,13 @@ describe 'data helper', :vcr do
     file_path = data_helper.realize(bigquery_basic_params)
     puts "bigquery: #{file_path}"
     data = File.open('spec/data/bigquery_data.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to blob storage with connection string' do
+    data_helper = GoodData::Helpers::DataSource.new(blob_storage_params['input_source'])
+    file_path = data_helper.realize(blob_storage_params)
+    data = File.open('spec/data/blobstorage_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
 end

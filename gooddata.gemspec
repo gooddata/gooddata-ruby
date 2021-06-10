@@ -66,6 +66,8 @@ Gem::Specification.new do |s|
   else
     s.add_dependency 'docile', '> 1.1', '< 1.4.0'
   end
+  s.add_dependency 'azure-storage-blob', '~> 1.1.0'
+  s.add_dependency 'nokogiri', '~> 1.10.0'
   s.add_dependency 'gli', '~> 2.15'
   s.add_dependency 'gooddata_datawarehouse', '~> 0.0.10' if RUBY_PLATFORM == 'java'
   s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
