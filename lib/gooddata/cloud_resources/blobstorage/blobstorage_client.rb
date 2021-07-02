@@ -12,6 +12,16 @@ require "azure/storage/blob"
 module GoodData
   class BlobStorageClient
     SAS_URL_PATTERN = %r{(^https?:\/\/[^\/]*)\/.*\?(.*)}
+    INVALID_BLOB_GENERAL_MESSAGE = "The connection string is not valid."
+    INVALID_BLOB_SIG_WELL_FORMED_MESSAGE = "The signature format is not valid."
+    INVALID_BLOB_CONTAINER_MESSAGE = "ContainerNotFound"
+    INVALID_BLOB_CONTAINER_FORMED_MESSAGE = "The container with the specified name is not found."
+    INVALID_BLOB_EXPIRED_ORIGINAL_MESSAGE = "Signature not valid in the specified time frame"
+    INVALID_BLOB_EXPIRED_MESSAGE = "The signature expired."
+    INVALID_BLOB_INVALID_CONNECTION_STRING_MESSAGE = "The connection string is not valid."
+    INVALID_BLOB_PATH_MESSAGE = "BlobNotFound"
+    INVALID_BLOB_INVALID_PATH_MESSAGE = "The path to the data is not found."
+
     attr_reader :use_sas
 
     def initialize(options = {})
@@ -30,13 +40,18 @@ module GoodData
 
     def realize_blob(file, _params)
       GoodData.gd_logger.info("Realizing download from Blob Storage. Container #{@container}.")
-      connect
-      filename = "#{SecureRandom.urlsafe_base64(6)}_#{Time.now.to_i}.csv"
-      blob_name = @path ? "#{file}" : "#{@path.delete_suffix('/')}/#{file}"
+      filename = ''
+      begin
+        connect
+        filename = "#{SecureRandom.urlsafe_base64(6)}_#{Time.now.to_i}.csv"
+        blob_name = @path ? "#{@path.delete_suffix('/')}/#{file}" : "#{file}"
 
-      measure = Benchmark.measure do
-        _blob, content = @client.get_blob(@container, blob_name)
-        File.open(filename, "wb") { |f| f.write(content) }
+        measure = Benchmark.measure do
+          _blob, content = @client.get_blob(@container, blob_name)
+          File.open(filename, "wb") { |f| f.write(content) }
+        end
+      rescue  => e
+        raise_error(e)
       end
       GoodData.gd_logger.info("Done downloading file type=blobStorage status=finished duration=#{measure.real}")
       filename
@@ -58,6 +73,20 @@ module GoodData
       @use_sas = true
       @host = matches[0][0]
       @sas_token = matches[0][1]
+    end
+
+    def raise_error(e)
+      if e.message && e.message.include?(INVALID_BLOB_EXPIRED_ORIGINAL_MESSAGE)
+        raise INVALID_BLOB_EXPIRED_MESSAGE
+      elsif e.message && e.message.include?(INVALID_BLOB_SIG_WELL_FORMED_MESSAGE)
+        raise INVALID_BLOB_SIG_WELL_FORMED_MESSAGE
+      elsif e.message && e.message.include?(INVALID_BLOB_CONTAINER_MESSAGE)
+        raise INVALID_BLOB_CONTAINER_FORMED_MESSAGE
+      elsif e.message && e.message.include?(INVALID_BLOB_PATH_MESSAGE)
+        raise INVALID_BLOB_INVALID_PATH_MESSAGE
+      else
+        raise INVALID_BLOB_GENERAL_MESSAGE
+      end
     end
   end
 end
