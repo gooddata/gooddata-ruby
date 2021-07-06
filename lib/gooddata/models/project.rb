@@ -30,6 +30,7 @@ require_relative 'process'
 require_relative 'project_log_formatter'
 require_relative 'project_role'
 require_relative 'blueprint/blueprint'
+require_relative 'dataset_mapping'
 
 require_relative 'metadata/scheduled_mail'
 require_relative 'metadata/scheduled_mail/dashboard_attachment'
@@ -253,6 +254,20 @@ module GoodData
                      end
         transfer_processes(from_project, to_project)
         transfer_schedules(from_project, to_project)
+      end
+
+      def transfer_dataset_mapping(from_project, to_project)
+        mapping_data = GoodData::DatasetMapping.get(:client => from_project.client, :project => from_project)
+        dataset_mapping = GoodData::DatasetMapping.new(mapping_data)
+        res = dataset_mapping.save(:client => to_project.client, :project => to_project)
+        status = res&.dig('datasetMappings', 'items').nil? ? "Failed" : "OK"
+        count = "OK".eql?(status) ? res['datasetMappings']['items'].length() : 0
+        {
+            from: from_project.pid,
+            to: to_project.pid,
+            count: count,
+            status: status
+        }
       end
 
       # @param from_project The source project

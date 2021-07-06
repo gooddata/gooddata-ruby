@@ -98,6 +98,7 @@ module GoodData
         SynchronizeComputedAttributes,
         SynchronizeProcesses,
         SynchronizeSchedules,
+        SynchronizeDataSetMapping,
         SynchronizeColorPalette,
         SynchronizeUserGroups,
         SynchronizeNewSegments,
@@ -125,6 +126,7 @@ module GoodData
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         CollectDymanicScheduleParams,
+        SynchronizeDataSetMapping,
         SynchronizeETLsInSegment
       ],
 
@@ -138,6 +140,7 @@ module GoodData
         SynchronizeLdm,
         MigrateGdcDateDimension,
         SynchronizeClients,
+        SynchronizeDataSetMapping,
         SynchronizeComputedAttributes,
         CollectDymanicScheduleParams,
         SynchronizeETLsInSegment
