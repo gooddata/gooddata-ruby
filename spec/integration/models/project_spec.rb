@@ -312,6 +312,10 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
         }
       }
 
+      @dataset_mapping_data = {"datasetMappings"=>{"items"=>[{"datasetMapping"=>{"identifier"=>"dataset.orderlines2", "source"=>{"identifier"=>"orderlines", "csv"=>{"headerRow"=>1, "delimiter"=>","}}, "fields"=>[{"fieldMapping"=>{"field"=>{"identifier"=>"label.orderlines.customer_name", "type"=>"label"}, "sourceColumn"=>{"name"=>"customer_name", "dataType"=>"text", "format"=>""}}}], "references"=>[], "system"=>{}}}]}}
+
+      @dataset_mapping = GoodData::DatasetMapping.new(@dataset_mapping_data)
+
       @dataload_component = @project.deploy_process(etl_component)
 
       @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@client)
@@ -339,10 +343,13 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
 
       @from_processes = @project.processes.map(&:name).sort
       @from_schedules = @project.schedules.map(&:name).sort
+      @dataset_mapping.save(:client => @project.client, :project => @project)
       @project.transfer_processes(@to_project)
       @project.transfer_schedules(@to_project)
+      @to_project.update_dataset_mapping(@dataset_mapping_data)
       @to_processes = @to_project.processes.map(&:name).sort
       @to_schedules = @to_project.schedules.map(&:name).sort
+      @to_dataset_mapping = @to_project.dataset_mapping
     end
 
     after(:all) do
@@ -389,6 +396,15 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
       expect(@to_schedules).not_to include(
         'this schedule should be deleted'
       )
+    end
+
+    it 'keeps dataset_mapping in the original project untouched' do
+      origin_project_mapping = GoodData::DatasetMapping.get(:client => @project.client, :project => @project)
+      expect(origin_project_mapping).to eq(@dataset_mapping_data)
+    end
+
+    it 'transfers dataset_mapping to the target project' do
+      expect(@to_dataset_mapping).to eq(@dataset_mapping_data)
     end
 
     it 'is idempotent' do
