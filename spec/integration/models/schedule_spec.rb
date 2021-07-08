@@ -398,7 +398,7 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_model_all' do
     context 'when after is set' do
       before do
         @after_process = @project.deploy_process(
-          './spec/data/hello_world_process/hello_world.rb',
+          './spec/data/hello_world_process/hello_world.zip',
           type: 'RUBY',
           name: 'After Process'
         )
@@ -407,7 +407,7 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_model_all' do
           @after_process.executables.first
         )
         @process = @project.deploy_process(
-          './spec/data/hello_world_process/hello_world.rb',
+          './spec/data/hello_world_process/hello_world.zip',
           type: 'RUBY',
           name: 'Main Process'
         )

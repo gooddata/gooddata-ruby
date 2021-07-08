@@ -14,15 +14,13 @@ RUN yum install -y curl which patch make git maven \
     && rm -rf /var/cache/yum
 
 # Install + verify RVM with gpg (https://rvm.io/rvm/security)
-RUN gpg2 --quiet --no-tty --logger-fd 1 --keyserver hkp://ipv4.pool.sks-keyservers.net \
-         --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 \
-                     7D2BAF1CF37B13E2069D6956105BD0E739499BDB \
-    && echo 409B6B1796C275462A1703113804BB82D39DC0E3:6: | \
-       gpg2 --quiet --no-tty --logger-fd 1 --import-ownertrust \
-    && curl -sSO https://raw.githubusercontent.com/rvm/rvm/${RVM_VERSION}/binscripts/rvm-installer \
-    && curl -sSO https://raw.githubusercontent.com/rvm/rvm/${RVM_VERSION}/binscripts/rvm-installer.asc \
-    && gpg2 --quiet --no-tty --logger-fd 1 --verify rvm-installer.asc \
-    && bash rvm-installer ${RVM_VERSION} \
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
+    && curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - \
+    && curl -sSL https://get.rvm.io | bash -s ${RVM_VERSION} \
+    && curl -sSL https://raw.githubusercontent.com/rvm/rvm/${RVM_VERSION}/binscripts/rvm-installer -o rvm-installer \
+    && curl -sSL https://raw.githubusercontent.com/rvm/rvm/${RVM_VERSION}/binscripts/rvm-installer.asc -o rvm-installer.asc \
+    && gpg2 --verify rvm-installer.asc rvm-installer \
+    && bash rvm-installer \
     && rm rvm-installer rvm-installer.asc \
     && echo "bundler" >> /usr/local/rvm/gemsets/global.gems \
     && echo "rvm_silence_path_mismatch_check_flag=1" >> /etc/rvmrc \
