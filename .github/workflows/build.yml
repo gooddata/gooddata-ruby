@@ -1,0 +1,66 @@
+name: build
+on:
+  push:
+    branches: [master]
+jobs:
+  jruby-gem-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: jruby-9.1.17
+          bundler-cache: true
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run gem release
+        run: |
+          echo -e "---\n:rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+          bundle exec rake gem:release
+  rubygems-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.3
+          bundler-cache: true
+      - name: Run gem release
+        run: |
+          echo -e "---\n:rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+          bundle exec rake gem:release
+  gem-smoke-test:
+    runs-on: ubuntu-latest
+    needs: [jruby-gem-release, rubygems-release]
+    strategy:
+      matrix:
+        ruby-version: [2.3, jruby-9.1.17]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - uses: actions/setup-java@v2
+        if: ${{ matrix.ruby-version == 'jruby-9.1.17' }}
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - run: |
+          gem install gooddata
+          ruby -e "require 'gooddata';GoodData.version"
