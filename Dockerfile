@@ -66,6 +66,10 @@ RUN cp -rf ci/bigquery/target/*.jar ./lib/gooddata/cloud_resources/bigquery/driv
 RUN mvn -f ci/postgresql/pom.xml clean install -P binary-packaging
 RUN cp -rf ci/postgresql/target/*.jar ./lib/gooddata/cloud_resources/postgresql/drivers/
 
+#build mssql dependencies
+RUN mvn -f ci/mssql/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/mssql/target/*.jar ./lib/gooddata/cloud_resources/mssql/drivers/
+
 RUN bundle install
 
 ARG GIT_COMMIT=unspecified
