@@ -1,0 +1,70 @@
+name: pre-merge
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: [2.3, 2.4, 2.5, 2.6, jruby-9.1.17]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - run: bundle exec rake test:unit
+        if: ${{ matrix.ruby-version != 'jruby-9.1.17' }}
+      - run: bundle exec rake test:unit
+        if: ${{ matrix.ruby-version == 'jruby-9.1.17' }}
+        continue-on-error: true
+  unit-tests-OSX:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - ruby-version: 2.3
+            xcode-version: 7.3
+          - ruby-version: 2.4.3
+            xcode-version: 9.4
+          - ruby-version: 2.5
+            xcode-version: 9
+          - ruby-version: 2.6
+            xcode-version: 9
+          - ruby-version: jruby-9.1.17
+            xcode-version: latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - name: run tests
+        run: bundle exec rake test:unit
+  pronto-code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.5
+          bundler-cache: true
+      - name: run pronto-code-review
+        run: |
+          set -x
+          git remote add upstream https://github.com/gooddata/gooddata-ruby.git
+          git fetch upstream $GITHUB_BASE_REF
+          failed=0
+          PRONTO_FLAY_MASS_THRESHOLD=50 bundle exec pronto run -c upstream/$GITHUB_BASE_REF --exit-code lib || failed=1
+          PRONTO_FLAY_MASS_THRESHOLD=100 bundle exec pronto run -c upstream/$GITHUB_BASE_REF --exit-code spec || failed=1
+          if [ "$failed" -ne 0 ] ; then
+              exit 1
+          fi
+        shell: bash

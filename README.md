@@ -18,8 +18,7 @@ Feel free to check out the [GoodData community website](http://community.gooddat
 [![Downloads](http://img.shields.io/gem/dt/gooddata.svg)](http://rubygems.org/gems/gooddata)
 [![Dependency Status](https://gemnasium.com/gooddata/gooddata-ruby.png)](https://gemnasium.com/gooddata/gooddata-ruby)
 [![Code Climate](https://codeclimate.com/github/gooddata/gooddata-ruby.png)](https://codeclimate.com/github/gooddata/gooddata-ruby)
-[![Build Status](https://travis-ci.org/gooddata/gooddata-ruby.png)](https://travis-ci.org/gooddata/gooddata-ruby)
-[![Coverage Status](https://coveralls.io/repos/gooddata/gooddata-ruby/badge.png)](https://coveralls.io/r/gooddata/gooddata-ruby)
+[![Build Status](https://github.com/gooddata/gooddata-ruby/actions/workflows/build.yml/badge.svg)](https://github.com/gooddata/gooddata-ruby/actions/workflows/build.yml/)
 
 ## Supported versions
  
