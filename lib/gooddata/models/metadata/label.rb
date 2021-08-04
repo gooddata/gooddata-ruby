@@ -136,7 +136,7 @@ module GoodData
       if status_url
         results = client.poll_on_response(status_url) do |body|
           status = body['taskState'] && body['taskState']['status']
-          status == 'RUNNING' || status == 'PREPARED'
+          status == 'RUNNING' || status == 'PREPARED' || body['uri']
         end
       end
 
