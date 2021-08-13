@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://staging2-lcm-prod.intgdc.com/gdc/dataload/projects/px0sugvog1moq0y2pzps4o0cczy6civf/modelMapping/datasets
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+        - application/json, application/zip
+      User-Agent:
+        - gooddata-gem/2.1.10/x86_64-darwin16/2.3.8
+      Content-Type:
+        - application/json
+      X-Gdc-Authtt:
+        - "<X_GDC_AUTHTT>"
+      X-Gdc-Request:
+        - ":QZkBbPddTOwMJONR29UzHw:LKWG2tFDKBG-QgONPdtcsg"
+      Stats-On:
+        - ''
+      X-Gdc-Version:
+        - '2'
+      Accept-Encoding:
+        - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+        - staging2-lcm-prod.intgdc.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Gdc-Log-Header:
+        - ''
+      Content-Type:
+        - application/json;charset=UTF-8
+      Transfer-Encoding:
+        - chunked
+      Date:
+        - Sun, 18 Jul 2021 11:57:25 GMT
+      Server:
+        - GoodData WebApp
+      X-Gdc-Request-Time:
+        - '7'
+      X-Gdc-Request:
+        - ":QZkBbPddTOwMJONR29UzHw:LKWG2tFDKBG-QgONPdtcsg:HNzXjhSPBa9CwNvB"
+      Cache-Control:
+        - no-cache, no-store, must-revalidate
+      Vary:
+        - Accept-Encoding,origin,X-GDC-VERSION
+      Strict-Transport-Security:
+        - max-age=10886400; includeSubDomains; preload;
+    body:
+      encoding: ASCII-8BIT
+      string: '{"datasetMappings":{"items":[{"datasetMapping":{"identifier":"dataset.orderlines2","source":{"identifier":"orderlines","csv":{"headerRow":1,"delimiter":","}},"fields":[{"fieldMapping":{"field":{"identifier":"label.orderlines.customer_name","type":"label"},"sourceColumn":{"name":"customer_name","dataType":"text","format":""}}}],"references":[],"system":{}}}]}}'
+    http_version: null
+  recorded_at: Sun, 18 Jul 2021 11:57:25 GMT
+recorded_with: VCR 5.1.0
