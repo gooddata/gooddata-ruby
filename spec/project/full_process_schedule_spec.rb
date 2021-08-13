@@ -29,7 +29,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
   before(:all) do
     @client = ConnectionHelper.create_default_connection
     @project = @client.create_project(title: 'Project for schedule testing', auth_token: ConnectionHelper::SECRETS[:gd_project_token], environment: ProjectHelper::ENVIRONMENT)
-    @process = @project.deploy_process('./spec/data/ruby_process',
+    @process = @project.deploy_process('./spec/data/ruby_process/ruby_process.zip',
                                        type: 'RUBY',
                                        name: 'Test ETL Process (Ruby)')
 
@@ -133,7 +133,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
   end
 
   it "should be possible to deploy only a single file" do
-    process = @project.deploy_process('./spec/data/hello_world_process/hello_world.rb',
+    process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
                                       type: 'RUBY',
                                       name: 'Test ETL one file Process')
     begin
@@ -184,7 +184,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
       result = schedule.execute
       expect(result.status).to eq :ok
       log = result.log
-      expect(log.index('GoodData::VERSION - 0.6.')).not_to eq nil
+      expect(log.index('GoodData::VERSION - 2.1.')).not_to eq nil
       expect(process.schedules.count).to eq 1
     ensure
       schedule && schedule.delete
@@ -193,7 +193,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
   end
 
   it 'should be possible to deploy and run directory and use nested parameters' do
-    process = @project.deploy_process('./spec/data/ruby_params_process',
+    process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip',
                                       type: 'RUBY',
                                       name: 'Test ETL dir GoodData Process')
     begin
@@ -212,7 +212,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
   end
 
   it 'should be possible to deploy and run directory and use nested hidden parameters' do
-    process = @project.deploy_process('./spec/data/ruby_params_process',
+    process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip',
                                       type: 'RUBY',
                                       name: 'Test ETL dir GoodData Process')
     begin
@@ -229,15 +229,24 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
   end
 
   it "should be possible to download deployed process" do
-    size = File.size('./spec/data/hello_world_process/hello_world.zip')
     process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
                                       type: 'RUBY',
                                       name: 'Test ETL zipped file Process')
     begin
+      files = ['info.json', 'Gemfile', 'hello_world.rb', 'Gemfile.lock']
       Tempfile.open('downloaded-process') do |temp|
         temp << process.download
         temp.flush
-        expect(File.size(temp.path)).to eq size
+        count = 0
+        Zip::File.open(temp.path) do |zip_file|
+          zip_file.each do |f|
+            if (files.include?(f.name))
+              count +=1
+              files.delete(f.name)
+            end
+          end
+        end
+        expect(count).to eq 4
       end
     ensure
       process && process.delete
@@ -263,7 +272,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
         name: 'Test ETL zipped file Process'
       )
 
-      process2 = process1.deploy('./spec/data/ruby_process/process.rb')
+      process2 = process1.deploy('./spec/data/ruby_process/ruby_process.zip')
       expect(process1.executables).not_to eq process2.executables
     ensure
       process1 && process1.delete
@@ -298,7 +307,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
 
   it 'should have no notification when creating a new process' do
     begin
-      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip', type: 'RUBY', name: 'Ruby params process')
       expect(process.notification_rules).to eq []
     ensure
       process && process.delete
@@ -307,7 +316,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
 
   it 'should be able to add a notification rule' do
     begin
-      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip', type: 'RUBY', name: 'Ruby params process')
       old_notification_rules = process.notification_rules
       notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
       expect(notification_rule.class).to be GoodData::NotificationRule
@@ -323,7 +332,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
 
   it 'should be able to remove a notification rule' do
     begin
-      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip', type: 'RUBY', name: 'Ruby params process')
       old_notification_rules = process.notification_rules
       notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
       notification_rule.delete
@@ -336,7 +345,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
 
   it 'should be able to edit a notification rule' do
     begin
-      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip', type: 'RUBY', name: 'Ruby params process')
       notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
       expect(notification_rule.email).to eq ConnectionHelper::DEFAULT_USERNAME
       expect(notification_rule.subject).to eq 'Email subject'
@@ -356,7 +365,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
 
   it 'should be able to get all notification rules' do
     begin
-      process = @project.deploy_process('./spec/data/ruby_params_process', type: 'RUBY', name: 'Ruby params process')
+      process = @project.deploy_process('./spec/data/ruby_params_process/ruby_params.zip', type: 'RUBY', name: 'Ruby params process')
       notification_rule = process.create_notification_rule(email: ConnectionHelper::DEFAULT_USERNAME, events: GoodData::Subscription::PROCESS_SUCCESS_EVENT)
       expect(process.notification_rules).to eq [notification_rule]
     ensure
