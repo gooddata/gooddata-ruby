@@ -71,9 +71,9 @@ module GoodData
           dest_dates = get_date_dimensions(dest_blueprint) if dest_blueprint
           src_dates = get_date_dimensions(src_blueprint) if src_blueprint
 
-          return false if dest_dates.empty? || src_dates.empty?
-
           upgrade_datasets = []
+          return upgrade_datasets if dest_dates.empty? || src_dates.empty?
+
           dest_dates.each do |dest|
             src_dim = get_date_dimension(src_blueprint, dest[:id])
             next unless src_dim
