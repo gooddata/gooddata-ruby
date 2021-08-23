@@ -123,6 +123,7 @@ module GoodData
         AssociateClients,
         RenameExistingClientProjects,
         ProvisionClients,
+        UpdateMetricFormats,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
         CollectDymanicScheduleParams,
@@ -141,6 +142,7 @@ module GoodData
         SynchronizeDataSetMapping,
         MigrateGdcDateDimension,
         SynchronizeClients,
+        UpdateMetricFormats,
         SynchronizeComputedAttributes,
         CollectDymanicScheduleParams,
         SynchronizeETLsInSegment

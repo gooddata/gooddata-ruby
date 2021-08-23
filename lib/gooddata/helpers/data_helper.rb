@@ -115,12 +115,13 @@ module GoodData
       end
 
       def realize_s3(params)
-        s3_client = params['aws_client'] && params['aws_client']['s3_client']
+        s3_client = params['s3_client'] && params['s3_client']['client']
         raise 'AWS client not present. Perhaps S3Middleware is missing in the brick definition?' if !s3_client || !s3_client.respond_to?(:bucket)
         bucket_name = @options[:bucket]
-        key = @options[:key]
+        key = @options[:key].present? ? @options[:key] : @options[:file]
         raise 'Key "bucket" is missing in S3 datasource' if bucket_name.blank?
-        raise 'Key "key" is missing in S3 datasource' if key.blank?
+        raise 'Key "key" or "file" is missing in S3 datasource' if key.blank?
+
         GoodData.logger.info("Realizing download from S3. Bucket #{bucket_name}, object with key #{key}.")
         filename = Digest::SHA256.new.hexdigest(@options.to_json)
         bucket = s3_client.bucket(bucket_name)
