@@ -44,7 +44,7 @@ module GoodData
       begin
         connect
         filename = "#{SecureRandom.urlsafe_base64(6)}_#{Time.now.to_i}.csv"
-        blob_name = @path ? "#{@path.delete_suffix('/')}/#{file}" : "#{file}"
+        blob_name = get_blob_name(@path, file)
 
         measure = Benchmark.measure do
           _blob, content = @client.get_blob(@container, blob_name)
@@ -87,6 +87,12 @@ module GoodData
       else
         raise INVALID_BLOB_GENERAL_MESSAGE
       end
+    end
+
+    def get_blob_name(path, file)
+      return file unless path
+
+      path.rindex('/') == path.length - 1 ? "#{path}#{file}" : "#{path}/#{file}"
     end
   end
 end

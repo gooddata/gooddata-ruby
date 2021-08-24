@@ -151,7 +151,7 @@ blob_storage_params = {
     "blobStorage_client"=> {
         "connectionString"=> ConnectionHelper::SECRETS[:blob_storage_connection],
         "container"=> "msftest",
-        "path"=> "",
+        "path"=> "DO_NOT_DELETE",
     },
     "input_source"=> {
         "type"=> "blobStorage",
