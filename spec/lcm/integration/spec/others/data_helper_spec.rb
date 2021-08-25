@@ -159,6 +159,26 @@ blob_storage_params = {
     }
 }
 
+mssql_basic_params = {
+  "input_source"=> {
+    "type"=> "mssql",
+    "query"=> "select * from do_not_touch_ruby.Opportunity",
+  },
+  "mssql_client" => {
+    "connection" => {
+      "url" => "jdbc:sqlserver://msf-test-database.na.intgdc.com:1433",
+      "database" => "msf_it_test",
+      "authentication" => {
+        "basic" => {
+          "userName" => "sa",
+          "password" => "D0ntleakit",
+        }
+      },
+      "sslMode" => "prefer"
+    },
+  },
+}
+
 describe 'data helper', :vcr do
 
   it 'connect to redshift with IAM authentication' do
@@ -226,6 +246,14 @@ describe 'data helper', :vcr do
     data_helper = GoodData::Helpers::DataSource.new(blob_storage_params['input_source'])
     file_path = data_helper.realize(blob_storage_params)
     data = File.open('spec/data/blobstorage_data.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to mssql with BASIC authentication' do
+    data_helper = GoodData::Helpers::DataSource.new(mssql_basic_params['input_source'])
+    file_path = data_helper.realize(mssql_basic_params)
+    puts "MSSQL basic: #{file_path}"
+    data = File.open('spec/data/mssql_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
 end
