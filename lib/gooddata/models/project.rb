@@ -477,7 +477,8 @@ module GoodData
         local_stuff = local_schedules.map do |s|
           v = s.to_hash
           after_schedule = local_schedules.find { |s2| s.trigger_id == s2.obj_id }
-          v[:after] = s.trigger_id && after_schedule && after_schedule.name
+          after_process_schedule = from_project_processes.find { |p| after_schedule && p.obj_id == after_schedule.process_id }
+          v[:after] = s.trigger_id && after_process_schedule && after_schedule && after_schedule.name
           v[:remote_schedule] = s
           v[:params] = v[:params].except("EXECUTABLE", "PROCESS_ID")
           v.compact

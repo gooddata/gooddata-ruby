@@ -316,8 +316,6 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
 
       @dataset_mapping = GoodData::DatasetMapping.new(@dataset_mapping_data)
 
-      @dataload_component = @project.deploy_process(etl_component)
-
       @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@client)
 
       add_component_data = {
@@ -339,7 +337,11 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
         project: @project,
         client: @client
       )
-      @add_component.create_schedule(nil, 'add-component-schedule')
+      @add_schedule = @add_component.create_schedule(nil, 'add-component-schedule')
+
+      @dataload_component = @project.deploy_process(etl_component)
+      @dataload_component.create_schedule(@add_schedule, 'etl-component-schedule1')
+      @dataload_component.create_schedule(@add_schedule, 'etl-component-schedule2')
 
       @from_processes = @project.processes.map(&:name).sort
       @from_schedules = @project.schedules.map(&:name).sort
@@ -390,6 +392,13 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
     it 'transfers schedules to the target project' do
       transferrable_schedules = @from_schedules - ['add-component-schedule']
       expect(@to_schedules).to eq(transferrable_schedules)
+      schedule1 = @to_project.schedules.find { |s| s.name == 'etl-component-schedule1'}
+      expect(schedule1.cron).to be_nil
+      expect(schedule1.after).to be_nil
+
+      schedule2 = @to_project.schedules.find { |s| s.name == 'etl-component-schedule2'}
+      expect(schedule2.cron).to be_nil
+      expect(schedule2.after).to be_nil
     end
 
     it 'deletes extra schedules in the target project' do
