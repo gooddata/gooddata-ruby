@@ -1,0 +1,5 @@
+DELETE FROM "<%= table_name || 'LCM_RELEASE' %>"
+WHERE
+  segment_id = '<%= segment_id %>'
+  AND master_project_id IN (<%= master_project_ids %>)
+;

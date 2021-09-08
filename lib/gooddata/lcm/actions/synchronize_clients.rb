@@ -33,6 +33,9 @@ module GoodData
         description 'ADS Client'
         param :ads_client, instance_of(Type::AdsClientType), required: false
 
+        description 'Keep number of old master workspace excluding the latest one'
+        param :keep_only_previous_masters_count, instance_of(Type::StringType), required: false, default: '-1'
+
         description 'Additional Hidden Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
       end
@@ -53,6 +56,7 @@ module GoodData
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
           data_product = params.data_product
           domain_segments = domain.segments(:all, data_product)
+          keep_only_previous_masters_count = Integer(params.keep_only_previous_masters_count || "-1")
 
           segments = params.segments.map do |seg|
             domain_segments.find do |s|
@@ -62,18 +66,14 @@ module GoodData
 
           results = segments.map do |segment|
             if params.ads_client
-              current_master = GoodData::LCM2::Helpers.latest_master_project_from_ads(
-                params.release_table_name,
-                params.ads_client,
-                segment.segment_id
-              )
+              master_projects = GoodData::LCM2::Helpers.get_master_project_list_from_ads(params.release_table_name, params.ads_client, segment.segment_id)
             else
-              current_master = GoodData::LCM2::Helpers.latest_master_project_from_nfs(domain_name, data_product.data_product_id, segment.segment_id)
+              master_projects = GoodData::LCM2::Helpers.get_master_project_list_from_nfs(domain_name, data_product.data_product_id, segment.segment_id)
             end
 
+            current_master = master_projects.last
             # TODO: Check res.first.nil? || res.first[:master_project_id].nil?
             master = client.projects(current_master[:master_project_id])
-
             segment.master_project = master
             segment.save
 
@@ -87,6 +87,19 @@ module GoodData
                    "Details: #{sync_result['links']['details']}")
             end
 
+            if keep_only_previous_masters_count >= 0
+              number_of_deleted_projects = master_projects.count - (keep_only_previous_masters_count + 1)
+
+              if number_of_deleted_projects.positive?
+                begin
+                  removal_master_project_ids = remove_multiple_workspace(params, segment.segment_id, master_projects, number_of_deleted_projects)
+                  remove_old_workspaces_from_release_table(params, domain_name, data_product.data_product_id, segment.segment_id, master_projects, removal_master_project_ids)
+                rescue StandardError => e
+                  GoodData.logger.error "Problem occurs when removing old master workspace, reason: #{e}"
+                end
+              end
+            end
+
             {
               segment: segment.id,
               master_pid: master.pid,
@@ -98,6 +111,42 @@ module GoodData
           # Return results
           results
         end
+
+        def remove_multiple_workspace(params, segment_id, master_projects, number_of_deleted_projects)
+          removal_master_project_ids = []
+          need_to_delete_projects = master_projects.take(number_of_deleted_projects)
+
+          need_to_delete_projects.each do |project_wrapper|
+            master_project_id = project_wrapper[:master_project_id]
+            next if master_project_id.to_s.empty?
+
+            project = params.gdc_gd_client.projects(master_project_id)
+            begin
+              if project && !%w[deleted archived].include?(project.state.to_s)
+                GoodData.logger.info "Segment #{segment_id}: Deleting old master workspace, project: '#{project.title}', PID: (#{project.pid})."
+                project.delete
+              end
+              removal_master_project_ids << master_project_id
+              master_projects.delete_if { |p| p[:master_project_id] == master_project_id }
+            rescue StandardError => ex
+              GoodData.logger.error "Unable to remove master workspace: '#{master_project_id}', Error: #{ex}"
+            end
+          end
+          removal_master_project_ids
+        end
+
+        # rubocop:disable Metrics/ParameterLists
+        def remove_old_workspaces_from_release_table(params, domain_id, data_product_id, segment_id, master_projects, removal_master_project_ids)
+          unless removal_master_project_ids.empty?
+            if params.ads_client
+              GoodData::LCM2::Helpers.delete_master_project_from_ads(params.release_table_name, params.ads_client, segment_id, removal_master_project_ids)
+            else
+              data = master_projects.sort_by { |master| master[:version] }
+              GoodData::LCM2::Helpers.update_master_project_to_nfs(domain_id, data_product_id, segment_id, data)
+            end
+          end
+        end
+        # rubocop:enable Metrics/ParameterLists
       end
     end
   end

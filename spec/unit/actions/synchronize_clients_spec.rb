@@ -69,3 +69,71 @@ describe GoodData::LCM2::SynchronizeClients do
     end
   end
 end
+
+describe '.remove old master workspace' do
+  let(:segment_id) { 'id_of_my_segment' }
+  let(:number_of_deleted_projects) { 2 }
+  let(:gdc_gd_client) { double(GoodData::Rest::Client) }
+  let(:logger) { double(Logger) }
+  let(:ads_client) { double(GoodData::DataWarehouse) }
+  let(:project_1) { double(GoodData::Project) }
+  let(:project_2) { double(GoodData::Project) }
+  let(:project_3) { double(GoodData::Project) }
+  let(:master_projects) do
+    [
+        { master_project_id: 'foo', version: 1, segment_id: 'id_of_my_segment' },
+        { master_project_id: 'bar', version: 2, segment_id: 'id_of_my_segment' },
+        { master_project_id: 'baz', version: 3, segment_id: 'id_of_my_segment' },
+        { master_project_id: 'qux', version: 4, segment_id: 'id_of_my_segment' }
+    ]
+  end
+  let(:master_project_id_1) { 'foo' }
+  let(:master_project_id_2) { 'bar' }
+  let(:master_project_id_3) { 'baz' }
+  let(:project_title_1) { 'title 1' }
+  let(:project_title_2) { 'title 2' }
+  let(:project_title_3) { 'title 3' }
+  let(:params) do
+    params = {
+        gdc_gd_client: gdc_gd_client,
+        release_table_name: 'LCM_RELEASE',
+        ads_client: ads_client,
+        gdc_logger: logger
+    }
+    GoodData::LCM2.convert_to_smart_hash(params)
+  end
+
+  subject { GoodData::LCM2::SynchronizeClients.remove_multiple_workspace(params, segment_id, master_projects, number_of_deleted_projects) }
+
+  before do
+    allow(project_1).to receive(:delete)
+    allow(project_1).to receive(:deleted?).and_return(false)
+    allow(gdc_gd_client).to receive(:projects)
+                                .with(master_project_id_1)
+                                .and_return(project_1)
+    allow(project_1).to receive(:pid).and_return(master_project_id_1)
+    allow(project_1).to receive(:title).and_return(project_title_1)
+    allow(project_1).to receive(:state).and_return('enabled')
+
+    allow(gdc_gd_client).to receive(:projects)
+                                .with(master_project_id_2)
+                                .and_return(project_2)
+    allow(project_2).to receive(:pid).and_return(master_project_id_2)
+    allow(project_2).to receive(:title).and_return(project_title_2)
+    allow(project_2).to receive(:state).and_return('deleted')
+
+    allow(gdc_gd_client).to receive(:projects)
+                                .with(master_project_id_3)
+                                .and_return(project_3)
+    allow(project_3).to receive(:pid).and_return(master_project_id_3)
+    allow(project_3).to receive(:title).and_return(project_title_3)
+    allow(project_3).to receive(:state).and_return('deleted')
+  end
+
+  context 'when remove some old master workspaces' do
+    let(:removal_master_project_ids) { ['foo', 'bar'] }
+    it 'returns deleted master workspaces' do
+      expect(subject).to eq(removal_master_project_ids)
+    end
+  end
+end
