@@ -134,7 +134,7 @@ module GoodData
 
             formats = {}
             metric_data.select { |row| row[:client_id] == client && row[:tag].present? && row[:format].present? }.each { |row| formats[row[:tag]] = row[:format] }
-            metric_groups[client] ||= formats
+            metric_groups[client.to_s] ||= formats
           end
           metric_groups
         end
@@ -147,7 +147,9 @@ module GoodData
           metric_group = get_clients_metrics(data)
           return result if metric_group.empty?
 
+          GoodData.logger.debug("Clients have metrics which will be modified: #{metric_group.keys}")
           updated_clients = params.synchronize.map { |segment| segment.to.map { |client| client[:client_id] } }.flatten.uniq
+          GoodData.logger.debug("Updating clients: #{updated_clients}")
           data_product = params.data_product
           data_product_clients = data_product.clients
           number_client_ok = 0
