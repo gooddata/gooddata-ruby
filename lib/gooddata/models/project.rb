@@ -479,6 +479,7 @@ module GoodData
           after_schedule = local_schedules.find { |s2| s.trigger_id == s2.obj_id }
           after_process_schedule = from_project_processes.find { |p| after_schedule && p.obj_id == after_schedule.process_id }
           v[:after] = s.trigger_id && after_process_schedule && after_schedule && after_schedule.name
+          v[:trigger_execution_status] = s.trigger_execution_status
           v[:remote_schedule] = s
           v[:params] = v[:params].except("EXECUTABLE", "PROCESS_ID")
           v.compact
@@ -547,6 +548,7 @@ module GoodData
             schedule.params = (schedule_spec[:params] || {})
             schedule.cron = schedule_spec[:cron] if schedule_spec[:cron]
             schedule.after = schedule_cache[schedule_spec[:after]] if schedule_spec[:after]
+            schedule.trigger_execution_status = schedule_cache[schedule_spec[:trigger_execution_status]] if schedule_spec[:after]
             schedule.hidden_params = schedule_spec[:hidden_params] || {}
             if process_spec.type != :dataload
               schedule.executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
@@ -607,7 +609,8 @@ module GoodData
           hidden_params: schedule_spec[:hidden_params],
           name: schedule_spec[:name],
           reschedule: schedule_spec[:reschedule],
-          state: schedule_spec[:state]
+          state: schedule_spec[:state],
+          trigger_execution_status: schedule_spec[:trigger_execution_status]
         }
       end
     end

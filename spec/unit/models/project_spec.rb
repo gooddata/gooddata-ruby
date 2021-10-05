@@ -197,6 +197,7 @@ describe GoodData::Project do
         allow(target_project).to receive(:schedules).and_return([])
         allow(add_schedule).to receive(:to_hash).and_return(params: {})
         allow(add_schedule).to receive(:trigger_id)
+        allow(add_schedule).to receive(:trigger_execution_status)
         allow(add_schedule).to receive(:obj_id).and_return('add_schedule_id')
       end
 

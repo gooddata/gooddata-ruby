@@ -101,6 +101,7 @@ module GoodData
 
         schedule.name = options[:name]
         schedule.set_trigger(trigger)
+        schedule.trigger_execution_status = options[:trigger_execution_status]
         schedule.params = default_opts[:params].merge(options[:params] || {})
         schedule.hidden_params = options[:hidden_params] || {}
         schedule.timezone = options[:timezone] || default_opts[:timezone]
@@ -468,6 +469,7 @@ module GoodData
         hidden_params: hidden_params,
         cron: cron,
         trigger_id: trigger_id,
+        trigger_execution_status: trigger_execution_status,
         timezone: timezone,
         uri: uri,
         reschedule: reschedule,
@@ -484,6 +486,16 @@ module GoodData
       json['schedule']['triggerScheduleId'] = a_trigger
       @dirty = true
       self
+    end
+
+    def trigger_execution_status
+      json['schedule']['triggerExecutionStatus']
+    end
+
+    def trigger_execution_status=(trigger_execution_status)
+      json['schedule']['triggerExecutionStatus'] = trigger_execution_status
+      @dirty = true
+      self # rubocop:disable Lint/Void
     end
 
     def name
@@ -530,7 +542,7 @@ module GoodData
           'hiddenParams' => GoodData::Helpers.encode_hidden_params(hidden_params)
         }
       }
-
+      res['schedule']['triggerExecutionStatus'] = trigger_execution_status if trigger_execution_status
       res['schedule']['reschedule'] = reschedule if reschedule
 
       res
