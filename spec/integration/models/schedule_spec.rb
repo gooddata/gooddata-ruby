@@ -382,8 +382,10 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_model_all' do
       schedule = GoodData::Schedule.create(PROCESS_ID, @test_cron, @project_executable, @test_data_with_optional_param)
       expect(schedule.dirty).to be_truthy
       schedule.trigger_id = 'some_other_id'
+      schedule.trigger_execution_status = 'OK+WARNING'
       expect(schedule.dirty).to be_truthy
       expect(schedule.trigger_id).to eq 'some_other_id'
+      expect(schedule.trigger_execution_status).to eq 'OK+WARNING'
     end
   end
 
