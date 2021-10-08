@@ -421,68 +421,73 @@ module GoodData
                  results: create_results + delete_results }
       end
 
-      create_results = to_create.each_slice(100).flat_map do |batch|
-        batch.pmapcat do |related_uri, group|
-          group.each(&:save)
-          res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
-          items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
+      if to_create.empty?
+        create_results = []
+      else
+        create_results = to_create.each_slice(100).flat_map do |batch|
+          batch.pmapcat do |related_uri, group|
+            group.each(&:save)
+            res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
+            items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
 
-          payload = {
-            'userFilters' => {
-              'items' => [{
-                'user' => related_uri,
-                'userFilters' => items.concat(group.map(&:uri))
-              }]
+            payload = {
+              'userFilters' => {
+                'items' => [{
+                  'user' => related_uri,
+                  'userFilters' => items.concat(group.map(&:uri))
+                }]
+              }
             }
-          }
-          res = client.post("/gdc/md/#{project.pid}/userfilters", payload)
+            res = client.post("/gdc/md/#{project.pid}/userfilters", payload)
 
-          # turn the errors from hashes into array of hashes
-          update_result = res['userFiltersUpdateResult'].flat_map do |k, v|
-            v.map { |r| { status: k.to_sym, user: r, type: :create } }
-          end
+            # turn the errors from hashes into array of hashes
+            update_result = res['userFiltersUpdateResult'].flat_map do |k, v|
+              v.map { |r| { status: k.to_sym, user: r, type: :create } }
+            end
 
-          update_result.map do |result|
-            result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result
+            update_result.map do |result|
+              result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result
+            end
           end
         end
+        project_log_formatter.log_user_filter_results(create_results, to_create)
+        create_errors = create_results.select { |r| r[:status] == :failed }
+        fail "Creating MUFs resulted in errors: #{create_errors}" if create_errors.any?
       end
 
-      project_log_formatter.log_user_filter_results(create_results, to_create)
-      create_errors = create_results.select { |r| r[:status] == :failed }
-      fail "Creating MUFs resulted in errors: #{create_errors}" if create_errors.any?
-
-      delete_results = unless options[:do_not_touch_filters_that_are_not_mentioned]
-                         to_delete.each_slice(100).flat_map do |batch|
-                           batch.flat_map do |related_uri, group|
-                             results = []
-                             if related_uri
-                               res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
-                               items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
-                               payload = {
-                                 'userFilters' => {
-                                   'items' => [
-                                     {
-                                       'user' => related_uri,
-                                       'userFilters' => items - group.map(&:uri)
-                                     }
-                                   ]
-                                 }
-                               }
-                               res = client.post("/gdc/md/#{project.pid}/userfilters", payload)
-                               results.concat(res['userFiltersUpdateResult']
+      if to_delete.empty?
+        delete_results = []
+      elsif !options[:do_not_touch_filters_that_are_not_mentioned]
+        delete_results = to_delete.each_slice(100).flat_map do |batch|
+          batch.flat_map do |related_uri, group|
+            results = []
+            if related_uri
+              res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
+              items = res['userFilters']['items'].empty? ? [] : res['userFilters']['items'].first['userFilters']
+              payload = {
+                'userFilters' => {
+                  'items' => [
+                    {
+                      'user' => related_uri,
+                      'userFilters' => items - group.map(&:uri)
+                    }
+                  ]
+                }
+              }
+              res = client.post("/gdc/md/#{project.pid}/userfilters", payload)
+              results.concat(res['userFiltersUpdateResult']
                                  .flat_map { |k, v| v.map { |r| { status: k.to_sym, user: r, type: :delete } } }
                                  .map { |result| result[:status] == :failed ? result.merge(GoodData::Helpers.symbolize_keys(result[:user])) : result })
-                             end
-                             group.peach(&:delete)
-                             results
-                           end
-                         end
-                       end
+            end
+            group.peach(&:delete)
+            results
+          end
 
-      project_log_formatter.log_user_filter_results(delete_results, to_delete)
-      delete_errors = delete_results.select { |r| r[:status] == :failed } if delete_results
-      fail "Deleting MUFs resulted in errors: #{delete_errors}" if delete_errors && delete_errors.any?
+          project_log_formatter.log_user_filter_results(delete_results, to_delete)
+          delete_errors = delete_results.select { |r| r[:status] == :failed } if delete_results
+          fail "Deleting MUFs resulted in errors: #{delete_errors}" if delete_errors&.any?
+        end
+      end
 
       { created: to_create, deleted: to_delete, results: create_results + (delete_results || []) }
     end

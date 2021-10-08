@@ -124,6 +124,7 @@ module GoodData
           GoodData.gd_logger.info("Synchronizing in mode=#{mode}, number_of_clients=#{all_clients.size}, data_rows=#{user_filters.size}")
 
           GoodData.logger.info("Synchronizing in mode \"#{mode}\"")
+          results = []
           case mode
           when 'sync_project', 'sync_one_project_based_on_pid', 'sync_one_project_based_on_custom_id'
             if mode == 'sync_one_project_based_on_pid'
@@ -134,7 +135,9 @@ module GoodData
             user_filters = user_filters.select { |f| f[:pid] == filter } if filter
 
             GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project.pid}, data_rows=#{user_filters.size}")
-            sync_user_filters(project, user_filters, run_params, symbolized_config)
+            current_results = sync_user_filters(project, user_filters, run_params, symbolized_config)
+
+            results.concat(current_results[:results]) unless current_results.nil? || current_results[:results].empty?
           when 'sync_multiple_projects_based_on_pid', 'sync_multiple_projects_based_on_custom_id'
             users_by_project = run_params[:users_brick_input].group_by { |u| u[:pid] }
             user_filters.group_by { |u| u[:pid] }.flat_map.pmap do |id, new_filters|
@@ -149,7 +152,9 @@ module GoodData
               end
 
               GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{id}, data_rows=#{new_filters.size}")
-              sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
+              current_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
+
+              results.concat(current_results[:results]) unless current_results.nil? || current_results[:results].empty?
             end
           when 'sync_domain_client_workspaces'
             domain_clients = all_clients
@@ -161,7 +166,6 @@ module GoodData
             working_client_ids = []
 
             users_by_project = run_params[:users_brick_input].group_by { |u| u[:pid] }
-            results = []
             user_filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |client_id, new_filters|
               users = users_by_project[client_id]
               fail "Client id cannot be empty" if client_id.blank?
@@ -182,7 +186,7 @@ module GoodData
 
               GoodData.gd_logger.info("Synchronizing in mode=#{mode}, client_id=#{client_id}, data_rows=#{new_filters.size}")
               partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
-              results.concat(partial_results[:results])
+              results.concat(partial_results[:results]) unless partial_results.nil? && partial_results[:results].empty?
             end
 
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
@@ -197,17 +201,16 @@ module GoodData
                   GoodData.gd_logger.info("Delete all filters in project_id=#{current_project.pid}, client_id=#{c.client_id}")
                   current_results = sync_user_filters(current_project, [], run_params.merge(users_brick_input: users), symbolized_config)
 
-                  results.concat(current_results[:results])
+                  results.concat(current_results[:results]) unless current_results[:results].empty?
                 rescue StandardError => e
                   params.gdc_logger.error "Failed to clear filters of  #{c.client_id} due to: #{e.inspect}"
                 end
               end
             end
-
-            {
-              results: results
-            }
           end
+          {
+            results: results
+          }
         end
 
         def sync_user_filters(project, filters, params, filters_config)
