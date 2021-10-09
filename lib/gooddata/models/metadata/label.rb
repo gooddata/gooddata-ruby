@@ -40,22 +40,20 @@ module GoodData
       end
     end
 
-    # Gets valid elements using /validElements? API
+    # Gets valid elements of a label for a specific paging (:offset and :limit) or get validElements of a specific value (:filter).
+    # In the case filter a specific value, because the API /validElements only filter by partial match, we need to filter again at client side for exact match.
     # @return [Array] Results
     def get_valid_elements(*args)
-      results, params = valid_elements(*args)
-      # TMA-775 - the validElements API can possibly return more matches than requested (usually 1)
-      # so we do a preliminary first request to check and then increase the limit if needed
-      if results['validElements']['paging']['total'].to_i != params[:limit]
+      if args && !args.empty? && args.first[:filter]
+        params = args.first
         params[:limit] = 100_000
         results, = valid_elements params
-        if params[:filter]
-          results['validElements']['items'] = results['validElements']['items'].reject do |i|
-            i['element']['title'] != params[:filter]
-          end
+        results['validElements']['items'] = results['validElements']['items'].select do |i|
+          i['element']['title'] == params[:filter]
         end
+      else
+        results, = valid_elements(*args)
       end
-
       results
     end
 
@@ -74,24 +72,25 @@ module GoodData
     # @option options [Number] :limit limits the number of values to certain number. Default is 100
     # @return [Array]
     def values(options = {})
-      Enumerator.new do |y|
-        offset = options[:offset] || 0
-        page_limit = options[:limit] || 100
-        loop do
-          results = get_valid_elements(limit: page_limit, offset: offset)
+      all_values = []
+      offset = options[:offset] || 0
+      page_limit = options[:limit] || 100
+      loop do
+        results = get_valid_elements(limit: page_limit, offset: offset)
 
-          elements = results['validElements']
-          elements['items'].map do |el|
-            v = el['element']
-            y << {
-              :value => v['title'],
-              :uri => v['uri']
-            }
-          end
-          break if elements['items'].count < page_limit
-          offset += page_limit
+        elements = results['validElements']
+        elements['items'].map do |el|
+          v = el['element']
+          all_values << {
+            :value => v['title'],
+            :uri => v['uri']
+          }
         end
+        break if elements['items'].count < page_limit
+
+        offset += page_limit
       end
+      all_values
     end
 
     def values_count

@@ -186,7 +186,7 @@ module GoodData
 
               GoodData.gd_logger.info("Synchronizing in mode=#{mode}, client_id=#{client_id}, data_rows=#{new_filters.size}")
               partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
-              results.concat(partial_results[:results]) unless partial_results.nil? && partial_results[:results].empty?
+              results.concat(partial_results[:results]) unless partial_results.nil? || partial_results[:results].empty?
             end
 
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
@@ -201,7 +201,7 @@ module GoodData
                   GoodData.gd_logger.info("Delete all filters in project_id=#{current_project.pid}, client_id=#{c.client_id}")
                   current_results = sync_user_filters(current_project, [], run_params.merge(users_brick_input: users), symbolized_config)
 
-                  results.concat(current_results[:results]) unless current_results[:results].empty?
+                  results.concat(current_results[:results]) unless current_results.nil? || current_results[:results].empty?
                 rescue StandardError => e
                   params.gdc_logger.error "Failed to clear filters of  #{c.client_id} due to: #{e.inspect}"
                 end
