@@ -28,7 +28,6 @@ describe 'Release and Rollout brick with NFS', :vcr do
     rollout_result = []
     @test_context[:master_project_id] = release_result[0][:master_project_id]
     @test_context[:data_product] = 'LCM_DATA_PRODUCT_' + SecureRandom.urlsafe_base64(5).gsub('-', '_')
-    @test_context[:release_table_name] = "#{@test_context[:data_product]}_LCM_RELEASE"
     BrickRunner.release_brick context: @test_context, template_path: '../../params/release_brick_delete_old_master_project.json.erb', client: @prod_rest_client, set_master_project: true
 
     @test_context[:master_project_id] = release_result[1][:master_project_id]
@@ -36,9 +35,9 @@ describe 'Release and Rollout brick with NFS', :vcr do
     segments = JSON.parse(@test_context[:segments])
     segments.each do |s|
       segment_id = s['segment_id']
-      master_projects = GoodData::LCM2::Helpers.get_master_project_list_from_nfs(@test_context[:release_table_name], @ads_client, segment_id)
+      master_projects = GoodData::LCM2::Helpers.get_master_project_list_from_nfs(@config[:prod_organization], @test_context[:data_product], segment_id)
       expect(master_projects.size).to eq 2
-      rollout_result << master_projects.find { |p| p[:version] == 2 }
+      rollout_result << master_projects.find { |p| p[:version] == 2 }.merge({:segment_id => segment_id})
     end
 
     @test_context[:keep_only_previous_masters_count] = '0'
@@ -46,8 +45,9 @@ describe 'Release and Rollout brick with NFS', :vcr do
     segments.each do |s|
       segment_id = s['segment_id']
       expected_master_project = rollout_result.select { |p| p[:segment_id].to_s == segment_id }
-      rollout_master_projects = GoodData::LCM2::Helpers.get_master_project_list_from_ads(@test_context[:release_table_name], @ads_client, segment_id)
-      expect(rollout_master_projects).to eq(expected_master_project)
+      expected_master_project.each { |p| p.except!(:segment_id) }
+      rollout_master_projects = GoodData::LCM2::Helpers.get_master_project_list_from_nfs(@config[:prod_organization], @test_context[:data_product], segment_id)
+      expect(expected_master_project).to eq(rollout_master_projects)
     end
   end
 end
