@@ -354,18 +354,14 @@ module GoodData
       def get_data_source_alias(data_source_id, client, aliases)
         unless aliases[data_source_id]
           data_source = GoodData::DataSource.from_id(data_source_id, client: client)
-          if data_source&.dig('dataSource', 'alias')
+          if data_source&.alias
             aliases[data_source_id] = {
-              :type => get_data_source_type(data_source),
-              :alias => data_source['dataSource']['alias']
+              :type => data_source.type,
+              :alias => data_source.alias
             }
           end
         end
         aliases[data_source_id]
-      end
-
-      def get_data_source_type(data_source_data)
-        data_source_data&.dig('dataSource', 'connectionInfo') ? data_source_data['dataSource']['connectionInfo'].first[0].upcase : ""
       end
 
       def replace_process_data_source_ids(process_data, client, aliases)

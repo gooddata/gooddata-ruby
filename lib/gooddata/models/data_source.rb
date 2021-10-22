@@ -34,7 +34,7 @@ module GoodData
             c.create(DataSource, ds_data)
           end
         else
-          c.create(DataSource, c.get("#{DATA_SOURCES_URL}/#{id}"))
+          c.create(DataSource, c.get(DATA_SOURCES_URL + '/' + id))
         end
       end
 
@@ -175,6 +175,10 @@ module GoodData
 
     def is(type)
       @json['dataSource']['connectionInfo'][type]
+    end
+
+    def type
+      @json['dataSource']['connectionInfo'].first[0].upcase
     end
 
     private
