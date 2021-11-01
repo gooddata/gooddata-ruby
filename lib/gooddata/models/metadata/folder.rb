@@ -44,6 +44,7 @@ module GoodData
             }
           }
         }
+        folder['folder']['meta']['identifier'] = opts[:identifier] if opts[:identifier]
 
         client, project = GoodData.get_client_and_project(opts)
         client.create(Folder, folder, project: project)
