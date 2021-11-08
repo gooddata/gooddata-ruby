@@ -83,18 +83,29 @@ module GoodData
           segment_info[:from_blueprint] = blueprint
           maql_diff = nil
           previous_master = segment_info[:previous_master]
+          synchronize_ldm_mode = params[:synchronize_ldm].downcase
           diff_against_master = %w(diff_against_master_with_fallback diff_against_master)
-            .include?(params[:synchronize_ldm].downcase)
-          GoodData.logger.info "Synchronize LDM mode: '#{params[:synchronize_ldm].downcase}'"
-          if previous_master && diff_against_master
-            maql_diff_params = [:includeGrain]
-            maql_diff_params << :excludeFactRule if exclude_fact_rule
-            maql_diff_params << :includeDeprecated if include_deprecated
-            maql_diff = previous_master.maql_diff(blueprint: blueprint, params: maql_diff_params)
+            .include?(synchronize_ldm_mode)
+          GoodData.logger.info "Synchronize LDM mode: '#{synchronize_ldm_mode}'"
+          if segment_info.key?(:previous_master) && diff_against_master
+            if previous_master
+              maql_diff_params = [:includeGrain]
+              maql_diff_params << :excludeFactRule if exclude_fact_rule
+              maql_diff_params << :includeDeprecated if include_deprecated
+              maql_diff = previous_master.maql_diff(blueprint: blueprint, params: maql_diff_params)
+            else
+              maql_diff = {
+                "projectModelDiff" =>
+                   {
+                     "updateOperations" => [],
+                     "updateScripts" => []
+                   }
+              }
+            end
             chunks = maql_diff['projectModelDiff']['updateScripts']
             if chunks.empty?
               GoodData.logger.info "Synchronize LDM to clients will not proceed in mode \
-'#{params[:synchronize_ldm].downcase}' due to no LDM changes in the new master project. \
+'#{synchronize_ldm_mode}' due to no LDM changes in the segment master project. \
 If you had changed LDM of clients manually, please use mode 'diff_against_clients' \
 to force synchronize LDM to clients"
             end
