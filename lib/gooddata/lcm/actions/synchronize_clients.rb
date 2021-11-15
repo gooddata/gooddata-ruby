@@ -94,8 +94,8 @@ module GoodData
                 begin
                   removal_master_project_ids = remove_multiple_workspace(params, segment.segment_id, master_projects, number_of_deleted_projects)
                   remove_old_workspaces_from_release_table(params, domain_name, data_product.data_product_id, segment.segment_id, master_projects, removal_master_project_ids)
-                rescue StandardError => e
-                  GoodData.logger.error "Problem occurs when removing old master workspace, reason: #{e}"
+                rescue Exception => e # rubocop:disable RescueException
+                  GoodData.logger.error "Problem occurs when removing old master workspace, reason: #{e.message}"
                 end
               end
             end
@@ -128,8 +128,8 @@ module GoodData
               end
               removal_master_project_ids << master_project_id
               master_projects.delete_if { |p| p[:master_project_id] == master_project_id }
-            rescue StandardError => ex
-              GoodData.logger.error "Unable to remove master workspace: '#{master_project_id}', Error: #{ex}"
+            rescue Exception => ex # rubocop:disable RescueException
+              GoodData.logger.error "Unable to remove master workspace: '#{master_project_id}', Error: #{ex.message}"
             end
           end
           removal_master_project_ids
