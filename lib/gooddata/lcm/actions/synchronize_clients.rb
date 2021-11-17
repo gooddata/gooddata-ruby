@@ -120,8 +120,8 @@ module GoodData
             master_project_id = project_wrapper[:master_project_id]
             next if master_project_id.to_s.empty?
 
-            project = params.gdc_gd_client.projects(master_project_id)
             begin
+              project = params.gdc_gd_client.projects(master_project_id)
               if project && !%w[deleted archived].include?(project.state.to_s)
                 GoodData.logger.info "Segment #{segment_id}: Deleting old master workspace, project: '#{project.title}', PID: (#{project.pid})."
                 project.delete
