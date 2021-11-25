@@ -70,6 +70,10 @@ RUN cp -rf ci/postgresql/target/*.jar ./lib/gooddata/cloud_resources/postgresql/
 RUN mvn -f ci/mssql/pom.xml clean install -P binary-packaging
 RUN cp -rf ci/mssql/target/*.jar ./lib/gooddata/cloud_resources/mssql/drivers/
 
+#build mysql dependencies
+RUN mvn -f ci/mysql/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/mysql/target/*.jar ./lib/gooddata/cloud_resources/mysql/drivers/
+
 RUN bundle install
 
 ARG GIT_COMMIT=unspecified
