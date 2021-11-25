@@ -1,4 +1,4 @@
-FROM harbor.intgdc.com/tools/gdc-java-8-jre:8291370
+FROM harbor.intgdc.com/tools/gdc-java-8-jre-centos8:6c54afc
 
 ARG RVM_VERSION=stable
 ARG JRUBY_VERSION=9.2.5.0
@@ -6,10 +6,10 @@ ARG JRUBY_VERSION=9.2.5.0
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre:8291370"
+LABEL parent_image="harbor.intgdc.com/tools/gdc-java-8-jre-centos8:6c54afc"
 
 # which is required by RVM
-RUN yum install -y curl which patch make git maven \
+RUN yum install -y curl which patch make git maven procps \
     && yum clean all \
     && rm -rf /var/cache/yum
 
