@@ -50,6 +50,7 @@ module GoodData
             segment_info[:to].pmap do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+              GoodData.logger.info "Migrating date dimension, project: '#{to_project.title}', PID: #{pid}"
               to_blueprint = to_project.blueprint
               upgrade_datasets = get_upgrade_dates(latest_blueprint, to_blueprint)
               next if upgrade_datasets.empty?
