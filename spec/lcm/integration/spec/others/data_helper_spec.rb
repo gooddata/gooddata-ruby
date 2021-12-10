@@ -179,6 +179,26 @@ mssql_basic_params = {
   },
 }
 
+mysql_basic_params = {
+    "input_source"=> {
+        "type"=> "mysql",
+        "query"=> "SELECT DISTINCT * FROM clients",
+    },
+    "mysql_client" => {
+        "connection" => {
+            "url" => "jdbc:mysql://msf-test-database.na.intgdc.com:1435",
+            "database" => "integration_test",
+            "authentication" => {
+                "basic" => {
+                    "userName" => "mysql_integration_test",
+                    "password" => ConnectionHelper::SECRETS[:mysql_connection],
+                }
+            },
+            "sslMode" => "prefer"
+        },
+    },
+}
+
 describe 'data helper', :vcr do
 
   it 'connect to redshift with IAM authentication' do
@@ -254,6 +274,13 @@ describe 'data helper', :vcr do
     file_path = data_helper.realize(mssql_basic_params)
     puts "MSSQL basic: #{file_path}"
     data = File.open('spec/data/mssql_data.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to mysql with BASIC authentication' do
+    data_helper = GoodData::Helpers::DataSource.new(mysql_basic_params['input_source'])
+    file_path = data_helper.realize(mysql_basic_params)
+    data = File.open('spec/data/mysql_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
 end

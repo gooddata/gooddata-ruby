@@ -44,7 +44,7 @@ module GoodData
           realize_link
         when 's3'
           realize_s3(params)
-        when 'redshift', 'snowflake', 'bigquery', 'postgresql', 'mssql'
+        when 'redshift', 'snowflake', 'bigquery', 'postgresql', 'mssql', 'mysql'
           raise GoodData::InvalidEnvError, "DataSource does not support type \"#{source}\" on the platform #{RUBY_PLATFORM}" unless RUBY_PLATFORM =~ /java/
           require_relative '../cloud_resources/cloud_resources'
           realize_cloud_resource(source, params)

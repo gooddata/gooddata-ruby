@@ -75,7 +75,7 @@ module GoodData
 
           modified_input_source = input_source
           case type
-          when 'ads', 'redshift', 'snowflake', 'bigquery', 'postgresql', 'mssql'
+          when 'ads', 'redshift', 'snowflake', 'bigquery', 'postgresql', 'mssql', 'mysql'
             if metric_format[:query].blank?
               GoodData.logger.warn("The metric input_source '#{type}' is missing property 'query'")
               return nil
