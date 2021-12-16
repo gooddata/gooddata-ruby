@@ -93,7 +93,7 @@ module GoodData
         host = matches[0][0]
         port = matches[0][2]&.to_i || MYSQL_DEFAULT_PORT
 
-        "#{JDBC_MYSQL_PROTOCOL}#{host}:#{port}/#{@database}?sslmode=#{get_ssl_mode(@ssl_mode)}&useCursorFetch=true"
+        "#{JDBC_MYSQL_PROTOCOL}#{host}:#{port}/#{@database}?sslmode=#{get_ssl_mode(@ssl_mode)}&useCursorFetch=true&enabledTLSProtocols=TLSv1.2"
       end
 
       def get_ssl_mode(ssl_mode)
