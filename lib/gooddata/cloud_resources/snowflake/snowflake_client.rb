@@ -18,6 +18,9 @@ end
 module GoodData
   module CloudResources
     class SnowflakeClient < CloudResourceClient
+      SNOWFLAKE_GDC_APPLICATION_PARAMETER = 'application=GoodData_Platform'
+      SNOWFLAKE_SEPARATOR_PARAM = '?'
+
       class << self
         def accept?(type)
           type == 'snowflake'
@@ -31,7 +34,7 @@ module GoodData
           @database = options['snowflake_client']['connection']['database']
           @schema = options['snowflake_client']['connection']['schema'] || 'public'
           @warehouse = options['snowflake_client']['connection']['warehouse']
-          @url = options['snowflake_client']['connection']['url']
+          @url = build_url(options['snowflake_client']['connection']['url'])
           @authentication = options['snowflake_client']['connection']['authentication']
         else
           raise('Missing connection info for Snowflake client')
@@ -78,6 +81,20 @@ module GoodData
         prop.setProperty('db', @database)
 
         @connection = java.sql.DriverManager.getConnection(@url, prop)
+      end
+
+      def build_url(url)
+        is_contain = url.include?(SNOWFLAKE_GDC_APPLICATION_PARAMETER)
+        unless is_contain
+          if url.include?(SNOWFLAKE_SEPARATOR_PARAM)
+            url.concat("&")
+          else
+            url.concat(SNOWFLAKE_SEPARATOR_PARAM)
+          end
+          url.concat(SNOWFLAKE_GDC_APPLICATION_PARAMETER)
+        end
+
+        url
       end
     end
   end
