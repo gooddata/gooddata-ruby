@@ -53,7 +53,9 @@ module GoodData
                 client: development_client
               )
               kpi_dashboards = MdObject.query('analyticalDashboard', MdObject, client: development_client, project: from_project)
-              objects = old_dashboards.to_a + kpi_dashboards.to_a
+              kpi_dashboard_plugin = MdObject.query('dashboardPlugin', MdObject, client: development_client, project: from_project)
+              kpi_date_filter_config = MdObject.query('dateFilterConfig', MdObject, client: development_client, project: from_project)
+              objects = old_dashboards.to_a + kpi_dashboards.to_a + kpi_dashboard_plugin.to_a + kpi_date_filter_config.to_a
             else
               objects = GoodData::Dashboard.find_by_tag(
                 production_tags,
