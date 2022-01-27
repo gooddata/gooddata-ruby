@@ -30,7 +30,7 @@ describe 'LCM load test' do
   include_context 'load tests cleanup' unless ENV['GD_LCM_SMOKE_TEST'] == 'true'
 
   describe 'release/provisioning/rollout' do
-    it 'schedules bricks' do
+    xit 'schedules bricks' do
       service_project = @prod_rest_client.create_project(
         title: 'lcm load test service project',
         auth_token: @test_context[:config][:prod_token]
@@ -62,7 +62,7 @@ describe 'LCM load test' do
       release_schedule.execute(wait: false)
     end
 
-    it 'successfully finishes' do
+    xit 'successfully finishes' do
       timeout = 3.hours
       results = GoodData::AppStore::Helper.wait_for_executions([release_schedule, provisioning_schedule, rollout_schedule], timeout)
       results.each do |result|

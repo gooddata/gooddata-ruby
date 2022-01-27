@@ -136,7 +136,7 @@ describe 'UsersBrick' do
       users_schedule = BrickRunner.schedule_brick('users_brick', service_project, opts)
     end
 
-    it 'sets the right MUFs to right users' do
+    xit 'sets the right MUFs to right users' do
       @test_context = {
         project_id: @project.pid,
         config: LcmConnectionHelper.environment,
@@ -188,7 +188,7 @@ describe 'UsersBrick' do
       users_schedule.execute(wait: false)
     end
 
-    it 'successfully finishes' do
+    xit 'successfully finishes' do
       timeout = 3.hours
       results = GoodData::AppStore::Helper.wait_for_executions(
         [users_schedule, user_filters_schedule],
