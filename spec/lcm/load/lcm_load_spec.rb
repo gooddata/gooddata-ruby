@@ -30,44 +30,44 @@ describe 'LCM load test' do
   include_context 'load tests cleanup' unless ENV['GD_LCM_SMOKE_TEST'] == 'true'
 
   describe 'release/provisioning/rollout' do
-    xit 'schedules bricks' do
-      service_project = @prod_rest_client.create_project(
-        title: 'lcm load test service project',
-        auth_token: @test_context[:config][:prod_token]
-      )
-
-      release_schedule = BrickRunner.schedule_brick(
-        'release_brick',
-        service_project,
-        context: @test_context,
-        image_tag: image_tag
-      )
-
-      provisioning_schedule = BrickRunner.schedule_brick(
-        'provisioning_brick',
-        service_project,
-        context: @test_context,
-        run_after: release_schedule,
-        image_tag: image_tag
-      )
-
-      rollout_schedule = BrickRunner.schedule_brick(
-        'rollout_brick',
-        service_project,
-        context: @test_context,
-        run_after: provisioning_schedule,
-        image_tag: image_tag
-      )
-
-      release_schedule.execute(wait: false)
-    end
-
-    xit 'successfully finishes' do
-      timeout = 3.hours
-      results = GoodData::AppStore::Helper.wait_for_executions([release_schedule, provisioning_schedule, rollout_schedule], timeout)
-      results.each do |result|
-        expect(result.status).to be :ok
-      end
-    end
+    # it 'schedules bricks' do
+    #   service_project = @prod_rest_client.create_project(
+    #     title: 'lcm load test service project',
+    #     auth_token: @test_context[:config][:prod_token]
+    #   )
+    #
+    #   release_schedule = BrickRunner.schedule_brick(
+    #     'release_brick',
+    #     service_project,
+    #     context: @test_context,
+    #     image_tag: image_tag
+    #   )
+    #
+    #   provisioning_schedule = BrickRunner.schedule_brick(
+    #     'provisioning_brick',
+    #     service_project,
+    #     context: @test_context,
+    #     run_after: release_schedule,
+    #     image_tag: image_tag
+    #   )
+    #
+    #   rollout_schedule = BrickRunner.schedule_brick(
+    #     'rollout_brick',
+    #     service_project,
+    #     context: @test_context,
+    #     run_after: provisioning_schedule,
+    #     image_tag: image_tag
+    #   )
+    #
+    #   release_schedule.execute(wait: false)
+    # end
+    #
+    # it 'successfully finishes' do
+    #   timeout = 3.hours
+    #   results = GoodData::AppStore::Helper.wait_for_executions([release_schedule, provisioning_schedule, rollout_schedule], timeout)
+    #   results.each do |result|
+    #     expect(result.status).to be :ok
+    #   end
+    # end
   end
 end
