@@ -29,8 +29,9 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
 # Switch to a bash login shell to allow simple 'rvm' in RUN commands
 SHELL ["/bin/bash", "-l", "-c"]
 
-RUN rvm install jruby-${JRUBY_VERSION} && gem update --system \
-    && gem install bundler rake
+RUN rvm install jruby-${JRUBY_VERSION} && gem update --system 3.0.6 \
+    && gem install bundler -v 1.17.3 \
+    && gem install rake -v 11.3.0
 
 WORKDIR /src
 
