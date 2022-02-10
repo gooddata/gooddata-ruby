@@ -8,5 +8,5 @@ require 'pathname'
 
 base = Pathname(__FILE__).dirname.expand_path
 Dir.glob("#{base}/*_middleware.rb").each do |file|
-  require file
+  require file unless file.start_with?('bulk_salesforce_middleware')
 end
