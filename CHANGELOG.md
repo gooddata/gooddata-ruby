@@ -1,4 +1,42 @@
 # GoodData Ruby SDK Changelog
+
+## 2.2.0
+ - FEATURE: MSF-23003 Supports Ruby 2.7, remove salesforce_bulk_query dependency
+ - FEATURE:TMA-1737, TMA-1738 - Change to propagate dateFilterConfig and dashboardPlugin during LCM release and rollout.
+ - MSF-22739: Bump lcm-bricks chart version
+ - FEATURE: MSF-22133 bump LCM version to 3.7.42
+ - FEATURE: MSF-22578 Add Gooddata platform parameter for snowflake url
+ - FEATURE: MSF-22129 add support mysql input source
+ - BUGFIX: MSF-22215 Add more log to MigrateGdcDateDimension action of Rollout brick
+ - MSF-22480: Update MSF ruby docker images to Centos 8
+ - BUGFIX: MSF-22414 Should not fail rollout if any errors related to delete old master workspaces
+ - BUGFIX: MSF-22164 Diff against clients is done when there are no LDM changes
+ - BUGFIX:MSF-22296 - Fix frozen object when release with datasource in dev ws.
+ - FEATURE: MSF-22170 Update integration test for NFS when delete old master project
+ - BUGFIX:MSF-22175 - Revert to use Enumerator on MD object
+ - BUGFIX:MSF-22175 - Change to not use Enumerator
+ - FEATURE: MSF-22016 add support trigger execution status
+ - MSF-22170: Add integration test to rollout brick for delete old master workspace
+ - BUGFIX:MSF-22175 - bump LCM version to 3.7.33
+ - BUGFIX:MSF-22175 - Ignore empty log in table SynchronizeUserFilters
+ - BUGFIX:MSF-22140 - Fix error when user using numeric client_id
+ - MSF-21292: Add capability to remove old master workspaces to LCM brick
+ - FEATURE:TMA-1610 - Change redshift repos to nexus
+ - FEATURE:TMA-1610 - Update metric for client localization
+ - FEATURE: MSF-21860 bump LCM version 3.7.30
+ - BUGFIX: MSF-21805 Fix loop forever when sync schedules
+ - REQUEST: MSF-21521 - implement integration test for MSSQL Datasource
+ - BUGFIX: MSF-21477 Don’t use delete_suffix which not available for ruby 2.3
+ - BUGFIX:MSF-21702 - Fix for empty date-dimension and bump LCM version to 3.7.29
+ - FEATURE:MSF-21056 - Sync Dataset Mapping to Release, rollout, provisioning bricks
+ - FEATURE: MSF-21165 - implement mssql data source
+ - BUGFIX: MSF-21241 Poll validElements until task finished
+ - SETI-5977: Migrate Travis-CI to Github Actions - Merge gem-release and gem-smoke-test into build pipeline - Skip intergration tests from pre-merge pipeline
+ - MSF-20263: bump VERSION 3.7.27
+ - FEATURE: MSF-20653 Support Blob Storage input source
+ - Automated base image update (BUILD pipeline from gdc-docker-images, fcb7257)
+ - MSF-20737: Update another SSO provider instead of deprecated saleforce.com
+
 ## 2.1.19
  - BUGFIX: MSF-20827 Fix gem-smoke-test failed when release ruby SDK 
  - BUGFIX: MSF-20826 Failure update license file when release ruby SDK 
