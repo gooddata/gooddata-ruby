@@ -269,7 +269,7 @@ describe 'data helper', :vcr do
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to mssql with BASIC authentication' do
+  it 'connect to mssql with BASIC  authentication' do
     data_helper = GoodData::Helpers::DataSource.new(mssql_basic_params['input_source'])
     file_path = data_helper.realize(mssql_basic_params)
     puts "MSSQL basic: #{file_path}"
