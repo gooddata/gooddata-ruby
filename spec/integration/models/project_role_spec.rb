@@ -20,7 +20,7 @@ describe GoodData::ProjectRole, :vcr do
   end
 
   describe '#author' do
-    it 'Returns author as GoodData::Profile' do
+    it 'Returns author as  GoodData::Profile' do
       res = @role.author
       expect(res).to be_an_instance_of(GoodData::Profile)
     end
