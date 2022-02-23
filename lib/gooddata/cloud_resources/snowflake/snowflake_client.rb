@@ -18,7 +18,7 @@ end
 module GoodData
   module CloudResources
     class SnowflakeClient < CloudResourceClient
-      SNOWFLAKE_GDC_APPLICATION_PARAMETER = 'application=GoodData_Platform'
+      SNOWFLAKE_GDC_APPLICATION_PARAMETER = 'application=gooddata_platform'
       SNOWFLAKE_SEPARATOR_PARAM = '?'
 
       class << self
