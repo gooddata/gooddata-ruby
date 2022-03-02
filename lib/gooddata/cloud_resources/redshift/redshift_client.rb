@@ -39,8 +39,6 @@ module GoodData
         @debug = options['debug'] == true || options['debug'] == 'true'
 
         Java.com.amazon.redshift.jdbc42.Driver
-        base = Pathname(__FILE__).dirname
-        org.apache.log4j.PropertyConfigurator.configure("#{base}/drivers/log4j.properties")
       end
 
       def realize_query(query, _params)
