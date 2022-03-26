@@ -273,6 +273,50 @@ module GoodData
       }
     end
 
+    def self.create_user_profile_mapping(filters, project_users, options = {})
+      domain = options[:domain]
+      found_list = {}
+      missing_list = []
+
+      # Get the list of user login from filters
+      login_list = filters.flat_map do |filter|
+        filter[:login]
+      end
+
+      # Then find user login in the users_brick_input
+      users_brick_input = options[:users_brick_input]
+      if users_brick_input&.any?
+        users_brick_input.map do |user|
+          login_list << user.with_indifferent_access['login']
+        end
+      end
+
+      login_list.uniq.flat_map do |login|
+        user = project_users.find { |u| u.login == login }
+        if user
+          found_list[login] = user.profile_url
+        else
+          missing_list << login
+        end
+      end
+
+      unless missing_list.empty?
+        if missing_list.size < 100
+          missing_list.each do |login|
+            user = domain.find_user_by_login(login)
+            found_list[login] = user.links['self'] if user
+          end
+        else
+          domain_users = domain.users
+          missing_list.each do |login|
+            user = domain_users.find { |u| u.login == login }
+            found_list[login] = user.links['self'] if user
+          end
+        end
+      end
+      found_list
+    end
+
     # Resolves and creates maql statements from filter definitions.
     # This method does not perform any modifications on API but
     # collects all the information that is needed to do so.
@@ -283,7 +327,7 @@ module GoodData
     #
     # @param filters [Array<Hash>] Filters definition
     # @return [Array] first is list of MAQL statements
-    def self.maqlify_filters(filters, project_users, options = {})
+    def self.maqlify_filters(filters, user_profile_mapping, options = {})
       fail_early = options[:fail_early] == false ? false : true
       users_cache = options[:users_cache]
       labels_cache = create_label_cache(filters, options)
@@ -294,8 +338,7 @@ module GoodData
         expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
         safe_login = login.downcase
         profiles_uri = if options[:type] == :muf
-                         project_user = project_users.find { |u| u.login == safe_login }
-                         project_user.nil? ? ('/gdc/account/profile/' + safe_login) : project_user.profile_url
+                         user_profile_mapping[safe_login].nil? ? ('/gdc/account/profile/' + safe_login) : user_profile_mapping[safe_login]
                        elsif options[:type] == :variable
                          (users_cache[login] && users_cache[login].uri)
                        else
@@ -393,7 +436,8 @@ module GoodData
 
       project_users = project.users
       filters = normalize_filters(user_filters)
-      user_filters, errors = maqlify_filters(filters, project_users, options.merge(users_must_exist: users_must_exist, type: :muf))
+      user_profile_mapping = create_user_profile_mapping(filters, project_users, options)
+      user_filters, errors = maqlify_filters(filters, user_profile_mapping, options.merge(users_must_exist: users_must_exist, type: :muf))
       if !ignore_missing_values && !errors.empty?
         errors = errors.map do |e|
           e.merge(pid: project.pid)
@@ -404,7 +448,7 @@ module GoodData
       filters = user_filters.map { |data| client.create(MandatoryUserFilter, data, project: project) }
       to_create, to_delete = resolve_user_filters(filters, project.data_permissions)
 
-      to_delete = sanitize_filters_to_delete(to_delete, options[:users_brick_input], project_users) unless options[:no_sanitize]
+      to_delete = sanitize_filters_to_delete(to_delete, options[:users_brick_input], user_profile_mapping) unless options[:no_sanitize]
 
       if options[:do_not_touch_filters_that_are_not_mentioned]
         GoodData.logger.warn("Data permissions computed: #{to_create.count} to create")
@@ -584,12 +628,12 @@ module GoodData
     # Removes MUFs from to_delete unless in user is in users_brick_input
     # if this does not happen, users that are about to be deleted by users_brick
     # would have all their filters removed now, which is not desirable
-    def self.sanitize_filters_to_delete(to_delete, users_brick_input, project_users)
+    def self.sanitize_filters_to_delete(to_delete, users_brick_input, user_profile_mapping)
       return [] unless users_brick_input && users_brick_input.any?
       user_profiles = users_brick_input.map do |user|
-        result = project_users.find { |u| u.login == user.with_indifferent_access['login'] }
+        result = user_profile_mapping[user.with_indifferent_access['login']]
         next unless result
-        result.profile_url
+        result
       end.compact
       return [] unless user_profiles.any?
       to_delete.reject do |_, value|

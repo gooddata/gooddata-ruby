@@ -35,8 +35,10 @@ describe GoodData::UserFilterBuilder do
     end
     let(:users_brick_input) { [{ 'login' => login }] }
     let(:client) { double('client') }
+    let(:domain) { double('domain') }
     let(:project) { double('project') }
     let(:user) { double('user') }
+    let(:domain_user) { GoodData::Profile.new({"accountSetting" => {"links" => {  "self" => "domain_user@gmail.com" }}} ) }
     let(:project_users) { [user] }
     let(:label) { double('label') }
     let(:filter) { double('filter') }
@@ -75,6 +77,41 @@ describe GoodData::UserFilterBuilder do
       result = subject.execute_mufs(filter_definitions, options)
       expect(result[:created].length).to be(1)
       expect(result[:deleted].length).to be(0)
+    end
+
+    context 'look for user' do
+      let(:project_users) {[]}
+      let(:options) do
+        { client: client,
+          project: project,
+          domain: domain}
+      end
+      it 'found in domain' do
+        allow(domain).to receive(:find_user_by_login).and_return(domain_user)
+        result = subject.execute_mufs(filter_definitions, options)
+        expect(result[:created].length).to be(1)
+        expect(result[:deleted].length).to be(0)
+      end
+      it 'not found in domain' do
+        allow(domain).to receive(:find_user_by_login).and_return(nil)
+        result = subject.execute_mufs(filter_definitions, options)
+        expect(result[:created].length).to be(1)
+        expect(result[:deleted].length).to be(0)
+      end
+      it 'missing list > 100' do
+        allow(domain).to receive(:find_user_by_login).and_return(domain_user)
+        allow(domain).to receive(:users).and_return([domain_user])
+        user_input = []
+        for i in 0..101
+          user_input << {
+              :login => "user#{i}@email.com",
+              :pid => "ProjectA"
+          }
+        end
+        result = subject.execute_mufs(filter_definitions, options.merge(users_brick_input: user_input))
+        expect(result[:created].length).to be(1)
+        expect(result[:deleted].length).to be(0)
+      end
     end
 
     context 'when dry_run option set to true' do
