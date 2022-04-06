@@ -166,7 +166,7 @@ mssql_basic_params = {
   },
   "mssql_client" => {
     "connection" => {
-      "url" => "jdbc:sqlserver://msf-test-database.na.intgdc.com:1433",
+      "url" => "jdbc:sqlserver://msf-test-database01.na.intgdc.com:1433",
       "database" => "msf_it_test",
       "authentication" => {
         "basic" => {
@@ -186,7 +186,7 @@ mysql_basic_params = {
     },
     "mysql_client" => {
         "connection" => {
-            "url" => "jdbc:mysql://msf-test-database.na.intgdc.com:1435",
+            "url" => "jdbc:mysql://msf-test-database01.na.intgdc.com:1435",
             "database" => "integration_test",
             "authentication" => {
                 "basic" => {
