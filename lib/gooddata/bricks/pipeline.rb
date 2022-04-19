@@ -10,23 +10,11 @@ require_relative 'release_brick'
 require_relative 'provisioning_brick'
 require_relative 'rollout_brick'
 require_relative 'hello_world_brick'
+require_relative 'base_pipeline'
 
 module GoodData
   module Bricks
-    class Pipeline
-      # Pipeline preparation code
-      def self.prepare(pipeline)
-        pipeline.reverse.reduce(nil) do |memo, app|
-          if memo.nil?
-            app.respond_to?(:new) ? app.new : app
-          elsif app.respond_to?(:new)
-            app.new(app: memo)
-          else
-            app.app = memo
-            app
-          end
-        end
-      end
+    class Pipeline < GoodData::Bricks::BasePipeline
 
       def self.users_brick_pipeline
         prepare([
