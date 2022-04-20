@@ -1,0 +1,109 @@
+{
+  "title": "blueprint old date dimension add more",
+  "include_ca": true,
+  "datasets": [
+    {
+      "type": "dataset",
+      "title": "person",
+      "id": "dataset.person",
+      "columns": [
+        {
+          "type": "anchor",
+          "id": "attr.person.factsof",
+          "title": "Records of person",
+          "description": "Records of person",
+          "folder": "person"
+        },
+        {
+          "type": "attribute",
+          "id": "attr.person.name",
+          "title": "name",
+          "description": "name",
+          "folder": "person"
+        },
+        {
+          "type": "label",
+          "id": "label.person.name",
+          "reference": "attr.person.name",
+          "title": "name",
+          "gd_data_type": "VARCHAR(128)",
+          "gd_type": "GDC.text",
+          "default_label": true
+        },
+        {
+          "type": "fact",
+          "id": "fact.person.id",
+          "title": "id",
+          "description": "id",
+          "folder": "person",
+          "gd_data_type": "DECIMAL(12,2)"
+        },
+        {
+          "type": "date",
+          "dataset": "datecustom"
+        },
+        {
+          "type": "date",
+          "dataset": "dategooddata"
+        }
+      ]
+    }
+  ],
+  "date_dimensions": [
+    {
+      "type": "date_dimension",
+      "id": "datecustom",
+      "identifier": "datecustom",
+      "title": "DateCustom",
+      "urn": "urn:custom:date",
+      "identifier_prefix": "datecustom",
+      "columns": [
+
+      ]
+    },
+    {
+      "type": "date_dimension",
+      "id": "dategooddata",
+      "identifier": "dategooddata",
+      "title": "DateGooddata",
+      "urn": "urn:gooddata:date",
+      "identifier_prefix": "dategooddata",
+      "columns": [
+
+      ]
+    },
+    {
+      "type": "date_dimension",
+      "id": "targetdate",
+      "identifier": "targetdate",
+      "title": "TargetDate",
+      "urn": "urn:custom:date",
+      "identifier_prefix": "dategooddata",
+      "columns": [
+
+      ]
+    },
+    {
+      "type": "date_dimension",
+      "id": "datecustomadd01",
+      "identifier": "datecustomadd01",
+      "title": "DateCustomAdd01",
+      "urn": "urn:custom:date",
+      "identifier_prefix": "datecustom",
+      "columns": [
+
+      ]
+    },
+    {
+      "type": "date_dimension",
+      "id": "dategooddataadd01",
+      "identifier": "dategooddataadd01",
+      "title": "DateGooddataAdd01",
+      "urn": "urn:gooddata:date",
+      "identifier_prefix": "dategooddata",
+      "columns": [
+
+      ]
+    }
+  ]
+}
