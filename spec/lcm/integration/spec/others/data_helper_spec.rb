@@ -199,6 +199,27 @@ mysql_basic_params = {
     },
 }
 
+mysql_mongobi_basic_params = {
+  "input_source"=> {
+    "type"=> "mysql",
+    "query"=> "SELECT DISTINCT segment_id,client_id,project_title,project_token FROM clients ORDER BY client_id",
+  },
+  "mysql_client" => {
+    "connection" => {
+      "url" => "jdbc:mysql://msf-test-database01.na.intgdc.com:1445",
+      "database" => "integration_test",
+      "authentication" => {
+        "basic" => {
+          "userName" => "myUserAdmin",
+          "password" => ConnectionHelper::SECRETS[:mysql_mongobi_connection],
+        }
+      },
+      "databaseType" => "MongoDBConnector",
+      "sslMode" => "prefer",
+    },
+  },
+}
+
 describe 'data helper', :vcr do
 
   it 'connect to redshift with IAM authentication' do
@@ -281,6 +302,13 @@ describe 'data helper', :vcr do
     data_helper = GoodData::Helpers::DataSource.new(mysql_basic_params['input_source'])
     file_path = data_helper.realize(mysql_basic_params)
     data = File.open('spec/data/mysql_data.csv').read
+    expect(data).to eq File.open(file_path).read
+  end
+
+  it 'connect to mysql mongobi with BASIC authentication' do
+    data_helper = GoodData::Helpers::DataSource.new(mysql_mongobi_basic_params['input_source'])
+    file_path = data_helper.realize(mysql_mongobi_basic_params)
+    data = File.open('spec/data/mysql_mongobi_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
 end

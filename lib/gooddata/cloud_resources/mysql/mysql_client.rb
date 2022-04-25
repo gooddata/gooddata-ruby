@@ -21,10 +21,12 @@ module GoodData
       JDBC_MYSQL_PATTERN = %r{jdbc:mysql:\/\/([^:^\/]+)(:([0-9]+))?(\/)?}
       MYSQL_DEFAULT_PORT = 3306
       JDBC_MYSQL_PROTOCOL = 'jdbc:mysql://'
-      VERIFY_FULL = 'VERIFY_IDENTITY'
-      PREFER = 'PREFERRED'
-      REQUIRE = 'REQUIRED'
+      VERIFY_FULL = '&useSSL=true&verifyServerCertificate=true'
+      PREFER = '&useSSL=true&requireSSL=false&verifyServerCertificate=false'
+      REQUIRE = '&useSSL=true&requireSSL=true&verifyServerCertificate=false'
       MYSQL_FETCH_SIZE = 1000
+      MONGO_BI_FETCH_SIZE = 1
+      MONGO_BI_TYPE = 'MongoDBConnector'
 
       class << self
         def accept?(type)
@@ -39,6 +41,7 @@ module GoodData
           @database = options['mysql_client']['connection']['database']
           @authentication = options['mysql_client']['connection']['authentication']
           @ssl_mode = options['mysql_client']['connection']['sslMode']
+          @database_type = options['mysql_client']['connection']['databaseType']
           raise "SSL Mode should be prefer, require and verify-full" unless @ssl_mode == 'prefer' || @ssl_mode == 'require' || @ssl_mode == 'verify-full'
 
           @url = build_url(options['mysql_client']['connection']['url'])
@@ -46,7 +49,7 @@ module GoodData
           raise('Missing connection info for Mysql client')
         end
 
-        Java.com.mysql.cj.jdbc.Driver
+        Java.com.mysql.jdbc.Driver
       end
 
       def realize_query(query, _params)
@@ -56,7 +59,7 @@ module GoodData
         filename = "#{SecureRandom.urlsafe_base64(6)}_#{Time.now.to_i}.csv"
         measure = Benchmark.measure do
           statement = @connection.create_statement
-          statement.set_fetch_size(MYSQL_FETCH_SIZE)
+          statement.set_fetch_size(fetch_size)
           has_result = statement.execute(query)
           if has_result
             result = statement.get_result_set
@@ -76,12 +79,11 @@ module GoodData
       end
 
       def connect
-        GoodData.logger.info "Setting up connection to Mysql #{@url}"
+        GoodData.logger.info "Setting up connection to Mysql #{@database_type} #{@url} "
 
         prop = java.util.Properties.new
         prop.setProperty('user', @authentication['basic']['userName'])
         prop.setProperty('password', @authentication['basic']['password'])
-
         @connection = java.sql.DriverManager.getConnection(@url, prop)
         @connection.set_auto_commit(false)
       end
@@ -93,7 +95,11 @@ module GoodData
         host = matches[0][0]
         port = matches[0][2]&.to_i || MYSQL_DEFAULT_PORT
 
-        "#{JDBC_MYSQL_PROTOCOL}#{host}:#{port}/#{@database}?sslmode=#{get_ssl_mode(@ssl_mode)}&useCursorFetch=true&enabledTLSProtocols=TLSv1.2"
+        "#{JDBC_MYSQL_PROTOCOL}#{host}:#{port}/#{@database}?#{get_ssl_mode(@ssl_mode)}#{add_extended}&useCursorFetch=true&enabledTLSProtocols=TLSv1.2"
+      end
+
+      def fetch_size
+        @database_type == MONGO_BI_TYPE ? MONGO_BI_FETCH_SIZE : MYSQL_FETCH_SIZE
       end
 
       def get_ssl_mode(ssl_mode)
@@ -105,6 +111,10 @@ module GoodData
         end
 
         mode
+      end
+
+      def add_extended
+        @database_type == MONGO_BI_TYPE ? '&authenticationPlugins=org.mongodb.mongosql.auth.plugin.MongoSqlAuthenticationPlugin&useLocalTransactionState=true' : ''
       end
     end
   end
