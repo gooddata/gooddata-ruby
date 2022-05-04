@@ -300,7 +300,7 @@ module GoodData
         end
       end
 
-      unless missing_list.empty?
+      unless missing_list.empty? || domain.nil?
         if missing_list.size < 100
           missing_list.each do |login|
             user = domain.find_user_by_login(login)
