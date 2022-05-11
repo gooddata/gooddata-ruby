@@ -47,6 +47,7 @@ module GoodData
           end
 
           begin
+            params.gdc_logger.info "Starting to find DataProduct #{data_product_id}"
             data_product = domain.data_products(data_product_id)
           rescue RestClient::BadRequest, RestClient::NotFound
             params.gdc_logger.info "Can not find DataProduct #{params.data_product}, creating it instead"
