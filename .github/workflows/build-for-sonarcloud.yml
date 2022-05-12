@@ -1,0 +1,21 @@
+name: build-for-sonarcloud
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build_for_sonar:
+    name: SonarCloud build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Store PR info for workflow_run
+        shell: bash
+        env:
+          PR_NUM: ${{ github.event.number }}
+        run: |
+          echo $PR_NUM
+          echo $PR_NUM > pr_num.txt
+      - name: Upload the PR info
+        uses: actions/upload-artifact@v3
+        with:
+          name: pr_info
+          path: ./pr_*.txt

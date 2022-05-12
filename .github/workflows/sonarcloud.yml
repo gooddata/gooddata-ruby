@@ -1,0 +1,39 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+  workflow_run:
+    workflows: [build-for-sonarcloud]
+    types: [completed]
+jobs:
+  sonarcloud_scan:
+    name: SonarCloud scan
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout the new PR
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+      - name: Get PR artefacts
+        uses: dawidd6/action-download-artifact@v2.19.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: build-for-sonarcloud.yml
+          run_id: ${{ github.event.workflow_run.id }}
+      - name: Read the PR number
+        run: |
+          PR=$(cat pr_info/pr_num.txt)
+          echo "SONAR_PR_NUMBER=$PR" >> $GITHUB_ENV
+      - name: SonarCloud Actual Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}
+            -Dsonar.pullrequest.key=${{ env.SONAR_PR_NUMBER }}
