@@ -25,6 +25,10 @@ require_relative 'gooddata/bricks/base_pipeline'
 require_relative 'gooddata/bricks/middleware/base_middleware'
 require_relative 'gooddata/bricks/middleware/bench_middleware'
 require_relative 'gooddata/bricks/middleware/logger_middleware'
+require_relative 'gooddata/bricks/middleware/decode_params_middleware'
+require_relative 'gooddata/bricks/middleware/aws_middleware'
+require_relative 'gooddata/bricks/middleware/dwh_middleware'
+require_relative 'gooddata/bricks/middleware/bench_middleware'
 
 # CSV Downloader
 require_relative 'gooddata/core/logging'
