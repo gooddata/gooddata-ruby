@@ -443,7 +443,7 @@ module GoodData
       # Object to be cloned from. Can be either segment in which case we take
       # the master, client in which case we take its project, string in which
       # case we treat is as an project object or directly project.
-      def transfer_schedules(from_project, to_project)
+      def transfer_schedules(from_project, to_project, has_cycle_trigger = false)
         to_project_processes = to_project.processes.sort_by(&:name)
         from_project_processes = from_project.processes.sort_by(&:name)
         from_project_processes.reject!(&:add_v2_component?)
@@ -496,15 +496,23 @@ module GoodData
         end
 
         results = []
+        update_trigger_schedules = []
         loop do # rubocop:disable Metrics/BlockLength
           break if stack.empty?
           state, changed_schedule = stack.shift
+          lazy_update_trigger_info = false
           if state == :added
             schedule_spec = changed_schedule
             if schedule_spec[:after] && !schedule_cache[schedule_spec[:after]]
-              stack << [state, schedule_spec]
-              next
+              if has_cycle_trigger
+                # The schedule is triggered by another schedule
+                lazy_update_trigger_info = true
+              else
+                stack << [state, schedule_spec]
+                next
+              end
             end
+
             remote_process, process_spec = cache.find do |_remote, local, schedule|
               (schedule_spec[:process_id] == local.process_id) && (schedule.name == schedule_spec[:name])
             end
@@ -517,8 +525,21 @@ module GoodData
             if process_spec.type != :dataload
               executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
             end
+
             params = schedule_parameters(schedule_spec)
-            created_schedule = remote_process.create_schedule(schedule_spec[:cron] || schedule_cache[schedule_spec[:after]], executable, params)
+
+            if lazy_update_trigger_info
+              # Temporary update nil for trigger info. The trigger info will be update late after transfer all schedules
+              created_schedule = remote_process.create_schedule(nil, executable, params)
+              update_trigger_schedules << {
+                state: :added,
+                schedule: created_schedule,
+                after: schedule_spec[:after]
+              }
+            else
+              created_schedule = remote_process.create_schedule(schedule_spec[:cron] || schedule_cache[schedule_spec[:after]], executable, params)
+            end
+
             schedule_cache[created_schedule.name] = created_schedule
 
             results << {
@@ -529,8 +550,13 @@ module GoodData
           else
             schedule_spec = changed_schedule[:new_obj]
             if schedule_spec[:after] && !schedule_cache[schedule_spec[:after]]
-              stack << [state, schedule_spec]
-              next
+              if has_cycle_trigger
+                # The schedule is triggered by another schedule
+                lazy_update_trigger_info = true
+              else
+                stack << [state, schedule_spec]
+                next
+              end
             end
 
             remote_process, process_spec = cache.find do |i|
@@ -543,8 +569,12 @@ module GoodData
 
             schedule.params = (schedule_spec[:params] || {})
             schedule.cron = schedule_spec[:cron] if schedule_spec[:cron]
-            schedule.after = schedule_cache[schedule_spec[:after]] if schedule_spec[:after]
-            schedule.trigger_execution_status = schedule_cache[schedule_spec[:trigger_execution_status]] if schedule_spec[:after]
+
+            unless lazy_update_trigger_info
+              schedule.after = schedule_cache[schedule_spec[:after]] if schedule_spec[:after]
+              schedule.trigger_execution_status = schedule_cache[schedule_spec[:trigger_execution_status]] if schedule_spec[:after]
+            end
+
             schedule.hidden_params = schedule_spec[:hidden_params] || {}
             if process_spec.type != :dataload
               schedule.executable = schedule_spec[:executable] || (process_spec.type == :ruby ? 'main.rb' : 'main.grf')
@@ -556,11 +586,36 @@ module GoodData
             schedule.save
             schedule_cache[schedule.name] = schedule
 
+            if lazy_update_trigger_info
+              update_trigger_schedules << {
+                state: :changed,
+                schedule: schedule,
+                after: schedule_spec[:after],
+                trigger_execution_status: schedule_spec[:trigger_execution_status]
+              }
+            end
+
             results << {
               state: :changed,
               process: remote_process,
               schedule: schedule
             }
+          end
+        end
+
+        if has_cycle_trigger
+          update_trigger_schedules.each do |update_trigger_schedule|
+            working_schedule = update_trigger_schedule[:schedule]
+            working_schedule.after = schedule_cache[update_trigger_schedule[:after]]
+            working_schedule.trigger_execution_status = schedule_cache[update_trigger_schedule[:trigger_execution_status]] if update_trigger_schedule[:state] == :changed
+
+            # Update trigger info
+            working_schedule.save
+
+            # Update transfer result
+            results.each do |transfer_result|
+              transfer_result[:schedule] = working_schedule if transfer_result[:schedule].obj_id == working_schedule.obj_id
+            end
           end
         end
 
