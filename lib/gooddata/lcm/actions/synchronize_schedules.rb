@@ -61,12 +61,13 @@ module GoodData
             to_projects = info.to
 
             from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
+            has_cycle_trigger = exist_cycle_trigger(from)
             to_projects.peach do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               params.gdc_logger.info "Transferring Schedules, from project: '#{from.title}', PID: '#{from.pid}', to project: '#{to_project.title}', PID: '#{to_project.pid}'"
-              res = GoodData::Project.transfer_schedules(from, to_project).sort_by do |item|
+              res = GoodData::Project.transfer_schedules(from, to_project, has_cycle_trigger).sort_by do |item|
                 item[:status]
               end
 
@@ -96,6 +97,35 @@ module GoodData
 
           # Return results
           results
+        end
+
+        private
+
+        def exist_cycle_trigger(project)
+          schedules = project.schedules
+          triggers = {}
+          schedules.each do |schedule|
+            triggers[schedule.obj_id] = schedule.trigger_id if schedule.trigger_id
+          end
+
+          triggers.each do |schedule_id, trigger_id|
+            checking_id = trigger_id
+            if checking_id == schedule_id
+              return true
+            else
+              max_step = triggers.length
+              count = 1
+              loop do
+                checking_id = triggers[checking_id]
+                count += 1
+                break if !checking_id || count > max_step
+
+                return true if checking_id == schedule_id
+              end
+            end
+          end
+
+          false
         end
       end
     end
