@@ -19,6 +19,9 @@ using NilExtensions
 
 module GoodData
   module UserFilterBuilder
+    @all_domain_users = {}
+    @mutex = Mutex.new
+
     # Main Entry function. Gets values and processes them to get filters
     # that are suitable for other function to process.
     # Values can be read from file or provided inline as an array.
@@ -310,7 +313,7 @@ module GoodData
           missing_list << login
         end
       end
-
+      # rubocop:disable Metrics/BlockNesting
       unless missing_list.empty? || domain.nil?
         if missing_list.size < 100
           missing_list.each do |login|
@@ -318,13 +321,29 @@ module GoodData
             found_list[login] = user.links['self'] if user
           end
         else
-          domain_users = domain.users
+          if @all_domain_users[domain.name].nil?
+            @mutex.lock
+            if @all_domain_users[domain.name].nil?
+              domain_users = domain.users
+              @all_domain_users[domain.name] = domain_users
+              GoodData.logger.info("action=lcm_get_domain_users domain=#{domain.name} number_users=#{domain_users.size} number_missing_users=#{missing_list.size} use_cache=false")
+            else
+              domain_users = @all_domain_users[domain.name]
+              GoodData.logger.info("action=lcm_get_domain_users domain=##{domain.name} number_users=#{domain_users.size} number_missing_users=#{missing_list.size} use_cache=true")
+            end
+            @mutex.unlock
+          else
+            domain_users = @all_domain_users[domain.name]
+            GoodData.logger.info("action=lcm_get_domain_users domain=##{domain.name} number_users=#{domain_users.size} number_missing_users=#{missing_list.size} use_cache=true")
+          end
+
           missing_list.each do |login|
             user = domain_users.find { |u| u.login == login }
             found_list[login] = user.links['self'] if user
           end
         end
       end
+      # rubocop:enable Metrics/BlockNesting
       found_list
     end
 
