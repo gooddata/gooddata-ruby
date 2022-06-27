@@ -104,8 +104,10 @@ module GoodData
           get_date_dimensions(blueprint).any? { |e| e[:urn] == DATE_DIMENSION_CUSTOM_V2 }
         end
 
+        # Get date dimension from blue print. Return nil if date dimension not existing
         def get_date_dimension(blueprint, id)
-          GoodData::Model::ProjectBlueprint.find_date_dimension(blueprint, id)
+          date_dimensions = get_date_dimensions(blueprint)
+          date_dimensions.find { |d| d[:id] == id }
         end
 
         def get_date_dimensions(blueprint)
