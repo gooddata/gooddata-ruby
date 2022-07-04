@@ -101,6 +101,8 @@ module GoodData
         SynchronizeSchedules,
         SynchronizeColorPalette,
         SynchronizeUserGroups,
+        SynchronizePPDashboardPermissions,
+        SynchronizeKDDashboardPermissions,
         SynchronizeNewSegments,
         UpdateReleaseTable
       ],
@@ -128,6 +130,9 @@ module GoodData
         EnsureTechnicalUsersProject,
         CollectDymanicScheduleParams,
         SynchronizeDataSetMapping,
+        SynchronizeUserGroups,
+        SynchronizePPDashboardPermissions,
+        SynchronizeKDDashboardPermissions,
         SynchronizeETLsInSegment
       ],
 
@@ -142,6 +147,9 @@ module GoodData
         SynchronizeDataSetMapping,
         MigrateGdcDateDimension,
         SynchronizeClients,
+        SynchronizeUserGroups,
+        SynchronizePPDashboardPermissions,
+        SynchronizeKDDashboardPermissions,
         UpdateMetricFormats,
         SynchronizeComputedAttributes,
         CollectDymanicScheduleParams,

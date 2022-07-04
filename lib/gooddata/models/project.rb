@@ -416,16 +416,6 @@ module GoodData
           new_group.project = to_project
           new_group.description = ug.description
           new_group.save
-          # migrate dashboard "grantees"
-          dashboards = from_project.dashboards
-          dashboards.each do |dashboard|
-            new_dashboard = to_project.dashboards.select { |dash| dash.title == dashboard.title }.first
-            next unless new_dashboard
-            grantee = dashboard.grantees['granteeURIs']['items'].select { |item| item['aclEntryURI']['grantee'].split('/').last == ug.links['self'].split('/').last }.first
-            next unless grantee
-            permission = grantee['aclEntryURI']['permission']
-            new_dashboard.grant(:member => new_group, :permission => permission)
-          end
 
           {
             from: from_project.pid,
@@ -433,6 +423,68 @@ module GoodData
             user_group: new_group.name,
             status: new_group_status
           }
+        end
+      end
+
+      def transfer_dashboard_permission(from_project, to_project, source_dashboards, target_dashboards)
+        source_user_groups = from_project.user_groups
+        target_user_groups = to_project.user_groups
+
+        source_dashboards.each do |source_dashboard|
+          target_dashboard = target_dashboards.select { |dash| dash.title == source_dashboard.title }.first
+          next unless target_dashboard
+
+          begin
+            source_group_dashboards = dashboard_user_groups(source_user_groups, source_dashboard)
+            target_group_dashboards = dashboard_user_groups(target_user_groups, target_dashboard)
+
+            common_group_names = source_group_dashboards.flat_map { |s| target_group_dashboards.select { |t| t[:name] == s[:name] } }.map { |x| [x[:name], true] }.to_h
+
+            remove_user_groups_from_dashboard(target_group_dashboards, target_dashboard, common_group_names)
+            add_user_groups_to_dashboard(source_group_dashboards, target_dashboard, common_group_names, target_user_groups)
+          rescue StandardError => e
+            GoodData.logger.warn "Failed to synchronize dashboard permission from project: '#{from_project.title}', PID: '#{from_project.pid}' to project: '#{to_project.title}', PID: '#{to_project.pid}', dashboard: '#{target_dashboard.title}', dashboard uri: '#{target_dashboard.uri}' . Error: #{e.message} - #{e}" # rubocop:disable Metrics/LineLength
+          end
+        end
+      end
+
+      def dashboard_user_groups(user_groups, dashboard)
+        group_dashboards = []
+        dashboard_grantees = dashboard.grantees['granteeURIs']['items'].select { |item| item['aclEntryURI']['grantee'].include?('/usergroups/') }
+
+        dashboard_grantees.each do |dashboard_grantee|
+          permission = dashboard_grantee['aclEntryURI']['permission']
+          group_id = dashboard_grantee['aclEntryURI']['grantee'].split('/').last
+          user_group = user_groups.select { |group| group.links['self'].split('/').last == group_id }.first
+          next unless user_group
+
+          group_dashboards << {
+            name: user_group.name,
+            user_group: user_group,
+            permission: permission
+          }
+        end
+        group_dashboards
+      end
+
+      def remove_user_groups_from_dashboard(group_dashboards, dashboard, common_group_names)
+        group_dashboards.each do |group_dashboard|
+          group_name = group_dashboard[:name]
+          next if common_group_names && common_group_names[group_name]
+
+          dashboard.revoke(:member => group_dashboard[:user_group], :permission => group_dashboard[:permission])
+        end
+      end
+
+      def add_user_groups_to_dashboard(group_dashboards, dashboard, common_group_names, target_user_groups)
+        group_dashboards.each do |group_dashboard|
+          group_name = group_dashboard[:name]
+          next if common_group_names && common_group_names[group_name]
+
+          target_user_group = target_user_groups.select { |group| group.name == group_name }.first
+          next unless target_user_group
+
+          dashboard.grant(:member => target_user_group, :permission => group_dashboard[:permission])
         end
       end
 
@@ -924,6 +976,14 @@ module GoodData
     # @return [GoodData::Dashboard | Array<GoodData::Dashboard>] dashboard instance or list
     def dashboards(id = :all)
       GoodData::Dashboard[id, project: self, client: client]
+    end
+
+    # Helper for getting analytical dashboards (KD dashboards) of a project
+    #
+    # @param id [String | Number | Object] Anything that you can pass to GoodData::Dashboard[id]
+    # @return [GoodData::AnalyticalDashboard | Array<GoodData::AnalyticalDashboard>] dashboard instance or list
+    def analytical_dashboards(id = :all)
+      GoodData::AnalyticalDashboard[id, project: self, client: client]
     end
 
     def data_permissions(id = :all)
