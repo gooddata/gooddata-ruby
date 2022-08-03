@@ -688,7 +688,7 @@ ERR
           execution_id = request_id
 
           GoodData.gd_logger.update_store(domain, method, duration, endpoint)
-          GoodData.gd_logger.add Logger::INFO, { endpoint: endpoint, duration: duration, domain: domain,
+          GoodData.gd_logger.add Logger::DEBUG, { endpoint: endpoint, duration: duration, domain: domain,
                                                  execution_id: execution_id, time_stamp: time_stamp }, "rest_call"
         end
       end
