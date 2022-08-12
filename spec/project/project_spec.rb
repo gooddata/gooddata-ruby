@@ -292,6 +292,41 @@ describe GoodData::Project, :vcr, :constraint => 'slow' do
       expect(@project.user_groups(new_group)).not_to be_nil
       expect(@project.user_groups(new_group).member?(u.uri)).to be_truthy
     end
+
+    it 'add user group then remove it by empty value' do |example|
+      users = ProjectHelper.ensure_users(client: @client, amount: 5, caller: example.description)
+      @users_to_delete += users
+      users = users.map(&:to_hash)
+      group_names = %w(group_1 group_2)
+      groups = group_names.map { |g| @project.create_group(name: g) }
+      users_with_groups = users.map do |u|
+        u[:user_group] = groups.take(3).map(&:name)
+        u
+      end
+      @domain.create_users(users_with_groups, domain: @domain)
+      @project.import_users(users_with_groups, domain: @domain, whitelists: [/admin@gooddata.com/])
+      expect(users_with_groups.flat_map { |u| u[:user_group].map { |g| [u[:login], g] } }.all? do |u, g|
+        begin
+          @project.user_groups(g).member?(@project.member(u).uri)
+        rescue
+          false
+        end
+      end).to be_truthy
+
+      # empty value for all user_groups
+      users_with_empty_group = users.map do |u|
+        u[:user_group] = []
+        u
+      end
+      @project.import_users(users_with_empty_group, domain: @domain, whitelists: [/admin@gooddata.com/])
+      users_with_empty_group.map do |u|
+        begin
+          expect(@project.user_groups(g).member?(@project.member(u).uri)).to be_falsey
+        rescue
+          false
+        end
+      end
+    end
   end
 
   describe '#summary' do

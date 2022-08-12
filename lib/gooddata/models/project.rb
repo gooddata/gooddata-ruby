@@ -1852,15 +1852,15 @@ module GoodData
       end
 
       # reassign to groups
+      removal_user_group_members = []
       mappings = new_users.map(&:to_hash).flat_map do |user|
+        removal_user_group_members << user[:login] if user[:user_group]&.empty?
         groups = user[:user_group] || []
         groups.map { |g| [user[:login], g] }
       end
+
       unless mappings.empty?
-        users_lookup = users.reduce({}) do |a, e|
-          a[e.login] = e
-          a
-        end
+        users_lookup = login_users
         mappings.group_by { |_, g| g }.each do |g, mapping|
           remote_users = mapping.map { |user, _| user }.map { |login| users_lookup[login] && users_lookup[login].uri }.reject(&:nil?)
           GoodData.logger.info("Assigning users #{remote_users} to group #{g}")
@@ -1874,12 +1874,40 @@ module GoodData
         end
         mentioned_groups = mappings.map(&:last).uniq
         groups_to_cleanup = user_groups_cache.reject { |g| mentioned_groups.include?(g.name) }
+
         # clean all groups not mentioned with exception of whitelisted users
         groups_to_cleanup.each do |g|
           g.set_members(whitelist_users(g.members.map(&:to_hash), [], options[:whitelists], :include).first.map { |x| x[:uri] })
         end
       end
+
+      remove_member_from_group(users_lookup, removal_user_group_members, user_groups_cache)
       GoodData::Helpers.join(results, diff_results, [:user], [:login_uri])
+    end
+
+    def remove_member_from_group(users_lookup, removal_user_group_members, user_groups_cache)
+      unless removal_user_group_members.empty?
+        users_lookup ||= login_users
+        current_user_groups = user_groups_cache || user_groups
+        removal_user_group_members.uniq.each do |login|
+          user_uri = users_lookup[login]&.uri
+
+          # remove user from group if exists as group member
+          current_user_groups.each do |user_group|
+            if user_group.member?(user_uri)
+              GoodData.logger.info("Removing #{user_uri} user from group #{user_group.name}")
+              user_group.remove_members(user_uri)
+            end
+          end
+        end
+      end
+    end
+
+    def login_users
+      users.reduce({}) do |a, e|
+        a[e.login] = e
+        a
+      end
     end
 
     def disable_users(list, options = {})

@@ -390,6 +390,7 @@ module GoodData
 
             user_group = row[user_groups_column] || row[user_groups_column.to_sym]
             user_group = user_group.split(',').map(&:strip) if user_group
+            user_group = [] if row.headers.include?(user_groups_column) && !user_group
 
             ip_whitelist = row[ip_whitelist_column] || row[ip_whitelist_column.to_sym]
             ip_whitelist = ip_whitelist.split(',').map(&:strip) if ip_whitelist
