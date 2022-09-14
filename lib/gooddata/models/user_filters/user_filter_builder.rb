@@ -210,13 +210,23 @@ module GoodData
     # Takes the filter definition looks up any necessary values and provides API executable MAQL
     # @param labels_cache e.g. { 'label_uri': label_object }
     # @param lookups_cache e.g. { 'label_uri': { "jirka@gooddata.com": 'value_uri' }}
-    def self.create_expression(filter, labels_cache, lookups_cache, attr_cache, options = {})
+    # rubocop:disable Metrics/ParameterLists
+    def self.create_expression(filter, labels_cache, lookups_cache, attr_cache, options = {}, login)
       values = filter[:values]
       # Do not create MUF for label when all its values is NULL (https://jira.intgdc.com/browse/TMA-1361)
       non_null_values = values.select { |value| !value.nil? && value.downcase != 'null' }
       return ['TRUE', []] if non_null_values.empty?
 
       label = labels_cache[filter[:label]]
+      if label.nil?
+        err_message = "Unable to apply filter values: #{values} since the project: #{options[:project].pid} doesn't have label: #{filter[:label]} for login: #{login}"
+        if options[:ignore_missing_values]
+          GoodData.logger.warn(err_message)
+          return ['TRUE', []]
+        else
+          fail err_message
+        end
+      end
       errors = []
 
       element_uris_by_values = Hash[values.map do |v|
@@ -262,6 +272,7 @@ module GoodData
                    end
       [expression, errors]
     end
+    # rubocop:enable Metrics/ParameterLists
 
     # Encapuslates the creation of filter
     def self.create_user_filter(expression, related)
@@ -335,7 +346,7 @@ module GoodData
       lookups_cache = create_lookups_cache(small_labels)
       attrs_cache = create_attrs_cache(filters, options)
       create_filter_proc = proc do |login, f|
-        expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options)
+        expression, errors = create_expression(f, labels_cache, lookups_cache, attrs_cache, options, login)
         safe_login = login.downcase
         profiles_uri = if options[:type] == :muf
                          user_profile_mapping[safe_login].nil? ? ('/gdc/account/profile/' + safe_login) : user_profile_mapping[safe_login]
