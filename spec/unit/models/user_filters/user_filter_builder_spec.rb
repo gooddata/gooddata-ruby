@@ -101,6 +101,7 @@ describe GoodData::UserFilterBuilder do
       it 'missing list > 100' do
         allow(domain).to receive(:find_user_by_login).and_return(domain_user)
         allow(domain).to receive(:users).and_return([domain_user])
+        allow(domain).to receive(:name).and_return("domain_name")
         user_input = []
         for i in 0..101
           user_input << {
