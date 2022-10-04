@@ -83,6 +83,7 @@ module GoodData
         ['/gdc/internal/projects/{id}/objects/setPermissions', %r{/gdc/internal/projects/[^\/]+/objects/setPermissions}],
         ['/gdc/internal/projects/{id}/roles', %r{/gdc/internal/projects/[^\/]+/roles}],
         ['/gdc/dataload/projects/{id}/modelMapping/datasets/bulk/upsert', %r{/gdc/dataload/projects/[^\/]+/modelMapping/datasets/bulk/upsert}],
+        ['/gdc/dataload/internal/projects/{id}/ldmLayout', %r{/gdc/dataload/internal/projects/[^\/]+/ldmLayout}],
         ['/gdc/md/{id}/variables/item/{id}', %r{/gdc/md/[^\/]+/variables/item/[\d]+}],
         ['/gdc/md/{id}/validate/task/{id}', %r{/gdc/md/[^\/]+/validate/task/[^\/]+}],
         ['/gdc/md/{id}/using2/{id}/{id}', %r{/gdc/md/[^\/]+/using2/[\d]+/[\d]+}],
