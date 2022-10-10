@@ -71,16 +71,17 @@ See our [contribution guidelines](/CONTRIBUTING.md).
 
 **Originally started by**
 
-Pavel Kolesnikov [ <mailto:pavel@gooddata.com> / [@koles](http://twitter.com/koles) ]
+Pavel Kolesnikov [ [@koles](http://twitter.com/koles) ]
 
 **Actively developed and maintained by**
 
-- [Jan Zdráhal](https://github.com/panjan) [ <mailto:jan.zdrahal@gooddata.com> ]
-- [Jakub Mahnert](https://github.com/kubamahnert) [ <mailto:jakub.mahnert@gooddata.com> ]
-- [Petr Gaďorek](https://github.com/Hahihula) [ <mailto:petr.gadorek@gooddata.com> ]
+GoodData Team
 
 **Contributors**
 
+- [Jan Zdráhal](https://github.com/panjan) 
+- [Jakub Mahnert](https://github.com/kubamahnert) 
+- [Petr Gaďorek](https://github.com/Hahihula) 
 - [Tomas Korcak](https://github.com/korczis) [ <mailto:korczis@gmail.com> / [@korczis](http://twitter.com/korczis) ]
 - [Tomas Svarovsky](https://github.com/fluke777) [ <mailto:svarovsky.tomas@gmail.com> / [@fluke777](http://twitter.com/fluke777) ]
 - [Patrick McConlogue](https://github.com/thnkr/)
