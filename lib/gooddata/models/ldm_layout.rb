@@ -7,6 +7,12 @@
 
 module GoodData
   class LdmLayout
+    DEFAULT_EMPTY_LDM_LAYOUT = {
+      "ldmLayout" => {
+        "layout" => []
+      }
+    }
+
     LDM_LAYOUT_URI = '/gdc/dataload/internal/projects/%<project_id>s/ldmLayout'
 
     class << self

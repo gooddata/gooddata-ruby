@@ -275,12 +275,20 @@ module GoodData
 
       def get_ldm_layout(from_project)
         GoodData::LdmLayout.get(:client => from_project.client, :project => from_project)
+      rescue StandardError => e
+        GoodData.logger.warn "An unexpected error when get ldm layout. Error: #{e.message}"
+        GoodData::LdmLayout::DEFAULT_EMPTY_LDM_LAYOUT
       end
 
       def save_ldm_layout(ldm_layout_json, to_project)
         ldm_layout = GoodData::LdmLayout.new(ldm_layout_json)
-        res = ldm_layout.save(:client => to_project.client, :project => to_project)
-        status = res&.dig('ldmLayout', 'layout').nil? ? "Failed" : "OK"
+        begin
+          ldm_layout.save(:client => to_project.client, :project => to_project)
+          status = "OK"
+        rescue StandardError => e
+          GoodData.logger.warn "An unexpected error when save ldm layout. Error: #{e.message}"
+          status = "Failed"
+        end
 
         {
           to: to_project.pid,
