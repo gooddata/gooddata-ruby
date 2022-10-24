@@ -20,7 +20,7 @@ end
 def handle_error(params, log, brick_type, error, error_message)
   execution_log = GoodData.logger
   execution_log.error "Execution failed. Error: #{error}" unless execution_log.nil?
-  GoodData::Bricks::ExecutionResultMiddleware.update_execution_result(GoodData::Bricks::ExecutionStatus::ERROR, error_message)
+  GoodData::Bricks::ExecutionResultMiddleware.update_execution_result(GoodData::Bricks::ExecutionStatus::WARNING, error_message)
   log.error "action=#{brick_type}_execution status=failed commit_hash=#{params['GOODDATA_RUBY_COMMIT']} execution_id=#{params['GDC_EXECUTION_ID']} exception=#{error}"
   raise
 end
