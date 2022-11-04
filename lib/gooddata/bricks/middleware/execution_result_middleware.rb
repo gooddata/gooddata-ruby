@@ -39,7 +39,7 @@ module GoodData
             message: message
           }
         }
-        update_result(result)
+        update_result(result, status)
       end
 
       private
@@ -52,9 +52,9 @@ module GoodData
         @@result_log_path = result_log_path
       end
 
-      def self.update_result(result)
+      def self.update_result(result, status = ExecutionStatus::ERROR)
         if @@result_log_path.nil?
-          GoodData.gd_logger.warn("action=update_execution_result status=error Not found execution result logger file.") unless GoodData.gd_logger.nil?
+          GoodData.gd_logger&.warn("action=update_execution_result status=#{status} Not found execution result logger file.")
           return
         end
 

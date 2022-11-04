@@ -10,6 +10,9 @@ module GoodData
   module LCM2
     class Helpers
       class << self
+        ABORT_ON_ERROR_PARAM = 'abort_on_error'.to_sym
+        COLLECT_SYNCED_STATUS = 'collect_synced_status'.to_sym
+
         def check_params(specification, params)
           specification.keys.each do |param_name|
             value = params.send(param_name)
@@ -38,6 +41,24 @@ module GoodData
               end
             end
           end
+        end
+
+        def continue_on_error(params)
+          params.include?(ABORT_ON_ERROR_PARAM) && !to_bool(ABORT_ON_ERROR_PARAM, params[ABORT_ON_ERROR_PARAM])
+        end
+
+        def collect_synced_status(params)
+          params.include?(COLLECT_SYNCED_STATUS) && to_bool(COLLECT_SYNCED_STATUS, params[COLLECT_SYNCED_STATUS])
+        end
+
+        private
+
+        def to_bool(key, value)
+          return value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+          return true if value =~ /^(true|t|yes|y|1)$/i
+          return false if value == '' || value =~ /^(false|f|no|n|0)$/i
+
+          raise ArgumentError, "Invalid '#{value}' boolean value for '#{key}' parameter"
         end
       end
     end

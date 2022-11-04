@@ -35,14 +35,26 @@ module GoodData
 
         description 'Localization query'
         param :localization_query, instance_of(Type::StringType), required: false
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = %i[action ok_clients error_clients]
 
       class << self
         def load_metric_data(params)
+          collect_synced_status = collect_synced_status(params)
+
           if params&.dig(:input_source, :metric_format) && params[:input_source][:metric_format].present?
-            metric_input_source = validate_input_source(params[:input_source])
+            metric_input_source = validate_input_source(params[:input_source], collect_synced_status)
+            return nil unless metric_input_source
           else
             return nil
           end
@@ -68,10 +80,14 @@ module GoodData
           metrics_hash
         end
 
-        def validate_input_source(input_source)
+        def validate_input_source(input_source, continue_on_error)
           type = input_source[:type] if input_source&.dig(:type)
           metric_format = input_source[:metric_format]
-          raise "Incorrect configuration: 'type' of 'input_source' is required" if type.blank?
+          if type.blank?
+            raise "Incorrect configuration: 'type' of 'input_source' is required" unless continue_on_error
+
+            return nil
+          end
 
           modified_input_source = input_source
           case type
@@ -154,8 +170,9 @@ module GoodData
           data_product_clients = data_product.clients
           number_client_ok = 0
           number_client_error = 0
+          collect_synced_status = collect_synced_status(params)
           metric_group.each do |client_id, formats|
-            next unless updated_clients.include?(client_id)
+            next if !updated_clients.include?(client_id) || (collect_synced_status && sync_failed_client(client_id, params))
 
             client = data_product_clients.find { |c| c.id == client_id }
             begin

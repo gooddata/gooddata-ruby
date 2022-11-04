@@ -24,6 +24,15 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = %i[from to status]
@@ -35,12 +44,19 @@ module GoodData
           client = params.gdc_gd_client
           development_client = params.development_client
           gdc_logger = params.gdc_logger
+          collect_synced_status = collect_synced_status(params)
+          failed_projects = ThreadSafe::Array.new
 
           params.synchronize.peach do |info|
             from_project = info.from
             to_projects = info.to
 
-            from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
+            from = development_client.projects(from_project)
+            unless from
+              process_failed_project(from_project, "Invalid 'from' project specified - '#{from_project}'", failed_projects, collect_synced_status)
+              next
+            end
+
             from_pid = from.pid
             from_title = from.title
             from_ldm_layout = from.ldm_layout
@@ -50,15 +66,29 @@ module GoodData
             else
               to_projects.peach do |to|
                 pid = to[:pid]
-                to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+                to_project = client.projects(pid)
+                unless to_project
+                  process_failed_project(pid, "Invalid 'from' project specified - '#{pid}'", failed_projects, collect_synced_status)
+                  next
+                end
+
+                next if sync_failed_project(pid, params)
 
                 gdc_logger.info "Transferring ldm layout, from project: '#{from_title}', PID: '#{from_pid}', to project: '#{to_project.title}', PID: '#{to_project.pid}'"
                 res = to_project.save_ldm_layout(from_ldm_layout)
-                res[:from] = from_pid
-                results << res
+
+                if res[:status] == 'OK' || !collect_synced_status
+                  res[:from] = from_pid
+                  results << res
+                else
+                  warning_message = "Failed to transfer ldm layout from project: '#{from_pid}' to project: '#{to_project.title}'"
+                  process_failed_project(pid, warning_message, failed_projects, collect_synced_status)
+                end
               end
             end
           end
+
+          process_failed_projects(failed_projects, short_name, params) if collect_synced_status
           # Return results
           results.flatten
         end

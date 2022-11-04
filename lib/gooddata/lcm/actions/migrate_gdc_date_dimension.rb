@@ -19,6 +19,18 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = %i[from to status]
@@ -27,6 +39,8 @@ module GoodData
         def call(params)
           results = []
           params.synchronize.map do |segment_info|
+            next if sync_failed_segment(segment_info[:segment_id], params)
+
             result = migrate_date_dimension(params, segment_info)
             results.concat(result)
           end
@@ -47,8 +61,13 @@ module GoodData
           # check latest master and previous master
           master_upgrade_datasets = get_upgrade_dates(latest_blueprint, previous_blueprint) if params[:synchronize_ldm].downcase == 'diff_against_master' && previous_blueprint
           unless master_upgrade_datasets&.empty?
+            collect_synced_status = collect_synced_status(params)
+            failed_projects = ThreadSafe::Array.new
+
             segment_info[:to].pmap do |entry|
               pid = entry[:pid]
+              next if sync_failed_project(pid, params)
+
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
               GoodData.logger.info "Migrating date dimension, project: '#{to_project.title}', PID: #{pid}"
               to_blueprint = to_project.blueprint
@@ -56,13 +75,18 @@ module GoodData
               next if upgrade_datasets.empty?
 
               message = get_upgrade_message(upgrade_datasets)
+              failed_message = "Failed to migrate date dimension for project #{pid}"
+              update_status = to_project.upgrade_custom_v2(message)
+              process_failed_project(pid, failed_message, failed_projects, collect_synced_status) if collect_synced_status && update_status != 'OK'
 
               results << {
                 from: segment_info[:from],
                 to: pid,
-                status: to_project.upgrade_custom_v2(message)
+                status: update_status
               }
             end
+
+            process_failed_projects(failed_projects, short_name, params) if collect_synced_status
           end
 
           results

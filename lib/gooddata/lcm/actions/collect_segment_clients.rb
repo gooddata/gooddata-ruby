@@ -32,9 +32,22 @@ module GoodData
 
         description 'Domain'
         param :domain, instance_of(Type::StringType), required: false
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = [
+        :segment,
         :from_name,
         :from_pid,
         :to_name,
@@ -89,6 +102,7 @@ module GoodData
                 client_project = segment_client.project
                 to_pid = client_project.pid
                 results << {
+                  segment: segment.segment_id,
                   from_name: master_name,
                   from_pid: master_pid,
                   to_name: client_project.title,

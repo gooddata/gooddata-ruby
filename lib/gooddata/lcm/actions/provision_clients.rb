@@ -29,7 +29,16 @@ module GoodData
         param :data_product, instance_of(Type::GDDataProductType), required: false
 
         description 'Logger'
-        param :gdc_logger, instance_of(Type::GdLogger), required: true
+        param :gdc_logger, instance_of(Type::GdLogger), required: false
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = [
@@ -45,6 +54,8 @@ module GoodData
           synchronize_projects = []
           data_product = params.data_product
           client = params.gdc_gd_client
+          collect_synced_status = collect_synced_status(params)
+          continue_on_error = continue_on_error(params)
           domain_name = params.organization || params.domain
           fail "Either organisation or domain has to be specified in params" unless domain_name
           domain = client.domain(domain_name) || fail("Invalid domain name specified - #{domain_name}")
@@ -52,6 +63,8 @@ module GoodData
           invalid_client_ids = []
           begin
             results = params.segments.map do |segment|
+              next if sync_failed_segment(segment.segment_id, params)
+
               segment_object = domain.segments(segment.segment_id, data_product)
               tmp = segment_object.provision_client_projects.map do |m|
                 Hash[m.each_pair.to_a].merge(type: :provision_result)
@@ -65,6 +78,10 @@ module GoodData
                     unless entry[:project_uri]
                       error_message = "There was error during provisioning clients: #{entry[:error]}" unless error_message
                       invalid_client_ids << entry[:id]
+                      if collect_synced_status
+                        failed_message = "Failed to provision client #{entry[:id]} in segment #{segment.segment_id}. Error: #{entry[:error]}"
+                        add_failed_client(entry[:id], failed_message, short_name, params)
+                      end
                       next
                     end
                     {
@@ -93,15 +110,20 @@ module GoodData
                 end
 
                 params.gdc_logger.debug "Deleted clients: #{deleted_client_ids.join(', ')}"
-                raise error_message unless error_message['TooManyProjectsCreatedException'] || error_message['Max number registered projects']
+                unless error_message['TooManyProjectsCreatedException'] || error_message['Max number registered projects']
+                  raise error_message unless continue_on_error
+
+                  next
+                end
+
                 break tmp
               end
 
               tmp
             end
           rescue => e
-            params.gdc_logger.error "Problem occurs when provisioning clients."
-            raise e
+            params.gdc_logger.error "Problem occurs when provisioning clients. Error: #{e}"
+            raise e unless continue_on_error
           end
 
           results.flatten! if results

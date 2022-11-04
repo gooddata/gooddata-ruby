@@ -44,6 +44,15 @@ module GoodData
 
         description 'Delete extra process schedule flag'
         param :delete_extra_process_schedule, instance_of(Type::BooleanType), required: false, default: true
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       # will be updated later based on the way etl synchronization
@@ -59,6 +68,8 @@ module GoodData
         def call(params)
           client = params.gdc_gd_client
           data_product = params.data_product
+          collect_synced_status = collect_synced_status(params)
+          failed_projects = ThreadSafe::Array.new
 
           schedule_additional_params = params.schedule_additional_params || params.additional_params
           schedule_additional_hidden_params = params.schedule_additional_hidden_params || params.additional_hidden_params
@@ -68,6 +79,8 @@ module GoodData
           end
 
           results = synchronize_segments.pmap do |segment_id, synchronize|
+            next if collect_synced_status && sync_failed_segment(segment_id, params)
+
             segment = data_product.segments.find { |s| s.segment_id == segment_id }
             res = segment.synchronize_processes(
               synchronize.flat_map do |info|
@@ -80,7 +93,11 @@ module GoodData
             res = GoodData::Helpers.symbolize_keys(res)
 
             if res[:syncedResult][:errors]
-              fail "Failed to sync processes/schedules for segment #{segment_id}. Error: #{res[:syncedResult][:errors].pretty_inspect}"
+              error_message = "Failed to sync processes/schedules for segment #{segment_id}. Error: #{res[:syncedResult][:errors].pretty_inspect}"
+              fail error_message unless collect_synced_status
+
+              add_failed_segment(segment_id, error_message, short_name, params)
+              next
             end
 
             if res[:syncedResult][:clients]
@@ -111,12 +128,19 @@ module GoodData
           hidden_params_for_all_schedules_in_all_projects = hidden_params_for_all_projects[:all_schedules]
 
           params.synchronize.peach do |info|
-            from_project_etl_names = get_process_n_schedule_names(client, info.from) if delete_extra_process_schedule
+            from_project_etl_names = get_process_n_schedule_names(client, info.from, failed_projects, collect_synced_status) if delete_extra_process_schedule
+            next if delete_extra_process_schedule && from_project_etl_names.nil?
 
             to_projects = info.to
             to_projects.peach do |entry|
               pid = entry[:pid]
-              to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+              next if collect_synced_status && sync_failed_project(pid, params)
+
+              to_project = client.projects(pid)
+              unless to_project
+                process_failed_project(pid, "Invalid 'to' project specified - '#{pid}'", failed_projects, collect_synced_status)
+                next
+              end
 
               if delete_extra_process_schedule
                 to_project_process_id_names = {}
@@ -165,13 +189,19 @@ module GoodData
             end
           end
 
+          process_failed_projects(failed_projects, short_name, params) if collect_synced_status
           results.flatten
         end
 
         private
 
-        def get_process_n_schedule_names(client, project_id)
-          project = client.projects(project_id) || fail("Invalid 'from' project specified - '#{project_id}'")
+        def get_process_n_schedule_names(client, project_id, failed_projects, continue_on_error)
+          project = client.projects(project_id)
+          unless project
+            process_failed_project(project_id, "Invalid 'from' project specified - '#{project_id}'", failed_projects, continue_on_error)
+            return nil
+          end
+
           processes = project.processes
           process_id_names = Hash[processes.map { |process| [process.process_id, process.name] }]
 

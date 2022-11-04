@@ -32,6 +32,15 @@ module GoodData
 
         description 'Additional Hidden Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       class << self
@@ -46,6 +55,8 @@ module GoodData
           return results unless include_ca
 
           client = params.gdc_gd_client
+          collect_synced_status = collect_synced_status(params)
+          failed_projects = ThreadSafe::Array.new
 
           params.synchronize.each do |info|
             from = info.from
@@ -58,14 +69,22 @@ module GoodData
               next unless ca_scripts
 
               pid = entry[:pid]
+              next if sync_failed_project(pid, params)
+
               ca_chunks = ca_scripts[:maqlDdlChunks]
-              to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+              to_project = client.projects(pid)
+              unless to_project
+                process_failed_project(pid, "Invalid 'to' project specified - '#{pid}'", failed_projects, collect_synced_status)
+                next
+              end
+
               params.gdc_logger.info "Synchronizing Computed Attributes to project: '#{to_project.title}', PID: #{pid}"
 
               begin
                 ca_chunks.each { |chunk| to_project.execute_maql(chunk) }
               rescue => e
-                raise "Error occured when executing MAQL, project: \"#{to_project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
+                error_message = "Error occurred when executing MAQL for project: \"#{to_project.title}\" reason: \"#{e.message}\", chunks: #{ca_chunks.inspect}"
+                process_failed_project(pid, error_message, failed_projects, collect_synced_status)
               end
 
               results << {
@@ -76,6 +95,7 @@ module GoodData
             end
           end
 
+          process_failed_projects(failed_projects, short_name, params) if collect_synced_status
           results
         end
       end

@@ -37,5 +37,6 @@ require 'backports/2.1.0/array/to_h'
 
 # Helpers
 require 'gooddata/helpers/global_helpers'
+require 'gooddata/lcm/helpers/check_helper'
 
 require 'active_support/core_ext/hash/compact' unless RUBY_VERSION >= '2.5'

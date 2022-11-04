@@ -47,6 +47,15 @@ module GoodData
 
         description 'Enables handling of deprecated objects in the logical data model.'
         param :include_deprecated, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = %i[from to status]
@@ -56,6 +65,8 @@ module GoodData
           results = []
           synchronize = []
           params.synchronize.map do |segment_info|
+            next if sync_failed_segment(segment_info[:segment_id], params)
+
             new_segment_info, segment_results = sync_segment_ldm(params, segment_info)
             results.concat(segment_results)
             synchronize << new_segment_info
@@ -72,12 +83,23 @@ module GoodData
         private
 
         def sync_segment_ldm(params, segment_info)
-          results = []
+          collect_synced_status = collect_synced_status(params)
+          failed_projects = ThreadSafe::Array.new
+          results = ThreadSafe::Array.new
           client = params.gdc_gd_client
           exclude_fact_rule = params.exclude_fact_rule.to_b
           include_deprecated = params.include_deprecated.to_b
           from_pid = segment_info[:from]
-          from = params.development_client.projects(from_pid) || fail("Invalid 'from' project specified - '#{from_pid}'")
+          from = params.development_client.projects(from_pid)
+          unless from
+            segment_id = segment_info[:segment_id]
+            error_message = "Failed to sync LDM for segment #{segment_id}. Error: Invalid 'from' project specified - '#{from_pid}'"
+            fail(error_message) unless collect_synced_status
+
+            add_failed_segment(segment_id, error_message, short_name, params)
+            return [segment_info, results]
+          end
+
           GoodData.logger.info "Creating Blueprint, project: '#{from.title}', PID: #{from_pid}"
           blueprint = from.blueprint(include_ca: params.include_computed_attributes.to_b)
           segment_info[:from_blueprint] = blueprint
@@ -102,6 +124,7 @@ module GoodData
                    }
               }
             end
+
             chunks = maql_diff['projectModelDiff']['updateScripts']
             if chunks.empty?
               GoodData.logger.info "Synchronize LDM to clients will not proceed in mode \
@@ -112,8 +135,15 @@ to force synchronize LDM to clients"
           end
 
           segment_info[:to] = segment_info[:to].pmap do |entry|
+            update_status = true
             pid = entry[:pid]
-            to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+            next if sync_failed_project(pid, params)
+
+            to_project = client.projects(pid)
+            unless to_project
+              process_failed_project(pid, "Invalid 'to' project specified - '#{pid}'", failed_projects, collect_synced_status)
+              next
+            end
 
             GoodData.logger.info "Updating from Blueprint, project: '#{to_project.title}', PID: #{pid}"
             begin
@@ -126,26 +156,34 @@ to force synchronize LDM to clients"
                 include_deprecated: include_deprecated
               )
             rescue MaqlExecutionError => e
-              GoodData.logger.info("Applying MAQL to project #{to_project.title} - #{pid} failed. Reason: #{e}")
-              fail e unless previous_master && params[:synchronize_ldm] == 'diff_against_master_with_fallback'
-              GoodData.logger.info("Restoring the client project #{to_project.title} from master.")
-              entry[:ca_scripts] = to_project.update_from_blueprint(
-                blueprint,
-                update_preference: params[:update_preference],
-                exclude_fact_rule: exclude_fact_rule,
-                execute_ca_scripts: false,
-                include_deprecated: include_deprecated
-              )
+              if collect_synced_status
+                update_status = false
+                failed_message = "Applying MAQL to project #{to_project.title} - #{pid} failed. Reason: #{e}"
+                process_failed_project(pid, failed_message, failed_projects, collect_synced_status)
+              else
+                fail e unless previous_master && params[:synchronize_ldm] == 'diff_against_master_with_fallback'
+
+                GoodData.logger.info("Restoring the client project #{to_project.title} from master.")
+                entry[:ca_scripts] = to_project.update_from_blueprint(
+                  blueprint,
+                  update_preference: params[:update_preference],
+                  exclude_fact_rule: exclude_fact_rule,
+                  execute_ca_scripts: false,
+                  include_deprecated: include_deprecated
+                )
+              end
             end
 
             results << {
               from: from_pid,
               to: pid,
               status: 'ok'
-            }
+            } if update_status
+
             entry
           end
 
+          process_failed_projects(failed_projects, short_name, params) if collect_synced_status
           [segment_info, results]
         end
       end
