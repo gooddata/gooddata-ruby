@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #
-# Copyright (c) 2010-2017 GoodData Corporation. All rights reserved.
+# Copyright (c) 2010-2022 GoodData Corporation. All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -316,6 +316,29 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
 
       @dataset_mapping = GoodData::DatasetMapping.new(@dataset_mapping_data)
 
+      @ldm_layout_data = {
+        "ldmLayout" => {
+          "layout" => [
+            {
+              "id" => "dataset_1",
+              "type" => "dataset",
+              "collapse" => true,
+              "x" => 100.1,
+              "y" => 200.2
+            },
+            {
+              "id" => "date_1",
+              "type" => "template_dataset",
+              "collapse" => false,
+              "x" => 150.1,
+              "y" => 250.2
+            }
+          ]
+        }
+      }
+      @ldm_layout = GoodData::LdmLayout.new(@ldm_layout_data)
+
+
       @data_source_id = GoodData::Helpers::DataSourceHelper.create_snowflake_data_source(@client)
 
       add_component_data = {
@@ -346,12 +369,15 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
       @from_processes = @project.processes.map(&:name).sort
       @from_schedules = @project.schedules.map(&:name).sort
       @dataset_mapping.save(:client => @project.client, :project => @project)
+      @ldm_layout.save(:client => @project.client, :project => @project)
       @project.transfer_processes(@to_project)
       @project.transfer_schedules(@to_project)
       @to_project.update_dataset_mapping(@dataset_mapping_data)
+      @to_project.save_ldm_layout(@ldm_layout_data)
       @to_processes = @to_project.processes.map(&:name).sort
       @to_schedules = @to_project.schedules.map(&:name).sort
       @to_dataset_mapping = @to_project.dataset_mapping
+      @to_ldm_layout = @to_project.ldm_layout
     end
 
     after(:all) do
@@ -414,6 +440,15 @@ describe "GoodData Model Project", :vcr, :constraint => 'slow' do
 
     it 'transfers dataset_mapping to the target project' do
       expect(@to_dataset_mapping).to eq(@dataset_mapping_data)
+    end
+
+    it 'keeps ldm_layout in the original project untouched' do
+      origin_project_layout = GoodData::LdmLayout.get(:client => @project.client, :project => @project)
+      expect(origin_project_layout).to eq(@ldm_layout_data)
+    end
+
+    it 'transfers ldm_layout to the target project' do
+      expect(@to_ldm_layout).to eq(@ldm_layout_data)
     end
 
     it 'is idempotent' do
