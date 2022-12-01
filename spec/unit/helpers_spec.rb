@@ -250,5 +250,6 @@ describe GoodData::Helpers do
       }
       expect { GoodData::Helpers.decode_params(params) }.to raise_error(JSON::ParserError)
     end
+
   end
 end
