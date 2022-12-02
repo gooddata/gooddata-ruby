@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: [2.3, 2.4, 2.5, 2.6, 2.7, jruby-9.1.17]
+        ruby-version: [2.3, 2.4, 2.5, 2.6, 2.7.6, jruby-9.1.17]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -36,7 +36,7 @@ jobs:
             xcode-version: 9
           - ruby-version: 2.6
             xcode-version: 9
-          - ruby-version: 2.7
+          - ruby-version: 2.7.6
             xcode-version: 9
           - ruby-version: jruby-9.1.17
             xcode-version: latest
