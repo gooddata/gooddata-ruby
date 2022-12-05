@@ -38,6 +38,18 @@ module GoodData
 
         description 'Additional Hidden Parameters'
         param :additional_hidden_params, instance_of(Type::HashType), required: false
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Logger'
+        param :gdc_logger, instance_of(Type::GdLogger), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       RESULT_HEADER = [
@@ -65,6 +77,8 @@ module GoodData
           end
 
           results = segments.map do |segment|
+            next if sync_failed_segment(segment.segment_id, params)
+
             if params.ads_client
               master_projects = GoodData::LCM2::Helpers.get_master_project_list_from_ads(params.release_table_name, params.ads_client, segment.segment_id)
             else
@@ -83,8 +97,7 @@ module GoodData
             failed_count = sync_result['failedClients']['count']
 
             if failed_count.to_i > 0
-              fail("#{failed_count} clients failed to synchronize. " \
-                   "Details: #{sync_result['links']['details']}")
+              error_handle(segment, res, collect_synced_status(params), params)
             end
 
             if keep_only_previous_masters_count >= 0
@@ -147,6 +160,45 @@ module GoodData
           end
         end
         # rubocop:enable Metrics/ParameterLists
+
+        private
+
+        def error_handle(segment, error_result, continue_on_error, params)
+          sync_result = error_result.json['synchronizationResult']
+          success_count = sync_result['successfulClients']['count'].to_i
+          failed_count = sync_result['failedClients']['count'].to_i
+
+          # Synchronize failure for all clients in segment
+          if continue_on_error && success_count.zero? && failed_count.positive?
+            segment_warning_message = "Failed to synchronize clients for #{segment.segment_id} segment. Details: #{sync_result['links']['details']}"
+            add_failed_segment(segment.segment_id, segment_warning_message, short_name, params)
+            return
+          end
+
+          summary_error_message = "#{failed_count} clients failed to synchronize. Details: #{sync_result['links']['details']}"
+          fail(summary_error_message) unless continue_on_error
+
+          GoodData.logger.warn summary_error_message
+          if error_result.details # rubocop:disable Style/SafeNavigation
+            error_result.details.items.each do |item|
+              next if item['status'] == 'OK'
+
+              error_client_id = item['id']
+              error_message = error_message(item, segment)
+              add_failed_client(error_client_id, error_message, short_name, params)
+            end
+          end
+        end
+
+        def error_message(error_item, segment)
+          error_client_id = error_item['id']
+          error_message = "Failed to synchronize #{error_client_id} client in #{segment.segment_id} segment."
+          error_message = "#{error_message}. Detail: #{error_item['error']['message']}" if error_item['error'] && error_item['error']['message']
+
+          error_message = "#{error_message}. Error items: #{error_item['error']['parameters']}" if error_item['error'] && error_item['error']['parameters']
+
+          error_message
+        end
       end
     end
   end

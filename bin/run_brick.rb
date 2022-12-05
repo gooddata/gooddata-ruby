@@ -17,6 +17,11 @@ def get_brick_params(prefix)
   ENV.select { |k,| k.to_s.match(/^#{prefix}.*/) }.map { |k, v| [k.slice(prefix.length..-1), v] }.to_h
 end
 
+def handle_warning(params, log, brick_type, error, summary_error)
+  log.error "action=#{brick_type}_execution status=warning commit_hash=#{params['GOODDATA_RUBY_COMMIT']} execution_id=#{params['GDC_EXECUTION_ID']} exception=#{error}"
+  GoodData::Bricks::ExecutionResultMiddleware.update_execution_result(GoodData::Bricks::ExecutionStatus::WARNING, summary_error)
+end
+
 def handle_error(params, log, brick_type, error, error_message)
   execution_log = GoodData.logger
   execution_log.error "Execution failed. Error: #{error}" unless execution_log.nil?
@@ -60,6 +65,8 @@ begin
   brick_pipeline.call(params)
 rescue GoodData::LcmExecutionError => lcm_error
   handle_error(execution_result_log_params, log, brick_type, lcm_error, lcm_error.summary_error)
+rescue GoodData::LcmExecutionWarning => lcm_warning
+  handle_warning(execution_result_log_params, log, brick_type, lcm_warning, lcm_warning.summary_error)
 rescue Exception => e # rubocop:disable RescueException
   handle_error(execution_result_log_params, log, brick_type, e, e.to_s)
 end

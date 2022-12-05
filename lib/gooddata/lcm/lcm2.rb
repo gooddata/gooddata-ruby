@@ -17,6 +17,7 @@ require_relative 'actions/actions'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
 require_relative 'exceptions/lcm_execution_error'
+require_relative 'exceptions/lcm_execution_warning'
 
 using TrueExtensions
 using FalseExtensions
@@ -125,6 +126,7 @@ module GoodData
         CollectClients,
         AssociateClients,
         RenameExistingClientProjects,
+        InitializeContinueOnErrorOption,
         ProvisionClients,
         UpdateMetricFormats,
         EnsureTechnicalUsersDomain,
@@ -135,7 +137,8 @@ module GoodData
         SynchronizeUserGroups,
         SynchronizePPDashboardPermissions,
         SynchronizeKDDashboardPermissions,
-        SynchronizeETLsInSegment
+        SynchronizeETLsInSegment,
+        CollectProjectsWarningStatus
       ],
 
       rollout: [
@@ -145,6 +148,7 @@ module GoodData
         CollectSegmentClients,
         EnsureTechnicalUsersDomain,
         EnsureTechnicalUsersProject,
+        InitializeContinueOnErrorOption,
         SynchronizeLdm,
         SynchronizeDataSetMapping,
         SynchronizeLdmLayout,
@@ -156,7 +160,8 @@ module GoodData
         UpdateMetricFormats,
         SynchronizeComputedAttributes,
         CollectDymanicScheduleParams,
-        SynchronizeETLsInSegment
+        SynchronizeETLsInSegment,
+        CollectProjectsWarningStatus
       ],
 
       users: [
@@ -373,7 +378,7 @@ module GoodData
           params.merge!(new_params)
 
           # Print action result
-          print_action_result(action, res)
+          print_action_result(action, res) if action.send(:print_result, params)
 
           # Store result for final summary
           results << res
@@ -400,7 +405,26 @@ module GoodData
           end
         end
 
+        process_sync_failed_projects(params) if GoodData::LCM2::Helpers.collect_synced_status(params) && strict_mode
+
         result
+      end
+
+      def process_sync_failed_projects(params)
+        sync_failed_list = params[:sync_failed_list]
+        sync_project_list = sync_failed_list[:project_client_mappings]
+        sync_failed_project_list = sync_failed_list[:failed_detailed_projects]
+
+        if sync_project_list && sync_failed_project_list && sync_project_list.size.positive? && sync_failed_project_list.size.positive?
+          failed_project = sync_failed_project_list[0]
+          summary_message = "Existing errors during execution. See log for details"
+          error_message = failed_project[:message]
+          if sync_project_list.size == sync_failed_project_list.size
+            raise GoodData::LcmExecutionError.new(summary_message, error_message)
+          else
+            raise GoodData::LcmExecutionWarning.new(summary_message, error_message)
+          end
+        end
       end
 
       def run_action(action, params)

@@ -164,7 +164,7 @@ describe GoodData::LCM2::UpdateMetricFormats do
       )
       expected = {:type=>"ads", :query=>"SELECT client_id, tag, format FROM metric_formats;",
                   :metric_format=>{:query=>"SELECT client_id, tag, format FROM metric_formats;"}}
-      res = subject.class.validate_input_source(input_source)
+      res = subject.class.validate_input_source(input_source, false)
       expect(res).to eql(expected)
     end
 
@@ -179,7 +179,7 @@ describe GoodData::LCM2::UpdateMetricFormats do
       )
       expected = {:type=>"snowflake", :query=>"SELECT client_id, tag, format FROM metric_formats;",
                   :metric_format=>{:query=>"SELECT client_id, tag, format FROM metric_formats;"}}
-      res = subject.class.validate_input_source(input_source)
+      res = subject.class.validate_input_source(input_source, false)
       expect(res).to eql(expected)
     end
 
@@ -194,7 +194,7 @@ describe GoodData::LCM2::UpdateMetricFormats do
       )
       expected = {:type=>"s3", :key=>"The path to csv file",
                   :metric_format=>{:file=>"The path to csv file"}}
-      res = subject.class.validate_input_source(input_source)
+      res = subject.class.validate_input_source(input_source, false)
       expect(res).to eql(expected)
     end
 
@@ -209,7 +209,7 @@ describe GoodData::LCM2::UpdateMetricFormats do
       )
       expected = {:type=>"s3", :file=>"The path to csv file",
                   :metric_format=>{:file=>"The path to csv file"}}
-      res = subject.class.validate_input_source(input_source)
+      res = subject.class.validate_input_source(input_source, false)
       expect(res).to eql(expected)
     end
 
@@ -224,7 +224,7 @@ describe GoodData::LCM2::UpdateMetricFormats do
       )
       expected = {:type=>"web", :url=>"The test url",
                   :metric_format=>{:url=>"The test url"}}
-      res = subject.class.validate_input_source(input_source)
+      res = subject.class.validate_input_source(input_source, false )
       expect(res).to eql(expected)
     end
 
@@ -238,7 +238,7 @@ describe GoodData::LCM2::UpdateMetricFormats do
                                                           }
       )
       expected = nil
-      res = subject.class.validate_input_source(input_source)
+      res = subject.class.validate_input_source(input_source, false)
       expect(res).to eql(expected)
     end
   end

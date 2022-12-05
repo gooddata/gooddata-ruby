@@ -33,43 +33,73 @@ module GoodData
 
         description 'Disable synchronizing dashboard permissions for Pixel Perfect dashboards'
         param :disable_pp_dashboard_permission, instance_of(Type::BooleanType), required: false, default: false
+
+        description 'Abort on error'
+        param :abort_on_error, instance_of(Type::StringType), required: false
+
+        description 'Collect synced status'
+        param :collect_synced_status, instance_of(Type::BooleanType), required: false
+
+        description 'Sync failed list'
+        param :sync_failed_list, instance_of(Type::HashType), required: false
       end
 
       class << self
         def call(params)
           results = []
           disable_pp_dashboard_permission = GoodData::Helpers.to_boolean(params.disable_pp_dashboard_permission)
+          collect_synced_status = collect_synced_status(params)
+          failed_projects = ThreadSafe::Array.new
 
           if disable_pp_dashboard_permission
             params.gdc_logger.info "Skip synchronize Pixel Perfect dashboard permission."
           else
             client = params.gdc_gd_client
             development_client = params.development_client
+            failed_projects = ThreadSafe::Array.new
 
             params.synchronize.peach do |info|
               from_project = info.from
               to_projects = info.to
+              sync_success = false
 
-              from = development_client.projects(from_project) || fail("Invalid 'from' project specified - '#{from_project}'")
+              from = development_client.projects(from_project)
+              unless from
+                process_failed_project(from_project, "Invalid 'from' project specified - '#{from_project}'", failed_projects, collect_synced_status)
+                next
+              end
+
               source_dashboards = from.dashboards
 
               params.gdc_logger.info "Transferring Pixel Perfect Dashboard permission, from project: '#{from.title}', PID: '#{from.pid}' for dashboard(s): #{source_dashboards.map { |d| "#{d.title.inspect}" }.join(', ')}" # rubocop:disable Metrics/LineLength
               to_projects.peach do |entry|
                 pid = entry[:pid]
-                to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
+                next if sync_failed_project(pid, params)
+
+                to_project = client.projects(pid)
+                unless to_project
+                  process_failed_project(pid, "Invalid 'to' project specified - '#{pid}'", failed_projects, collect_synced_status)
+                  next
+                end
 
                 target_dashboards = to_project.dashboards
-                GoodData::Project.transfer_dashboard_permission(from, to_project, source_dashboards, target_dashboards)
+                begin
+                  GoodData::Project.transfer_dashboard_permission(from, to_project, source_dashboards, target_dashboards)
+                  sync_success = true
+                rescue StandardError => err
+                  process_failed_project(pid, err.message, failed_projects, collect_synced_status)
+                end
               end
 
               results << {
                 from_project_name: from.title,
                 from_project_pid: from.pid,
                 status: 'ok'
-              }
+              } if sync_success
             end
           end
 
+          process_failed_projects(failed_projects, short_name, params) if collect_synced_status
           results
         end
       end
