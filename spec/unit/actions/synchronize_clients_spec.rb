@@ -31,8 +31,8 @@ describe GoodData::LCM2::SynchronizeClients do
           "status" => "error",
           "id" => "pid",
           "error" => {
-            "message" => "Error sync ds",
-            "parameters" => "test_ds"
+            "message" => "Error sync dataset",
+            "parameters" => "expected_error_sync_ds"
           }
         }
       ]
@@ -91,8 +91,8 @@ describe GoodData::LCM2::SynchronizeClients do
         status: 'error',
         id: 'pid',
         error: {
-          message: 'Error sync ds',
-          parameters: 'test_ds'
+          message: 'Error sync dataset',
+          parameters: 'expected_error_sync_ds'
         }
       }
 

@@ -101,7 +101,13 @@ module GoodData
           end
         end
 
-        def add_project_client_mapping(project_id, client_id, segment_id, params)
+        # Add new clients to project client mapping
+        #
+        # @param [String] project_id project identify will be added to mapping
+        # @param [String] client_id client identify will be added to mapping
+        # @param [String] segment_id segment identify will be added to mapping
+        # @param [Hash] params the hash contains list of parameters and values
+        def add_new_clients_to_project_client_mapping(project_id, client_id, segment_id, params)
           if collect_synced_status(params)
             sync_failed_list = sync_failed_list(params)
             client_project_mappings = sync_failed_list[:client_project_mappings]
