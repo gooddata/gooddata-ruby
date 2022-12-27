@@ -101,6 +101,23 @@ module GoodData
           end
         end
 
+        def add_project_client_mapping(project_id, client_id, segment_id, params)
+          if collect_synced_status(params)
+            sync_failed_list = sync_failed_list(params)
+            client_project_mappings = sync_failed_list[:client_project_mappings]
+            project_client_mappings = sync_failed_list[:project_client_mappings]
+            client_project_mappings[client_id.to_sym] = {
+              project_id: project_id,
+              segment_id: segment_id
+            } if client_project_mappings
+
+            project_client_mappings[project_id.to_sym] = {
+              client_id: client_id,
+              segment_id: segment_id
+            } if project_client_mappings
+          end
+        end
+
         def process_failed_project(project_id, failed_message, failed_projects, continue_on_error)
           fail(failed_message) unless continue_on_error
 

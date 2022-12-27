@@ -79,7 +79,7 @@ module GoodData
               end
 
               params.gdc_logger.info "Synchronizing Computed Attributes to project: '#{to_project.title}', PID: #{pid}"
-
+              error_message = nil
               begin
                 ca_chunks.each { |chunk| to_project.execute_maql(chunk) }
               rescue => e
@@ -90,7 +90,7 @@ module GoodData
               results << {
                 from: from,
                 to: pid,
-                status: 'ok'
+                status: error_message.nil? ? 'ok' : 'failed'
               }
             end
           end
