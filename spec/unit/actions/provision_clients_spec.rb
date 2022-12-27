@@ -42,4 +42,31 @@ describe GoodData::LCM2::ProvisionClients do
       expect { subject.class.call(params) }.to raise_error('limit reached')
     end
   end
+
+  context 'when provisioning process with warning status' do
+    let(:params) do
+      params = {
+        gdc_gd_client: gdc_gd_client,
+        gdc_logger: logger,
+        segments: [
+            segment
+        ],
+        domain: domain,
+        data_product: data_product,
+        abort_on_error: false
+      }
+      GoodData::LCM2.convert_to_smart_hash(params)
+    end
+
+    it 'process warning status' do
+      allow(logger).to receive(:info)
+      allow(logger).to receive(:warn)
+      allow(logger).to receive(:error)
+
+      expect(logger).to receive(:error).with(/Problem occurs when provisioning clients. Error: limit reached/)
+
+      # Action get errors but still continue process
+      subject.class.call(params)
+    end
+  end
 end
