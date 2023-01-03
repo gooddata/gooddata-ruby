@@ -47,15 +47,15 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry-byebug', '~> 3.6' if RUBY_PLATFORM != 'java'
 
   s.add_development_dependency 'pronto', '~> 0.10' if RUBY_PLATFORM != 'java'
-  s.add_development_dependency 'pronto-rubocop', '~> 0.9' if RUBY_PLATFORM != 'java'
-  s.add_development_dependency 'pronto-reek', '~> 0.9' if RUBY_PLATFORM != 'java'
+  s.add_development_dependency 'pronto-rubocop', '~> 0.9', '< 0.11' if RUBY_PLATFORM != 'java'
+  s.add_development_dependency 'pronto-reek', '~> 0.9', '< 0.11' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'vcr', '5.0.0'
   s.add_development_dependency 'hashdiff', '~> 0.4'
 
   s.add_development_dependency 'sqlite3' if RUBY_PLATFORM != 'java'
 
   if RUBY_VERSION >= '2.5'
-    s.add_dependency 'activesupport', '>= 6.0.3.1', '< 6.2'
+    s.add_dependency 'activesupport', '>= 6.0.3.1'
   else
     s.add_dependency 'activesupport', '>= 5.2.4.3', '< 6.0'
   end
@@ -66,19 +66,18 @@ Gem::Specification.new do |s|
   else
     s.add_dependency 'docile', '> 1.1', '< 1.4.0'
   end
-  s.add_dependency 'azure-storage-blob', '~> 1.1.0'
-  s.add_dependency 'nokogiri', '~> 1.10.0'
+  s.add_dependency 'azure-storage-blob', '~> 2.0'
   s.add_dependency 'gli', '~> 2.15'
-  s.add_dependency 'gooddata_datawarehouse', '~> 0.0.10' if RUBY_PLATFORM == 'java'
+  s.add_dependency 'gooddata_datawarehouse', '~> 0.0.11' if RUBY_PLATFORM == 'java'
   s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
-  s.add_dependency 'json_pure', '~> 1.8'
+  s.add_dependency 'json_pure', '~> 2.6'
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'parseconfig', '~> 1.0'
   s.add_dependency 'pmap', '~> 1.1'
   s.add_dependency 'remote_syslog_logger', '~> 1.0.3'
-  s.add_dependency 'restforce', '>= 2.4', '< 4.0'
+  s.add_dependency 'restforce', '>= 2.4'
   s.add_dependency 'rest-client', '~> 2.0'
-  s.add_dependency 'rubyzip', '~> 1.2', '>= 1.2.1'
+  s.add_dependency 'rubyzip'
   s.add_dependency 'terminal-table', '~> 1.7'
   s.add_dependency 'thread_safe'
   s.add_dependency 'backports'
