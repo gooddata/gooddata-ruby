@@ -50,6 +50,7 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
     allow(gdc_gd_client).to receive(:domain) { domain }
     allow(gdc_gd_client).to receive(:projects).with('from project') { project }
     allow(gdc_gd_client).to receive(:projects).with(target_project_id) { project }
+    allow(logger).to receive(:warn)
     allow(data_product).to receive(:segments) { [segment] }
     allow(segment).to receive(:synchronize_processes) { result }
     allow(project).to receive(:set_metadata)
@@ -148,6 +149,47 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
 
     it 'raise error' do
       expect { subject.class.call(params) }.to raise_error
+    end
+  end
+
+  context 'when sync processes/schedules has problem with warning status' do
+    let(:result) do
+      {
+        syncedResult: {
+          errors: [
+            {
+              errorId: "91a811a7-8d3a-42d2-a1ba-024933f74021",
+              errorCode: "gdc.lcm.schedule.fatal_error",
+              message: "Error",
+              parameters: []
+            }
+          ]
+        }
+      }
+    end
+    let(:warning_params) {
+      warning_params = params.merge({
+                                      collect_synced_status: true,
+                                      sync_failed_list: {
+                                        failed_detailed_projects: [],
+                                        failed_projects: [],
+                                        failed_clients: [],
+                                        failed_segments: []
+                                      }
+                                    })
+      GoodData::LCM2.convert_to_smart_hash(warning_params)
+    }
+
+    it 'process warning status' do
+      # Action get errors but still continue process
+      subject.class.call(warning_params)
+      failed_detailed_projects = warning_params.sync_failed_list.failed_detailed_projects
+
+      expect(failed_detailed_projects.size).to eq(1)
+      expect(failed_detailed_projects[0][:segment]).to eq('some_segment_ids')
+      expect(failed_detailed_projects[0][:message]).to include('Failed to sync processes/schedules for segment some_segment_ids')
+      expect(failed_detailed_projects[0][:message]).to include('91a811a7-8d3a-42d2-a1ba-024933f74021')
+      expect(failed_detailed_projects[0][:message]).to include('gdc.lcm.schedule.fatal_error')
     end
   end
 

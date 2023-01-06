@@ -7,12 +7,13 @@
 describe GoodData::LCM2::SynchronizeClients do
   subject { GoodData::LCM2::SynchronizeClients }
   let(:failure_details) { '/link/to/details' }
+  let(:success_count) { 50 }
   let(:failed_count) { 42 }
   let(:sync_failed_response_body) do
     {
       "synchronizationResult" => {
         "successfulClients" => {
-          "count" => 0
+          "count" => success_count
         },
         "failedClients" => {
           "count" => failed_count
@@ -21,6 +22,20 @@ describe GoodData::LCM2::SynchronizeClients do
           "details" => failure_details
         }
       }
+    }
+  end
+  let(:sync_clients_detail_result) do
+    {
+      "items" => [
+        {
+          "status" => "error",
+          "id" => "pid",
+          "error" => {
+            "message" => "Error sync dataset",
+            "parameters" => "expected_error_sync_ds"
+          }
+        }
+      ]
     }
   end
 
@@ -66,6 +81,50 @@ describe GoodData::LCM2::SynchronizeClients do
       expected_error_message = "#{failed_count} clients failed to " \
                                "synchronize. Details: #{failure_details}"
       expect { subject.call(params) }.to raise_error(expected_error_message)
+    end
+  end
+
+  context 'when synchronizing client get errors' do
+    before do
+      detail_items = []
+      detail_items << {
+        status: 'error',
+        id: 'pid',
+        error: {
+          message: 'Error sync dataset',
+          parameters: 'expected_error_sync_ds'
+        }
+      }
+
+      allow(segment).to receive(:synchronize_clients)
+                                         .and_return(sync_failed_response)
+      allow(sync_failed_response).to receive(:details)
+                                         .and_return(sync_clients_detail_result)
+      allow(sync_clients_detail_result).to receive(:items)
+                                         .and_return(detail_items)
+      allow(segment).to receive(:id).and_return('id_of_my_segment')
+      allow(logger).to receive(:warn)
+    end
+
+    let(:warning_params) {
+      warning_params = params.merge({
+                                      collect_synced_status: true,
+                                      sync_failed_list: {
+                                        failed_detailed_projects: [],
+                                        failed_projects: [],
+                                        failed_clients: [],
+                                        failed_segments: []
+                                      }
+                                  })
+      GoodData::LCM2.convert_to_smart_hash(warning_params)
+    }
+
+    it 'it processes warning status' do
+      # Action get errors but still continue process
+      result = subject.call(warning_params)
+      expect(result.size).to eq(1)
+      expect(result[0][:segment]).to eq('id_of_my_segment')
+      expect(result[0][:successful_count]).to eq(50)
     end
   end
 end

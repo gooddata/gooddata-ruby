@@ -84,8 +84,15 @@ module GoodData
                       end
                       next
                     end
+
+                    project_id = entry[:project_uri].split('/').last
+                    if collect_synced_status && entry[:status] == 'CREATED' && entry[:id]
+                      # Update project client mappings when there are create new clients during provision clients of the segment
+                      add_new_clients_to_project_client_mapping(project_id, entry[:id], segment.segment_id, params)
+                    end
+
                     {
-                      pid: entry[:project_uri].split('/').last,
+                      pid: project_id,
                       client_id: entry[:id]
                     }
                   end.compact

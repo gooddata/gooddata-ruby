@@ -115,8 +115,8 @@ module GoodData
 
             {
               segment: segment.id,
-              master_pid: master.pid,
-              master_name: master.title,
+              master_pid: master.nil? ? '' : master.pid,
+              master_name: master.nil? ? '' : master.title,
               successful_count: sync_result['successfulClients']['count']
             }
           end

@@ -50,6 +50,7 @@ describe GoodData::LCM2::SynchronizeLdm do
     allow(project).to receive(:pid)
     allow(project).to receive(:blueprint)
     allow(logger).to receive(:info)
+    allow(logger).to receive(:warn)
     allow(logger).to receive(:class) { Logger }
     allow(target_project).to receive(:title)
     allow(target_project).to receive(:update_from_blueprint)
@@ -164,6 +165,37 @@ describe GoodData::LCM2::SynchronizeLdm do
 
           expect { subject }.to raise_error
         end
+      end
+    end
+
+    context 'when get errors with warning status' do
+      before do
+        allow(target_project).to receive(:update_from_blueprint)
+                                     .with(any_args, hash_including(maql_diff: maql_diff))
+                                     .and_raise(GoodData::MaqlExecutionError, 'Failed to update LDM')
+      end
+
+      let(:synchronize_ldm) { 'diff_against_master' }
+      let(:converted_params) {
+        converted_params = params.merge({
+                                        collect_synced_status: true,
+                                        sync_failed_list: {
+                                          failed_detailed_projects: [],
+                                          failed_projects: [],
+                                          failed_clients: [],
+                                          failed_segments: []
+                                        }
+                                      })
+        GoodData::LCM2.convert_to_smart_hash(converted_params)
+      }
+
+      it 'Process warning status' do
+        # Action get errors but still continue process
+        subject
+        failed_detailed_projects = converted_params.sync_failed_list.failed_detailed_projects
+        expect(failed_detailed_projects.size).to eq(1)
+        expect(failed_detailed_projects[0][:project_id]).to eq('to_pid')
+        expect(failed_detailed_projects[0][:message]).to include('Failed to update LDM')
       end
     end
   end
