@@ -51,8 +51,6 @@ module GoodData
           params.include?(COLLECT_SYNCED_STATUS) && to_bool(COLLECT_SYNCED_STATUS, params[COLLECT_SYNCED_STATUS])
         end
 
-        private
-
         def to_bool(key, value)
           return value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
           return true if value =~ /^(true|t|yes|y|1)$/i

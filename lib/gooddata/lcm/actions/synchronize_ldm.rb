@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 require_relative 'base_action'
+require_relative '../helpers/helpers'
 
 using TrueExtensions
 using FalseExtensions
@@ -89,6 +90,10 @@ module GoodData
           client = params.gdc_gd_client
           exclude_fact_rule = params.exclude_fact_rule.to_b
           include_deprecated = params.include_deprecated.to_b
+          update_preference = params[:update_preference]
+          exist_fallback_to_hard_sync_config = !update_preference.nil? && !update_preference[:fallback_to_hard_sync].nil?
+          include_maql_fallback_hard_sync = exist_fallback_to_hard_sync_config && Helpers.to_bool('fallback_to_hard_sync', update_preference[:fallback_to_hard_sync])
+
           from_pid = segment_info[:from]
           from = params.development_client.projects(from_pid)
           unless from
@@ -114,6 +119,8 @@ module GoodData
               maql_diff_params = [:includeGrain]
               maql_diff_params << :excludeFactRule if exclude_fact_rule
               maql_diff_params << :includeDeprecated if include_deprecated
+              maql_diff_params << :includeMaqlFallbackHardSync if include_maql_fallback_hard_sync
+
               maql_diff = previous_master.maql_diff(blueprint: blueprint, params: maql_diff_params)
             else
               maql_diff = {
@@ -149,7 +156,7 @@ to force synchronize LDM to clients"
             begin
               entry[:ca_scripts] = to_project.update_from_blueprint(
                 blueprint,
-                update_preference: params[:update_preference],
+                update_preference: update_preference,
                 exclude_fact_rule: exclude_fact_rule,
                 execute_ca_scripts: false,
                 maql_diff: maql_diff,
@@ -166,7 +173,7 @@ to force synchronize LDM to clients"
                 GoodData.logger.info("Restoring the client project #{to_project.title} from master.")
                 entry[:ca_scripts] = to_project.update_from_blueprint(
                   blueprint,
-                  update_preference: params[:update_preference],
+                  update_preference: update_preference,
                   exclude_fact_rule: exclude_fact_rule,
                   execute_ca_scripts: false,
                   include_deprecated: include_deprecated
