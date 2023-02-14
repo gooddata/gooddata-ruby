@@ -277,9 +277,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_model_all' do
     it 'Should return process id as string' do
       schedule = GoodData::Schedule.create(PROCESS_ID, @test_cron, @project_executable, @test_data)
       res = schedule.process_id
-      res.should_not be_nil
-      res.should_not be_empty
-      res.should be_a_kind_of(String)
+      expect(res).not_to be_nil
+      expect(res).not_to be_empty
+      expect(res).to be_a_kind_of(String)
     end
   end
 
