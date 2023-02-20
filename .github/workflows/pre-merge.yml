@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: [2.3, 2.4, 2.5, 2.6, 2.7.6, jruby-9.1.17]
+        ruby-version: [2.3, 2.4, 2.5, 2.6, 2.7.6, 3.2.1, jruby-9.1.17, jruby-9.4.1]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -38,7 +38,11 @@ jobs:
             xcode-version: 9
           - ruby-version: 2.7.6
             xcode-version: 9
+          - ruby-version: 3.2.1
+            xcode-version: 9
           - ruby-version: jruby-9.1.17
+            xcode-version: latest
+          - ruby-version: jruby-9.4.1
             xcode-version: latest
     steps:
       - name: run prepare-env
@@ -58,7 +62,7 @@ jobs:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.5
+          ruby-version: 3.2
           bundler-cache: true
       - name: run pronto-code-review
         run: |
