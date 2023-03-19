@@ -9,16 +9,6 @@ module GoodData
     module RotateKeysHelper
       class << self
         def rotate_encryption_key(current_key, new_key)
-          # Update credentials in secrets.yaml file
-          yaml_file = 'spec/environment/secrets.yaml'
-          secrets = YAML.load_file(yaml_file)
-          secrets.each do | key, _|
-            env_secrets = secrets[key]
-            env_secrets.each do | item_key, item_value|
-              env_secrets[item_key] = GoodData::Helpers.encrypt(GoodData::Helpers.decrypt(item_value, current_key), new_key)
-            end
-          end
-          File.write(yaml_file, secrets.to_yaml)
           # Update BigQuery encryption key in bigquery_encrypted file
           bigquery_encrypted_file = 'spec/environment/bigquery_encrypted'
           File.write(bigquery_encrypted_file, GoodData::Helpers.encrypt(GoodData::Helpers.decrypt(File.read(bigquery_encrypted_file), current_key), new_key))
