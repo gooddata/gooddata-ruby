@@ -20,7 +20,7 @@ module GoodData
         env = branch_to_environment(env)
         puts "USING ENVIRONMENT: #{env}"
         require_relative env
-        env_secrets = decrypt_secrets(env)
+        env_secrets = initial_secrets(env)
         GoodData::Environment::ConnectionHelper.set_const('SECRETS', env_secrets)
         ENV['GD_SERVER'] = GoodData::Environment::ConnectionHelper::DEFAULT_SERVER
         # VCR is enabled by default - set VCR_ON=false to disable
@@ -38,16 +38,33 @@ module GoodData
         BRANCH_TO_ENVIRONMENT[branch.to_sym] || branch
       end
 
-      def decrypt_secrets(env)
-        secrets_path = File.join(File.dirname(__FILE__), 'secrets.yaml')
-        secrets = YAML.load_file(secrets_path)
-        env_secrets = secrets[env.downcase].symbolize_keys
-        env_secrets.merge!(secrets['global'].symbolize_keys)
-        encryption_key = ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
-        env_secrets.each do |_, value|
-          decrypted = GoodData::Helpers.decrypt(value, encryption_key)
-          value.replace(decrypted)
-        end
+      def initial_secrets(env)
+        key_prefix = if env == 'development' then
+                       'GD_DEV'
+                     elsif env == 'testing' then
+                       'GD_TEST'
+                     else
+                       'GD_STG'
+                     end
+        {
+          s3_bucket_name: ENV['RT_S3_BUCKET_NAME'],
+          s3_access_key_id: ENV['RT_S3_ACCESS_KEY'],
+          s3_secret_access_key: ENV['RT_S3_SECRET_KEY'],
+          redshift_password: ENV['REDSHIFT_PASSWORD'],
+          redshift_access_key: ENV['REDSHIFT_ACCESS_KEY'],
+          redshift_secret_key: ENV['REDSHIFT_SECRET_KEY'],
+          snowflake_password: ENV['SNOWFLAKE_PASSWORD'],
+          blob_storage_connection: ENV['BLOB_STORAGE_CONNECTION'],
+          mysql_connection: ENV['MYSQL_INTEGRATION_TEST_PASSWORD'],
+          mysql_mongobi_connection: ENV['MYSQL_MONGOBI_INTEGRATION_TEST_PASSWORD'],
+          dev_token: ENV["#{key_prefix}_DEV_TOKEN"],
+          prod_token: ENV["#{key_prefix}_PROD_TOKEN"],
+          vertica_dev_token: ENV["#{key_prefix}_VERTICA_DEV_TOKEN"],
+          vertica_prod_token: ENV["#{key_prefix}_VERTICA_PROD_TOKEN"],
+          password: ENV["#{key_prefix}_PASSWORD"],
+          gd_project_token: ENV["#{key_prefix}_GD_PROJECT_TOKEN"],
+          default_password: ENV["#{key_prefix}_DEFAULT_PASSWORD"]
+        }
       end
     end
   end
