@@ -8,7 +8,7 @@
 1. run `bundle exec rake -f lcm.rake test:docker:integration`
 
 ## Running tests locally
-1. switch to JRuby (because JRuby ADS driver is needed): `rvm use jruby`
+1. switch  to JRuby (because JRuby ADS driver is needed): `rvm use jruby`
 1. add this line `127.0.0.1 testbucket.localstack` to `/etc/hosts`
 1. add this line `127.0.0.1 localstack` to `/etc/hosts`
 1. add certificates to Java `sudo keytool -importcert -alias
