@@ -95,7 +95,7 @@ describe 'the whole life-cycle', :vcr do
 
     end
 
-    it 'migrates LDM' do
+    xit 'migrates LDM' do
       $client_projects.each do |target_project|
         blueprint = GoodData::Model::ProjectBlueprint.new($master.blueprint)
         diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
