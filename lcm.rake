@@ -138,6 +138,15 @@ namespace :maven do
 
     system('mvn -f ci/redshift/pom.xml clean install -P binary-packaging')
     system('cp -rf ci/redshift/target/*.jar lib/gooddata/cloud_resources/redshift/drivers/')
+
+    system('mvn -f ci/postgresql/pom.xml clean install -P binary-packaging')
+    system('cp -rf ci/postgresql/target/*.jar lib/gooddata/cloud_resources/postgresql/drivers/')
+
+    system('mvn -f ci/mssql/pom.xml clean install -P binary-packaging')
+    system('cp -rf ci/mssql/target/*.jar lib/gooddata/cloud_resources/mssql/drivers/')
+
+    system('mvn -f ci/mysql/pom.xml clean install -P binary-packaging')
+    system('cp -rf ci/mysql/target/*.jar lib/gooddata/cloud_resources/mysql/drivers/')
   end
 end
 

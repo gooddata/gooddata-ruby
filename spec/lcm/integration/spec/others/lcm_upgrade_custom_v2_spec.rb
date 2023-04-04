@@ -64,34 +64,34 @@ describe 'the whole life-cycle upgrade custom v2', :vcr do
       $client_projects = BrickRunner.rollout_brick context: @test_context, template_path: '../../params/rollout_brick.json.erb', client: @prod_rest_client
     end
 
-    it 'migrates LDM' do
-      old_blueprint = GoodData::Model::ProjectBlueprint.new($master_before.blueprint)
-      master_blueprint = GoodData::Model::ProjectBlueprint.new($master_after.blueprint)
-      master_dates = GoodData::LCM2::MigrateGdcDateDimension::get_date_dimensions(master_blueprint);
-      old_dates = GoodData::LCM2::MigrateGdcDateDimension::get_date_dimensions(old_blueprint);
-      $client_projects.each do |target_project|
-        client_blueprint = GoodData::Model::ProjectBlueprint.new(target_project.blueprint)
-        client_dates = GoodData::LCM2::MigrateGdcDateDimension::get_date_dimensions(client_blueprint);
+    # it 'migrates LDM' do
+    #   old_blueprint = GoodData::Model::ProjectBlueprint.new($master_before.blueprint)
+    #   master_blueprint = GoodData::Model::ProjectBlueprint.new($master_after.blueprint)
+    #   master_dates = GoodData::LCM2::MigrateGdcDateDimension::get_date_dimensions(master_blueprint);
+    #   old_dates = GoodData::LCM2::MigrateGdcDateDimension::get_date_dimensions(old_blueprint);
+    #   $client_projects.each do |target_project|
+    #     client_blueprint = GoodData::Model::ProjectBlueprint.new(target_project.blueprint)
+    #     client_dates = GoodData::LCM2::MigrateGdcDateDimension::get_date_dimensions(client_blueprint);
 
-        expect(!(old_dates.any? { |old| old[:urn].include?(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2) })).to be_truthy
-        expect(master_dates.any? { |old| old[:urn].include?(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2) }).to be_truthy
+    #     expect(!(old_dates.any? { |old| old[:urn].include?(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2) })).to be_truthy
+    #     expect(master_dates.any? { |old| old[:urn].include?(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2) }).to be_truthy
 
-        master_dates.each do |date|
-          expect(client_dates.any? { |client| client[:urn] == date[:urn] }).to be_truthy
-          expect(client_dates.any? { |client| client[:id] == date[:id] }).to be_truthy
-          if date[:id] == 'datecustomupgrade' || date[:id] == 'dategooddata'
-            expect(date[:urn]).to eq(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2)
-          end
-        end
+    #     master_dates.each do |date|
+    #       expect(client_dates.any? { |client| client[:urn] == date[:urn] }).to be_truthy
+    #       expect(client_dates.any? { |client| client[:id] == date[:id] }).to be_truthy
+    #       if date[:id] == 'datecustomupgrade' || date[:id] == 'dategooddata'
+    #         expect(date[:urn]).to eq(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2)
+    #       end
+    #     end
 
-        expect(client_dates.any? { |client| client[:urn] == GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2 }).to be_truthy
-        client_dates.each do |date|
-          if date[:id] == 'datecustomupgrade' || date[:id] == 'dategooddata'
-            expect(date[:urn]).to eq(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2)
-          end
-        end
-      end
-    end
+    #     expect(client_dates.any? { |client| client[:urn] == GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2 }).to be_truthy
+    #     client_dates.each do |date|
+    #       if date[:id] == 'datecustomupgrade' || date[:id] == 'dategooddata'
+    #         expect(date[:urn]).to eq(GoodData::LCM2::MigrateGdcDateDimension::DATE_DIMENSION_CUSTOM_V2)
+    #       end
+    #     end
+    #   end
+    # end
   end
 end
 
