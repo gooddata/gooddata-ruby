@@ -38,7 +38,7 @@ describe GoodData::Mixin::MdIdToUri, :vcr do
     expect do
       SomeTestClass.identifier_to_uri(@opts, '-1')
     end.to raise_error(RestClient::BadRequest) { |error|
-      error.response.should match(/does not match with value '-1'/)
+      expect(error.response).to match(/does not match with value '-1'/)
     }
   end
 

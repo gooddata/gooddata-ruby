@@ -8,6 +8,6 @@ require 'gooddata/core/core'
 
 describe GoodData::NilLogger do
   it "Has GoodData::NilLogger class" do
-    GoodData::NilLogger.should_not be(nil)
+    expect(GoodData::NilLogger).not_to be_nil
   end
 end

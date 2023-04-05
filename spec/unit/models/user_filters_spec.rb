@@ -7,16 +7,16 @@
 require 'gooddata'
 
 def check_filters(filters)
-  filters.count.should eq(2)
+  expect(filters.count).to eq(2)
   filter = filters.first
-  filter[:login].should eq("john.doe@example.com")
-  filter[:filters].count.should eq(1)
-  filter[:filters].first[:values].count.should eq(4)
-  filter[:filters].first[:values].should eq(["USA", "Czech Republic", "Uganda", "Slovakia"])
+  expect(filter[:login]).to eq("john.doe@example.com")
+  expect(filter[:filters].count).to eq(1)
+  expect(filter[:filters].first[:values].count).to eq(4)
+  expect(filter[:filters].first[:values]).to eq(["USA", "Czech Republic", "Uganda", "Slovakia"])
   filter = filters.last
-  filter[:login].should eq("jane.doe@example.com")
-  filter[:filters].count.should eq(1)
-  filter[:filters].first[:values].count.should eq(1)
+  expect(filter[:login]).to eq("jane.doe@example.com")
+  expect(filter[:filters].count).to eq(1)
+  expect(filter[:filters].first[:values].count).to eq(1)
 end
 
 describe 'User filters implementation' do
@@ -44,7 +44,7 @@ describe 'User filters implementation' do
         { :label => "other_label", :column => 'department' }
       ]
     )
-    filters.first[:filters].last[:values].count.should eq(3)
+    expect(filters.first[:filters].last[:values].count).to eq(3)
   end
 
   it "should be able to specify columns by number" do
@@ -56,7 +56,7 @@ describe 'User filters implementation' do
         { :label => "other_label", :column => 1 }
       ]
     )
-    filters.first[:filters].last[:values].count.should eq(2)
+    expect(filters.first[:filters].last[:values].count).to eq(2)
   end
 
   it "should be able to specify columns by name" do
@@ -68,7 +68,7 @@ describe 'User filters implementation' do
         { :label => 'other_label', :column => 'department' }
       ]
     )
-    filters.first[:filters].last[:values].count.should eq(2)
+    expect(filters.first[:filters].last[:values].count).to eq(2)
   end
 
   it "should normalize simplified filters" do
@@ -80,7 +80,7 @@ describe 'User filters implementation' do
         "jirka@gooddata.com"
       ]
     ]
-    GoodData::UserFilterBuilder.normalize_filters(filters).should eq([
+    expect(GoodData::UserFilterBuilder.normalize_filters(filters)).to eq([
       {
         :login => "svarovsky+gem_tester@gooddata.com",
         :filters => [

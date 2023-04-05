@@ -17,6 +17,6 @@ describe GoodData::Command::Project, :vcr, :vcr_all_cassette => 'create' do
 
   it "Is Possible to create GoodData::Command::Project instance" do
     cmd = GoodData::Command::Project.new
-    cmd.should be_a(GoodData::Command::Project)
+    expect(cmd).to be_a(GoodData::Command::Project)
   end
 end
