@@ -11,6 +11,30 @@ integratedTests:
     path: .
     vault:
       GD_SPEC_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-bia-encryption-key"
+      RT_S3_BUCKET_NAME: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials bucket_name"
+      RT_S3_ACCESS_KEY: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials access_key"
+      RT_S3_SECRET_KEY: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials secret_key"
+      GD_DEV_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 dev_token"
+      GD_DEV_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 prod_token"
+      GD_DEV_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 vertica_dev_token"
+      GD_DEV_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 vertica_prod_token"
+      GD_DEV_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_password"
+      GD_DEV_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_project_token"
+      GD_DEV_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_default_password"
+      GD_TEST_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 dev_token"
+      GD_TEST_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 prod_token"
+      GD_TEST_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 vertica_dev_token"
+      GD_TEST_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 vertica_prod_token"
+      GD_TEST_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_password"
+      GD_TEST_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_project_token"
+      GD_TEST_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_default_password"
+      GD_STG_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 dev_token"
+      GD_STG_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 prod_token"
+      GD_STG_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 vertica_dev_token"
+      GD_STG_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 vertica_prod_token"
+      GD_STG_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_password"
+      GD_STG_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_project_token"
+      GD_STG_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_default_password"
     command: ./bin/run_smoke_tests.sh
     image: harbor.intgdc.com/staging/lcm-bricks:GIT_REV
     repo_mount_dir: /src
