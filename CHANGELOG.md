@@ -1,5 +1,7 @@
 # GoodData Ruby SDK Changelog
 
+# Just Verify Extended test, do not merge
+
 ## 2.2.0
  - FEATURE: MSF-23003 Supports Ruby 2.7, remove salesforce_bulk_query dependency
  - FEATURE:TMA-1737, TMA-1738 - Change to propagate dateFilterConfig and dashboardPlugin during LCM release and rollout.
