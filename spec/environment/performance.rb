@@ -8,10 +8,10 @@ module GoodData
   module Environment
     module ConnectionHelper
       set_const :LCM_ENVIRONMENT,
-                dev_server: 'perf-lcm-dev.prodgdc.com',
-                prod_server: 'perf-lcm-prod.prodgdc.com',
-                dev_organization: 'perf-lcm-dev',
-                prod_organization: 'perf-lcm-prod',
+                dev_server: 'perf1-lcm-dev.prodgdc.com',
+                prod_server: 'perf1-lcm-prod.prodgdc.com',
+                dev_organization: 'perf1-lcm-dev',
+                prod_organization: 'perf1-lcm-prod',
                 username: 'rubydev+admin@gooddata.com',
                 appstore_deploy_name: 'PUBLIC_APPSTORE'
     end
