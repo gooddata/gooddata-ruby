@@ -1,4 +1,4 @@
-FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jre-centos8:202304130528.646c8f2
+FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jre-centos8:202306121212.f55ddaf
 
 ARG RVM_VERSION=stable
 ARG JRUBY_VERSION=9.4.1.0
@@ -6,7 +6,7 @@ ARG JRUBY_VERSION=9.4.1.0
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jre-centos8:202304130528.646c8f2"
+LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jre-centos8:202306121212.f55ddaf"
 
 # which is required by RVM
 RUN yum install -y curl which patch make git maven procps \
