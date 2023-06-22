@@ -26,6 +26,15 @@ module GoodData
 
           goodot_id.empty? ? client.id : goodot_id
         end
+
+        def non_working_clients(domain_clients, working_client_ids)
+          non_working_clients = []
+          domain_clients.each do |c|
+            non_working_clients << c unless working_client_ids.include?(c.client_id.to_s)
+          end
+
+          non_working_clients
+        end
       end
     end
   end

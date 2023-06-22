@@ -55,4 +55,32 @@ describe GoodData::LCM2::UserBricksHelper do
       end
     end
   end
+
+  describe '.non_working_clients' do
+    let(:metadata) { { 'PROJECT_ID' => 'testing' } }
+
+    it 'returns correct non working clients' do
+      working_client_01_id = 'c01'
+      working_client_02_id = 'c02'
+      working_client_03_id = 'c03'
+      non_working_client_01_id = 'non_working_c01'
+      non_working_client_02_id = 'non_working_c02'
+
+      domain_clients = []
+      domain_clients << GoodData::Client.new(data: { 'id' => working_client_01_id })
+      domain_clients << GoodData::Client.new(data: { 'id' => working_client_02_id })
+      domain_clients << GoodData::Client.new(data: { 'id' => working_client_03_id })
+      domain_clients << GoodData::Client.new(data: { 'id' => non_working_client_01_id })
+      domain_clients << GoodData::Client.new(data: { 'id' => non_working_client_02_id })
+
+      working_client_ids = [working_client_01_id, working_client_02_id, working_client_03_id]
+      non_working_client_ids = []
+      expected_non_working_client_ids = [non_working_client_01_id, non_working_client_02_id]
+
+      non_working_clients = GoodData::LCM2::UserBricksHelper.non_working_clients(domain_clients, working_client_ids)
+      non_working_clients.each { |c| non_working_client_ids << c.client_id}
+
+      expect(non_working_client_ids).to eq expected_non_working_client_ids
+    end
+  end
 end
