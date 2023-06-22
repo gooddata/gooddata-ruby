@@ -10,7 +10,7 @@ require 'gooddata/bricks/middleware/base_middleware'
 
 describe GoodData::Bricks do
   it "Has GoodData::Bricks::Brick class" do
-    expect(GoodData::Bricks::Brick).not_to be_nil
+    GoodData::Bricks::Brick.should_not be(nil)
   end
 
   it "should be possible to use block as an app in pipeline" do
@@ -70,7 +70,7 @@ describe GoodData::Bricks do
           }
         )
 
-        expect(res).to eq(
+        res.should eq(
           'config' => {
             'my' => {
               'namespace' => {

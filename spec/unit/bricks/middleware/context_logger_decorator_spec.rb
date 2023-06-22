@@ -13,14 +13,14 @@ describe GoodData::ContextLoggerDecorator do
   ContextManagerMock = Struct.new(:context)
 
   describe "When dynamically changing source context" do
-    let(:context_manager) { ContextManagerMock.new({key: 'val1'}) }
+    let(:context_manager) { ContextManagerMock.new(key: 'val1') }
 
     it "Should return changed context" do
       logger = Logger.new nil
       logger.extend(GoodData::ContextLoggerDecorator)
       logger.context_source = context_manager
       context_manager.context = { key: 'val2' }
-      expect(logger).to receive(:enrich).with(nil, {key: 'val2'})
+      expect(logger).to receive(:enrich).with(nil, key: 'val2')
       logger.info nil
     end
   end

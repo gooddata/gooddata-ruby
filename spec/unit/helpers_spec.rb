@@ -18,7 +18,7 @@ describe GoodData::Helpers do
     it 'works' do
       result = GoodData::Helpers.running_on_windows?
       # rubocop:disable Style/DoubleNegation
-      !!expect(result) == result
+      !!result.should == result
       # rubocop:enable Style/DoubleNegation
     end
   end
@@ -27,7 +27,7 @@ describe GoodData::Helpers do
     it 'works' do
       result = GoodData::Helpers.running_on_a_mac?
       # rubocop:disable Style/DoubleNegation
-      !!expect(result) == result
+      !!result.should == result
       # rubocop:enable Style/DoubleNegation
     end
   end

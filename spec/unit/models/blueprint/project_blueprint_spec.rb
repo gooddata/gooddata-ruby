@@ -79,7 +79,7 @@ describe GoodData::Model::ProjectBlueprint do
           d.add_fact('more_numbers')
         end
       end
-      expect(bp.valid?).to be_truthy
+      bp.valid?.should be_truthy
       errors = bp.validate
       expect(errors.count).to eq 0
       facts = bp.to_wire[:diffRequest][:targetModel][:projectModel][:datasets].first[:dataset][:facts]
