@@ -10,6 +10,6 @@ require 'gooddata/bricks/middleware/bench_middleware'
 
 describe GoodData::Bricks::BenchMiddleware do
   it "Has GoodData::Bricks::BenchMiddleware class" do
-    expect(GoodData::Bricks::BenchMiddleware).not_to be_nil
+    GoodData::Bricks::BenchMiddleware.should_not be(nil)
   end
 end

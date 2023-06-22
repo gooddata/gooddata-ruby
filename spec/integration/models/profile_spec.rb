@@ -95,7 +95,7 @@ describe GoodData::Profile, :vcr do
   describe '#!=' do
     it 'Returns false for same objects' do
       res = @user1 != @user2
-      expect(res).to be_falsey
+      res.should be_falsey
     end
 
     it 'Returns true for different objects' do
@@ -103,7 +103,7 @@ describe GoodData::Profile, :vcr do
       @user2.first_name = 'kokos'
 
       res = @user1 != @user2
-      expect(res).to be_truthy
+      res.should be_truthy
     end
   end
 
@@ -127,7 +127,7 @@ describe GoodData::Profile, :vcr do
     it 'Returns empty hash for same objects' do
       res = @user1.diff(@user2)
       expect(res).to be_instance_of(Hash)
-      expect(res.length).to eql(0)
+      res.length.should eql(0)
     end
 
     it 'Returns non empty hash for different objects' do
@@ -136,7 +136,7 @@ describe GoodData::Profile, :vcr do
 
       res = @user1.diff(@user2)
       expect(res).to be_instance_of(Hash)
-      expect(res.length).not_to eql(0)
+      res.length.should_not eql(0)
     end
   end
 
@@ -151,9 +151,9 @@ describe GoodData::Profile, :vcr do
       ]
 
       diff = GoodData::Profile.diff_list(l1, l2)
-      expect(diff[:added].length).to eql(0)
-      expect(diff[:changed].length).to eql(0)
-      expect(diff[:removed].length).to eql(0)
+      diff[:added].length.should eql(0)
+      diff[:changed].length.should eql(0)
+      diff[:removed].length.should eql(0)
     end
 
     it 'Recognizes added element' do
@@ -164,9 +164,9 @@ describe GoodData::Profile, :vcr do
       ]
 
       diff = GoodData::Profile.diff_list(l1, l2)
-      expect(diff[:added].length).to eql(1)
-      expect(diff[:changed].length).to eql(0)
-      expect(diff[:removed].length).to eql(0)
+      diff[:added].length.should eql(1)
+      diff[:changed].length.should eql(0)
+      diff[:removed].length.should eql(0)
     end
 
     it 'Recognizes changed element' do
@@ -180,9 +180,9 @@ describe GoodData::Profile, :vcr do
       l2[0].first_name = 'Peter'
 
       diff = GoodData::Profile.diff_list(l1, l2)
-      expect(diff[:added].length).to eql(0)
-      expect(diff[:changed].length).to eql(1)
-      expect(diff[:removed].length).to eql(0)
+      diff[:added].length.should eql(0)
+      diff[:changed].length.should eql(1)
+      diff[:removed].length.should eql(0)
     end
 
     it 'Recognizes removed element' do
@@ -193,9 +193,9 @@ describe GoodData::Profile, :vcr do
       l2 = []
 
       diff = GoodData::Profile.diff_list(l1, l2)
-      expect(diff[:added].length).to eql(0)
-      expect(diff[:changed].length).to eql(0)
-      expect(diff[:removed].length).to eql(1)
+      diff[:added].length.should eql(0)
+      diff[:changed].length.should eql(0)
+      diff[:removed].length.should eql(1)
     end
   end
 

@@ -10,7 +10,7 @@ module GoodData
   module Mixin
     # When an RSpec test like this fails,
     #
-    #   expect(@my_array).to == [@some_model, @some_model2]
+    #   @my_array.should == [@some_model, @some_model2]
     #
     # RSpec will call inspect on each of the objects to "help" you figure out
     # what went wrong. Well, inspect will usually dump a TON OF SHIT and make trying
