@@ -11,7 +11,7 @@ jobs:
       matrix:
         ruby-version: [2.3, 2.4, 2.5, 2.6, 2.7.6, jruby-9.1.17]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: run prepare-env
         run: brew install pkg-config
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
@@ -53,7 +53,7 @@ jobs:
   pronto-code-review:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1

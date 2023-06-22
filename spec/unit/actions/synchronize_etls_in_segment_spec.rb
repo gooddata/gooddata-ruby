@@ -253,8 +253,8 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
       end
 
       it 'each schedules must have different parameters' do
-        expect(schedule1).to receive(:update_params).once.ordered.with('HELLO' => 'hi')
-        expect(schedule2).to receive(:update_params).once.ordered.with('BYE' => 'bye')
+        schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        schedule2.should_receive(:update_params).once.ordered.with('BYE' => 'bye')
         subject.class.call(params)
       end
     end
@@ -287,8 +287,8 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
       end
 
       it 'all schedules must have the parameter' do
-        expect(schedule1).to receive(:update_params).once.ordered.with('HELLO' => 'hi')
-        expect(schedule2).to receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        schedule2.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
         subject.class.call(params)
       end
     end
@@ -326,7 +326,7 @@ describe GoodData::LCM2::SynchronizeETLsInSegment do
       end
 
       it 'parameters should be passed to the correct client project and schedule' do
-        expect(schedule1).to receive(:update_params).once.ordered.with('HELLO' => 'hi')
+        schedule1.should_receive(:update_params).once.ordered.with('HELLO' => 'hi')
         subject.class.call(params)
       end
     end

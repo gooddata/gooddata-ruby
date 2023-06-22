@@ -10,6 +10,6 @@ require 'gooddata/bricks/middleware/stdout_middleware'
 
 describe GoodData::Bricks::STDOUTLoggingMiddleware do
   it "Has GoodData::Bricks::STDOUTLoggingMiddleware class" do
-    expect(GoodData::Bricks::STDOUTLoggingMiddleware).not_to be_nil
+    GoodData::Bricks::STDOUTLoggingMiddleware.should_not be(nil)
   end
 end

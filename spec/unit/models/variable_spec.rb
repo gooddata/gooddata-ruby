@@ -68,7 +68,7 @@ COLUMN_BASED_DATA_WITH_HEADERS_AND_EMPTY_VAL = [
 describe "DSL" do
   it "should pick the values from row based file" do
     results = GoodData::UserFilterBuilder.get_values(ROW_BASED_DATA, :labels => [{ :label => "label/34" }])
-    expect(results).to eq({
+    results.should == {
       "tomas@gooddata.com" => [
         { :label => "label/34", :values => %w(US CZ KZ), :over => nil, :to => nil }
       ],
@@ -76,7 +76,7 @@ describe "DSL" do
        { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
        { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil }
       ]
-    })
+    }
   end
 
   it "should pick the values from column based file" do
@@ -86,7 +86,7 @@ describe "DSL" do
       :user_column => :login,
       :labels => [{ :label => "label/34", :column => :country }]
     )
-    expect(results).to eq({
+    results.should == {
       "tomas@gooddata.com" => [
         { :label => "label/34", :values => ["US"], :over => nil, :to => nil }
       ],
@@ -94,7 +94,7 @@ describe "DSL" do
        { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
        { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil }
       ]
-    })
+    }
   end
 
   it "should pick the values from column based file with multiple columns" do
@@ -104,7 +104,7 @@ describe "DSL" do
       :user_column => :login,
       :labels => [{ :label => "label/34", :column => :country }, { :label => "label/99", :column => :age }]
     )
-    expect(results).to eq({
+    results.should == {
       "tomas@gooddata.com" => [
         { :label => "label/34", :values => ["US"], :over => nil, :to => nil },
         { :label => "label/99", :values => [14], :over => nil, :to => nil }
@@ -115,16 +115,16 @@ describe "DSL" do
        { :label => "label/34", :values => ["KZ"], :over => nil, :to => nil },
        { :label => "label/99", :values => [30], :over => nil, :to => nil }
       ]
-    })
+    }
   end
 
   it "should process end to end" do
-    results = GoodData::UserFilterBuilder.get_filters(
+    result = GoodData::UserFilterBuilder.get_filters(
       COLUMN_BASED_DATA_WITH_HEADERS,
       :user_column => :login,
       :labels => [{ :label => { :uri => "label/34" }, :column => :country }, { :label => { :uri => "label/99" }, :column => :age }]
     )
-    expect(results).to eq [
+    result.should == [
       {
         :login => "tomas@gooddata.com",
         :filters => [
@@ -143,12 +143,12 @@ describe "DSL" do
   end
 
   it "should process end to end nil value should be ignored" do
-    results = GoodData::UserFilterBuilder.get_filters(
+    result = GoodData::UserFilterBuilder.get_filters(
       COLUMN_BASED_DATA_WITH_HEADERS_AND_NIL_VAL,
       :user_column => :login,
       :labels => [{ :label => { :uri => "label/34" }, :column => :country }, { :label => { :uri => "label/99" }, :column => :age }]
     )
-    expect(results).to eq [
+    result.should == [
       {
         :login => "tomas@gooddata.com",
         :filters => [
@@ -167,7 +167,7 @@ describe "DSL" do
   end
 
   it "should process end to end nil value should be ignored" do
-    results = GoodData::UserFilterBuilder.get_filters(
+    result = GoodData::UserFilterBuilder.get_filters(
       COLUMN_BASED_DATA_WITH_HEADERS_AND_EMPTY_VAL,
       :user_column => :login,
       :labels => [
@@ -175,7 +175,7 @@ describe "DSL" do
         { :label => { :uri => "label/99" }, :column => :age }
       ]
     )
-    expect(results).to eq [
+    result.should == [
       {
         :login => "tomas@gooddata.com",
         :filters => [
@@ -207,8 +207,8 @@ describe "DSL" do
         { :label => "label/99", :values => [1] }
       ]
     }
-    results = GoodData::UserFilterBuilder.reduce_results(data)
-    expect(results).to eq [
+    result = GoodData::UserFilterBuilder.reduce_results(data)
+    result.should == [
       {
         :login => "tomas",
         :filters => [
@@ -233,8 +233,8 @@ describe "DSL" do
       { :label => "label/99", :values => [18] },
       { :label => "label/99", :values => [20] }
     ]
-    results = GoodData::UserFilterBuilder.collect_labels(data)
-    expect(results).to eq [
+    result = GoodData::UserFilterBuilder.collect_labels(data)
+    result.should == [
       { :label => "label/34", :values => %w(US KZ), :over => nil, :to => nil },
       { :label => "label/99", :values => [18, 20], :over => nil, :to => nil }
     ]
@@ -246,7 +246,7 @@ describe "DSL" do
       { :label => "label/34", :values => ["KZ"] }
     ]
     results = GoodData::UserFilterBuilder.collect_values(data)
-    expect(results).to eq %w(US KZ)
+    results.should == %w(US KZ)
   end
 
   it "should translate filters into MAQL filters" do
@@ -272,7 +272,7 @@ describe "DSL" do
         :maql_filter => user_data[:filters].map { |item| "[#{item[:label]}] IN (#{item[:values].join(', ')})" }.join(" AND ")
       }
     end
-    expect(results).to eq [
+    results.should == [
       { :login => "tomas@gooddata.com", :maql_filter => "[label/34] IN (US) AND [label/99] IN (14)" },
       { :login => "petr@gooddata.com", :maql_filter => "[label/34] IN (US, KZ) AND [label/99] IN (19)" }
     ]

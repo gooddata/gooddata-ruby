@@ -13,21 +13,21 @@ describe GoodData::Rest::Connection, :vcr do
   end
 
   it "Has DEFAULT_URL defined" do
-    expect(GoodData::Rest::Connection::DEFAULT_URL).to be_a(String)
+    GoodData::Rest::Connection::DEFAULT_URL.should be_a(String)
   end
 
   it "Has LOGIN_PATH defined" do
-    expect(GoodData::Rest::Connection::LOGIN_PATH).to be_a(String)
+    GoodData::Rest::Connection::LOGIN_PATH.should be_a(String)
   end
 
   it "Has TOKEN_PATH defined" do
-    expect(GoodData::Rest::Connection::TOKEN_PATH).to be_a(String)
+    GoodData::Rest::Connection::TOKEN_PATH.should be_a(String)
   end
 
   describe '#connect' do
     it "Connects using username and password" do
       c = GoodData.connect(ConnectionHelper::DEFAULT_USERNAME, ConnectionHelper::SECRETS[:default_password], :verify_ssl => 0)
-      expect(c).to be_a(GoodData::Rest::Client)
+      c.should be_a(GoodData::Rest::Client)
       c.disconnect
     end
   end
@@ -47,8 +47,8 @@ describe GoodData::Rest::Connection, :vcr do
       id = c.generate_request_id
       c.get('/gdc/md', :request_id => id)
 
-      expect(id).to be_a(String)
-      expect(id).not_to be_empty
+      id.should be_a(String)
+      id.should_not be_empty
 
       c.disconnect
     end

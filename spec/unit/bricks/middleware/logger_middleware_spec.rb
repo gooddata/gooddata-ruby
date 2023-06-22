@@ -45,7 +45,7 @@ describe GoodData::Bricks::LoggerMiddleware do
   end
 
   it "Has GoodData::Bricks::LoggerMiddleware class" do
-    expect(GoodData::Bricks::LoggerMiddleware).not_to be_nil
+    GoodData::Bricks::LoggerMiddleware.should_not be(nil)
   end
 
   context 'when HTTP_LOGGING parameter set to true' do
