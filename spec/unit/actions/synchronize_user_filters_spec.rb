@@ -42,6 +42,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
     allow(GoodData::Helpers::DataSource).to receive(:new).and_return(data_source)
     allow(logger).to receive(:warn)
     allow(logger).to receive(:info)
+    allow(logger).to receive(:debug)
   end
 
   context 'when multiple_projects_column not specified' do
@@ -129,7 +130,7 @@ describe GoodData::LCM2::SynchronizeUserFilters do
           let(:params) { GoodData::LCM2.convert_to_smart_hash(params_stub.merge(sync_mode: 'sync_domain_client_workspaces', dry_run: 'true')) }
 
           it 'sets the dry_run option' do
-            expect(project).to receive(:add_data_permissions).twice
+            expect(project).to receive(:add_data_permissions).once
               .with(instance_of(Array), hash_including(dry_run: true))
               .and_return(results: [])
             GoodData::LCM2.run_action(subject.class, params)

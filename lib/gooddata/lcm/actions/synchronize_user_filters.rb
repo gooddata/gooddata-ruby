@@ -121,7 +121,7 @@ module GoodData
             users_brick_input: params.users_brick_users
           }
           all_clients = domain.clients(:all, data_product).to_a
-          GoodData.gd_logger.info("Synchronizing in mode=#{mode}, number_of_clients=#{all_clients.size}, data_rows=#{user_filters.size}")
+          GoodData.gd_logger.info("Synchronizing in mode=#{mode}, number_of_clients=#{all_clients.size}, data_rows=#{user_filters.size} ,")
 
           GoodData.logger.info("Synchronizing in mode \"#{mode}\"")
           results = []
@@ -134,7 +134,7 @@ module GoodData
             end
             user_filters = user_filters.select { |f| f[:pid] == filter } if filter
 
-            GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project.pid}, data_rows=#{user_filters.size}")
+            GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{project.pid}, data_rows=#{user_filters.size} ,")
             current_results = sync_user_filters(project, user_filters, run_params, symbolized_config)
 
             results.concat(current_results[:results]) unless current_results.nil? || current_results[:results].empty?
@@ -151,7 +151,7 @@ module GoodData
                 current_project = client.projects(id)
               end
 
-              GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{id}, data_rows=#{new_filters.size}")
+              GoodData.gd_logger.info("Synchronizing in mode=#{mode}, project_id=#{id}, data_rows=#{new_filters.size} ,")
               current_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
 
               results.concat(current_results[:results]) unless current_results.nil? || current_results[:results].empty?
@@ -182,23 +182,24 @@ module GoodData
               current_project = c.project
               fail "Client #{client_id} does not have project." unless current_project
 
-              working_client_ids << client_id
+              working_client_ids << client_id.to_s
 
-              GoodData.gd_logger.info("Synchronizing in mode=#{mode}, client_id=#{client_id}, data_rows=#{new_filters.size}")
+              GoodData.gd_logger.info("Synchronizing in mode=#{mode}, client_id=#{client_id}, data_rows=#{new_filters.size} ,")
               partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
               results.concat(partial_results[:results]) unless partial_results.nil? || partial_results[:results].empty?
             end
 
-            unless run_params[:do_not_touch_filters_that_are_not_mentioned]
-              domain_clients.peach do |c|
-                next if working_client_ids.include?(c.client_id)
+            GoodData.gd_logger.info("Synchronizing in mode=#{mode}, working_client_ids=#{working_client_ids.join(', ')} ,") if working_client_ids.size < 50
 
+            unless run_params[:do_not_touch_filters_that_are_not_mentioned]
+              to_be_deleted_clients = UserBricksHelper.non_working_clients(domain_clients, working_client_ids)
+              to_be_deleted_clients.peach do |c|
                 begin
                   current_project = c.project
                   users = users_by_project[c.client_id]
                   params.gdc_logger.info "Delete all filters in project #{current_project.pid} of client #{c.client_id}"
 
-                  GoodData.gd_logger.info("Delete all filters in project_id=#{current_project.pid}, client_id=#{c.client_id}")
+                  GoodData.gd_logger.info("Delete all filters in project_id=#{current_project.pid}, client_id=#{c.client_id} ,")
                   current_results = sync_user_filters(current_project, [], run_params.merge(users_brick_input: users), symbolized_config)
 
                   results.concat(current_results[:results]) unless current_results.nil? || current_results[:results].empty?
@@ -208,6 +209,7 @@ module GoodData
               end
             end
           end
+
           {
             results: results
           }
