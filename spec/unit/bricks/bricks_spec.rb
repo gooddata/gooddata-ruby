@@ -8,7 +8,7 @@ require 'gooddata/bricks/bricks'
 
 describe GoodData::Bricks::Brick do
   it "Has GoodData::Bricks::Brick class" do
-    GoodData::Bricks::Brick.should_not be(nil)
+    expect(GoodData::Bricks::Brick).not_to be_nil
   end
 
   describe '#version' do

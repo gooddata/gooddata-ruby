@@ -51,7 +51,7 @@ module GoodData
     end
 
     def self.read_file(file, options = {})
-      memo = {}
+      memo = Hash[]
       params = row_based?(options) ? { headers: false } : { headers: true }
 
       CSV.foreach(file, params.merge(return_headers: false)) do |e|
