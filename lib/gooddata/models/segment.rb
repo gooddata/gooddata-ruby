@@ -257,7 +257,7 @@ module GoodData
       res = client.poll_on_code(res['asyncTask']['links']['poll'])
       failed_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult failed count), 0)
       created_count = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult created count), 0)
-      return Enumerator.new([]) if (failed_count + created_count).zero?
+      return [].to_enum if (failed_count + created_count).zero?
 
       Enumerator.new do |y|
         uri = GoodData::Helpers.get_path(res, %w(clientProjectProvisioningResult links details))

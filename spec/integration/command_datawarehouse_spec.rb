@@ -17,7 +17,7 @@ describe GoodData::Command::DataWarehouse, :vcr do
 
   it "Is Possible to create GoodData::Command::DataWarehouse instance" do
     cmd = GoodData::Command::DataWarehouse.new
-    cmd.should be_a(GoodData::Command::DataWarehouse)
+    expect(cmd).to be_a(GoodData::Command::DataWarehouse)
   end
 
   it "Can create a data warehouse", broken: true do
