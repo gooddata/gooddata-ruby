@@ -164,6 +164,7 @@ module GoodData
             end
 
             working_client_ids = []
+            semaphore = Mutex.new
 
             users_by_project = run_params[:users_brick_input].group_by { |u| u[:pid] }
             user_filters.group_by { |u| u[multiple_projects_column] }.flat_map.pmap do |client_id, new_filters|
@@ -182,7 +183,9 @@ module GoodData
               current_project = c.project
               fail "Client #{client_id} does not have project." unless current_project
 
-              working_client_ids << client_id.to_s
+              semaphore.synchronize do
+                working_client_ids << client_id.to_s
+              end
 
               GoodData.gd_logger.info("Synchronizing in mode=#{mode}, client_id=#{client_id}, data_rows=#{new_filters.size} ,")
               partial_results = sync_user_filters(current_project, new_filters, run_params.merge(users_brick_input: users), symbolized_config)
