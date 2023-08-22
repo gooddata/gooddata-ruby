@@ -52,10 +52,25 @@ module GoodData
 
     def self.read_file(file, options = {})
       memo = Hash[]
-      params = row_based?(options) ? { headers: false } : { headers: true }
+      if row_based?(options)
+        read_data_without_header(file, memo, options)
+      else
+        read_data_with_header(file, memo, options)
+      end
+      memo
+    end
 
-      CSV.foreach(file, params.merge(return_headers: false)) do |e|
-        key, data = process_line(e, options)
+    def self.read_data_without_header(file, memo, options)
+      CSV.foreach(file, headers: false, return_headers: false) do |row|
+        key, data = process_line(row, options)
+        memo[key] = [] unless memo.key?(key)
+        memo[key].concat(data)
+      end
+    end
+
+    def self.read_data_with_header(file, memo, options)
+      CSV.foreach(file, headers: true, return_headers: false) do |row|
+        key, data = process_line(row, options)
         memo[key] = [] unless memo.key?(key)
         memo[key].concat(data)
       end
@@ -573,7 +588,7 @@ module GoodData
     # @param file [String | Array] File or array of values to be parsed for filters
     # @param options [Hash] Filter definitions
     # @return [Array<Hash>]
-    def self.get_values(file, options)
+    def self.get_values(file, options = {})
       file.is_a?(Array) ? read_array(file, options) : read_file(file, options)
     end
 
