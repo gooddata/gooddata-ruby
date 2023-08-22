@@ -44,33 +44,33 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
   describe '#[]' do
     it 'Returns all schedules when :all passed' do
       res = @project.schedules
-      res.should_not be_nil
-      res.should be_a_kind_of(Array)
+      expect(res).not_to be_nil
+      expect(res).to be_a_kind_of(Array)
       res.each do |schedule|
-        schedule.should be_a_kind_of(GoodData::Schedule)
+        expect(schedule).to be_a_kind_of(GoodData::Schedule)
       end
     end
 
     it 'Returns specific schedule when schedule ID passed' do
       res = @project.schedules(SCHEDULE_ID)
-      res.should_not be_nil
-      res.should be_a_kind_of(GoodData::Schedule)
+      expect(res).not_to be_nil
+      expect(res).to be_a_kind_of(GoodData::Schedule)
     end
 
     it 'Returns specific schedule when schedule URL passed' do
       res = @project.schedules(SCHEDULE_ID)
-      res.should_not be_nil
-      res.should be_a_kind_of(GoodData::Schedule)
+      expect(res).not_to be_nil
+      expect(res).to be_a_kind_of(GoodData::Schedule)
     end
   end
 
   describe '#all' do
     it 'Returns all schedules' do
       res = @project.schedules
-      res.should_not be_nil
-      res.should be_a_kind_of(Array)
+      expect(res).not_to be_nil
+      expect(res).to be_a_kind_of(Array)
       res.each do |schedule|
-        schedule.should be_a_kind_of(GoodData::Schedule)
+        expect(schedule).to be_a_kind_of(GoodData::Schedule)
       end
     end
   end
@@ -185,9 +185,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.cron
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(String)
+        expect(res).not_to be_nil
+        expect(res).not_to be_empty
+        expect(res).to be_a_kind_of(String)
         expect(schedule.time_based?).to be_truthy
       ensure
         schedule && schedule.delete
@@ -215,9 +215,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.executable
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(String)
+        expect(res).not_to be_nil
+        expect(res).not_to be_empty
+        expect(res).to be_a_kind_of(String)
       ensure
         schedule && schedule.delete
       end
@@ -278,9 +278,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.execution_url
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(String)
+        expect(res).not_to be_nil
+        expect(res).not_to be_empty
+        expect(res).to be_a_kind_of(String)
       ensure
         schedule && schedule.delete
       end
@@ -292,8 +292,8 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.hidden_params
-        res.should_not be_nil
-        res.should be_a_kind_of(Hash)
+        expect(res).not_to be_nil
+        expect(res).to be_a_kind_of(Hash)
       ensure
         schedule && schedule.delete
       end
@@ -356,9 +356,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.params
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(Hash)
+        expect(res).not_to be_nil
+        expect(res).not_to be_empty
+        expect(res).to be_a_kind_of(Hash)
       ensure
         schedule && schedule.delete
       end
@@ -390,9 +390,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.process_id
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(String)
+        expect(res).not_to be_nil
+        expect(res).not_to be_empty
+        expect(res).to be_a_kind_of(String)
       ensure
         schedule && schedule.delete
       end
@@ -431,9 +431,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.state
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(String)
+        expect(res).not_to be_nil
+        expect(res).not_to be_empty
+        expect(res).to be_a_kind_of(String)
       ensure
         schedule && schedule.delete
       end
@@ -460,9 +460,9 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data)
         res = schedule.timezone
-        res.should_not be_nil
-        res.should_not be_empty
-        res.should be_a_kind_of(String)
+        expect(res).not_to be_nil
+        expect(res).not_to be_empty
+        expect(res).to be_a_kind_of(String)
       ensure
         schedule && schedule.delete
       end
@@ -489,8 +489,8 @@ describe GoodData::Schedule, :vcr, :vcr_all_cassette => 'schedule_integration_al
       begin
         schedule = @project.create_schedule(PROCESS_ID, @test_cron, ProcessHelper::DEPLOY_NAME, @test_data_with_optional_param)
         res = schedule.reschedule
-        res.should_not be_nil
-        res.should be_a_kind_of(Integer)
+        expect(res).not_to be_nil
+        expect(res).to be_a_kind_of(Integer)
       ensure
         schedule && schedule.delete
       end

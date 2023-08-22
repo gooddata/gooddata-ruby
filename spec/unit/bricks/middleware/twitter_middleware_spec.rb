@@ -10,6 +10,6 @@ require 'gooddata/bricks/middleware/twitter_middleware'
 
 describe GoodData::Bricks::TwitterMiddleware do
   it "Has GoodData::Bricks::TwitterMiddleware class" do
-    GoodData::Bricks::TwitterMiddleware.should_not be(nil)
+    expect(GoodData::Bricks::TwitterMiddleware).not_to be_nil
   end
 end
