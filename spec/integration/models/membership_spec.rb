@@ -77,9 +77,9 @@ describe GoodData::Membership, :vcr do
       ]
 
       diff = GoodData::Membership.diff_list(l1, l2)
-      diff[:added].length.should eql(0)
-      diff[:changed].length.should eql(0)
-      diff[:removed].length.should eql(0)
+      expect(diff[:added].length).to eql(0)
+      expect(diff[:changed].length).to eql(0)
+      expect(diff[:removed].length).to eql(0)
     end
 
     it 'Recognizes added element' do
@@ -90,9 +90,9 @@ describe GoodData::Membership, :vcr do
       ]
 
       diff = GoodData::Membership.diff_list(l1, l2)
-      diff[:added].length.should eql(1)
-      diff[:changed].length.should eql(0)
-      diff[:removed].length.should eql(0)
+      expect(diff[:added].length).to eql(1)
+      expect(diff[:changed].length).to eql(0)
+      expect(diff[:removed].length).to eql(0)
     end
 
     it 'Recognizes changed element' do
@@ -106,9 +106,9 @@ describe GoodData::Membership, :vcr do
       l2[0].first_name = 'Peter'
 
       diff = GoodData::Membership.diff_list(l1, l2)
-      diff[:added].length.should eql(0)
-      diff[:changed].length.should eql(1)
-      diff[:removed].length.should eql(0)
+      expect(diff[:added].length).to eql(0)
+      expect(diff[:changed].length).to eql(1)
+      expect(diff[:removed].length).to eql(0)
     end
 
     it 'Recognizes removed element' do
@@ -119,9 +119,9 @@ describe GoodData::Membership, :vcr do
       l2 = []
 
       diff = GoodData::Membership.diff_list(l1, l2)
-      diff[:added].length.should eql(0)
-      diff[:changed].length.should eql(0)
-      diff[:removed].length.should eql(1)
+      expect(diff[:added].length).to eql(0)
+      expect(diff[:changed].length).to eql(0)
+      expect(diff[:removed].length).to eql(1)
     end
   end
 end
