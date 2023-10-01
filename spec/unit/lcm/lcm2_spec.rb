@@ -32,6 +32,7 @@ describe 'GoodData::LCM2' do
   before do
     allow(logger).to receive(:class) { Logger }
     allow(GoodData.gd_logger).to receive(:info)
+    allow(GoodData.gd_logger).to receive(:error)
   end
 
   describe '#perform' do
@@ -42,6 +43,7 @@ describe 'GoodData::LCM2' do
       allow(client).to receive(:class) { GoodData::Rest::Client }
       allow(client).to receive(:domain) { domain }
       allow(logger).to receive(:info)
+      allow(logger).to receive(:error)
       allow(domain).to receive(:data_products)
     end
 

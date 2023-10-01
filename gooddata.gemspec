@@ -73,6 +73,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'parseconfig', '~> 1.0'
   s.add_dependency 'pmap', '~> 1.1'
+  s.add_dependency 'sequel', '< 5.72.0'
   s.add_dependency 'remote_syslog_logger', '~> 1.0.3'
   s.add_dependency 'restforce', '>= 2.4'
   s.add_dependency 'rest-client', '~> 2.0'

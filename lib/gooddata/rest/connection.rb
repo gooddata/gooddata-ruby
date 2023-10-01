@@ -68,6 +68,8 @@ module GoodData
       RETRY_TIME_COEFFICIENT = 1.5
       RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
 
+      RETRYABLE_ERRORS << OpenSSL::SSL::SSLErrorWaitReadable if OpenSSL::SSL.const_defined?(:SSLErrorWaitReadable)
+
       class << self
         def construct_login_payload(username, password)
           res = {
@@ -304,12 +306,12 @@ module GoodData
       end
 
       def refresh_token(_options = {})
-        begin # rubocop:disable RedundantBegin
+        begin # rubocop:disable Style/RedundantBegin
           # avoid infinite loop GET fails with 401
           response = get(TOKEN_PATH, :x_gdc_authsst => sst_token, :dont_reauth => true)
           # Remove when TT sent in headers. Currently we need to parse from body
           merge_headers!(:x_gdc_authtt => GoodData::Helpers.get_path(response, %w(userToken token)))
-        rescue Exception => e # rubocop:disable RescueException
+        rescue Exception => e # rubocop:disable Style/RescueException
           raise e
         end
       end
