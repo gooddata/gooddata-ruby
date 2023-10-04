@@ -356,7 +356,7 @@ module GoodData
           # Invoke action
           begin
             out = run_action action, params
-          rescue Exception => e # rubocop:disable RescueException
+          rescue Exception => e # rubocop:disable Style/RescueException
             errors << {
               action: action,
               err: e,
@@ -436,6 +436,12 @@ module GoodData
           BaseAction.check_params(action.const_get('PARAMS'), params)
           params.setup_filters(action.const_get('PARAMS'))
           out = action.send(:call, params)
+        rescue Exception => e # rubocop:disable Style/RescueException
+          # Log to splunk
+          GoodData.gd_logger.error("action=#{action} status=failed message=#{e} exception=#{e.backtrace}")
+          # Log to execution log
+          GoodData.logger.error("Execution #{action} failed. Error: #{e}. Detail:#{e.backtrace}")
+          raise e
         ensure
           params.clear_filters
           GoodData.gd_logger.end_action GoodData.gd_logger
