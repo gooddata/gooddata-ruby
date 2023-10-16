@@ -52,8 +52,8 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'sqlite3' if RUBY_PLATFORM != 'java'
 
-  if RUBY_VERSION >= '2.5'
-    s.add_dependency 'activesupport', '>= 6.0.3.1'
+if RUBY_VERSION >= '2.5'
+      s.add_dependency 'activesupport', '< 7.0.0'
   else
     s.add_dependency 'activesupport', '>= 5.2.4.3', '< 6.0'
   end
