@@ -1,4 +1,4 @@
-FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202310031054.5119496
+FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jdk-centos9:202310201237.2c3bc86
 
 ARG RVM_VERSION=stable
 ARG JRUBY_VERSION=9.4.1.0
@@ -6,7 +6,7 @@ ARG JRUBY_VERSION=9.4.1.0
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202310031054.5119496"
+LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jdk-centos9:202310201237.2c3bc86"
 
 # which is required by RVM
 RUN yum install -y which patch make git maven procps \
@@ -32,6 +32,10 @@ SHELL ["/bin/bash", "-l", "-c"]
 RUN rvm install jruby-${JRUBY_VERSION} && gem update --system \
     && gem install bundler -v 2.4.6 \
     && gem install rake -v 13.0.6
+
+RUN alternatives --install /usr/bin/java java /usr/lib/jvm/java-1.8.0-openjdk/bin/java 1
+RUN update-alternatives --set java /usr/lib/jvm/java-1.8.0-openjdk/bin/java
+RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 
 WORKDIR /src
 
