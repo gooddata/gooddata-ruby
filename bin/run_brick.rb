@@ -62,6 +62,12 @@ begin
   params['GDC_EXECUTION_RESULT_LOG_PATH'] = execution_result_log_path
 
   log.info "action=#{brick_type}_execution status=start commit_hash=#{commit_hash} execution_id=#{execution_id}"
+
+  # Start sleep to investigate issue no suitable driver found
+  log.info "action=#{brick_type}_execution status=start commit_hash=#{commit_hash} execution_id=#{execution_id} sleep=start"
+  sleep(60)
+  log.info "action=#{brick_type}_execution status=start commit_hash=#{commit_hash} execution_id=#{execution_id} sleep=end"
+
   brick_pipeline.call(params)
 rescue GoodData::LcmExecutionError => lcm_error
   handle_error(execution_result_log_params, log, brick_type, lcm_error, lcm_error.summary_error)
