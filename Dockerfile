@@ -1,4 +1,4 @@
-FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202310031054.5119496
+FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jdk-centos9:202311071405.4d8c665
 
 ARG RVM_VERSION=stable
 ARG JRUBY_VERSION=9.4.1.0
@@ -6,7 +6,7 @@ ARG JRUBY_VERSION=9.4.1.0
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202310031054.5119496"
+LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jdk-centos9:202311071405.4d8c665"
 
 # which is required by RVM
 RUN yum install -y which patch make git maven procps \
@@ -32,6 +32,9 @@ SHELL ["/bin/bash", "-l", "-c"]
 RUN rvm install jruby-${JRUBY_VERSION} && gem update --system \
     && gem install bundler -v 2.4.6 \
     && gem install rake -v 13.0.6
+
+# Make sure java default running with java8
+RUN update-alternatives --set java java-1.8.0-openjdk.x86_64
 
 WORKDIR /src
 
@@ -76,6 +79,9 @@ RUN mvn -f ci/mysql/pom.xml clean install -P binary-packaging
 RUN cp -rf ci/mysql/target/*.jar ./lib/gooddata/cloud_resources/mysql/drivers/
 
 RUN bundle install
+
+# Check to make sure Java version is always Java8
+RUN java_version=$(java -version 2>&1) && echo "$java_version" | grep 'version.*1.8' || (echo "Java version is not 1.8" && exit 1)
 
 ARG GIT_COMMIT=unspecified
 ARG BRICKS_VERSION=unspecified
