@@ -124,6 +124,10 @@ module GoodData
             if (retries -= 1) > 0
               retry
             else
+              read_would_block_error = OpenSSL::SSL.const_defined?(:SSLErrorWaitReadable) && e.is_a?(OpenSSL::SSL::SSLErrorWaitReadable)
+              error_message = "action=retryable error_type=read_would_block status=failed time=#{retry_time} error=#{e.message} error_detail=#{e.backtrace}"
+              GoodData.gd_logger&.warn(error_message) if read_would_block_error
+
               fail e
             end
           end

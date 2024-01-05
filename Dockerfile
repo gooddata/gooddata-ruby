@@ -9,7 +9,7 @@ LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jdk-centos9:202311071405.4d8c665"
 
 # which is required by RVM
-RUN yum install -y which patch make git maven procps \
+RUN yum install -y which patch make openssl git maven procps \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -30,6 +30,7 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
 SHELL ["/bin/bash", "-l", "-c"]
 
 RUN rvm install jruby-${JRUBY_VERSION} && gem update --system \
+    && gem install jruby-openssl \
     && gem install bundler -v 2.4.6 \
     && gem install rake -v 13.0.6
 
