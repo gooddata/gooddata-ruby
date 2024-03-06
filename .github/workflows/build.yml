@@ -6,12 +6,12 @@ jobs:
   jruby-gem-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: jruby-9.1.17
+          ruby-version: jruby-9.4.1
           bundler-cache: true
       - uses: actions/setup-java@v2
         with:
@@ -30,12 +30,12 @@ jobs:
   rubygems-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.3
+          ruby-version: 3.2.1
           bundler-cache: true
       - name: Run gem release
         run: |
@@ -47,20 +47,15 @@ jobs:
     needs: [jruby-gem-release, rubygems-release]
     strategy:
       matrix:
-        ruby-version: [2.3, jruby-9.1.17]
+        ruby-version: [3.2.1, jruby-9.4.1]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-      - uses: actions/setup-java@v2
-        if: ${{ matrix.ruby-version == 'jruby-9.1.17' }}
-        with:
-          java-version: '8'
-          distribution: 'adopt'
       - run: |
           gem install gooddata
           ruby -e "require 'gooddata';GoodData.version"
