@@ -1,5 +1,14 @@
 # GoodData Ruby SDK Changelog
 
+## 2.3.0
+ - BUGFIX: MSF-25800 Add SSLErrorWaitReadable error to retry error list
+ - MSF-24148: Upgrade LCM image to run with JRuby latest version 9.4.1
+ - BUGFIX: MSF-23944 Change log level of rest API call to DEBUG
+ - BUGFIX: TMA-1744 Store domain users to cache to avoid calling API multiple times 
+ - FEATURE: MSF-23266 support mongo BI mysql
+ - BUGFIX: MSF-22958 - Lookup user in domain if not found in project 
+ - FEATURE: MSF-23033 change to gooddata_platform snowflake connection
+
 ## 2.2.0
  - FEATURE: MSF-23003 Supports Ruby 2.7, remove salesforce_bulk_query dependency
  - FEATURE:TMA-1737, TMA-1738 - Change to propagate dateFilterConfig and dashboardPlugin during LCM release and rollout.

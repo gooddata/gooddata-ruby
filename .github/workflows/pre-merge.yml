@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: [2.3, 2.4, 2.5, 2.6, 2.7.6, 3.2.1, jruby-9.1.17, jruby-9.4.1]
+        ruby-version: [2.5, 2.6, 2.7.6, 3.2.1, jruby-9.2.21, jruby-9.3.14, jruby-9.4.1]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -19,19 +19,13 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
       - run: bundle exec rake test:unit
-        if: ${{ matrix.ruby-version != 'jruby-9.1.17' }}
       - run: bundle exec rake test:unit
-        if: ${{ matrix.ruby-version == 'jruby-9.1.17' }}
         continue-on-error: true
   unit-tests-OSX:
     runs-on: macos-latest
     strategy:
       matrix:
         include:
-          - ruby-version: 2.3
-            xcode-version: 7.3
-          - ruby-version: 2.4.3
-            xcode-version: 9.4
           - ruby-version: 2.5
             xcode-version: 9
           - ruby-version: 2.6
@@ -40,7 +34,7 @@ jobs:
             xcode-version: 9
           - ruby-version: 3.2.1
             xcode-version: 9
-          - ruby-version: jruby-9.1.17
+          - ruby-version: jruby-9.2.9
             xcode-version: latest
           - ruby-version: jruby-9.4.1
             xcode-version: latest
