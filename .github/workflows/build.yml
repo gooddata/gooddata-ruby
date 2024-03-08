@@ -11,7 +11,7 @@ jobs:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: jruby-9.1.17
+          ruby-version: jruby-9.4.1
           bundler-cache: true
       - uses: actions/setup-java@v2
         with:
@@ -35,7 +35,7 @@ jobs:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.3
+          ruby-version: 3.2.1
           bundler-cache: true
       - name: Run gem release
         run: |
