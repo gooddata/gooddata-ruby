@@ -6,12 +6,12 @@ jobs:
   jruby-gem-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: jruby-9.4.1
+          ruby-version: jruby-9.1.17
           bundler-cache: true
       - uses: actions/setup-java@v2
         with:
@@ -30,12 +30,12 @@ jobs:
   rubygems-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.1
+          ruby-version: 2.3
           bundler-cache: true
       - name: Run gem release
         run: |
