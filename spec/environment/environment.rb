@@ -41,9 +41,8 @@ module GoodData
       def initial_secrets(env)
         key_prefix = if env == 'development' then
                        'GD_DEV'
-                     elsif env == 'testing' then
-                       'GD_TEST'
                      else
+                       # env == 'testing' is also utilizing staging1
                        'GD_STG'
                      end
         {

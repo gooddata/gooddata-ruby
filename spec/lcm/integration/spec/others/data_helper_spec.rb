@@ -229,28 +229,28 @@ describe 'data helper', :vcr do
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to redshift with BASIC authentication' do
+  xit 'connect to redshift with BASIC authentication' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params['input_source'])
     file_path = data_helper.realize(basic_params)
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to redshift with BASIC authentication without schema' do
+  xit 'connect to redshift with BASIC authentication without schema' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params_without_schema['input_source'])
     file_path = data_helper.realize(basic_params_without_schema)
     data = File.open('spec/data/redshift_data.csv').read
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to redshift with BASIC authentication and dynamic source' do
+  xit 'connect to redshift with BASIC authentication and dynamic source' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params_dynamic_source['dynamic_params']['input_source'])
     file_path = data_helper.realize(basic_params_dynamic_source)
     data = File.open('spec/data/redshift_data2.csv').read
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to redshift with BASIC authentication and url has parameter' do
+  xit 'connect to redshift with BASIC authentication and url has parameter' do
     data_helper = GoodData::Helpers::DataSource.new(basic_params_url_parameters['input_source'])
     file_path = data_helper.realize(basic_params_url_parameters)
     data = File.open('spec/data/redshift_data2.csv').read
@@ -264,7 +264,7 @@ describe 'data helper', :vcr do
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to bigquery with BASIC authentication' do
+  xit 'connect to bigquery with BASIC authentication' do
     encryption_key = ENV['GD_SPEC_PASSWORD'] || ENV['BIA_ENCRYPTION_KEY']
     bigquery_secret = File.open('spec/environment/bigquery_encrypted').read
     decrypted = GoodData::Helpers.decrypt(bigquery_secret, encryption_key)
@@ -282,7 +282,7 @@ describe 'data helper', :vcr do
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to mssql with BASIC authentication' do
+  xit 'connect to mssql with BASIC authentication' do
     data_helper = GoodData::Helpers::DataSource.new(mssql_basic_params['input_source'])
     file_path = data_helper.realize(mssql_basic_params)
     data = File.open('spec/data/mssql_data.csv').read

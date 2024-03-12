@@ -7,29 +7,29 @@
 module GoodData
   module Environment
     module ConnectionHelper
-      set_const :DEFAULT_DOMAIN, 'staging2-lcm-prod'
-      set_const :DEFAULT_SERVER, 'https://staging2-lcm-prod.intgdc.com'
-      set_const :DEFAULT_USER_URL, '/gdc/account/profile/5ad80b895edcc438e5a4418e222733fa'
-      set_const :STAGING_URI, 'https://staging2-lcm-prod.intgdc.com/gdc/uploads/'
+      set_const :DEFAULT_DOMAIN, 'staging-lcm-prod'
+      set_const :DEFAULT_SERVER, 'https://staging-lcm-prod.intgdc.com'
+      set_const :DEFAULT_USER_URL, '/gdc/account/profile/e306b64fb4178785c9cf29c29b5e498a'
+      set_const :STAGING_URI, 'https://staging-lcm-prod.intgdc.com/gdc/uploads/'
       set_const :LCM_ENVIRONMENT,
-                dev_server: 'staging2-lcm-dev.intgdc.com',
-                prod_server: 'staging2-lcm-prod.intgdc.com',
-                dev_organization: 'staging2-lcm-dev',
-                prod_organization: 'staging2-lcm-prod',
+                dev_server: 'staging-lcm-dev.intgdc.com',
+                prod_server: 'staging-lcm-prod.intgdc.com',
+                dev_organization: 'staging-lcm-dev',
+                prod_organization: 'staging-lcm-prod',
                 username: 'rubydev+admin@gooddata.com',
                 appstore_deploy_name: 'PRODUCTION_APPSTORE'
     end
 
     module ProcessHelper
-      set_const :PROCESS_ID, '7bc4b678-d1f6-4fb0-b1ee-513f4709bbf1'
+      set_const :PROCESS_ID, '756b5f0f-6412-4072-b8e2-f5c33624f497'
     end
 
     module ProjectHelper
-      set_const :PROJECT_ID, 'voyb6fcvdngwfyf722vn9cmbv7sq6mf6'
+      set_const :PROJECT_ID, 'kd39zwi3bii39ewe1skh6ldjfx7ebj7x'
     end
 
     module ScheduleHelper
-      set_const :SCHEDULE_ID, '5acdd513e4b01dce92b23505'
+      set_const :SCHEDULE_ID, '65f0f0ded245736d3f85dfb6'
     end
   end
 end

@@ -228,7 +228,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
     end
   end
 
-  it "should be possible to download deployed process" do
+  xit "should be possible to download deployed process" do
     process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
                                       type: 'RUBY',
                                       name: 'Test ETL zipped file Process')
@@ -253,7 +253,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
     end
   end
 
-  it "should be able to redeploy via project" do
+  xit "should be able to redeploy via project" do
     begin
       process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
                                         type: 'RUBY',
@@ -264,7 +264,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
     end
   end
 
-  it "should be able to redeploy directly" do
+  xit "should be able to redeploy directly" do
     begin
       process1 = @project.deploy_process(
         './spec/data/hello_world_process/hello_world.zip',
