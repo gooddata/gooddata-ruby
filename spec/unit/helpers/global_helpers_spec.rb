@@ -62,8 +62,8 @@ describe GoodData::Helpers do
     end
 
     it 'should encode params and preserve the nil in hidden' do
-      x = GoodData::Helpers.decode_params(GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => nil)
-      expect(x).to eq("gd_encoded_hidden_params" => nil)
+      x = GoodData::Helpers.decode_params(GoodData::Helpers::ENCODED_HIDDEN_PARAMS_KEY.to_s => nil, GoodData::Helpers::ENCODED_PARAMS_KEY.to_s => '{"d":{"b": "c"}}')
+      expect(x).to eq({"d"=>{"b"=>"c"}, "gd_encoded_hidden_params"=>nil})
     end
 
     it 'should encode params and preserve the nil in hidden' do
