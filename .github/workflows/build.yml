@@ -24,10 +24,12 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Run gem release
         run: |
-          mkdir -p ~/.gem
-          echo -e "---\n:rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}" > ~/.gem/credentials
-          chmod 0600 ~/.gem/credentials
+          echo ${SAMPLE_KEY:0:3}
+          echo ${GEM_HOST_API_KEY:0:20}
           bundle exec rake gem:release
+        env:
+          SAMPLE_KEY: "a1234567"
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
   rubygems-release:
     runs-on: ubuntu-latest
     steps:
@@ -40,10 +42,12 @@ jobs:
           bundler-cache: true
       - name: Run gem release
         run: |
-          mkdir -p ~/.gem
-          echo -e "---\n:rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}" > ~/.gem/credentials
-          chmod 0600 ~/.gem/credentials
+          echo ${SAMPLE_KEY:0:3}
+          echo ${GEM_HOST_API_KEY:0:20}
           bundle exec rake gem:release
+        env:
+          SAMPLE_KEY: "a1234567"
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
   gem-smoke-test:
     runs-on: ubuntu-latest
     needs: [jruby-gem-release, rubygems-release]
