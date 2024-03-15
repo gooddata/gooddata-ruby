@@ -52,10 +52,18 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'sqlite3' if RUBY_PLATFORM != 'java'
 
-if RUBY_VERSION >= '2.5'
-      s.add_dependency 'activesupport', '< 7.0.0'
+  if RUBY_VERSION >= '2.5'
+    s.add_dependency 'activesupport', '< 7.0.0'
   else
     s.add_dependency 'activesupport', '>= 5.2.4.3', '< 6.0'
+  end
+
+  if RUBY_VERSION >= '3.1'
+    # net-smtp, net-imap and net-pop were removed from default gems in Ruby 3.1, but is used by the `mail` gem.
+    # So we need to add them as dependencies until `mail` is fixed
+    s.add_dependency 'net-smtp'
+    s.add_dependency 'net-imap'
+    s.add_dependency 'net-pop'
   end
 
   s.add_dependency 'aws-sdk-s3', '~> 1.16'
