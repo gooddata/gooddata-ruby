@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 2.3.1
+ - BUGFIX: MSF-25977 Add missing dependencies to support jruby3.1
+
 ## 2.3.0
  - BUGFIX: MSF-25800 Add SSLErrorWaitReadable error to retry error list
  - MSF-24148: Upgrade LCM image to run with JRuby latest version 9.4.1
