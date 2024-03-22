@@ -22,7 +22,8 @@ module GoodData
       'pt-PT' => 'Portuguese/Portugal',
       'fr-FR' => 'French',
       'de-DE' => 'German',
-      'ja-JP' => 'Japanese'
+      'ja-JP' => 'Japanese',
+      'it-IT' => 'Italian'
     }
 
     class << self
@@ -292,9 +293,8 @@ to new properties (email=#{user_data[:email]}, sso_provider=#{user_data[:sso_pro
         language = user_data[:language] || 'en-US'
         unless USER_LANGUAGES.keys.include?(language)
           available_languages = USER_LANGUAGES.map { |k, v| "#{k} (#{v})" }.join(', ')
-          GoodData.logger.warn "The language for user '#{user_data[:login]}' will be English because '#{language}' is an invalid value. \
+          GoodData.logger.warn "The language for user '#{user_data[:login]}' will be '#{language}' but it may be not valid, since it's not declared to be known by the client. \
 Available values for setting language are: #{available_languages}."
-          language = 'en-US'
         end
         language
       end
