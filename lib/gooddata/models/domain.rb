@@ -23,7 +23,10 @@ module GoodData
       'fr-FR' => 'French',
       'de-DE' => 'German',
       'ja-JP' => 'Japanese',
-      'it-IT' => 'Italian'
+      'it-IT' => 'Italian',
+      'es-419' => 'Spanish/Latin America',
+      'fr-CA' => 'French/Canada',
+      'en-GB' => 'English/UK'
     }
 
     class << self
