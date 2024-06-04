@@ -180,7 +180,8 @@ module GoodData
 
     def self.create_lookups_cache(small_labels)
       small_labels.reduce({}) do |a, e|
-        lookup = e.values(:limit => 1_000_000).reduce({}) do |a1, e1|
+        # The validElements API allow maximum paging with 10000 items
+        lookup = e.values(:limit => 10_000).reduce({}) do |a1, e1|
           a1[e1[:value]] = e1[:uri]
           a1
         end
