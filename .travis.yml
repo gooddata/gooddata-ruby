@@ -311,41 +311,6 @@ jobs:
 
   # AFTER MERGE UNIT TESTS ON ALTERNATIVE PLATFORM
 
-  - name: unit tests 2.3
-    stage: after-merge
-    script: bundle exec rake test:unit
-    os: osx
-    osx_image: xcode7.3
-    rvm: 2.3
-
-  - name: unit tests 2.4
-    stage: after-merge
-    script: bundle exec rake test:unit
-    os: osx
-    osx_image: xcode9.4
-    rvm: 2.4.3
-
-  - name: unit tests 2.5
-    stage: after-merge
-    script: bundle exec rake test:unit
-    os: osx
-    osx_image: xcode9
-    rvm: 2.5
-
-  - name: unit tests 2.6
-    stage: after-merge
-    script: bundle exec rake test:unit
-    os: osx
-    osx_image: xcode9
-    rvm: 2.6
-
-  - name: unit tests jruby-9.1.14
-    stage: after-merge
-    script: bundle exec rake test:unit
-    os: osx
-    rvm: jruby-9.1.14
-    osx_image: xcode9.4
-
   - stage: gem-release
     name: deploy MRI gem
     rvm: 2.3
