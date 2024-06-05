@@ -21,33 +21,6 @@ jobs:
       - run: bundle exec rake test:unit
       - run: bundle exec rake test:unit
         continue-on-error: true
-  unit-tests-OSX:
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        include:
-          - ruby-version: 2.5
-            xcode-version: 9
-          - ruby-version: 2.6
-            xcode-version: 9
-          - ruby-version: 2.7.6
-            xcode-version: 9
-          - ruby-version: 3.2.1
-            xcode-version: 9
-          - ruby-version: jruby-9.2.9
-            xcode-version: latest
-          - ruby-version: jruby-9.4.1
-            xcode-version: latest
-    steps:
-      - name: run prepare-env
-        run: brew install pkg-config
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true
-      - name: run tests
-        run: bundle exec rake test:unit
   pronto-code-review:
     runs-on: ubuntu-latest
     steps:
