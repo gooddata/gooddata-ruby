@@ -44,14 +44,31 @@ module GoodData
     # In the case filter a specific value, because the API /validElements only filter by partial match, we need to filter again at client side for exact match.
     # @return [Array] Results
     def get_valid_elements(*args)
+      results = {}
       if args && !args.empty? && args.first[:filter]
+        # Support paging in case filter by a specific value
         params = args.first
-        params[:limit] = 100_000
-        results, = valid_elements params
-        results['validElements']['items'] = results['validElements']['items'].select do |i|
-          i['element']['title'] == params[:filter]
+        all_valid_elements = []
+        offset = 0
+        paging_limit = 10_000
+
+        loop do
+          params[:offset] = offset
+          params[:limit] = paging_limit
+          results, = valid_elements params
+          all_valid_elements << results['validElements']['items'].select do |i|
+            i['element']['title'] == params[:filter]
+          end
+
+          if results['validElements']['items'].count < paging_limit
+            results['validElements']['items'] = all_valid_elements
+            break
+          else
+            offset += paging_limit
+          end
         end
       else
+        # This case will support paging by the method which call this method eg: values(...) method
         results, = valid_elements(*args)
       end
       results
