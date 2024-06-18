@@ -1,0 +1,192 @@
+name: check
+on: pull_request
+jobs:
+  prepare-env:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    outputs:
+      branch: ${{ github.base_ref }}
+      ref: ${{ github.ref }}
+      commit: ${{ github.event.pull_request.head.sha }}
+      pr_number: ${{ github.event.pull_request.number }}
+      project: ${{ github.repository }}
+      changed_files: ${{ steps.changed-files.outputs.all_changed_files }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v40
+  gooddata-ruby-lcm-build-pipeline:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    needs:
+      - prepare-env
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check if all changed files match patterns
+        id: all-match
+        run: |-
+          any_didnt_match=false
+          patterns=('^k8s/.*$' '^.gdc-ii-config-chart.yaml$' '^Jenkinsfile-chart$')
+          for file in ${{ needs.prepare-env.outputs.changed_files }}; do
+              matched=false
+              for pattern in "${patterns[@]}"; do
+                  if [[ $file =~ $pattern ]]; then
+                      matched=true
+                  fi
+              done
+              if [[ $matched == false ]]; then
+                  any_didnt_match=true
+              fi
+          done
+          echo "any_didnt_match=$any_didnt_match" >> "$GITHUB_OUTPUT"
+                  
+      - name: Check if branch matches
+        id: branch-matches
+        run: |-
+          branch=${{ needs.prepare-env.outputs.branch }}
+          branch_matches=$([[ $branch =~ ^master$ ]] && echo true || echo false)
+          echo "branch_matches=$branch_matches" >> "$GITHUB_OUTPUT"
+      - name: Call Jenkins trigger
+        id: call-jenkins
+        uses: gooddata/github-actions-public/jenkins/trigger@master
+        with:
+          server: ${{ secrets.JENKINS_II_ADDRESS }}
+          folder: gooddata-ruby
+          job-name: gooddata-ruby-lcm-build-pipeline
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          params: |-
+            {
+              "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
+              "GH_REF": "${{ needs.prepare-env.outputs.ref }}",
+              "GH_COMMIT": "${{ needs.prepare-env.outputs.commit }}",
+              "GH_URL": "git@github.com:",
+              "GH_CHANGE": "${{ needs.prepare-env.outputs.pr_number }}",
+              "GH_PROJECT": "${{ needs.prepare-env.outputs.project }}",
+              "BUILD_BY_GITHUB": "true",
+              "GH_PIPELINE": "check"
+            }
+          comment-pr: 'true'
+        if: steps.all-match.outputs.any_didnt_match == 'true' && steps.branch-matches.outputs.branch_matches == 'true'
+  gooddata-ruby-check-pipeline:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    needs:
+      - prepare-env
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check if any matching file changed
+        id: changed-files
+        run: |
+          any_changed=false
+          patterns=('^k8s/.*$' '^.gdc-ii-config-chart.yaml$' '^Jenkinsfile-chart$')
+          for file in ${{ needs.prepare-env.outputs.changed_files }}; do
+              for pattern in "${patterns[@]}"; do
+                  if [[ $file =~ $pattern ]]; then
+                      any_changed=true
+                  fi
+              done
+          done
+          echo "any_changed=$any_changed" >> "$GITHUB_OUTPUT"
+      - name: Check if branch matches
+        id: branch-matches
+        run: |-
+          branch=${{ needs.prepare-env.outputs.branch }}
+          branch_matches=$([[ $branch =~ ^master$ ]] && echo true || echo false)
+          echo "branch_matches=$branch_matches" >> "$GITHUB_OUTPUT"
+      - name: Call Jenkins trigger
+        id: call-jenkins
+        uses: gooddata/github-actions-public/jenkins/trigger@master
+        with:
+          server: ${{ secrets.JENKINS_II_ADDRESS }}
+          folder: gooddata-ruby
+          job-name: gooddata-ruby-check-pipeline
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          params: |-
+            {
+              "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
+              "GH_REF": "${{ needs.prepare-env.outputs.ref }}",
+              "GH_COMMIT": "${{ needs.prepare-env.outputs.commit }}",
+              "GH_URL": "git@github.com:",
+              "GH_CHANGE": "${{ needs.prepare-env.outputs.pr_number }}",
+              "GH_PROJECT": "${{ needs.prepare-env.outputs.project }}",
+              "BUILD_BY_GITHUB": "true",
+              "GH_PIPELINE": "check"
+            }
+          comment-pr: 'true'
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.branch-matches.outputs.branch_matches == 'true'
+  gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    needs:
+      - prepare-env
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check if any matching file changed
+        id: changed-files
+        run: |
+          any_changed=false
+          patterns=('^NOTICE(S)?(.TXT)?$' '^LICENSE(S)?(.TXT)?$')
+          for file in ${{ needs.prepare-env.outputs.changed_files }}; do
+              for pattern in "${patterns[@]}"; do
+                  if [[ $file =~ $pattern ]]; then
+                      any_changed=true
+                  fi
+              done
+          done
+          echo "any_changed=$any_changed" >> "$GITHUB_OUTPUT"
+      - name: Check if branch matches
+        id: branch-matches
+        run: |-
+          branch=${{ needs.prepare-env.outputs.branch }}
+          branch_matches=$([[ $branch =~ ^master$ ]] && echo true || echo false)
+          echo "branch_matches=$branch_matches" >> "$GITHUB_OUTPUT"
+      - name: Call Jenkins trigger
+        id: call-jenkins
+        uses: gooddata/github-actions-public/jenkins/trigger@master
+        with:
+          server: ${{ secrets.JENKINS_ADDRESS }}
+          folder: compliance
+          job-name: gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          params: |-
+            {
+              "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
+              "GH_REF": "${{ needs.prepare-env.outputs.ref }}",
+              "GH_COMMIT": "${{ needs.prepare-env.outputs.commit }}",
+              "GH_URL": "git@github.com:",
+              "GH_CHANGE": "${{ needs.prepare-env.outputs.pr_number }}",
+              "GH_PROJECT": "${{ needs.prepare-env.outputs.project }}",
+              "BUILD_BY_GITHUB": "true",
+              "GH_PIPELINE": "check"
+            }
+          comment-pr: 'true'
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.branch-matches.outputs.branch_matches == 'true'
+  ready-to-merge:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    if: always()
+    needs:
+      - prepare-env
+      - gooddata-ruby-lcm-build-pipeline
+      - gooddata-ruby-check-pipeline
+      - gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
+    steps:
+      - name: Check if needed jobs succeeded
+        uses: re-actors/alls-green@release/v1
+        with:
+          allowed-skips: ${{ toJSON(needs) }}
+          jobs: ${{ toJSON(needs) }}
