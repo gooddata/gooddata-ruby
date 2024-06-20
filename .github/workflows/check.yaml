@@ -57,10 +57,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_II_ADDRESS }}
+          server: ${{ env.JENKINS_II_ADDRESS }}
           folder: gooddata-ruby
           job-name: gooddata-ruby-lcm-build-pipeline
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
@@ -107,10 +107,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_II_ADDRESS }}
+          server: ${{ env.JENKINS_II_ADDRESS }}
           folder: gooddata-ruby
           job-name: gooddata-ruby-check-pipeline
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
@@ -157,10 +157,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_ADDRESS }}
+          server: ${{ env.JENKINS_ADDRESS }}
           folder: compliance
           job-name: gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",

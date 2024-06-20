@@ -53,10 +53,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_ADDRESS }}
+          server: ${{ env.JENKINS_ADDRESS }}
           folder: lcm
           job-name: gooddata-ruby-integration-tests-zuul
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
@@ -84,10 +84,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_ADDRESS }}
+          server: ${{ env.JENKINS_ADDRESS }}
           folder: lcm
           job-name: gooddata-lcm-ruby-integration-e2e-zuul
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
@@ -115,10 +115,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_ADDRESS }}
+          server: ${{ env.JENKINS_ADDRESS }}
           folder: lcm
           job-name: gooddata-lcm-ruby-integration-release-zuul
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
@@ -146,10 +146,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_ADDRESS }}
+          server: ${{ env.JENKINS_ADDRESS }}
           folder: lcm
           job-name: gooddata-lcm-ruby-integration-others-zuul
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
@@ -177,10 +177,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_ADDRESS }}
+          server: ${{ env.JENKINS_ADDRESS }}
           folder: lcm
           job-name: gooddata-lcm-ruby-integration-slow-zuul
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
@@ -208,10 +208,10 @@ jobs:
         id: call-jenkins
         uses: gooddata/github-actions-public/jenkins/trigger@master
         with:
-          server: ${{ secrets.JENKINS_ADDRESS }}
+          server: ${{ env.JENKINS_ADDRESS }}
           folder: lcm
           job-name: gooddata-lcm-ruby-integration-userprov-zuul
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+          vault-url: ${{ env.VAULT_ADDRESS }}
           params: |-
             {
               "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
