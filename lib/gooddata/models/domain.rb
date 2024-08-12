@@ -14,6 +14,7 @@ module GoodData
   class Domain < Rest::Resource
     attr_reader :name
 
+    # Support user languages
     USER_LANGUAGES = {
       'en-US' => 'English',
       'nl-NL' => 'Dutch',

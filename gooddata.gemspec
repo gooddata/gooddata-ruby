@@ -44,9 +44,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-byebug', '~> 3.6' if RUBY_PLATFORM != 'java'
 
-  s.add_development_dependency 'pronto', '>= 0.10' if RUBY_PLATFORM != 'java'
-  s.add_development_dependency 'pronto-rubocop', '>= 0.9' if RUBY_PLATFORM != 'java'
-  s.add_development_dependency 'pronto-reek', '>= 0.9' if RUBY_PLATFORM != 'java'
+  s.add_development_dependency 'pronto', '>= 0.11.2' if RUBY_PLATFORM != 'java'
+  s.add_development_dependency 'pronto-rubocop', '>= 0.11.5' if RUBY_PLATFORM != 'java'
+  s.add_development_dependency 'pronto-reek', '>= 0.11.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'vcr', '5.0.0'
   s.add_development_dependency 'hashdiff', '~> 0.4'
 
@@ -79,6 +79,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
   s.add_dependency 'json_pure', '~> 2.6'
   s.add_dependency 'multi_json', '~> 1.12'
+  s.add_dependency 'path_expander', '< 1.1.2'
   s.add_dependency 'parseconfig', '~> 1.0'
   s.add_dependency 'pmap', '~> 1.1'
   s.add_dependency 'sequel', '< 5.72.0'
