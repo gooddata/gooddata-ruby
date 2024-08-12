@@ -26,7 +26,11 @@ module GoodData
       'it-IT' => 'Italian',
       'es-419' => 'Spanish/Latin America',
       'fr-CA' => 'French/Canada',
-      'en-GB' => 'English/UK'
+      'en-GB' => 'English/UK',
+      'en-AU' => 'English/Australian',
+      'fi-FI' => 'Finnish',
+      'zh-Hant' => 'Traditional Chinese',
+      'zh-HK' => 'Cantonese'
     }
 
     class << self
