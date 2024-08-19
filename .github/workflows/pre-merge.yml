@@ -11,9 +11,7 @@ jobs:
       matrix:
         ruby-version: [2.5, 2.6, 2.7.6, 3.2.1, jruby-9.2.21, jruby-9.3.14, jruby-9.4.1]
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
@@ -24,9 +22,7 @@ jobs:
   pronto-code-review:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
