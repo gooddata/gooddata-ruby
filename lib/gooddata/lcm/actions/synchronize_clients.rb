@@ -170,7 +170,27 @@ module GoodData
 
           # Synchronize failure for all clients in segment
           if continue_on_error && success_count.zero? && failed_count.positive?
-            segment_warning_message = "Failed to synchronize clients for #{segment.segment_id} segment. Details: #{sync_result['links']['details']}"
+            segment_warning_message = "Failed to synchronize all clients for #{segment.segment_id} segment. Details: #{sync_result['links']['details']}"
+            if sync_result['links'] && sync_result['links']['details'] # rubocop:disable Style/SafeNavigation
+              begin
+                client = params.gdc_gd_client
+                response = client.get sync_result['links']['details']
+                error_detail_result = response['synchronizationResultDetails']
+
+                if error_detail_result && error_detail_result['items'] # rubocop:disable Style/SafeNavigation
+                  error_count = 1
+                  error_detail_result['items'].each do |item|
+                    break if error_count > 5
+
+                    GoodData.logger.warn(error_message(item, segment))
+                    error_count += 1
+                  end
+                end
+              rescue StandardError => ex
+                GoodData.logger.warn "Failed to fetch result of synchronize clients. Error: #{ex.message}"
+              end
+            end
+
             add_failed_segment(segment.segment_id, segment_warning_message, short_name, params)
             return
           end
@@ -192,7 +212,7 @@ module GoodData
 
         def error_message(error_item, segment)
           error_client_id = error_item['id']
-          error_message = "Failed to synchronize #{error_client_id} client in #{segment.segment_id} segment."
+          error_message = "Failed to synchronize #{error_client_id} client in #{segment.segment_id} segment"
           error_message = "#{error_message}. Detail: #{error_item['error']['message']}" if error_item['error'] && error_item['error']['message']
 
           error_message = "#{error_message}. Error items: #{error_item['error']['parameters']}" if error_item['error'] && error_item['error']['parameters']
