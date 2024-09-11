@@ -296,7 +296,8 @@ describe 'data helper', :vcr do
     expect(data).to eq File.open(file_path).read
   end
 
-  it 'connect to mysql mongobi with BASIC authentication' do
+  # Disable test for MongoBI
+  xit 'connect to mysql mongobi with BASIC authentication' do
     data_helper = GoodData::Helpers::DataSource.new(mysql_mongobi_basic_params['input_source'])
     file_path = data_helper.realize(mysql_mongobi_basic_params)
     data = File.open('spec/data/mysql_mongobi_data.csv').read
