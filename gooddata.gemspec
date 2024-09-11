@@ -75,7 +75,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'azure-storage-blob', '~> 2.0'
   s.add_dependency 'nokogiri', '~> 1', '>= 1.10.8'
   s.add_dependency 'gli', '~> 2.15'
-  s.add_dependency 'gooddata_datawarehouse', '~> 0.0.12' if RUBY_PLATFORM == 'java'
+  s.add_dependency 'gooddata_datawarehouse', '~> 0.0.11' if RUBY_PLATFORM == 'java'
   s.add_dependency 'highline', '= 2.0.0.pre.develop.14'
   s.add_dependency 'json_pure', '~> 2.6'
   s.add_dependency 'multi_json', '~> 1.12'
