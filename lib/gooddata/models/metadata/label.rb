@@ -56,7 +56,7 @@ module GoodData
           params[:offset] = offset
           params[:limit] = paging_limit
           results, = valid_elements params
-          all_valid_elements << results['validElements']['items'].select do |i|
+          all_valid_elements += results['validElements']['items'].select do |i|
             i['element']['title'] == params[:filter]
           end
 
