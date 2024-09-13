@@ -49,6 +49,7 @@ module GoodData
           raise('Missing connection info for MSSQL client')
         end
 
+        # When update driver class then also updating driver class using in connection(..) method below
         Java.com.microsoft.sqlserver.jdbc.SQLServerDriver
       end
 
@@ -90,7 +91,7 @@ module GoodData
         prop.setProperty('userName', authentication['userName'])
         prop.setProperty('password', authentication['password'])
 
-        @connection = java.sql.DriverManager.getConnection(connection_string, prop)
+        @connection = com.microsoft.sqlserver.jdbc.SQLServerDriver.new.connect(@url, prop)
       end
 
       def validate

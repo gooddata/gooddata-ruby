@@ -49,6 +49,7 @@ module GoodData
           raise('Missing connection info for Mysql client')
         end
 
+        # When update driver class then also updating driver class using in connection(..) method below
         Java.com.mysql.jdbc.Driver
       end
 
@@ -84,7 +85,7 @@ module GoodData
         prop = java.util.Properties.new
         prop.setProperty('user', @authentication['basic']['userName'])
         prop.setProperty('password', @authentication['basic']['password'])
-        @connection = java.sql.DriverManager.getConnection(@url, prop)
+        @connection = com.mysql.jdbc.Driver.new.connect(@url, prop)
         @connection.set_auto_commit(false)
       end
 

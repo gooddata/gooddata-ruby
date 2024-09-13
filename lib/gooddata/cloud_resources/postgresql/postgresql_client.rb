@@ -49,6 +49,7 @@ module GoodData
           raise('Missing connection info for Postgres client')
         end
 
+        # When update driver class then also updating driver class using in connection(..) method below
         Java.org.postgresql.Driver
       end
 
@@ -86,7 +87,7 @@ module GoodData
         prop.setProperty('password', @authentication['basic']['password'])
         prop.setProperty('schema', @schema)
 
-        @connection = java.sql.DriverManager.getConnection(@url, prop)
+        @connection = org.postgresql.Driver.new.connect(@url, prop)
         statement = @connection.create_statement
         statement.execute("#{POSTGRES_SET_SCHEMA_COMMAND} #{@schema}")
         @connection.set_auto_commit(false)
