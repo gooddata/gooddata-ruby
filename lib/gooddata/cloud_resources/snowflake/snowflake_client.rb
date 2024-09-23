@@ -41,6 +41,7 @@ module GoodData
 
         end
 
+        # When update driver class then also updating driver class using in connection(..) method below
         Java.net.snowflake.client.jdbc.SnowflakeDriver
       end
 
@@ -80,7 +81,7 @@ module GoodData
         prop.setProperty('warehouse', @warehouse)
         prop.setProperty('db', @database)
 
-        @connection = java.sql.DriverManager.getConnection(@url, prop)
+        @connection = com.snowflake.client.jdbc.SnowflakeDriver.new.connect(@url, prop)
       end
 
       def build_url(url)

@@ -38,6 +38,7 @@ module GoodData
         end
         @debug = options['debug'] == true || options['debug'] == 'true'
 
+        # When update driver class then also updating driver class using in connection(..) method below
         Java.com.amazon.redshift.jdbc42.Driver
       end
 
@@ -83,7 +84,7 @@ module GoodData
           prop.setProperty('DbUser', @authentication['iam']['dbUser'])
         end
 
-        @connection = java.sql.DriverManager.getConnection(full_url, prop)
+        @connection = com.amazon.redshift.jdbc42.Driver.new.connect(@url, prop)
       end
 
       private
