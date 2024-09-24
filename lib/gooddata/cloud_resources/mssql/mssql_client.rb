@@ -91,7 +91,7 @@ module GoodData
         prop.setProperty('userName', authentication['userName'])
         prop.setProperty('password', authentication['password'])
 
-        @connection = com.microsoft.sqlserver.jdbc.SQLServerDriver.new.connect(@url, prop)
+        @connection = com.microsoft.sqlserver.jdbc.SQLServerDriver.new.connect(connection_string, prop)
       end
 
       def validate

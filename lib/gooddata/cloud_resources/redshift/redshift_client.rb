@@ -84,7 +84,7 @@ module GoodData
           prop.setProperty('DbUser', @authentication['iam']['dbUser'])
         end
 
-        @connection = com.amazon.redshift.jdbc42.Driver.new.connect(@url, prop)
+        @connection = com.amazon.redshift.jdbc42.Driver.new.connect(full_url, prop)
       end
 
       private
