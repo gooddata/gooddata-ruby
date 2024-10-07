@@ -94,7 +94,7 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &_block)
-          opts = { :tries => 12, :on => RETRYABLE_ERRORS }.merge(options)
+          opts = { :tries => 17, :on => RETRYABLE_ERRORS }.merge(options)
 
           retry_exception = opts[:on]
           retries = opts[:tries]
@@ -114,20 +114,26 @@ module GoodData
             if (retries -= 1) > 0
               retry
             else
-              fail e
+              process_retry_error(e, retry_time)
             end
           rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable, *retry_exception => e
-            GoodData.logger.warn "#{e.message}, retrying in #{retry_time} seconds"
             sleep retry_time
             retry_time *= RETRY_TIME_COEFFICIENT
-            # 10 requests with 1.5 coefficent should take ~ 3 mins to finish
+            # Total 10 retry requests with 1.5 coefficent should take ~ 2 mins to finish
             if (retries -= 1) > 0
               retry
             else
-              fail e
+              process_retry_error(e, retry_time)
             end
           end
           yield
+        end
+
+        def process_retry_error(e, retry_time)
+          error_message =  "#{e.message}, retrying in #{retry_time} seconds"
+          GoodData.logger.warn error_message
+          GoodData.gd_logger.warn error_message
+          fail e
         end
       end
 
