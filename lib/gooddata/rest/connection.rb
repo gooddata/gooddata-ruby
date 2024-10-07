@@ -157,6 +157,17 @@ module GoodData
         # Initialize headers
         reset_headers!
 
+        if OpenSSL::SSL.const_defined?(:OP_IGNORE_UNEXPECTED_EOF)
+          GoodData.logger.info 'Start add ignore unexpected eof'
+          GoodData.logger.info "SSL context start=#{OpenSSL::SSL::SSLContext::DEFAULT_PARAMS[:options]}"
+          OpenSSL::SSL::SSLContext::DEFAULT_PARAMS[:options] |= OpenSSL::SSL::OP_IGNORE_UNEXPECTED_EOF
+          GoodData.logger.info "SSL context start=#{OpenSSL::SSL::SSLContext::DEFAULT_PARAMS[:options]}"
+          GoodData.logger.info 'Success add ignore unexpected eof'
+        else
+          GoodData.logger.info 'Cannot add ignore unexpected eof'
+          GoodData.logger.info "SSL context start=#{OpenSSL::SSL::SSLContext::DEFAULT_PARAMS[:options]}"
+        end
+
         @at_exit_handler_installed = nil
       end
 
