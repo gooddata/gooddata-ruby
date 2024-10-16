@@ -65,7 +65,7 @@ module GoodData
       ]
 
       RETRY_TIME_INITIAL_VALUE = 1
-      RETRY_TIME_COEFFICIENT = 1.5
+      RETRY_TIME_COEFFICIENT = 2
       RETRYABLE_ERRORS << Net::ReadTimeout if Net.const_defined?(:ReadTimeout)
 
       RETRYABLE_ERRORS << OpenSSL::SSL::SSLErrorWaitReadable if OpenSSL::SSL.const_defined?(:SSLErrorWaitReadable)
@@ -94,7 +94,7 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &_block)
-          opts = { :tries => 17, :on => RETRYABLE_ERRORS }.merge(options)
+          opts = { :tries => 12, :on => RETRYABLE_ERRORS }.merge(options)
 
           retry_exception = opts[:on]
           retries = opts[:tries]
