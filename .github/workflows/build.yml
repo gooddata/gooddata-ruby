@@ -4,7 +4,7 @@ on:
     branches: [master]
 jobs:
   jruby-gem-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -25,7 +25,7 @@ jobs:
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
   rubygems-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -37,7 +37,7 @@ jobs:
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
   gem-smoke-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [jruby-gem-release, rubygems-release]
     strategy:
       matrix:
