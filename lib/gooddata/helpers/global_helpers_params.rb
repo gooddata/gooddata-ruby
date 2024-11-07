@@ -52,9 +52,11 @@ module GoodData
         encode_params(params, ENCODED_HIDDEN_PARAMS_KEY)
       end
 
-      # Decodes params as they came from the platform
-      # The "data" key is supposed to be json and it's parsed - if this
-      def decode_params(params)
+      # Decodes params as they came from the platform.
+      # @params Parameter hash need to be decoded
+      # @option options [Boolean] :resolve_reference_params Resolve reference parameters in gd_encoded_params or not
+      # @return [Hash] Decoded parameters
+      def decode_params(params, options = {})
         key = ENCODED_PARAMS_KEY.to_s
         hidden_key = ENCODED_HIDDEN_PARAMS_KEY.to_s
         data_params = params[key] || '{}'
@@ -66,19 +68,66 @@ module GoodData
                                '{}'
                              end
 
+        reference_values = []
+        # Replace reference parameters by the actual values. Use backslash to escape a reference parameter, e.g: \${not_a_param},
+        # the ${not_a_param} will not be replaced
+        if options[:resolve_reference_params]
+          data_params, reference_values = resolve_reference_params(data_params, params)
+          hidden_data_params, = resolve_reference_params(hidden_data_params, params)
+        end
+
         begin
-          parsed_data_params = JSON.parse(data_params)
-          parsed_hidden_data_params = JSON.parse(hidden_data_params)
-        rescue JSON::ParserError => e
-          raise e.class, "Error reading json from '#{key}' or '#{hidden_key}', reason: #{e.message}"
+          parsed_data_params = data_params.is_a?(Hash) ? data_params : JSON.parse(data_params)
+        rescue JSON::ParserError => exception
+          reason = exception.message
+          reference_values.each { |secret_value| reason.gsub!("\"#{secret_value}\"", '"***"') }
+          raise exception.class, "Error reading json from '#{key}', reason: #{reason}"
+        end
+
+        begin
+          parsed_hidden_data_params = hidden_data_params.is_a?(Hash) ? hidden_data_params : JSON.parse(hidden_data_params)
+        rescue JSON::ParserError => exception
+          raise exception.class, "Error reading json from '#{hidden_key}'"
         end
 
         # Add the nil on ENCODED_HIDDEN_PARAMS_KEY
         # if the data was retrieved from API You will not have the actual values so encode -> decode is not losless. The nil on the key prevents the server from deleting the key
         parsed_hidden_data_params[ENCODED_HIDDEN_PARAMS_KEY] = nil unless parsed_hidden_data_params.empty?
+
         params.delete(key)
         params.delete(hidden_key)
-        params.merge(parsed_data_params).merge(parsed_hidden_data_params)
+        params = GoodData::Helpers.deep_merge(params, parsed_data_params)
+        params = GoodData::Helpers.deep_merge(params, parsed_hidden_data_params)
+
+        if options[:convert_pipe_delimited_params]
+          convert_pipe_delimited_params = lambda do |args|
+            args = args.select { |k, _| k.include? "|" }
+            lines = args.keys.map do |k|
+              hash = {}
+              last_a = nil
+              last_e = nil
+              k.split("|").reduce(hash) do |a, e|
+                last_a = a
+                last_e = e
+                a[e] = {}
+              end
+              last_a[last_e] = args[k]
+              hash
+            end
+
+            lines.reduce({}) do |a, e|
+              GoodData::Helpers.deep_merge(a, e)
+            end
+          end
+
+          pipe_delimited_params = convert_pipe_delimited_params.call(params)
+          params.delete_if do |k, _|
+            k.include?('|')
+          end
+          params = GoodData::Helpers.deep_merge(params, pipe_delimited_params)
+        end
+
+        params
       end
 
       # A helper which allows you to diff two lists of objects. The objects
@@ -166,6 +215,55 @@ module GoodData
           end
         end
         lookup
+      end
+
+      private
+
+      def resolve_reference_params(data_params, params)
+        reference_values = []
+        regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{([^\n\{\}]+)\}/)
+        resolve_reference = lambda do |v|
+          if v.is_a? Hash
+            Hash[
+                v.map do |k, v2|
+                  [k, resolve_reference.call(v2)]
+                end
+            ]
+          elsif v.is_a? Array
+            v.map do |v2|
+              resolve_reference.call(v2)
+            end
+          elsif !v.is_a?(String)
+            v
+          else
+            v.gsub(regexps) do |match|
+              if match =~ /\\\\/
+                data_params.is_a?(Hash) ? '\\' : '\\\\' # rubocop: disable Metrics/BlockNesting
+              elsif match =~ /\\\$/
+                '$'
+              elsif match =~ /\$\{([^\n\{\}]+)\}/
+                val = params["#{$1}"]
+                if val
+                  reference_values << val
+                  val
+                else
+                  GoodData.logger.warn "Reference '#{$1}' is not found!"
+                  match
+                end
+              end
+            end
+          end
+        end
+
+        data_params = if data_params.is_a? Hash
+                        Hash[data_params.map do |k, v|
+                          [k, resolve_reference.call(v)]
+                        end]
+                      else
+                        resolve_reference.call(data_params)
+                      end
+
+        [data_params, reference_values]
       end
     end
   end

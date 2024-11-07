@@ -239,6 +239,10 @@ module GoodData
         end
       end
 
+      def deep_merge(source, target)
+        GoodData::Helpers::DeepMergeableHash[source].deep_merge(target)
+      end
+
       def undot(params)
         # for each key-value config given
         params.map do |k, v|

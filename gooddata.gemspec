@@ -57,7 +57,8 @@ Gem::Specification.new do |s|
     s.add_dependency 'net-pop'
   end
 
-  s.add_dependency 'aws-sdk-v1', '~> 1.45'
+  s.add_dependency 'gooddata_datawarehouse'
+  s.add_dependency 'aws-sdk-s3', '~> 1.16'
   s.add_dependency 'docile', '~> 1.1'
   s.add_dependency 'erubis', '~> 2.7', '>= 2.7.0'
   s.add_dependency 'gli', '~> 2.15'

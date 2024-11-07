@@ -9,6 +9,8 @@ require 'gooddata/bricks/bricks'
 require 'gooddata/bricks/middleware/aws_middleware'
 
 describe GoodData::Bricks::AWSMiddleware do
+  subject { GoodData::Bricks::AWSMiddleware.new(app: proc {}) }
+
   it 'should do nothing if the key "aws_client" is not there at all' do
     middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda {|params| 'Doing nothing'})
     middleware.call({})
@@ -41,7 +43,7 @@ describe GoodData::Bricks::AWSMiddleware do
 
   it "should preapre aws middleware for aws_client param" do
     middleware = GoodData::Bricks::AWSMiddleware.new(app: lambda do |params|
-      expect(params['aws_client']['s3_client']).to be_kind_of(AWS::S3)
+      expect(params['aws_client']['s3_client']).to be_kind_of(Aws::S3::Resource)
     end)
     middleware.call('aws_client' => {
       'secret_access_key' => 'something',
