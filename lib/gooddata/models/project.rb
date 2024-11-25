@@ -1619,6 +1619,7 @@ module GoodData
       path = options[:email_template_path]
       access_key = options[:email_template_access_key]
       secret_key = options[:email_template_secret_key]
+      region = options[:email_template_region] || 'us-west-2'
       raise "Unable to connect to AWS. Parameter \"email_template_bucket\" seems to be empty" unless bucket
       raise "Unable to connect to AWS. Parameter \"email_template_path\" is missing" unless path
       raise "Unable to connect to AWS. Parameter \"email_template_access_key\" is missing" unless access_key
@@ -1626,22 +1627,25 @@ module GoodData
       args = {
         access_key_id: access_key,
         secret_access_key: secret_key,
-        max_retries: 15,
+        retry_limit: 15,
+        region: region,
         http_read_timeout: 120,
         http_open_timeout: 120
       }
 
       server_side_encryption = options['email_server_side_encryption'] || false
       args['s3_server_side_encryption'] = :aes256 if server_side_encryption
+      args_symbolize = GoodData::Helpers.symbolize_keys(args)
 
-      s3 = Aws::S3::Resource.new(args)
+      s3 = Aws::S3::Resource.new(args_symbolize)
+      s3_client = Aws::S3::Client.new(args_symbolize)
       bucket = s3.bucket(bucket)
-      process_email_template(bucket, path)
+      process_email_template(s3_client, bucket.name, path)
     end
 
-    def process_email_template(bucket, path)
+    def process_email_template(s3_client, bucket, path)
       type = path.split('/').last.include?('.html') ? 'html' : 'txt'
-      body = bucket.object(path).read
+      body = s3_client.get_object(bucket: bucket, key: path).body.read
       body.prepend("MIME-Version: 1.0\nContent-type: text/html\n") if type == 'html'
       body
     end
