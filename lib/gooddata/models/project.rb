@@ -1651,10 +1651,16 @@ module GoodData
     end
 
     def get_email_body(template, user)
-      template.gsub('${name}', "#{user[:first_name]} #{user[:last_name]}")
+      begin
+        working_template = template.scrub.gsub('${name}', "#{user[:first_name]} #{user[:last_name]}")
               .gsub('${role}', user[:role_title].count == 1 ? user[:role_title].first : user[:role_title].to_s)
               .gsub('${user_group}', user[:user_group].count == 1 ? user[:user_group].first : user[:user_group].to_s)
               .gsub('${project}', Project[user[:pid]].title)
+      rescue => e
+        puts "Error processing mail template #{template}. Error: #{e.message}"
+        raise e
+      end
+      working_template
     end
 
     def generate_user_payload(user_uri, status = 'ENABLED', roles_uri = nil)
