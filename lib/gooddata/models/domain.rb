@@ -284,12 +284,16 @@ to new properties (email=#{user_data[:email]}, sso_provider=#{user_data[:sso_pro
               [{ type: :successful, :action => :user_changed_in_domain, user: updated_user }]
             end
           rescue RuntimeError => e
+            error_message = e.message
+            user.delete(:password)
             if !domain_user
-              GoodData.logger.error("Failed to add user=#{user_login} to domain=#{default_domain_name}. Error: #{e.message}")
+              GoodData.logger.error("Failed to add user=#{user_login} to domain=#{default_domain_name}. Error: #{error_message}")
             else
-              GoodData.logger.error("Failed to update user=#{user_login} in domain=#{default_domain_name}. Error: #{e.message}")
+              error_message = 'Invalid user data or update new password cannot be the same as old password' if error_message == '400 Bad Request'
+
+              GoodData.logger.error("Failed to update user=#{user_login} in domain=#{default_domain_name}. Error: #{error_message}")
             end
-            [{ type: :failed, :user => user, message: e }]
+            [{ type: :failed, :user => user, message: error_message }]
           end
         end
       end
