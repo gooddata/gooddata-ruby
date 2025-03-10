@@ -295,6 +295,10 @@ module GoodData
       end
 
       def perform(mode, params = {})
+        # Default setting for $pmap_default_thread_count = 20 in gooddata.rb file. We are going to decrease default
+        # number of threads count to 10 for LCM bricks only
+        $pmap_default_thread_count = 10 # rubocop:disable GlobalVars
+
         params = convert_params(params)
 
         GoodData.gd_logger.brick = mode

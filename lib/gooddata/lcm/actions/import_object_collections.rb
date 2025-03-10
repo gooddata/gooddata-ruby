@@ -20,6 +20,9 @@ module GoodData
 
         description 'Synchronization Info'
         param :synchronize, array_of(instance_of(Type::SynchronizationInfoType)), required: true, generated: true
+
+        description 'Number Of Threads'
+        param :number_of_threads, instance_of(Type::StringType), required: false, default: '10'
       end
 
       class << self
@@ -28,15 +31,16 @@ module GoodData
 
           client = params.gdc_gd_client
           development_client = params.development_client
+          number_of_threads = Integer(params.number_of_threads || '10')
 
-          params.synchronize.peach do |info|
+          params.synchronize.peach(number_of_threads) do |info|
             from = info.from
             to_projects = info.to
             transfer_uris = info.transfer_uris
 
             from_project = development_client.projects(from) || fail("Invalid 'from' project specified - '#{from}'")
 
-            to_projects.peach do |entry|
+            to_projects.peach(number_of_threads) do |entry|
               pid = entry[:pid]
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 

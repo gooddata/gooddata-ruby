@@ -74,6 +74,9 @@ module GoodData
 
         description 'Makes the brick run without altering user filters'
         param :dry_run, instance_of(Type::StringType), required: false, default: false
+
+        description 'Number Of Threads'
+        param :number_of_threads, instance_of(Type::StringType), required: false, default: '10'
       end
 
       class << self
@@ -104,6 +107,7 @@ module GoodData
           symbolized_config = GoodData::Helpers.symbolize_keys(symbolized_config)
           symbolized_config[:labels] = symbolized_config[:labels].map { |l| GoodData::Helpers.symbolize_keys(l) }
           multiple_projects_column = params.multiple_projects_column
+          number_of_threads = Integer(params.number_of_threads || '10')
 
           mode = params.sync_mode
           unless MODES.include?(mode)
@@ -196,7 +200,7 @@ module GoodData
 
             unless run_params[:do_not_touch_filters_that_are_not_mentioned]
               to_be_deleted_clients = UserBricksHelper.non_working_clients(domain_clients, working_client_ids)
-              to_be_deleted_clients.peach do |c|
+              to_be_deleted_clients.peach(number_of_threads) do |c|
                 begin
                   current_project = c.project
                   users = users_by_project[c.client_id]

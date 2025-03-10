@@ -514,7 +514,7 @@ module GoodData
       if to_create.empty?
         create_results = []
       else
-        create_results = to_create.each_slice(100).flat_map do |batch|
+        create_results = to_create.each_slice(50).flat_map do |batch|
           batch.pmapcat do |related_uri, group|
             group.each(&:save)
             res = client.get("/gdc/md/#{project.pid}/userfilters?users=#{related_uri}")
