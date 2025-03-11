@@ -33,6 +33,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads, instance_of(Type::StringType), required: false, default: '10'
       end
 
       RESULT_HEADER = %i[from to count status]
@@ -45,8 +48,9 @@ module GoodData
 
           client = params.gdc_gd_client
           development_client = params.development_client
+          number_of_threads = Integer(params.number_of_threads || '10')
 
-          params.synchronize.peach do |info|
+          params.synchronize.peach(number_of_threads) do |info|
             from_project = info.from
             to_projects = info.to
 
@@ -60,7 +64,7 @@ module GoodData
             if dataset_mapping&.dig('datasetMappings', 'items').nil? || dataset_mapping['datasetMappings']['items'].empty?
               params.gdc_logger.info "Project: '#{from.title}', PID: '#{from.pid}' has no model mapping, skip synchronizing model mapping."
             else
-              to_projects.peach do |to|
+              to_projects.peach(number_of_threads) do |to|
                 pid = to[:pid]
                 next if sync_failed_project(pid, params)
 
