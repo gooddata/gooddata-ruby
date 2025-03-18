@@ -1434,9 +1434,13 @@ module GoodData
           :crossDataCenterExport => '1'
         }
       }
-      result = client.post("#{md['maintenance']}/partialmdexport", export_payload)
+      export_uri = "/gdc/md/#{pid}/maintenance/partialmdexport"
+      GoodData.gd_logger.info("Project export action=objects_export, project_id=#{pid}, uri=#{export_uri}, export_status=start, export_objs=#{export_payload}") if GoodData.gd_logger
+
+      result = client.post(export_uri, export_payload)
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
+      GoodData.gd_logger.info("Project export action=objects_export, project_id=#{pid}, uri=#{polling_url}, export_status=polling") if GoodData.gd_logger
 
       polling_result = client.poll_on_response(polling_url, options) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
@@ -1445,6 +1449,9 @@ module GoodData
         messages = GoodData::Helpers.interpolate_error_messages(polling_result['wTaskStatus']['messages']).join(' ')
         fail ObjectsExportError, "Exporting objects failed with messages. #{messages}"
       end
+
+      GoodData.gd_logger.info("Project export action=objects_export, project_id=#{pid}, export_status=success") if GoodData.gd_logger
+
       token
     end
 
@@ -1467,8 +1474,12 @@ module GoodData
         }
       }
 
-      result = client.post("#{md['maintenance']}/partialmdimport", import_payload)
+      import_uri = "/gdc/md/#{pid}/maintenance/partialmdimport"
+      GoodData.gd_logger.info("Project import action=objects_import, project_id=#{pid}, uri=#{import_uri}, import_status=start") if GoodData.gd_logger
+
+      result = client.post(import_uri, import_payload)
       polling_url = result['uri']
+      GoodData.gd_logger.info("Project import action=objects_import, project_id=#{pid}, uri=#{polling_url}, import_status=polling") if GoodData.gd_logger
 
       polling_result = client.poll_on_response(polling_url, options) do |body|
         body['wTaskStatus'] && body['wTaskStatus']['status'] == 'RUNNING'
@@ -1478,6 +1489,9 @@ module GoodData
         messages = GoodData::Helpers.interpolate_error_messages(polling_result['wTaskStatus']['messages']).join(' ')
         fail ObjectsImportError, "Importing objects failed with messages. #{messages}"
       end
+
+      GoodData.gd_logger.info("Project import action=objects_import, project_id=#{pid}, uri=#{import_uri}, import_status=success") if GoodData.gd_logger
+
       true
     end
 

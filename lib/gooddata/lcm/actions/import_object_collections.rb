@@ -31,7 +31,7 @@ module GoodData
 
           client = params.gdc_gd_client
           development_client = params.development_client
-          number_of_threads = Integer(params.number_of_threads || '10')
+          number_of_threads = Integer(params.number_of_threads || '8')
 
           params.synchronize.peach(number_of_threads) do |info|
             from = info.from
