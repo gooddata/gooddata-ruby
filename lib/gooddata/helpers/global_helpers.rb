@@ -33,7 +33,7 @@ module GoodData
       include Hashie::Extensions::DeepMerge
     end
 
-    set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 12
+    set_const :GD_MAX_RETRY, (ENV['GD_MAX_RETRY'] && ENV['GD_MAX_RETRY'].to_i) || 14
     AES_256_CBC_CIPHER = 'aes-256-cbc'
 
     class << self
