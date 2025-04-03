@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.6.0'
   if RUBY_VERSION >= '2.6'
     s.add_development_dependency 'rubocop', '>= 1.28'
+    s.add_development_dependency 'rubocop-ast', '>= 1.24.1', '<= 1.42.0'
   else
     s.add_development_dependency 'rubocop', '~> 0.81'
   end
