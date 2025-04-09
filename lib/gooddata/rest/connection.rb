@@ -94,7 +94,7 @@ module GoodData
 
         # Retry block if exception thrown
         def retryable(options = {}, &_block)
-          opts = { :tries => 12, :on => RETRYABLE_ERRORS }.merge(options)
+          opts = { :tries => 14, :on => RETRYABLE_ERRORS }.merge(options)
 
           retry_exception = opts[:on]
           retries = opts[:tries]
@@ -118,9 +118,9 @@ module GoodData
             end
           rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable, *retry_exception => e
             sleep retry_time
-            retry_time *= RETRY_TIME_COEFFICIENT
             # Total 10 retry requests with 1.5 coefficent should take ~ 2 mins to finish
             if (retries -= 1) > 0
+              retry_time *= RETRY_TIME_COEFFICIENT
               retry
             else
               process_retry_error(e, retry_time)
