@@ -80,6 +80,8 @@ module GoodData
         prop.setProperty('schema', @schema)
         prop.setProperty('warehouse', @warehouse)
         prop.setProperty('db', @database)
+        # Add JDBC_QUERY_RESULT_FORMAT parameter to fix unsafe memory issue of Snowflake JDBC driver
+        prop.setProperty('JDBC_QUERY_RESULT_FORMAT', 'JSON')
 
         @connection = com.snowflake.client.jdbc.SnowflakeDriver.new.connect(@url, prop)
       end
