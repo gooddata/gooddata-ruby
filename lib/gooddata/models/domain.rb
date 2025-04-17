@@ -21,6 +21,7 @@ module GoodData
       'pt-BR' => 'Portuguese/Brazil',
       'pt-PT' => 'Portuguese/Portugal',
       'fr-FR' => 'French',
+      'fr-CA' => 'French',
       'de-DE' => 'German',
       'ja-JP' => 'Japanese',
       'it-IT' => 'Italian',
