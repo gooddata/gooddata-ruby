@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 2.3.2
+ - CONFIG: Support new version of activesupport library
+
 ## 2.3.1
  - BUGFIX: MSF-25977 Add missing dependencies to support jruby3.1
 
