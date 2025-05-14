@@ -1437,7 +1437,8 @@ module GoodData
       export_uri = "/gdc/md/#{pid}/maintenance/partialmdexport"
       GoodData.gd_logger.info("Project export action=objects_export, project_id=#{pid}, uri=#{export_uri}, export_status=start, export_objs=#{export_payload}") if GoodData.gd_logger
 
-      result = client.post(export_uri, export_payload)
+      # Export api will take time to finish So increasing timeout during calling the api
+      result = client.post(export_uri, export_payload, :timeout => 10)
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
       GoodData.gd_logger.info("Project export action=objects_export, project_id=#{pid}, uri=#{polling_url}, export_status=polling") if GoodData.gd_logger

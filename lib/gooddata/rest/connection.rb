@@ -58,6 +58,8 @@ module GoodData
       RETRYABLE_ERRORS = [
         Net::HTTPBadResponse,
         RestClient::InternalServerError,
+        RestClient::Exceptions::OpenTimeout,
+        RestClient::Exceptions::ReadTimeout,
         RestClient::RequestTimeout,
         RestClient::MethodNotAllowed,
         SystemCallError,
@@ -110,30 +112,31 @@ module GoodData
             raise e unless options[:refresh_token]
             raise e if options[:dont_reauth]
 
+            logging_retry_error(e, retry_time)
             options[:refresh_token].call # (dont_reauth: true)
             if (retries -= 1) > 0
               retry
             else
-              process_retry_error(e, retry_time)
+              fail e
             end
           rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable, *retry_exception => e
+            logging_retry_error(e, retry_time)
             sleep retry_time
             # Total 10 retry requests with 1.5 coefficent should take ~ 2 mins to finish
             if (retries -= 1) > 0
               retry_time *= RETRY_TIME_COEFFICIENT
               retry
             else
-              process_retry_error(e, retry_time)
+              fail e
             end
           end
           yield
         end
 
-        def process_retry_error(e, retry_time)
+        def logging_retry_error(e, retry_time)
           error_message =  "#{e.message}, retrying in #{retry_time} seconds"
           GoodData.logger.warn error_message
           GoodData.gd_logger.warn error_message
-          fail e
         end
       end
 
