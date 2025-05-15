@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-export JRUBY_OPTS=-J-Xmx2560m
+export JRUBY_OPTS=-J-XX:MaxRAMPercentage=75
 
 /bin/bash -l -c "bundle exec ./bin/run_brick.rb user_filters_brick"
