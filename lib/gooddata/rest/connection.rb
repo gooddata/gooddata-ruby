@@ -122,6 +122,12 @@ module GoodData
           rescue RestClient::TooManyRequests, RestClient::ServiceUnavailable, *retry_exception => e
             logging_retry_error(e, retry_time)
             sleep retry_time
+            if OpenSSL::SSL.const_defined?(:SSLErrorWaitReadable) && e.is_a?(OpenSSL::SSL::SSLErrorWaitReadable)
+              GoodData.gd_logger.warn "Refresh token status=start retry_time=#{retry_time}. Error: #{e.message}"
+              options[:refresh_token].call # (dont_reauth: true)
+              GoodData.gd_logger.warn "Refresh token status=success retry_time=#{retry_time}. Error: #{e.message}"
+            end
+
             # Total 10 retry requests with 1.5 coefficent should take ~ 2 mins to finish
             if (retries -= 1) > 0
               retry_time *= RETRY_TIME_COEFFICIENT
