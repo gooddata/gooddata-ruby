@@ -9,7 +9,7 @@ LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202501070635.05b6a77"
 
 # which is required by RVM
-RUN yum install -y which patch make unzip gnupg git maven procps gzip \
+RUN yum install -y gcc gcc-c++ which patch make unzip gnupg git maven procps gzip \
     && yum clean all \
     && rm -rf /var/cache/yum
 
