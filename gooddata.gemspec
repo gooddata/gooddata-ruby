@@ -27,15 +27,16 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   # s.add_development_dependency 'bundler', "~> 1.14"
   s.add_development_dependency 'license_finder', '~> 2.0'
-  s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'redcarpet', '~> 3.1' if RUBY_PLATFORM != 'java'
   s.add_development_dependency 'rspec', '~> 3.12.0'
   s.add_development_dependency 'rspec-expectations', '~> 3.12'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.6.0'
   if RUBY_VERSION >= '2.6'
+    s.add_development_dependency 'rake', '~> 13.0'
     s.add_development_dependency 'rubocop', '>= 1.28'
     s.add_development_dependency 'rubocop-ast', '>= 1.24.1', '<= 1.42.0'
   else
+    s.add_development_dependency 'rake', '~> 11.1'
     s.add_development_dependency 'rubocop', '~> 0.81'
   end
   s.add_development_dependency 'simplecov', '~> 0.12'
