@@ -179,10 +179,10 @@ module GoodData
                 hidden_params_for_this_client_schedule_name = hidden_params_for_this_client[schedule_name]
 
                 schedule.update_params(schedule_additional_params) if schedule_additional_params
-                schedule.update_params(**params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
-                schedule.update_params(**params_for_all_projects_schedule_name) if params_for_all_projects_schedule_name
+                schedule.update_params(params_for_all_schedules_in_all_projects) if params_for_all_schedules_in_all_projects
+                schedule.update_params(params_for_all_projects_schedule_name) if params_for_all_projects_schedule_name
                 schedule.update_params(params_for_all_schedules_in_this_client) if params_for_all_schedules_in_this_client
-                schedule.update_params(**params_for_this_client_schedule_name) if params_for_this_client_schedule_name
+                schedule.update_params(params_for_this_client_schedule_name) if params_for_this_client_schedule_name
 
                 schedule.update_hidden_params(schedule_additional_hidden_params) if schedule_additional_hidden_params
                 schedule.update_hidden_params(hidden_params_for_all_schedules_in_all_projects) if hidden_params_for_all_schedules_in_all_projects
