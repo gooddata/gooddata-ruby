@@ -51,7 +51,7 @@ module GoodData
     end
 
     def self.read_file(file, options = {})
-      memo = Hash[]
+      memo = {}
       if row_based?(options)
         read_data_without_header(file, memo, options)
       else
