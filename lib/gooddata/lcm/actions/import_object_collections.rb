@@ -29,6 +29,7 @@ module GoodData
         def call(params)
           results = []
 
+          GoodData.logger.info 'Starting ImportObjectCollections action'
           client = params.gdc_gd_client
           development_client = params.development_client
           number_of_threads = Integer(params.number_of_threads || '8')
@@ -45,7 +46,9 @@ module GoodData
               to_project = client.projects(pid) || fail("Invalid 'to' project specified - '#{pid}'")
 
               if transfer_uris.any?
+                logging_data(from, pid, transfer_uris, true)
                 from_project.partial_md_export(transfer_uris, project: to_project)
+                logging_data(from, pid, transfer_uris, false)
               end
 
               results << {
@@ -57,6 +60,20 @@ module GoodData
           end
 
           results
+        end
+
+        private
+
+        def logging_data(from_project, to_project, transfer_uris, start_action)
+          if start_action
+            # Logging to execution log
+            GoodData.logger.info "Starting import objects, from_project: #{from_project}, to_project: #{to_project}"
+            # Logging to Splunk log
+            GoodData.gd_logger.info "Starting import objects, action=objects_import, from_project=#{from_project}, to_project=#{to_project}, transfer_uris=#{transfer_uris}"
+          else
+            GoodData.logger.info "Success import objects, from_project: #{from_project}, to_project: #{to_project}"
+            GoodData.gd_logger.info "Success import objects, action=objects_import, from_project=#{from_project}, to_project=#{to_project}"
+          end
         end
       end
     end
