@@ -1438,7 +1438,7 @@ module GoodData
       GoodData.gd_logger.info("Project export action=objects_export, project_id=#{pid}, uri=#{export_uri}, export_status=start, export_objs=#{export_payload}") if GoodData.gd_logger
 
       # Export api will take time to finish So increasing timeout during calling the api
-      result = client.post(export_uri, export_payload, :timeout => 10)
+      result = client.post(export_uri, export_payload, :timeout => 120)
       polling_url = result['partialMDArtifact']['status']['uri']
       token = result['partialMDArtifact']['token']
       GoodData.gd_logger.info("Project export action=objects_export, project_id=#{pid}, uri=#{polling_url}, export_status=polling") if GoodData.gd_logger
@@ -1510,9 +1510,12 @@ module GoodData
     def partial_md_export(objects, options = {})
       projects = options[:project]
       batch_size = options[:batch_size] || 10
+
+      GoodData.logger.info "Starting export objects from_project: #{pid}"
       token = objects_export(objects)
       return if token.nil?
 
+      GoodData.logger.info "Starting import objects to_project: #{projects}"
       if projects.is_a?(Array)
         projects.each_slice(batch_size).flat_map do |batch|
           batch.pmap do |proj|
@@ -1532,6 +1535,7 @@ module GoodData
           result: true
         }]
       end
+      GoodData.logger.info "Success export objects from_project: #{pid}, to_project: #{projects}"
     end
 
     alias_method :transfer_objects, :partial_md_export
