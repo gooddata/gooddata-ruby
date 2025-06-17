@@ -1,7 +1,7 @@
 FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202501070635.05b6a77
 
 ARG RVM_VERSION=stable
-ARG JRUBY_VERSION=9.4.12.1
+ARG JRUBY_VERSION=9.2.5.0
 
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
@@ -9,7 +9,7 @@ LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202501070635.05b6a77"
 
 # which is required by RVM
-RUN yum install -y gcc gcc-c++ which patch make unzip gnupg git maven procps gzip \
+RUN yum install -y gcc gcc-c++ diffutils curl-minimal which patch make git maven procps \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -29,9 +29,10 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
 # Switch to a bash login shell to allow simple 'rvm' in RUN commands
 SHELL ["/bin/bash", "-l", "-c"]
 
-RUN rvm install jruby-${JRUBY_VERSION} && gem update --system \
-    && gem install bundler -v 2.4.6 \
-    && gem install rake -v 13.0.6
+RUN rvm install jruby-${JRUBY_VERSION} \
+    && gem update --system 3.3.26 \
+    && gem install bundler -v 2.3.27 \
+    && gem install rake -v 11.3.0
 
 WORKDIR /src
 

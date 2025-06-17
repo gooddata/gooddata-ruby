@@ -1510,9 +1510,12 @@ module GoodData
     def partial_md_export(objects, options = {})
       projects = options[:project]
       batch_size = options[:batch_size] || 10
+
+      GoodData.logger.info "Starting export objects from_project: #{pid}"
       token = objects_export(objects)
       return if token.nil?
 
+      GoodData.logger.info "Starting import objects to_project: #{projects}"
       if projects.is_a?(Array)
         projects.each_slice(batch_size).flat_map do |batch|
           batch.pmap do |proj|
@@ -1532,6 +1535,7 @@ module GoodData
           result: true
         }]
       end
+      GoodData.logger.info "Success export objects from_project: #{pid}, to_project: #{projects}"
     end
 
     alias_method :transfer_objects, :partial_md_export
