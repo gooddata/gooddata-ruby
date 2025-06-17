@@ -1,15 +1,15 @@
-FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202501070635.05b6a77
+FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jdk-centos9:202506091345.d3f7c0db
 
 ARG RVM_VERSION=stable
-ARG JRUBY_VERSION=9.4.12.1
+ARG JRUBY_VERSION=9.2.5.0
 
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202501070635.05b6a77"
+LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-8-jdk-centos9:202506091345.d3f7c0db"
 
 # which is required by RVM
-RUN yum install -y gcc gcc-c++ which patch make unzip gnupg git maven procps gzip \
+RUN yum install -y gcc gcc-c++ diffutils curl-minimal which patch make git maven procps \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -29,9 +29,14 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
 # Switch to a bash login shell to allow simple 'rvm' in RUN commands
 SHELL ["/bin/bash", "-l", "-c"]
 
-RUN rvm install jruby-${JRUBY_VERSION} && gem update --system \
-    && gem install bundler -v 2.4.6 \
-    && gem install rake -v 13.0.6
+RUN rvm install jruby-${JRUBY_VERSION} \
+    && gem update --system 3.3.26 \
+    && gem install bundler -v 2.3.27 \
+    && gem install jruby-launcher -v 2.0.1 \
+    && gem install rake -v 11.3.0
+
+# Make sure java default running with java8
+RUN update-alternatives --set java java-1.8.0-openjdk.x86_64
 
 WORKDIR /src
 
@@ -76,6 +81,9 @@ RUN mvn -f ci/mysql/pom.xml clean install -P binary-packaging
 RUN cp -rf ci/mysql/target/*.jar ./lib/gooddata/cloud_resources/mysql/drivers/
 
 RUN bundle install
+
+# Check to make sure Java version is always Java8
+RUN java_version=$(java -version 2>&1) && echo "$java_version" | grep 'version.*1.8' || (echo "Java version is not 1.8" && exit 1)
 
 ARG GIT_COMMIT=unspecified
 ARG BRICKS_VERSION=unspecified
