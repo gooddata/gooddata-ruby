@@ -1,13 +1,13 @@
 microservices:
   lcm-bricks:
     docker:
-      dockerfile: './Dockerfile'
+      dockerfile: './DockerfileOldImage'
       # specifies whether promote image to M3 image tag when release LCM. Default always promote image. Don't remote
       # image when promoteImage configure false
-      promoteImage: false
+      promoteImage: true
       # specifies whether run register pipeline components for the image when promote image. Default always run register
       # pipeline components. Don't run register when registerPipelineComponentsWhenPromote configure false
-      registerPipelineComponentsWhenPromote: false
+      registerPipelineComponentsWhenPromote: true
       argumentsFromFiles:
         BRICKS_VERSION: 'VERSION'
   lcm-bricks-nextversion:
@@ -15,7 +15,7 @@ microservices:
       dockerfile: './Dockerfile'
       # specifies whether promote image to M3 image tag when release LCM. Default always promote image. Don't remote
       # image when promoteImage configure false
-      promoteImage: true
+      promoteImage: false
       # specifies whether run register pipeline components for the image when promote image. Default always run register
       # pipeline components. Don't run register when registerPipelineComponentsWhenPromote configure false
       registerPipelineComponentsWhenPromote: false
