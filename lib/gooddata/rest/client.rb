@@ -25,7 +25,7 @@ module GoodData
       # Constants
       #################################
       DEFAULT_CONNECTION_IMPLEMENTATION = GoodData::Rest::Connection
-      DEFAULT_SLEEP_INTERVAL = 10
+      DEFAULT_SLEEP_INTERVAL = 10 # 10 seconds
       DEFAULT_POLL_TIME_LIMIT = 5 * 60 * 60 # 5 hours
 
       #################################
@@ -353,6 +353,11 @@ module GoodData
           end
           sleep retry_time
           retry_time *= GoodData::Rest::Connection::RETRY_TIME_COEFFICIENT
+          # Polling response will wait result from calling APIs. So don't need wait a long time for each polling
+          if retry_time > DEFAULT_SLEEP_INTERVAL
+            retry_time = DEFAULT_SLEEP_INTERVAL
+          end
+
           GoodData::Rest::Client.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { connection.refresh_token }) do
             response = get(link, process: process)
           end

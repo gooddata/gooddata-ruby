@@ -71,6 +71,7 @@ describe 'Behavior during polling and retries' do
       before do
         GoodData::Rest::Connection::RETRY_TIME_INITIAL_VALUE = 1
         GoodData::Rest::Connection::RETRY_TIME_COEFFICIENT = 1.5
+        GoodData::Rest::Client::DEFAULT_SLEEP_INTERVAL = 10
       end
 
       it 'retries after an increasing interval' do
