@@ -61,6 +61,7 @@ module GoodData
 
       class << self
         def call(params)
+          GoodData.logger.info 'Starting SynchronizeClients action'
           client = params.gdc_gd_client
 
           domain_name = params.organization || params.domain
@@ -91,7 +92,9 @@ module GoodData
             segment.master_project = master
             segment.save
 
+            GoodData.logger.info "Starting synchronize clients for segment: '#{segment.segment_id}' with master workspace: '#{current_master[:master_project_id]}'"
             res = segment.synchronize_clients
+            GoodData.logger.info "Finish synchronize clients for segment: '#{segment.segment_id}'"
 
             sync_result = res.json['synchronizationResult']
             failed_count = sync_result['failedClients']['count']
