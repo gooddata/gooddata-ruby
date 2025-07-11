@@ -50,6 +50,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Synchronize clients time limit'
+        param :sync_clients_timeout, instance_of(Type::StringType), required: false
       end
 
       RESULT_HEADER = [
@@ -70,6 +73,8 @@ module GoodData
           data_product = params.data_product
           domain_segments = domain.segments(:all, data_product)
           keep_only_previous_masters_count = Integer(params.keep_only_previous_masters_count || "-1")
+          sync_clients_options = {}
+          sync_clients_options = sync_clients_options.merge(:time_limit => Integer(params.sync_clients_timeout)) if params.sync_clients_timeout
 
           segments = params.segments.map do |seg|
             domain_segments.find do |s|
@@ -93,7 +98,7 @@ module GoodData
             segment.save
 
             GoodData.logger.info "Starting synchronize clients for segment: '#{segment.segment_id}' with master workspace: '#{current_master[:master_project_id]}'"
-            res = segment.synchronize_clients
+            res = segment.synchronize_clients(sync_clients_options)
             GoodData.logger.info "Finish synchronize clients for segment: '#{segment.segment_id}'"
 
             sync_result = res.json['synchronizationResult']

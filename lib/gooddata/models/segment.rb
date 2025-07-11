@@ -193,13 +193,14 @@ module GoodData
 
     # Runs async process that walks through segments and provisions projects if necessary.
     #
+    # @param options [Hash] Options
     # @return [Array] Returns array of results
-    def synchronize_clients
+    def synchronize_clients(options = {})
       sync_uri = SYNCHRONIZE_URI % [domain.obj_id, data_product.data_product_id, id]
       res = client.post sync_uri, nil
 
       # wait until the instance is created
-      res = client.poll_on_response(res['asyncTask']['links']['poll'], :sleep_interval => 1) do |r|
+      res = client.poll_on_response(res['asyncTask']['links']['poll'], options.merge(:sleep_interval => 1)) do |r|
         r['synchronizationResult'].nil?
       end
 
