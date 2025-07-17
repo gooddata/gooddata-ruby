@@ -15,6 +15,14 @@ Dir.glob(base + 'drivers/*.jar').each do |file|
   require file unless file.start_with?('lcm-snowflake-driver')
 end
 
+java_import 'java.io.StringReader'
+java_import 'org.bouncycastle.openssl.PEMParser'
+java_import 'org.bouncycastle.jce.provider.BouncyCastleProvider'
+java_import 'org.bouncycastle.asn1.pkcs.PrivateKeyInfo'
+java_import 'org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo'
+java_import 'org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder'
+java_import 'org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter'
+
 module GoodData
   module CloudResources
     class SnowflakeClient < CloudResourceClient
@@ -75,11 +83,19 @@ module GoodData
         GoodData.logger.info "Setting up connection to Snowflake #{@url}"
 
         prop = java.util.Properties.new
-        prop.setProperty('user', @authentication['basic']['userName'])
-        prop.setProperty('password', @authentication['basic']['password'])
         prop.setProperty('schema', @schema)
         prop.setProperty('warehouse', @warehouse)
         prop.setProperty('db', @database)
+
+        if @authentication['keyPair']
+          prop.setProperty('user', @authentication['keyPair']['userName'])
+          private_key_str = build_private_key(@authentication['keyPair']['privateKey'], @authentication['keyPair']['passPhrase'])
+          prop.setProperty('private_key_base64', private_key_str)
+        else
+          prop.setProperty('user', @authentication['basic']['userName'])
+          prop.setProperty('password', @authentication['basic']['password'])
+        end
+
         # Add JDBC_QUERY_RESULT_FORMAT parameter to fix unsafe memory issue of Snowflake JDBC driver
         prop.setProperty('JDBC_QUERY_RESULT_FORMAT', 'JSON')
 
@@ -99,6 +115,42 @@ module GoodData
 
         url
       end
+
+      private
+
+      def build_private_key(private_key_string, pass_phrase)
+        java.security.Security.removeProvider("BC")
+        java.security.Security.addProvider(BouncyCastleProvider.new)
+
+        begin
+          pem_parser = PEMParser.new(StringReader.new(private_key_string))
+          pem_object = pem_parser.readObject
+
+          if pem_object.is_a?(PKCS8EncryptedPrivateKeyInfo)
+            builder = JceOpenSSLPKCS8DecryptorProviderBuilder.new
+            decryptor = builder.build(pass_phrase.to_java.to_char_array)
+            private_key_info = pem_object.decryptPrivateKeyInfo(decryptor)
+          else pem_object.is_a?(PrivateKeyInfo)
+            private_key_info = pem_object
+          end
+
+        ensure
+          pem_parser&.close
+        end
+
+        converter = JcaPEMKeyConverter.new
+        private_key = converter.getPrivateKey(private_key_info)
+        pem_str = convert_private_key(private_key)
+        java.util.Base64.getEncoder.encodeToString(pem_str.encode('UTF-8').bytes)
+      end
+
+      def convert_private_key(private_key)
+        pem = "-----BEGIN PRIVATE KEY-----\n"
+        encoder = java.util.Base64.getMimeEncoder(64, "\n".to_java_bytes)
+        base64 = encoder.encodeToString(private_key.getEncoded)
+        "#{pem}#{base64}\n-----END PRIVATE KEY-----"
+      end
+
     end
   end
 end
