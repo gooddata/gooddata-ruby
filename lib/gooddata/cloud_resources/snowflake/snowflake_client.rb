@@ -130,7 +130,7 @@ module GoodData
             builder = JceOpenSSLPKCS8DecryptorProviderBuilder.new
             decryptor = builder.build(pass_phrase.to_java.to_char_array)
             private_key_info = pem_object.decryptPrivateKeyInfo(decryptor)
-          else pem_object.is_a?(PrivateKeyInfo)
+          elsif pem_object.is_a?(PrivateKeyInfo)
             private_key_info = pem_object
           end
 
