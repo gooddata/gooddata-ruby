@@ -166,7 +166,7 @@ module GoodData
 
         dir = Dir.mktmpdir
         begin
-          Zip::File.open("#{dir}/upload.zip", Zip::File::CREATE) do |zip|
+          Zip::File.open("#{dir}/upload.zip", create: true) do |zip|
             # TODO: make sure schema columns match CSV column names
             zip.get_output_stream('upload_info.json') { |f| f.puts JSON.pretty_generate(manifest) }
 
