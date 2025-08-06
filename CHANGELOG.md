@@ -1,5 +1,8 @@
 # GoodData Ruby SDK Changelog
 
+## 2.3.3
+ - FEATURE: GRIF-312 Support Snowflake key paid authentication 
+
 ## 2.3.2
  - CONFIG: Support new version of activesupport library
 
