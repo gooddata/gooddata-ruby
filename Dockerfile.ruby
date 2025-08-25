@@ -13,6 +13,18 @@ RUN gem update --system \
     && gem install --install-dir $BUNDLE_PATH bundler -v 2.4.6 \
     && gem install --install-dir $BUNDLE_PATH rake -v 13.0.6
 
+# build postgresql dependencies
+RUN mvn -f ci/postgresql/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/postgresql/target/*.jar ./lib/gooddata/cloud_resources/postgresql/drivers/
+
+# build mssql dependencies
+RUN mvn -f ci/mssql/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/mssql/target/*.jar ./lib/gooddata/cloud_resources/mssql/drivers/
+
+# build mysql dependencies
+RUN mvn -f ci/mysql/pom.xml clean install -P binary-packaging
+RUN cp -rf ci/mysql/target/*.jar ./lib/gooddata/cloud_resources/mysql/drivers/
+
 ADD . .
 
 CMD ["./bin/gooddata"]
