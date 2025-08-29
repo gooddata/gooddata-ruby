@@ -31,6 +31,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_migrate_dates, instance_of(Type::StringType), required: false, default: '10'
       end
 
       RESULT_HEADER = %i[from to status]
@@ -53,6 +56,7 @@ module GoodData
         def migrate_date_dimension(params, segment_info)
           results = []
           client = params.gdc_gd_client
+          number_of_threads = Integer(params.number_of_threads_migrate_dates || '10')
           latest_blueprint = segment_info[:from_blueprint]
           # don't migrate when latest master doesn't contain custom v2 date.
           return results unless contain_v2?(latest_blueprint)
@@ -64,7 +68,7 @@ module GoodData
             collect_synced_status = collect_synced_status(params)
             failed_projects = ThreadSafe::Array.new
 
-            segment_info[:to].pmap do |entry|
+            segment_info[:to].pmap(number_of_threads) do |entry|
               pid = entry[:pid]
               next if sync_failed_project(pid, params)
 
