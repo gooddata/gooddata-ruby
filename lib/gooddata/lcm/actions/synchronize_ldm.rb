@@ -57,6 +57,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_synchronize_ldm, instance_of(Type::StringType), required: false, default: '10'
       end
 
       RESULT_HEADER = %i[from to status]
@@ -91,6 +94,9 @@ module GoodData
           exclude_fact_rule = params.exclude_fact_rule.to_b
           include_deprecated = params.include_deprecated.to_b
           update_preference = params[:update_preference]
+          number_of_threads = Integer(params.number_of_threads_synchronize_ldm || '10')
+          GoodData.logger.info "Number of threads using synchronize logical data model #{number_of_threads}"
+
           exist_fallback_to_hard_sync_config = !update_preference.nil? && !update_preference[:fallback_to_hard_sync].nil?
           include_maql_fallback_hard_sync = exist_fallback_to_hard_sync_config && Helpers.to_bool('fallback_to_hard_sync', update_preference[:fallback_to_hard_sync])
 
@@ -141,7 +147,7 @@ to force synchronize LDM to clients"
             end
           end
 
-          segment_info[:to] = segment_info[:to].pmap do |entry|
+          segment_info[:to] = segment_info[:to].pmap(number_of_threads) do |entry|
             update_status = true
             pid = entry[:pid]
             next if sync_failed_project(pid, params)
