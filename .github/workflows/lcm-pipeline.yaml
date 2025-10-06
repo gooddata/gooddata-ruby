@@ -76,7 +76,7 @@ jobs:
     strategy:
       matrix:
         image: ${{ fromJSON(needs.prepare-build.outputs.images) }}
-    uses: gooddata/github-actions/.github/workflows/ii-dockerfile-validation.yaml@master
+    uses: ./.github/workflows/dockerfile-validation.yaml
     with:
       image: ${{ matrix.image }}
     secrets: inherit
@@ -87,7 +87,7 @@ jobs:
     strategy:
       matrix:
         chart: ${{ fromJSON(needs.prepare-build.outputs.charts) }}
-    uses: gooddata/github-actions/.github/workflows/ii-chart-validation.yaml@master
+    uses: ./.github/workflows/chart-validation.yaml
     with:
       base_branch: ${{ inputs.base_branch }}
       chart: ${{ matrix.chart }}
@@ -130,7 +130,7 @@ jobs:
             fi
             )" >> $GITHUB_OUTPUT
       - name: Build docker image
-        uses: gooddata/github-actions/ecr/container-build-push@master
+        uses: ./.github/actions/container-build-push
         with:
           ecr-repos: ${{ inputs.deploy && format('staging/{0}', matrix.component) || format('gdc-testing/{0}', matrix.component) }}
           aws-creds-vault-role: ${{ inputs.deploy && 'ecr-ii-push' || 'ecr-push-testing' }}
@@ -170,7 +170,7 @@ jobs:
           submodules: 'true'
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
       - name: Build helm chart
-        uses: gooddata/github-actions/ecr/helm-push@master
+        uses: ./.github/actions/helm-push
         with:
           aws-creds-vault-role: ${{ inputs.deploy && 'ecr-ii-push' || 'ecr-push-testing' }}
           vault-url: '${{ secrets.VAULT_ADDRESS }}'
@@ -189,7 +189,7 @@ jobs:
         needs.helm-charts-build.result != 'skipped'
       ) &&
       inputs.deploy
-    uses: gooddata/github-actions/.github/workflows/ii-build-helmreleases.yaml@master
+    uses: ./.github/workflows/build-helmreleases.yaml
     with:
       charts: ${{ needs.prepare-build.outputs.charts }}
       images: ${{ needs.prepare-build.outputs.images }}
@@ -203,7 +203,7 @@ jobs:
       !contains(needs.*.result, 'failure') &&
       needs.build-helmreleases.result == 'success' &&
       inputs.deploy
-    uses: gooddata/github-actions/.github/workflows/ii-create-gitops-deployments-pr.yaml@master
+    uses: ./.github/workflows/create-gitops-deployments-pr.yaml
     with:
       is_staging: true
       helm_releases: ${{ needs.build-helmreleases.outputs.helmreleases }}
@@ -220,7 +220,7 @@ jobs:
     strategy:
       matrix:
         hr: ${{ fromJson(needs.build-helmreleases.outputs.staging_helmreleases) }}
-    uses: gooddata/github-actions/.github/workflows/ii-wait-for-deployment.yaml@master
+    uses: ./.github/workflows/wait-for-deployment.yaml
     with:
       namespace: ${{ matrix.hr.namespace }}
       release_name: ${{ matrix.hr.releasename }}
@@ -233,7 +233,7 @@ jobs:
       !cancelled() &&
       needs.wait-for-deployment.result == 'failure' &&
       inputs.deploy
-    uses: gooddata/github-actions/.github/workflows/ii-revert-staging-pr.yaml@master
+    uses: ./.github/workflows/revert-staging-pr.yaml
     with:
       commit_hash: ${{ needs.create-staging-pr.outputs.commit_hash }}
       original_pr_title: ${{ needs.create-staging-pr.outputs.pr_title }}
@@ -246,7 +246,7 @@ jobs:
       !contains(needs.*.result, 'failure') &&
       needs.build-helmreleases.result == 'success' &&
       inputs.deploy
-    uses: gooddata/github-actions/.github/workflows/ii-promote-to-stable.yaml@master
+    uses: ./.github/workflows/promote-to-stable.yaml
     with:
       images: ${{ needs.prepare-build.outputs.images }}
       charts: ${{ needs.build-helmreleases.outputs.built_charts }}
@@ -264,7 +264,7 @@ jobs:
     strategy:
       matrix:
         cluster: ${{ fromJson(needs.build-helmreleases.outputs.updated_prod_cluster_names) }}
-    uses: gooddata/github-actions/.github/workflows/ii-create-gitops-deployments-pr.yaml@master
+    uses: ./.github/workflows/create-gitops-deployments-pr.yaml
     with:
       is_staging: false
       is_auto_merge: true
@@ -281,7 +281,7 @@ jobs:
       needs.build-helmreleases.result == 'success' &&
       !inputs.AUTO_MERGE &&
       inputs.deploy
-    uses: gooddata/github-actions/.github/workflows/ii-create-gitops-deployments-pr.yaml@master
+    uses: ./.github/workflows/create-gitops-deployments-pr.yaml
     with:
       is_staging: false
       is_auto_merge: false
@@ -296,7 +296,7 @@ jobs:
       !contains(needs.*.result, 'failure') &&
       needs.build-helmreleases.result == 'success'  &&
       inputs.deploy
-    uses: gooddata/github-actions/.github/workflows/ii-create-pr-comment.yaml@master
+    uses: ./.github/workflows/create-pr-comment.yaml
     with:
       auto_merge: ${{ inputs.AUTO_MERGE }}
       updated_prod_cluster_names: ${{ needs.build-helmreleases.outputs.updated_prod_cluster_names }}
