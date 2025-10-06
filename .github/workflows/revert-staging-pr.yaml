@@ -1,0 +1,70 @@
+name: Revert staging PR
+on:
+  workflow_call:
+    inputs:
+      commit_hash:
+        description: "Hash of the commit to revert"
+        required: true
+        type: string
+      original_pr_title:
+        description: "Title of the original PR to revert"
+        required: true
+        type: string
+
+jobs:
+  revert-staging-pr:
+    runs-on:
+      group: stg1-runners-arc
+      labels: runners-small
+    steps:
+      - name: Checkout gitops-deployments
+        uses: actions/checkout@v5
+        with:
+          repository: gooddata/gitops-deployments
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+          fetch-depth: 0
+
+      - name: Prepare PR metadata
+        id: prepare-pr-metadata
+        run: |
+          repo_name=$(basename "$GITHUB_REPOSITORY")
+
+          branch_name="${repo_name}/${{ inputs.commit_hash }}/revert"
+          commit_message="Revert of ${{ inputs.original_pr_title }}"
+          pr_title="Revert of ${{ inputs.original_pr_title }}"
+          pr_body="This PR reverts the previous deployment to the staging cluster.
+          Reverted commit: https://github.com/gooddata/gitops-deployments/commit/${{ inputs.original_pr_title }}
+          Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
+          echo "commit_message=$commit_message" >> $GITHUB_OUTPUT
+          echo "pr_title=$pr_title" >> $GITHUB_OUTPUT
+          echo "pr_body<<EOF" >> $GITHUB_OUTPUT
+          echo "$pr_body" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Revert staging PR
+        run: |
+          git config --global user.email "infra+yenkins-admin@gooddata.com"
+          git config --global user.name "yenkins-admin"
+
+          git checkout -b "${{ steps.prepare-pr-metadata.outputs.branch_name }}"
+          git revert --no-commit "${{ inputs.commit_hash }}"
+          git commit -m "${{ steps.prepare-pr-metadata.outputs.commit_message }}"
+          git push origin "${{ steps.prepare-pr-metadata.outputs.branch_name }}"
+
+      - name: Create revert PR
+        run: |
+          gh pr create \
+            --title "${{ steps.prepare-pr-metadata.outputs.pr_title }}" \
+            --body "${{ steps.prepare-pr-metadata.outputs.pr_body }}" \
+            --base master \
+            --head "${{ steps.prepare-pr-metadata.outputs.branch_name }}"
+          gh pr merge --merge --auto
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+
+      - name: Approve the PR as yenkins-admin
+        run: gh pr review --approve
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS_ADMIN }}
