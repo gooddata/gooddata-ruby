@@ -33,6 +33,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_synchronize_ldm_layout, instance_of(Type::StringType), required: false, default: '10'
       end
 
       RESULT_HEADER = %i[from to status]
@@ -45,6 +48,8 @@ module GoodData
           development_client = params.development_client
           gdc_logger = params.gdc_logger
           collect_synced_status = collect_synced_status(params)
+          number_of_threads = Integer(params.number_of_threads_synchronize_ldm_layout || '10')
+          GoodData.logger.info "Number of threads using synchronize ldm layout #{number_of_threads}" if number_of_threads != 10
           failed_projects = ThreadSafe::Array.new
 
           params.synchronize.peach do |info|
@@ -64,7 +69,7 @@ module GoodData
             if from_ldm_layout&.dig('ldmLayout', 'layout').nil? || from_ldm_layout['ldmLayout']['layout'].empty?
               gdc_logger.info "Project: '#{from_title}', PID: '#{from_pid}' has no ldm layout, skip synchronizing ldm layout."
             else
-              to_projects.peach do |to|
+              to_projects.peach(number_of_threads) do |to|
                 pid = to[:pid]
                 to_project = client.projects(pid)
                 unless to_project

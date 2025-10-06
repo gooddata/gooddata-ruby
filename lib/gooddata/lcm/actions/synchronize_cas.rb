@@ -41,6 +41,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_synchronize_cas, instance_of(Type::StringType), required: false, default: '10'
       end
 
       class << self
@@ -57,6 +60,8 @@ module GoodData
           client = params.gdc_gd_client
           collect_synced_status = collect_synced_status(params)
           failed_projects = ThreadSafe::Array.new
+          number_of_threads = Integer(params.number_of_threads_synchronize_cas || '10')
+          GoodData.logger.info "Number of threads using synchronize computed attributes #{number_of_threads}" if number_of_threads != 10
 
           params.synchronize.each do |info|
             from = info.from
@@ -64,7 +69,7 @@ module GoodData
 
             params.gdc_logger.info "Synchronize Computed Attributes from project pid: #{from}"
 
-            to_projects.peach do |entry|
+            to_projects.peach(number_of_threads) do |entry|
               ca_scripts = entry[:ca_scripts]
               next unless ca_scripts
 

@@ -42,6 +42,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_synchronize_pp_dashboard_permissions, instance_of(Type::StringType), required: false, default: '10'
       end
 
       class << self
@@ -49,6 +52,8 @@ module GoodData
           results = []
           disable_pp_dashboard_permission = GoodData::Helpers.to_boolean(params.disable_pp_dashboard_permission)
           collect_synced_status = collect_synced_status(params)
+          number_of_threads = Integer(params.number_of_threads_synchronize_pp_dashboard_permissions || '10')
+          GoodData.logger.info "Number of threads using synchronize pixel perfect dashboard permissions #{number_of_threads}" if number_of_threads != 10
           failed_projects = ThreadSafe::Array.new
 
           if disable_pp_dashboard_permission
@@ -72,7 +77,7 @@ module GoodData
               source_dashboards = from.dashboards
 
               params.gdc_logger.info "Transferring Pixel Perfect Dashboard permission, from project: '#{from.title}', PID: '#{from.pid}' for dashboard(s): #{source_dashboards.map { |d| "#{d.title.inspect}" }.join(', ')}" # rubocop:disable Metrics/LineLength
-              to_projects.peach do |entry|
+              to_projects.peach(number_of_threads) do |entry|
                 pid = entry[:pid]
                 next if sync_failed_project(pid, params)
 

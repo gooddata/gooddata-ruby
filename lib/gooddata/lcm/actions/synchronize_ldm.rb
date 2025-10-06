@@ -95,7 +95,7 @@ module GoodData
           include_deprecated = params.include_deprecated.to_b
           update_preference = params[:update_preference]
           number_of_threads = Integer(params.number_of_threads_synchronize_ldm || '10')
-          GoodData.logger.info "Number of threads using synchronize logical data model #{number_of_threads}"
+          GoodData.logger.info "Number of threads using synchronize logical data model #{number_of_threads}" if number_of_threads != 10
 
           exist_fallback_to_hard_sync_config = !update_preference.nil? && !update_preference[:fallback_to_hard_sync].nil?
           include_maql_fallback_hard_sync = exist_fallback_to_hard_sync_config && Helpers.to_bool('fallback_to_hard_sync', update_preference[:fallback_to_hard_sync])

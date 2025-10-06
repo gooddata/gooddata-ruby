@@ -57,7 +57,7 @@ module GoodData
           results = []
           client = params.gdc_gd_client
           number_of_threads = Integer(params.number_of_threads_migrate_dates || '10')
-          GoodData.logger.info "Number of threads using migration dates #{number_of_threads}"
+          GoodData.logger.info "Number of threads using migration dates #{number_of_threads}" if number_of_threads != 10
           latest_blueprint = segment_info[:from_blueprint]
           # don't migrate when latest master doesn't contain custom v2 date.
           return results unless contain_v2?(latest_blueprint)

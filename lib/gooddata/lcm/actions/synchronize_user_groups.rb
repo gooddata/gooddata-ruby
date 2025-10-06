@@ -36,6 +36,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_synchronize_user_groups, instance_of(Type::StringType), required: false, default: '10'
       end
 
       class << self
@@ -46,6 +49,8 @@ module GoodData
 
           client = params.gdc_gd_client
           development_client = params.development_client
+          number_of_threads = Integer(params.number_of_threads_synchronize_user_groups || '10')
+          GoodData.logger.info "Number of threads using synchronize user groups #{number_of_threads}" if number_of_threads != 10
 
           params.synchronize.peach do |info|
             from_project = info.from
@@ -57,7 +62,7 @@ module GoodData
               next
             end
 
-            to_projects.peach do |entry|
+            to_projects.peach(number_of_threads) do |entry|
               pid = entry[:pid]
               next if sync_failed_project(pid, params)
 
