@@ -1,0 +1,76 @@
+name: Promote charts and images to stable
+on:
+  workflow_call:
+    inputs:
+      images:
+        description: "List of images to promote"
+        required: true
+        type: string
+      charts:
+        description: "Dict containing charts to promote"
+        required: true
+        type: string
+      image_tag:
+        description: "Tag of the images to promote"
+        required: true
+        type: string
+
+jobs:
+  promote-to-stable:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    env:
+      INFRA_REPO_URL: ${{ secrets.ECR_URL }}
+    steps:
+      - name: Get required Vault secrets
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDRESS }}
+          method: jwt
+          path: jwt/github
+          role: ecr-ii-push
+          secrets: |
+            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_access_key | AWS_ACCESS_KEY ;
+            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_secret_key | AWS_SECRET_KEY ;
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+
+      - name: Promote images
+        run: |
+          built_images='${{ inputs.images }}'
+          tag=${{ inputs.image_tag }}
+          for image in $(echo "$built_images" | jq -r '.[]'); do
+            crane cp \
+              "${INFRA_REPO_URL}/staging/${image}:${tag}" \
+              "${INFRA_REPO_URL}/stable/${image}:${tag}"
+            crane cp \
+              "${INFRA_REPO_URL}/staging/${image}:latest" \
+              "${INFRA_REPO_URL}/stable/${image}:latest"
+
+            echo "Promoted image ${image} to stable"
+          done
+
+      - name: Promote charts
+        run: |
+          built_charts='${{ inputs.charts }}'
+          for chart in $(echo "$built_charts" | jq -c '.[]'); do
+            name=$(echo "$chart" | jq -r '.name')
+            version=$(echo "$chart" | jq -r '.version')
+
+            crane cp \
+              "${INFRA_REPO_URL}/helm/gooddata/bear/staging/${name}:${version}" \
+              "${INFRA_REPO_URL}/helm/gooddata/bear/stable/${name}:${version}"
+
+            echo "Promoted chart ${name}:${version} to stable"
+          done
