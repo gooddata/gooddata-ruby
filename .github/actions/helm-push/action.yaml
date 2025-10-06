@@ -1,0 +1,106 @@
+---
+# yamllint disable rule:line-length
+name: "ecr-helm-push"
+description: "Package a Helm chart and upload to ECR"
+inputs:
+  aws-creds-vault-path:
+    default: secret/data/v2/data-special/infra1-user-ecr-rw
+    description: "Vault path to AWS credentials used for helm push"
+    type: string
+  aws-creds-vault-role:
+    description: "Vault auth role for reading AWS credentials"
+    type: string
+    required: true
+  aws-region:
+    default: "us-east-1"
+    description: "AWS region to use for ECR"
+    type: string
+  ecr-repo-prefix:
+    description: "Repository prefix (without Chart name)"
+    type: string
+    required: true
+  ecr-url:
+    description: "ECR registry default URL (without prefix/suffix)"
+    type: string
+    required: true
+  path:
+    description: "Path to directory containing Chart.yaml"
+    required: true
+    type: string
+  package-destination:
+    default: "."
+    description: "Where to put helm-built package"
+    type: string
+  package-app-version:
+    default: ""
+    description: "Application version"
+    type: string
+  package-version:
+    default: ""
+    description: "Helm chart version - used by `helm package`"
+    type: string
+  vault-url:
+    description: "Vault API URL (default okay in almost all cases)"
+    required: true
+  checkout-code:
+    default: "true"
+    description: "Checkout fresh code from repository"
+    type: string
+  dependency-update:
+    default: "true"
+    description: "Run helm dependency update before packaging"
+    type: string
+  dry-run:
+    default: "false"
+    type: string
+    description: "Dry-run (do not upload to ECR)"
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      if: ${{ inputs.checkout-code == 'true' }}
+      uses: actions/checkout@v5
+    - name: Install helm binary
+      uses: azure/setup-helm@v4
+      with:
+        version: 'v3.12.1'
+    - name: Get required Vault secrets
+      if: ${{ inputs.dry-run == 'false' }}
+      id: secrets
+      uses: hashicorp/vault-action@v3
+      with:
+        url: ${{ inputs.vault-url }}
+        method: jwt
+        path: jwt/github
+        role: ${{ inputs.aws-creds-vault-role }}
+        secrets: |
+          ${{ inputs.aws-creds-vault-path }} aws_ecr_access_key | AWS_ACCESS_KEY ;
+          ${{ inputs.aws-creds-vault-path }} aws_ecr_secret_key | AWS_SECRET_KEY ;
+    - name: Configure AWS credentials
+      if: ${{ inputs.dry-run == 'false' }}
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+        aws-region: ${{ inputs.aws-region }}
+    - name: Login to Amazon ECR
+      if: ${{ inputs.dry-run == 'false' }}
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    - name: Package chart
+      id: package-chart
+      env:
+        DESTINATION: ${{ inputs.package-destination }}
+        APP_VERSION: ${{ inputs.package-app-version }}
+        VERSION: ${{ inputs.package-version }}
+      run: |
+        # helm package doesn't allow custom target name, so we have to parse it this way
+        pkgfile=$(helm package ${DESTINATION:+--destination $DESTINATION} ${APP_VERSION:+--app-version $APP_VERSION} ${VERSION:+--version $VERSION} ${{ inputs.dependency-update == 'true' && '--dependency-update' || '' }} ${{ inputs.path }} | tee | awk '{print $NF}')
+        echo "pkgfile=$pkgfile" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Push chart to ECR
+      if: ${{ inputs.dry-run == 'false' }}
+      run: |
+        helm push ${{ steps.package-chart.outputs.pkgfile }} oci://${{ inputs.ecr-url }}/${{ inputs.ecr-repo-prefix }}
+        echo "Pushed ${{ steps.package-chart.outputs.pkgfile }} to oci://${{ inputs.ecr-url }}/${{ inputs.ecr-repo-prefix }}" >> $GITHUB_STEP_SUMMARY
+      shell: bash
