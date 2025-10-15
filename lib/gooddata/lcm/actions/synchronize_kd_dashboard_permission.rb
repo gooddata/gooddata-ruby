@@ -40,6 +40,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_synchronize_kd_dashboard_permissions, instance_of(Type::StringType), required: false, default: '10'
       end
 
       class << self
@@ -49,6 +52,8 @@ module GoodData
           failed_projects = ThreadSafe::Array.new
 
           disable_kd_dashboard_permission = GoodData::Helpers.to_boolean(params.disable_kd_dashboard_permission)
+          number_of_threads = Integer(params.number_of_threads_synchronize_kd_dashboard_permissions || '10')
+          GoodData.logger.info "Number of threads using synchronize KD dashboard permissions #{number_of_threads}" if number_of_threads != 10
 
           # rubocop:disable Style/UnlessElse
           unless disable_kd_dashboard_permission
@@ -69,7 +74,7 @@ module GoodData
               from_dashboards = from_project.analytical_dashboards
 
               params.gdc_logger.info "Transferring #{dashboard_type} Dashboard permission, from project: '#{from_project.title}', PID: '#{from_project.pid}' for dashboard(s): #{from_dashboards.map { |d| "#{d.title.inspect}" }.join(', ')}" # rubocop:disable Metrics/LineLength
-              to_projects_info.peach do |item|
+              to_projects_info.peach(number_of_threads) do |item|
                 to_project_pid = item[:pid]
                 next if sync_failed_project(to_project_pid, params)
 

@@ -53,6 +53,9 @@ module GoodData
 
         description 'Sync failed list'
         param :sync_failed_list, instance_of(Type::HashType), required: false
+
+        description 'Number Of Threads'
+        param :number_of_threads_synchronize_etls, instance_of(Type::StringType), required: false, default: '10'
       end
 
       # will be updated later based on the way etl synchronization
@@ -73,6 +76,8 @@ module GoodData
 
           schedule_additional_params = params.schedule_additional_params || params.additional_params
           schedule_additional_hidden_params = params.schedule_additional_hidden_params || params.additional_hidden_params
+          number_of_threads = Integer(params.number_of_threads_synchronize_etls || '10')
+          GoodData.logger.info "Number of threads using synchronize ETL processes #{number_of_threads}" if number_of_threads != 10
 
           synchronize_segments = params.synchronize.group_by do |info|
             info[:segment_id]
@@ -132,7 +137,7 @@ module GoodData
             next if delete_extra_process_schedule && from_project_etl_names.nil?
 
             to_projects = info.to
-            to_projects.peach do |entry|
+            to_projects.peach(number_of_threads) do |entry|
               pid = entry[:pid]
               next if collect_synced_status && sync_failed_project(pid, params)
 
