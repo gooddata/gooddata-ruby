@@ -179,8 +179,30 @@ jobs:
           ecr-url: '${{ secrets.ECR_URL }}'
           dry-run: ${{ !inputs.deploy }}
 
+  register-bricks-staging:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    needs: [ prepare-build, services-build ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.prepare-build.outputs.images != '[]' &&
+      needs.prepare-build.outputs.images != ''
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Register bricks to staging
+        uses: ./.github/actions/rundeck
+        with:
+          server: '${{ secrets.RUNDECK_URL }}'
+          project: stg1-ansible
+          job-group: ansible/msf/hotfix
+          job-name: stg1_lcm_pipeline_component_tool
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
+
   build-helmreleases:
-    needs: [ prepare-build, services-build, helm-charts-build ]
+    needs: [ prepare-build, services-build, helm-charts-build, register-bricks-staging ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
@@ -253,8 +275,34 @@ jobs:
       image_tag: ${{ needs.prepare-build.outputs.service_major_version }}
     secrets: inherit
 
+  register-bricks-prod:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    needs: [ prepare-build, promote-to-stable ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.prepare-build.outputs.images != '[]' &&
+      needs.prepare-build.outputs.images != '' &&
+      inputs.deploy
+    strategy:
+      matrix:
+        cluster: [ na1, ca2, perf1, bom1, syd1, na3, eu1, fra1 ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Register bricks to ${{ matrix.cluster }}
+        uses: ./.github/actions/rundeck
+        with:
+          server: '${{ secrets.RUNDECK_URL }}'
+          project: ${{ matrix.cluster }}-ansible
+          job-group: ansible/msf/hotfix
+          job-name: ${{ matrix.cluster }}_lcm_pipeline_component_tool
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
+
   create-auto-merge-prod-pr:
-    needs: [ prepare-build, build-helmreleases, promote-to-stable ]
+    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
@@ -274,7 +322,7 @@ jobs:
     secrets: inherit
 
   create-manual-merge-prod-pr:
-    needs: [ prepare-build, build-helmreleases, promote-to-stable ]
+    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
