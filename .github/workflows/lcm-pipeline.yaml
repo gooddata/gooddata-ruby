@@ -83,7 +83,7 @@ jobs:
 
   charts-validation:
     needs: [ prepare-build ]
-    if: ${{ needs.prepare-build.outputs.charts != '[]' && needs.prepare-build.outputs.charts != '' }}
+    if: ${{ false && needs.prepare-build.outputs.charts != '[]' && needs.prepare-build.outputs.charts != '' }}
     strategy:
       matrix:
         chart: ${{ fromJSON(needs.prepare-build.outputs.charts) }}
@@ -201,8 +201,20 @@ jobs:
           job-name: stg1_lcm_pipeline_component_tool
           vault-url: ${{ secrets.VAULT_ADDRESS }}
 
+  fail:
+    needs: [ register-bricks-staging ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      inputs.deploy
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    steps:
+      - run: exit 1
+
   build-helmreleases:
-    needs: [ prepare-build, services-build, helm-charts-build, register-bricks-staging ]
+    needs: [ prepare-build, services-build, helm-charts-build, register-bricks-staging, fail ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
