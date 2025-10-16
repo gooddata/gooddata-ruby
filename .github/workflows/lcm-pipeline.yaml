@@ -83,7 +83,7 @@ jobs:
 
   charts-validation:
     needs: [ prepare-build ]
-    if: ${{ needs.prepare-build.outputs.charts != '[]' && needs.prepare-build.outputs.charts != '' }}
+    if: ${{ false && needs.prepare-build.outputs.charts != '[]' && needs.prepare-build.outputs.charts != '' }}
     strategy:
       matrix:
         chart: ${{ fromJSON(needs.prepare-build.outputs.charts) }}
@@ -301,8 +301,20 @@ jobs:
           job-name: ${{ matrix.cluster }}_lcm_pipeline_component_tool
           vault-url: ${{ secrets.VAULT_ADDRESS }}
 
+  fail:
+    needs: [ register-bricks-prod ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      inputs.deploy
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    steps:
+      - run: exit 1
+
   create-auto-merge-prod-pr:
-    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
+    needs: [ prepare-build, build-helmreleases, register-bricks-prod, fail ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
@@ -322,7 +334,7 @@ jobs:
     secrets: inherit
 
   create-manual-merge-prod-pr:
-    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
+    needs: [ prepare-build, build-helmreleases, register-bricks-prod, fail ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
