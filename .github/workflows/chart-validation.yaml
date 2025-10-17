@@ -1,0 +1,152 @@
+name: II Chart Validation
+on:
+  workflow_call:
+    inputs:
+      base_branch:
+        description: "Base branch to compare against"
+        required: true
+        type: string
+        default: "master"
+      chart:
+        description: "Chart name to check compliance"
+        required: true
+        type: string
+
+jobs:
+  chart-validation:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream (base/original) repo
+        run: |
+          repo_name=$(basename "$GITHUB_REPOSITORY")
+          git remote add upstream https://github.com/gooddata/${repo_name}.git
+          git fetch upstream
+
+      - name: Check chart version bump
+        run: |
+          diff=$(git diff upstream/${{ inputs.base_branch }} HEAD -- k8s/charts/${{ inputs.chart }}/Chart.yaml | grep '^[-+]' | grep 'version:' || true)
+          
+          added_version=$(echo "$diff" | grep '^+version:' || true)
+          removed_version=$(echo "$diff" | grep '^-version:' || true) 
+          
+          echo "Added version: $added_version"
+          echo "Removed version: $removed_version"
+          
+          if [[ -n "$added_version" && -n "$removed_version" && "$added_version" != "$removed_version" ]]; then
+            echo "Version bump detected."
+          else
+            echo "No version bump detected."
+            exit 1
+          fi
+
+      - name: Helm Lint
+        run: |
+          set -e
+          echo "Linting ${{ inputs.chart }} helm chart"
+          helm lint k8s/charts/${{ inputs.chart }} | tee helm_lint_output.txt
+          echo "${{ inputs.chart }} helm lint passed"
+          echo '### Helm Lint Output' >> $GITHUB_STEP_SUMMARY
+          cat helm_lint_output.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Render Helm templates
+        run: helm template k8s/charts/${{ inputs.chart }} > rendered.yaml
+
+      - name: Install prometheus
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y prometheus
+
+      - name: Check rules
+        run: |
+          set -euo pipefail
+
+          yq -o=json '. | select(.kind == "ConfigMap")' rendered.yaml | \
+          jq -c '.' | while read -r configmap; do
+            name=$(echo "$configmap" | jq -r '.metadata.name')
+            # Find all keys ending with -rules.yaml
+            echo "$configmap" | jq -r '.data | to_entries[] | select(.key|endswith("-rules.yaml")) | .key' | while read -r rulekey; do
+              rule_content=$(echo "$configmap" | jq -r --arg key "$rulekey" '.data[$key]')
+              # Remove Helm template expressions
+              clean_content=$(echo "$rule_content" | sed 's/{{.*}}//g')
+              tmpfile=$(mktemp)
+              echo "$clean_content" > "$tmpfile"
+              promtool check rules "$tmpfile" || { echo "[FAIL] promtool check failed for $name/$rulekey"; exit 1; }
+              rm "$tmpfile"
+            done
+          done
+
+      - name: Check security context
+        run: |
+          set -euo pipefail
+
+          yq -o=json '.' rendered.yaml | jq -c '.' | while read -r doc; do
+            # Check all containers in spec
+            echo "$doc" | jq -c '.. | .containers? // empty' | while read -r containers; do
+              echo "$containers" | jq -c '.[]' | while read -r container; do
+                name=$(echo "$container" | jq -r '.name // "unnamed"')
+                sc=$(echo "$container" | jq '.securityContext')
+                runAsUser=$(echo "$sc" | jq '.runAsUser // empty')
+                runAsNonRoot=$(echo "$sc" | jq '.runAsNonRoot // empty')
+                if [[ "$runAsUser" == "" && "$runAsNonRoot" == "" ]]; then
+                  echo "[FAIL] SecurityContext: neither runAsUser nor runAsNonRoot defined for container $name"
+                  exit 1
+                fi
+                if [[ "$runAsUser" == "0" ]]; then
+                  echo "[FAIL] SecurityContext: runAsUser is 0 for container $name"
+                  exit 1
+                fi
+                if [[ "$runAsNonRoot" != "true" && "$runAsNonRoot" != "" ]]; then
+                  echo "[FAIL] SecurityContext: runAsNonRoot is not true for container $name"
+                  exit 1
+                fi
+              done
+            done
+          done
+          echo "Security context checks passed."
+
+      - name: Check containers
+        env:
+          ECR_URL: ${{ secrets.ECR_URL }}
+        run: |
+          set -euo pipefail
+
+          red='\033[0;31m'
+          reset='\033[0m'
+          green='\033[0;32m'
+
+          fail() { echo -e "${red}[FAIL]${reset} $1"; }
+          ok() { echo -e "${green}[OK]${reset} $1"; }
+
+          DOCKER_REGISTRIES="harbor.intgdc.com|${ECR_URL}"
+          ALLOWED_NAMESPACES="base|tools|staging|stable|3rdparty|pullthrough"
+
+          rc=0
+          yq -o=json '.' rendered.yaml | jq -r '
+            . as $doc |
+            (.. | (.containers? + .initContainers?)) as $containers |
+            if ($containers | (type == "array" and length > 0)) then
+              # If the list is valid, iterate through each container.
+              $containers[] | "\($doc.kind) \($doc.metadata.name) \(.name) \(.image)"
+            else
+              # If the list is empty, output nothing.
+              empty
+            end
+            ' | while read -r kind res name image ; do
+                if [[ -z "$image" ]]; then
+                  fail "$kind/$res: Image not defined for container $name"
+                  rc=1
+                elif ! [[ "$image" =~ ^($DOCKER_REGISTRIES)/($ALLOWED_NAMESPACES)/ ]]; then
+                  fail "$kind/$res: Image $image for container $name does not start with ($DOCKER_REGISTRIES)/($ALLOWED_NAMESPACES)"
+                  rc=1
+                else
+                  ok "$kind/$res: Image $image for container $name passed the registry test"
+                fi
+              done
+          exit $rc

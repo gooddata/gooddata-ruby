@@ -82,106 +82,23 @@ jobs:
             }
           comment-pr: 'true'
         if: steps.changed-files.outputs.any_changed == 'true' && steps.branch-matches.outputs.branch_matches == 'true'
+
   gooddata-ruby-lcm-promote-pipeline:
-    runs-on:
-      group: infra1-runners-arc
-      labels: runners-small
     needs:
-      - gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
       - prepare-env
     permissions:
       contents: read
       id-token: write
-    steps:
-      - name: Check if any matching file changed
-        id: changed-files
-        run: |
-          any_changed=false
-          patterns=('^VERSION$')
-          for file in ${{ needs.prepare-env.outputs.changed_files }}; do
-              for pattern in "${patterns[@]}"; do
-                  if [[ $file =~ $pattern ]]; then
-                      any_changed=true
-                  fi
-              done
-          done
-          echo "any_changed=$any_changed" >> "$GITHUB_OUTPUT"
-      - name: Check if all changed files match patterns
-        id: all-match
-        run: |-
-          any_didnt_match=false
-          patterns=('^k8s/.*$' '^.gdc-ii-config-chart.yaml$' '^Jenkinsfile-chart$')
-          for file in ${{ needs.prepare-env.outputs.changed_files }}; do
-              matched=false
-              for pattern in "${patterns[@]}"; do
-                  if [[ $file =~ $pattern ]]; then
-                      matched=true
-                  fi
-              done
-              if [[ $matched == false ]]; then
-                  any_didnt_match=true
-              fi
-          done
-          echo "any_didnt_match=$any_didnt_match" >> "$GITHUB_OUTPUT"
-                  
-      - name: Check if branch matches
-        id: branch-matches
-        run: |-
-          branch=${{ needs.prepare-env.outputs.branch }}
-          branch_matches=$([[ $branch =~ ^master$ ]] && echo true || echo false)
-          echo "branch_matches=$branch_matches" >> "$GITHUB_OUTPUT"
-      - name: Call Jenkins trigger
-        id: call-jenkins
-        uses: gooddata/github-actions-public/jenkins/trigger@master
-        with:
-          server: ${{ secrets.JENKINS_II_ADDRESS }}
-          folder: gooddata-ruby
-          job-name: gooddata-ruby-lcm-promote-pipeline
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
-          params: |-
-            {
-              "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
-              "GH_REF": "${{ needs.prepare-env.outputs.ref }}",
-              "GH_COMMIT": "${{ needs.prepare-env.outputs.commit }}",
-              "GH_URL": "git@github.com:",
-              "GH_CHANGE": "${{ needs.prepare-env.outputs.pr_number }}",
-              "GH_PROJECT": "${{ needs.prepare-env.outputs.project }}",
-              "BUILD_BY_GITHUB": "true",
-              "GH_PIPELINE": "gate"
-            }
-          comment-pr: 'true'
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.all-match.outputs.any_didnt_match == 'true' && steps.branch-matches.outputs.branch_matches == 'true'
-  gooddata-ruby-gitops-deploy-pipeline:
-    runs-on:
-      group: infra1-runners-arc
-      labels: runners-small
-    needs:
-      - gooddata-ruby-lcm-promote-pipeline
-      - prepare-env
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - name: Call Jenkins trigger
-        id: call-jenkins
-        uses: gooddata/github-actions-public/jenkins/trigger@master
-        with:
-          server: ${{ secrets.JENKINS_II_ADDRESS }}
-          folder: gooddata-ruby
-          job-name: gooddata-ruby-gitops-deploy-pipeline
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
-          params: |-
-            {
-              "GH_BRANCH": "${{ needs.prepare-env.outputs.branch }}",
-              "GH_REF": "${{ needs.prepare-env.outputs.ref }}",
-              "GH_COMMIT": "${{ needs.prepare-env.outputs.commit }}",
-              "GH_URL": "git@github.com:",
-              "GH_CHANGE": "${{ needs.prepare-env.outputs.pr_number }}",
-              "GH_PROJECT": "${{ needs.prepare-env.outputs.project }}",
-              "BUILD_BY_GITHUB": "true",
-              "GH_PIPELINE": "gate"
-            }
-          comment-pr: 'true'
+      pull-requests: write
+    if: ${{ needs.prepare-env.outputs.branch == 'master' }}
+    uses: ./.github/workflows/lcm-pipeline.yaml
+    with:
+      AUTO_MERGE: false
+      base_branch: ${{ needs.prepare-env.outputs.branch }}
+      deploy: true
+      pr_number: ${{ needs.prepare-env.outputs.pr_number }}
+    secrets: inherit
+
   ready-to-merge:
     runs-on:
       group: infra1-runners-arc
@@ -191,7 +108,6 @@ jobs:
       - prepare-env
       - gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
       - gooddata-ruby-lcm-promote-pipeline
-      - gooddata-ruby-gitops-deploy-pipeline
     steps:
       - name: Check if needed jobs succeeded
         uses: re-actors/alls-green@release/v1

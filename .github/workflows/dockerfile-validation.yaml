@@ -1,0 +1,88 @@
+name: II Dockerfile Validation
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: "Image name to check compliance"
+        required: true
+        type: string
+
+jobs:
+  dockerfile-validation:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Read component configuration
+        id: load-config
+        run: |
+          cat .github/containers/${{ inputs.image }}.env >> "$GITHUB_OUTPUT"
+      - name: Get dockerfile path
+        id: get-dockerfile-path
+        run: |
+          echo "DOCKERFILE_PATH=$(
+            if [[ -n '${{ steps.load-config.outputs.CONTAINER_FILE }}' ]]; then
+              echo '${{ steps.load-config.outputs.CONTAINER_FILE }}'
+            else
+              echo '${{ steps.load-config.outputs.CONTAINER_CONTEXT }}/Dockerfile'
+            fi
+            )" >> $GITHUB_OUTPUT
+      - name: Dockerfile compliance check
+        env:
+          ECR_URL: ${{ secrets.ECR_URL }}
+        run: |
+          set -e
+
+          ECR_URL="${ECR_URL}"
+          ALLOWED_NAMESPACES="base|tools|staging|stable|3rdparty|pullthrough"
+          REQUIRED_LABELS=("image_name" "maintainer" "git_repository_url" "parent_image" "git_commit")
+
+          DOCKERFILE_PATH="${{ steps.get-dockerfile-path.outputs.DOCKERFILE_PATH }}"
+          repo_name=$(basename "$GITHUB_REPOSITORY")
+          GIT_REPO_URL="https://github.com/gooddata/${repo_name}/"
+
+          # Check all FROM lines
+          grep '^FROM ' "$DOCKERFILE_PATH" | while read -r line; do
+            from_img=$(echo "$line" | awk '{print $2}')
+            if [[ "$from_img" =~ ^\$\{?parent_image\}?$ || "$from_img" =~ ^$ECR_URL/($ALLOWED_NAMESPACES)/ ]]; then
+              echo "Valid FROM statement detected: '$from_img' in $DOCKERFILE_PATH"
+            else
+              echo "ERROR: FROM must start with $ECR_URL/(ALLOWED_NAMESPACES) or be \${parent_image} (got $from_img)"
+              exit 1
+            fi
+          done
+
+          # Find last stage (after last FROM)
+          last_from_line=$(grep -n '^FROM ' "$DOCKERFILE_PATH" | tail -1 | cut -d: -f1)
+          tail -n +"$last_from_line" "$DOCKERFILE_PATH" > /tmp/last_stage
+
+          # Check labels in last stage
+          for label in "${REQUIRED_LABELS[@]}"; do
+          if ! grep -q "^LABEL $label=" /tmp/last_stage; then
+            echo "ERROR: LABEL $label is missing in the last stage"
+            exit 1
+          fi
+          done
+
+          # Check maintainer value
+          if ! grep -Eq '.*<[^@]+@gooddata\.com>' /tmp/last_stage; then
+            echo "ERROR: LABEL maintainer must be in the format Team name <email@gooddata.com>"
+            exit 1
+          fi
+
+          # Check git_repository_url value
+          dockerfile_repo_url=$(grep '^LABEL git_repository_url=' /tmp/last_stage | sed -E 's/^LABEL git_repository_url="?([^"]+)"?/\1/')
+          if [[ "${dockerfile_repo_url%/}" != "${GIT_REPO_URL%/}" ]]; then
+            echo "ERROR: LABEL git_repository_url must be ${GIT_REPO_URL}"
+            exit 1
+          fi
+
+          # Check git_commit value
+          if ! grep -q '^LABEL git_commit=\$GIT_COMMIT' /tmp/last_stage; then
+            echo "ERROR: LABEL git_commit must be \$GIT_COMMIT"
+            exit 1
+          fi
+
+          echo "Dockerfile compliance check passed."
