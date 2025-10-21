@@ -1,0 +1,189 @@
+name: Build Helm Releases
+on:
+  workflow_call:
+    inputs:
+      charts:
+        description: The list of charts filtered to be built.
+        required: true
+        type: string
+      images:
+        description: The list of built images.
+        required: true
+        type: string
+      image_tag:
+        description: The tag of the built images.
+        required: true
+        type: string
+      chart_filters_path:
+        description: Path to chart filters YAML file.
+        required: false
+        default: .github/chart-filters.yml
+        type: string
+    outputs:
+      helmreleases:
+        description: The dict with the helm releases to be deployed for each cluster.
+        value: ${{ jobs.build-helmreleases.outputs.helmreleases }}
+      updated_prod_cluster_names:
+        description: The list of updated production cluster names.
+        value: ${{ jobs.build-helmreleases.outputs.updated_prod_cluster_names }}
+      staging_helmreleases:
+        description: List of staging helm releases that shoul be waited for.
+        value: ${{ jobs.build-helmreleases.outputs.staging_helmreleases }}
+      built_charts:
+        description: Dict of built charts including the chart name and version.
+        value: ${{ jobs.build-helmreleases.outputs.built_charts }}
+
+jobs:
+  build-helmreleases:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    outputs:
+      helmreleases: ${{ steps.build-helmreleases.outputs.helmreleases }}
+      built_charts: ${{ steps.get-built-charts.outputs.built_charts }}
+      staging_helmreleases: ${{ steps.extract-staging-helmreleases.outputs.staging_helmreleases }}
+      updated_prod_cluster_names: ${{ steps.extract-updated-prod-names.outputs.updated_prod_names }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Get built charts
+        id: get-built-charts
+        run: |
+          charts=$(echo '${{ inputs.charts }}' | jq -r '.[]')
+          result='{}'
+          for chart in $charts; do
+            chart_file="k8s/charts/$chart/Chart.yaml"
+            version=$(yq e '.version' "$chart_file")
+            chart_obj=$(jq -n --arg name "$chart" --arg version "$version" '{name: $name, version: $version}')
+            result=$(echo "$result" | jq --arg n "$chart" --argjson obj "$chart_obj" '. + {($n): $obj}')
+          done
+          echo "Built charts: $result"
+          echo "built_charts=$(echo "$result" | jq -c)" >> $GITHUB_OUTPUT
+
+      - name: Prepare charts
+        id: prepare-charts
+        run: |
+          built_charts='${{ steps.get-built-charts.outputs.built_charts }}'
+          all_charts=$(yq e 'keys' "${{ inputs.chart_filters_path }}" -o=json | jq -c)
+          prepared_charts='{}'
+
+          for name in $(echo "$all_charts" | jq -r '.[]'); do
+            if echo "$built_charts" | jq -e --arg n "$name" 'has($n)' >/dev/null; then
+              chart=$(echo "$built_charts" | jq -c --arg n "$name" '.[$n]')
+            else
+              chart_file="k8s/charts/$name/Chart.yaml"
+              if [[ ! -f "$chart_file" ]]; then
+                echo "Chart $name not found at $chart_file"
+                exit 1
+              fi
+
+              version=$(grep '^version:' "$chart_file" | awk '{print $2}')
+              chart=$(jq -n \
+                --arg name "$name" \
+                --arg version "$version" \
+                '{name: $name, version: $version}')
+            fi
+            prepared_charts=$(echo "$prepared_charts" | jq --arg n "$name" --argjson c "$chart" '. + {($n): $c}')
+          done
+
+          echo "Prepared charts: $prepared_charts"
+          echo "charts=$(echo "$prepared_charts" | jq -c)" >> $GITHUB_OUTPUT
+
+      - name: Checkout gitops-deployments
+        uses: actions/checkout@v5
+        with:
+          repository: gooddata/gitops-deployments
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+
+      - name: Get cluster mapping
+        id: cluster-mapping
+        run: |
+          cluster_mapping=$(yq -e '.clusterMapping' tools/auto_merge/config.yaml -o json)
+          echo "Cluster mapping: $cluster_mapping"
+          echo "cluster_mapping=$(echo "$cluster_mapping" | jq -c)" >> $GITHUB_OUTPUT
+
+      - name: Build HelmReleases
+        id: build-helmreleases
+        run: |
+          charts='${{ steps.prepare-charts.outputs.charts }}'
+          built_images='${{ inputs.images }}'
+          tag=${{ inputs.image_tag }}
+          cluster_mapping='${{ steps.cluster-mapping.outputs.cluster_mapping }}'
+
+          hrs_per_cluster='{}'
+
+          for cluster_id in $(echo "$cluster_mapping" | jq -r '.[]'); do
+            helmreleases='[]'
+            echo "Processing cluster $cluster_id"
+            for entry in $(echo "$charts" | jq -c 'to_entries[]'); do
+              chart_name=$(echo "$entry" | jq -r '.key')
+              chart_definition=$(echo "$entry" | jq -c '.value')
+
+              file_path="${cluster_id}/${chart_name}.yaml"
+              if [[ ! -f "$file_path" ]]; then
+                echo "File $file_path not found, skipping..."
+                continue
+              fi
+              echo "Processing chart $chart_name for cluster $cluster_id"
+
+              used_images=$(yq e '.. | .image? | select(.) | .name' "$file_path" | sort -u)
+              filtered_images='[]'
+              for img_name in $(echo "$built_images" | jq -r '.[]'); do
+                if echo "$used_images" | grep -qx "$img_name"; then
+                  filtered_images=$(echo "$filtered_images" | jq --arg n "$img_name" --arg t "$tag" '. + [{name: $n, tag: $t}]')
+                fi
+              done
+              echo "Filtered images for $chart_name: $filtered_images"
+
+              if [[ "$filtered_images" == "[]" ]]; then
+                original_version=$(yq e '.spec.chart.spec.version' "$file_path")
+                new_version=$(echo "$chart_definition" | jq -r '.version')
+
+                if [[ "$original_version" == "$new_version" ]]; then
+                  echo "There is nothing to update for chart $chart_name in cluster $cluster_id, skipping..."
+                  continue
+                fi
+              fi
+
+              chart_version="$(echo "$chart_definition" | jq -r '.version')"
+              releasename=$(echo "$chart_definition" | jq -r '.name')
+              wait_retries=$(yq e '.spec.values.waitRetries' "$file_path")
+              namespace=$(yq e '.metadata.namespace' "$file_path")
+
+              helmrelease=$(jq -n \
+                --arg chart_version "$chart_version" \
+                --argjson images "$filtered_images" \
+                --arg releasename "$releasename" \
+                --argjson waitRetries "$wait_retries" \
+                --arg namespace "$namespace" \
+                '{chart_version: $chart_version, images: $images, releasename: $releasename, waitRetries: $waitRetries, namespace: $namespace}')
+
+              helmreleases=$(echo "$helmreleases" | jq --argjson hr "$helmrelease" '. + [ $hr ]')
+            done
+            hrs_per_cluster=$(echo "$hrs_per_cluster" | jq --arg cluster_id "$cluster_id" --argjson list "$helmreleases" '. + {($cluster_id): $list}')
+          done
+
+          echo "Final hrs_per_cluster: $hrs_per_cluster"
+          echo "helmreleases=$(echo "$hrs_per_cluster" | jq -c)" >> $GITHUB_OUTPUT
+
+      - name: Extract staging helmreleases
+        id: extract-staging-helmreleases
+        run: |
+          hrs_per_cluster='${{ steps.build-helmreleases.outputs.helmreleases }}'
+          staging_hrs=$(echo "$hrs_per_cluster" | jq -c '."62" // []')
+          echo "staging_helmreleases=$(echo "$staging_hrs" | jq -c)" >> $GITHUB_OUTPUT
+
+      - name: Extract updated production cluster names
+        id: extract-updated-prod-names
+        run: |
+          hrs_per_cluster='${{ steps.build-helmreleases.outputs.helmreleases }}'
+          cluster_mapping='${{ steps.cluster-mapping.outputs.cluster_mapping }}'
+          updated_prod_ids=$(echo "$hrs_per_cluster" | jq 'del(.["62"], .["ucluster"]) | [to_entries | map(select(.value | length > 0) | .key)] | .[]')
+          updated_prod_names=$(echo "$cluster_mapping" | jq -r --argjson ids "$updated_prod_ids" '
+            to_entries
+            | map(select((.value | tostring) as $v | $ids[] == $v))
+            | map(.key)
+          ')
+          echo "Updated production clusters: $updated_prod_names"
+          echo "updated_prod_names=$(echo "$updated_prod_names" | jq -c)" >> $GITHUB_OUTPUT

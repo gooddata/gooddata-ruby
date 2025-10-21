@@ -1,0 +1,97 @@
+name: Wait for staging deployment
+on:
+  workflow_call:
+    inputs:
+      namespace:
+        description: "Kubernetes namespace to wait for deployment"
+        required: true
+        type: string
+      release_name:
+        description: "Helm release name to wait for"
+        required: true
+        type: string
+      wait_retries:
+        description: "Number of retries to wait for deployment with 30 seconds interval"
+        required: true
+        type: number
+      pipeline_identifier:
+        description: "Unique pipeline identifier used to distinguish the deployment"
+        required: true
+        type: string
+
+jobs:
+  wait-for-deployment:
+    runs-on:
+      group: stg1-runners-arc
+      labels: runners-small
+    steps:
+      - name: Wait for HelmRelease rollout
+        run: |
+          namespace=${{ inputs.namespace }}
+          release_name=${{ inputs.release_name }}
+          max_retries=${{ inputs.wait_retries }}
+          expected_identifier=${{ inputs.pipeline_identifier }}
+          retries=0
+
+          echo "Checking HelmRelease '${release_name}' in namespace '${namespace}' for expected identifier '${expected_identifier}' with '${max_retries}' wait retries"
+
+          while [ "$retries" -lt "$max_retries" ]; do
+            echo "Attempt $((retries+1))/$max_retries"
+
+            response=$(kubectl get hr "${release_name}" -n "${namespace}" -o json 2>/dev/null) || {
+              echo "Failed to get HelmRelease $release_name, retrying..."
+              sleep 30
+              retries=$((retries+1))
+              continue
+            }
+
+            current_identifier=$(echo "$response" | jq -r '.metadata.labels["deploy-pipeline-identifier"]')
+            if [[ "$current_identifier" != "$expected_identifier" ]]; then
+              echo "The label of HelmRelease '$current_identifier' is different then expected '$expected_identifier', waiting"
+              sleep 30
+              retries=$((retries+1))
+              continue
+            fi
+
+            conditions=$(echo "$response" | jq '.status.conditions // []')
+            if [[ "$conditions" == "[]" ]]; then
+              echo "No status.conditions found yet. Waiting..."
+              sleep 30
+              retries=$((retries+1))
+              continue
+            fi
+
+            latest_timestamp=$(echo "$conditions" | jq -r '.[].lastTransitionTime' | sort | tail -n 1)
+            echo "Found latest transition timestamp $latest_timestamp"
+
+            ready=$(echo "$conditions" | jq --arg ts "$latest_timestamp" '.[] | select(.lastTransitionTime == $ts and .type == "Ready")')
+
+            if [[ -z "$ready" ]]; then
+              echo "No 'Ready' condition at latest timestamp. Retrying..."
+              sleep 30
+              retries=$((retries+1))
+              continue
+            fi
+
+            status=$(echo "$ready" | jq -r '.status')
+            reason=$(echo "$ready" | jq -r '.reason')
+
+            if [[ "$status" == "True" && ("$reason" == "InstallSucceeded" || "$reason" == "UpgradeSucceeded" || "$reason" == "TestSucceeded") ]]; then
+              echo "Release succeeded with reason $reason"
+              exit 0
+            elif [[ "$status" == "False" && "$reason" != "SourceNotReady" ]]; then
+              # ignore transient failures caused by waiting for source-controller to fetch chart
+              echo "HelmRelease failed with reason $reason"
+              echo "### :x: HelmRelease '${release_name}' in namespace '${namespace}' failed" >> $GITHUB_STEP_SUMMARY
+              echo "Reason: $reason" >> $GITHUB_STEP_SUMMARY
+                exit 1
+            fi
+
+            echo "Release still progressing (status=$status, reason=$reason)..."
+            sleep 30
+            retries=$((retries+1))
+          done
+
+          echo "Release ${release_name} in namespace ${namespace} timed out after ${max_retries} attempts."
+          echo "### :hourglass_flowing_sand: HelmRelease '${release_name}' in namespace '${namespace}' timed out" >> $GITHUB_STEP_SUMMARY
+          exit 1

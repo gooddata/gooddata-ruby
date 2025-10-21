@@ -1,0 +1,140 @@
+# yamllint disable rule:line-length
+---
+name: "ecr-container-build-push"
+description: "Build a container image and upload it to ECR"
+inputs:
+  aws-creds-vault-path:
+    default: secret/data/v2/data-special/infra1-user-ecr-rw
+    description: "Vault path to AWS credentials used for helm push"
+  aws-creds-vault-role:
+    default: ecr-push
+    description: "Vault auth role for reading AWS credentials"
+  aws-region:
+    default: "us-east-1"
+    description: "AWS region to use for ECR"
+  ecr-repos:
+    description: "Repository (as defined in gooddata/terraform-ecr/repositories)"
+    required: true
+  ecr-url:
+    description: "ECR registry default URL (without prefix/suffix)"
+    required: true
+  vault-url:
+    description: "Vault API URL (default okay in almost all cases)"
+    required: true
+  build-args:
+    description: "Arguments for container build file (ARG in Dockerfile)."
+    required: false
+    default: ""
+  build-context:
+    description: "Context (working directory) where the build should be executed"
+    default: "."
+  build-tags:
+    description: "Tags (newline delimited)"
+    required: true
+  container-file:
+    description: "File (with a path) to use for build"
+    default: "Dockerfile"
+  push-image:
+    description: "Whether to really push to registry"
+    default: "true"
+  debug:
+    description: "Turn on debug messages"
+    default: "false"
+  platforms:
+    description: "List of target platforms for build"
+    default: "linux/amd64"
+  labels:
+    description: "List of labels for image"
+    default: ""
+  secrets:
+    description: "List of secrets to expose to the build (e.g., key=string, GIT_AUTH_TOKEN=mytoken)"
+    default: ""
+  secret-envs:
+    description: "List of secret env vars to expose to the build (e.g., key=envname, MY_SECRET=MY_ENV_VAR)"
+    default: ""
+  provenance:
+    description: "Generate provenance attestation for the build"
+    default: "true"
+outputs:
+  digest:
+    description: "Image digest"
+    value: ${{ steps.build_push.outputs.digest }}
+  imageid:
+    description: "Image ID"
+    value: ${{ steps.build_push.outputs.imageid }}
+  metadata:
+    description: "Image metadata"
+    value: ${{ steps.build_push.outputs.metadata }}
+runs:
+  using: "composite"
+  steps:
+    - name: Check container file
+      env:
+        CONTAINERFILE: ${{ inputs.container-file }}
+      shell: bash
+      run: |
+        test -f $CONTAINERFILE
+    - name: Get required Vault secrets
+      id: secrets
+      uses: hashicorp/vault-action@v3
+      with:
+        url: ${{ inputs.vault-url }}
+        method: jwt
+        path: jwt/github
+        role: ${{ inputs.aws-creds-vault-role }}
+        secrets: |
+          ${{ inputs.aws-creds-vault-path }} aws_ecr_access_key | AWS_ACCESS_KEY ;
+          ${{ inputs.aws-creds-vault-path }} aws_ecr_secret_key | AWS_SECRET_KEY ;
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+        aws-region: ${{ inputs.aws-region }}
+    - name: Expand tags with ECR url and ECR repo
+      id: expand_tags
+      env:
+        ECR_URL: ${{ inputs.ecr-url }}
+        ECR_REPOS: ${{ inputs.ecr-repos }}
+        BUILD_TAGS: ${{ inputs.build-tags }}
+      shell: bash
+      run: |
+        eval REPO=$ECR_REPOS
+        {
+          echo "EXPANDED_TAGS<<EOF"
+          for BTAG in $BUILD_TAGS; do
+            echo $ECR_URL/$REPO:$BTAG
+          done
+          echo EOF
+        } >> "$GITHUB_ENV"
+        echo "REPO=$REPO" >> "$GITHUB_ENV"
+
+    - name: Build and push Docker images (legacy)
+      shell: bash
+      env:
+        CONTAINERFILE: ${{ inputs.container-file }}
+        BUILD_CONTEXT: ${{ inputs.build-context }}
+        BUILD_ARGS: ${{ inputs.build-args }}
+        ECR_URL: ${{ inputs.ecr-url }}
+        AWS_REGION: ${{ inputs.aws-region }}
+      run: |
+        # Login to ECR
+        aws ecr get-login-password --region $AWS_REGION | \
+          docker login --username AWS --password-stdin $ECR_URL
+
+        # Parse build args
+        DOCKER_BUILD_ARGS=""
+        if [ -n "$BUILD_ARGS" ]; then
+          while IFS= read -r arg; do
+            [ -n "$arg" ] && DOCKER_BUILD_ARGS="$DOCKER_BUILD_ARGS --build-arg $arg"
+          done <<< "$BUILD_ARGS"
+        fi
+
+        # Build and push each tag
+        for TAG in $EXPANDED_TAGS; do
+          docker build -f $CONTAINERFILE \
+            $DOCKER_BUILD_ARGS \
+            -t $TAG \
+            $BUILD_CONTEXT
+          docker push $TAG
+        done

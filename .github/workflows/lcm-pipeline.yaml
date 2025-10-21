@@ -1,0 +1,353 @@
+name: II LCM Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      AUTO_MERGE:
+        default: true
+        required: false
+        type: boolean
+        description: Must be set here in order to use in if condition at job level.
+      base_branch:
+        required: true
+        type: string
+        description: The base branch to compare against for detecting changes.
+      deploy:
+        required: false
+        type: boolean
+        default: false
+        description: Whether to deploy the changes to staging and production clusters.
+      pr_number:
+        required: true
+        type: string
+
+jobs:
+  prepare-build:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: read
+    outputs:
+      images: ${{ steps.filter.outputs.changes }}
+      charts: ${{ steps.chart-filter.outputs.changes }}
+      image_tag: ${{ steps.gen-image-tag.outputs.image_tag }}
+      pipeline_identifier: ${{ github.run_id }}
+      service_version: ${{ steps.read-version.outputs.service_version }}
+      service_major_version: ${{ steps.read-version.outputs.service_major_version }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: 'true'
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+      - name: Detect changed images
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: ".github/service-filters.yml"
+      - name: Detect changed helm charts
+        id: chart-filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: ".github/chart-filters.yml"
+      - name: Generate image tag
+        id: gen-image-tag
+        run: |
+          hash=$(date +'%Y%m%d%H%M').${GITHUB_SHA::8}
+          if [[ "${{ inputs.deploy }}" == "true" ]]; then
+            prefix=""
+          else
+            prefix="dev-"
+          fi
+          echo "image_tag=${prefix}${hash}" >> $GITHUB_OUTPUT
+      - name: Read service version
+        id: read-version
+        run: |
+          version=$(cat VERSION | tr -d '\n')
+          echo "service_version=$version" >> $GITHUB_OUTPUT
+          major=$(echo "$version" | cut -d. -f1)
+          echo "service_major_version=M$major" >> $GITHUB_OUTPUT
+
+  dockerfiles-validation:
+    needs: [ prepare-build ]
+    if: ${{ needs.prepare-build.outputs.images != '[]' && needs.prepare-build.outputs.images != '' }}
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.prepare-build.outputs.images) }}
+    uses: ./.github/workflows/dockerfile-validation.yaml
+    with:
+      image: ${{ matrix.image }}
+    secrets: inherit
+
+  charts-validation:
+    needs: [ prepare-build ]
+    if: ${{ needs.prepare-build.outputs.charts != '[]' && needs.prepare-build.outputs.charts != '' }}
+    strategy:
+      matrix:
+        chart: ${{ fromJSON(needs.prepare-build.outputs.charts) }}
+    uses: ./.github/workflows/chart-validation.yaml
+    with:
+      base_branch: ${{ inputs.base_branch }}
+      chart: ${{ matrix.chart }}
+    secrets: inherit
+
+  services-build:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-rxa-xlarge
+    permissions:
+      id-token: write
+      contents: read
+    needs: [ prepare-build, dockerfiles-validation, ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.prepare-build.outputs.images != '[]' &&
+      needs.prepare-build.outputs.images != ''
+    strategy:
+      matrix:
+        component: ${{ fromJSON(needs.prepare-build.outputs.images) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          submodules: 'true'
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+      - name: Read component configuration
+        id: load-config
+        run: |
+          cat .github/containers/${{ matrix.component }}.env >> "$GITHUB_OUTPUT"
+      - name: Get image configuration
+        id: get-image-config
+        run: |
+          echo "CONTAINER_FILE=$(
+            if [[ -n '${{ steps.load-config.outputs.CONTAINER_FILE }}' ]]; then
+              echo '${{ steps.load-config.outputs.CONTAINER_FILE }}'
+            else
+              echo '${{ steps.load-config.outputs.CONTAINER_CONTEXT }}/Dockerfile'
+            fi
+            )" >> $GITHUB_OUTPUT
+      - name: Build docker image
+        uses: ./.github/actions/container-build-push
+        with:
+          ecr-repos: ${{ inputs.deploy && format('staging/{0}', matrix.component) || format('gdc-testing/{0}', matrix.component) }}
+          aws-creds-vault-role: ${{ inputs.deploy && 'ecr-ii-push' || 'ecr-push-testing' }}
+          aws-creds-vault-path: "secret/data/v3/int/ecr/infra1-user-ecr-rw${{ !inputs.deploy && '-testing' || '' }}"
+          build-tags: |
+            latest
+            ${{ needs.prepare-build.outputs.image_tag }}
+            ${{ needs.prepare-build.outputs.service_version }}
+            ${{ needs.prepare-build.outputs.service_major_version }}
+          build-context: ${{ steps.load-config.outputs.CONTAINER_CONTEXT }}
+          container-file: ${{ steps.get-image-config.outputs.CONTAINER_FILE }}
+          vault-url: '${{ secrets.VAULT_ADDRESS }}'
+          ecr-url: '${{ secrets.ECR_URL }}'
+          build-args: |
+            BRICKS_VERSION=${{ needs.prepare-build.outputs.service_version }}
+
+  helm-charts-build:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    permissions:
+      id-token: write
+      contents: read
+    needs: [ prepare-build, charts-validation ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.prepare-build.outputs.charts != '[]' &&
+      needs.prepare-build.outputs.charts != ''
+    strategy:
+      matrix:
+        charts: ${{ fromJSON(needs.prepare-build.outputs.charts) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          submodules: 'true'
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+      - name: Build helm chart
+        uses: ./.github/actions/helm-push
+        with:
+          aws-creds-vault-role: ${{ inputs.deploy && 'ecr-ii-push' || 'ecr-push-testing' }}
+          vault-url: '${{ secrets.VAULT_ADDRESS }}'
+          path: k8s/charts/${{ matrix.charts }}
+          ecr-repo-prefix: helm/gooddata/bear/staging
+          ecr-url: '${{ secrets.ECR_URL }}'
+          dry-run: ${{ !inputs.deploy }}
+
+  register-bricks-staging:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    needs: [ prepare-build, services-build ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.prepare-build.outputs.images != '[]' &&
+      needs.prepare-build.outputs.images != ''
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Register bricks to staging
+        uses: ./.github/actions/rundeck
+        with:
+          server: '${{ secrets.RUNDECK_URL }}'
+          project: stg1-ansible
+          job-group: ansible/msf/hotfix
+          job-name: stg1_lcm_pipeline_component_tool
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
+
+  build-helmreleases:
+    needs: [ prepare-build, services-build, helm-charts-build, register-bricks-staging ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      (
+        needs.services-build.result != 'skipped' ||
+        needs.helm-charts-build.result != 'skipped'
+      ) &&
+      inputs.deploy
+    uses: ./.github/workflows/build-helmreleases.yaml
+    with:
+      charts: ${{ needs.prepare-build.outputs.charts }}
+      images: ${{ needs.prepare-build.outputs.images }}
+      image_tag: ${{ needs.prepare-build.outputs.image_tag }}
+    secrets: inherit
+
+  create-staging-pr:
+    needs: [ prepare-build, build-helmreleases ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.build-helmreleases.result == 'success' &&
+      inputs.deploy
+    uses: ./.github/workflows/create-gitops-deployments-pr.yaml
+    with:
+      is_staging: true
+      helm_releases: ${{ needs.build-helmreleases.outputs.helmreleases }}
+      pipeline_identifier: ${{ needs.prepare-build.outputs.pipeline_identifier }}
+    secrets: inherit
+
+  wait-for-deployment:
+    needs: [ prepare-build, build-helmreleases, create-staging-pr ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.build-helmreleases.result == 'success' &&
+      inputs.deploy
+    strategy:
+      matrix:
+        hr: ${{ fromJson(needs.build-helmreleases.outputs.staging_helmreleases) }}
+    uses: ./.github/workflows/wait-for-deployment.yaml
+    with:
+      namespace: ${{ matrix.hr.namespace }}
+      release_name: ${{ matrix.hr.releasename }}
+      wait_retries: ${{ matrix.hr.waitRetries }}
+      pipeline_identifier: ${{ needs.prepare-build.outputs.pipeline_identifier }}
+
+  revert-staging-pr:
+    needs: [ create-staging-pr, wait-for-deployment ]
+    if: |
+      !cancelled() &&
+      needs.wait-for-deployment.result == 'failure' &&
+      inputs.deploy
+    uses: ./.github/workflows/revert-staging-pr.yaml
+    with:
+      commit_hash: ${{ needs.create-staging-pr.outputs.commit_hash }}
+      original_pr_title: ${{ needs.create-staging-pr.outputs.pr_title }}
+    secrets: inherit
+
+  promote-to-stable:
+    needs: [ prepare-build, build-helmreleases, wait-for-deployment ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.build-helmreleases.result == 'success' &&
+      inputs.deploy
+    uses: ./.github/workflows/promote-to-stable.yaml
+    with:
+      images: ${{ needs.prepare-build.outputs.images }}
+      charts: ${{ needs.build-helmreleases.outputs.built_charts }}
+      image_tag: ${{ needs.prepare-build.outputs.service_major_version }}
+    secrets: inherit
+
+  register-bricks-prod:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    needs: [ prepare-build, promote-to-stable ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.prepare-build.outputs.images != '[]' &&
+      needs.prepare-build.outputs.images != '' &&
+      inputs.deploy
+    strategy:
+      matrix:
+        cluster: [ na1, ca2, perf1, bom1, syd1, na3, eu1, fra1 ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Register bricks to ${{ matrix.cluster }}
+        uses: ./.github/actions/rundeck
+        with:
+          server: '${{ secrets.RUNDECK_URL }}'
+          project: ${{ matrix.cluster }}-ansible
+          job-group: ansible/msf/hotfix
+          job-name: ${{ matrix.cluster }}_lcm_pipeline_component_tool
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
+
+  create-auto-merge-prod-pr:
+    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.build-helmreleases.result == 'success' &&
+      inputs.AUTO_MERGE &&
+      inputs.deploy
+    strategy:
+      matrix:
+        cluster: ${{ fromJson(needs.build-helmreleases.outputs.updated_prod_cluster_names) }}
+    uses: ./.github/workflows/create-gitops-deployments-pr.yaml
+    with:
+      is_staging: false
+      is_auto_merge: true
+      cluster: ${{ matrix.cluster }}
+      helm_releases: ${{ needs.build-helmreleases.outputs.helmreleases }}
+      pipeline_identifier: ${{ needs.prepare-build.outputs.pipeline_identifier }}
+    secrets: inherit
+
+  create-manual-merge-prod-pr:
+    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.build-helmreleases.result == 'success' &&
+      !inputs.AUTO_MERGE &&
+      inputs.deploy
+    uses: ./.github/workflows/create-gitops-deployments-pr.yaml
+    with:
+      is_staging: false
+      is_auto_merge: false
+      helm_releases: ${{ needs.build-helmreleases.outputs.helmreleases }}
+      pipeline_identifier: ${{ needs.prepare-build.outputs.pipeline_identifier }}
+    secrets: inherit
+
+  create-comment-with-pr-urls:
+    needs: [ build-helmreleases, create-auto-merge-prod-pr, create-manual-merge-prod-pr ]
+    if: |
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      needs.build-helmreleases.result == 'success'  &&
+      inputs.deploy
+    uses: ./.github/workflows/create-pr-comment.yaml
+    with:
+      auto_merge: ${{ inputs.AUTO_MERGE }}
+      updated_prod_cluster_names: ${{ needs.build-helmreleases.outputs.updated_prod_cluster_names }}
+      deployment_pr_url: ${{ needs.create-manual-merge-prod-pr.outputs.pr_url }}
+      triggering_pr_number: ${{ inputs.pr_number }}
+    secrets: inherit

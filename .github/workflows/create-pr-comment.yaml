@@ -1,0 +1,104 @@
+name: Create PR comment with PR urls
+on:
+  workflow_call:
+    inputs:
+      auto_merge:
+        description: "Specifies whether deployment PRs use auto-merge in the gitops-deployments repository"
+        required: true
+        type: boolean
+      updated_prod_cluster_names:
+        description: "List of updated production cluster names, needed only for auto-merge PRs"
+        required: true
+        type: string
+      deployment_pr_url:
+        description: "URL of the deployment PR in the gitops-deployments repository, needed only for manual-merge PRs"
+        required: true
+        type: string
+      triggering_pr_number:
+        description: "Number of the PR triggering the workflow where the comment is created"
+        required: true
+        type: string
+
+jobs:
+  create-comment-with-pr-urls:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    steps:
+      - name: Checkout gitops-deployments
+        uses: actions/checkout@v5
+        with:
+          repository: gooddata/gitops-deployments
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+
+      - name: Download PR URLs
+        if: ${{ inputs.AUTO_MERGE == true }}
+        uses: actions/download-artifact@v5
+        with:
+          path: pr_urls
+          pattern: "*_pr_url"
+          merge-multiple: 'true'
+
+      - name: Prepare comment with PR URLs
+        id: prepare-pr-comment
+        run: |
+          if [[ "${{ inputs.AUTO_MERGE }}" == "true" ]]; then
+            updated_clusters=$(echo '${{ inputs.updated_prod_cluster_names }}' | jq -r '.[]')
+            updated_lookup=" $(echo $updated_clusters) "
+            repo_name=$(basename "$GITHUB_REPOSITORY")
+
+            comment_file=pr_comment.md
+            echo ':exclamation: **THIS PULL REQUEST WILL BE DELIVERED AUTOMATICALLY BY AUTO-MERGE** :exclamation:' >> "$comment_file"
+            echo ':exclamation: *REVERT all these gitops-deployments PRs bellow to rollback this change* :exclamation:' >> "$comment_file"
+
+            schedule=$(yq ".repoList.$repo_name" tools/auto_merge/config.yaml -o json 2>/dev/null) 
+            if [ "$schedule" = "null" ] || [ -z "$schedule" ]; then
+              echo "No specific schedule found for $repo_name, using default clusterMergingSchedule"
+              schedule=$(yq -e ".clusterMergingSchedule" tools/auto_merge/config.yaml -o json)
+            fi
+
+            echo "$schedule" | jq -c 'to_entries | sort_by(.key)[]' | while read -r entry; do
+              minute=$(echo "$entry" | jq -r '.key')
+              for cluster in $(echo "$entry" | jq -r '.value[]'); do
+                # Check if cluster is in updated clusters
+                if [[ "$updated_lookup" == *" $cluster "* ]]; then
+                  pr_url_file="pr_urls/${cluster}_pr_url.txt"
+                  pr_url=$(cat "$pr_url_file")
+                  echo "* Next **${minute}** mins to **${cluster}** cluster :arrow_right:: ${pr_url}" >> "$comment_file"
+                fi
+              done
+            done
+
+            echo ':warning:  Feel free to manually merge those PRs above before the scheduled time to deliver them sooner' >> "$comment_file"
+            echo ':point_right:  Merging progress will be informed in [#cd-pipelines-release-prod](https://app.slack.com/client/T02G0PHRH/C0504DF292T) slack channel' >> "$comment_file"
+
+            echo "pr_comment<<EOF" >> $GITHUB_OUTPUT
+            cat "$comment_file" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            pr_url=${{ inputs.deployment_pr_url }}
+
+            pr_comment=":exclamation: **THIS PULL REQUEST WILL NEED TO BE DELIVERED MANUALLY** :exclamation:
+            :exclamation: *REVERT following gitops-deployments PR bellow to rollback this change* :exclamation:
+            * PR for **all clusters** :arrow_right:: ${pr_url}
+
+            :warning:  Pushing another change before rolling out this change might cause confliction in [gitops-deployments](https://github.com/gooddata/gitops-deployments) repo
+            :point_right:  Merging progress will be informed in [#cd-pipelines-release-prod](https://app.slack.com/client/T02G0PHRH/C0504DF292T) slack channel"
+
+            echo "pr_comment<<EOF" >> $GITHUB_OUTPUT
+            echo "$pr_comment" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ inputs.triggering_pr_number }};
+            const comment = '${{ toJson(steps.prepare-pr-comment.outputs.pr_comment) }}';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });

@@ -1,0 +1,56 @@
+name: "Trigger Rundeck job"
+description: "Trigger Rundeck job through Rundeck API with given parameters"
+inputs:
+  server:
+    description: "Which server should the job be run on (rundeck server hostname)"
+    required: true
+  project:
+    description: "Rundeck project name containing the job to run"
+    required: true
+  job-group:
+    description: "Job group name"
+    required: true
+  job-name:
+    description: "Job name"
+    required: true
+  vault-url:
+    description: "Vault URL for certificate retrieval"
+    required: true
+outputs:
+  job-execution-status:
+    description: "Job execution status"
+    value: ${{ steps.python.outputs.execution_status }}
+  job-execution-url:
+    description: "Job execution URL"
+    value: ${{ steps.python.outputs.url }}
+  plan-summary:
+    description: "Overall plan summary extracted from job output"
+    value: ${{ steps.python.outputs.plan_summary }}
+runs:
+  using: "composite"
+  steps:
+    - name: Get certificate from Vault
+      id: cert-from-vault
+      uses: gooddata/github-actions-public/vault/cert@master
+      with:
+        vault-url: ${{ inputs.vault-url }}
+        cn: gh.action
+        role: github-common-action
+        vault-auth-role: common-action
+    - name: Join certificates
+      id: join-certs
+      run: |
+        echo "${{ steps.cert-from-vault.outputs.certificate }}" > cert.pem
+        echo "${{ steps.cert-from-vault.outputs.ca_chain }}" >> cert.pem
+        echo "${{ steps.cert-from-vault.outputs.private_key }}" >> cert.pem
+      shell: bash
+    - name: Run python script
+      id: python
+      run: |
+        python "${{ github.action_path }}/rundeck_job_trigger.py" \
+          --cert-path cert.pem \
+          --server "${{ inputs.server }}" \
+          --project "${{ inputs.project }}" \
+          --job-group "${{ inputs.job-group }}" \
+          --job-name "${{ inputs.job-name }}"
+      shell: bash

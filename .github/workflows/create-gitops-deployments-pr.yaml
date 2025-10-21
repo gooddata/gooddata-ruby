@@ -1,0 +1,208 @@
+name: Create gitops-deployments PR
+on:
+  workflow_call:
+    inputs:
+      is_staging:
+        required: true
+        type: boolean
+        description: |
+          If true, the PR will be created for the staging clusters (stg1 and ucluster).
+          If false, the PR will be created for the production cluster(s).
+      is_auto_merge:
+        required: false
+        type: boolean
+        description: |
+          If true, there will be created a PR for the production cluster specified in cluster input, that will be automatically merged.
+          If false, the PR will be created for all production clusters, and it will not be automatically merged.
+      cluster:
+        required: false
+        type: string
+        description: The name of the production cluster to create the PR for. Required only if is_auto_merge is true.
+      helm_releases:
+        required: true
+        type: string
+        description: JSON string containing the HelmRelease objects to be updated for each cluster.
+      pipeline_identifier:
+        required: true
+        type: string
+        description: The deploy pipeline identifier to be set in the HelmRelease metadata labels.
+    outputs:
+      commit_hash:
+        description: The commit hash of the created commit in the gitops-deployments repository. Used only if is_staging is true.
+        value: ${{ jobs.create-gitops-deployments-pr.outputs.commit_hash }}
+      pr_title:
+        description: The title of the created PR. Used only if is_staging is true.
+        value: ${{ jobs.create-gitops-deployments-pr.outputs.pr_title }}
+      pr_url:
+        description: The URL of the created PR. For automerge production PRs, it is outputted as an artifact.
+        value: ${{ jobs.create-gitops-deployments-pr.outputs.pr_url }}
+
+jobs:
+  create-gitops-deployments-pr:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    outputs:
+      commit_hash: ${{ steps.commit-and-push.outputs.commit_sha }}
+      pr_title: ${{ steps.prepare-pr-metadata.outputs.pr_title }}
+      pr_url: ${{ steps.create-pr.outputs.pr_url }}
+    steps:
+      - name: Prepare PR metadata
+        id: prepare-pr-metadata
+        run: |
+          commit_hash=${GITHUB_SHA::8}
+          repo_name=$(basename "$GITHUB_REPOSITORY")
+          
+          if [[ "${{ inputs.is_staging }}" == "true" ]]; then
+            branch_name="${repo_name}/${commit_hash}"
+            commit_message="${GITHUB_REPOSITORY}: ${commit_hash}"
+            pr_title="${GITHUB_REPOSITORY}: ${commit_hash}"
+            pr_body="Automated PR for deployment to the staging clusters.
+            Change HEAD: https://github.com/${GITHUB_REPOSITORY}/commit/${commit_hash}
+            Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          elif [[ "${{ inputs.is_auto_merge }}" == "true" ]]; then
+            cluster_name="${{ inputs.cluster }}"
+            branch_name="${repo_name}/${commit_hash}_${cluster_name}_automerge"
+            commit_message="[auto-merge]: ${GITHUB_REPOSITORY}: ${commit_hash} for cluster ${cluster_name}"
+            pr_title="[auto-merge]: ${GITHUB_REPOSITORY}: ${commit_hash} for cluster ${cluster_name}"
+            pr_body="Automated PR for deployment to the ${cluster_name} production cluster.
+            Change HEAD: https://github.com/${GITHUB_REPOSITORY}/commit/${commit_hash}
+            Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          else
+            branch_name="${repo_name}/${commit_hash}"
+            commit_message="${GITHUB_REPOSITORY}: ${commit_hash}"
+            pr_title="${GITHUB_REPOSITORY}: ${commit_hash}"
+            pr_body=":exclamation: CAREFULLY REVIEW AFFECTED CLUSTER IDs :exclamation:
+            :exclamation: Change is delivered immediatelly to the clusters, including production :exclamation:
+            Change HEAD: https://github.com/${GITHUB_REPOSITORY}/commit/${commit_hash}
+            Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          fi
+          
+          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
+          echo "commit_message=$commit_message" >> $GITHUB_OUTPUT
+          echo "pr_title=$pr_title" >> $GITHUB_OUTPUT
+          echo "pr_body<<EOF" >> $GITHUB_OUTPUT
+          echo "$pr_body" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Checkout gitops-deployments repository
+        uses: actions/checkout@v5
+        with:
+          repository: gooddata/gitops-deployments
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+
+      - name: Get cluster mapping
+        id: cluster-mapping
+        run: |
+          cluster_mapping=$(yq -e '.clusterMapping' tools/auto_merge/config.yaml -o json)
+          echo "Cluster mapping: $cluster_mapping"
+          echo "cluster_mapping=$(echo "$cluster_mapping" | jq -c)" >> $GITHUB_OUTPUT
+
+      - name: Update files
+        id: update-files
+        run: |
+          update_helmreleases() {
+            local helmreleases="$1"
+            local current_cluster_id="$2"
+            local pipeline_identifier="$3"
+          
+            for hr in $(echo "$helmreleases" | jq -c --arg id "$current_cluster_id" '.[$id][]'); do
+              echo "Processing HelmRelease: $hr"
+
+              new_chart_version=$(echo "$hr" | jq -r '.chart_version')
+              images=$(echo "$hr" | jq -c '.images')
+              helmrelease_filepath="$(echo "$hr" | jq -r '.releasename').yaml"
+
+              # === UPDATE CHART ===
+              current_chart_version=$(yq e '.spec.chart.spec.version' "$helmrelease_filepath")
+
+              chart_updated=$([[ "$current_chart_version" != *"$new_chart_version"* ]] && echo true || echo false)
+              if [[ "$chart_updated" == true ]]; then
+                echo "Updating version of chart in ${helmrelease_filepath} to ${new_chart_version}"         
+                yq e ".spec.chart.spec.version = \"${new_chart_version}\"" -i "${helmrelease_filepath}"
+              fi
+
+              # === UPDATE IMAGES ===
+              for image in $(echo "$images" | jq -r -c '.[]'); do
+                echo "Processing image: $image"
+                image_name=$(echo "$image" | jq -r '.name')
+                image_tag=$(echo "$image" | jq -r '.tag')
+
+                image_chart_path=$(yq e '.. | select(has("image")) | path | join(".")' "$helmrelease_filepath" | while read -r path; do
+                  name=$(yq e ".$path.image.name" "$helmrelease_filepath")
+                  if [[ "$name" == "$image_name" ]]; then
+                    echo "$path.image"
+                    break
+                  fi
+                done)
+
+                echo "Updating image $image_name to tag $image_tag"
+                yq e ".${image_chart_path}.tag = \"$image_tag\"" -i "$helmrelease_filepath"
+              done
+
+              # === UPDATE DEPLOY PIPELINE IDENTIFIER ===
+              echo "Updating deploy-pipeline-identifier in $helmrelease_filepath to ${{ inputs.pipeline_identifier }}"
+              yq e ".metadata.labels.deploy-pipeline-identifier = \"${{ inputs.pipeline_identifier }}\"" -i "$helmrelease_filepath"          
+            done
+          }
+          
+          helmreleases='${{ inputs.helm_releases }}'
+          cluster_mapping='${{ steps.cluster-mapping.outputs.cluster_mapping }}'
+          
+          if [[ "${{ inputs.is_staging }}" == "true" ]]; then
+            # For staging, we update stg1 and ucluster clusters 
+            clusters="stg1 ucluster"
+          elif [[ "${{ inputs.is_auto_merge }}" == "true" ]]; then
+            clusters="${{ inputs.cluster }}"
+          else
+             clusters=$(echo "$cluster_mapping" | jq -r 'keys[] | select(. != "stg1" and . != "ucluster")')
+          fi
+          
+          for cluster in $clusters; do
+            current_cluster_id=$(echo "$cluster_mapping" | jq -r --arg k "$cluster" '.[$k]')
+            echo "Processing cluster ID: $current_cluster_id"
+            cd "$current_cluster_id"
+            update_helmreleases "$helmreleases" "$current_cluster_id" "${{ inputs.pipeline_identifier }}"
+            cd ..
+          done
+
+      - name: Commit and push
+        id: commit-and-push
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: ${{ steps.prepare-pr-metadata.outputs.commit_message }}
+          author_name: "yenkins"
+          author_email: "infra+yenkins@gooddata.com>"
+          new_branch: "${{ steps.prepare-pr-metadata.outputs.branch_name }}"
+
+      - name: Create PR
+        id: create-pr
+        run: |
+          pr_url=$(gh pr create \
+            --title "${{ steps.prepare-pr-metadata.outputs.pr_title }}" \
+            --body "${{ steps.prepare-pr-metadata.outputs.pr_body }}" \
+            --base master \
+            --head "${{ steps.prepare-pr-metadata.outputs.branch_name }}")
+          
+          gh pr merge --merge --auto
+          
+          if [[ "${{ inputs.is_staging }}" == "false" && "${{ inputs.is_auto_merge }}" == "true" ]]; then
+            echo "$pr_url" > "${{ inputs.cluster }}_pr_url.txt"
+          else
+            echo "pr_url=$pr_url" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+
+      - name: Upload PR URL
+        if: ${{ inputs.is_staging == false && inputs.is_auto_merge == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ inputs.cluster }}_pr_url"
+          path: "${{ inputs.cluster }}_pr_url.txt"
+
+      - name: Approve the PR
+        if: ${{ inputs.is_staging == true }}
+        run: gh pr review --approve
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS_ADMIN}}
