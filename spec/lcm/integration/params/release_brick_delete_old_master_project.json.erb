@@ -6,8 +6,7 @@
     "SEGMENTS": <%= segments %>,
     "DATA_PRODUCT": "<%= data_product %>",
     "TOKENS": {
-      "pg": "<%= config[:prod_token] %>",
-      "vertica": "<%= config[:vertica_prod_token] %>"
+      "pg": "<%= config[:prod_token] %>"
     },
     <% if defined? jdbc_url %>
     "ads_client": {

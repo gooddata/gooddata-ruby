@@ -123,7 +123,9 @@ shared_context 'lcm bricks' do |opts = {}|
       data = {
         segment_id: "LCM_SPEC_#{segment}_#{i}",
         development_pid: @project.obj_id,
-        driver: segment == 'PREMIUM' ? 'vertica' : 'pg',
+        # TODO: Uncomment below after https://gooddata.atlassian.net/browse/GRIF-655 is fixed
+        # driver: segment == 'PREMIUM' ? 'vertica' : 'pg',
+        driver: 'pg',
         master_name: "LCM spec master project (#{segment} #{i}) " + '##{version}' # rubocop:disable Lint/InterpolationCheck
       }
 

@@ -60,6 +60,7 @@ module GoodData
             'SDK uses SSL everywhere. To disable SSL you must ' \
             'configure an endpoint that uses http://.'
         end
+        config.delete('endpoint') if config['endpoint'].nil? || config['endpoint'].to_s.strip.empty?
         config
       end
     end

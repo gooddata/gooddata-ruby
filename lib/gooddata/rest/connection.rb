@@ -177,6 +177,8 @@ module GoodData
 
       # Connect using username and password
       def connect(username, password, options = {})
+        Psych::Parser.code_point_limit = 100_000_000
+
         server = options[:server] || Helpers::AuthHelper.read_server
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
