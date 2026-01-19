@@ -61,6 +61,8 @@ module GoodData
       def decode_params(params, options = {})
         key = ENCODED_PARAMS_KEY.to_s
         hidden_key = ENCODED_HIDDEN_PARAMS_KEY.to_s
+        raise "Mandatory parameter '#{key}' or '#{hidden_key}' of type 'HashType' needs to be specified" if params[key].nil? && params[hidden_key].nil?
+
         data_params = params[key] || '{}'
         hidden_data_params = if params.key?(hidden_key) && params[hidden_key].nil?
                                "{\"#{hidden_key}\" : null}"
