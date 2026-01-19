@@ -26,6 +26,7 @@ def handle_error(params, log, brick_type, error, error_message)
   execution_log = GoodData.logger
   execution_log.error "Execution failed. Error: #{error}" unless execution_log.nil?
   GoodData::Bricks::ExecutionResultMiddleware.update_execution_result(GoodData::Bricks::ExecutionStatus::ERROR, error_message)
+  GoodData.logger.warn("Handling the WARNING status when error")
   log.error "action=#{brick_type}_execution status=failed commit_hash=#{params['GOODDATA_RUBY_COMMIT']} execution_id=#{params['GDC_EXECUTION_ID']} exception=#{error}"
   raise
 end
@@ -34,6 +35,7 @@ syslog_node = ENV['NODE_NAME']
 log = RemoteSyslogLogger.new(syslog_node, 514, :program => "ruby_#{brick_type}", :facility => 'local2')
 
 log.info "action=#{brick_type}_execution status=init"
+GoodData.logger.info("Start for testing WARNING status")
 
 begin
   commit_hash = ENV['GOODDATA_RUBY_COMMIT'] || ''
@@ -63,6 +65,12 @@ begin
 
   log.info "action=#{brick_type}_execution status=start commit_hash=#{commit_hash} execution_id=#{execution_id}"
   brick_pipeline.call(params)
+  if params['is_brick_ok'].nil? || params['is_brick_ok'] == false
+    log.info "#Debug brick ends: WARNING"
+    GoodData::Bricks::ExecutionResultMiddleware.update_execution_result(GoodData::Bricks::ExecutionStatus::WARNING, "The testing warning message")
+  else
+    log.info "#Debug brick ends: OK"
+  end
 rescue GoodData::LcmExecutionError => lcm_error
   handle_error(execution_result_log_params, log, brick_type, lcm_error, lcm_error.summary_error)
 rescue GoodData::LcmExecutionWarning => lcm_warning
