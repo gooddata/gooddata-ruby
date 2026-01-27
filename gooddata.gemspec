@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
     s.add_development_dependency 'rspec', '~> 3.12.0'
     s.add_development_dependency 'rspec-expectations', '~> 3.12'
     s.add_development_dependency 'rspec_junit_formatter', '~> 0.6.0'
+    s.add_development_dependency 'webmock', '~> 3.26.0'
 
     s.add_dependency 'azure-storage-blob', '~> 2.0'
     s.add_dependency 'nokogiri', '~> 1', '>= 1.10.8'
@@ -47,6 +48,7 @@ Gem::Specification.new do |s|
     s.add_development_dependency 'rspec', '~> 3.5.0'
     s.add_development_dependency 'rspec-expectations', '~> 3.5'
     s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
+    s.add_development_dependency 'webmock', '~> 2.3.1'
 
     s.add_dependency 'azure-storage-blob', '~> 1.1.0'
     s.add_dependency 'nokogiri', '~> 1.10.0'
@@ -56,7 +58,6 @@ Gem::Specification.new do |s|
     s.add_dependency 'unf', '~> 0.1.4'
   end
   s.add_development_dependency 'simplecov', '~> 0.12'
-  s.add_development_dependency 'webmock', '~> 3.26.0'
   s.add_development_dependency 'yard', '~> 0.9.11'
   s.add_development_dependency 'yard-rspec', '~> 0.1'
   s.add_development_dependency 'pry'
