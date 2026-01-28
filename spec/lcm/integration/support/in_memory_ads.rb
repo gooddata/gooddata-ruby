@@ -1,11 +1,26 @@
-require 'sqlite3' unless RUBY_PLATFORM == 'java'
+if RUBY_PLATFORM == 'java'
+  require 'active_record'
+  require 'activerecord-jdbcsqlite3-adapter'
+else
+  require 'sqlite3'
+end
 
 module Support
   class InMemoryAds
     def initialize
-      db = SQLite3::Database.new(':memory:')
-      db.results_as_hash = true
-      @db = db
+      if RUBY_PLATFORM == 'java'
+        # Use ActiveRecord with JDBC adapter for JRuby
+        ActiveRecord::Base.establish_connection(
+          adapter: 'sqlite3',
+          database: ':memory:'
+        )
+        @db = ActiveRecord::Base.connection
+      else
+        # Use sqlite3 gem for MRI
+        db = SQLite3::Database.new(':memory:')
+        db.results_as_hash = true
+        @db = db
+      end
     end
 
     def data
@@ -33,12 +48,30 @@ module Support
     end
 
     def execute_with_headers(*args)
-      res = @db.execute(*args)
-      res.map do |row|
-        # sqlite3 returns hash with both column names and numbers, we want only names
-        res = GoodData::Helpers.symbolize_keys(row.reject { |k, _| k.is_a? Integer })
-        yield res if block_given?
-        res
+      if RUBY_PLATFORM == 'java'
+        # ActiveRecord JDBC adapter
+        result = @db.exec_query(*args)
+        # ActiveRecord returns arrays of arrays, convert to hash format
+        columns = result.columns if result.respond_to?(:columns)
+        result.map do |row|
+          if row.is_a?(Array) && columns
+            # Convert array to hash
+            row_hash = columns.zip(row).to_h
+            res = GoodData::Helpers.symbolize_keys(row_hash)
+          else
+            res = GoodData::Helpers.symbolize_keys(row.is_a?(Hash) ? row : {})
+          end
+          yield res if block_given?
+          res
+        end
+      else
+        res = @db.execute(*args)
+        res.map do |row|
+          # sqlite3 returns hash with both column names and numbers, we want only names
+          res = GoodData::Helpers.symbolize_keys(row.reject { |k, _| k.is_a? Integer })
+          yield res if block_given?
+          res
+        end
       end
     end
 

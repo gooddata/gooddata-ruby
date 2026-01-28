@@ -3,6 +3,11 @@
   "CLIENT_GDC_PROTOCOL": "https",
   "CLIENT_GDC_HOSTNAME": "<%= config[:prod_server] %>",
   "gd_encoded_params": {
+    "SEGMENTS": <%= segments %>,
+    "DATA_PRODUCT": "<%= data_product %>",
+    "TOKENS": {
+      "pg": "<%= config[:prod_token] %>"
+    },
     <% if defined? jdbc_url %>
     "ads_client": {
       "username": "${GDC_USERNAME}",
@@ -10,13 +15,21 @@
       "jdbc_url": "<%= jdbc_url %>"
     },
     <% end %>
-    "SEGMENTS": <%= segments %>,
-    "DATA_PRODUCT": "<%= data_product %>"
+    "technical_user": [
+      "${GDC_USERNAME}"
+    ],
+    "development_client": {
+      "protocol": "https",
+      "hostname": "<%= config[:dev_server] %>",
+      "username": "${GDC_USERNAME}",
+      "password": "${GDC_PASSWORD}"
+    }
   },
+  "production_tag": "dashboard, metric",
   "release_table_name": "<%= release_table_name %>",
   "fail_early": "true",
   "strict": "true",
   "GDC_USERNAME": "<%= config[:username] %>",
   "GDC_PASSWORD": "<%= config[:password] %>",
-  "set_master_project": "<%= master_project_id %>"
+  "GDC_LOG_LEVEL": "DEBUG"
 }

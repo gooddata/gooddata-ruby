@@ -49,6 +49,7 @@ module GoodData
           s3_bucket_name: ENV['RT_S3_BUCKET_NAME'],
           s3_access_key_id: ENV['RT_S3_ACCESS_KEY'],
           s3_secret_access_key: ENV['RT_S3_SECRET_KEY'],
+          s3_session_token: ENV['RT_S3_SESSION_TOKEN'],
           redshift_password: ENV['REDSHIFT_PASSWORD'],
           redshift_access_key: ENV['REDSHIFT_ACCESS_KEY'],
           redshift_secret_key: ENV['REDSHIFT_SECRET_KEY'],

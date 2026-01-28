@@ -43,8 +43,12 @@ module GoodData
           vcr_config.allow_http_connections_when_no_cassette = true
           vcr_config.configure_rspec_metadata!
 
-          vcr_config.ignore_request do
-            @ignore_vcr_requests
+          vcr_config.ignore_request do |request|
+            @ignore_vcr_requests ||
+              request.uri.include?('s3.amazonaws.com') ||
+              request.uri.match?(/s3[.-][a-z0-9-]+\.amazonaws\.com/) ||
+              request.uri.include?('staging-lcm-prod.intgdc.com') ||
+              request.uri.include?('staging-lcm-dev.intgdc.com')
           end
 
           vcr_config.default_cassette_options = {

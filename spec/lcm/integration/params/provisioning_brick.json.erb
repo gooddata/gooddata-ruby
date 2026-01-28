@@ -36,7 +36,9 @@
     "aws_client": {
       "access_key_id": "${s3_access_key}",
       "secret_access_key": "${s3_secret_access_key}",
-      "endpoint": "<%= s3_endpoint %>"
+      "session_token": "${s3_session_token}",
+      "endpoint": "<%= s3_endpoint %>",
+      "region": "<%= s3_region %>"
     }
   },
   "gd_encoded_hidden_params": {
@@ -53,5 +55,6 @@
   "GDC_USERNAME": "<%= config[:username] %>",
   "GDC_PASSWORD": "<%= config[:password] %>",
   "s3_secret_access_key": "<%= s3_secret_access_key %>",
-  "s3_access_key": "<%= s3_access_key %>"
+  "s3_access_key": "<%= s3_access_key %>",
+  "s3_session_token": "<%= s3_session_token %>"
 }
