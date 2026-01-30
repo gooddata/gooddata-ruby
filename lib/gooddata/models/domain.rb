@@ -30,6 +30,7 @@ module GoodData
       'en-AU' => 'English/Australian',
       'fi-FI' => 'Finnish',
       'zh-Hant' => 'Traditional Chinese',
+      'zh-Hans' => 'Simplified Chinese',
       'zh-HK' => 'Cantonese'
     }
 
