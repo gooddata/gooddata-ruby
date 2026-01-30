@@ -33,16 +33,16 @@ jobs:
         with:
           submodules: 'true'
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
-      - name: Get required Vault secrets
-        uses: hashicorp/vault-action@v3
-        with:
-          url: ${{ secrets.VAULT_ADDRESS }}
-          method: jwt
-          path: jwt/github
-          role: ecr-ii-push
-          secrets: |
-            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_access_key | AWS_ACCESS_KEY ;
-            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_secret_key | AWS_SECRET_KEY ;
+#      - name: Get required Vault secrets
+#        uses: hashicorp/vault-action@v3
+#        with:
+#          url: ${{ secrets.VAULT_ADDRESS }}
+#          method: jwt
+#          path: jwt/github
+#          role: ecr-ii-push
+#          secrets: |
+#            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_access_key | AWS_ACCESS_KEY ;
+#            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_secret_key | AWS_SECRET_KEY ;
       - name: Set up JDK (required for JRuby)
         uses: actions/setup-java@v4
         with:
@@ -98,3 +98,4 @@ jobs:
           GD_STG_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_password"
           GD_STG_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_project_token"
           GD_STG_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_default_password"
+
