@@ -1,0 +1,42 @@
+name: LCM Integration E2E Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      AUTO_MERGE:
+        default: true
+        required: false
+        type: boolean
+        description: Must be set here in order to use in if condition at job level.
+      base_branch:
+        required: true
+        type: string
+        description: The base branch to compare against for detecting changes.
+      pr_number:
+        required: true
+        type: string
+
+jobs:
+  LCM-integration-e2e-tests:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-rxa-xlarge
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+      - name: Build local image
+        run: |
+          bundle exec rake -f lcm.rake test:docker:build
+      - name: Build gems
+        run: |
+          bundle exec rake -f lcm.rake test:docker:bundle
+      - name: Run integrated tests
+        run: |
+          bundle exec rake -f lcm.rake test:docker:integration-e2e
+
