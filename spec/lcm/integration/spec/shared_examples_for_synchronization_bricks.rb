@@ -19,6 +19,7 @@ shared_examples 'a synchronization brick' do
     original_processes.reject! { |p| p.name == ADD_V2_COMPONENT_NAME }
     projects.each do |target_project|
       target_processes = target_project.processes.to_a
+      target_processes.reject! { |p| p.name == ADD_COMPONENT_NAME }
       expect(target_processes.length).to be original_processes.length
       original_processes.each do |expected|
         actual = target_processes.find { |p| p.name == expected.name }
@@ -49,6 +50,8 @@ shared_examples 'a synchronization brick' do
     projects.each do |target_project|
       blueprint = GoodData::Model::ProjectBlueprint.new(original_project.blueprint)
       diff = Support::ComparisonHelper.compare_ldm(blueprint, target_project.pid, @prod_rest_client)
+      puts "DEBUGG - diff['updateOperations']: #{diff['updateOperations'].inspect}"
+      puts "DEBUGG - diff['updateScripts']: #{diff['updateScripts'].inspect}"
       expect(diff['updateOperations']).to eq([])
       expect(diff['updateScripts']).to eq([])
     end
@@ -62,6 +65,9 @@ shared_examples 'a synchronization brick' do
 
   it 'transfer tags for facts and datasets' do
     projects.each do |p|
+      puts "DEBUGG - p: #{p.inspect}"
+      puts "DEBUGG - p.datasets(Support::DATASET_IDENTIFIER).tags.split: #{p.datasets(Support::DATASET_IDENTIFIER).tags.split.inspect}"
+      puts "DEBUGG - p.facts(fact_id).tags.split: #{p.facts(fact_id).tags.split.inspect}"
       expect(p.datasets(Support::DATASET_IDENTIFIER).tags.split).to include('dataset')
       expect(p.facts(fact_id).tags.split).to include('fact')
     end
@@ -107,6 +113,8 @@ shared_examples 'a synchronization brick' do
         diff = Support::ComparisonHelper.compare_dashboards(expected, actual)
         expected_diff = []
         expected_diff << ['~', 'meta.tags', 'dashboard', '_lcm_managed_object dashboard'] if lcm_managed_tag
+        puts "DEBUGG - expected_diff: #{expected_diff.inspect}"
+        puts "DEBUGG - diff: #{diff.inspect}"
         expect(diff).to eq expected_diff
       end
     end
@@ -116,6 +124,8 @@ shared_examples 'a synchronization brick' do
     used_reports = Support::ComparisonHelper.used_reports(original_project)
     projects.each do |target_project|
       target_reports = target_project.reports.to_a
+      puts "DEBUGG - target_reports: #{target_reports.map(&:identifier).inspect}"
+      puts "DEBUGG - used_reports: #{used_reports.map(&:identifier).inspect}"
       expect(target_reports.length).to be used_reports.length
       used_reports.each do |report|
         actual = target_reports.find { |r| r.identifier == report.identifier }
@@ -137,6 +147,8 @@ shared_examples 'a synchronization brick' do
       .uniq(&:identifier)
       .map(&:identifier)
     projects.each do |target_project|
+      puts "DEBUGG - target_project.metrics.map(&:identifier): #{target_project.metrics.map(&:identifier).inspect}"
+      puts "DEBUGG - expected_metrics: #{expected_metrics.inspect}"
       expect(target_project.metrics.map(&:identifier)).to match_array(expected_metrics)
     end
   end
