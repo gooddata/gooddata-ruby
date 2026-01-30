@@ -1,0 +1,16 @@
+name: Quick and Dirty lcm runner
+on: 
+  workflow_dispatch: 
+
+jobs: 
+  call-e2e: 
+    uses: ./.github/workflows/lcm-integration-e2e.yaml 
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    with: 
+      AUTO_MERGE: true 
+      base_branch: main 
+      pr_number: "123" 
+
