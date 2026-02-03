@@ -1,0 +1,11 @@
+name: tmp.yaml
+on: pull_request
+
+jobs:
+  - name: Promote images
+    uses: ./.github/workflows/promote-to-stable.yaml
+    with:
+      images: [ "lcm-bricks", "lcm-bricks-nextversion" ]
+      charts: '{}'
+      image_tag: "3.7.102"
+    secrets: inherit
