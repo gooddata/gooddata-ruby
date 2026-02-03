@@ -259,16 +259,19 @@ jobs:
     secrets: inherit
 
   promote-to-stable:
-    needs: [ prepare-build, build-helmreleases, wait-for-deployment ]
+    needs: [ prepare-build, services-build, build-helmreleases, wait-for-deployment ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
-      needs.build-helmreleases.result == 'success' &&
+      (
+        needs.build-helmreleases.result == 'success' ||
+        needs.services-build.result == 'success'
+      ) &&
       inputs.deploy
     uses: ./.github/workflows/promote-to-stable.yaml
     with:
       images: ${{ needs.prepare-build.outputs.images }}
-      charts: ${{ needs.build-helmreleases.outputs.built_charts }}
+      charts: ${{ needs.build-helmreleases.outputs.built_charts || '{}' }}
       image_tag: ${{ needs.prepare-build.outputs.service_major_version }}
     secrets: inherit
 
