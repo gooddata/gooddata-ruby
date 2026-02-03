@@ -1,0 +1,26 @@
+name: TMP workflow, register bricks
+on: pull_request
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  register-bricks-prod:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    strategy:
+      matrix:
+        cluster: [ na1, ca2, perf1, bom1, syd1, na3, eu1, fra1 ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Register bricks to ${{ matrix.cluster }}
+        uses: ./.github/actions/rundeck
+        with:
+          server: '${{ secrets.RUNDECK_URL }}'
+          project: ${{ matrix.cluster }}-ansible
+          job-group: ansible/msf/hotfix
+          job-name: ${{ matrix.cluster }}_lcm_pipeline_component_tool
+          vault-url: ${{ secrets.VAULT_ADDRESS }}
