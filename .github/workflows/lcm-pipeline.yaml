@@ -206,10 +206,7 @@ jobs:
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
-      (
-        needs.services-build.result != 'skipped' ||
-        needs.helm-charts-build.result != 'skipped'
-      ) &&
+      needs.helm-charts-build.result != 'skipped' &&
       inputs.deploy
     uses: ./.github/workflows/build-helmreleases.yaml
     with:
