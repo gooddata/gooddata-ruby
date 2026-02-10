@@ -1,0 +1,100 @@
+name: LCM Integration E2E Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      AUTO_MERGE:
+        default: true
+        required: false
+        type: boolean
+        description: Must be set here in order to use in if condition at job level.
+      base_branch:
+        required: true
+        type: string
+        description: The base branch to compare against for detecting changes.
+      pr_number:
+        required: true
+        type: string
+
+env:
+  VAULT_SPECIAL_PREFIX: "secret/v2/na1/int/data-special" 
+
+jobs:
+  LCM-integration-e2e-tests:
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-rxa-xlarge
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+      - name: Get required Vault secrets
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDRESS }}
+          method: jwt
+          path: jwt/github
+          role: ecr-ii-push
+          secrets: |
+            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_access_key | AWS_ACCESS_KEY ;
+            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_secret_key | AWS_SECRET_KEY ;
+      - name: Set up JDK (required for JRuby)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+      - name: Set up JRuby + Bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 'jruby-9.4.12.1'
+          bundler-cache: true
+      - name: Build image
+        run: |
+          bundle exec rake -f lcm.rake docker:build
+      - name: Build gems
+        run: |
+          bundle exec rake -f lcm.rake docker:bundle
+      - name: Run integrated tests
+        run: |
+          bundle exec rake -f lcm.rake test:docker:integration-e2e
+        env:
+#          GD_STG_PASSWORD: ""
+#          GD_STG_USERNAME: "rubydev+admin@gooddata.com"
+#          GD_STG_DEV_TOKEN: "INT00PDWH01STG1LCMDEV"
+#          GD_STG_PROD_TOKEN: "INT01PRODPDWH01STG1LCM"
+#          GD_STG_VERTICA_DEV_TOKEN: "INT00PDWH01STG1LCMDEV"
+#          GD_STG_VERTICA_PROD_TOKEN: "INT01PRODPDWH01STG1LCM"
+#          RT_S3_BUCKET_NAME: "gdc-dev-eu-integration-tests"
+#          RT_S3_ACCESS_KEY: ${{ env.AWS_ACCESS_KEY }}
+#          RT_S3_SECRET_KEY: ${{ env.AWS_SECRET_KEY }}
+#          RT_S3_SESSION_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS }}
+          GD_SPEC_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-bia-encryption-key"
+          RT_S3_BUCKET_NAME: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials bucket_name"
+          RT_S3_ACCESS_KEY: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials access_key"
+          RT_S3_SECRET_KEY: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials secret_key"
+          GD_DEV_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 dev_token"
+          GD_DEV_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 prod_token"
+          GD_DEV_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 vertica_dev_token"
+          GD_DEV_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 vertica_prod_token"
+          GD_DEV_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_password"
+          GD_DEV_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_project_token"
+          GD_DEV_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_default_password"
+          GD_TEST_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 dev_token"
+          GD_TEST_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 prod_token"
+          GD_TEST_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 vertica_dev_token"
+          GD_TEST_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 vertica_prod_token"
+          GD_TEST_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_password"
+          GD_TEST_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_project_token"
+          GD_TEST_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_default_password"
+          GD_STG_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 dev_token"
+          GD_STG_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 prod_token"
+          GD_STG_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 vertica_dev_token"
+          GD_STG_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 vertica_prod_token"
+          GD_STG_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_password"
+          GD_STG_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_project_token"
+          GD_STG_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_default_password"
