@@ -39,10 +39,33 @@ jobs:
           url: ${{ secrets.VAULT_ADDRESS }}
           method: jwt
           path: jwt/github
-          role: ecr-ii-push
+          role: infra-na1-dev-jenkins-slave
           secrets: |
-            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_access_key | AWS_ACCESS_KEY ;
-            secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_secret_key | AWS_SECRET_KEY ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-bia-encryption-key secret | GD_SPEC_PASSWORD ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-s3-credentials bucket_name | RT_S3_BUCKET_NAME ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-s3-credentials access_key | RT_S3_ACCESS_KEY ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-s3-credentials secret_key | RT_S3_SECRET_KEY ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg3 dev_token | GD_DEV_DEV_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg3 prod_token | GD_DEV_PROD_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg3 vertica_dev_token | GD_DEV_VERTICA_DEV_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg3 vertica_prod_token | GD_DEV_VERTICA_PROD_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg3 gd_password | GD_DEV_PASSWORD ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg3 gd_project_token | GD_DEV_GD_PROJECT_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg3 gd_default_password | GD_DEV_DEFAULT_PASSWORD ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg2 dev_token | GD_TEST_DEV_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg2 prod_token | GD_TEST_PROD_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg2 vertica_dev_token | GD_TEST_VERTICA_DEV_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg2 vertica_prod_token | GD_TEST_VERTICA_PROD_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg2 gd_password | GD_TEST_PASSWORD ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg2 gd_project_token | GD_TEST_GD_PROJECT_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg2 gd_default_password | GD_TEST_DEFAULT_PASSWORD ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg1 dev_token | GD_STG_DEV_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg1 prod_token | GD_STG_PROD_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg1 vertica_dev_token | GD_STG_VERTICA_DEV_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg1 vertica_prod_token | GD_STG_VERTICA_PROD_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg1 gd_password | GD_STG_PASSWORD ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg1 gd_project_token | GD_STG_GD_PROJECT_TOKEN ;
+            ${{ env.VAULT_SPECIAL_PREFIX }}/ruby-test-stg1 gd_default_password | GD_STG_DEFAULT_PASSWORD ;
       - name: Set up JDK (required for JRuby)
         uses: actions/setup-java@v4
         with:
@@ -73,28 +96,29 @@ jobs:
 #          RT_S3_ACCESS_KEY: ${{ env.AWS_ACCESS_KEY }}
 #          RT_S3_SECRET_KEY: ${{ env.AWS_SECRET_KEY }}
 #          RT_S3_SESSION_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS }}
-          GD_SPEC_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-bia-encryption-key"
-          RT_S3_BUCKET_NAME: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials bucket_name"
-          RT_S3_ACCESS_KEY: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials access_key"
-          RT_S3_SECRET_KEY: "$VAULT_SPECIAL_PREFIX/ruby-test-s3-credentials secret_key"
-          GD_DEV_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 dev_token"
-          GD_DEV_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 prod_token"
-          GD_DEV_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 vertica_dev_token"
-          GD_DEV_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 vertica_prod_token"
-          GD_DEV_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_password"
-          GD_DEV_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_project_token"
-          GD_DEV_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg3 gd_default_password"
-          GD_TEST_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 dev_token"
-          GD_TEST_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 prod_token"
-          GD_TEST_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 vertica_dev_token"
-          GD_TEST_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 vertica_prod_token"
-          GD_TEST_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_password"
-          GD_TEST_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_project_token"
-          GD_TEST_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg2 gd_default_password"
-          GD_STG_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 dev_token"
-          GD_STG_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 prod_token"
-          GD_STG_VERTICA_DEV_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 vertica_dev_token"
-          GD_STG_VERTICA_PROD_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 vertica_prod_token"
-          GD_STG_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_password"
-          GD_STG_GD_PROJECT_TOKEN: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_project_token"
-          GD_STG_DEFAULT_PASSWORD: "$VAULT_SPECIAL_PREFIX/ruby-test-stg1 gd_default_password"
+          GD_SPEC_PASSWORD: ${{ env.GD_SPEC_PASSWORD }}
+          RT_S3_BUCKET_NAME: ${{ env.RT_S3_BUCKET_NAME  }}
+          RT_S3_ACCESS_KEY: ${{ env.RT_S3_ACCESS_KEY }}
+          RT_S3_SECRET_KEY: ${{ env.RT_S3_SECRET_KEY }}
+          GD_DEV_DEV_TOKEN: ${{ env.GD_DEV_DEV_TOKEN }}
+          GD_DEV_PROD_TOKEN: ${{ env.GD_DEV_PROD_TOKEN }}
+          GD_DEV_VERTICA_DEV_TOKEN: ${{ env.GD_DEV_VERTICA_DEV_TOKEN }}
+          GD_DEV_VERTICA_PROD_TOKEN: ${{ env.GD_DEV_VERTICA_PROD_TOKEN }}
+          GD_DEV_PASSWORD: ${{ env.GD_DEV_PASSWORD }}
+          GD_DEV_GD_PROJECT_TOKEN: ${{ env.GD_DEV_GD_PROJECT_TOKEN }}
+          GD_DEV_DEFAULT_PASSWORD: ${{ env.GD_DEV_DEFAULT_PASSWORD }}
+          GD_TEST_DEV_TOKEN: ${{ env.GD_TEST_DEV_TOKEN }}
+          GD_TEST_PROD_TOKEN: ${{ env.GD_TEST_PROD_TOKEN }}
+          GD_TEST_VERTICA_DEV_TOKEN: ${{ env.GD_TEST_VERTICA_DEV_TOKEN }}
+          GD_TEST_VERTICA_PROD_TOKEN: ${{ env.GD_TEST_VERTICA_PROD_TOKEN }}
+          GD_TEST_PASSWORD: ${{ env.GD_TEST_PASSWORD }}
+          GD_TEST_GD_PROJECT_TOKEN: ${{ env.GD_TEST_GD_PROJECT_TOKEN }}
+          GD_TEST_DEFAULT_PASSWORD: ${{ env.GD_TEST_DEFAULT_PASSWORD }}
+          GD_STG_DEV_TOKEN: ${{ env.GD_STG_DEV_TOKEN }}
+          GD_STG_PROD_TOKEN: ${{ env.GD_STG_PROD_TOKEN }}
+          GD_STG_VERTICA_DEV_TOKEN: ${{ env.GD_STG_VERTICA_DEV_TOKEN }}
+          GD_STG_VERTICA_PROD_TOKEN: ${{ env.GD_STG_VERTICA_PROD_TOKEN }}
+          GD_STG_PASSWORD: ${{ env.GD_STG_PASSWORD }}
+          GD_STG_GD_PROJECT_TOKEN: ${{ env.GD_STG_GD_PROJECT_TOKEN }}
+          GD_STG_DEFAULT_PASSWORD: ${{ env.GD_STG_DEFAULT_PASSWORD }}
+
