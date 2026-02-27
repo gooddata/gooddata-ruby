@@ -71,15 +71,19 @@ module GoodData
                              end
 
         reference_values = []
+        sanitize_values = {}
         # Replace reference parameters by the actual values. Use backslash to escape a reference parameter, e.g: \${not_a_param},
         # the ${not_a_param} will not be replaced
         if options[:resolve_reference_params]
-          data_params, reference_values = resolve_reference_params(data_params, params)
+          data_params, reference_values, sanitize_values = resolve_reference_params(data_params, params)
           hidden_data_params, = resolve_reference_params(hidden_data_params, params)
         end
 
         begin
           parsed_data_params = data_params.is_a?(Hash) ? data_params : JSON.parse(data_params)
+          # Invalid ascii characters in data_params make json parse fails. So after escape the invalid ascii
+          # characters to json parse success then We need recover them to origin value
+          recover_sanitize_value(parsed_data_params, sanitize_values) if sanitize_values.any?
         rescue JSON::ParserError => exception
           reason = exception.message
           reference_values.each { |secret_value| reason.gsub!("\"#{secret_value}\"", '"***"') }
@@ -240,8 +244,23 @@ module GoodData
 
       private
 
+      def invalid_ascii_value(data)
+        data.include?("\n")
+      end
+
+      def recover_sanitize_value(parsed_data_params, sanitize_values)
+        parsed_data_params.map do |k, v|
+          if v.is_a?(Hash)
+            recover_sanitize_value(v, sanitize_values)
+          else
+            parsed_data_params[k] = sanitize_values[v] if sanitize_values.include?(v)
+          end
+        end
+      end
+
       def resolve_reference_params(data_params, params)
         reference_values = []
+        sanitize_values = {}
         regexps = Regexp.union(/\\\\/, /\\\$/, /\$\{([^\n\{\}]+)\}/)
         resolve_reference = lambda do |v|
           if v.is_a? Hash
@@ -266,7 +285,13 @@ module GoodData
                 val = params["#{$1}"]
                 if val
                   reference_values << val
-                  val
+                  if invalid_ascii_value(val)
+                    escape_value = val.gsub("\n", "\\n")
+                    sanitize_values[escape_value] = val
+                    escape_value
+                  else
+                    val
+                  end
                 else
                   GoodData.logger.warn "Reference '#{$1}' is not found!"
                   match
@@ -284,7 +309,7 @@ module GoodData
                         resolve_reference.call(data_params)
                       end
 
-        [data_params, reference_values]
+        [data_params, reference_values, sanitize_values]
       end
     end
   end
