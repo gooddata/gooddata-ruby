@@ -33,6 +33,8 @@ module GoodData
       TOKEN_PATH = '/gdc/account/token'
       KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
       API_LEVEL = 2
+      KB = 1024
+      MB = 1024 * KB
 
       ID_LENGTH = 16
 
@@ -177,8 +179,8 @@ module GoodData
 
       # Connect using username and password
       def connect(username, password, options = {})
-        if RUBY_VERSION >= '3.3'
-          Psych::Parser.code_point_limit = 100_000_000_000
+        if RUBY_ENGINE == "jruby" && RUBY_ENGINE_VERSION >= '9.4.12.0'
+            Psych::Parser.code_point_limit = 100 * MB
         end
         server = options[:server] || Helpers::AuthHelper.read_server
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)

@@ -15,11 +15,17 @@ on:
       pr_number:
         required: true
         type: string
+      java_version:
+        required: true
+        type: string
+      ruby_version:
+        required: true
+        type: string
 
 env:
   RT_S3_BUCKET_NAME: "gdc-dev-eu-integration-tests"
-  JAVA_HOME: /usr/lib/jvm/java-${{ inputs.java-version }}-openjdk-amd64
-  PATH: /usr/lib/jvm/java-${{ inputs.java-version }}-openjdk-amd64/bin:/usr/local/bin:/usr/bin:/bin
+  JAVA_HOME: /usr/lib/jvm/java-${{ inputs.java_version }}-openjdk-amd64
+  PATH: /usr/lib/jvm/java-${{ inputs.java_version }}-openjdk-amd64/bin:/usr/local/bin:/usr/bin:/bin
 
 jobs:
   LCM-integration-e2e-tests:
@@ -38,7 +44,7 @@ jobs:
       - name: Set up JRuby + Bundler
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 'jruby-9.4.12.1'
+          ruby-version: ${{ inputs.ruby_version }}
           bundler-cache: true
       - name: Build image
         run: |
