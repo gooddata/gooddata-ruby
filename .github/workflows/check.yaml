@@ -35,9 +35,9 @@ jobs:
     with:
       AUTO_MERGE: false
       base_branch: ${{ needs.prepare-env.outputs.branch }}
-      deploy: false
       pr_number: ${{ needs.prepare-env.outputs.pr_number }}
       java_version: '11'
+      ruby_version: 'jruby-9.4.12.1'
 
   gooddata-ruby-lcm-build-pipeline:
     needs:
