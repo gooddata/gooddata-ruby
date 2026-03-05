@@ -19,6 +19,7 @@ shared_examples 'a synchronization brick' do
     original_processes.reject! { |p| p.name == ADD_V2_COMPONENT_NAME }
     projects.each do |target_project|
       target_processes = target_project.processes.to_a
+      target_processes.reject! { |p| p.name == ADD_COMPONENT_NAME }
       expect(target_processes.length).to be original_processes.length
       original_processes.each do |expected|
         actual = target_processes.find { |p| p.name == expected.name }

@@ -21,6 +21,7 @@ module GoodData
     CUSTOM_CLIENT_ID_COLUMN = 'custom_client_id_column'
     COMPUTED_ATTRIBUTE_ID = 'attr.comp.my_computed_attr'
     USER_GROUP_NAME = 'My Test Group'
+    ADD_COMPONENT_NAME = 'Automated Data Distribution'
     ADD_V2_COMPONENT_NAME = 'lcm-end-to-end-add-component'
     ADD_COMPONENT_SCHEDULE_NAME = 'add-component-schedule'
   end
