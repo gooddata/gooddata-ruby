@@ -44,6 +44,14 @@ runs:
         echo "${{ steps.cert-from-vault.outputs.ca_chain }}" >> cert.pem
         echo "${{ steps.cert-from-vault.outputs.private_key }}" >> cert.pem
       shell: bash
+    - name: Setup python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+    - name: Install modules
+      shell: bash
+      run: |
+        pip install requests
     - name: Run python script
       id: python
       run: |
