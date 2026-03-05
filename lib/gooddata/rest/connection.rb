@@ -179,9 +179,6 @@ module GoodData
 
       # Connect using username and password
       def connect(username, password, options = {})
-        if RUBY_ENGINE == "jruby" && RUBY_ENGINE_VERSION >= '9.4.12.0'
-            Psych::Parser.code_point_limit = 100 * MB
-        end
         server = options[:server] || Helpers::AuthHelper.read_server
         options = DEFAULT_LOGIN_PAYLOAD.merge(options)
         headers = options[:headers] || {}
