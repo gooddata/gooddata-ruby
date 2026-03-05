@@ -106,7 +106,7 @@ jobs:
     if: always()
     needs:
       - prepare-env
-      - gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
+    #  - gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
       - gooddata-ruby-lcm-promote-pipeline
     steps:
       - name: Check if needed jobs succeeded

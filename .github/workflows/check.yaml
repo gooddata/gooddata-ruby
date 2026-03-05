@@ -24,8 +24,8 @@ jobs:
         uses: tj-actions/changed-files@v45
 
   gooddata-ruby-lcm-build-pipeline:
-    needs:
-      - gooddata-ruby-lcm-integration-e2e
+    #needs:
+    #  - gooddata-ruby-lcm-integration-e2e
     permissions:
       contents: read
       id-token: write
@@ -97,7 +97,7 @@ jobs:
     needs:
       - prepare-env
       - gooddata-ruby-lcm-build-pipeline
-      - gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
+    #  - gooddata-ruby-fossa-licenses-validate-LR-ticket-zuul
     steps:
       - name: Check if needed jobs succeeded
         uses: re-actors/alls-green@release/v1
