@@ -162,22 +162,41 @@ describe GoodData::Helpers do
           'x' => 'y',
           'ads_password' => 'ads_123',
           'my_password' => 'login_123',
+          'private_key' => '-----TEST-----
+abc
+123
+-----END TEST-----',
           'alias.user' => 'qa+test@gooddata.com',
           'alias.segment' => 'UserTestSegmentK8s',
           'gd_encoded_params' => '{"login_username": "${alias.user}",
                   "login_password": "abc_${my_password}_123" ,
                   "SEGMENTS_FILTER": ["${alias.segment}"],
+                  "connection": {
+                    "username": "${alias.user}",
+                    "db_private_key": "${private_key}"
+                  },
                   "technical_user": ["${alias.user}"]}'
       }
       expected_result = {
           'x' => 'y',
           'ads_password' => 'ads_123',
           'my_password' => 'login_123',
+          'private_key' => '-----TEST-----
+abc
+123
+-----END TEST-----',
           'alias.user' => 'qa+test@gooddata.com',
           'alias.segment' => 'UserTestSegmentK8s',
           'login_username' => 'qa+test@gooddata.com',
           'login_password' => 'abc_login_123_123',
           'SEGMENTS_FILTER' => ["UserTestSegmentK8s"],
+          'connection' => {
+            'username' => 'qa+test@gooddata.com',
+            'db_private_key' => '-----TEST-----
+abc
+123
+-----END TEST-----'
+          },
           'technical_user' => ["qa+test@gooddata.com"]
       }
       result = GoodData::Helpers.decode_params(params, :resolve_reference_params => true)
