@@ -41,6 +41,12 @@ end
 
 GoodData::Environment.load
 
+if RUBY_ENGINE == "jruby" && RUBY_ENGINE_VERSION >= '9.4.12.0'
+    KB = 1024
+    MB = 1024 * KB
+    Psych::Parser.code_point_limit = 100 * MB
+end
+
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
 RSpec.configure do |config|
