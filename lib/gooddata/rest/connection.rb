@@ -33,8 +33,6 @@ module GoodData
       TOKEN_PATH = '/gdc/account/token'
       KEYS_TO_SCRUB = [:password, :verifyPassword, :authorizationToken]
       API_LEVEL = 2
-      KB = 1024
-      MB = 1024 * KB
 
       ID_LENGTH = 16
 
