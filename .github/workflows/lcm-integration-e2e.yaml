@@ -3,18 +3,6 @@ name: LCM Integration E2E Pipeline
 on:
   workflow_call:
     inputs:
-      AUTO_MERGE:
-        default: true
-        required: false
-        type: boolean
-        description: Must be set here in order to use in if condition at job level.
-      base_branch:
-        required: true
-        type: string
-        description: The base branch to compare against for detecting changes.
-      pr_number:
-        required: true
-        type: string
       java_version:
         required: true
         type: string
@@ -25,7 +13,6 @@ on:
 env:
   RT_S3_BUCKET_NAME: "gdc-dev-eu-integration-tests"
   JAVA_HOME: /usr/lib/jvm/java-${{ inputs.java_version }}-openjdk-amd64
-  PATH: /usr/lib/jvm/java-${{ inputs.java_version }}-openjdk-amd64/bin:/usr/local/bin:/usr/bin:/bin
 
 jobs:
   LCM-integration-e2e-tests:
@@ -36,6 +23,10 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Add java path
+        run: |
+          echo "${JAVA_HOME}/bin" >> $GITHUB_PATH
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
