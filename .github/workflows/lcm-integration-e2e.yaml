@@ -3,18 +3,6 @@ name: LCM Integration E2E Pipeline
 on:
   workflow_call:
     inputs:
-      AUTO_MERGE:
-        default: true
-        required: false
-        type: boolean
-        description: Must be set here in order to use in if condition at job level.
-      base_branch:
-        required: true
-        type: string
-        description: The base branch to compare against for detecting changes.
-      pr_number:
-        required: true
-        type: string
       java_version:
         required: true
         type: string
