@@ -246,11 +246,33 @@ jobs:
       wait_retries: ${{ matrix.hr.waitRetries }}
       pipeline_identifier: ${{ needs.prepare-build.outputs.pipeline_identifier }}
 
-  revert-staging-pr:
-    needs: [ create-staging-pr, wait-for-deployment ]
+  lcm-integration-e2e:
+    needs: [ prepare-build, build-helmreleases, wait-for-deployment ]
     if: |
       !cancelled() &&
-      needs.wait-for-deployment.result == 'failure' &&
+      !contains(needs.*.result, 'failure') &&
+      needs.build-helmreleases.result == 'success' &&
+      inputs.deploy
+    uses: ./.github/workflows/lcm-integration-e2e.yaml
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    with:
+      AUTO_MERGE: ${{ inputs.AUTO_MERGE }}
+      base_branch: ${{ inputs.base_branch }}
+      pr_number: ${{ inputs.pr_number }}
+      java_version: '11'
+      ruby_version: 'jruby-9.4.12.1'
+
+  revert-staging-pr:
+    needs: [ create-staging-pr, wait-for-deployment, lcm-integration-e2e ]
+    if: |
+      !cancelled() &&
+      (
+        needs.wait-for-deployment.result == 'failure' ||
+        needs.lcm-integration-e2e.result == 'failure'
+      ) &&
       inputs.deploy
     uses: ./.github/workflows/revert-staging-pr.yaml
     with:
@@ -259,7 +281,7 @@ jobs:
     secrets: inherit
 
   promote-to-stable:
-    needs: [ prepare-build, services-build, build-helmreleases, wait-for-deployment ]
+    needs: [ prepare-build, services-build, build-helmreleases, wait-for-deployment, lcm-integration-e2e ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&

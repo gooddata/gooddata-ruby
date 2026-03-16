@@ -23,25 +23,9 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v45
 
-  gooddata-ruby-lcm-integration-e2e:
-    needs:
-      - prepare-env
-    uses: ./.github/workflows/lcm-integration-e2e.yaml
-    secrets: inherit
-    permissions:
-      id-token: write
-      contents: read
-    if: ${{ needs.prepare-env.outputs.branch == 'master' }}
-    with:
-      AUTO_MERGE: false
-      base_branch: ${{ needs.prepare-env.outputs.branch }}
-      pr_number: ${{ needs.prepare-env.outputs.pr_number }}
-      java_version: '11'
-      ruby_version: 'jruby-9.4.12.1'
-
   gooddata-ruby-lcm-build-pipeline:
     needs:
-      - gooddata-ruby-lcm-integration-e2e
+      - prepare-env
     permissions:
       contents: read
       id-token: write
