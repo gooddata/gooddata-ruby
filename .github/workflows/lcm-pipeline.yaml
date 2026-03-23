@@ -132,14 +132,14 @@ jobs:
       - name: Build docker image
         uses: ./.github/actions/container-build-push
         with:
-          ecr-repos: ${{ inputs.deploy && format('staging/{0}', matrix.component) || format('gdc-testing/{0}', matrix.component) }}
-          aws-creds-vault-role: ${{ inputs.deploy && 'ecr-ii-push' || 'ecr-push-testing' }}
-          aws-creds-vault-path: "secret/data/v3/int/ecr/infra1-user-ecr-rw${{ !inputs.deploy && '-testing' || '' }}"
+          ecr-repos: staging/${{ matrix.component }}
+          aws-creds-vault-role: ecr-push
+          aws-creds-vault-path: "secret/data/v3/int/ecr/infra1-user-ecr-rw"
           build-tags: |
-            latest
             ${{ needs.prepare-build.outputs.image_tag }}
-            ${{ needs.prepare-build.outputs.service_version }}
-            ${{ needs.prepare-build.outputs.service_major_version }}
+            ${{ inputs.deploy && 'latest' || '' }}
+            ${{ inputs.deploy && needs.prepare-build.outputs.service_version || '' }}
+            ${{ inputs.deploy && needs.prepare-build.outputs.service_major_version || '' }}
           build-context: ${{ steps.load-config.outputs.CONTAINER_CONTEXT }}
           container-file: ${{ steps.get-image-config.outputs.CONTAINER_FILE }}
           vault-url: '${{ secrets.VAULT_ADDRESS }}'
@@ -247,12 +247,11 @@ jobs:
       pipeline_identifier: ${{ needs.prepare-build.outputs.pipeline_identifier }}
 
   lcm-integration-e2e:
-    needs: [ prepare-build, build-helmreleases, wait-for-deployment ]
+    needs: [ prepare-build, register-bricks-staging, build-helmreleases, wait-for-deployment ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
-      needs.build-helmreleases.result == 'success' &&
-      inputs.deploy
+      needs.register-bricks-staging.result == 'success'
     uses: ./.github/workflows/lcm-integration-e2e.yaml
     secrets: inherit
     permissions:
