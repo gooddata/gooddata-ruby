@@ -36,7 +36,6 @@ jobs:
       image_tag: ${{ steps.gen-image-tag.outputs.image_tag }}
       pipeline_identifier: ${{ github.run_id }}
       service_version: ${{ steps.read-version.outputs.service_version }}
-      service_major_version: ${{ steps.read-version.outputs.service_major_version }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -62,9 +61,6 @@ jobs:
         run: |
           version=$(cat VERSION | tr -d '\n')
           echo "service_version=$version" >> $GITHUB_OUTPUT
-          major=$(echo "$version" | cut -d. -f1)
-          echo "service_major_version=M$major" >> $GITHUB_OUTPUT
-
   dockerfiles-validation:
     needs: [ prepare-build ]
     if: ${{ needs.prepare-build.outputs.images != '[]' && needs.prepare-build.outputs.images != '' }}
@@ -134,7 +130,6 @@ jobs:
             ${{ needs.prepare-build.outputs.image_tag }}
             ${{ inputs.deploy && 'latest' || '' }}
             ${{ inputs.deploy && needs.prepare-build.outputs.service_version || '' }}
-            ${{ inputs.deploy && needs.prepare-build.outputs.service_major_version || '' }}
           build-context: ${{ steps.load-config.outputs.CONTAINER_CONTEXT }}
           container-file: ${{ steps.get-image-config.outputs.CONTAINER_FILE }}
           vault-url: '${{ secrets.VAULT_ADDRESS }}'
@@ -285,37 +280,41 @@ jobs:
     with:
       images: ${{ needs.prepare-build.outputs.images }}
       charts: ${{ needs.build-helmreleases.outputs.built_charts || '{}' }}
-      image_tag: ${{ needs.prepare-build.outputs.service_major_version }}
+      image_tag: ${{ needs.prepare-build.outputs.service_version }}
     secrets: inherit
 
-  register-bricks-prod:
+  notify-image-available:
     runs-on:
       group: infra1-runners-arc
       labels: runners-small
     needs: [ prepare-build, promote-to-stable ]
+    permissions:
+      pull-requests: write
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
       needs.prepare-build.outputs.images != '[]' &&
       needs.prepare-build.outputs.images != '' &&
       inputs.deploy
-    strategy:
-      matrix:
-        cluster: [ na1, ca2, perf1, bom1, syd1, na3, eu1, fra1 ]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-      - name: Register bricks to ${{ matrix.cluster }}
-        uses: ./.github/actions/rundeck
-        with:
-          server: '${{ secrets.RUNDECK_URL }}'
-          project: ${{ matrix.cluster }}-ansible
-          job-group: ansible/msf/hotfix
-          job-name: ${{ matrix.cluster }}_lcm_pipeline_component_tool
-          vault-url: ${{ secrets.VAULT_ADDRESS }}
+      - name: Comment on PR
+        run: |
+          gh pr comment ${{ inputs.pr_number }} \
+            --repo ${{ github.repository }} \
+            --body "## LCM bricks image available
+
+          New image \`stable/lcm-bricks\` available and tagged for all prod clusters.
+          Please, manually run the respective rundeck job for each: ${{ secrets.RUNDECK_URL }}
+
+          | | |
+          |---|---|
+          | **Version** | \`${{ needs.prepare-build.outputs.service_version }}\` |
+          | **Build tag** | \`${{ needs.prepare-build.outputs.image_tag }}\` |"
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS }}
 
   create-auto-merge-prod-pr:
-    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
+    needs: [ prepare-build, build-helmreleases ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
@@ -335,7 +334,7 @@ jobs:
     secrets: inherit
 
   create-manual-merge-prod-pr:
-    needs: [ prepare-build, build-helmreleases, register-bricks-prod ]
+    needs: [ prepare-build, build-helmreleases ]
     if: |
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
