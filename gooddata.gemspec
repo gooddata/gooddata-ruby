@@ -78,6 +78,7 @@ Gem::Specification.new do |s|
 
   if RUBY_VERSION >= '2.8'
     s.add_dependency 'activesupport', '>= 6.0.3.1'
+    s.add_dependency 'i18n', '< 1.15'
   elsif RUBY_VERSION >= '2.5'
     s.add_dependency 'activesupport', '< 7.0.0'
   else
