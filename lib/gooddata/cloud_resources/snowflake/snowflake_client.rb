@@ -50,7 +50,7 @@ module GoodData
         end
 
         # When update driver class then also updating driver class using in connection(..) method below
-        Java.net.snowflake.client.jdbc.SnowflakeDriver
+        Java.net.snowflake.client.api.driver.SnowflakeDriver
       end
 
       def realize_query(query, _params)
@@ -99,7 +99,7 @@ module GoodData
         # Add JDBC_QUERY_RESULT_FORMAT parameter to fix unsafe memory issue of Snowflake JDBC driver
         prop.setProperty('JDBC_QUERY_RESULT_FORMAT', 'JSON')
 
-        @connection = com.snowflake.client.jdbc.SnowflakeDriver.new.connect(@url, prop)
+        @connection = Java.net.snowflake.client.api.driver.SnowflakeDriver.new.connect(@url, prop)
       end
 
       def build_url(url)
