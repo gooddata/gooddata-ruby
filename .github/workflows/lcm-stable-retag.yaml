@@ -1,0 +1,96 @@
+name: "LCM: Retag stable image to major version"
+run-name: "Retag stable lcm-bricks ${{ inputs.tag }} → M<major>-<cluster>"
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Stable image tag to retag (e.g. 3.7.106)'
+        required: true
+        type: string
+      dry-run:
+        description: 'Dry-run only — print crane commands without executing'
+        required: true
+        default: true
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  retag-stable:
+    name: Retag stable/${{ inputs.tag }} to major version
+    runs-on:
+      group: infra1-runners-arc
+      labels: runners-small
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      INFRA_REPO_URL: ${{ secrets.ECR_URL }}
+      images: "lcm-bricks lcm-bricks-nextversion"
+      clusters: "na1 ca2 perf1 bom1 syd1 na3 eu1 fra1"
+    steps:
+      - name: Get required Vault secrets
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDRESS }}
+          method: jwt
+          path: jwt/github
+          role: ecr-push
+          secrets: |
+            secret/data/v3/int/ecr/infra1-user-ecr-rw aws_ecr_access_key | AWS_ACCESS_KEY ;
+            secret/data/v3/int/ecr/infra1-user-ecr-rw aws_ecr_secret_key | AWS_SECRET_KEY ;
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+
+      - name: Retag images
+        env:
+          TAG: ${{ inputs.tag }}
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          set -euo pipefail
+          major=$(echo "$TAG" | cut -d. -f1)
+          images=( ${{ env.images }} )
+          clusters=( ${{ env.clusters }} )
+          for image in "${images[@]}"; do
+            src="${INFRA_REPO_URL}/stable/${image}:${TAG}"
+            for cluster in "${clusters[@]}"; do
+              major_tag="M${major}-${cluster}"
+              if [ "${DRY_RUN}" == 'true' ]; then
+                echo "[dry-run] crane tag ${src} ${major_tag}"
+              else
+                crane tag "${src}" "${major_tag}"
+                echo "Tagged ${image}:${TAG} → ${image}:${major_tag}"
+              fi
+            done
+          done
+
+      - name: Summary
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          major=$(echo "$TAG" | cut -d. -f1)
+          clusters=( ${{ env.clusters }} )
+          {
+            echo "## LCM stable retag"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Source tag** | \`${TAG}\` |"
+            echo "| **Major tag pattern** | \`M${major}-<cluster>\` |"
+            echo "| **Clusters** | \`${clusters[*]}\` |"
+            echo "| **Dry-run** | \`${{ inputs.dry-run }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"

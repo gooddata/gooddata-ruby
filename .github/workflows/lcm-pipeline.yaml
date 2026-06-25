@@ -303,13 +303,28 @@ jobs:
             --repo ${{ github.repository }} \
             --body "## LCM bricks image available
 
-          New image \`stable/lcm-bricks\` available and tagged for all prod clusters.
-          Please, manually run the respective rundeck job for each: ${{ secrets.RUNDECK_URL }}
+          New image \`stable/lcm-bricks\` is available.
 
           | | |
           |---|---|
           | **Version** | \`${{ needs.prepare-build.outputs.service_version }}\` |
-          | **Build tag** | \`${{ needs.prepare-build.outputs.image_tag }}\` |"
+          | **Build tag** | \`${{ needs.prepare-build.outputs.image_tag }}\` |
+
+          ### Next steps
+
+          **1. Tag the image with its major version**
+          Run the [LCM: Retag stable image to major version](${{ github.server_url }}/${{ github.repository }}/actions/workflows/lcm-stable-retag.yaml) workflow dispatch:
+          - Go to **Actions → LCM: Retag stable image to major version → Run workflow**
+          - Set **tag** to \`${{ needs.prepare-build.outputs.service_version }}\`
+          - Leave **dry-run** unchecked and click **Run workflow**
+
+          Or via gh CLI:
+          \`\`\`
+          gh workflow run lcm-stable-retag.yaml --repo ${{ github.repository }} -f tag=${{ needs.prepare-build.outputs.service_version }} -f dry-run=false
+          \`\`\`
+
+          **2. Register bricks to prod clusters**
+          Once the retag completes, manually run the respective Rundeck job for each cluster: ${{ secrets.RUNDECK_URL }}"
         env:
           GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS }}
 
