@@ -53,9 +53,14 @@ module GoodData
 
         unless params['NO_SPLUNK_LOGGING'] && params['NO_SPLUNK_LOGGING'].to_b
           GoodData.logger.info "Statistics collecting is turned ON. All the data is anonymous."
-          # NODE_NAME is set up by k8s execmgr
-          syslog_node = ENV['NODE_NAME']
-          splunk_file_logger = syslog_node ? RemoteSyslogLogger.new(syslog_node, 514, program: "lcm_ruby_brick", facility: 'local2') : Logger.new(STDOUT)
+          logging_appender = ENV['GDC_LOGGING_APPENDER'] || 'SYSLOG'
+          splunk_file_logger = if logging_appender == 'CONSOLE'
+                                 Logger.new(STDOUT)
+                               else
+                                 # NODE_NAME is set up by k8s execmgr
+                                 syslog_node = ENV['NODE_NAME']
+                                 syslog_node ? RemoteSyslogLogger.new(syslog_node, 514, program: "lcm_ruby_brick", facility: 'local2') : Logger.new(STDOUT)
+                               end
           splunk_logger = SplunkLoggerDecorator.new splunk_file_logger
           splunk_logger.level = params['SPLUNK_LOG_LEVEL'] || GoodData::DEFAULT_SPLUNKLOG_LEVEL
           splunk_logger = splunk_logger.extend(ContextLoggerDecorator)
