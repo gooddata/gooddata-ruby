@@ -100,6 +100,46 @@ describe GoodData::Bricks::LoggerMiddleware do
     end
   end
 
+  context 'when GDC_LOGGING_APPENDER is CONSOLE' do
+    let(:params) { { it_does: 'not matter' } }
+
+    around do |example|
+      original_appender = ENV['GDC_LOGGING_APPENDER']
+      ENV['GDC_LOGGING_APPENDER'] = 'CONSOLE'
+      example.run
+      ENV['GDC_LOGGING_APPENDER'] = original_appender
+    end
+
+    it 'does not create a remote syslog forwarder' do
+      ENV['NODE_NAME'] = '12.12.12.12'
+      expect(RemoteSyslogLogger).not_to receive(:new)
+      subject.call(params)
+    end
+
+    it 'still registers the splunk logger channel' do
+      expect(GoodData).to receive(:splunk_logging_on).with(splunk_logger)
+      subject.call(params)
+    end
+  end
+
+  context 'when GDC_LOGGING_APPENDER is SYSLOG' do
+    let(:params) { { it_does: 'not matter' } }
+    let(:node_name) { '12.12.12.12' }
+
+    around do |example|
+      original_appender = ENV['GDC_LOGGING_APPENDER']
+      ENV['GDC_LOGGING_APPENDER'] = 'SYSLOG'
+      example.run
+      ENV['GDC_LOGGING_APPENDER'] = original_appender
+    end
+
+    it 'creates a remote syslog forwarder' do
+      ENV['NODE_NAME'] = node_name
+      expect(RemoteSyslogLogger).to receive(:new).with(node_name, 514, program: 'lcm_ruby_brick', facility: 'local2')
+      subject.call(params)
+    end
+  end
+
   context 'GDC_LOG_LEVEL' do
     let(:params) { { 'GDC_LOG_LEVEL' => log_level } }
 
