@@ -64,17 +64,21 @@ jobs:
           major=$(echo "$TAG" | cut -d. -f1)
           images=( ${{ env.images }} )
           clusters=( ${{ env.clusters }} )
+          crane_tag() {
+            local src=$1 tag=$2
+            if [ "${DRY_RUN}" == 'true' ]; then
+              echo "[dry-run] crane tag ${src} ${tag}"
+            else
+              crane tag "${src}" "${tag}"
+              echo "Tagged ${src} → ${tag}"
+            fi
+          }
           for image in "${images[@]}"; do
             src="${INFRA_REPO_URL}/stable/${image}:${TAG}"
             for cluster in "${clusters[@]}"; do
-              major_tag="M${major}-${cluster}"
-              if [ "${DRY_RUN}" == 'true' ]; then
-                echo "[dry-run] crane tag ${src} ${major_tag}"
-              else
-                crane tag "${src}" "${major_tag}"
-                echo "Tagged ${image}:${TAG} → ${image}:${major_tag}"
-              fi
+              crane_tag "${src}" "M${major}-${cluster}"
             done
+            crane_tag "${src}" latest
           done
 
       - name: Summary
