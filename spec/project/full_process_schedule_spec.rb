@@ -228,7 +228,7 @@ describe "Full process and schedule exercise", :vcr, :constraint => 'slow' do
     end
   end
 
-  xit "should be possible to download deployed process" do
+  it "should be possible to download deployed process" do
     process = @project.deploy_process('./spec/data/hello_world_process/hello_world.zip',
                                       type: 'RUBY',
                                       name: 'Test ETL zipped file Process')

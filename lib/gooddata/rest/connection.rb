@@ -527,14 +527,22 @@ module GoodData
       def do_stream_file(uri, filename, _options = {})
         GoodData.logger.info "Uploading file user storage #{uri}"
 
-        request = RestClient::Request.new(:method => :put,
-                                          :url => uri.to_s,
-                                          :verify_ssl => verify_ssl,
-                                          :headers => @webdav_headers.merge(:x_gdc_authtt => headers[:x_gdc_authtt]),
-                                          :payload => File.new(filename, 'rb'))
+        # Build the request inside the retryable block so that, after a token
+        # refresh triggered by a 401, the new x_gdc_authtt header is picked up
+        # and a fresh file handle is used for the retried upload.
+        b = proc do
+          request = RestClient::Request.new(:method => :put,
+                                            :url => uri.to_s,
+                                            :verify_ssl => verify_ssl,
+                                            :headers => @webdav_headers.merge(:x_gdc_authtt => headers[:x_gdc_authtt]),
+                                            :payload => File.new(filename, 'rb'))
+          request.execute
+        end
 
         begin
-          request.execute
+          GoodData::Rest::Connection.retryable(:tries => Helpers::GD_MAX_RETRY, :refresh_token => proc { refresh_token }) do
+            b.call
+          end
         rescue => e
           raise "Error when uploading file #{filename}. Error: #{e}"
         end
