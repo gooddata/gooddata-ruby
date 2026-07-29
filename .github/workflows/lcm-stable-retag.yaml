@@ -5,8 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Stable image tag to retag (e.g. 3.7.106)'
+        description: 'Stable image tag to retag (e.g. 3.7.106), or "latest" to resolve the newest promoted version'
         required: true
+        default: 'latest'
         type: string
       cluster:
         description: 'Target cluster to retag image to it'
@@ -70,13 +71,13 @@ jobs:
           mask-password: 'true'
 
       - name: Retag images
+        id: retag
         env:
           TAG: ${{ inputs.tag }}
           DRY_RUN: ${{ inputs.dry-run }}
           CLUSTER: ${{ inputs.cluster }}
         run: |
           set -euo pipefail
-          major=$(echo "$TAG" | cut -d. -f1)
           images=( ${{ env.images }} )
           clusters=( ${{ env.clusters }} )
           target_cluster="${CLUSTER}"
@@ -84,6 +85,18 @@ jobs:
             echo "::error::Unknown cluster '${target_cluster}'. Configured clusters: ${clusters[*]}"
             exit 1
           fi
+          # the image carries its own version (LABEL bricks_version, fed by BRICKS_VERSION
+          # at build time), so this gets the version from it
+          resolve_version() {
+            local ref=$1 version
+            version=$(crane config "${ref}" | jq -r '.config.Labels.bricks_version // empty')
+            if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              # stderr: this runs inside $(...), stdout is reserved for the version
+              echo "::error::cannot resolve a version from ${ref} (bricks_version label = '${version:-<missing>}')" >&2
+              return 1
+            fi
+            printf '%s' "${version}"
+          }
           crane_tag() {
             local src=$1 tag=$2
             if [ "${DRY_RUN}" == 'true' ]; then
@@ -93,8 +106,20 @@ jobs:
               echo "Tagged ${src} → ${tag}"
             fi
           }
+          resolved_summary=""
           for image in "${images[@]}"; do
-            src="${INFRA_REPO_URL}/stable/${image}:${TAG}"
+            version="${TAG}"
+            if [[ "${TAG}" == 'latest' ]]; then
+              version=$(resolve_version "${INFRA_REPO_URL}/stable/${image}:latest")
+              echo "Resolved stable/${image}:latest → ${version}"
+              if [[ "$(crane digest "${INFRA_REPO_URL}/stable/${image}:${version}")" \
+                 != "$(crane digest "${INFRA_REPO_URL}/stable/${image}:latest")" ]]; then
+                echo "::error::stable/${image}:latest and :${version} are different digests — refusing to retag"
+                exit 1
+              fi
+            fi
+            major="${version%%.*}"
+            src="${INFRA_REPO_URL}/stable/${image}:${version}"
             if [[ "${target_cluster}" == "all-clusters" ]]; then
               for cluster in "${clusters[@]}"; do
                 crane_tag "${src}" "M${major}-${cluster}"
@@ -102,23 +127,31 @@ jobs:
             else
               crane_tag "${src}" "M${major}-${target_cluster}"
             fi
-            crane_tag "${src}" latest
+            resolved_summary+="${image}=${version} "
           done
+          echo "resolved_summary=${resolved_summary% }" >> "$GITHUB_OUTPUT"
 
       - name: Summary
         env:
           TAG: ${{ inputs.tag }}
+          CLUSTER: ${{ inputs.cluster }}
+          RESOLVED: ${{ steps.retag.outputs.resolved_summary }}
         run: |
           set -euo pipefail
-          major=$(echo "$TAG" | cut -d. -f1)
           clusters=( ${{ env.clusters }} )
+          if [[ "${CLUSTER}" == 'all-clusters' ]]; then
+            targets="${clusters[*]}"
+          else
+            targets="${CLUSTER}"
+          fi
           {
             echo "## LCM stable retag"
             echo ""
             echo "| | |"
             echo "|---|---|"
-            echo "| **Source tag** | \`${TAG}\` |"
-            echo "| **Major tag pattern** | \`M${major}-<cluster>\` |"
-            echo "| **Clusters** | \`${clusters[*]}\` |"
+            echo "| **Requested tag** | \`${TAG}\` |"
+            echo "| **Resolved version(s)** | \`${RESOLVED}\` |"
+            echo "| **Major tag pattern** | \`M<major>-<cluster>\` |"
+            echo "| **Retagged cluster(s)** | \`${targets}\` |"
             echo "| **Dry-run** | \`${{ inputs.dry-run }}\` |"
           } >> "$GITHUB_STEP_SUMMARY"
