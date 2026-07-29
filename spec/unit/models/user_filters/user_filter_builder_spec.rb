@@ -213,6 +213,9 @@ describe GoodData::UserFilterBuilder do
       it 'raises an error with a message bounded to the first few errors' do
         expect { subject.execute_mufs(filter_definitions, options) }.to raise_error do |error|
           expect(error.message).to match(/Creating MUFs resulted in errors, count: 500, first 10/)
+          expect(error.message).to include('user0@example.com')
+          expect(error.message).to include('user9@example.com')
+          expect(error.message).not_to include('user10@example.com')
           expect(error.message.size).to be < 15_000
         end
       end

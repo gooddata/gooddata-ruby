@@ -22,10 +22,18 @@ module GoodData
     @all_domain_users = {}
     @mutex = Mutex.new
 
-    # Cap on error entries embedded in a raised exception's message (and logged).
-    # Domain-wide syncs can produce one entry per user/value across a whole domain;
-    # stringifying the raw collection exhausts the JRuby heap (GRIF-951).
+    # Caps on error entries embedded in a raised exception's message (and logged).
+    # Domain-wide syncs can produce one entry per user/value across a whole domain,
+    # and a single entry can embed large value lists; stringifying the raw
+    # collection exhausts the JRuby heap (GRIF-951).
     MAX_ERRORS_IN_MESSAGE = 10
+    MAX_ERROR_ENTRY_CHARS = 1_000
+
+    # Renders a bounded sample of an error collection for logs and exception
+    # messages: caps both the number of entries and each entry's rendered size.
+    def self.bounded_error_sample(errors)
+      errors.take(MAX_ERRORS_IN_MESSAGE).map { |e| e.inspect.slice(0, MAX_ERROR_ENTRY_CHARS) }
+    end
 
     # Main Entry function. Gets values and processes them to get filters
     # that are suitable for other function to process.
@@ -493,7 +501,7 @@ module GoodData
         errors = errors.map do |e|
           e.merge(pid: project.pid)
         end
-        sample = errors.take(MAX_ERRORS_IN_MESSAGE)
+        sample = bounded_error_sample(errors)
         GoodData.logger.error("Maqlizing MUFs failed with #{errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
         fail GoodData::FilterMaqlizationError, "Maqlizing MUFs resulted in #{errors.size} error(s). First #{sample.size}: #{sample}"
       end
@@ -550,7 +558,7 @@ module GoodData
         project_log_formatter.log_user_filter_results(create_results, to_create)
         create_errors = create_results.select { |r| r[:status] == :failed }
         if create_errors.any?
-          sample = create_errors.take(MAX_ERRORS_IN_MESSAGE)
+          sample = bounded_error_sample(create_errors)
           GoodData.logger.error("Creating MUFs failed with #{create_errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
           fail "Creating MUFs resulted in errors, count: #{create_errors.size}, first #{sample.size}: #{sample}"
         end
@@ -587,7 +595,7 @@ module GoodData
           project_log_formatter.log_user_filter_results(delete_results, to_delete)
           delete_errors = delete_results.select { |r| r[:status] == :failed } if delete_results
           if delete_errors&.any?
-            sample = delete_errors.take(MAX_ERRORS_IN_MESSAGE)
+            sample = bounded_error_sample(delete_errors)
             GoodData.logger.error("Deleting MUFs failed with #{delete_errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
             fail "Deleting MUFs resulted in errors, count: #{delete_errors.size}, first #{sample.size}: #{sample}"
           end
@@ -659,7 +667,7 @@ module GoodData
                              end
 
       if !ignore_missing_values && !errors.empty?
-        sample = errors.take(MAX_ERRORS_IN_MESSAGE)
+        sample = bounded_error_sample(errors)
         GoodData.logger.error("Maqlizing variables failed with #{errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
         fail GoodData::FilterMaqlizationError, "Maqlizing variables resulted in #{errors.size} error(s). First #{sample.size}: #{sample}"
       end
