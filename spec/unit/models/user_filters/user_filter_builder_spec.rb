@@ -199,5 +199,23 @@ describe GoodData::UserFilterBuilder do
         expect { subject.execute_mufs(filter_definitions, options) }.to raise_error(/Creating MUFs resulted in errors/)
       end
     end
+
+    context 'when creating MUFs results in a large number of errors' do
+      let(:failed_users) do
+        Array.new(500) { |i| { 'login' => "user#{i}@example.com", 'detail' => 'x' * 1_000 } }
+      end
+
+      before do
+        allow(client).to receive(:post)
+          .and_return 'userFiltersUpdateResult' => { 'failed' => failed_users }
+      end
+
+      it 'raises an error with a message bounded to the first few errors' do
+        expect { subject.execute_mufs(filter_definitions, options) }.to raise_error do |error|
+          expect(error.message).to match(/Creating MUFs resulted in errors, count: 500, first 10/)
+          expect(error.message.size).to be < 15_000
+        end
+      end
+    end
   end
 end

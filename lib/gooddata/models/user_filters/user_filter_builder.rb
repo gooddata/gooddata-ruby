@@ -22,6 +22,11 @@ module GoodData
     @all_domain_users = {}
     @mutex = Mutex.new
 
+    # Cap on error entries embedded in a raised exception's message (and logged).
+    # Domain-wide syncs can produce one entry per user/value across a whole domain;
+    # stringifying the raw collection exhausts the JRuby heap (GRIF-951).
+    MAX_ERRORS_IN_MESSAGE = 10
+
     # Main Entry function. Gets values and processes them to get filters
     # that are suitable for other function to process.
     # Values can be read from file or provided inline as an array.
@@ -488,7 +493,9 @@ module GoodData
         errors = errors.map do |e|
           e.merge(pid: project.pid)
         end
-        fail GoodData::FilterMaqlizationError, errors
+        sample = errors.take(MAX_ERRORS_IN_MESSAGE)
+        GoodData.logger.error("Maqlizing MUFs failed with #{errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
+        fail GoodData::FilterMaqlizationError, "Maqlizing MUFs resulted in #{errors.size} error(s). First #{sample.size}: #{sample}"
       end
 
       filters = user_filters.map { |data| client.create(MandatoryUserFilter, data, project: project) }
@@ -542,7 +549,11 @@ module GoodData
         end
         project_log_formatter.log_user_filter_results(create_results, to_create)
         create_errors = create_results.select { |r| r[:status] == :failed }
-        fail "Creating MUFs resulted in errors: #{create_errors}" if create_errors.any?
+        if create_errors.any?
+          sample = create_errors.take(MAX_ERRORS_IN_MESSAGE)
+          GoodData.logger.error("Creating MUFs failed with #{create_errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
+          fail "Creating MUFs resulted in errors, count: #{create_errors.size}, first #{sample.size}: #{sample}"
+        end
       end
 
       if to_delete.empty?
@@ -575,7 +586,11 @@ module GoodData
 
           project_log_formatter.log_user_filter_results(delete_results, to_delete)
           delete_errors = delete_results.select { |r| r[:status] == :failed } if delete_results
-          fail "Deleting MUFs resulted in errors: #{delete_errors}" if delete_errors&.any?
+          if delete_errors&.any?
+            sample = delete_errors.take(MAX_ERRORS_IN_MESSAGE)
+            GoodData.logger.error("Deleting MUFs failed with #{delete_errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
+            fail "Deleting MUFs resulted in errors, count: #{delete_errors.size}, first #{sample.size}: #{sample}"
+          end
         end
       end
 
@@ -643,7 +658,11 @@ module GoodData
                                maqlify_filters(filters, users, options.merge(users_cache: users_cache, users_must_exist: users_must_exist))
                              end
 
-      fail GoodData::FilterMaqlizationError, errors if !ignore_missing_values && !errors.empty?
+      if !ignore_missing_values && !errors.empty?
+        sample = errors.take(MAX_ERRORS_IN_MESSAGE)
+        GoodData.logger.error("Maqlizing variables failed with #{errors.size} error(s). First #{sample.size}: #{sample.pretty_inspect}")
+        fail GoodData::FilterMaqlizationError, "Maqlizing variables resulted in #{errors.size} error(s). First #{sample.size}: #{sample}"
+      end
       filters = user_filters.map { |data| client.create(klass, data, project: project) }
       resolve_user_filters(filters, project_filters)
     end
