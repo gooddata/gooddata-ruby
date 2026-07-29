@@ -48,17 +48,24 @@ jobs:
 
       - name: Promote images
         run: |
+          set -euo pipefail
           built_images='${{ inputs.images }}'
           tag=${{ inputs.image_tag }}
           for image in $(echo "$built_images" | jq -r '.[]'); do
             crane cp \
               "${INFRA_REPO_URL}/staging/${image}:${tag}" \
               "${INFRA_REPO_URL}/stable/${image}:${tag}"
-            crane cp \
-              "${INFRA_REPO_URL}/staging/${image}:latest" \
-              "${INFRA_REPO_URL}/stable/${image}:latest"
+            # latest must be the digest just promoted, not whatever staging:latest is now
+            crane tag "${INFRA_REPO_URL}/stable/${image}:${tag}" latest
 
-            echo "Promoted image ${image} to stable"
+            promoted=$(crane digest "${INFRA_REPO_URL}/stable/${image}:${tag}")
+            current=$(crane digest "${INFRA_REPO_URL}/stable/${image}:latest")
+            if [[ "${promoted}" != "${current}" ]]; then
+              echo "::error::stable/${image}:latest (${current}) != :${tag} (${promoted})"
+              exit 1
+            fi
+
+            echo "Promoted image ${image} to stable as ${tag} + latest"
           done
 
       - name: Promote charts
