@@ -1,6 +1,8 @@
 FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202607101511.b527cf7b
 
 ARG RVM_VERSION=stable
+
+# We must use JRuby9.2.20.0 to fix Read Would Block issue on GRIF-177
 ARG JRUBY_VERSION=9.2.20.0
 
 LABEL image_name="GDC LCM Bricks"
@@ -29,8 +31,12 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
 # Switch to a bash login shell to allow simple 'rvm' in RUN commands
 SHELL ["/bin/bash", "-l", "-c"]
 
+# Do NOT 'gem update --system' here. JRuby 9.2.20.0 ships RubyGems 3.1.6, which already
+# satisfies bundler 2.3.27 (needs >= 2.5.2). Replacing it breaks the default-gem activation
+# that jruby-openssl relies on to load its BouncyCastle jars, leaving OpenSSL with only its
+# Java half (SSLContext without #set_params) - which kills every later HTTPS gem fetch.
 RUN rvm install jruby-${JRUBY_VERSION} \
-    && gem update --system 3.3.26 \
+    && ruby -ropenssl -e 'raise "jruby-openssl Ruby layer not loaded" unless OpenSSL::SSL::SSLContext.method_defined?(:set_params)' \
     && gem install bundler -v 2.3.27 \
     && gem install rake -v 11.3.0
 
