@@ -619,7 +619,7 @@ ERR
         merge_headers! response.headers
         content_type = response.headers[:content_type]
         return response if process == false
-        if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8'
+        if content_type == 'application/json' || content_type == 'application/json;charset=UTF-8' || content_type_with_version(content_type)
           result = response.to_str == '""' ? {} : MultiJson.load(response.to_str)
           GoodData.rest_logger.debug "Request ID: #{response.headers[:x_gdc_request]} - Response: #{result.inspect}"
         elsif ['text/plain;charset=UTF-8', 'text/plain; charset=UTF-8', 'text/plain'].include?(content_type)
@@ -645,6 +645,10 @@ ERR
           fail "Unsupported response content type '%s':\n%s" % [content_type, response.to_str[0..127]]
         end
         result
+      end
+
+      def content_type_with_version(content_type)
+        !content_type.nil? && content_type.include?('application/json') && content_type.include?('version=')
       end
 
       def profile(method, path, request_id, stats_on, &block)
