@@ -175,8 +175,17 @@ jobs:
           author_email: "infra+yenkins@gooddata.com>"
           new_branch: "${{ steps.prepare-pr-metadata.outputs.branch_name }}"
 
+      - name: Report nothing to deploy
+        if: ${{ steps.commit-and-push.outputs.committed != 'true' }}
+        run: |
+          echo "### :information_source: Nothing to deploy" >> $GITHUB_STEP_SUMMARY
+          echo "The target HelmReleases already match the built chart and images, so no" >> $GITHUB_STEP_SUMMARY
+          echo "commit was produced and no gitops-deployments PR was opened." >> $GITHUB_STEP_SUMMARY
+          echo "Branch that would have been used: \`${{ steps.prepare-pr-metadata.outputs.branch_name }}\`" >> $GITHUB_STEP_SUMMARY
+
       - name: Create PR
         id: create-pr
+        if: ${{ steps.commit-and-push.outputs.committed == 'true' }}
         run: |
           pr_url=$(gh pr create \
             --title "${{ steps.prepare-pr-metadata.outputs.pr_title }}" \
@@ -195,14 +204,14 @@ jobs:
           GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS }}
 
       - name: Upload PR URL
-        if: ${{ inputs.is_staging == false && inputs.is_auto_merge == true }}
+        if: ${{ steps.commit-and-push.outputs.committed == 'true' && inputs.is_staging == false && inputs.is_auto_merge == true }}
         uses: actions/upload-artifact@v4
         with:
           name: "${{ inputs.cluster }}_pr_url"
           path: "${{ inputs.cluster }}_pr_url.txt"
 
       - name: Approve the PR
-        if: ${{ inputs.is_staging == true }}
+        if: ${{ steps.commit-and-push.outputs.committed == 'true' && inputs.is_staging == true }}
         run: gh pr review --approve
         env:
           GH_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS_ADMIN}}
