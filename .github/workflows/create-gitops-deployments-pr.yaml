@@ -69,9 +69,9 @@ jobs:
             Change HEAD: https://github.com/${GITHUB_REPOSITORY}/commit/${commit_hash}
             Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           else
-            branch_name="${repo_name}/${commit_hash}"
-            commit_message="${GITHUB_REPOSITORY}: ${commit_hash}"
-            pr_title="${GITHUB_REPOSITORY}: ${commit_hash}"
+            branch_name="${repo_name}/${commit_hash}_prod"
+            commit_message="${GITHUB_REPOSITORY}: ${commit_hash} for all production clusters"
+            pr_title="${GITHUB_REPOSITORY}: ${commit_hash} for all production clusters"
             pr_body=":exclamation: CAREFULLY REVIEW AFFECTED CLUSTER IDs :exclamation:
             :exclamation: Change is delivered immediatelly to the clusters, including production :exclamation:
             Change HEAD: https://github.com/${GITHUB_REPOSITORY}/commit/${commit_hash}
