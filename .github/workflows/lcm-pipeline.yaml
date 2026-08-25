@@ -225,6 +225,8 @@ jobs:
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
       needs.build-helmreleases.result == 'success' &&
+      needs.build-helmreleases.outputs.staging_helmreleases != '[]' &&
+      needs.build-helmreleases.outputs.staging_helmreleases != '' &&
       inputs.deploy
     strategy:
       matrix:
@@ -335,6 +337,8 @@ jobs:
       !cancelled() &&
       !contains(needs.*.result, 'failure') &&
       needs.build-helmreleases.result == 'success' &&
+      needs.build-helmreleases.outputs.updated_prod_cluster_names != '[]' &&
+      needs.build-helmreleases.outputs.updated_prod_cluster_names != '' &&
       inputs.AUTO_MERGE &&
       inputs.deploy
     strategy:
