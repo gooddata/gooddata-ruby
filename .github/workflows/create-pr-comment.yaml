@@ -76,14 +76,19 @@ jobs:
             cat "$comment_file" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           else
-            pr_url=${{ inputs.deployment_pr_url }}
+            pr_url="${{ inputs.deployment_pr_url }}"
 
-            pr_comment=":exclamation: **THIS PULL REQUEST WILL NEED TO BE DELIVERED MANUALLY** :exclamation:
-            :exclamation: *REVERT following gitops-deployments PR bellow to rollback this change* :exclamation:
-            * PR for **all clusters** :arrow_right:: ${pr_url}
+            if [[ -z "$pr_url" ]]; then
+              pr_comment=":information_source: **NO PRODUCTION DELIVERY NEEDED**
+              The production HelmReleases already match the built chart and images, so no gitops-deployments PR was opened."
+            else
+              pr_comment=":exclamation: **THIS PULL REQUEST WILL NEED TO BE DELIVERED MANUALLY** :exclamation:
+              :exclamation: *REVERT following gitops-deployments PR bellow to rollback this change* :exclamation:
+              * PR for **all clusters** :arrow_right:: ${pr_url}
 
-            :warning:  Pushing another change before rolling out this change might cause confliction in [gitops-deployments](https://github.com/gooddata/gitops-deployments) repo
-            :point_right:  Merging progress will be informed in [#cd-pipelines-release-prod](https://app.slack.com/client/T02G0PHRH/C0504DF292T) slack channel"
+              :warning:  Pushing another change before rolling out this change might cause confliction in [gitops-deployments](https://github.com/gooddata/gitops-deployments) repo
+              :point_right:  Merging progress will be informed in [#cd-pipelines-release-prod](https://app.slack.com/client/T02G0PHRH/C0504DF292T) slack channel"
+            fi
 
             echo "pr_comment<<EOF" >> $GITHUB_OUTPUT
             echo "$pr_comment" >> $GITHUB_OUTPUT

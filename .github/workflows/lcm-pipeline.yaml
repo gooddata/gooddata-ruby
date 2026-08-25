@@ -259,6 +259,7 @@ jobs:
         needs.wait-for-deployment.result == 'failure' ||
         needs.lcm-integration-e2e.result == 'failure'
       ) &&
+      needs.create-staging-pr.outputs.commit_hash != '' &&
       inputs.deploy
     uses: ./.github/workflows/revert-staging-pr.yaml
     with:
