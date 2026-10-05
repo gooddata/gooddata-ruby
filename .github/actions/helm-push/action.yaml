@@ -63,7 +63,7 @@ runs:
     - name: Install helm binary
       uses: azure/setup-helm@v4
       with:
-        version: 'v3.12.1'
+        version: 'v3.22.0'
     - name: Get required Vault secrets
       if: ${{ inputs.dry-run == 'false' }}
       id: secrets
