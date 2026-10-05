@@ -1,4 +1,4 @@
-FROM ruby:3.2.1
+FROM ruby:3.4.11
 
 MAINTAINER Tomas Korcak <korczis@gmail.com>
 
