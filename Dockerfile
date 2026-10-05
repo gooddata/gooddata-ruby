@@ -1,4 +1,4 @@
-FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202607101511.b527cf7b
+FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202609201524.cf8d8cb6
 
 ARG RVM_VERSION=stable
 ARG JRUBY_VERSION=9.4.12.1
