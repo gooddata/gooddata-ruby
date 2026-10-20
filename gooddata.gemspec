@@ -93,6 +93,14 @@ Gem::Specification.new do |s|
     s.add_dependency 'net-pop'
   end
 
+  # Default gems up to Ruby 3.0, bundled gems from Ruby 3.4/4.0 on. A bundled
+  # gem still resolves standalone, but is invisible under bundler unless some
+  # gemspec asks for it, and lib/ requires all four directly.
+  s.add_dependency 'base64'
+  s.add_dependency 'benchmark'
+  s.add_dependency 'csv'
+  s.add_dependency 'logger'
+
   s.add_dependency 'aws-sdk-s3', '~> 1.16'
   if RUBY_VERSION >= '2.5'
     s.add_dependency 'docile', '~> 1.1'
