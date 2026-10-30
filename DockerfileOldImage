@@ -10,8 +10,13 @@ LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
 LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202607101511.b527cf7b"
 
+COPY ci/ca-blocklist/ /etc/pki/ca-trust/source/blocklist/
+
 # which is required by RVM
 RUN yum install -y gcc gcc-c++ diffutils curl-minimal which patch make git maven procps \
+    && yum update -y ca-certificates \
+    && update-ca-trust \
+    && ! grep -q '^# emSign ECC Root CA - G3$' /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem \
     && yum clean all \
     && rm -rf /var/cache/yum
 
