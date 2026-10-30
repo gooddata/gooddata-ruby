@@ -10,6 +10,8 @@ LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-
 
 # which is required by RVM
 RUN yum install -y gcc gcc-c++ which patch make unzip gnupg git maven procps gzip \
+    && yum update -y ca-certificates \
+    && ! grep -q '^# emSign ECC Root CA - G3$' /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem \
     && yum clean all \
     && rm -rf /var/cache/yum
 
