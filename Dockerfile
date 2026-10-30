@@ -1,4 +1,4 @@
-FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202607101511.b527cf7b
+FROM 020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre:202609300803.5ae07065-f44
 
 ARG RVM_VERSION=stable
 ARG JRUBY_VERSION=9.4.12.1
@@ -6,10 +6,10 @@ ARG JRUBY_VERSION=9.4.12.1
 LABEL image_name="GDC LCM Bricks"
 LABEL maintainer="LCM <lcm@gooddata.com>"
 LABEL git_repository_url="https://github.com/gooddata/gooddata-ruby/"
-LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre-centos9:202607101511.b527cf7b"
+LABEL parent_image="020413372491.dkr.ecr.us-east-1.amazonaws.com/tools/gdc-java-11-jre:202609300803.5ae07065-f44"
 
 # which is required by RVM
-RUN yum install -y gcc gcc-c++ which patch make unzip gnupg git maven procps gzip \
+RUN yum install -y gcc gcc-c++ which patch make unzip gnupg git maven procps gzip gawk bzip2 \
     && yum clean all \
     && rm -rf /var/cache/yum
 
