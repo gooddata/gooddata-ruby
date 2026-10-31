@@ -11,7 +11,7 @@ jobs:
       matrix:
         ruby-version: [2.5, 2.6, 2.7.6, 3.2.1, jruby-9.2.21, jruby-9.3.14, jruby-9.4.12.1]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}

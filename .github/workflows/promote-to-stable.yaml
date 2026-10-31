@@ -24,7 +24,7 @@ jobs:
       INFRA_REPO_URL: ${{ secrets.ECR_URL }}
     steps:
       - name: Get required Vault secrets
-        uses: hashicorp/vault-action@v3
+        uses: hashicorp/vault-action@v4
         with:
           url: ${{ secrets.VAULT_ADDRESS }}
           method: jwt
@@ -35,7 +35,7 @@ jobs:
             secret/data/v2/data-special/infra1-user-ecr-rw aws_ecr_secret_key | AWS_SECRET_KEY ;
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}

@@ -6,16 +6,16 @@ jobs:
   jruby-gem-release:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: jruby-9.4.12.1
           bundler-cache: true
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           java-version: '8'
           distribution: 'adopt'
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -27,7 +27,7 @@ jobs:
   rubygems-release:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2.1
@@ -43,7 +43,7 @@ jobs:
       matrix:
         ruby-version: [3.2.1, jruby-9.4.12.1]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}

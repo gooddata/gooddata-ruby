@@ -76,7 +76,7 @@ runs:
         test -f $CONTAINERFILE
     - name: Get required Vault secrets
       id: secrets
-      uses: hashicorp/vault-action@v3
+      uses: hashicorp/vault-action@v4
       with:
         url: ${{ inputs.vault-url }}
         method: jwt
@@ -86,7 +86,7 @@ runs:
           ${{ inputs.aws-creds-vault-path }} aws_ecr_access_key | AWS_ACCESS_KEY ;
           ${{ inputs.aws-creds-vault-path }} aws_ecr_secret_key | AWS_SECRET_KEY ;
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
         aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
