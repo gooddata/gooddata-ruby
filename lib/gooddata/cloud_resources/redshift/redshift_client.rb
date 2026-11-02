@@ -74,14 +74,23 @@ module GoodData
         full_url = build_url(@url, @database)
         GoodData.logger.info "Setting up connection to Redshift #{full_url}"
 
+        # The driver defaults 'user' to the JVM's user.name and reads it before UID,
+        # so 'user' must be set explicitly or UID is ignored.
         prop = java.util.Properties.new
         if @authentication['basic']
-          prop.setProperty('UID', @authentication['basic']['userName'])
-          prop.setProperty('PWD', @authentication['basic']['password'])
+          user = @authentication['basic']['userName']
+          password = @authentication['basic']['password']
+          prop.setProperty('user', user)
+          prop.setProperty('UID', user)
+          prop.setProperty('password', password)
+          prop.setProperty('PWD', password)
         else
+          db_user = @authentication['iam']['dbUser']
           prop.setProperty('AccessKeyID', @authentication['iam']['accessKeyId'])
           prop.setProperty('SecretAccessKey', @authentication['iam']['secretAccessKey'])
-          prop.setProperty('DbUser', @authentication['iam']['dbUser'])
+          prop.setProperty('DbUser', db_user)
+          prop.setProperty('user', db_user)
+          prop.setProperty('UID', db_user)
         end
 
         @connection = com.amazon.redshift.jdbc42.Driver.new.connect(full_url, prop)
