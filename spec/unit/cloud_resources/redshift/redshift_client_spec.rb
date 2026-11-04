@@ -7,7 +7,7 @@
 if RUBY_PLATFORM =~ /java/
   require 'gooddata/cloud_resources/redshift/redshift_client'
 
-  describe GoodData::CloudResources::RedshiftClient do
+  shared_context 'redshift client with stubbed driver' do
     let(:driver) { double('driver') }
     let(:driver_class) { double('driver_class', new: driver) }
     let(:options) do
@@ -32,6 +32,10 @@ if RUBY_PLATFORM =~ /java/
       allow(client).to receive_message_chain('com.amazon.redshift.jdbc42.Driver').and_return(driver_class)
       client
     end
+  end
+
+  describe GoodData::CloudResources::RedshiftClient do
+    include_context 'redshift client with stubbed driver'
 
     def connect_properties
       received = nil
@@ -64,6 +68,44 @@ if RUBY_PLATFORM =~ /java/
         expect(props.getProperty('DbUser')).to eq 'iam_user'
         expect(props.getProperty('AccessKeyID')).to eq 'key_id'
         expect(props.getProperty('SecretAccessKey')).to eq 'secret_key'
+      end
+    end
+  end
+
+  describe GoodData::CloudResources::RedshiftClient, '#realize_query' do
+    include_context 'redshift client with stubbed driver'
+
+    let(:authentication) { { 'basic' => { 'userName' => 'basic_user', 'password' => 'secret' } } }
+    let(:metadata) { double('metadata', column_count: 3) }
+    let(:result) { double('result') }
+    let(:statement) { double('statement', execute: true, get_result_set: result) }
+    let(:connection) { double('connection', create_statement: statement, close: nil) }
+
+    before do
+      # Other specs leave doubles in the global loggers
+      allow(GoodData).to receive(:gd_logger).and_return(double('gd_logger', info: nil))
+      allow(GoodData).to receive(:logger).and_return(double('logger', info: nil))
+      allow(driver).to receive(:connect).and_return(connection)
+      allow(result).to receive(:get_meta_data).and_return(metadata)
+      allow(metadata).to receive(:get_column_name) { |i| %w[name active deleted][i - 1] }
+      allow(metadata).to receive(:get_column_type) do |i|
+        [java.sql.Types::VARCHAR, java.sql.Types::BIT, java.sql.Types::BOOLEAN][i - 1]
+      end
+      allow(result).to receive(:next).and_return(true, true, false)
+      allow(result).to receive(:get_string).with(1).and_return('Alice', 'Bob')
+      # Driver 2.x getString() returns BOOLEAN as "t"/"f"
+      allow(result).to receive(:get_string).with(2).and_return('t', 'f')
+      allow(result).to receive(:get_boolean).with(2).and_return(true, false)
+      allow(result).to receive(:get_boolean).with(3).and_return(false, false)
+      allow(result).to receive(:was_null).and_return(false, false, false, true)
+    end
+
+    it 'writes BOOLEAN columns as true/false and NULL as empty' do
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          rows = CSV.read(subject.realize_query('SELECT 1', nil))
+          expect(rows).to eq [%w[name active deleted], %w[Alice true false], ['Bob', 'false', nil]]
+        end
       end
     end
   end

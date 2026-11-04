@@ -57,9 +57,10 @@ module GoodData
             result = statement.get_result_set
             metadata = result.get_meta_data
             col_count = metadata.column_count
+            boolean_columns = boolean_column_indexes(metadata)
             CSV.open(filename, 'wb') do |csv|
               csv << Array(1..col_count).map { |i| metadata.get_column_name(i) } # build the header
-              csv << Array(1..col_count).map { |i| result.get_string(i)&.to_s } while result.next
+              csv << Array(1..col_count).map { |i| column_value(result, i, boolean_columns) } while result.next
             end
           end
         end
@@ -97,6 +98,20 @@ module GoodData
       end
 
       private
+
+      # Driver 2.x getString() returns BOOLEAN as "t"/"f"; keep "true"/"false"
+      def boolean_column_indexes(metadata)
+        Array(1..metadata.column_count).select do |i|
+          [java.sql.Types::BIT, java.sql.Types::BOOLEAN].include?(metadata.get_column_type(i))
+        end
+      end
+
+      def column_value(result, index, boolean_columns)
+        return result.get_string(index)&.to_s unless boolean_columns.include?(index)
+
+        value = result.get_boolean(index)
+        result.was_null ? nil : value.to_s
+      end
 
       def build_url(url, database)
         url_parts = url.split('?')
