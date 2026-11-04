@@ -82,6 +82,9 @@ if RUBY_PLATFORM =~ /java/
     let(:connection) { double('connection', create_statement: statement, close: nil) }
 
     before do
+      # Other specs leave doubles in the global loggers
+      allow(GoodData).to receive(:gd_logger).and_return(double('gd_logger', info: nil))
+      allow(GoodData).to receive(:logger).and_return(double('logger', info: nil))
       allow(driver).to receive(:connect).and_return(connection)
       allow(result).to receive(:get_meta_data).and_return(metadata)
       allow(metadata).to receive(:get_column_name) { |i| %w[name active deleted][i - 1] }
