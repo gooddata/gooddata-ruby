@@ -45,7 +45,7 @@ runs:
         echo "${{ steps.cert-from-vault.outputs.private_key }}" >> cert.pem
       shell: bash
     - name: Setup python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: "3.12"
     - name: Install modules

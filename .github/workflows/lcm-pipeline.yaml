@@ -37,18 +37,18 @@ jobs:
       pipeline_identifier: ${{ github.run_id }}
       service_version: ${{ steps.read-version.outputs.service_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           submodules: 'true'
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
       - name: Detect changed images
         id: filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: ".github/service-filters.yml"
       - name: Detect changed helm charts
         id: chart-filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: ".github/chart-filters.yml"
       - name: Generate image tag
@@ -102,7 +102,7 @@ jobs:
         component: ${{ fromJSON(needs.prepare-build.outputs.images) }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: 'true'
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
@@ -155,7 +155,7 @@ jobs:
         charts: ${{ fromJSON(needs.prepare-build.outputs.charts) }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: 'true'
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
@@ -181,7 +181,7 @@ jobs:
       needs.prepare-build.outputs.images != ''
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Register bricks to staging
         uses: ./.github/actions/rundeck
         with:

@@ -86,7 +86,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Checkout gitops-deployments repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: gooddata/gitops-deployments
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
@@ -168,7 +168,7 @@ jobs:
 
       - name: Commit and push
         id: commit-and-push
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v11
         with:
           message: ${{ steps.prepare-pr-metadata.outputs.commit_message }}
           author_name: "yenkins"
@@ -205,7 +205,7 @@ jobs:
 
       - name: Upload PR URL
         if: ${{ steps.commit-and-push.outputs.committed == 'true' && inputs.is_staging == false && inputs.is_auto_merge == true }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ inputs.cluster }}_pr_url"
           path: "${{ inputs.cluster }}_pr_url.txt"

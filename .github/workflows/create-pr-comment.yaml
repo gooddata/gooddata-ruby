@@ -26,14 +26,14 @@ jobs:
       labels: runners-small
     steps:
       - name: Checkout gitops-deployments
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: gooddata/gitops-deployments
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
 
       - name: Download PR URLs
         if: ${{ inputs.AUTO_MERGE == true }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           path: pr_urls
           pattern: "*_pr_url"
@@ -96,7 +96,7 @@ jobs:
           fi
 
       - name: Comment PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const prNumber = ${{ inputs.triggering_pr_number }};

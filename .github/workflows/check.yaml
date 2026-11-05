@@ -18,12 +18,12 @@ jobs:
       project: ${{ github.repository }}
       changed_files: ${{ steps.changed-files.outputs.all_changed_files }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Configure git safe directory
         run: git config --global --add safe.directory '*'
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@v47
 
   gooddata-ruby-lcm-build-pipeline:
     needs:

@@ -31,12 +31,12 @@ jobs:
             jq --raw-output .head.sha)
           echo "commit=$pr_head_sha" >> "$GITHUB_OUTPUT"
                                 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: refs/pull/${{ github.event.issue.number }}/merge
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@v47
     if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, 'extended test') }}
   gooddata-ruby-integration-tests-zuul:
     runs-on:

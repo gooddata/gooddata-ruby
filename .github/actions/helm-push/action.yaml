@@ -59,15 +59,15 @@ runs:
   steps:
     - name: Checkout code
       if: ${{ inputs.checkout-code == 'true' }}
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
     - name: Install helm binary
-      uses: azure/setup-helm@v4
+      uses: azure/setup-helm@v5
       with:
         version: 'v3.12.1'
     - name: Get required Vault secrets
       if: ${{ inputs.dry-run == 'false' }}
       id: secrets
-      uses: hashicorp/vault-action@v3
+      uses: hashicorp/vault-action@v4
       with:
         url: ${{ inputs.vault-url }}
         method: jwt
@@ -78,7 +78,7 @@ runs:
           ${{ inputs.aws-creds-vault-path }} aws_ecr_secret_key | AWS_SECRET_KEY ;
     - name: Configure AWS credentials
       if: ${{ inputs.dry-run == 'false' }}
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
         aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}

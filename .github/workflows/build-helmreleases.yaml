@@ -45,7 +45,7 @@ jobs:
       updated_prod_cluster_names: ${{ steps.extract-updated-prod-names.outputs.updated_prod_names }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Get built charts
         id: get-built-charts
@@ -91,7 +91,7 @@ jobs:
           echo "charts=$(echo "$prepared_charts" | jq -c)" >> $GITHUB_OUTPUT
 
       - name: Checkout gitops-deployments
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: gooddata/gitops-deployments
           token: ${{ secrets.TOKEN_GITHUB_YENKINS }}
